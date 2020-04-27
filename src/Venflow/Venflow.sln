@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30021.99
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow", "Venflow\Venflow.csproj", "{B16B88AB-3D5E-4A8B-B11C-75F89EFABAEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venflow.ExecutionTests", "Venflow.ExecutionTests\Venflow.ExecutionTests.csproj", "{E40D47E3-008B-4BC2-A471-9744DA574F93}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B16B88AB-3D5E-4A8B-B11C-75F89EFABAEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B16B88AB-3D5E-4A8B-B11C-75F89EFABAEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B16B88AB-3D5E-4A8B-B11C-75F89EFABAEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B16B88AB-3D5E-4A8B-B11C-75F89EFABAEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E40D47E3-008B-4BC2-A471-9744DA574F93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E40D47E3-008B-4BC2-A471-9744DA574F93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E40D47E3-008B-4BC2-A471-9744DA574F93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E40D47E3-008B-4BC2-A471-9744DA574F93}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {020D29CB-7D63-45D4-8F95-7C89DC06E6E6}
+	EndGlobalSection
+EndGlobal
