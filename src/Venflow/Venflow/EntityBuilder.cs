@@ -125,13 +125,14 @@ namespace Venflow
             var columns = new List<EntityColumn<TEntity>>();
             PrimaryEntityColumn<TEntity>? primaryColumn = null;
 
-
             var notMappedAttributeType = typeof(NotMappedAttribute);
             var npgsqlParameterType = typeof(NpgsqlParameter<>);
             var constructorTypes = new Type[2];
             constructorTypes[0] = typeof(string);
 
             var entityParameter = Expression.Parameter(_type, "entity");
+            var indexParameter = Expression.Parameter(constructorTypes[0], "index");
+            var stringConcatMethod = constructorTypes[0].GetMethod("Concat", new[] { constructorTypes[0], constructorTypes[0] });
 
             for (int i = 0; i < properties.Length; i++)
             {
@@ -150,9 +151,9 @@ namespace Venflow
 
                 var constructor = npgsqlParameterType.MakeGenericType(property.PropertyType).GetConstructor(constructorTypes)!;
 
-                var parameterInstance = Expression.New(constructor, Expression.Constant("@" + property.Name), propertyGetter);
+                var parameterInstance = Expression.New(constructor, Expression.Add(Expression.Constant("@" + property.Name), indexParameter, stringConcatMethod), propertyGetter);
 
-                var prameterValueRetriever = Expression.Lambda<Func<TEntity, NpgsqlParameter>>(parameterInstance, entityParameter).Compile();
+                var parameterValueRetriever = Expression.Lambda<Func<TEntity, string, NpgsqlParameter>>(parameterInstance, entityParameter, indexParameter).Compile();
 
 
                 if (_columnDefinitions.TryGetValue(property.Name, out var definition))
@@ -160,7 +161,7 @@ namespace Venflow
                     switch (definition)
                     {
                         case PrimaryColumnDefinition<TEntity> primaryDefintion:
-                            primaryColumn = new PrimaryEntityColumn<TEntity>(definition.Name, prameterValueRetriever, primaryDefintion.ValueWriter!, primaryDefintion.IsServerSideGenerated);
+                            primaryColumn = new PrimaryEntityColumn<TEntity>(definition.Name, parameterValueRetriever, primaryDefintion.ValueWriter!, primaryDefintion.IsServerSideGenerated);
 
                             hasCustomDefinition = true;
                             break;
@@ -171,7 +172,7 @@ namespace Venflow
                 {
                     var columnName = definition?.Name ?? property.Name;
 
-                    columns.Add(new EntityColumn<TEntity>(columnName, prameterValueRetriever));
+                    columns.Add(new EntityColumn<TEntity>(columnName, parameterValueRetriever));
                 }
             }
 

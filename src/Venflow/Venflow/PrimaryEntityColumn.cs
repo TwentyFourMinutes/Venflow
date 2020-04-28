@@ -9,7 +9,7 @@ namespace Venflow
 
         internal bool IsServerSideGenerated { get; }
 
-        internal PrimaryEntityColumn(string columnName, Func<TEntity, NpgsqlParameter> parameterRetriever, Action<TEntity, object> valueWriter, bool isServerSideGenerated) : base(columnName, parameterRetriever)
+        internal PrimaryEntityColumn(string columnName, Func<TEntity, string, NpgsqlParameter> parameterRetriever, Action<TEntity, object> valueWriter, bool isServerSideGenerated) : base(columnName, parameterRetriever)
         {
             ValueWriter = valueWriter;
             IsServerSideGenerated = isServerSideGenerated;
