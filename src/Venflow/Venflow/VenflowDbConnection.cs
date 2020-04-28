@@ -21,19 +21,26 @@ namespace Venflow
             _dbConfiguration = dbConfiguration;
         }
 
+        #region InsertAsync
+
         public async Task<int> InsertAsync<TEntity>(TEntity entity, bool getInstertedId = true, CancellationToken cancellationToken = default) where TEntity : class
         {
-            if (!_dbConfiguration.Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
-            {
-                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the DbConfiguration.", nameof(TEntity));
-            }
+            await using var venflowCommand = CompileInsertCommand(entity, getInstertedId);
 
-            var entityConfiguration = (Entity<TEntity>)entityModel;
+            return await InsertAsync(venflowCommand, entity, cancellationToken);
+        }
 
-            using var command = new NpgsqlCommand
-            {
-                Connection = Connection
-            };
+        public VenflowCommand<TEntity> CompileInsertCommand<TEntity>(TEntity entity, bool getInstertedId = true) where TEntity : class
+            => CompileInsertCommand(entity, true, getInstertedId);
+
+        public VenflowCommand<TEntity> CompileInsertCommand<TEntity>(bool getInstertedId = true) where TEntity : class
+            => CompileInsertCommand<TEntity>(null, false, getInstertedId);
+
+        private VenflowCommand<TEntity> CompileInsertCommand<TEntity>(TEntity? entity, bool writeParameters, bool getInstertedId) where TEntity : class
+        {
+            var entityConfiguration = GetEntityConfiguration<TEntity>();
+
+            var command = new NpgsqlCommand();
 
             var sb = new StringBuilder();
 
@@ -64,11 +71,18 @@ namespace Venflow
 
             while (true)
             {
-                var parameter = entityConfiguration.Columns[i].ValueRetriever(entity, "0");
+                if (writeParameters)
+                {
+                    var parameter = entityConfiguration.Columns[i].ValueRetriever(entity, "0");
 
-                command.Parameters.Add(parameter);
+                    command.Parameters.Add(parameter);
 
-                sb.Append(parameter.ParameterName);
+                    sb.Append(parameter.ParameterName);
+                }
+                else
+                {
+                    sb.Append("@" + entityConfiguration.Columns[i].ColumnName + "0");
+                }
 
                 i++;
 
@@ -99,33 +113,52 @@ namespace Venflow
 
             command.CommandText = sb.ToString();
 
-            if (getInstertedId)
+            return new VenflowCommand<TEntity>(command, entityConfiguration)
             {
-                var value = await command.ExecuteScalarAsync(cancellationToken);
+                GetInstertedId = getInstertedId
+            };
+        }
 
-                entityConfiguration.PrimaryColumn.PrimaryKeyWriter(entity, value);
+        public async Task<int> InsertAsync<TEntity>(VenflowCommand<TEntity> command, TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            command.UnderlyingCommand.Connection = Connection;
+
+            if (command.GetInstertedId)
+            {
+                var value = await command.UnderlyingCommand.ExecuteScalarAsync(cancellationToken);
+
+                command.EntityConfiguration.PrimaryColumn.PrimaryKeyWriter(entity, value);
 
                 return -1;
             }
             else
             {
-                return await command.ExecuteNonQueryAsync(cancellationToken);
+                return await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
             }
         }
 
+        #endregion
+
+        #region InsertAllAsync
+
         public async Task<int> InsertAllAsync<TEntity>(IEnumerable<TEntity> entities, bool getInstertedId = false, CancellationToken cancellationToken = default) where TEntity : class
         {
-            if (!_dbConfiguration.Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
-            {
-                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the DbConfiguration.", nameof(TEntity));
-            }
+            await using var venflowCommand = CompileInsertAllCommand(entities, getInstertedId);
 
-            var entityConfiguration = (Entity<TEntity>)entityModel;
+            return await InsertAllAsync(venflowCommand, entities, cancellationToken);
+        }
 
-            using var command = new NpgsqlCommand
-            {
-                Connection = Connection
-            };
+        public VenflowCommand<TEntity> CompileInsertAllCommand<TEntity>(IEnumerable<TEntity> entities, bool getInstertedId = false) where TEntity : class
+            => CompileInsertAllCommand(entities, 0, true, getInstertedId);
+
+        public VenflowCommand<TEntity> CompileInsertAllCommand<TEntity>(int itemCount, bool getInstertedId = false) where TEntity : class
+            => CompileInsertAllCommand<TEntity>(null, itemCount, true, getInstertedId);
+
+        private VenflowCommand<TEntity> CompileInsertAllCommand<TEntity>(IEnumerable<TEntity>? entities, int itemCount, bool writeParameters, bool getInstertedId = false) where TEntity : class
+        {
+            var entityConfiguration = GetEntityConfiguration<TEntity>();
+
+            var command = new NpgsqlCommand();
 
             var sb = new StringBuilder();
 
@@ -153,34 +186,63 @@ namespace Venflow
             sb.Append("VALUES (");
 
             var parameterIndex = 0;
-
-            foreach (var entity in entities)
+            if (writeParameters)
             {
-                var i = startIndex;
-
-                while (true)
+                foreach (var entity in entities)
                 {
-                    var parameter = entityConfiguration.Columns[i].ValueRetriever(entity, parameterIndex.ToString());
+                    var i = startIndex;
 
-                    command.Parameters.Add(parameter);
-
-                    sb.Append(parameter.ParameterName);
-
-                    i++;
-
-                    if (i < entityConfiguration.Columns.Count)
+                    while (true)
                     {
-                        sb.Append(", ");
+                        var parameter = entityConfiguration.Columns[i].ValueRetriever(entity, parameterIndex.ToString());
+
+                        command.Parameters.Add(parameter);
+
+                        sb.Append(parameter.ParameterName);
+
+                        i++;
+
+                        if (i < entityConfiguration.Columns.Count)
+                        {
+                            sb.Append(", ");
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
-                    else
-                    {
-                        break;
-                    }
+
+                    sb.Append("), (");
+
+                    parameterIndex++;
                 }
+            }
+            else
+            {
+                for (int k = 0; k < itemCount; k++)
+                {
+                    var i = startIndex;
 
-                sb.Append("), (");
+                    while (true)
+                    {
+                        sb.Append("@" + entityConfiguration.Columns[i].ColumnName + parameterIndex.ToString());
 
-                parameterIndex++;
+                        i++;
+
+                        if (i < entityConfiguration.Columns.Count)
+                        {
+                            sb.Append(", ");
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    sb.Append("), (");
+
+                    parameterIndex++;
+                }
             }
 
             sb.Remove(sb.Length - 3, 3);
@@ -198,9 +260,19 @@ namespace Venflow
 
             command.CommandText = sb.ToString();
 
-            if (getInstertedId)
+            return new VenflowCommand<TEntity>(command, entityConfiguration)
             {
-                await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+                GetInstertedId = getInstertedId
+            };
+        }
+
+        public async Task<int> InsertAllAsync<TEntity>(VenflowCommand<TEntity> command, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            command.UnderlyingCommand.Connection = Connection;
+
+            if (command.GetInstertedId)
+            {
+                await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
                 foreach (var entity in entities)
                 {
@@ -211,28 +283,43 @@ namespace Venflow
 
                     var value = reader.GetValue(0);
 
-                    entityConfiguration.PrimaryColumn.PrimaryKeyWriter(entity, value);
+                    command.EntityConfiguration.PrimaryColumn.PrimaryKeyWriter(entity, value);
                 }
 
                 return -1;
             }
             else
             {
-                return await command.ExecuteNonQueryAsync(cancellationToken);
+                return await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
             }
         }
 
+        #endregion
+
+        #region GetOneAsync
+
         public async Task<TEntity> GetOneAsync<TEntity>(string sql, bool orderPreservedColumns = false, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            if (!_dbConfiguration.Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
+            await using var venflowCommand = CompileGetOneCommand<TEntity>(sql, orderPreservedColumns);
+
+            return await GetOneAsync(venflowCommand, cancellationToken);
+        }
+
+        public VenflowCommand<TEntity> CompileGetOneCommand<TEntity>(string sql, bool orderPreservedColumns = false) where TEntity : class
+        {
+            var entityConfiguration = GetEntityConfiguration<TEntity>();
+
+            return new VenflowCommand<TEntity>(new NpgsqlCommand(sql), entityConfiguration)
             {
-                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the DbConfiguration.", nameof(TEntity));
-            }
+                OrderPreservedColumns = orderPreservedColumns
+            };
+        }
 
-            var entityConfiguration = (Entity<TEntity>)entityModel;
+        public async Task<TEntity> GetOneAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            command.UnderlyingCommand.Connection = Connection;
 
-            using var command = new NpgsqlCommand(sql, Connection);
-            await using var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleRow, cancellationToken);
+            await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(CommandBehavior.SingleRow, cancellationToken);
 
             if (!await reader.ReadAsync())
             {
@@ -241,13 +328,13 @@ namespace Venflow
 
             var entity = new TEntity();
 
-            if (orderPreservedColumns)
+            if (command.OrderPreservedColumns)
             {
                 int counter = reader.VisibleFieldCount - 1;
 
                 for (int i = 0; i < reader.VisibleFieldCount; i++)
                 {
-                    entityConfiguration.Columns[i].ValueWriter(entity, reader, counter--);
+                    command.EntityConfiguration.Columns[i].ValueWriter(entity, reader, counter--);
                 }
             }
             else
@@ -256,11 +343,28 @@ namespace Venflow
                 {
                     var name = reader.GetName(i);
 
-                    entityConfiguration.Columns[name].ValueWriter(entity, reader, i);
+                    command.EntityConfiguration.Columns[name].ValueWriter(entity, reader, i);
                 }
             }
 
             return entity;
+        }
+
+        #endregion
+
+        public Task<CachedCommand<TEntity>> GetCachedCommandAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            return CachedCommand<TEntity>.CreateAsync(this, command, cancellationToken);
+        }
+
+        private Entity<TEntity> GetEntityConfiguration<TEntity>() where TEntity : class
+        {
+            if (!_dbConfiguration.Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
+            {
+                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the DbConfiguration.", nameof(TEntity));
+            }
+
+            return (Entity<TEntity>)entityModel;
         }
 
         public ValueTask DisposeAsync()
