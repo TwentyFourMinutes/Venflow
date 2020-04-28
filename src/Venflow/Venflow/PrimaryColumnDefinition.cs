@@ -2,15 +2,15 @@
 
 namespace Venflow
 {
-    internal class PrimaryColumnDefinition<TEntity> : ColumnDefinition where TEntity : class
+    internal class PrimaryColumnDefinition<TEntity> : ColumnDefinition<TEntity> where TEntity : class
     {
-        public Action<TEntity, object>? ValueWriter { get; set; }
+        public Action<TEntity, object> PrimaryKeyWriter { get; set; }
 
         public bool IsServerSideGenerated { get; set; }
 
-        public PrimaryColumnDefinition(string name) : base(name)
+        public PrimaryColumnDefinition(string name, Action<TEntity, object> primaryKeyWriter) : base(name)
         {
-
+            PrimaryKeyWriter = primaryKeyWriter;
         }
     }
 }

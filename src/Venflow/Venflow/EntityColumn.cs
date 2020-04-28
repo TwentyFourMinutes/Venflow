@@ -6,12 +6,16 @@ namespace Venflow
     internal class EntityColumn<TEntity> where TEntity : class
     {
         internal string ColumnName { get; }
-        internal Func<TEntity, string, NpgsqlParameter> ParameterRetriever { get; }
 
-        public EntityColumn(string columnName, Func<TEntity, string, NpgsqlParameter> parameterRetriever)
+        internal Action<TEntity, NpgsqlDataReader, int> ValueWriter { get; }
+
+        internal Func<TEntity, string, NpgsqlParameter> ValueRetriever { get; }
+
+        public EntityColumn(string columnName, Action<TEntity, NpgsqlDataReader, int> valueWriter, Func<TEntity, string, NpgsqlParameter> valueRetriever)
         {
+            ValueWriter = valueWriter;
             ColumnName = columnName;
-            ParameterRetriever = parameterRetriever;
+            ValueRetriever = valueRetriever;
         }
     }
 }

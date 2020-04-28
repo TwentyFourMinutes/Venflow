@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Venflow
 {
@@ -9,29 +12,29 @@ namespace Venflow
         internal string ColumnsString { get; }
         internal string ColumnsStringWithPrimaryKey { get; }
 
-        internal EntityColumn<TEntity>[] Columns { get; set; }
+        internal DualKeyCollection<string, EntityColumn<TEntity>> Columns { get; set; }
 
         internal PrimaryEntityColumn<TEntity> PrimaryColumn { get; set; }
 
-        public Entity(string tableName, EntityColumn<TEntity>[] columns, PrimaryEntityColumn<TEntity> primaryColumn)
+        public Entity(string tableName, DualKeyCollection<string, EntityColumn<TEntity>> columns, PrimaryEntityColumn<TEntity> primaryColumn)
         {
             TableName = "\"" + tableName + "\"";
             Columns = columns;
-            ColumnsStringWithPrimaryKey = BuildColumnsString(0, columns);
-            ColumnsString = BuildColumnsString(1, columns);
+            ColumnsStringWithPrimaryKey = BuildColumnsString(0, columns.KeysTwo);
+            ColumnsString = BuildColumnsString(1, columns.KeysTwo);
             PrimaryColumn = primaryColumn;
         }
 
-        private string BuildColumnsString(int offset, EntityColumn<TEntity>[] columns)
+        private string BuildColumnsString(int offset, ICollection<string> columnNames)
         {
             var sb = new StringBuilder();
 
             sb.Append("(");
 
-            for (int i = offset; i < columns.Length; i++)
+            foreach (var columnName in columnNames.Skip(offset))
             {
                 sb.Append('"');
-                sb.Append(columns[i].ColumnName);
+                sb.Append(columnName);
                 sb.Append("\",");
             }
 

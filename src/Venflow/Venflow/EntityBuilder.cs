@@ -10,14 +10,14 @@ namespace Venflow
     public class EntityBuilder<TEntity> where TEntity : class
     {
         private readonly Type _type;
-        private readonly IDictionary<string, ColumnDefinition> _columnDefinitions;
+        private readonly IDictionary<string, ColumnDefinition<TEntity>> _columnDefinitions;
 
         private string? _tableName;
 
         internal EntityBuilder()
         {
             _type = typeof(TEntity);
-            _columnDefinitions = new Dictionary<string, ColumnDefinition>();
+            _columnDefinitions = new Dictionary<string, ColumnDefinition<TEntity>>();
         }
 
         public EntityBuilder<TEntity> MapToTable(string tableName)
@@ -37,7 +37,7 @@ namespace Venflow
             }
             else
             {
-                definition = new ColumnDefinition(columnName);
+                definition = new ColumnDefinition<TEntity>(columnName);
 
                 _columnDefinitions.Add(property.Name, definition);
             }
@@ -60,9 +60,8 @@ namespace Venflow
 
             var isServerSideGenerated = option != DatabaseGeneratedOption.None;
 
-            var columnDefinition = new PrimaryColumnDefinition<TEntity>(property.Name)
+            var columnDefinition = new PrimaryColumnDefinition<TEntity>(property.Name, valueWriter)
             {
-                ValueWriter = valueWriter,
                 IsServerSideGenerated = isServerSideGenerated
             };
 
@@ -123,16 +122,26 @@ namespace Venflow
             }
 
             var columns = new List<EntityColumn<TEntity>>();
+            var nameToColumn = new Dictionary<string, int>();
             PrimaryEntityColumn<TEntity>? primaryColumn = null;
 
             var notMappedAttributeType = typeof(NotMappedAttribute);
             var npgsqlParameterType = typeof(NpgsqlParameter<>);
+            var npgsqlDataReaderType = typeof(NpgsqlDataReader);
+            var intType = typeof(int);
+
             var constructorTypes = new Type[2];
             constructorTypes[0] = typeof(string);
 
             var entityParameter = Expression.Parameter(_type, "entity");
             var indexParameter = Expression.Parameter(constructorTypes[0], "index");
+
+            var dataReaderParameter = Expression.Parameter(npgsqlDataReaderType, "dataReader");
+            var valueIndexParameter = Expression.Parameter(intType, "index");
+
             var stringConcatMethod = constructorTypes[0].GetMethod("Concat", new[] { constructorTypes[0], constructorTypes[0] });
+
+            var columnIndex = 0;
 
             for (int i = 0; i < properties.Length; i++)
             {
@@ -145,23 +154,30 @@ namespace Venflow
 
                 var hasCustomDefinition = false;
 
-                var propertyGetter = Expression.Property(entityParameter, property);
+                var valueProperty = Expression.Property(entityParameter, property);
 
                 constructorTypes[1] = property.PropertyType;
 
                 var constructor = npgsqlParameterType.MakeGenericType(property.PropertyType).GetConstructor(constructorTypes)!;
 
-                var parameterInstance = Expression.New(constructor, Expression.Add(Expression.Constant("@" + property.Name), indexParameter, stringConcatMethod), propertyGetter);
+                var parameterInstance = Expression.New(constructor, Expression.Add(Expression.Constant("@" + property.Name), indexParameter, stringConcatMethod), valueProperty);
 
                 var parameterValueRetriever = Expression.Lambda<Func<TEntity, string, NpgsqlParameter>>(parameterInstance, entityParameter, indexParameter).Compile();
 
+                var assignValue = Expression.Assign(valueProperty, Expression.Call(dataReaderParameter, "GetFieldValue", new[] { property.PropertyType }, valueIndexParameter));
+
+                var valueWriter = Expression.Lambda<Action<TEntity, NpgsqlDataReader, int>>(assignValue, entityParameter, dataReaderParameter, valueIndexParameter).Compile();
 
                 if (_columnDefinitions.TryGetValue(property.Name, out var definition))
                 {
                     switch (definition)
                     {
                         case PrimaryColumnDefinition<TEntity> primaryDefintion:
-                            primaryColumn = new PrimaryEntityColumn<TEntity>(definition.Name, parameterValueRetriever, primaryDefintion.ValueWriter!, primaryDefintion.IsServerSideGenerated);
+                            primaryColumn = new PrimaryEntityColumn<TEntity>(definition.Name, valueWriter, parameterValueRetriever, primaryDefintion.PrimaryKeyWriter, primaryDefintion.IsServerSideGenerated);
+
+                            columns.Add(primaryColumn);
+
+                            nameToColumn.Add(definition.Name, columnIndex);
 
                             hasCustomDefinition = true;
                             break;
@@ -172,8 +188,12 @@ namespace Venflow
                 {
                     var columnName = definition?.Name ?? property.Name;
 
-                    columns.Add(new EntityColumn<TEntity>(columnName, parameterValueRetriever));
+                    columns.Add(new EntityColumn<TEntity>(columnName, valueWriter, parameterValueRetriever));
+
+                    nameToColumn.Add(columnName, columnIndex);
                 }
+
+                columnIndex++;
             }
 
             if (primaryColumn is null)
@@ -186,9 +206,7 @@ namespace Venflow
                 _tableName = _type.Name + "s";
             }
 
-            columns.Insert(0, primaryColumn);
-
-            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_tableName, columns.ToArray(), primaryColumn));
+            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_tableName, new DualKeyCollection<string, EntityColumn<TEntity>>(columns.ToArray(), nameToColumn), primaryColumn));
         }
     }
 }

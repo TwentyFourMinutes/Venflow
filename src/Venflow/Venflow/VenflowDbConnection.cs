@@ -1,6 +1,8 @@
 ﻿using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -62,7 +64,7 @@ namespace Venflow
 
             while (true)
             {
-                var parameter = entityConfiguration.Columns[i].ParameterRetriever(entity, "0");
+                var parameter = entityConfiguration.Columns[i].ValueRetriever(entity, "0");
 
                 command.Parameters.Add(parameter);
 
@@ -70,7 +72,7 @@ namespace Venflow
 
                 i++;
 
-                if (i < entityConfiguration.Columns.Length)
+                if (i < entityConfiguration.Columns.Count)
                 {
                     sb.Append(", ");
                 }
@@ -101,7 +103,7 @@ namespace Venflow
             {
                 var value = await command.ExecuteScalarAsync(cancellationToken);
 
-                entityConfiguration.PrimaryColumn.ValueWriter(entity, value);
+                entityConfiguration.PrimaryColumn.PrimaryKeyWriter(entity, value);
 
                 return -1;
             }
@@ -156,9 +158,9 @@ namespace Venflow
             {
                 var i = startIndex;
 
-                while(true)
+                while (true)
                 {
-                    var parameter = entityConfiguration.Columns[i].ParameterRetriever(entity, parameterIndex.ToString());
+                    var parameter = entityConfiguration.Columns[i].ValueRetriever(entity, parameterIndex.ToString());
 
                     command.Parameters.Add(parameter);
 
@@ -166,7 +168,7 @@ namespace Venflow
 
                     i++;
 
-                    if (i < entityConfiguration.Columns.Length)
+                    if (i < entityConfiguration.Columns.Count)
                     {
                         sb.Append(", ");
                     }
@@ -209,7 +211,7 @@ namespace Venflow
 
                     var value = reader.GetValue(0);
 
-                    entityConfiguration.PrimaryColumn.ValueWriter(entity, value);
+                    entityConfiguration.PrimaryColumn.PrimaryKeyWriter(entity, value);
                 }
 
                 return -1;
@@ -218,6 +220,47 @@ namespace Venflow
             {
                 return await command.ExecuteNonQueryAsync(cancellationToken);
             }
+        }
+
+        public async Task<TEntity> GetOneAsync<TEntity>(string sql, bool orderPreservedColumns = false, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            if (!_dbConfiguration.Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
+            {
+                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the DbConfiguration.", nameof(TEntity));
+            }
+
+            var entityConfiguration = (Entity<TEntity>)entityModel;
+
+            using var command = new NpgsqlCommand(sql, Connection);
+            await using var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleRow, cancellationToken);
+
+            if (!await reader.ReadAsync())
+            {
+                return default!;
+            }
+
+            var entity = new TEntity();
+
+            if (orderPreservedColumns)
+            {
+                int counter = reader.VisibleFieldCount - 1;
+
+                for (int i = 0; i < reader.VisibleFieldCount; i++)
+                {
+                    entityConfiguration.Columns[i].ValueWriter(entity, reader, counter--);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < reader.VisibleFieldCount; i++)
+                {
+                    var name = reader.GetName(i);
+
+                    entityConfiguration.Columns[name].ValueWriter(entity, reader, i);
+                }
+            }
+
+            return entity;
         }
 
         public ValueTask DisposeAsync()
