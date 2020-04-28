@@ -1,5 +1,6 @@
 ﻿using Npgsql;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Venflow
@@ -17,6 +18,16 @@ namespace Venflow
         {
             UnderlyingCommand = underlyingCommand;
             EntityConfiguration = entity;
+        }
+
+        public Task<PreparedCommand<TEntity>> PrepareSelfAsync(NpgsqlConnection connection, CancellationToken cancellationToken = default)
+        {
+            return PreparedCommand<TEntity>.CreateAsync(connection, this, cancellationToken);
+        }
+
+        public Task<PreparedCommand<TEntity>> PrepareSelfAsync(VenflowDbConnection connection, CancellationToken cancellationToken = default)
+        {
+            return PreparedCommand<TEntity>.CreateAsync(connection.Connection, this, cancellationToken);
         }
 
         public ValueTask DisposeAsync()

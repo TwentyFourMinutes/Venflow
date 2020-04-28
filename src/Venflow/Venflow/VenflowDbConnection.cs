@@ -352,9 +352,9 @@ namespace Venflow
 
         #endregion
 
-        public Task<CachedCommand<TEntity>> GetCachedCommandAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<PreparedCommand<TEntity>> GetPreparedCommandAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
         {
-            return CachedCommand<TEntity>.CreateAsync(this, command, cancellationToken);
+            return PreparedCommand<TEntity>.CreateAsync(this.Connection, command, cancellationToken);
         }
 
         private Entity<TEntity> GetEntityConfiguration<TEntity>() where TEntity : class
