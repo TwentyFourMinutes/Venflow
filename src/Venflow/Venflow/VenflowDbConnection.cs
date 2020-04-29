@@ -1,10 +1,8 @@
 ﻿using Npgsql;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Data.Common;
-using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,16 +24,16 @@ namespace Venflow
 
         #region Misc
 
-        public Task<int> TruncateTableAsync(string tableName, ForeignTruncateOptions foreignOptions)
-            => TruncateTableAsync(tableName, truncateOptions: IdentityTruncateOptions.None, foreignOptions: foreignOptions);
+        public Task TruncateTableAsync<TEntity>(ForeignTruncateOptions foreignOptions, CancellationToken cancellationToken = default) where TEntity : class
+            => TruncateTableAsync<TEntity>(IdentityTruncateOptions.None, foreignOptions, cancellationToken);
 
-        public Task<int> TruncateTableAsync(string tableName, IdentityTruncateOptions truncateOptions = IdentityTruncateOptions.None, ForeignTruncateOptions foreignOptions = ForeignTruncateOptions.None)
+        public Task TruncateTableAsync<TEntity>(IdentityTruncateOptions truncateOptions = IdentityTruncateOptions.None, ForeignTruncateOptions foreignOptions = ForeignTruncateOptions.None, CancellationToken cancellationToken = default) where TEntity : class
         {
+            var entityConfiguration = GetEntityConfiguration<TEntity>();
+
             var sb = new StringBuilder();
             sb.Append("TRUNCATE ");
-            sb.Append('"');
-            sb.Append(tableName);
-            sb.Append('"');
+            sb.Append(entityConfiguration.TableName);
 
             switch (truncateOptions)
             {
@@ -63,7 +61,16 @@ namespace Venflow
 
             using var command = new NpgsqlCommand(sb.ToString(), Connection);
 
-            return command.ExecuteNonQueryAsync();
+            return command.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        public Task<long> CountAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class
+        {
+            var entityConfiguration = GetEntityConfiguration<TEntity>();
+
+            using var command = new NpgsqlCommand("SELECT COUNT(*) FROM " + entityConfiguration.TableName, Connection);
+
+            return command.ExecuteScalarAsync(cancellationToken).ContinueWith(task => (long)task.Result);
         }
 
         #endregion
