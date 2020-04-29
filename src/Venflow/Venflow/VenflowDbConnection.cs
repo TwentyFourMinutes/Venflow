@@ -1,11 +1,14 @@
 ﻿using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Venflow.Enums;
 
 namespace Venflow
 {
@@ -21,13 +24,57 @@ namespace Venflow
             _dbConfiguration = dbConfiguration;
         }
 
+        #region Misc
+
+        public Task<int> TruncateTableAsync(string tableName, ForeignTruncateOptions foreignOptions)
+            => TruncateTableAsync(tableName, truncateOptions: IdentityTruncateOptions.None, foreignOptions: foreignOptions);
+
+        public Task<int> TruncateTableAsync(string tableName, IdentityTruncateOptions truncateOptions = IdentityTruncateOptions.None, ForeignTruncateOptions foreignOptions = ForeignTruncateOptions.None)
+        {
+            var sb = new StringBuilder();
+            sb.Append("TRUNCATE ");
+            sb.Append('"');
+            sb.Append(tableName);
+            sb.Append('"');
+
+            switch (truncateOptions)
+            {
+                case IdentityTruncateOptions.None:
+                    break;
+                case IdentityTruncateOptions.Restart:
+                    sb.Append(" RESTART IDENTITY");
+                    break;
+                case IdentityTruncateOptions.Continue:
+                    sb.Append(" CONTINUE IDENTITY");
+                    break;
+            }
+
+            switch (foreignOptions)
+            {
+                case ForeignTruncateOptions.None:
+                    break;
+                case ForeignTruncateOptions.Cascade:
+                    sb.Append(" CASCADE");
+                    break;
+                case ForeignTruncateOptions.Restric:
+                    sb.Append(" RESTRICT");
+                    break;
+            }
+
+            using var command = new NpgsqlCommand(sb.ToString(), Connection);
+
+            return command.ExecuteNonQueryAsync();
+        }
+
+        #endregion
+
         #region InsertAsync
 
-        public async Task<int> InsertAsync<TEntity>(TEntity entity, bool getInstertedId = true, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> InsertAsync<TEntity>(TEntity entity, bool getInstertedId = true, CancellationToken cancellationToken = default) where TEntity : class
         {
-            await using var venflowCommand = CompileInsertCommand(entity, getInstertedId);
+            using var venflowCommand = CompileInsertCommand(entity, getInstertedId);
 
-            return await InsertAsync(venflowCommand, entity, cancellationToken);
+            return InsertAsync(venflowCommand, entity, cancellationToken);
         }
 
         public VenflowCommand<TEntity> CompileInsertCommand<TEntity>(TEntity entity, bool getInstertedId = true) where TEntity : class
@@ -141,11 +188,11 @@ namespace Venflow
 
         #region InsertAllAsync
 
-        public async Task<int> InsertAllAsync<TEntity>(IEnumerable<TEntity> entities, bool getInstertedId = false, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> InsertAllAsync<TEntity>(IEnumerable<TEntity> entities, bool getInstertedId = false, CancellationToken cancellationToken = default) where TEntity : class
         {
-            await using var venflowCommand = CompileInsertAllCommand(entities, getInstertedId);
+            using var venflowCommand = CompileInsertAllCommand(entities, getInstertedId);
 
-            return await InsertAllAsync(venflowCommand, entities, cancellationToken);
+            return InsertAllAsync(venflowCommand, entities, cancellationToken);
         }
 
         public VenflowCommand<TEntity> CompileInsertAllCommand<TEntity>(IEnumerable<TEntity> entities, bool getInstertedId = false) where TEntity : class
@@ -298,11 +345,11 @@ namespace Venflow
 
         #region GetOneAsync
 
-        public async Task<TEntity> GetOneAsync<TEntity>(string sql, bool orderPreservedColumns = false, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public Task<TEntity> GetOneAsync<TEntity>(string sql, bool orderPreservedColumns = false, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            await using var venflowCommand = CompileGetOneCommand<TEntity>(sql, orderPreservedColumns);
+            using var venflowCommand = CompileGetOneCommand<TEntity>(sql, orderPreservedColumns);
 
-            return await GetOneAsync(venflowCommand, cancellationToken);
+            return GetOneAsync(venflowCommand, cancellationToken);
         }
 
         public VenflowCommand<TEntity> CompileGetOneCommand<TEntity>(string sql, bool orderPreservedColumns = false) where TEntity : class

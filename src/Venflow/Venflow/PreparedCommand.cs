@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Venflow
 {
-    public class PreparedCommand<TEntity> : IAsyncDisposable where TEntity : class
+    public class PreparedCommand<TEntity> : IDisposable where TEntity : class
     {
         public VenflowCommand<TEntity> Command { get; }
 
@@ -28,11 +28,11 @@ namespace Venflow
         public void ClearParameters()
             => Command.UnderlyingCommand.Parameters.Clear();
 
-        public ValueTask DisposeAsync()
+        public void Dispose()
         {
             Command.UnderlyingCommand.Unprepare();
 
-            return Command.DisposeAsync();
+            Command.Dispose();
         }
 
         public static implicit operator VenflowCommand<TEntity>(PreparedCommand<TEntity> command) => command.Command;

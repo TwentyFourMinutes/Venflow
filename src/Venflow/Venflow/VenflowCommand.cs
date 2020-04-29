@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Venflow
 {
-    public class VenflowCommand<TEntity> : IAsyncDisposable where TEntity : class
+    public class VenflowCommand<TEntity> : IDisposable where TEntity : class
     {
         public NpgsqlCommand UnderlyingCommand { get; set; }
 
@@ -30,9 +30,9 @@ namespace Venflow
             return PreparedCommand<TEntity>.CreateAsync(connection.Connection, this, cancellationToken);
         }
 
-        public ValueTask DisposeAsync()
+        public void Dispose()
         {
-            return UnderlyingCommand.DisposeAsync();
+            UnderlyingCommand.Dispose();
         }
     }
 }
