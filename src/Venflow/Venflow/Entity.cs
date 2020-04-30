@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -8,6 +9,8 @@ namespace Venflow
     {
         internal string TableName { get; }
 
+        internal Type EntityType { get; }
+
         internal string ColumnsString { get; }
         internal string ColumnsStringWithPrimaryKey { get; }
 
@@ -15,8 +18,9 @@ namespace Venflow
 
         internal PrimaryEntityColumn<TEntity> PrimaryColumn { get; set; }
 
-        public Entity(string tableName, DualKeyCollection<string, EntityColumn<TEntity>> columns, PrimaryEntityColumn<TEntity> primaryColumn)
+        internal Entity(Type entityType, string tableName, DualKeyCollection<string, EntityColumn<TEntity>> columns, PrimaryEntityColumn<TEntity> primaryColumn)
         {
+            EntityType = entityType;
             TableName = "\"" + tableName + "\"";
             Columns = columns;
             ColumnsStringWithPrimaryKey = BuildColumnsString(0, columns.KeysTwo);

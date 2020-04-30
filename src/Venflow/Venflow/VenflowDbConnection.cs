@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -181,7 +180,7 @@ namespace Venflow
             {
                 var value = await command.UnderlyingCommand.ExecuteScalarAsync(cancellationToken);
 
-                command.EntityConfiguration.PrimaryColumn.PrimaryKeyWriter(entity, value);
+                command.EntityConfiguration.PrimaryColumn.ValueWriter(entity, value);
 
                 return -1;
             }
@@ -227,7 +226,7 @@ namespace Venflow
                 getInstertedId = entityConfiguration.PrimaryColumn.IsServerSideGenerated;
             }
 
-            if (getInstertedId)
+            if (getInstertedId || entityConfiguration.PrimaryColumn.IsServerSideGenerated)
             {
                 sb.AppendLine(entityConfiguration.ColumnsString);
             }
@@ -240,6 +239,7 @@ namespace Venflow
             sb.Append("VALUES (");
 
             var parameterIndex = 0;
+
             if (writeParameters)
             {
                 foreach (var entity in entities)
@@ -326,6 +326,8 @@ namespace Venflow
 
             if (command.GetInstertedId)
             {
+                var valueWriter = command.EntityConfiguration.PrimaryColumn.ValueWriter;
+
                 await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
                 foreach (var entity in entities)
@@ -335,9 +337,7 @@ namespace Venflow
                     if (!success)
                         break;
 
-                    var value = reader.GetValue(0);
-
-                    command.EntityConfiguration.PrimaryColumn.PrimaryKeyWriter(entity, value);
+                    valueWriter(entity, reader.GetValue(0));
                 }
 
                 return -1;
@@ -350,16 +350,16 @@ namespace Venflow
 
         #endregion
 
-        #region GetOneAsync
+        #region QuerySelectAsync
 
-        public Task<TEntity> GetOneAsync<TEntity>(string sql, bool orderPreservedColumns = false, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public Task<TEntity> QuerySingleAsync<TEntity>(string sql, bool orderPreservedColumns = false, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            using var venflowCommand = CompileGetOneCommand<TEntity>(sql, orderPreservedColumns);
+            using var venflowCommand = CompileQuerySingleCommand<TEntity>(sql, orderPreservedColumns);
 
-            return GetOneAsync(venflowCommand, cancellationToken);
+            return QuerySingleAsync(venflowCommand, cancellationToken);
         }
 
-        public VenflowCommand<TEntity> CompileGetOneCommand<TEntity>(string sql, bool orderPreservedColumns = false) where TEntity : class
+        public VenflowCommand<TEntity> CompileQuerySingleCommand<TEntity>(string sql, bool orderPreservedColumns = false) where TEntity : class
         {
             var entityConfiguration = GetEntityConfiguration<TEntity>();
 
@@ -369,7 +369,7 @@ namespace Venflow
             };
         }
 
-        public async Task<TEntity> GetOneAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public async Task<TEntity> QuerySingleAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
             command.UnderlyingCommand.Connection = Connection;
 
@@ -388,7 +388,9 @@ namespace Venflow
 
                 for (int i = 0; i < reader.VisibleFieldCount; i++)
                 {
-                    command.EntityConfiguration.Columns[i].ValueWriter(entity, reader, counter--);
+                    var value = reader[counter--];
+
+                    command.EntityConfiguration.Columns[i].ValueWriter(entity, value);
                 }
             }
             else
@@ -397,11 +399,40 @@ namespace Venflow
                 {
                     var name = reader.GetName(i);
 
-                    command.EntityConfiguration.Columns[name].ValueWriter(entity, reader, i);
+                    var value = reader[i];
+
+                    command.EntityConfiguration.Columns[name].ValueWriter(entity, value);
                 }
             }
 
             return entity;
+        }
+
+        #endregion
+
+        #region QueryAllAsync
+
+        public Task<ICollection<TEntity>> QueryAllAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            using var venflowCommand = CompileQueryAllCommand<TEntity>(sql);
+
+            return QueryAllAsync(venflowCommand, cancellationToken);
+        }
+
+        public VenflowCommand<TEntity> CompileQueryAllCommand<TEntity>(string sql) where TEntity : class
+        {
+            var entityConfiguration = GetEntityConfiguration<TEntity>();
+
+            return new VenflowCommand<TEntity>(new NpgsqlCommand(sql), entityConfiguration);
+        }
+
+        public async Task<ICollection<TEntity>> QueryAllAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            command.UnderlyingCommand.Connection = Connection;
+
+            await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
+
+            return await new ColumnMapper<TEntity>(command).GetEntitiesAsync(reader, cancellationToken);
         }
 
         #endregion

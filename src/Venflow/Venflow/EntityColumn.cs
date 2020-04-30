@@ -1,5 +1,6 @@
 ﻿using Npgsql;
 using System;
+using System.Reflection;
 
 namespace Venflow
 {
@@ -7,14 +8,19 @@ namespace Venflow
     {
         internal string ColumnName { get; }
 
-        internal Action<TEntity, NpgsqlDataReader, int> ValueWriter { get; }
+        internal PropertyInfo PropertyInfo { get; }
+        internal MethodInfo DbValueRetriever { get; }
+
+        internal Action<TEntity, object> ValueWriter { get; }
 
         internal Func<TEntity, string, NpgsqlParameter> ValueRetriever { get; }
 
-        public EntityColumn(string columnName, Action<TEntity, NpgsqlDataReader, int> valueWriter, Func<TEntity, string, NpgsqlParameter> valueRetriever)
+        internal EntityColumn(PropertyInfo propertyInfo, string columnName, MethodInfo dbValueRetriever, Action<TEntity, object> valueWriter, Func<TEntity, string, NpgsqlParameter> valueRetriever)
         {
-            ValueWriter = valueWriter;
+            PropertyInfo = propertyInfo;
             ColumnName = columnName;
+            DbValueRetriever = dbValueRetriever;
+            ValueWriter = valueWriter;
             ValueRetriever = valueRetriever;
         }
     }

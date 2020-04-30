@@ -1,5 +1,6 @@
 ﻿using Npgsql;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,8 +23,11 @@ namespace Venflow
 
         public async ValueTask<VenflowDbConnection> NewConnectionScopeAsync(bool openConnection = true, CancellationToken cancellationToken = default)
         {
+            var sw = Stopwatch.StartNew();
             if (!this.IsBuild)
                 Build();
+            sw.Stop();
+            System.Console.WriteLine(sw.Elapsed.TotalMilliseconds + " - build");
 
             var connection = new NpgsqlConnection(ConnectionString);
 

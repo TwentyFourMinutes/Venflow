@@ -11,6 +11,8 @@ namespace Venflow
 
         internal Entity<TEntity> EntityConfiguration { get; set; }
 
+        internal Func<NpgsqlDataReader, TEntity>? EntityFactory { get; set; }
+
         internal bool GetInstertedId { get; set; }
         internal bool OrderPreservedColumns { get; set; }
 
