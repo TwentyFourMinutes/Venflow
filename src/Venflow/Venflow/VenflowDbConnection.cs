@@ -445,17 +445,17 @@ namespace Venflow
             return QuerySingleAsync(venflowCommand, cancellationToken);
         }
 
-        public VenflowCommand<TEntity> CompileQuerySingleCommand<TEntity>(string sql, bool orderPreservedColumns = false) where TEntity : class
+        public QueryCommand<TEntity> CompileQuerySingleCommand<TEntity>(string sql, bool orderPreservedColumns = false) where TEntity : class
         {
             var entityConfiguration = GetEntityConfiguration<TEntity>();
 
-            return new VenflowCommand<TEntity>(new NpgsqlCommand(sql), entityConfiguration)
+            return new QueryCommand<TEntity>(new NpgsqlCommand(sql), entityConfiguration)
             {
                 OrderPreservedColumns = orderPreservedColumns
             };
         }
 
-        public async Task<TEntity> QuerySingleAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public async Task<TEntity> QuerySingleAsync<TEntity>(QueryCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
             command.UnderlyingCommand.Connection = Connection;
 
@@ -505,14 +505,14 @@ namespace Venflow
             return QueryAllAsync(venflowCommand, cancellationToken);
         }
 
-        public VenflowCommand<TEntity> CompileQueryAllCommand<TEntity>(string sql) where TEntity : class
+        public QueryCommand<TEntity> CompileQueryAllCommand<TEntity>(string sql) where TEntity : class
         {
             var entityConfiguration = GetEntityConfiguration<TEntity>();
 
-            return new VenflowCommand<TEntity>(new NpgsqlCommand(sql), entityConfiguration);
+            return new QueryCommand<TEntity>(new NpgsqlCommand(sql), entityConfiguration);
         }
 
-        public async Task<ICollection<TEntity>> QueryAllAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
+        public async Task<ICollection<TEntity>> QueryAllAsync<TEntity>(QueryCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
         {
             command.UnderlyingCommand.Connection = Connection;
 
@@ -532,7 +532,7 @@ namespace Venflow
             return DeleteOneAsync(venflowCommand, entity, cancellationToken);
         }
 
-        public VenflowCommand<TEntity> CompileDeleteOneCommand<TEntity>() where TEntity : class
+        public DeleteCommand<TEntity> CompileDeleteOneCommand<TEntity>() where TEntity : class
         {
             var entityConfiguration = GetEntityConfiguration<TEntity>();
 
@@ -546,10 +546,10 @@ namespace Venflow
             sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
             sb.Append("0;");
 
-            return new VenflowCommand<TEntity>(new NpgsqlCommand(sb.ToString()), entityConfiguration);
+            return new DeleteCommand<TEntity>(new NpgsqlCommand(sb.ToString()), entityConfiguration);
         }
 
-        public Task<int> DeleteOneAsync<TEntity>(VenflowCommand<TEntity> command, TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> DeleteOneAsync<TEntity>(DeleteCommand<TEntity> command, TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
         {
             command.UnderlyingCommand.Connection = Connection;
 
@@ -569,7 +569,7 @@ namespace Venflow
             return DeleteAllAsync(venflowCommand, cancellationToken);
         }
 
-        private VenflowCommand<TEntity> CompileDeleteAllCommandWithParameters<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
+        private DeleteCommand<TEntity> CompileDeleteAllCommandWithParameters<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
         {
             var entityConfiguration = GetEntityConfiguration<TEntity>();
             var command = new NpgsqlCommand();
@@ -616,10 +616,10 @@ namespace Venflow
 
             command.CommandText = sb.ToString();
 
-            return new VenflowCommand<TEntity>(command, entityConfiguration);
+            return new DeleteCommand<TEntity>(command, entityConfiguration);
         }
 
-        public VenflowCommand<TEntity> CompileDeleteAllCommand<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
+        public DeleteCommand<TEntity> CompileDeleteAllCommand<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
         {
             var entityConfiguration = GetEntityConfiguration<TEntity>();
             var command = new NpgsqlCommand();
@@ -660,17 +660,17 @@ namespace Venflow
 
             command.CommandText = sb.ToString();
 
-            return new VenflowCommand<TEntity>(command, entityConfiguration);
+            return new DeleteCommand<TEntity>(command, entityConfiguration);
         }
 
-        private Task<int> DeleteAllAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
+        private Task<int> DeleteAllAsync<TEntity>(DeleteCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
         {
             command.UnderlyingCommand.Connection = Connection;
 
             return command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
         }
 
-        public Task<int> DeleteAllAsync<TEntity>(VenflowCommand<TEntity> command, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> DeleteAllAsync<TEntity>(DeleteCommand<TEntity> command, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
         {
             var npgsqlCommand = command.UnderlyingCommand;
 
