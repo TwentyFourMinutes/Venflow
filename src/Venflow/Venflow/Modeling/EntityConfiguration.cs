@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Venflow
+namespace Venflow.Modeling
 {
     public abstract class EntityConfiguration<TEntity> : EntityConfiguration where TEntity : class
     {

@@ -2,7 +2,7 @@
 using System;
 using System.Reflection;
 
-namespace Venflow
+namespace Venflow.Modeling
 {
     internal class PrimaryEntityColumn<TEntity> : EntityColumn<TEntity> where TEntity : class
     {

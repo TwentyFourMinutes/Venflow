@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Venflow
+namespace Venflow.Modeling
 {
     public static class ConfigurationEvaluator
     {

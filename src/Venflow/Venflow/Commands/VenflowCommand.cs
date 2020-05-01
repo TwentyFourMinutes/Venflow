@@ -2,8 +2,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Venflow.Modeling;
 
-namespace Venflow
+namespace Venflow.Commands
 {
     public class VenflowCommand<TEntity> : IDisposable where TEntity : class
     {

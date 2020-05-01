@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Venflow
+namespace Venflow.Commands
 {
     public class PreparedCommand<TEntity> : IDisposable where TEntity : class
     {

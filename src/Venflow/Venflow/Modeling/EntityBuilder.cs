@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Venflow
+namespace Venflow.Modeling
 {
     public class EntityBuilder<TEntity> where TEntity : class
     {

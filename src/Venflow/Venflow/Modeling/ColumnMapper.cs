@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Venflow.Commands;
 
-namespace Venflow
+namespace Venflow.Modeling
 {
     internal class ColumnMapper<TEntity> where TEntity : class
     {

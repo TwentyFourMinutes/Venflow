@@ -1,4 +1,4 @@
-﻿namespace Venflow
+﻿namespace Venflow.Modeling
 {
     internal class PrimaryColumnDefinition<TEntity> : ColumnDefinition<TEntity> where TEntity : class
     {

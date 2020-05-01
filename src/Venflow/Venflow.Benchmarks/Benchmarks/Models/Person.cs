@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Venflow.Modeling;
 
 namespace Venflow.Benchmarks.Benchmarks.Models
 {

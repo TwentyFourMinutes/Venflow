@@ -1,10 +1,9 @@
 ﻿using Npgsql;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Venflow
+namespace Venflow.Modeling
 {
     public abstract class DbConfiguration
     {
