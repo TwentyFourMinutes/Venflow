@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -78,20 +79,20 @@ namespace Venflow
 
         #region InsertAsync
 
-        public Task<int> InsertAsync<TEntity>(TEntity entity, bool getInstertedId = true, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> InsertAsync<TEntity>(TEntity entity, bool getInsertedId = true, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var venflowCommand = CompileInsertCommand(entity, getInstertedId);
+            using var venflowCommand = CompileInsertCommand(entity, getInsertedId);
 
-            return InsertAsync(venflowCommand, entity, cancellationToken);
+            return InsertAsync(venflowCommand, entity, false, cancellationToken);
         }
 
-        public VenflowCommand<TEntity> CompileInsertCommand<TEntity>(TEntity entity, bool getInstertedId = true) where TEntity : class
-            => CompileInsertCommand(entity, true, getInstertedId);
+        public InsertCommand<TEntity> CompileInsertCommand<TEntity>(TEntity entity, bool getInsertedId = true) where TEntity : class
+            => CompileInsertCommand(entity, true, getInsertedId);
 
-        public VenflowCommand<TEntity> CompileInsertCommand<TEntity>(bool getInstertedId = true) where TEntity : class
-            => CompileInsertCommand<TEntity>(null, false, getInstertedId);
+        public InsertCommand<TEntity> CompileInsertCommand<TEntity>(bool getInsertedId = true) where TEntity : class
+            => CompileInsertCommand<TEntity>(null, false, getInsertedId);
 
-        private VenflowCommand<TEntity> CompileInsertCommand<TEntity>(TEntity? entity, bool writeParameters, bool getInstertedId) where TEntity : class
+        private InsertCommand<TEntity> CompileInsertCommand<TEntity>(TEntity? entity, bool writeParameters, bool getInsertedId) where TEntity : class
         {
             var entityConfiguration = GetEntityConfiguration<TEntity>();
 
@@ -105,12 +106,12 @@ namespace Venflow
 
             var startIndex = 1;
 
-            if (getInstertedId)
+            if (getInsertedId)
             {
-                getInstertedId = entityConfiguration.PrimaryColumn.IsServerSideGenerated;
+                getInsertedId = entityConfiguration.PrimaryColumn.IsServerSideGenerated;
             }
 
-            if (getInstertedId)
+            if (getInsertedId)
             {
                 sb.AppendLine(entityConfiguration.ColumnsString);
             }
@@ -155,7 +156,7 @@ namespace Venflow
 
             sb.Append(")");
 
-            if (getInstertedId)
+            if (getInsertedId)
             {
                 sb.Append(" RETURNING \"");
 
@@ -168,17 +169,30 @@ namespace Venflow
 
             command.CommandText = sb.ToString();
 
-            return new VenflowCommand<TEntity>(command, entityConfiguration)
+            return new InsertCommand<TEntity>(command, entityConfiguration)
             {
-                GetInstertedId = getInstertedId
+                GetInsertedId = getInsertedId,
+                StartIndex = startIndex
             };
         }
 
-        public async Task<int> InsertAsync<TEntity>(VenflowCommand<TEntity> command, TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
+        public async Task<int> InsertAsync<TEntity>(InsertCommand<TEntity> command, TEntity entity, bool writeParameters, CancellationToken cancellationToken = default) where TEntity : class
         {
             command.UnderlyingCommand.Connection = Connection;
 
-            if (command.GetInstertedId)
+            if (writeParameters)
+            {
+                command.UnderlyingCommand.Parameters.Clear();
+
+                for (int i = command.StartIndex; i < command.EntityConfiguration.Columns.Count; i++)
+                {
+                    var parameter = command.EntityConfiguration.Columns[i].ValueRetriever(entity, "0");
+
+                    command.UnderlyingCommand.Parameters.Add(parameter);
+                }
+            }
+
+            if (command.GetInsertedId)
             {
                 var value = await command.UnderlyingCommand.ExecuteScalarAsync(cancellationToken);
 
@@ -196,20 +210,17 @@ namespace Venflow
 
         #region InsertAllAsync
 
-        public Task<int> InsertAllAsync<TEntity>(IEnumerable<TEntity> entities, bool getInstertedId = false, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> InsertAllAsync<TEntity>(IEnumerable<TEntity> entities, bool getInsertedId = false, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var venflowCommand = CompileInsertAllCommand(entities, getInstertedId);
+            using var venflowCommand = CompileInsertAllCommand(entities, getInsertedId);
 
-            return InsertAllAsync(venflowCommand, entities, cancellationToken);
+            return InsertAllAsync(venflowCommand, entities, false, cancellationToken);
         }
 
-        public VenflowCommand<TEntity> CompileInsertAllCommand<TEntity>(IEnumerable<TEntity> entities, bool getInstertedId = false) where TEntity : class
-            => CompileInsertAllCommand(entities, 0, true, getInstertedId);
+        public InsertCommand<TEntity> CompileInsertAllCommand<TEntity>(IEnumerable<TEntity> entities, bool getInsertedId = false) where TEntity : class
+            => CompileInsertAllCommand(entities, true, getInsertedId);
 
-        public VenflowCommand<TEntity> CompileInsertAllCommand<TEntity>(int itemCount, bool getInstertedId = false) where TEntity : class
-            => CompileInsertAllCommand<TEntity>(null, itemCount, true, getInstertedId);
-
-        private VenflowCommand<TEntity> CompileInsertAllCommand<TEntity>(IEnumerable<TEntity>? entities, int itemCount, bool writeParameters, bool getInstertedId = false) where TEntity : class
+        private InsertCommand<TEntity> CompileInsertAllCommand<TEntity>(IEnumerable<TEntity> entities, bool writeParameters, bool getInsertedId = false) where TEntity : class
         {
             var entityConfiguration = GetEntityConfiguration<TEntity>();
 
@@ -223,12 +234,12 @@ namespace Venflow
 
             var startIndex = 1;
 
-            if (getInstertedId)
+            if (getInsertedId && !entityConfiguration.PrimaryColumn.IsServerSideGenerated)
             {
-                getInstertedId = entityConfiguration.PrimaryColumn.IsServerSideGenerated;
+                throw new ArgumentException("You can not retrieve the values from the database since this column is not generated in the database.", nameof(getInsertedId));
             }
 
-            if (getInstertedId || entityConfiguration.PrimaryColumn.IsServerSideGenerated)
+            if (getInsertedId || entityConfiguration.PrimaryColumn.IsServerSideGenerated)
             {
                 sb.AppendLine(entityConfiguration.ColumnsString);
             }
@@ -240,48 +251,91 @@ namespace Venflow
 
             sb.Append("VALUES (");
 
-            var parameterIndex = 0;
-
             if (writeParameters)
             {
-                foreach (var entity in entities)
+                if (entities is IList<TEntity> list)
                 {
-                    var i = startIndex;
-
-                    while (true)
+                    for (int k = 0; k < list.Count; k++)
                     {
-                        var parameter = entityConfiguration.Columns[i].ValueRetriever(entity, parameterIndex.ToString());
+                        var i = startIndex;
 
-                        command.Parameters.Add(parameter);
-
-                        sb.Append(parameter.ParameterName);
-
-                        i++;
-
-                        if (i < entityConfiguration.Columns.Count)
+                        while (true)
                         {
-                            sb.Append(", ");
+                            var parameter = entityConfiguration.Columns[i].ValueRetriever(list[k], k.ToString());
+
+                            command.Parameters.Add(parameter);
+
+                            sb.Append(parameter.ParameterName);
+
+                            i++;
+
+                            if (i < entityConfiguration.Columns.Count)
+                            {
+                                sb.Append(", ");
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
-                        else
-                        {
-                            break;
-                        }
+
+                        sb.Append("), (");
                     }
+                }
+                else
+                {
+                    var parameterIndex = 0;
 
-                    sb.Append("), (");
+                    foreach (var entity in entities)
+                    {
+                        var i = startIndex;
 
-                    parameterIndex++;
+                        while (true)
+                        {
+                            var parameter = entityConfiguration.Columns[i].ValueRetriever(entity, parameterIndex.ToString());
+
+                            command.Parameters.Add(parameter);
+
+                            sb.Append(parameter.ParameterName);
+
+                            i++;
+
+                            if (i < entityConfiguration.Columns.Count)
+                            {
+                                sb.Append(", ");
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        sb.Append("), (");
+
+                        parameterIndex++;
+                    }
                 }
             }
             else
             {
-                for (int k = 0; k < itemCount; k++)
+                int count;
+
+                if (entities is IList<TEntity> list)
+                {
+                    count = list.Count;
+                }
+                else
+                {
+                    count = entities.Count();
+                }
+
+                for (int k = 0; k < count; k++)
                 {
                     var i = startIndex;
 
                     while (true)
                     {
-                        sb.Append("@" + entityConfiguration.Columns[i].ColumnName + parameterIndex.ToString());
+                        sb.Append("@" + entityConfiguration.Columns[i].ColumnName + k.ToString());
 
                         i++;
 
@@ -296,14 +350,12 @@ namespace Venflow
                     }
 
                     sb.Append("), (");
-
-                    parameterIndex++;
                 }
             }
 
             sb.Remove(sb.Length - 3, 3);
 
-            if (getInstertedId)
+            if (getInsertedId)
             {
                 sb.Append(" RETURNING \"");
 
@@ -316,17 +368,49 @@ namespace Venflow
 
             command.CommandText = sb.ToString();
 
-            return new VenflowCommand<TEntity>(command, entityConfiguration)
+            return new InsertCommand<TEntity>(command, entityConfiguration)
             {
-                GetInstertedId = getInstertedId
+                GetInsertedId = getInsertedId,
+                StartIndex = startIndex
             };
         }
 
-        public async Task<int> InsertAllAsync<TEntity>(VenflowCommand<TEntity> command, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
+        public async Task<int> InsertAllAsync<TEntity>(InsertCommand<TEntity> command, IEnumerable<TEntity> entities, bool writeParameters, CancellationToken cancellationToken = default) where TEntity : class
         {
             command.UnderlyingCommand.Connection = Connection;
 
-            if (command.GetInstertedId)
+            if (writeParameters)
+            {
+                var columns = command.EntityConfiguration.Columns;
+                var parameters = command.UnderlyingCommand.Parameters;
+
+                if (entities is IList<TEntity> list)
+                {
+                    for (int k = 0; k < list.Count; k++)
+                    {
+                        for (int i = command.StartIndex; i < columns.Count; i++)
+                        {
+                            parameters.Add(columns[i].ValueRetriever(list[k], k.ToString()));
+                        }
+                    }
+                }
+                else
+                {
+                    var parameterIndex = 0;
+
+                    foreach (var entity in entities)
+                    {
+                        for (int i = command.StartIndex; i < columns.Count; i++)
+                        {
+                            parameters.Add(columns[i].ValueRetriever(entity, parameterIndex.ToString()));
+                        }
+
+                        parameterIndex++;
+                    }
+                }
+            }
+
+            if (command.GetInsertedId)
             {
                 var valueWriter = command.EntityConfiguration.PrimaryColumn.ValueWriter;
 
