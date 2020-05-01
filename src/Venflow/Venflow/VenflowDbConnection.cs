@@ -475,6 +475,147 @@ namespace Venflow
 
         #endregion
 
+        #region DeleteAllAsync
+
+        public Task<int> DeleteAllAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            using var venflowCommand = CompileDeleteAllCommandWithParameters(entities);
+
+            return DeleteAllAsync(venflowCommand, cancellationToken);
+        }
+
+        private VenflowCommand<TEntity> CompileDeleteAllCommandWithParameters<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
+        {
+            var entityConfiguration = GetEntityConfiguration<TEntity>();
+            var command = new NpgsqlCommand();
+
+            var sb = new StringBuilder();
+
+            sb.Append("DELETE FROM ");
+            sb.AppendLine(entityConfiguration.TableName);
+            sb.Append(" WHERE \"");
+            sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
+            sb.Append("\" IN (");
+
+            var valueRetriever = entityConfiguration.PrimaryColumn.ValueRetriever;
+
+            if (entities is IList<TEntity> list)
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    sb.Append('@');
+                    sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
+                    sb.Append(i);
+                    sb.Append(", ");
+
+                    command.Parameters.Add(valueRetriever(list[i], i.ToString()));
+                }
+            }
+            else
+            {
+                int i = 0;
+
+                foreach (var entity in entities)
+                {
+                    sb.Append('@');
+                    sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
+                    sb.Append(i++);
+                    sb.Append(", ");
+
+                    command.Parameters.Add(valueRetriever(entity, i.ToString()));
+                }
+            }
+
+            sb.Remove(sb.Length - 2, 2);
+            sb.Append(");");
+
+            command.CommandText = sb.ToString();
+
+            return new VenflowCommand<TEntity>(command, entityConfiguration);
+        }
+
+        public VenflowCommand<TEntity> CompileDeleteAllCommand<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
+        {
+            var entityConfiguration = GetEntityConfiguration<TEntity>();
+            var command = new NpgsqlCommand();
+
+            var sb = new StringBuilder();
+
+            sb.Append("DELETE FROM ");
+            sb.AppendLine(entityConfiguration.TableName);
+            sb.Append(" WHERE \"");
+            sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
+            sb.Append("\" IN (");
+
+            if (entities is IList<TEntity> list)
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    sb.Append('@');
+                    sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
+                    sb.Append(i);
+                    sb.Append(", ");
+                }
+            }
+            else
+            {
+                int i = 0;
+
+                foreach (var entity in entities)
+                {
+                    sb.Append('@');
+                    sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
+                    sb.Append(i++);
+                    sb.Append(", ");
+                }
+            }
+
+            sb.Remove(sb.Length - 2, 2);
+            sb.Append(");");
+
+            command.CommandText = sb.ToString();
+
+            return new VenflowCommand<TEntity>(command, entityConfiguration);
+        }
+
+        private Task<int> DeleteAllAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            command.UnderlyingCommand.Connection = Connection;
+
+            return command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        public Task<int> DeleteAllAsync<TEntity>(VenflowCommand<TEntity> command, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            var npgsqlCommand = command.UnderlyingCommand;
+
+            npgsqlCommand.Connection = Connection;
+            npgsqlCommand.Parameters.Clear();
+
+            var valueRetriever = command.EntityConfiguration.PrimaryColumn.ValueRetriever;
+
+            if (entities is IList<TEntity> list)
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    npgsqlCommand.Parameters.Add(valueRetriever(list[i], i.ToString()));
+                }
+            }
+            else
+            {
+                int i = 0;
+
+                foreach (var entity in entities)
+                {
+                    npgsqlCommand.Parameters.Add(valueRetriever(entity, i.ToString()));
+                }
+            }
+
+            return command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        #endregion
+
         public Task<PreparedCommand<TEntity>> GetPreparedCommandAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
         {
             return PreparedCommand<TEntity>.CreateAsync(this.Connection, command, cancellationToken);
