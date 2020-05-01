@@ -699,9 +699,14 @@ namespace Venflow
 
         #endregion
 
-        public Task<PreparedCommand<TEntity>> GetPreparedCommandAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
+        public Task GetPreparedCommandAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
         {
-            return PreparedCommand<TEntity>.CreateAsync(this.Connection, command, cancellationToken);
+            if (command.UnderlyingCommand.Connection is null || command.UnderlyingCommand.Connection.State != ConnectionState.Open)
+            {
+                command.UnderlyingCommand.Connection = Connection;
+            }
+
+            return command.PerpareSelfAsync(cancellationToken);
         }
 
         private Entity<TEntity> GetEntityConfiguration<TEntity>() where TEntity : class

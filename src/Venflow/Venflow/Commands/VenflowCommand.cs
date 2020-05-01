@@ -1,5 +1,7 @@
 ﻿using Npgsql;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Venflow.Modeling;
 
 namespace Venflow.Commands
@@ -16,8 +18,18 @@ namespace Venflow.Commands
             EntityConfiguration = entity;
         }
 
+        public Task PerpareSelfAsync(CancellationToken cancellationToken)
+        {
+            return UnderlyingCommand.PrepareAsync(cancellationToken);
+        }
+
         public void Dispose()
         {
+            if (UnderlyingCommand.IsPrepared)
+            {
+                UnderlyingCommand.Unprepare();
+            }
+
             UnderlyingCommand.Dispose();
         }
     }

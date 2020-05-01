@@ -1,5 +1,4 @@
 ﻿using BenchmarkDotNet.Attributes;
-using Dapper;
 using RepoDb;
 using System.Threading.Tasks;
 using Venflow.Benchmarks.Benchmarks.Models;
