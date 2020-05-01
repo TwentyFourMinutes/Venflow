@@ -1,6 +1,7 @@
 ﻿using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Text;
 using System.Threading;
@@ -412,7 +413,7 @@ namespace Venflow
 
         #region QueryAllAsync
 
-        public Task<ICollection<TEntity>> QueryAllAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public Task<ICollection<TEntity>> QueryAllAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class
         {
             using var venflowCommand = CompileQueryAllCommand<TEntity>(sql);
 
@@ -426,13 +427,50 @@ namespace Venflow
             return new VenflowCommand<TEntity>(new NpgsqlCommand(sql), entityConfiguration);
         }
 
-        public async Task<ICollection<TEntity>> QueryAllAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public async Task<ICollection<TEntity>> QueryAllAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
         {
             command.UnderlyingCommand.Connection = Connection;
 
             await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
             return await new ColumnMapper<TEntity>(command).GetEntitiesAsync(reader, cancellationToken);
+        }
+
+        #endregion
+
+        #region DeleteOneAsync
+
+        public Task<int> DeleteOneAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            using var venflowCommand = CompileDeleteOneCommand<TEntity>();
+
+            return DeleteOneAsync(venflowCommand, entity, cancellationToken);
+        }
+
+        public VenflowCommand<TEntity> CompileDeleteOneCommand<TEntity>() where TEntity : class
+        {
+            var entityConfiguration = GetEntityConfiguration<TEntity>();
+
+            var sb = new StringBuilder();
+
+            sb.Append("DELETE FROM ");
+            sb.AppendLine(entityConfiguration.TableName);
+            sb.Append(" WHERE \"");
+            sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
+            sb.Append("\" = @");
+            sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
+            sb.Append("0;");
+
+            return new VenflowCommand<TEntity>(new NpgsqlCommand(sb.ToString()), entityConfiguration);
+        }
+
+        public Task<int> DeleteOneAsync<TEntity>(VenflowCommand<TEntity> command, TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            command.UnderlyingCommand.Connection = Connection;
+
+            command.UnderlyingCommand.Parameters.Add(command.EntityConfiguration.PrimaryColumn.ValueRetriever(entity, "0"));
+
+            return command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
         }
 
         #endregion

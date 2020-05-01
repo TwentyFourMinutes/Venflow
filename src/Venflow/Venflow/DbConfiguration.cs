@@ -23,11 +23,8 @@ namespace Venflow
 
         public async ValueTask<VenflowDbConnection> NewConnectionScopeAsync(bool openConnection = true, CancellationToken cancellationToken = default)
         {
-            var sw = Stopwatch.StartNew();
             if (!this.IsBuild)
                 Build();
-            sw.Stop();
-            System.Console.WriteLine(sw.Elapsed.TotalMilliseconds + " - build");
 
             var connection = new NpgsqlConnection(ConnectionString);
 
@@ -41,7 +38,7 @@ namespace Venflow
 
         protected abstract void Configure(DbConfigurator dbConfigurator);
 
-        internal void Build()
+        public void Build()
         {
             if (IsBuild)
                 return;
