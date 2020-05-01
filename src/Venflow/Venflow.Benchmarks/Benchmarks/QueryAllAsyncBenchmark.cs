@@ -13,7 +13,7 @@ namespace Venflow.Benchmarks.Benchmarks
 	{
 		public MyDbConfiguration Configuration { get; set; }
 		public VenflowDbConnection VenflowDbConnection { get; set; }
-		public VenflowCommand<Person> Command { get; set; }
+		public QueryCommand<Person> Command { get; set; }
 
 		[GlobalSetup]
 		public async Task Setup()

@@ -10,9 +10,9 @@ namespace Venflow.Modeling
 {
     internal class ColumnMapper<TEntity> where TEntity : class
     {
-        private readonly VenflowCommand<TEntity> _command;
+        private readonly QueryCommand<TEntity> _command;
 
-        internal ColumnMapper(VenflowCommand<TEntity> command)
+        internal ColumnMapper(QueryCommand<TEntity> command)
         {
             _command = command;
         }

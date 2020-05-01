@@ -1,27 +1,18 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Npgsql;
-using RepoDb;
 using System.Threading.Tasks;
-using Venflow.Benchmarks.Benchmarks.Models;
 
 namespace Venflow.Benchmarks.Benchmarks
 {
-    public class NpgsqlBenchmark
+    public class NpgsqlBenchmark : BenchmarkBase
     {
-        public MyDbConfiguration Configuration { get; set; }
-        public VenflowDbConnection VenflowDbConnection { get; set; }
         public NpgsqlDataReader NpgsqlDataReader { get; set; }
         public NpgsqlCommand Command { get; set; }
 
         [GlobalSetup]
-        public async Task Setup()
+        public override async Task Setup()
         {
-            Configuration = new MyDbConfiguration();
-
-            PostgreSqlBootstrap.Initialize();
-            ClassMapper.Add<Person>("\"Persons\"");
-
-            VenflowDbConnection = await Configuration.NewConnectionScopeAsync();
+            await base.Setup();
 
             Command = new NpgsqlCommand("SELECT \"Id\", \"Name\" FROM \"Persons\" LIMIT 1", VenflowDbConnection.Connection);
 
@@ -67,15 +58,13 @@ namespace Venflow.Benchmarks.Benchmarks
         }
 
         [GlobalCleanup]
-        public async Task Cleanup()
+        public override async Task Cleanup()
         {
-            Configuration = new MyDbConfiguration();
-
             await NpgsqlDataReader.DisposeAsync();
 
             await Command.DisposeAsync();
 
-            await VenflowDbConnection.DisposeAsync();
+            await base.Cleanup();
         }
     }
 }

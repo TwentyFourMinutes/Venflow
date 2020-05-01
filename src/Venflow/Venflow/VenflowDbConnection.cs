@@ -152,8 +152,6 @@ namespace Venflow
                 }
             }
 
-            sb.Remove(sb.Length - 2, 2);
-
             sb.Append(")");
 
             if (getInsertedId)
@@ -198,7 +196,7 @@ namespace Venflow
 
                 command.EntityConfiguration.PrimaryColumn.ValueWriter(entity, value);
 
-                return -1;
+                return 1;
             }
             else
             {

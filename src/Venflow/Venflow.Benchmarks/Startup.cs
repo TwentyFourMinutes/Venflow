@@ -11,8 +11,9 @@ namespace Venflow.Benchmarks
         {
             //BenchmarkRunner.Run<MiscBenchmarks>();
             //BenchmarkRunner.Run<NpgsqlBenchmark>();
-            BenchmarkRunner.Run<QuerySingleAsyncBenchmark>();
+            //BenchmarkRunner.Run<QuerySingleAsyncBenchmark>();
             //BenchmarkRunner.Run<QueryAllAsyncBenchmark>();
+            BenchmarkRunner.Run<InsertSingleAsyncBenchmark>();
 
             Console.ReadKey();
         }
