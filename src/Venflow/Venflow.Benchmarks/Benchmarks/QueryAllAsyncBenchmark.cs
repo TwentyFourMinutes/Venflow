@@ -1,8 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Dapper;
 using RepoDb;
+using RepoDb.Extensions;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Venflow.Benchmarks.Benchmarks.Models;
 
@@ -38,13 +38,13 @@ namespace Venflow.Benchmarks.Benchmarks
 		[Benchmark]
 		public Task<List<Person>> RepoDbQueryAllAsync()
 		{
-			return VenflowDbConnection.Connection.QueryAllAsync<Person>().ContinueWith(x => x.Result.ToList());
+			return VenflowDbConnection.Connection.QueryAllAsync<Person>().ContinueWith(x => EnumerableExtension.AsList(x.Result));
 		}
 
 		[Benchmark]
 		public Task<List<Person>> DapperQueryAllAsync()
 		{
-			return SqlMapper.QueryAsync<Person>(VenflowDbConnection.Connection, "SELECT \"Id\", \"Name\" FROM \"Persons\"").ContinueWith(x => x.Result.ToList());
+			return SqlMapper.QueryAsync<Person>(VenflowDbConnection.Connection, "SELECT \"Id\", \"Name\" FROM \"Persons\"").ContinueWith(x=> SqlMapper.AsList(x.Result));
 		}
 
 

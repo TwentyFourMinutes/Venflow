@@ -22,23 +22,23 @@ namespace Venflow.Benchmarks.Benchmarks
 
             VenflowDbConnection = await Configuration.NewConnectionScopeAsync();
 
-            await VenflowDbConnection.Connection.QueryAsync<Person>(whereOrPrimaryKey: null);
+            await DbConnectionExtension.QueryAsync<Person>(VenflowDbConnection.Connection, whereOrPrimaryKey: null, top: 1);
         }
 
         [Benchmark]
-        public Task<Person> VenflowQueryOneAsync()
+        public Task<Person> VenflowQuerySingleAsync()
         {
             return VenflowDbConnection.QuerySingleAsync<Person>("SELECT \"Id\", \"Name\" FROM \"Persons\" LIMIT 1");
         }
 
         [Benchmark]
-        public Task<Person> RepoDbQueryOneAsync()
+        public Task<Person> RepoDbQuerySingleAsync()
         {
-            return VenflowDbConnection.Connection.QueryAsync<Person>(whereOrPrimaryKey: null).ContinueWith(x => x.Result.First());
+            return DbConnectionExtension.QueryAsync<Person>(VenflowDbConnection.Connection, whereOrPrimaryKey: null, top: 1).ContinueWith(x=> x.Result.First());
         }
 
         [Benchmark]
-        public Task<Person> DapperQueryOneAsync()
+        public Task<Person> DapperQuerySingleAsync()
         {
             return VenflowDbConnection.Connection.QueryFirstAsync<Person>("SELECT \"Id\", \"Name\" FROM \"Persons\" LIMIT 1");
         }
