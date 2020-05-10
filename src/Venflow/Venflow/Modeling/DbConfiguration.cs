@@ -42,7 +42,9 @@ namespace Venflow.Modeling
             if (IsBuild)
                 return;
 
-            var dbConfigurator = new DbConfigurator();
+            var changeTrackerFactory = new ChangeTrackerFactory();
+
+            var dbConfigurator = new DbConfigurator(changeTrackerFactory);
 
             Configure(dbConfigurator);
 

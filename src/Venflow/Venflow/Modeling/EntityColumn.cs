@@ -9,6 +9,7 @@ namespace Venflow.Modeling
         internal string ColumnName { get; }
 
         internal PropertyInfo PropertyInfo { get; }
+
         internal MethodInfo DbValueRetriever { get; }
 
         internal Action<TEntity, object> ValueWriter { get; }

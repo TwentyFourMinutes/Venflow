@@ -8,15 +8,19 @@ namespace Venflow.Modeling
     public class DbConfigurator
     {
         private readonly IDictionary<string, IEntity> _entities;
+        private readonly ChangeTrackerFactory _changeTrackerFactory;
 
-        internal DbConfigurator()
+
+        internal DbConfigurator(ChangeTrackerFactory changeTrackerFactory)
         {
             _entities = new Dictionary<string, IEntity>();
+
+            _changeTrackerFactory = changeTrackerFactory;
         }
 
         public DbConfigurator AddEntity<TEntity>(EntityConfiguration<TEntity> configuration) where TEntity : class
         {
-            _entities.Add(configuration.BuildConfiguration());
+            _entities.Add(configuration.BuildConfiguration(_changeTrackerFactory));
 
             return this;
         }
@@ -24,7 +28,7 @@ namespace Venflow.Modeling
         public DbConfigurator AddEntity<TEntityConfiguration, TEntity>() where TEntity : class
                                                                          where TEntityConfiguration : EntityConfiguration<TEntity>, new()
         {
-            _entities.Add(new TEntityConfiguration().BuildConfiguration());
+            _entities.Add(new TEntityConfiguration().BuildConfiguration(_changeTrackerFactory));
             return this;
         }
 
@@ -44,7 +48,7 @@ namespace Venflow.Modeling
 
             var configurationInstance = (EntityConfiguration)Activator.CreateInstance(configuration)!;
 
-            _entities.Add(configurationInstance.BuildConfiguration());
+            _entities.Add(configurationInstance.BuildConfiguration(_changeTrackerFactory));
 
             return this;
         }

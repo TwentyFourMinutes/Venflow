@@ -11,11 +11,13 @@ namespace Venflow.Modeling
     {
         private readonly Type _type;
         private readonly IDictionary<string, ColumnDefinition<TEntity>> _columnDefinitions;
+        private readonly ChangeTrackerFactory _changeTrackerFactory;
 
         private string? _tableName;
 
-        internal EntityBuilder()
+        internal EntityBuilder(ChangeTrackerFactory changeTrackerFactory)
         {
+            _changeTrackerFactory = changeTrackerFactory;
             _type = typeof(TEntity);
             _columnDefinitions = new Dictionary<string, ColumnDefinition<TEntity>>();
         }
@@ -114,6 +116,7 @@ namespace Venflow.Modeling
 
             var columns = new List<EntityColumn<TEntity>>();
             var nameToColumn = new Dictionary<string, int>();
+            var changeTrackingColumns = new Dictionary<int, EntityColumn<TEntity>>();
             PrimaryEntityColumn<TEntity>? primaryColumn = null;
 
             var notMappedAttributeType = typeof(NotMappedAttribute);
@@ -175,6 +178,11 @@ namespace Venflow.Modeling
 
                             columns.Add(primaryColumn);
 
+                            if (property.GetSetMethod().IsVirtual)
+                            {
+                                changeTrackingColumns.Add(columnIndex, primaryColumn);
+                            }
+
                             nameToColumn.Add(definition.Name, columnIndex);
 
                             hasCustomDefinition = true;
@@ -186,7 +194,14 @@ namespace Venflow.Modeling
                 {
                     var columnName = definition?.Name ?? property.Name;
 
-                    columns.Add(new EntityColumn<TEntity>(property, columnName, valueRetriever, valueWriter, parameterValueRetriever));
+                    var column = new EntityColumn<TEntity>(property, columnName, valueRetriever, valueWriter, parameterValueRetriever);
+
+                    columns.Add(column);
+
+                    if (property.GetSetMethod().IsVirtual)
+                    {
+                        changeTrackingColumns.Add(columnIndex, column);
+                    }
 
                     nameToColumn.Add(columnName, columnIndex);
                 }
@@ -204,7 +219,9 @@ namespace Venflow.Modeling
                 _tableName = _type.Name + "s";
             }
 
-            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_type, _tableName, new DualKeyCollection<string, EntityColumn<TEntity>>(columns.ToArray(), nameToColumn), primaryColumn));
+            var changeTrackerFactory = _changeTrackerFactory.GetEntityProxy<TEntity>(_type, changeTrackingColumns);
+
+            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_type, changeTrackerFactory, _tableName, new DualKeyCollection<string, EntityColumn<TEntity>>(columns.ToArray(), nameToColumn), primaryColumn));
         }
 
         private MethodInfo GetDbValueRetrieverMethod(PropertyInfo property, Type readerType)

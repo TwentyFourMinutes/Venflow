@@ -6,9 +6,9 @@ namespace Venflow.Modeling
     {
         protected abstract void Configure(EntityBuilder<TEntity> entityBuilder);
 
-        internal sealed override KeyValuePair<string, IEntity> BuildConfiguration()
+        internal sealed override KeyValuePair<string, IEntity> BuildConfiguration(ChangeTrackerFactory changeTrackerFactory)
         {
-            var entityBuilder = new EntityBuilder<TEntity>();
+            var entityBuilder = new EntityBuilder<TEntity>(changeTrackerFactory);
 
             Configure(entityBuilder);
 
@@ -18,6 +18,6 @@ namespace Venflow.Modeling
 
     public abstract class EntityConfiguration
     {
-        internal abstract KeyValuePair<string, IEntity> BuildConfiguration();
+        internal abstract KeyValuePair<string, IEntity> BuildConfiguration(ChangeTrackerFactory changeTrackerFactory);
     }
 }
