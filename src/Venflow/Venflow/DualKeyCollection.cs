@@ -12,6 +12,8 @@ namespace Venflow
 
         internal ICollection<TKeyTwo> KeysTwo => _twoToOne.Keys;
 
+        internal TValue[] Values => _oneToValue;
+
         internal DualKeyCollection(TValue[] firstCollction, Dictionary<TKeyTwo, int> twoToOne)
         {
             _oneToValue = firstCollction;

@@ -12,6 +12,71 @@ using Venflow.Modeling;
 
 namespace Venflow
 {
+    public class VenflowCommandBuilder
+    {
+        public VenflowDbConnection VenflowDbConnection { get; set; }
+
+        public bool TrackChanges { get; set; }
+
+        internal VenflowCommandBuilder(VenflowDbConnection venflowDbConnection)
+        {
+            VenflowDbConnection = venflowDbConnection;
+        }
+
+        #region QuerySingleAsync
+
+        public Task<TEntity> QuerySingleAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            using var venflowCommand = VenflowDbConnection.CompileQuerySingleCommand<TEntity>();
+
+            venflowCommand.TrackChanges = TrackChanges;
+
+            return VenflowDbConnection.QuerySingleAsync(venflowCommand, cancellationToken);
+        }
+
+        public Task<TEntity> QuerySingleAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            using var venflowCommand = VenflowDbConnection.CompileQueryCommand<TEntity>(sql);
+
+            venflowCommand.TrackChanges = TrackChanges;
+
+            return VenflowDbConnection.QuerySingleAsync(venflowCommand, cancellationToken);
+        }
+
+        #endregion
+
+        #region QueryBatchAsync
+
+        public Task<ICollection<TEntity>> QueryBatchAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class
+        {
+            using var venflowCommand = VenflowDbConnection.CompileQueryBatchCommand<TEntity>(-1);
+
+            venflowCommand.TrackChanges = TrackChanges;
+
+            return VenflowDbConnection.QueryBatchAsync(venflowCommand, cancellationToken);
+        }
+
+        public Task<ICollection<TEntity>> QueryBatchAsync<TEntity>(int count, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            using var venflowCommand = VenflowDbConnection.CompileQueryBatchCommand<TEntity>(count);
+
+            venflowCommand.TrackChanges = TrackChanges;
+
+            return VenflowDbConnection.QueryBatchAsync(venflowCommand, cancellationToken);
+        }
+
+        public Task<ICollection<TEntity>> QueryBatchAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            using var venflowCommand = VenflowDbConnection.CompileQueryCommand<TEntity>(sql);
+
+            venflowCommand.TrackChanges = TrackChanges;
+
+            return VenflowDbConnection.QueryBatchAsync(venflowCommand, cancellationToken);
+        }
+
+        #endregion
+    }
+
     public class VenflowDbConnection : IAsyncDisposable
     {
         public NpgsqlConnection Connection { get; }
@@ -23,6 +88,15 @@ namespace Venflow
             Connection = connection;
             _dbConfiguration = dbConfiguration;
         }
+
+        #region Builder
+
+        public VenflowCommandBuilder TrackChanges()
+        {
+            return new VenflowCommandBuilder(this) { TrackChanges = true };
+        }
+
+        #endregion
 
         #region Misc
 
@@ -434,41 +508,34 @@ namespace Venflow
 
         #endregion
 
-        #region QuerySelectAsync
+        #region QuerySingleAsync
 
-        public Task<TEntity> QuerySingleAndTrackAsync<TEntity>(string sql, bool orderPreservedColumns = false, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public Task<TEntity> QuerySingleAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            using var venflowCommand = CompileQuerySingleAndTrackCommand<TEntity>(sql, orderPreservedColumns);
+            using var venflowCommand = CompileQuerySingleCommand<TEntity>();
 
             return QuerySingleAsync(venflowCommand, cancellationToken);
         }
 
-        public Task<TEntity> QuerySingleAsync<TEntity>(string sql, bool orderPreservedColumns = false, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public Task<TEntity> QuerySingleAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            using var venflowCommand = CompileQuerySingleCommand<TEntity>(sql, orderPreservedColumns);
+            using var venflowCommand = CompileQueryCommand<TEntity>(sql);
 
             return QuerySingleAsync(venflowCommand, cancellationToken);
         }
 
-        public QueryCommand<TEntity> CompileQuerySingleAndTrackCommand<TEntity>(string sql, bool orderPreservedColumns = false) where TEntity : class
+        public QueryCommand<TEntity> CompileQuerySingleCommand<TEntity>() where TEntity : class
         {
             var entityConfiguration = GetEntityConfiguration<TEntity>();
 
-            return new QueryCommand<TEntity>(new NpgsqlCommand(sql), entityConfiguration)
-            {
-                TrackChanges = true,
-                OrderPreservedColumns = orderPreservedColumns
-            };
+            return new QueryCommand<TEntity>(new NpgsqlCommand(QueryCommand<TEntity>.CompileDefaultStatement(entityConfiguration)), entityConfiguration);
         }
 
-        public QueryCommand<TEntity> CompileQuerySingleCommand<TEntity>(string sql, bool orderPreservedColumns = false) where TEntity : class
+        public QueryCommand<TEntity> CompileQueryCommand<TEntity>(string sql) where TEntity : class
         {
             var entityConfiguration = GetEntityConfiguration<TEntity>();
 
-            return new QueryCommand<TEntity>(new NpgsqlCommand(sql), entityConfiguration)
-            {
-                OrderPreservedColumns = orderPreservedColumns
-            };
+            return new QueryCommand<TEntity>(new NpgsqlCommand(sql), entityConfiguration);
         }
 
         public async Task<TEntity> QuerySingleAsync<TEntity>(QueryCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class, new()
@@ -484,13 +551,10 @@ namespace Venflow
 
             TEntity entity;
 
-            if (command.TrackChanges)
-            {
-                if (command.EntityConfiguration.ChangeTrackerFactory is null)
-                {
-                    throw new InvalidOperationException("No members of the Entity are marked as virtual.");
-                }
+            var isChangeTracking = command.TrackChanges && command.EntityConfiguration.ChangeTrackerFactory is { };
 
+            if (isChangeTracking)
+            {
                 entity = command.EntityConfiguration.GetProxiedEntity();
             }
             else
@@ -498,27 +562,18 @@ namespace Venflow
                 entity = new TEntity();
             }
 
-            if (command.OrderPreservedColumns)
+            for (int i = 0; i < reader.VisibleFieldCount; i++)
             {
-                int counter = reader.VisibleFieldCount - 1;
+                var name = reader.GetName(i);
 
-                for (int i = 0; i < reader.VisibleFieldCount; i++)
-                {
-                    var value = reader[counter--];
+                var value = reader[i];
 
-                    command.EntityConfiguration.Columns[i].ValueWriter(entity, value);
-                }
+                command.EntityConfiguration.Columns[name].ValueWriter(entity, value);
             }
-            else
+
+            if (isChangeTracking)
             {
-                for (int i = 0; i < reader.VisibleFieldCount; i++)
-                {
-                    var name = reader.GetName(i);
-
-                    var value = reader[i];
-
-                    command.EntityConfiguration.Columns[name].ValueWriter(entity, value);
-                }
+                EnableChangeTracking(entity);
             }
 
             return entity;
@@ -526,23 +581,37 @@ namespace Venflow
 
         #endregion
 
-        #region QueryAllAsync
+        #region QueryBatchAsync
 
-        public Task<ICollection<TEntity>> QueryAllAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<ICollection<TEntity>> QueryBatchAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var venflowCommand = CompileQueryAllCommand<TEntity>(sql);
+            using var venflowCommand = CompileQueryBatchCommand<TEntity>(-1);
 
-            return QueryAllAsync(venflowCommand, cancellationToken);
+            return QueryBatchAsync(venflowCommand, cancellationToken);
         }
 
-        public QueryCommand<TEntity> CompileQueryAllCommand<TEntity>(string sql) where TEntity : class
+        public Task<ICollection<TEntity>> QueryBatchAsync<TEntity>(int count, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            using var venflowCommand = CompileQueryBatchCommand<TEntity>(count);
+
+            return QueryBatchAsync(venflowCommand, cancellationToken);
+        }
+
+        public Task<ICollection<TEntity>> QueryBatchAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            using var venflowCommand = CompileQueryCommand<TEntity>(sql);
+
+            return QueryBatchAsync(venflowCommand, cancellationToken);
+        }
+
+        public QueryCommand<TEntity> CompileQueryBatchCommand<TEntity>(int count) where TEntity : class
         {
             var entityConfiguration = GetEntityConfiguration<TEntity>();
 
-            return new QueryCommand<TEntity>(new NpgsqlCommand(sql), entityConfiguration);
+            return new QueryCommand<TEntity>(new NpgsqlCommand(QueryCommand<TEntity>.CompileDefaultStatement(entityConfiguration, count)), entityConfiguration);
         }
 
-        public async Task<ICollection<TEntity>> QueryAllAsync<TEntity>(QueryCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
+        public async Task<ICollection<TEntity>> QueryBatchAsync<TEntity>(QueryCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
         {
             command.UnderlyingCommand.Connection = Connection;
 
@@ -749,6 +818,11 @@ namespace Venflow
             }
 
             return (Entity<TEntity>)entityModel;
+        }
+
+        private void EnableChangeTracking<TEntity>(TEntity entity) where TEntity : class
+        {
+            ((IEntityProxy<TEntity>)entity).ChangeTracker.TrackChanges = true;
         }
 
         public ValueTask DisposeAsync()

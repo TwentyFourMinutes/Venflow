@@ -24,7 +24,7 @@ namespace Venflow.Modeling
 
         internal Func<ChangeTracker<TEntity>, TEntity> GetEntityProxy<TEntity>(Type entityType, Dictionary<int, EntityColumn<TEntity>> properties) where TEntity : class
         {
-            var proxyInterfaceType = typeof(IChangeTracking<TEntity>);
+            var proxyInterfaceType = typeof(IEntityProxy<TEntity>);
             var changeTrackerType = typeof(ChangeTracker<TEntity>);
             var changeTrackerMakeDirtyType = changeTrackerType.GetMethod("MakeDirty", BindingFlags.NonPublic | BindingFlags.Instance)!;
 
@@ -95,14 +95,14 @@ namespace Venflow.Modeling
 
             var entity = (Entity<TEntity>)entityModel;
 
-            var changeTracker = new ChangeTracker<TEntity>(entity);
+            var changeTracker = new ChangeTracker<TEntity>(entity, true);
 
             return entity.ChangeTrackerFactory.Invoke(changeTracker);
         }
 
         public static void Test<TEntity>(TEntity entity) where TEntity : class
         {
-            var columns = ((IChangeTracking<TEntity>)entity).ChangeTracker.GetColumns().Where(x => x is { }).ToList();
+            var columns = ((IEntityProxy<TEntity>)entity).ChangeTracker.GetColumns().Where(x => x is { }).ToList();
         }
     }
 
@@ -115,9 +115,10 @@ namespace Venflow.Modeling
 
         private readonly Entity<TEntity> _entity;
 
-        internal ChangeTracker(Entity<TEntity> entity)
+        internal ChangeTracker(Entity<TEntity> entity, bool trackChanges)
         {
             _entity = entity;
+            TrackChanges = trackChanges;
             _changedColumns = null!;
         }
 
@@ -145,7 +146,7 @@ namespace Venflow.Modeling
         }
     }
 
-    internal interface IChangeTracking<TEntity> where TEntity : class
+    internal interface IEntityProxy<TEntity> where TEntity : class
     {
         ChangeTracker<TEntity> ChangeTracker { get; }
     }

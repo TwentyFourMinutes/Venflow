@@ -27,13 +27,13 @@ namespace Venflow.Benchmarks.Benchmarks
 
 			await VenflowDbConnection.Connection.QueryAllAsync<Person>();
 			Command = VenflowDbConnection.CompileQueryAllCommand<Person>("SELECT \"Id\", \"Name\" FROM \"Persons\"");
-			await VenflowDbConnection.QueryAllAsync(Command);
+			await VenflowDbConnection.QueryBatchAsync(Command);
 		}
 
 		[Benchmark]
 		public Task<ICollection<Person>> VenflowQueryAllAsync()
 		{
-			return VenflowDbConnection.QueryAllAsync(Command);
+			return VenflowDbConnection.QueryBatchAsync(Command);
 		}
 
 		[Benchmark]
