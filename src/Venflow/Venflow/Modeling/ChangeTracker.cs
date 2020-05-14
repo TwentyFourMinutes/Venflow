@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Venflow.Modeling.ProxyTypes")]
 
