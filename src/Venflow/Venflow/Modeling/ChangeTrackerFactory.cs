@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -101,43 +102,46 @@ namespace Venflow.Modeling
 
         public static void Test<TEntity>(TEntity entity) where TEntity : class
         {
-            var columns = ((IChangeTracking<TEntity>)entity).ChangeTracker.GetChangedColumns();
+            var columns = ((IChangeTracking<TEntity>)entity).ChangeTracker.GetColumns().Where(x => x is { }).ToList();
         }
     }
 
     internal class ChangeTracker<TEntity> where TEntity : class
     {
-        private HashSet<int>? _changedColumns;
-        private List<EntityColumn<TEntity>>? _changedEntityColumns;
-
+        internal bool TrackChanges { get; set; }
         internal bool IsDirty { get; private set; }
+
+        private EntityColumn<TEntity>?[] _changedColumns;
 
         private readonly Entity<TEntity> _entity;
 
         internal ChangeTracker(Entity<TEntity> entity)
         {
             _entity = entity;
+            _changedColumns = null!;
         }
 
-        internal void MakeDirty(int propertyIndex)
+        internal void MakeDirty(byte propertyIndex)
         {
+            if (!TrackChanges)
+                return;
+
             if (!IsDirty)
             {
-                _changedColumns = new HashSet<int>();
-                _changedEntityColumns = new List<EntityColumn<TEntity>>();
+                _changedColumns = new EntityColumn<TEntity>?[_entity.Columns.Count];
 
                 IsDirty = true;
             }
 
-            if (!_changedColumns.Contains(propertyIndex))
+            if (_changedColumns[propertyIndex] is null)
             {
-                _changedEntityColumns.Add(_entity.Columns[propertyIndex]);
+                _changedColumns[propertyIndex] = _entity.Columns.GetColumnByFlagPosition(propertyIndex);
             }
         }
 
-        internal List<EntityColumn<TEntity>>? GetChangedColumns()
+        internal EntityColumn<TEntity>?[] GetColumns()
         {
-            return _changedEntityColumns;
+            return _changedColumns;
         }
     }
 

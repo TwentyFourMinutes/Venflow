@@ -1,39 +1,59 @@
 ﻿using BenchmarkDotNet.Attributes;
 using System.Collections.Generic;
-using Venflow.Benchmarks.Benchmarks.Models;
+using System.Numerics;
 
 namespace Venflow.Benchmarks.Benchmarks
 {
     public class MiscBenchmarks
     {
-        HashSet<Person> personsHS;
-        List<Person> personsL;
+        Dictionary<ulong, string> _flagMap;
+        Dictionary<int, string> _repoMap;
+        string[] _map;
 
         [GlobalSetup]
         public void Setup()
         {
-            personsHS = new HashSet<Person>();
-            personsL = new List<Person>();
+            _map = new string[64];
+            _flagMap = new Dictionary<ulong, string>();
+            _repoMap = new Dictionary<int, string>();
+
+            for (ulong i = 1; i < ulong.MaxValue; i *= 2)
+            {
+                if (i == 0)
+                    break;
+
+                var firstBit = BitOperations.TrailingZeroCount(i);
+
+                _map[firstBit] = i.ToString();
+
+                _flagMap.Add(i, i.ToString());
+            }
+
+            _repoMap.Add("ThisIsMyPropertyName".GetHashCode(), "cyka");
         }
 
         [Benchmark]
-        public void List()
+        public string NormalMap()
         {
-            personsL.Clear();
-            for (int i = 0; i < 20000; i++)
-            {
-                personsL.Add(new Person());
-            }
+            return _map[BitOperations.TrailingZeroCount(0b1)];
         }
 
         [Benchmark]
-        public void HashSet()
+        public string ReverseMap()
         {
-            personsHS.Clear();
-            for (int i = 0; i < 20000; i++)
-            {
-                personsHS.Add(new Person());
-            }
+            return _map[BitOperations.LeadingZeroCount(0b1)];
         }
+
+        //[Benchmark]
+        //public string FlagMap()
+        //{
+        //    return _flagMap[0b100000000];
+        //}
+
+        //[Benchmark]
+        //public string RepoDbMap()
+        //{
+        //    return _repoMap["ThisIsMyPropertyName".GetHashCode()];
+        //}
     }
 }

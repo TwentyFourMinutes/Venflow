@@ -9,11 +9,11 @@ namespace Venflow.Benchmarks
     {
         public static void Main(string[] args)
         {
-            //BenchmarkRunner.Run<MiscBenchmarks>();
+            BenchmarkRunner.Run<MiscBenchmarks>();
             //BenchmarkRunner.Run<NpgsqlBenchmark>();
             //BenchmarkRunner.Run<QuerySingleAsyncBenchmark>();
             //BenchmarkRunner.Run<QueryAllAsyncBenchmark>();
-            BenchmarkRunner.Run<InsertSingleAsyncBenchmark>();
+            //BenchmarkRunner.Run<InsertSingleAsyncBenchmark>();
 
             Console.ReadKey();
         }

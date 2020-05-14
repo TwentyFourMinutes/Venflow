@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -219,9 +220,14 @@ namespace Venflow.Modeling
                 _tableName = _type.Name + "s";
             }
 
-            var changeTrackerFactory = _changeTrackerFactory.GetEntityProxy<TEntity>(_type, changeTrackingColumns);
+            Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory = null;
 
-            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_type, changeTrackerFactory, _tableName, new DualKeyCollection<string, EntityColumn<TEntity>>(columns.ToArray(), nameToColumn), primaryColumn));
+            if (changeTrackingColumns.Count != 0)
+            {
+                changeTrackerFactory = _changeTrackerFactory.GetEntityProxy(_type, changeTrackingColumns);
+            }
+
+            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_type, changeTrackerFactory, _tableName, new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn), primaryColumn));
         }
 
         private MethodInfo GetDbValueRetrieverMethod(PropertyInfo property, Type readerType)

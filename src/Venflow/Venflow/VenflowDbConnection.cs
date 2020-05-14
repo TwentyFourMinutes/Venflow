@@ -79,368 +79,386 @@ namespace Venflow
 
         #region InsertAsync
 
-        public Task<int> InsertAsync<TEntity>(TEntity entity, bool getInsertedId = true, CancellationToken cancellationToken = default) where TEntity : class
-        {
-            using var venflowCommand = CompileInsertCommand(entity, getInsertedId);
+        //public Task<int> InsertAsync<TEntity>(TEntity entity, bool getInsertedId = true, CancellationToken cancellationToken = default) where TEntity : class
+        //{
+        //    using var venflowCommand = CompileInsertCommand(entity, getInsertedId);
 
-            return InsertAsync(venflowCommand, entity, false, cancellationToken);
-        }
+        //    return InsertAsync(venflowCommand, entity, false, cancellationToken);
+        //}
 
-        public InsertCommand<TEntity> CompileInsertCommand<TEntity>(TEntity entity, bool getInsertedId = true) where TEntity : class
-            => CompileInsertCommand(entity, true, getInsertedId);
+        //public InsertCommand<TEntity> CompileInsertCommand<TEntity>(TEntity entity, bool getInsertedId = true) where TEntity : class
+        //    => CompileInsertCommand(entity, true, getInsertedId);
 
-        public InsertCommand<TEntity> CompileInsertCommand<TEntity>(bool getInsertedId = true) where TEntity : class
-            => CompileInsertCommand<TEntity>(null, false, getInsertedId);
+        //public InsertCommand<TEntity> CompileInsertCommand<TEntity>(bool getInsertedId = true) where TEntity : class
+        //    => CompileInsertCommand<TEntity>(null, false, getInsertedId);
 
-        private InsertCommand<TEntity> CompileInsertCommand<TEntity>(TEntity? entity, bool writeParameters, bool getInsertedId) where TEntity : class
-        {
-            var entityConfiguration = GetEntityConfiguration<TEntity>();
+        //private InsertCommand<TEntity> CompileInsertCommand<TEntity>(TEntity? entity, bool writeParameters, bool getInsertedId) where TEntity : class
+        //{
+        //    var entityConfiguration = GetEntityConfiguration<TEntity>();
 
-            var command = new NpgsqlCommand();
+        //    var command = new NpgsqlCommand();
 
-            var sb = new StringBuilder();
+        //    var sb = new StringBuilder();
 
-            sb.Append("INSERT INTO ");
-            sb.Append(entityConfiguration.TableName);
-            sb.Append(" ");
+        //    sb.Append("INSERT INTO ");
+        //    sb.Append(entityConfiguration.TableName);
+        //    sb.Append(" ");
 
-            var startIndex = 1;
+        //    var startIndex = 1;
 
-            if (getInsertedId)
-            {
-                getInsertedId = entityConfiguration.PrimaryColumn.IsServerSideGenerated;
-            }
+        //    if (getInsertedId)
+        //    {
+        //        getInsertedId = entityConfiguration.PrimaryColumn.IsServerSideGenerated;
+        //    }
 
-            if (getInsertedId)
-            {
-                sb.AppendLine(entityConfiguration.ColumnsString);
-            }
-            else
-            {
-                sb.AppendLine(entityConfiguration.ColumnsStringWithPrimaryKey);
-                startIndex = 0;
-            }
+        //    if (getInsertedId)
+        //    {
+        //        sb.AppendLine(entityConfiguration.ColumnsString);
+        //    }
+        //    else
+        //    {
+        //        sb.AppendLine(entityConfiguration.ColumnsStringWithPrimaryKey);
+        //        startIndex = 0;
+        //    }
 
-            sb.Append("VALUES (");
+        //    sb.Append("VALUES (");
 
-            var i = startIndex;
+        //    var i = startIndex;
 
-            while (true)
-            {
-                if (writeParameters)
-                {
-                    var parameter = entityConfiguration.Columns[i].ValueRetriever(entity, "0");
+        //    while (true)
+        //    {
+        //        if (writeParameters)
+        //        {
+        //            var parameter = entityConfiguration.Columns[i].ValueRetriever(entity, "0");
 
-                    command.Parameters.Add(parameter);
+        //            command.Parameters.Add(parameter);
 
-                    sb.Append(parameter.ParameterName);
-                }
-                else
-                {
-                    sb.Append("@" + entityConfiguration.Columns[i].ColumnName + "0");
-                }
+        //            sb.Append(parameter.ParameterName);
+        //        }
+        //        else
+        //        {
+        //            sb.Append("@" + entityConfiguration.Columns[i].ColumnName + "0");
+        //        }
 
-                i++;
+        //        i++;
 
-                if (i < entityConfiguration.Columns.Count)
-                {
-                    sb.Append(", ");
-                }
-                else
-                {
-                    break;
-                }
-            }
+        //        if (i < entityConfiguration.Columns.Count)
+        //        {
+        //            sb.Append(", ");
+        //        }
+        //        else
+        //        {
+        //            break;
+        //        }
+        //    }
 
-            sb.Append(")");
+        //    sb.Append(")");
 
-            if (getInsertedId)
-            {
-                sb.Append(" RETURNING \"");
+        //    if (getInsertedId)
+        //    {
+        //        sb.Append(" RETURNING \"");
 
-                sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
+        //        sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
 
-                sb.Append('"');
-            }
+        //        sb.Append('"');
+        //    }
 
-            sb.Append(";");
+        //    sb.Append(";");
 
-            command.CommandText = sb.ToString();
+        //    command.CommandText = sb.ToString();
 
-            return new InsertCommand<TEntity>(command, entityConfiguration)
-            {
-                GetInsertedId = getInsertedId,
-                StartIndex = startIndex
-            };
-        }
+        //    return new InsertCommand<TEntity>(command, entityConfiguration)
+        //    {
+        //        GetInsertedId = getInsertedId,
+        //        StartIndex = startIndex
+        //    };
+        //}
 
-        public async Task<int> InsertAsync<TEntity>(InsertCommand<TEntity> command, TEntity entity, bool writeParameters, CancellationToken cancellationToken = default) where TEntity : class
-        {
-            command.UnderlyingCommand.Connection = Connection;
+        //public async Task<int> InsertAsync<TEntity>(InsertCommand<TEntity> command, TEntity entity, bool writeParameters, CancellationToken cancellationToken = default) where TEntity : class
+        //{
+        //    command.UnderlyingCommand.Connection = Connection;
 
-            if (writeParameters)
-            {
-                command.UnderlyingCommand.Parameters.Clear();
+        //    if (writeParameters)
+        //    {
+        //        command.UnderlyingCommand.Parameters.Clear();
 
-                for (int i = command.StartIndex; i < command.EntityConfiguration.Columns.Count; i++)
-                {
-                    var parameter = command.EntityConfiguration.Columns[i].ValueRetriever(entity, "0");
+        //        for (int i = command.StartIndex; i < command.EntityConfiguration.Columns.Count; i++)
+        //        {
+        //            var parameter = command.EntityConfiguration.Columns[i].ValueRetriever(entity, "0");
 
-                    command.UnderlyingCommand.Parameters.Add(parameter);
-                }
-            }
+        //            command.UnderlyingCommand.Parameters.Add(parameter);
+        //        }
+        //    }
 
-            if (command.GetInsertedId)
-            {
-                var value = await command.UnderlyingCommand.ExecuteScalarAsync(cancellationToken);
+        //    if (command.GetInsertedId)
+        //    {
+        //        var value = await command.UnderlyingCommand.ExecuteScalarAsync(cancellationToken);
 
-                command.EntityConfiguration.PrimaryColumn.ValueWriter(entity, value);
+        //        command.EntityConfiguration.PrimaryColumn.ValueWriter(entity, value);
 
-                return 1;
-            }
-            else
-            {
-                return await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-            }
-        }
+        //        return 1;
+        //    }
+        //    else
+        //    {
+        //        return await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+        //    }
+        //}
 
         #endregion
 
         #region InsertAllAsync
 
-        public Task<int> InsertAllAsync<TEntity>(IEnumerable<TEntity> entities, bool getInsertedId = false, CancellationToken cancellationToken = default) where TEntity : class
-        {
-            using var venflowCommand = CompileInsertAllCommand(entities, getInsertedId);
+        //public Task<int> InsertAllAsync<TEntity>(IEnumerable<TEntity> entities, bool getInsertedId = false, CancellationToken cancellationToken = default) where TEntity : class
+        //{
+        //    using var venflowCommand = CompileInsertAllCommand(entities, getInsertedId);
 
-            return InsertAllAsync(venflowCommand, entities, false, cancellationToken);
-        }
+        //    return InsertAllAsync(venflowCommand, entities, false, cancellationToken);
+        //}
 
-        public InsertCommand<TEntity> CompileInsertAllCommand<TEntity>(IEnumerable<TEntity> entities, bool getInsertedId = false) where TEntity : class
-            => CompileInsertAllCommand(entities, true, getInsertedId);
+        //public InsertCommand<TEntity> CompileInsertAllCommand<TEntity>(IEnumerable<TEntity> entities, bool getInsertedId = false) where TEntity : class
+        //    => CompileInsertAllCommand(entities, true, getInsertedId);
 
-        private InsertCommand<TEntity> CompileInsertAllCommand<TEntity>(IEnumerable<TEntity> entities, bool writeParameters, bool getInsertedId = false) where TEntity : class
-        {
-            var entityConfiguration = GetEntityConfiguration<TEntity>();
+        //private InsertCommand<TEntity> CompileInsertAllCommand<TEntity>(IEnumerable<TEntity> entities, bool writeParameters, bool getInsertedId = false) where TEntity : class
+        //{
+        //    var entityConfiguration = GetEntityConfiguration<TEntity>();
 
-            var command = new NpgsqlCommand();
+        //    var command = new NpgsqlCommand();
 
-            var sb = new StringBuilder();
+        //    var sb = new StringBuilder();
 
-            sb.Append("INSERT INTO ");
-            sb.Append(entityConfiguration.TableName);
-            sb.Append(" ");
+        //    sb.Append("INSERT INTO ");
+        //    sb.Append(entityConfiguration.TableName);
+        //    sb.Append(" ");
 
-            var startIndex = 1;
+        //    var startIndex = 1;
 
-            if (getInsertedId && !entityConfiguration.PrimaryColumn.IsServerSideGenerated)
-            {
-                throw new ArgumentException("You can not retrieve the values from the database since this column is not generated in the database.", nameof(getInsertedId));
-            }
+        //    if (getInsertedId && !entityConfiguration.PrimaryColumn.IsServerSideGenerated)
+        //    {
+        //        throw new ArgumentException("You can not retrieve the values from the database since this column is not generated in the database.", nameof(getInsertedId));
+        //    }
 
-            if (getInsertedId || entityConfiguration.PrimaryColumn.IsServerSideGenerated)
-            {
-                sb.AppendLine(entityConfiguration.ColumnsString);
-            }
-            else
-            {
-                sb.AppendLine(entityConfiguration.ColumnsStringWithPrimaryKey);
-                startIndex = 0;
-            }
+        //    if (getInsertedId || entityConfiguration.PrimaryColumn.IsServerSideGenerated)
+        //    {
+        //        sb.AppendLine(entityConfiguration.ColumnsString);
+        //    }
+        //    else
+        //    {
+        //        sb.AppendLine(entityConfiguration.ColumnsStringWithPrimaryKey);
+        //        startIndex = 0;
+        //    }
 
-            sb.Append("VALUES (");
+        //    sb.Append("VALUES (");
 
-            if (writeParameters)
-            {
-                if (entities is IList<TEntity> list)
-                {
-                    for (int k = 0; k < list.Count; k++)
-                    {
-                        var i = startIndex;
+        //    if (writeParameters)
+        //    {
+        //        if (entities is IList<TEntity> list)
+        //        {
+        //            for (int k = 0; k < list.Count; k++)
+        //            {
+        //                var i = startIndex;
 
-                        while (true)
-                        {
-                            var parameter = entityConfiguration.Columns[i].ValueRetriever(list[k], k.ToString());
+        //                while (true)
+        //                {
+        //                    var parameter = entityConfiguration.Columns[i].ValueRetriever(list[k], k.ToString());
 
-                            command.Parameters.Add(parameter);
+        //                    command.Parameters.Add(parameter);
 
-                            sb.Append(parameter.ParameterName);
+        //                    sb.Append(parameter.ParameterName);
 
-                            i++;
+        //                    i++;
 
-                            if (i < entityConfiguration.Columns.Count)
-                            {
-                                sb.Append(", ");
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
+        //                    if (i < entityConfiguration.Columns.Count)
+        //                    {
+        //                        sb.Append(", ");
+        //                    }
+        //                    else
+        //                    {
+        //                        break;
+        //                    }
+        //                }
 
-                        sb.Append("), (");
-                    }
-                }
-                else
-                {
-                    var parameterIndex = 0;
+        //                sb.Append("), (");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            var parameterIndex = 0;
 
-                    foreach (var entity in entities)
-                    {
-                        var i = startIndex;
+        //            foreach (var entity in entities)
+        //            {
+        //                var i = startIndex;
 
-                        while (true)
-                        {
-                            var parameter = entityConfiguration.Columns[i].ValueRetriever(entity, parameterIndex.ToString());
+        //                while (true)
+        //                {
+        //                    var parameter = entityConfiguration.Columns[i].ValueRetriever(entity, parameterIndex.ToString());
 
-                            command.Parameters.Add(parameter);
+        //                    command.Parameters.Add(parameter);
 
-                            sb.Append(parameter.ParameterName);
+        //                    sb.Append(parameter.ParameterName);
 
-                            i++;
+        //                    i++;
 
-                            if (i < entityConfiguration.Columns.Count)
-                            {
-                                sb.Append(", ");
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
+        //                    if (i < entityConfiguration.Columns.Count)
+        //                    {
+        //                        sb.Append(", ");
+        //                    }
+        //                    else
+        //                    {
+        //                        break;
+        //                    }
+        //                }
 
-                        sb.Append("), (");
+        //                sb.Append("), (");
 
-                        parameterIndex++;
-                    }
-                }
-            }
-            else
-            {
-                int count;
+        //                parameterIndex++;
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        int count;
 
-                if (entities is IList<TEntity> list)
-                {
-                    count = list.Count;
-                }
-                else
-                {
-                    count = entities.Count();
-                }
+        //        if (entities is IList<TEntity> list)
+        //        {
+        //            count = list.Count;
+        //        }
+        //        else
+        //        {
+        //            count = entities.Count();
+        //        }
 
-                for (int k = 0; k < count; k++)
-                {
-                    var i = startIndex;
+        //        for (int k = 0; k < count; k++)
+        //        {
+        //            var i = startIndex;
 
-                    while (true)
-                    {
-                        sb.Append("@" + entityConfiguration.Columns[i].ColumnName + k.ToString());
+        //            while (true)
+        //            {
+        //                sb.Append("@" + entityConfiguration.Columns[i].ColumnName + k.ToString());
 
-                        i++;
+        //                i++;
 
-                        if (i < entityConfiguration.Columns.Count)
-                        {
-                            sb.Append(", ");
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
+        //                if (i < entityConfiguration.Columns.Count)
+        //                {
+        //                    sb.Append(", ");
+        //                }
+        //                else
+        //                {
+        //                    break;
+        //                }
+        //            }
 
-                    sb.Append("), (");
-                }
-            }
+        //            sb.Append("), (");
+        //        }
+        //    }
 
-            sb.Remove(sb.Length - 3, 3);
+        //    sb.Remove(sb.Length - 3, 3);
 
-            if (getInsertedId)
-            {
-                sb.Append(" RETURNING \"");
+        //    if (getInsertedId)
+        //    {
+        //        sb.Append(" RETURNING \"");
 
-                sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
+        //        sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
 
-                sb.Append('"');
-            }
+        //        sb.Append('"');
+        //    }
 
-            sb.Append(";");
+        //    sb.Append(";");
 
-            command.CommandText = sb.ToString();
+        //    command.CommandText = sb.ToString();
 
-            return new InsertCommand<TEntity>(command, entityConfiguration)
-            {
-                GetInsertedId = getInsertedId,
-                StartIndex = startIndex
-            };
-        }
+        //    return new InsertCommand<TEntity>(command, entityConfiguration)
+        //    {
+        //        GetInsertedId = getInsertedId,
+        //        StartIndex = startIndex
+        //    };
+        //}
 
-        public async Task<int> InsertAllAsync<TEntity>(InsertCommand<TEntity> command, IEnumerable<TEntity> entities, bool writeParameters, CancellationToken cancellationToken = default) where TEntity : class
-        {
-            command.UnderlyingCommand.Connection = Connection;
+        //public async Task<int> InsertAllAsync<TEntity>(InsertCommand<TEntity> command, IEnumerable<TEntity> entities, bool writeParameters, CancellationToken cancellationToken = default) where TEntity : class
+        //{
+        //    command.UnderlyingCommand.Connection = Connection;
 
-            if (writeParameters)
-            {
-                var columns = command.EntityConfiguration.Columns;
-                var parameters = command.UnderlyingCommand.Parameters;
+        //    if (writeParameters)
+        //    {
+        //        var columns = command.EntityConfiguration.Columns;
+        //        var parameters = command.UnderlyingCommand.Parameters;
 
-                if (entities is IList<TEntity> list)
-                {
-                    for (int k = 0; k < list.Count; k++)
-                    {
-                        for (int i = command.StartIndex; i < columns.Count; i++)
-                        {
-                            parameters.Add(columns[i].ValueRetriever(list[k], k.ToString()));
-                        }
-                    }
-                }
-                else
-                {
-                    var parameterIndex = 0;
+        //        if (entities is IList<TEntity> list)
+        //        {
+        //            for (int k = 0; k < list.Count; k++)
+        //            {
+        //                for (int i = command.StartIndex; i < columns.Count; i++)
+        //                {
+        //                    parameters.Add(columns[i].ValueRetriever(list[k], k.ToString()));
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            var parameterIndex = 0;
 
-                    foreach (var entity in entities)
-                    {
-                        for (int i = command.StartIndex; i < columns.Count; i++)
-                        {
-                            parameters.Add(columns[i].ValueRetriever(entity, parameterIndex.ToString()));
-                        }
+        //            foreach (var entity in entities)
+        //            {
+        //                for (int i = command.StartIndex; i < columns.Count; i++)
+        //                {
+        //                    parameters.Add(columns[i].ValueRetriever(entity, parameterIndex.ToString()));
+        //                }
 
-                        parameterIndex++;
-                    }
-                }
-            }
+        //                parameterIndex++;
+        //            }
+        //        }
+        //    }
 
-            if (command.GetInsertedId)
-            {
-                var valueWriter = command.EntityConfiguration.PrimaryColumn.ValueWriter;
+        //    if (command.GetInsertedId)
+        //    {
+        //        var valueWriter = command.EntityConfiguration.PrimaryColumn.ValueWriter;
 
-                await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
+        //        await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
-                foreach (var entity in entities)
-                {
-                    var success = await reader.ReadAsync(cancellationToken);
+        //        foreach (var entity in entities)
+        //        {
+        //            var success = await reader.ReadAsync(cancellationToken);
 
-                    if (!success)
-                        break;
+        //            if (!success)
+        //                break;
 
-                    valueWriter(entity, reader.GetValue(0));
-                }
+        //            valueWriter(entity, reader.GetValue(0));
+        //        }
 
-                return -1;
-            }
-            else
-            {
-                return await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-            }
-        }
+        //        return -1;
+        //    }
+        //    else
+        //    {
+        //        return await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+        //    }
+        //}
 
         #endregion
 
         #region QuerySelectAsync
+
+        public Task<TEntity> QuerySingleAndTrackAsync<TEntity>(string sql, bool orderPreservedColumns = false, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            using var venflowCommand = CompileQuerySingleAndTrackCommand<TEntity>(sql, orderPreservedColumns);
+
+            return QuerySingleAsync(venflowCommand, cancellationToken);
+        }
 
         public Task<TEntity> QuerySingleAsync<TEntity>(string sql, bool orderPreservedColumns = false, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
             using var venflowCommand = CompileQuerySingleCommand<TEntity>(sql, orderPreservedColumns);
 
             return QuerySingleAsync(venflowCommand, cancellationToken);
+        }
+
+        public QueryCommand<TEntity> CompileQuerySingleAndTrackCommand<TEntity>(string sql, bool orderPreservedColumns = false) where TEntity : class
+        {
+            var entityConfiguration = GetEntityConfiguration<TEntity>();
+
+            return new QueryCommand<TEntity>(new NpgsqlCommand(sql), entityConfiguration)
+            {
+                TrackChanges = true,
+                OrderPreservedColumns = orderPreservedColumns
+            };
         }
 
         public QueryCommand<TEntity> CompileQuerySingleCommand<TEntity>(string sql, bool orderPreservedColumns = false) where TEntity : class
@@ -464,7 +482,21 @@ namespace Venflow
                 return default!;
             }
 
-            var entity = new TEntity();
+            TEntity entity;
+
+            if (command.TrackChanges)
+            {
+                if (command.EntityConfiguration.ChangeTrackerFactory is null)
+                {
+                    throw new InvalidOperationException("No members of the Entity are marked as virtual.");
+                }
+
+                entity = command.EntityConfiguration.GetProxiedEntity();
+            }
+            else
+            {
+                entity = new TEntity();
+            }
 
             if (command.OrderPreservedColumns)
             {
