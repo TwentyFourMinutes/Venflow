@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Venflow.Modeling.ProxyTypes")]
+[assembly: InternalsVisibleTo("Venflow.Runtime.ProxyTypes")]
 
 namespace Venflow.Modeling
 {
@@ -16,7 +16,7 @@ namespace Venflow.Modeling
 
         static ChangeTrackerFactory()
         {
-            var assemblyName = new AssemblyName("Venflow.Modeling.ProxyTypes");
+            var assemblyName = new AssemblyName("Venflow.Runtime.ProxyTypes");
             var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
 
             _proxyModule = assemblyBuilder.DefineDynamicModule(assemblyName.Name + ".dll");
@@ -82,72 +82,5 @@ namespace Venflow.Modeling
 
             return Expression.Lambda<Func<ChangeTracker<TEntity>, TEntity>>(Expression.Convert(Expression.New(proxyType.GetConstructor(new[] { changeTrackerType }), changeTrackerParameter), typeof(TEntity)), changeTrackerParameter).Compile();
         }
-    }
-
-    public static class ChangeTrackingExtensions
-    {
-        public static TEntity TrackChanges<TEntity>(this TEntity entityInstance, DbConfiguration configuration) where TEntity : class
-        {
-            if (!configuration.Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
-            {
-                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the DbConfiguration.", nameof(TEntity));
-            }
-
-            var entity = (Entity<TEntity>)entityModel;
-
-            var changeTracker = new ChangeTracker<TEntity>(entity, true);
-
-            return entity.ChangeTrackerFactory.Invoke(changeTracker);
-        }
-
-        public static void Test<TEntity>(TEntity entity) where TEntity : class
-        {
-            var columns = ((IEntityProxy<TEntity>)entity).ChangeTracker.GetColumns().Where(x => x is { }).ToList();
-        }
-    }
-
-    internal class ChangeTracker<TEntity> where TEntity : class
-    {
-        internal bool TrackChanges { get; set; }
-        internal bool IsDirty { get; private set; }
-
-        private EntityColumn<TEntity>?[] _changedColumns;
-
-        private readonly Entity<TEntity> _entity;
-
-        internal ChangeTracker(Entity<TEntity> entity, bool trackChanges)
-        {
-            _entity = entity;
-            TrackChanges = trackChanges;
-            _changedColumns = null!;
-        }
-
-        internal void MakeDirty(byte propertyIndex)
-        {
-            if (!TrackChanges)
-                return;
-
-            if (!IsDirty)
-            {
-                _changedColumns = new EntityColumn<TEntity>?[_entity.Columns.Count];
-
-                IsDirty = true;
-            }
-
-            if (_changedColumns[propertyIndex] is null)
-            {
-                _changedColumns[propertyIndex] = _entity.Columns.GetColumnByFlagPosition(propertyIndex);
-            }
-        }
-
-        internal EntityColumn<TEntity>?[] GetColumns()
-        {
-            return _changedColumns;
-        }
-    }
-
-    internal interface IEntityProxy<TEntity> where TEntity : class
-    {
-        ChangeTracker<TEntity> ChangeTracker { get; }
     }
 }
