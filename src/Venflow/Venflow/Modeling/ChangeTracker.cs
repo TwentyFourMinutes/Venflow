@@ -23,7 +23,7 @@ namespace Venflow.Modeling
         internal void MakeDirty(byte propertyIndex)
         {
             if (!TrackChanges)
-                return;
+                 return;
 
             if (!IsDirty)
             {

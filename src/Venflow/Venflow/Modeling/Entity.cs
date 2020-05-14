@@ -11,14 +11,16 @@ namespace Venflow.Modeling
         internal string TableName { get; }
         internal Type EntityType { get; }
         internal Func<ChangeTracker<TEntity>, TEntity>? ChangeTrackerFactory { get; }
+        internal Func<ChangeTracker<TEntity>, TEntity, TEntity>? ChangeTrackerApplier { get; }
 
         internal string ColumnListString { get; }
         internal string NonPrimaryColumnListString { get; }
 
-        internal Entity(Type entityType, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, string tableName, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn)
+        internal Entity(Type entityType, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier, string tableName, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn)
         {
             EntityType = entityType;
             ChangeTrackerFactory = changeTrackerFactory;
+            ChangeTrackerApplier = changeTrackerApplier;
             TableName = "\"" + tableName + "\"";
             Columns = columns;
             PrimaryColumn = primaryColumn;
@@ -30,8 +32,6 @@ namespace Venflow.Modeling
         private string GetColumnListString(bool excludePrimaryColumns)
         {
             var sb = new StringBuilder();
-
-            sb.Append("(");
 
             foreach (var column in Columns.Values)
             {
@@ -46,14 +46,18 @@ namespace Venflow.Modeling
             }
 
             sb.Remove(sb.Length - 1, 1);
-            sb.Append(")");
 
             return sb.ToString();
         }
 
         internal TEntity GetProxiedEntity(bool trackChanges = false)
         {
-            return ChangeTrackerFactory.Invoke(new ChangeTracker<TEntity>(this,trackChanges));
+            return ChangeTrackerFactory.Invoke(new ChangeTracker<TEntity>(this, trackChanges));
+        }
+
+        internal TEntity ApplyChangeTracking(TEntity entity)
+        {
+            return ChangeTrackerApplier.Invoke(new ChangeTracker<TEntity>(this, false), entity);
         }
     }
 

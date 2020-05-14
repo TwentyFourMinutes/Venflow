@@ -219,14 +219,14 @@ namespace Venflow.Modeling
                 _tableName = _type.Name + "s";
             }
 
-            Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory = null;
+            (Func<ChangeTracker<TEntity>, TEntity> factory, Func<ChangeTracker<TEntity>, TEntity, TEntity> applier)? changeTrackerFactories = null;
 
             if (changeTrackingColumns.Count != 0)
             {
-                changeTrackerFactory = _changeTrackerFactory.GetEntityProxy(_type, changeTrackingColumns);
+                changeTrackerFactories = _changeTrackerFactory.GenerateEntityProxyFactories(_type, changeTrackingColumns);
             }
 
-            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_type, changeTrackerFactory, _tableName, new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn), primaryColumn));
+            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_type, changeTrackerFactories?.factory, changeTrackerFactories?.applier, _tableName, new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn), primaryColumn));
         }
 
         private MethodInfo GetDbValueRetrieverMethod(PropertyInfo property, Type readerType)

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -807,6 +808,21 @@ namespace Venflow
             }
 
             return command.PerpareSelfAsync(cancellationToken);
+        }
+
+        public void TrackChanges<TEntity>(ref TEntity entity) where TEntity : class
+        {
+            _dbConfiguration.TrackChanges(ref entity);
+        }
+
+        public void TrackChanges<TEntity>(ref IList<TEntity> entity) where TEntity : class
+        {
+            _dbConfiguration.TrackChanges(ref entity);
+        }
+
+        public void TrackChanges<TEntity>(ref IEnumerable<TEntity> entity) where TEntity : class
+        {
+            _dbConfiguration.TrackChanges(ref entity);
         }
 
         private Entity<TEntity> GetEntityConfiguration<TEntity>() where TEntity : class

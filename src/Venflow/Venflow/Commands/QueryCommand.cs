@@ -38,6 +38,8 @@ namespace Venflow.Commands
                 builder.Append(count);
             }
 
+            builder.Append(';');
+
             return builder.ToString();
         }
     }
