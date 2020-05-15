@@ -622,16 +622,16 @@ namespace Venflow
 
         #endregion
 
-        #region DeleteOneAsync
+        #region DeleteSingleAsync
 
-        public Task<int> DeleteOneAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> DeleteSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var venflowCommand = CompileDeleteOneCommand<TEntity>();
+            using var venflowCommand = CompileDeleteSingleCommand<TEntity>();
 
-            return DeleteOneAsync(venflowCommand, entity, cancellationToken);
+            return DeleteSingleAsync(venflowCommand, entity, cancellationToken);
         }
 
-        public DeleteCommand<TEntity> CompileDeleteOneCommand<TEntity>() where TEntity : class
+        public DeleteCommand<TEntity> CompileDeleteSingleCommand<TEntity>() where TEntity : class
         {
             var entityConfiguration = GetEntityConfiguration<TEntity>();
 
@@ -648,7 +648,7 @@ namespace Venflow
             return new DeleteCommand<TEntity>(new NpgsqlCommand(sb.ToString()), entityConfiguration);
         }
 
-        public Task<int> DeleteOneAsync<TEntity>(DeleteCommand<TEntity> command, TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> DeleteSingleAsync<TEntity>(DeleteCommand<TEntity> command, TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
         {
             command.UnderlyingCommand.Connection = Connection;
 
@@ -659,16 +659,16 @@ namespace Venflow
 
         #endregion
 
-        #region DeleteAllAsync
+        #region DeleteBatchAsync
 
-        public Task<int> DeleteAllAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> DeleteBatchAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var venflowCommand = CompileDeleteAllCommandWithParameters(entities);
+            using var venflowCommand = CompileDeleteBatchCommandWithParameters(entities);
 
-            return DeleteAllAsync(venflowCommand, cancellationToken);
+            return DeleteBatchAsync(venflowCommand, cancellationToken);
         }
 
-        private DeleteCommand<TEntity> CompileDeleteAllCommandWithParameters<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
+        private DeleteCommand<TEntity> CompileDeleteBatchCommandWithParameters<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
         {
             var entityConfiguration = GetEntityConfiguration<TEntity>();
             var command = new NpgsqlCommand();
@@ -718,7 +718,7 @@ namespace Venflow
             return new DeleteCommand<TEntity>(command, entityConfiguration);
         }
 
-        public DeleteCommand<TEntity> CompileDeleteAllCommand<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
+        public DeleteCommand<TEntity> CompileDeleteBatchCommand<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
         {
             var entityConfiguration = GetEntityConfiguration<TEntity>();
             var command = new NpgsqlCommand();
@@ -762,14 +762,14 @@ namespace Venflow
             return new DeleteCommand<TEntity>(command, entityConfiguration);
         }
 
-        private Task<int> DeleteAllAsync<TEntity>(DeleteCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
+        private Task<int> DeleteBatchAsync<TEntity>(DeleteCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
         {
             command.UnderlyingCommand.Connection = Connection;
 
             return command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
         }
 
-        public Task<int> DeleteAllAsync<TEntity>(DeleteCommand<TEntity> command, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> DeleteBatchAsync<TEntity>(DeleteCommand<TEntity> command, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
         {
             var npgsqlCommand = command.UnderlyingCommand;
 
@@ -810,20 +810,26 @@ namespace Venflow
             return command.PerpareSelfAsync(cancellationToken);
         }
 
+        #region Change Tracking
+
         public void TrackChanges<TEntity>(ref TEntity entity) where TEntity : class
         {
             _dbConfiguration.TrackChanges(ref entity);
         }
 
-        public void TrackChanges<TEntity>(ref IList<TEntity> entity) where TEntity : class
+        public void TrackChanges<TEntity>(ref IList<TEntity> entities) where TEntity : class
         {
-            _dbConfiguration.TrackChanges(ref entity);
+            _dbConfiguration.TrackChanges(ref entities);
         }
 
-        public void TrackChanges<TEntity>(ref IEnumerable<TEntity> entity) where TEntity : class
+        public void TrackChanges<TEntity>(ref IEnumerable<TEntity> entities) where TEntity : class
         {
-            _dbConfiguration.TrackChanges(ref entity);
+            _dbConfiguration.TrackChanges(ref entities);
         }
+
+        #endregion
+
+        #region Helpers
 
         private Entity<TEntity> GetEntityConfiguration<TEntity>() where TEntity : class
         {
@@ -839,6 +845,8 @@ namespace Venflow
         {
             ((IEntityProxy<TEntity>)entity).ChangeTracker.TrackChanges = true;
         }
+
+        #endregion
 
         public ValueTask DisposeAsync()
         {
