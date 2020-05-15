@@ -800,6 +800,192 @@ namespace Venflow
 
         #endregion
 
+        #region UpdateSingleAsync
+
+        public ValueTask<int> UpdateSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            using var venflowCommand = CompileUpdateSingleCommand(entity);
+
+            if (venflowCommand is null)
+                return new ValueTask<int>(Task.FromResult(0));
+
+            return new ValueTask<int>(UpdateSingleAsync(venflowCommand, cancellationToken));
+        }
+
+        public UpdateCommand<TEntity>? CompileUpdateSingleCommand<TEntity>(TEntity entity) where TEntity : class
+        {
+            if (!(entity is IEntityProxy<TEntity> proxy))
+            {
+                throw new InvalidOperationException("The provided entity is currently not being change tracked.");
+            }
+            else if (!proxy.ChangeTracker.IsDirty)
+            {
+                return null;
+            }
+
+            var entityConfiguration = GetEntityConfiguration<TEntity>();
+
+            var sb = new StringBuilder();
+
+            sb.Append("UPDATE ");
+            sb.Append(entityConfiguration.TableName);
+            sb.Append(" SET ");
+
+            var columns = proxy.ChangeTracker.GetColumns();
+
+            var command = new NpgsqlCommand();
+
+            for (int i = 0; i < columns.Length; i++)
+            {
+                var column = columns[i];
+
+                if (column is null)
+                    continue;
+
+                sb.Append('"');
+                sb.Append(column.ColumnName);
+                sb.Append("\" = ");
+
+                var parameter = column.ValueRetriever(entity, i.ToString());
+
+                sb.Append(parameter.ParameterName);
+
+                command.Parameters.Add(parameter);
+
+                sb.Append(", ");
+            }
+
+            sb.Remove(sb.Length - 2, 2);
+
+            sb.Append(" WHERE \"");
+
+            sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
+
+            sb.Append("\" = ");
+
+            var primaryParameter = entityConfiguration.PrimaryColumn.ValueRetriever(entity, "");
+
+            sb.Append(primaryParameter.ParameterName);
+            command.Parameters.Add(primaryParameter);
+
+            sb.Append(';');
+
+            command.CommandText = sb.ToString();
+
+            return new UpdateCommand<TEntity>(command, entityConfiguration);
+        }
+
+        public Task<int> UpdateSingleAsync<TEntity>(UpdateCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            command.UnderlyingCommand.Connection = Connection;
+
+            return command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        #endregion
+
+        #region UpdateBatchAsync
+
+        public ValueTask<int> UpdateBatchAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            using var venflowCommand = CompileUpdateBatchCommand(entities);
+
+            if (venflowCommand is null)
+                return new ValueTask<int>(Task.FromResult(0));
+
+            return new ValueTask<int>(UpdateBatchAsync(venflowCommand, cancellationToken));
+        }
+
+        public UpdateCommand<TEntity>? CompileUpdateBatchCommand<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
+        {
+            var entityConfiguration = GetEntityConfiguration<TEntity>();
+
+            var command = new NpgsqlCommand();
+
+            var sb = new StringBuilder();
+
+            if (entities is IList<TEntity> entitiesList)
+            {
+                for (int i = 0; i < entitiesList.Count; i++)
+                {
+                    CommandGenreator(entitiesList[i]);
+                }
+            }
+            else
+            {
+                foreach (var entity in entities)
+                {
+                    CommandGenreator(entity);
+                }
+            }
+
+            void CommandGenreator(TEntity entity)
+            {
+                if (!(entity is IEntityProxy<TEntity> proxy))
+                {
+                    throw new InvalidOperationException("The provided entity is currently not being change tracked.");
+                }
+                else if (!proxy.ChangeTracker.IsDirty)
+                {
+                    return;
+                }
+
+                sb.Append("UPDATE ");
+                sb.Append(entityConfiguration.TableName);
+                sb.Append(" SET ");
+
+                var columns = proxy.ChangeTracker.GetColumns(); ;
+
+                for (int i = 0; i < columns.Length; i++)
+                {
+                    var column = columns[i];
+
+                    if (column is null)
+                        continue;
+
+                    sb.Append('"');
+                    sb.Append(column.ColumnName);
+                    sb.Append("\" = ");
+
+                    var parameter = column.ValueRetriever(entity, i.ToString());
+
+                    sb.Append(parameter.ParameterName);
+
+                    command.Parameters.Add(parameter);
+
+                    sb.Append(", ");
+                }
+
+                sb.Remove(sb.Length - 2, 2);
+
+                sb.Append(" WHERE \"");
+
+                sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
+
+                sb.Append("\" = ");
+
+                var primaryParameter = entityConfiguration.PrimaryColumn.ValueRetriever(entity, "");
+
+                sb.Append(primaryParameter.ParameterName);
+                command.Parameters.Add(primaryParameter);
+
+                sb.Append(';');
+            }
+
+            command.CommandText = sb.ToString();
+
+            return new UpdateCommand<TEntity>(command, entityConfiguration);
+        }
+
+        public Task<int> UpdateBatchAsync<TEntity>(UpdateCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            command.UnderlyingCommand.Connection = Connection;
+
+            return command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        #endregion
+
         public Task GetPreparedCommandAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
         {
             if (command.UnderlyingCommand.Connection is null || command.UnderlyingCommand.Connection.State != ConnectionState.Open)
