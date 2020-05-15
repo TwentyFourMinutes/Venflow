@@ -232,15 +232,6 @@ namespace Venflow.Modeling
         private MethodInfo GetDbValueRetrieverMethod(PropertyInfo property, Type readerType)
         {
             return readerType!.GetMethod("GetFieldValue", BindingFlags.Instance | BindingFlags.Public).MakeGenericMethod(property.PropertyType);
-
-            if (property.PropertyType.IsClass)
-            {
-                return readerType!.GetMethod("GetValue", BindingFlags.Instance | BindingFlags.Public);
-            }
-            else
-            {
-
-            }
         }
     }
 }

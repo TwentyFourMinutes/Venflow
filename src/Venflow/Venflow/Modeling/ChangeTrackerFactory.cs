@@ -50,6 +50,8 @@ namespace Venflow.Modeling
             // Create All Entity properties
             foreach (var property in properties)
             {
+                var baseSetter = property.Value.PropertyInfo.GetSetMethod()!;
+
                 // Create Property set property method
                 var propertySet = proxyTypeBuilder.DefineMethod("set_" + property.Value.PropertyInfo.Name, MethodAttributes.Private | MethodAttributes.SpecialName |
                                                                                                            MethodAttributes.NewSlot | MethodAttributes.HideBySig |
@@ -57,12 +59,15 @@ namespace Venflow.Modeling
                 var propertySetIL = propertySet.GetILGenerator();
 
                 propertySetIL.Emit(OpCodes.Ldarg_0);
+                propertySetIL.Emit(OpCodes.Ldarg_1);
+                propertySetIL.Emit(OpCodes.Call, baseSetter);
+                propertySetIL.Emit(OpCodes.Ldarg_0);
                 propertySetIL.Emit(OpCodes.Call, changeTrackerPropertyGet);
                 propertySetIL.Emit(OpCodes.Ldc_I4_S, property.Key);
                 propertySetIL.Emit(OpCodes.Callvirt, changeTrackerMakeDirtyType);
                 propertySetIL.Emit(OpCodes.Ret);
 
-                proxyTypeBuilder.DefineMethodOverride(propertySet, property.Value.PropertyInfo.GetSetMethod()!);
+                proxyTypeBuilder.DefineMethodOverride(propertySet, baseSetter);
             }
 
             // Create Constructor
