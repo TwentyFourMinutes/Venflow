@@ -8,34 +8,34 @@ namespace Venflow.Benchmarks.Benchmarks
 {
     public class InsertSingleAsyncBenchmark : BenchmarkBase
     {
-        public InsertCommand<Person> Command { get; set; }
+        //public InsertCommand<Person> Command { get; set; }
 
-        [GlobalSetup]
-        public override async Task Setup()
-        {
-            await base.Setup();
+        //[GlobalSetup]
+        //public override async Task Setup()
+        //{
+        //    await base.Setup();
 
-            Command = VenflowDbConnection.CompileInsertCommand<Person>();
-        }
+        //    Command = VenflowDbConnection.CompileInsertCommand<Person>();
+        //}
 
-        [Benchmark]
-        public Task VenflowInsertSingleAsync()
-        {
-            return VenflowDbConnection.InsertAsync(Command, new Person { Name = "VenflowInsertSingleAsync" }, true);
-        }
+        //[Benchmark]
+        //public Task VenflowInsertSingleAsync()
+        //{
+        //    return VenflowDbConnection.InsertAsync(Command, new Person { Name = "VenflowInsertSingleAsync" }, true);
+        //}
 
-        [Benchmark]
-        public Task RepoDbInsertSingleAsync()
-        {
-            return VenflowDbConnection.Connection.InsertAsync(new Person { Name = "RepoDbInsertSingleAsync" });
-        }
+        //[Benchmark]
+        //public Task RepoDbInsertSingleAsync()
+        //{
+        //    return VenflowDbConnection.Connection.InsertAsync(new Person { Name = "RepoDbInsertSingleAsync" });
+        //}
 
-        [GlobalCleanup]
-        public override Task Cleanup()
-        {
-            Command.Dispose();
+        //[GlobalCleanup]
+        //public override Task Cleanup()
+        //{
+        //    Command.Dispose();
 
-            return base.Cleanup();
-        }
+        //    return base.Cleanup();
+        //}
     }
 }

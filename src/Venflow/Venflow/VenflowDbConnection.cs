@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,7 +46,7 @@ namespace Venflow
 
         #region QueryBatchAsync
 
-        public Task<ICollection<TEntity>> QueryBatchAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class
+        public Task<IList<TEntity>> QueryBatchAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class
         {
             using var venflowCommand = VenflowDbConnection.CompileQueryBatchCommand<TEntity>(-1);
 
@@ -56,7 +55,7 @@ namespace Venflow
             return VenflowDbConnection.QueryBatchAsync(venflowCommand, cancellationToken);
         }
 
-        public Task<ICollection<TEntity>> QueryBatchAsync<TEntity>(int count, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<IList<TEntity>> QueryBatchAsync<TEntity>(int count, CancellationToken cancellationToken = default) where TEntity : class
         {
             using var venflowCommand = VenflowDbConnection.CompileQueryBatchCommand<TEntity>(count);
 
@@ -65,7 +64,7 @@ namespace Venflow
             return VenflowDbConnection.QueryBatchAsync(venflowCommand, cancellationToken);
         }
 
-        public Task<ICollection<TEntity>> QueryBatchAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<IList<TEntity>> QueryBatchAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class
         {
             using var venflowCommand = VenflowDbConnection.CompileQueryCommand<TEntity>(sql);
 
@@ -583,21 +582,21 @@ namespace Venflow
 
         #region QueryBatchAsync
 
-        public Task<ICollection<TEntity>> QueryBatchAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class
+        public Task<IList<TEntity>> QueryBatchAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class
         {
             using var venflowCommand = CompileQueryBatchCommand<TEntity>(-1);
 
             return QueryBatchAsync(venflowCommand, cancellationToken);
         }
 
-        public Task<ICollection<TEntity>> QueryBatchAsync<TEntity>(int count, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<IList<TEntity>> QueryBatchAsync<TEntity>(int count, CancellationToken cancellationToken = default) where TEntity : class
         {
             using var venflowCommand = CompileQueryBatchCommand<TEntity>(count);
 
             return QueryBatchAsync(venflowCommand, cancellationToken);
         }
 
-        public Task<ICollection<TEntity>> QueryBatchAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<IList<TEntity>> QueryBatchAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class
         {
             using var venflowCommand = CompileQueryCommand<TEntity>(sql);
 
@@ -611,13 +610,22 @@ namespace Venflow
             return new QueryCommand<TEntity>(new NpgsqlCommand(QueryCommand<TEntity>.CompileDefaultStatement(entityConfiguration, count)), entityConfiguration);
         }
 
-        public async Task<ICollection<TEntity>> QueryBatchAsync<TEntity>(QueryCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
+        public async Task<IList<TEntity>> QueryBatchAsync<TEntity>(QueryCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
         {
             command.UnderlyingCommand.Connection = Connection;
 
             await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
-            return await new ColumnMapper<TEntity>(command).GetEntitiesAsync(reader, cancellationToken);
+            var factory = command.EntityConfiguration.QueryCommandCache.GetOrCreateFactory(reader.GetColumnSchema(), command.TrackChanges);
+
+            var entities = new List<TEntity>();
+
+            while (await reader.ReadAsync())
+            {
+                entities.Add(factory.Invoke(reader));
+            }
+
+            return entities;
         }
 
         #endregion
@@ -831,16 +839,20 @@ namespace Venflow
             sb.Append(entityConfiguration.TableName);
             sb.Append(" SET ");
 
-            var columns = proxy.ChangeTracker.GetColumns();
+            var columns = proxy.ChangeTracker.GetColumns()!;
+
+            var entityColumns = entityConfiguration.Columns;
 
             var command = new NpgsqlCommand();
 
             for (int i = 0; i < columns.Length; i++)
             {
-                var column = columns[i];
+                var columnIndex = columns[i];
 
-                if (column is null)
+                if (columnIndex == 0)
                     continue;
+
+                var column = entityColumns[columnIndex];
 
                 sb.Append('"');
                 sb.Append(column.ColumnName);
@@ -934,14 +946,18 @@ namespace Venflow
                 sb.Append(entityConfiguration.TableName);
                 sb.Append(" SET ");
 
-                var columns = proxy.ChangeTracker.GetColumns(); ;
+                var entityColumns = entityConfiguration.Columns;
+
+                var columns = proxy.ChangeTracker.GetColumns();
 
                 for (int i = 0; i < columns.Length; i++)
                 {
-                    var column = columns[i];
+                    var columnIndex = columns[i];
 
-                    if (column is null)
+                    if (columnIndex == 0)
                         continue;
+
+                    var column = entityColumns[columnIndex];
 
                     sb.Append('"');
                     sb.Append(column.ColumnName);

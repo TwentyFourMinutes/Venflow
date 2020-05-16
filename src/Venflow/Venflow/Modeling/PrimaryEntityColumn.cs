@@ -8,7 +8,7 @@ namespace Venflow.Modeling
     {
         internal bool IsServerSideGenerated { get; }
 
-        internal PrimaryEntityColumn(PropertyInfo propertyInfo, string columnName, MethodInfo dbValueRetriever, Action<TEntity, object> valueWriter, Func<TEntity, string, NpgsqlParameter> valueRetriever, bool isServerSideGenerated) : base(propertyInfo, columnName, dbValueRetriever, valueWriter, valueRetriever)
+        internal PrimaryEntityColumn(PropertyInfo propertyInfo, string columnName, ulong flagValue, MethodInfo dbValueRetriever, Action<TEntity, object> valueWriter, Func<TEntity, string, NpgsqlParameter> valueRetriever, bool isServerSideGenerated) : base(propertyInfo, columnName, flagValue, dbValueRetriever, valueWriter, valueRetriever)
         {
             IsServerSideGenerated = isServerSideGenerated;
         }

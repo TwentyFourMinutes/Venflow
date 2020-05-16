@@ -10,13 +10,16 @@ namespace Venflow.Modeling
 
         internal string TableName { get; }
         internal Type EntityType { get; }
+        internal Type? ProxyEntityType { get; }
         internal Func<ChangeTracker<TEntity>, TEntity>? ChangeTrackerFactory { get; }
         internal Func<ChangeTracker<TEntity>, TEntity, TEntity>? ChangeTrackerApplier { get; }
+
+        internal QueryCommandCache<TEntity> QueryCommandCache { get; }
 
         internal string ColumnListString { get; }
         internal string NonPrimaryColumnListString { get; }
 
-        internal Entity(Type entityType, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier, string tableName, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn)
+        internal Entity(Type entityType, Type? proxyEntityType, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier, string tableName, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn)
         {
             EntityType = entityType;
             ChangeTrackerFactory = changeTrackerFactory;
@@ -24,6 +27,8 @@ namespace Venflow.Modeling
             TableName = "\"" + tableName + "\"";
             Columns = columns;
             PrimaryColumn = primaryColumn;
+
+            QueryCommandCache = new QueryCommandCache<TEntity>(entityType, proxyEntityType, Columns);
 
             ColumnListString = GetColumnListString(false);
             NonPrimaryColumnListString = GetColumnListString(true);
@@ -52,12 +57,12 @@ namespace Venflow.Modeling
 
         internal TEntity GetProxiedEntity(bool trackChanges = false)
         {
-            return ChangeTrackerFactory.Invoke(new ChangeTracker<TEntity>(this, trackChanges));
+            return ChangeTrackerFactory.Invoke(new ChangeTracker<TEntity>(Columns.Count, trackChanges));
         }
 
         internal TEntity ApplyChangeTracking(TEntity entity)
         {
-            return ChangeTrackerApplier.Invoke(new ChangeTracker<TEntity>(this, false), entity);
+            return ChangeTrackerApplier.Invoke(new ChangeTracker<TEntity>(Columns.Count, false), entity);
         }
     }
 

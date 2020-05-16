@@ -9,15 +9,5 @@ namespace Venflow.Modeling
         {
 
         }
-
-        internal EntityColumn<TEntity> GetColumnByFlagValue(ulong flagValue)
-        {
-            return base[BitOperations.LeadingZeroCount(flagValue)];
-        }
-
-        internal EntityColumn<TEntity> GetColumnByFlagPosition(byte flagPosition)
-        {
-            return base[flagPosition];
-        }
     }
 }

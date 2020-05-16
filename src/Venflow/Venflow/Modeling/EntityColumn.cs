@@ -8,6 +8,8 @@ namespace Venflow.Modeling
     {
         internal string ColumnName { get; }
 
+        internal ulong FlagValue { get; }
+
         internal PropertyInfo PropertyInfo { get; }
 
         internal MethodInfo DbValueRetriever { get; }
@@ -16,10 +18,11 @@ namespace Venflow.Modeling
 
         internal Func<TEntity, string, NpgsqlParameter> ValueRetriever { get; }
 
-        internal EntityColumn(PropertyInfo propertyInfo, string columnName, MethodInfo dbValueRetriever, Action<TEntity, object> valueWriter, Func<TEntity, string, NpgsqlParameter> valueRetriever)
+        internal EntityColumn(PropertyInfo propertyInfo, string columnName, ulong flagValue, MethodInfo dbValueRetriever, Action<TEntity, object> valueWriter, Func<TEntity, string, NpgsqlParameter> valueRetriever)
         {
             PropertyInfo = propertyInfo;
             ColumnName = columnName;
+            FlagValue = flagValue;
             DbValueRetriever = dbValueRetriever;
             ValueWriter = valueWriter;
             ValueRetriever = valueRetriever;

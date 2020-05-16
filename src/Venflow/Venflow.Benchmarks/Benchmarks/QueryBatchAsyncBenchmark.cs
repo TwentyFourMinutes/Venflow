@@ -9,7 +9,7 @@ using Venflow.Commands;
 
 namespace Venflow.Benchmarks.Benchmarks
 {
-	public class QueryAllAsyncBenchmark
+	public class QueryBatchAsyncBenchmark
 	{
 		public MyDbConfiguration Configuration { get; set; }
 		public VenflowDbConnection VenflowDbConnection { get; set; }
@@ -26,12 +26,12 @@ namespace Venflow.Benchmarks.Benchmarks
 			VenflowDbConnection = await Configuration.NewConnectionScopeAsync();
 
 			await VenflowDbConnection.Connection.QueryAllAsync<Person>();
-			Command = VenflowDbConnection.CompileQueryAllCommand<Person>("SELECT \"Id\", \"Name\" FROM \"Persons\"");
+			Command = VenflowDbConnection.CompileQueryBatchCommand<Person>(-1);
 			await VenflowDbConnection.QueryBatchAsync(Command);
 		}
 
 		[Benchmark]
-		public Task<ICollection<Person>> VenflowQueryAllAsync()
+		public Task<IList<Person>> VenflowQueryAllAsync()
 		{
 			return VenflowDbConnection.QueryBatchAsync(Command);
 		}

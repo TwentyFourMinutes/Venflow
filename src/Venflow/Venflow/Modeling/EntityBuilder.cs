@@ -133,6 +133,7 @@ namespace Venflow.Modeling
             var stringConcatMethod = constructorTypes[0].GetMethod("Concat", new[] { constructorTypes[0], constructorTypes[0] });
 
             var columnIndex = 0;
+            var propertyFlagValue = 1uL;
 
             for (int i = 0; i < properties.Length; i++)
             {
@@ -174,7 +175,7 @@ namespace Venflow.Modeling
                     switch (definition)
                     {
                         case PrimaryColumnDefinition<TEntity> primaryDefintion:
-                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, valueRetriever, valueWriter, parameterValueRetriever, primaryDefintion.IsServerSideGenerated);
+                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, propertyFlagValue, valueRetriever, valueWriter, parameterValueRetriever, primaryDefintion.IsServerSideGenerated);
 
                             columns.Add(primaryColumn);
 
@@ -194,7 +195,7 @@ namespace Venflow.Modeling
                 {
                     var columnName = definition?.Name ?? property.Name;
 
-                    var column = new EntityColumn<TEntity>(property, columnName, valueRetriever, valueWriter, parameterValueRetriever);
+                    var column = new EntityColumn<TEntity>(property, columnName, propertyFlagValue, valueRetriever, valueWriter, parameterValueRetriever);
 
                     columns.Add(column);
 
@@ -207,6 +208,7 @@ namespace Venflow.Modeling
                 }
 
                 columnIndex++;
+                propertyFlagValue <<= 1;
             }
 
             if (primaryColumn is null)
@@ -219,14 +221,16 @@ namespace Venflow.Modeling
                 _tableName = _type.Name + "s";
             }
 
-            (Func<ChangeTracker<TEntity>, TEntity> factory, Func<ChangeTracker<TEntity>, TEntity, TEntity> applier)? changeTrackerFactories = null;
+            Type? proxyType = null;
+            Func<ChangeTracker<TEntity>, TEntity>? factory = null;
+            Func<ChangeTracker<TEntity>, TEntity, TEntity>? applier = null;
 
             if (changeTrackingColumns.Count != 0)
             {
-                changeTrackerFactories = _changeTrackerFactory.GenerateEntityProxyFactories(_type, changeTrackingColumns);
+                (proxyType, factory, applier) = _changeTrackerFactory.GenerateEntityProxyFactories(_type, changeTrackingColumns);
             }
 
-            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_type, changeTrackerFactories?.factory, changeTrackerFactories?.applier, _tableName, new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn), primaryColumn));
+            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_type, proxyType, factory, applier, _tableName, new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn), primaryColumn));
         }
 
         private MethodInfo GetDbValueRetrieverMethod(PropertyInfo property, Type readerType)

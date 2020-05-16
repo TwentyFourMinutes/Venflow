@@ -9,13 +9,13 @@ namespace Venflow.Modeling
         internal bool TrackChanges { get; set; }
         internal bool IsDirty { get; private set; }
 
-        private EntityColumn<TEntity>?[] _changedColumns;
+        private byte[]? _changedColumns;
 
-        private readonly Entity<TEntity> _entity;
+        private readonly int _columnLength;
 
-        internal ChangeTracker(Entity<TEntity> entity, bool trackChanges)
+        internal ChangeTracker(int columnLength, bool trackChanges)
         {
-            _entity = entity;
+            _columnLength = columnLength;
             TrackChanges = trackChanges;
             _changedColumns = null!;
         }
@@ -23,22 +23,19 @@ namespace Venflow.Modeling
         internal void MakeDirty(byte propertyIndex)
         {
             if (!TrackChanges)
-                 return;
+                return;
 
             if (!IsDirty)
             {
-                _changedColumns = new EntityColumn<TEntity>?[_entity.Columns.Count];
+                _changedColumns = new byte[_columnLength];
 
                 IsDirty = true;
             }
 
-            if (_changedColumns[propertyIndex] is null)
-            {
-                _changedColumns[propertyIndex] = _entity.Columns.GetColumnByFlagPosition(propertyIndex);
-            }
+            _changedColumns[propertyIndex] = propertyIndex;
         }
 
-        internal EntityColumn<TEntity>?[] GetColumns()
+        internal byte[]? GetColumns()
         {
             return _changedColumns;
         }

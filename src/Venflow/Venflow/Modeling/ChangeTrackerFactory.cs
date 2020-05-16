@@ -22,7 +22,7 @@ namespace Venflow.Modeling
             _proxyModule = assemblyBuilder.DefineDynamicModule(assemblyName.Name + ".dll");
         }
 
-        internal (Func<ChangeTracker<TEntity>, TEntity> factory, Func<ChangeTracker<TEntity>, TEntity, TEntity> applier) GenerateEntityProxyFactories<TEntity>(Type entityType, Dictionary<int, EntityColumn<TEntity>> properties) where TEntity : class
+        internal (Type proxyType, Func<ChangeTracker<TEntity>, TEntity> factory, Func<ChangeTracker<TEntity>, TEntity, TEntity> applier) GenerateEntityProxyFactories<TEntity>(Type entityType, Dictionary<int, EntityColumn<TEntity>> properties) where TEntity : class
         {
             var proxyInterfaceType = typeof(IEntityProxy<TEntity>);
             var changeTrackerType = typeof(ChangeTracker<TEntity>);
@@ -71,7 +71,7 @@ namespace Venflow.Modeling
             }
 
             // Create Constructor
-            var constructor = proxyTypeBuilder.DefineConstructor(MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, CallingConventions.Standard, new[] { changeTrackerType });
+            var constructor = proxyTypeBuilder.DefineConstructor(MethodAttributes.Assembly | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, CallingConventions.Standard, new[] { changeTrackerType });
             var constructorIL = constructor.GetILGenerator();
 
             constructorIL.Emit(OpCodes.Ldarg_0);
@@ -85,7 +85,7 @@ namespace Venflow.Modeling
             var changeTrackerParameter = Expression.Parameter(changeTrackerType, "changeTracker");
             var entityParameter = Expression.Parameter(entityType, "entity");
 
-            var proxyInstance = Expression.New(proxyType.GetConstructor(new[] { changeTrackerType }), changeTrackerParameter);
+            var proxyInstance = Expression.New(proxyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { changeTrackerType }, null), changeTrackerParameter);
 
             var factory = Expression.Lambda<Func<ChangeTracker<TEntity>, TEntity>>(Expression.Convert(proxyInstance, entityType), changeTrackerParameter).Compile();
 
@@ -107,7 +107,7 @@ namespace Venflow.Modeling
 
             var applier = Expression.Lambda<Func<ChangeTracker<TEntity>, TEntity, TEntity>>(block, changeTrackerParameter, entityParameter).Compile();
 
-            return (factory, applier);
+            return (proxyType, factory, applier);
         }
     }
 }
