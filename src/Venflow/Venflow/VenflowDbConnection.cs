@@ -190,7 +190,7 @@ namespace Venflow
 
             command.UnderlyingCommand.Connection = Connection;
 
-            await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(CommandBehavior.SingleRow, cancellationToken);
+            await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
             var isChangeTracking = command.TrackingChanges && command.EntityConfiguration.ChangeTrackerFactory is { };
 
