@@ -206,9 +206,7 @@ namespace Venflow.Commands
 
                 _commandString.Append(parameter.ParameterName);
 
-                index++;
-
-                if (index < columns.Count)
+                if (columnIndex < columns.Count)
                 {
                     _commandString.Append(", ");
                 }
