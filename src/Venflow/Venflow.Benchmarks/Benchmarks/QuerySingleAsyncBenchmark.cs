@@ -28,7 +28,7 @@ namespace Venflow.Benchmarks.Benchmarks
         [Benchmark]
         public Task<Person> VenflowQuerySingleAsync()
         {
-            return VenflowDbConnection.QuerySingleAsync<Person>("SELECT \"Id\", \"Name\" FROM \"Persons\" LIMIT 1");
+            return VenflowDbConnection.QuerySingleAsync<Person>();
         }
 
         [Benchmark]

@@ -5,7 +5,6 @@ using RepoDb.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Venflow.Benchmarks.Benchmarks.Models;
-using Venflow.Commands;
 
 namespace Venflow.Benchmarks.Benchmarks
 {
@@ -13,7 +12,6 @@ namespace Venflow.Benchmarks.Benchmarks
 	{
 		public MyDbConfiguration Configuration { get; set; }
 		public VenflowDbConnection VenflowDbConnection { get; set; }
-		public QueryCommand<Person> Command { get; set; }
 
 		[GlobalSetup]
 		public async Task Setup()
@@ -26,14 +24,13 @@ namespace Venflow.Benchmarks.Benchmarks
 			VenflowDbConnection = await Configuration.NewConnectionScopeAsync();
 
 			await VenflowDbConnection.Connection.QueryAllAsync<Person>();
-			Command = VenflowDbConnection.CompileQueryBatchCommand<Person>(-1);
-			await VenflowDbConnection.QueryBatchAsync(Command);
+			await VenflowDbConnection.QueryBatchAsync<Person>();
 		}
 
 		[Benchmark]
-		public Task<IList<Person>> VenflowQueryAllAsync()
+		public Task<List<Person>> VenflowQueryAllAsync()
 		{
-			return VenflowDbConnection.QueryBatchAsync(Command);
+			return VenflowDbConnection.QueryBatchAsync<Person>();
 		}
 
 		[Benchmark]
@@ -55,8 +52,6 @@ namespace Venflow.Benchmarks.Benchmarks
 			Configuration = new MyDbConfiguration();
 
 			await VenflowDbConnection.DisposeAsync();
-
-			Command.Dispose();
 		}
 	}
 }

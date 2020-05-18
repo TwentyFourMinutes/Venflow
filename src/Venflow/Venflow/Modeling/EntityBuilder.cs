@@ -133,6 +133,7 @@ namespace Venflow.Modeling
             var stringConcatMethod = constructorTypes[0].GetMethod("Concat", new[] { constructorTypes[0], constructorTypes[0] });
 
             var columnIndex = 0;
+            var regularColumnsOffset = 0;
             var propertyFlagValue = 1uL;
 
             for (int i = 0; i < properties.Length; i++)
@@ -177,7 +178,9 @@ namespace Venflow.Modeling
                         case PrimaryColumnDefinition<TEntity> primaryDefintion:
                             primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, propertyFlagValue, valueRetriever, valueWriter, parameterValueRetriever, primaryDefintion.IsServerSideGenerated);
 
-                            columns.Add(primaryColumn);
+                            columns.Insert(0, primaryColumn);
+
+                            regularColumnsOffset++;
 
                             if (property.GetSetMethod().IsVirtual)
                             {
@@ -187,6 +190,7 @@ namespace Venflow.Modeling
                             nameToColumn.Add(definition.Name, columnIndex);
 
                             hasCustomDefinition = true;
+
                             break;
                     }
                 }
@@ -230,7 +234,7 @@ namespace Venflow.Modeling
                 (proxyType, factory, applier) = _changeTrackerFactory.GenerateEntityProxyFactories(_type, changeTrackingColumns);
             }
 
-            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_type, proxyType, factory, applier, _tableName, new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn), primaryColumn));
+            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_type, proxyType, factory, applier, _tableName, new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn), regularColumnsOffset, primaryColumn));
         }
 
         private MethodInfo GetDbValueRetrieverMethod(PropertyInfo property, Type readerType)

@@ -6,6 +6,7 @@ namespace Venflow.Modeling
     internal class Entity<TEntity> : IEntity where TEntity : class
     {
         internal EntityColumnCollection<TEntity> Columns { get; }
+        internal int RegularColumnsOffset { get; }
         internal PrimaryEntityColumn<TEntity> PrimaryColumn { get; }
 
         internal string TableName { get; }
@@ -19,13 +20,14 @@ namespace Venflow.Modeling
         internal string ColumnListString { get; }
         internal string NonPrimaryColumnListString { get; }
 
-        internal Entity(Type entityType, Type? proxyEntityType, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier, string tableName, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn)
+        internal Entity(Type entityType, Type? proxyEntityType, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier, string tableName, EntityColumnCollection<TEntity> columns, int regularColumnsOffset, PrimaryEntityColumn<TEntity> primaryColumn)
         {
             EntityType = entityType;
             ChangeTrackerFactory = changeTrackerFactory;
             ChangeTrackerApplier = changeTrackerApplier;
             TableName = "\"" + tableName + "\"";
             Columns = columns;
+            RegularColumnsOffset = regularColumnsOffset;
             PrimaryColumn = primaryColumn;
 
             QueryCommandCache = new QueryCommandCache<TEntity>(entityType, proxyEntityType, Columns);

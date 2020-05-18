@@ -11,71 +11,6 @@ using Venflow.Modeling;
 
 namespace Venflow
 {
-    public class VenflowCommandBuilder
-    {
-        public VenflowDbConnection VenflowDbConnection { get; set; }
-
-        public bool TrackChanges { get; set; }
-
-        internal VenflowCommandBuilder(VenflowDbConnection venflowDbConnection)
-        {
-            VenflowDbConnection = venflowDbConnection;
-        }
-
-        #region QuerySingleAsync
-
-        public Task<TEntity> QuerySingleAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            using var venflowCommand = VenflowDbConnection.CompileQuerySingleCommand<TEntity>();
-
-            venflowCommand.TrackChanges = TrackChanges;
-
-            return VenflowDbConnection.QuerySingleAsync(venflowCommand, cancellationToken);
-        }
-
-        public Task<TEntity> QuerySingleAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            using var venflowCommand = VenflowDbConnection.CompileQueryCommand<TEntity>(sql);
-
-            venflowCommand.TrackChanges = TrackChanges;
-
-            return VenflowDbConnection.QuerySingleAsync(venflowCommand, cancellationToken);
-        }
-
-        #endregion
-
-        #region QueryBatchAsync
-
-        public Task<IList<TEntity>> QueryBatchAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class
-        {
-            using var venflowCommand = VenflowDbConnection.CompileQueryBatchCommand<TEntity>(-1);
-
-            venflowCommand.TrackChanges = TrackChanges;
-
-            return VenflowDbConnection.QueryBatchAsync(venflowCommand, cancellationToken);
-        }
-
-        public Task<IList<TEntity>> QueryBatchAsync<TEntity>(int count, CancellationToken cancellationToken = default) where TEntity : class
-        {
-            using var venflowCommand = VenflowDbConnection.CompileQueryBatchCommand<TEntity>(count);
-
-            venflowCommand.TrackChanges = TrackChanges;
-
-            return VenflowDbConnection.QueryBatchAsync(venflowCommand, cancellationToken);
-        }
-
-        public Task<IList<TEntity>> QueryBatchAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class
-        {
-            using var venflowCommand = VenflowDbConnection.CompileQueryCommand<TEntity>(sql);
-
-            venflowCommand.TrackChanges = TrackChanges;
-
-            return VenflowDbConnection.QueryBatchAsync(venflowCommand, cancellationToken);
-        }
-
-        #endregion
-    }
-
     public class VenflowDbConnection : IAsyncDisposable
     {
         public NpgsqlConnection Connection { get; }
@@ -87,15 +22,6 @@ namespace Venflow
             Connection = connection;
             _dbConfiguration = dbConfiguration;
         }
-
-        #region Builder
-
-        public VenflowCommandBuilder TrackChanges()
-        {
-            return new VenflowCommandBuilder(this) { TrackChanges = true };
-        }
-
-        #endregion
 
         #region Misc
 
@@ -152,393 +78,91 @@ namespace Venflow
 
         #region InsertAsync
 
-        //public Task<int> InsertAsync<TEntity>(TEntity entity, bool getInsertedId = true, CancellationToken cancellationToken = default) where TEntity : class
-        //{
-        //    using var venflowCommand = CompileInsertCommand(entity, getInsertedId);
+        public Task<int> InsertSingleAsync<TEntity>(TEntity entity, bool returnComputedColumns = false, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            using var command = Insert<TEntity>().ReturnComputedColumns(returnComputedColumns).Single(entity);
 
-        //    return InsertAsync(venflowCommand, entity, false, cancellationToken);
-        //}
+            return InsertSingleAsync(command, returnComputedColumns ? entity : null, cancellationToken);
+        }
 
-        //public InsertCommand<TEntity> CompileInsertCommand<TEntity>(TEntity entity, bool getInsertedId = true) where TEntity : class
-        //    => CompileInsertCommand(entity, true, getInsertedId);
+        public async Task<int> InsertSingleAsync<TEntity>(IInsertCommand<TEntity> insertCommand, TEntity? entity = null, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            var command = (VenflowCommand<TEntity>)insertCommand;
 
-        //public InsertCommand<TEntity> CompileInsertCommand<TEntity>(bool getInsertedId = true) where TEntity : class
-        //    => CompileInsertCommand<TEntity>(null, false, getInsertedId);
+            command.UnderlyingCommand.Connection = Connection;
 
-        //private InsertCommand<TEntity> CompileInsertCommand<TEntity>(TEntity? entity, bool writeParameters, bool getInsertedId) where TEntity : class
-        //{
-        //    var entityConfiguration = GetEntityConfiguration<TEntity>();
+            if (command.GetComputedColumns && entity is { })
+            {
+                var value = await command.UnderlyingCommand.ExecuteScalarAsync(cancellationToken);
 
-        //    var command = new NpgsqlCommand();
+                command.EntityConfiguration.PrimaryColumn.ValueWriter(entity, value);
 
-        //    var sb = new StringBuilder();
+                return 1;
+            }
+            else
+            {
+                return await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+            }
+        }
 
-        //    sb.Append("INSERT INTO ");
-        //    sb.Append(entityConfiguration.TableName);
-        //    sb.Append(" ");
+        public Task<int> InsertBatchAsync<TEntity>(IEnumerable<TEntity> entities, bool returnComputedColumns = false, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            using var command = Insert<TEntity>().ReturnComputedColumns(returnComputedColumns).Batch(entities);
 
-        //    var startIndex = 1;
+            return InsertBatchAsync(command, returnComputedColumns ? entities : null, cancellationToken);
+        }
 
-        //    if (getInsertedId)
-        //    {
-        //        getInsertedId = entityConfiguration.PrimaryColumn.IsServerSideGenerated;
-        //    }
+        public async Task<int> InsertBatchAsync<TEntity>(IInsertCommand<TEntity> insertCommand, IEnumerable<TEntity>? entities = null, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            var command = (VenflowCommand<TEntity>)insertCommand;
 
-        //    if (getInsertedId)
-        //    {
-        //        sb.AppendLine(entityConfiguration.ColumnsString);
-        //    }
-        //    else
-        //    {
-        //        sb.AppendLine(entityConfiguration.ColumnsStringWithPrimaryKey);
-        //        startIndex = 0;
-        //    }
+            command.UnderlyingCommand.Connection = Connection;
 
-        //    sb.Append("VALUES (");
+            if (command.GetComputedColumns && entities is { })
+            {
+                var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
-        //    var i = startIndex;
+                var valueWriter = command.EntityConfiguration.PrimaryColumn.ValueWriter;
 
-        //    while (true)
-        //    {
-        //        if (writeParameters)
-        //        {
-        //            var parameter = entityConfiguration.Columns[i].ValueRetriever(entity, "0");
+                var index = 0;
 
-        //            command.Parameters.Add(parameter);
+                if (entities is IList<TEntity> list)
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        valueWriter.Invoke(list[index++], reader.GetValue(0));
+                    }
+                }
+                else
+                {
+                    foreach (var entity in entities)
+                    {
+                        if (!await reader.ReadAsync())
+                            break;
 
-        //            sb.Append(parameter.ParameterName);
-        //        }
-        //        else
-        //        {
-        //            sb.Append("@" + entityConfiguration.Columns[i].ColumnName + "0");
-        //        }
+                        valueWriter.Invoke(entity, reader.GetValue(0));
+                    }
+                }
+            }
 
-        //        i++;
-
-        //        if (i < entityConfiguration.Columns.Count)
-        //        {
-        //            sb.Append(", ");
-        //        }
-        //        else
-        //        {
-        //            break;
-        //        }
-        //    }
-
-        //    sb.Append(")");
-
-        //    if (getInsertedId)
-        //    {
-        //        sb.Append(" RETURNING \"");
-
-        //        sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
-
-        //        sb.Append('"');
-        //    }
-
-        //    sb.Append(";");
-
-        //    command.CommandText = sb.ToString();
-
-        //    return new InsertCommand<TEntity>(command, entityConfiguration)
-        //    {
-        //        GetInsertedId = getInsertedId,
-        //        StartIndex = startIndex
-        //    };
-        //}
-
-        //public async Task<int> InsertAsync<TEntity>(InsertCommand<TEntity> command, TEntity entity, bool writeParameters, CancellationToken cancellationToken = default) where TEntity : class
-        //{
-        //    command.UnderlyingCommand.Connection = Connection;
-
-        //    if (writeParameters)
-        //    {
-        //        command.UnderlyingCommand.Parameters.Clear();
-
-        //        for (int i = command.StartIndex; i < command.EntityConfiguration.Columns.Count; i++)
-        //        {
-        //            var parameter = command.EntityConfiguration.Columns[i].ValueRetriever(entity, "0");
-
-        //            command.UnderlyingCommand.Parameters.Add(parameter);
-        //        }
-        //    }
-
-        //    if (command.GetInsertedId)
-        //    {
-        //        var value = await command.UnderlyingCommand.ExecuteScalarAsync(cancellationToken);
-
-        //        command.EntityConfiguration.PrimaryColumn.ValueWriter(entity, value);
-
-        //        return 1;
-        //    }
-        //    else
-        //    {
-        //        return await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-        //    }
-        //}
+            return await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
 
         #endregion
 
-        #region InsertAllAsync
+        #region QueryAsync
 
-        //public Task<int> InsertAllAsync<TEntity>(IEnumerable<TEntity> entities, bool getInsertedId = false, CancellationToken cancellationToken = default) where TEntity : class
-        //{
-        //    using var venflowCommand = CompileInsertAllCommand(entities, getInsertedId);
-
-        //    return InsertAllAsync(venflowCommand, entities, false, cancellationToken);
-        //}
-
-        //public InsertCommand<TEntity> CompileInsertAllCommand<TEntity>(IEnumerable<TEntity> entities, bool getInsertedId = false) where TEntity : class
-        //    => CompileInsertAllCommand(entities, true, getInsertedId);
-
-        //private InsertCommand<TEntity> CompileInsertAllCommand<TEntity>(IEnumerable<TEntity> entities, bool writeParameters, bool getInsertedId = false) where TEntity : class
-        //{
-        //    var entityConfiguration = GetEntityConfiguration<TEntity>();
-
-        //    var command = new NpgsqlCommand();
-
-        //    var sb = new StringBuilder();
-
-        //    sb.Append("INSERT INTO ");
-        //    sb.Append(entityConfiguration.TableName);
-        //    sb.Append(" ");
-
-        //    var startIndex = 1;
-
-        //    if (getInsertedId && !entityConfiguration.PrimaryColumn.IsServerSideGenerated)
-        //    {
-        //        throw new ArgumentException("You can not retrieve the values from the database since this column is not generated in the database.", nameof(getInsertedId));
-        //    }
-
-        //    if (getInsertedId || entityConfiguration.PrimaryColumn.IsServerSideGenerated)
-        //    {
-        //        sb.AppendLine(entityConfiguration.ColumnsString);
-        //    }
-        //    else
-        //    {
-        //        sb.AppendLine(entityConfiguration.ColumnsStringWithPrimaryKey);
-        //        startIndex = 0;
-        //    }
-
-        //    sb.Append("VALUES (");
-
-        //    if (writeParameters)
-        //    {
-        //        if (entities is IList<TEntity> list)
-        //        {
-        //            for (int k = 0; k < list.Count; k++)
-        //            {
-        //                var i = startIndex;
-
-        //                while (true)
-        //                {
-        //                    var parameter = entityConfiguration.Columns[i].ValueRetriever(list[k], k.ToString());
-
-        //                    command.Parameters.Add(parameter);
-
-        //                    sb.Append(parameter.ParameterName);
-
-        //                    i++;
-
-        //                    if (i < entityConfiguration.Columns.Count)
-        //                    {
-        //                        sb.Append(", ");
-        //                    }
-        //                    else
-        //                    {
-        //                        break;
-        //                    }
-        //                }
-
-        //                sb.Append("), (");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            var parameterIndex = 0;
-
-        //            foreach (var entity in entities)
-        //            {
-        //                var i = startIndex;
-
-        //                while (true)
-        //                {
-        //                    var parameter = entityConfiguration.Columns[i].ValueRetriever(entity, parameterIndex.ToString());
-
-        //                    command.Parameters.Add(parameter);
-
-        //                    sb.Append(parameter.ParameterName);
-
-        //                    i++;
-
-        //                    if (i < entityConfiguration.Columns.Count)
-        //                    {
-        //                        sb.Append(", ");
-        //                    }
-        //                    else
-        //                    {
-        //                        break;
-        //                    }
-        //                }
-
-        //                sb.Append("), (");
-
-        //                parameterIndex++;
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        int count;
-
-        //        if (entities is IList<TEntity> list)
-        //        {
-        //            count = list.Count;
-        //        }
-        //        else
-        //        {
-        //            count = entities.Count();
-        //        }
-
-        //        for (int k = 0; k < count; k++)
-        //        {
-        //            var i = startIndex;
-
-        //            while (true)
-        //            {
-        //                sb.Append("@" + entityConfiguration.Columns[i].ColumnName + k.ToString());
-
-        //                i++;
-
-        //                if (i < entityConfiguration.Columns.Count)
-        //                {
-        //                    sb.Append(", ");
-        //                }
-        //                else
-        //                {
-        //                    break;
-        //                }
-        //            }
-
-        //            sb.Append("), (");
-        //        }
-        //    }
-
-        //    sb.Remove(sb.Length - 3, 3);
-
-        //    if (getInsertedId)
-        //    {
-        //        sb.Append(" RETURNING \"");
-
-        //        sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
-
-        //        sb.Append('"');
-        //    }
-
-        //    sb.Append(";");
-
-        //    command.CommandText = sb.ToString();
-
-        //    return new InsertCommand<TEntity>(command, entityConfiguration)
-        //    {
-        //        GetInsertedId = getInsertedId,
-        //        StartIndex = startIndex
-        //    };
-        //}
-
-        //public async Task<int> InsertAllAsync<TEntity>(InsertCommand<TEntity> command, IEnumerable<TEntity> entities, bool writeParameters, CancellationToken cancellationToken = default) where TEntity : class
-        //{
-        //    command.UnderlyingCommand.Connection = Connection;
-
-        //    if (writeParameters)
-        //    {
-        //        var columns = command.EntityConfiguration.Columns;
-        //        var parameters = command.UnderlyingCommand.Parameters;
-
-        //        if (entities is IList<TEntity> list)
-        //        {
-        //            for (int k = 0; k < list.Count; k++)
-        //            {
-        //                for (int i = command.StartIndex; i < columns.Count; i++)
-        //                {
-        //                    parameters.Add(columns[i].ValueRetriever(list[k], k.ToString()));
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            var parameterIndex = 0;
-
-        //            foreach (var entity in entities)
-        //            {
-        //                for (int i = command.StartIndex; i < columns.Count; i++)
-        //                {
-        //                    parameters.Add(columns[i].ValueRetriever(entity, parameterIndex.ToString()));
-        //                }
-
-        //                parameterIndex++;
-        //            }
-        //        }
-        //    }
-
-        //    if (command.GetInsertedId)
-        //    {
-        //        var valueWriter = command.EntityConfiguration.PrimaryColumn.ValueWriter;
-
-        //        await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
-
-        //        foreach (var entity in entities)
-        //        {
-        //            var success = await reader.ReadAsync(cancellationToken);
-
-        //            if (!success)
-        //                break;
-
-        //            valueWriter(entity, reader.GetValue(0));
-        //        }
-
-        //        return -1;
-        //    }
-        //    else
-        //    {
-        //        return await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-        //    }
-        //}
-
-        #endregion
-
-        #region QuerySingleAsync
-
-        public Task<TEntity> QuerySingleAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class, new()
+        public Task<TEntity?> QuerySingleAsync<TEntity>(bool changeTracking = false, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var venflowCommand = CompileQuerySingleCommand<TEntity>();
+            using var command = Query<TEntity>().TrackChanges(changeTracking).Single();
 
-            return QuerySingleAsync(venflowCommand, cancellationToken);
+            return QuerySingleAsync(command, cancellationToken);
         }
 
-        public Task<TEntity> QuerySingleAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public async Task<TEntity?> QuerySingleAsync<TEntity>(IQueryCommand<TEntity> queryCommand, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var venflowCommand = CompileQueryCommand<TEntity>(sql);
+            var command = (VenflowCommand<TEntity>)queryCommand;
 
-            return QuerySingleAsync(venflowCommand, cancellationToken);
-        }
-
-        public QueryCommand<TEntity> CompileQuerySingleCommand<TEntity>() where TEntity : class
-        {
-            var entityConfiguration = GetEntityConfiguration<TEntity>();
-
-            return new QueryCommand<TEntity>(new NpgsqlCommand(QueryCommand<TEntity>.CompileDefaultStatement(entityConfiguration)), entityConfiguration);
-        }
-
-        public QueryCommand<TEntity> CompileQueryCommand<TEntity>(string sql) where TEntity : class
-        {
-            var entityConfiguration = GetEntityConfiguration<TEntity>();
-
-            return new QueryCommand<TEntity>(new NpgsqlCommand(sql), entityConfiguration);
-        }
-
-        public async Task<TEntity> QuerySingleAsync<TEntity>(QueryCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
             command.UnderlyingCommand.Connection = Connection;
 
             await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(CommandBehavior.SingleRow, cancellationToken);
@@ -548,77 +172,31 @@ namespace Venflow
                 return default!;
             }
 
-            TEntity entity;
+            var isChangeTracking = command.TrackingChanges && command.EntityConfiguration.ChangeTrackerFactory is { };
 
-            var isChangeTracking = command.TrackChanges && command.EntityConfiguration.ChangeTrackerFactory is { };
-
-            if (isChangeTracking)
-            {
-                entity = command.EntityConfiguration.GetProxiedEntity();
-            }
-            else
-            {
-                entity = new TEntity();
-            }
-
-            for (int i = 0; i < reader.VisibleFieldCount; i++)
-            {
-                var name = reader.GetName(i);
-
-                var value = reader[i];
-
-                command.EntityConfiguration.Columns[name].ValueWriter(entity, value);
-            }
-
-            if (isChangeTracking)
-            {
-                EnableChangeTracking(entity);
-            }
-
-            return entity;
+            return command.EntityConfiguration.QueryCommandCache.GetOrCreateFactory(reader.GetColumnSchema(), isChangeTracking).Invoke(reader);
         }
 
-        #endregion
-
-        #region QueryBatchAsync
-
-        public Task<IList<TEntity>> QueryBatchAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class
+        public Task<List<TEntity>> QueryBatchAsync<TEntity>(bool changeTracking = false, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var venflowCommand = CompileQueryBatchCommand<TEntity>(-1);
+            using var command = Query<TEntity>().TrackChanges(changeTracking).Batch();
 
-            return QueryBatchAsync(venflowCommand, cancellationToken);
+            return QueryBatchAsync(command, cancellationToken);
         }
 
-        public Task<IList<TEntity>> QueryBatchAsync<TEntity>(int count, CancellationToken cancellationToken = default) where TEntity : class
+        public async Task<List<TEntity>> QueryBatchAsync<TEntity>(IQueryCommand<TEntity> queryCommand, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var venflowCommand = CompileQueryBatchCommand<TEntity>(count);
+            var command = (VenflowCommand<TEntity>)queryCommand;
 
-            return QueryBatchAsync(venflowCommand, cancellationToken);
-        }
-
-        public Task<IList<TEntity>> QueryBatchAsync<TEntity>(string sql, CancellationToken cancellationToken = default) where TEntity : class
-        {
-            using var venflowCommand = CompileQueryCommand<TEntity>(sql);
-
-            return QueryBatchAsync(venflowCommand, cancellationToken);
-        }
-
-        public QueryCommand<TEntity> CompileQueryBatchCommand<TEntity>(int count) where TEntity : class
-        {
-            var entityConfiguration = GetEntityConfiguration<TEntity>();
-
-            return new QueryCommand<TEntity>(new NpgsqlCommand(QueryCommand<TEntity>.CompileDefaultStatement(entityConfiguration, count)), entityConfiguration);
-        }
-
-        public async Task<IList<TEntity>> QueryBatchAsync<TEntity>(QueryCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
-        {
             command.UnderlyingCommand.Connection = Connection;
 
-            await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
+            await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(CommandBehavior.SingleRow, cancellationToken);
 
-            var factory = command.EntityConfiguration.QueryCommandCache.GetOrCreateFactory(reader.GetColumnSchema(), command.TrackChanges);
+            var isChangeTracking = command.TrackingChanges && command.EntityConfiguration.ChangeTrackerFactory is { };
 
             var entities = new List<TEntity>();
+
+            var factory = command.EntityConfiguration.QueryCommandCache.GetOrCreateFactory(reader.GetColumnSchema(), isChangeTracking);
 
             while (await reader.ReadAsync())
             {
@@ -630,387 +208,78 @@ namespace Venflow
 
         #endregion
 
-        #region DeleteSingleAsync
+        #region DeleteAsync
 
-        public Task<int> DeleteSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
+        public Task DeleteSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var venflowCommand = CompileDeleteSingleCommand<TEntity>();
+            using var command = Delete<TEntity>().Single(entity);
 
-            return DeleteSingleAsync(venflowCommand, entity, cancellationToken);
+            return DeleteAsync(command, cancellationToken);
         }
 
-        public DeleteCommand<TEntity> CompileDeleteSingleCommand<TEntity>() where TEntity : class
+        public Task DeleteBatchAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
         {
-            var entityConfiguration = GetEntityConfiguration<TEntity>();
+            using var command = Delete<TEntity>().Batch(entities);
 
-            var sb = new StringBuilder();
-
-            sb.Append("DELETE FROM ");
-            sb.AppendLine(entityConfiguration.TableName);
-            sb.Append(" WHERE \"");
-            sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
-            sb.Append("\" = @");
-            sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
-            sb.Append("0;");
-
-            return new DeleteCommand<TEntity>(new NpgsqlCommand(sb.ToString()), entityConfiguration);
+            return DeleteAsync(command, cancellationToken);
         }
 
-        public Task<int> DeleteSingleAsync<TEntity>(DeleteCommand<TEntity> command, TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
+        public Task DeleteAsync<TEntity>(IDeleteCommand<TEntity> deleteCommand, CancellationToken cancellationToken = default) where TEntity : class
         {
+            var command = (VenflowCommand<TEntity>)deleteCommand;
+
             command.UnderlyingCommand.Connection = Connection;
-
-            command.UnderlyingCommand.Parameters.Add(command.EntityConfiguration.PrimaryColumn.ValueRetriever(entity, "0"));
 
             return command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
         }
 
         #endregion
 
-        #region DeleteBatchAsync
-
-        public Task<int> DeleteBatchAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
-        {
-            using var venflowCommand = CompileDeleteBatchCommandWithParameters(entities);
-
-            return DeleteBatchAsync(venflowCommand, cancellationToken);
-        }
-
-        private DeleteCommand<TEntity> CompileDeleteBatchCommandWithParameters<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
-        {
-            var entityConfiguration = GetEntityConfiguration<TEntity>();
-            var command = new NpgsqlCommand();
-
-            var sb = new StringBuilder();
-
-            sb.Append("DELETE FROM ");
-            sb.AppendLine(entityConfiguration.TableName);
-            sb.Append(" WHERE \"");
-            sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
-            sb.Append("\" IN (");
-
-            var valueRetriever = entityConfiguration.PrimaryColumn.ValueRetriever;
-
-            if (entities is IList<TEntity> list)
-            {
-                for (int i = 0; i < list.Count; i++)
-                {
-                    sb.Append('@');
-                    sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
-                    sb.Append(i);
-                    sb.Append(", ");
-
-                    command.Parameters.Add(valueRetriever(list[i], i.ToString()));
-                }
-            }
-            else
-            {
-                int i = 0;
-
-                foreach (var entity in entities)
-                {
-                    sb.Append('@');
-                    sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
-                    sb.Append(i++);
-                    sb.Append(", ");
-
-                    command.Parameters.Add(valueRetriever(entity, i.ToString()));
-                }
-            }
-
-            sb.Remove(sb.Length - 2, 2);
-            sb.Append(");");
-
-            command.CommandText = sb.ToString();
-
-            return new DeleteCommand<TEntity>(command, entityConfiguration);
-        }
-
-        public DeleteCommand<TEntity> CompileDeleteBatchCommand<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
-        {
-            var entityConfiguration = GetEntityConfiguration<TEntity>();
-            var command = new NpgsqlCommand();
-
-            var sb = new StringBuilder();
-
-            sb.Append("DELETE FROM ");
-            sb.AppendLine(entityConfiguration.TableName);
-            sb.Append(" WHERE \"");
-            sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
-            sb.Append("\" IN (");
-
-            if (entities is IList<TEntity> list)
-            {
-                for (int i = 0; i < list.Count; i++)
-                {
-                    sb.Append('@');
-                    sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
-                    sb.Append(i);
-                    sb.Append(", ");
-                }
-            }
-            else
-            {
-                int i = 0;
-
-                foreach (var entity in entities)
-                {
-                    sb.Append('@');
-                    sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
-                    sb.Append(i++);
-                    sb.Append(", ");
-                }
-            }
-
-            sb.Remove(sb.Length - 2, 2);
-            sb.Append(");");
-
-            command.CommandText = sb.ToString();
-
-            return new DeleteCommand<TEntity>(command, entityConfiguration);
-        }
-
-        private Task<int> DeleteBatchAsync<TEntity>(DeleteCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
-        {
-            command.UnderlyingCommand.Connection = Connection;
-
-            return command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-        }
-
-        public Task<int> DeleteBatchAsync<TEntity>(DeleteCommand<TEntity> command, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
-        {
-            var npgsqlCommand = command.UnderlyingCommand;
-
-            npgsqlCommand.Connection = Connection;
-            npgsqlCommand.Parameters.Clear();
-
-            var valueRetriever = command.EntityConfiguration.PrimaryColumn.ValueRetriever;
-
-            if (entities is IList<TEntity> list)
-            {
-                for (int i = 0; i < list.Count; i++)
-                {
-                    npgsqlCommand.Parameters.Add(valueRetriever(list[i], i.ToString()));
-                }
-            }
-            else
-            {
-                int i = 0;
-
-                foreach (var entity in entities)
-                {
-                    npgsqlCommand.Parameters.Add(valueRetriever(entity, i.ToString()));
-                }
-            }
-
-            return command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-        }
-
-        #endregion
-
-        #region UpdateSingleAsync
+        #region UpdateAsync
 
         public ValueTask<int> UpdateSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var venflowCommand = CompileUpdateSingleCommand(entity);
+            using var command = Update<TEntity>().Single(entity);
 
-            if (venflowCommand is null)
-                return new ValueTask<int>(Task.FromResult(0));
-
-            return new ValueTask<int>(UpdateSingleAsync(venflowCommand, cancellationToken));
+            return UpdateAsync(command, cancellationToken);
         }
-
-        public UpdateCommand<TEntity>? CompileUpdateSingleCommand<TEntity>(TEntity entity) where TEntity : class
-        {
-            if (!(entity is IEntityProxy<TEntity> proxy))
-            {
-                throw new InvalidOperationException("The provided entity is currently not being change tracked.");
-            }
-            else if (!proxy.ChangeTracker.IsDirty)
-            {
-                return null;
-            }
-
-            var entityConfiguration = GetEntityConfiguration<TEntity>();
-
-            var sb = new StringBuilder();
-
-            sb.Append("UPDATE ");
-            sb.Append(entityConfiguration.TableName);
-            sb.Append(" SET ");
-
-            var columns = proxy.ChangeTracker.GetColumns()!;
-
-            var entityColumns = entityConfiguration.Columns;
-
-            var command = new NpgsqlCommand();
-
-            for (int i = 0; i < columns.Length; i++)
-            {
-                var columnIndex = columns[i];
-
-                if (columnIndex == 0)
-                    continue;
-
-                var column = entityColumns[columnIndex];
-
-                sb.Append('"');
-                sb.Append(column.ColumnName);
-                sb.Append("\" = ");
-
-                var parameter = column.ValueRetriever(entity, i.ToString());
-
-                sb.Append(parameter.ParameterName);
-
-                command.Parameters.Add(parameter);
-
-                sb.Append(", ");
-            }
-
-            sb.Remove(sb.Length - 2, 2);
-
-            sb.Append(" WHERE \"");
-
-            sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
-
-            sb.Append("\" = ");
-
-            var primaryParameter = entityConfiguration.PrimaryColumn.ValueRetriever(entity, "");
-
-            sb.Append(primaryParameter.ParameterName);
-            command.Parameters.Add(primaryParameter);
-
-            sb.Append(';');
-
-            command.CommandText = sb.ToString();
-
-            return new UpdateCommand<TEntity>(command, entityConfiguration);
-        }
-
-        public Task<int> UpdateSingleAsync<TEntity>(UpdateCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
-        {
-            command.UnderlyingCommand.Connection = Connection;
-
-            return command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-        }
-
-        #endregion
-
-        #region UpdateBatchAsync
 
         public ValueTask<int> UpdateBatchAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var venflowCommand = CompileUpdateBatchCommand(entities);
+            using var command = Update<TEntity>().Batch(entities);
 
-            if (venflowCommand is null)
-                return new ValueTask<int>(Task.FromResult(0));
-
-            return new ValueTask<int>(UpdateBatchAsync(venflowCommand, cancellationToken));
+            return UpdateAsync(command, cancellationToken);
         }
 
-        public UpdateCommand<TEntity>? CompileUpdateBatchCommand<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
+        public ValueTask<int> UpdateAsync<TEntity>(IUpdateCommand<TEntity> updateCommand, CancellationToken cancellationToken = default) where TEntity : class
         {
-            var entityConfiguration = GetEntityConfiguration<TEntity>();
+            if (updateCommand is null)
+                return new ValueTask<int>(0);
 
-            var command = new NpgsqlCommand();
+            var command = (VenflowCommand<TEntity>)updateCommand;
 
-            var sb = new StringBuilder();
-
-            if (entities is IList<TEntity> entitiesList)
-            {
-                for (int i = 0; i < entitiesList.Count; i++)
-                {
-                    CommandGenreator(entitiesList[i]);
-                }
-            }
-            else
-            {
-                foreach (var entity in entities)
-                {
-                    CommandGenreator(entity);
-                }
-            }
-
-            void CommandGenreator(TEntity entity)
-            {
-                if (!(entity is IEntityProxy<TEntity> proxy))
-                {
-                    throw new InvalidOperationException("The provided entity is currently not being change tracked.");
-                }
-                else if (!proxy.ChangeTracker.IsDirty)
-                {
-                    return;
-                }
-
-                sb.Append("UPDATE ");
-                sb.Append(entityConfiguration.TableName);
-                sb.Append(" SET ");
-
-                var entityColumns = entityConfiguration.Columns;
-
-                var columns = proxy.ChangeTracker.GetColumns();
-
-                for (int i = 0; i < columns.Length; i++)
-                {
-                    var columnIndex = columns[i];
-
-                    if (columnIndex == 0)
-                        continue;
-
-                    var column = entityColumns[columnIndex];
-
-                    sb.Append('"');
-                    sb.Append(column.ColumnName);
-                    sb.Append("\" = ");
-
-                    var parameter = column.ValueRetriever(entity, i.ToString());
-
-                    sb.Append(parameter.ParameterName);
-
-                    command.Parameters.Add(parameter);
-
-                    sb.Append(", ");
-                }
-
-                sb.Remove(sb.Length - 2, 2);
-
-                sb.Append(" WHERE \"");
-
-                sb.Append(entityConfiguration.PrimaryColumn.ColumnName);
-
-                sb.Append("\" = ");
-
-                var primaryParameter = entityConfiguration.PrimaryColumn.ValueRetriever(entity, "");
-
-                sb.Append(primaryParameter.ParameterName);
-                command.Parameters.Add(primaryParameter);
-
-                sb.Append(';');
-            }
-
-            command.CommandText = sb.ToString();
-
-            return new UpdateCommand<TEntity>(command, entityConfiguration);
-        }
-
-        public Task<int> UpdateBatchAsync<TEntity>(UpdateCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
-        {
             command.UnderlyingCommand.Connection = Connection;
 
-            return command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+            return new ValueTask<int>(command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken));
         }
 
         #endregion
 
-        public Task GetPreparedCommandAsync<TEntity>(VenflowCommand<TEntity> command, CancellationToken cancellationToken = default) where TEntity : class
-        {
-            if (command.UnderlyingCommand.Connection is null || command.UnderlyingCommand.Connection.State != ConnectionState.Open)
-            {
-                command.UnderlyingCommand.Connection = Connection;
-            }
+        #region Builder
 
-            return command.PerpareSelfAsync(cancellationToken);
-        }
+        public IQueryCommandBuilder<TEntity> Query<TEntity>() where TEntity : class
+            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>()).Query();
+
+        public IInsertCommandBuilder<TEntity> Insert<TEntity>() where TEntity : class
+            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>()).Insert();
+
+        public IDeleteCommandBuilder<TEntity> Delete<TEntity>() where TEntity : class
+            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>()).Delete();
+
+        public IUpdateCommandBuilder<TEntity> Update<TEntity>() where TEntity : class
+            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>()).Update();
+
+        #endregion
 
         #region Change Tracking
 
