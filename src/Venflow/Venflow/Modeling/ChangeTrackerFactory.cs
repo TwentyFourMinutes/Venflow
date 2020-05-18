@@ -21,7 +21,7 @@ namespace Venflow.Modeling
             _proxyModule = assemblyBuilder.DefineDynamicModule(assemblyName.Name + ".dll");
         }
 
-        internal (Type proxyType, Func<ChangeTracker<TEntity>, TEntity> factory, Func<ChangeTracker<TEntity>, TEntity, TEntity> applier) GenerateEntityProxyFactories<TEntity>(Type entityType, Dictionary<int, EntityColumn<TEntity>> properties) where TEntity : class
+        internal (Type proxyType, Func<ChangeTracker<TEntity>, TEntity> factory, Func<ChangeTracker<TEntity>, TEntity, TEntity> applier) GenerateEntityProxyFactories<TEntity>(Type entityType, Dictionary<int, EntityColumn<TEntity>> trackingProperties, EntityColumnCollection<TEntity> columns) where TEntity : class
         {
             var proxyInterfaceType = typeof(IEntityProxy<TEntity>);
             var changeTrackerType = typeof(ChangeTracker<TEntity>);
@@ -47,7 +47,7 @@ namespace Venflow.Modeling
             changeTrackerProperty.SetGetMethod(changeTrackerPropertyGet);
 
             // Create All Entity properties
-            foreach (var property in properties)
+            foreach (var property in trackingProperties)
             {
                 var baseSetter = property.Value.PropertyInfo.GetSetMethod()!;
 
@@ -88,13 +88,15 @@ namespace Venflow.Modeling
 
             var factory = Expression.Lambda<Func<ChangeTracker<TEntity>, TEntity>>(Expression.Convert(proxyInstance, entityType), changeTrackerParameter).Compile();
 
-            var bindings = new MemberBinding[properties.Count];
+            var bindings = new MemberBinding[columns.Count];
 
             int index = 0;
 
-            foreach (var property in properties.Values)
+            for (int i = 0; i < columns.Count; i++)
             {
-                bindings[index++] = Expression.Bind(proxyType.GetProperty(property.PropertyInfo.Name), Expression.Property(entityParameter, property.PropertyInfo.Name));
+                var column = columns[i];
+
+                bindings[index++] = Expression.Bind(proxyType.GetProperty(column.PropertyInfo.Name), Expression.Property(entityParameter, column.PropertyInfo.Name));
             }
 
             var proxyVariable = Expression.Variable(proxyType, "proxy");

@@ -399,7 +399,7 @@ namespace Venflow.Commands
 
             _commandString.Append("\" = ");
 
-            var primaryParameter = _entityConfiguration.PrimaryColumn.ValueRetriever(entity, "");
+            var primaryParameter = _entityConfiguration.PrimaryColumn.ValueRetriever(entity, "Return" + index.ToString());
 
             parameters.Add(primaryParameter);
 

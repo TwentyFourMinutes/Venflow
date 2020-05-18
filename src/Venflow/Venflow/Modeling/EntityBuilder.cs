@@ -229,12 +229,14 @@ namespace Venflow.Modeling
             Func<ChangeTracker<TEntity>, TEntity>? factory = null;
             Func<ChangeTracker<TEntity>, TEntity, TEntity>? applier = null;
 
+            var entityColumns = new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn);
+
             if (changeTrackingColumns.Count != 0)
             {
-                (proxyType, factory, applier) = _changeTrackerFactory.GenerateEntityProxyFactories(_type, changeTrackingColumns);
+                (proxyType, factory, applier) = _changeTrackerFactory.GenerateEntityProxyFactories(_type, changeTrackingColumns, entityColumns);
             }
 
-            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_type, proxyType, factory, applier, _tableName, new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn), regularColumnsOffset, primaryColumn));
+            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_type, proxyType, factory, applier, _tableName, entityColumns, regularColumnsOffset, primaryColumn));
         }
 
         private MethodInfo GetDbValueRetrieverMethod(PropertyInfo property, Type readerType)
