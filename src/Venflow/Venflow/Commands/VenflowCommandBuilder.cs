@@ -264,8 +264,8 @@ namespace Venflow.Commands
                 {
                     var parameter = valueRetriever.Invoke(list[i], i.ToString());
 
-                    _commandString.Append(", ");
                     _commandString.Append(parameter.ParameterName);
+                    _commandString.Append(", ");
 
                     _parameters[i] = parameter;
                 }
@@ -280,8 +280,8 @@ namespace Venflow.Commands
                 {
                     var parameter = valueRetriever.Invoke(entity, index++.ToString());
 
-                    _commandString.Append(", ");
                     _commandString.Append(parameter.ParameterName);
+                    _commandString.Append(", ");
 
                     parameters.Add(parameter);
                 }
