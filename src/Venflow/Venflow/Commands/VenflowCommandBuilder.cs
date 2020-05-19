@@ -132,17 +132,7 @@ namespace Venflow.Commands
 
             _commandString.Append("VALUES (");
 
-            var columnStartIndex = _entityConfiguration.RegularColumnsOffset;
-            var columns = _entityConfiguration.Columns;
-
-            for (int columnIndex = columnStartIndex; columnIndex < columns.Count; columnIndex++)
-            {
-                var parameter = columns[columnIndex].ValueRetriever(entity, "0");
-
-                _command.Parameters.Add(parameter);
-
-                _commandString.Append(parameter.ParameterName);
-            }
+            _entityConfiguration.InsertWriter(entity, _commandString, "0", _command.Parameters);
 
             _commandString.Append(')');
 
@@ -168,10 +158,9 @@ namespace Venflow.Commands
 
             _commandString.Append("VALUES ");
 
-            var columnStartIndex = _entityConfiguration.RegularColumnsOffset;
-            var columns = _entityConfiguration.Columns;
-
             var index = 0;
+
+            var insertWriter = _entityConfiguration.InsertWriter;
 
             if (entities is IList<TEntity> entitiesList)
             {
@@ -184,14 +173,7 @@ namespace Venflow.Commands
                 {
                     _commandString.Append("(");
 
-                    for (int columnIndex = columnStartIndex; columnIndex < columns.Count; columnIndex++)
-                    {
-                        var parameter = columns[columnIndex].ValueRetriever(entitiesList[index], index++.ToString());
-
-                        _command.Parameters.Add(parameter);
-
-                        _commandString.Append(parameter.ParameterName);
-                    }
+                    insertWriter(entitiesList[index], _commandString, index++.ToString(), _command.Parameters);
 
                     if (index < entitiesList.Count)
                     {
@@ -211,14 +193,7 @@ namespace Venflow.Commands
                 {
                     _commandString.Append("(");
 
-                    for (int columnIndex = columnStartIndex; columnIndex < columns.Count; columnIndex++)
-                    {
-                        var parameter = columns[columnIndex].ValueRetriever(entity, index++.ToString());
-
-                        _command.Parameters.Add(parameter);
-
-                        _commandString.Append(parameter.ParameterName);
-                    }
+                    insertWriter(entity, _commandString, index++.ToString(), _command.Parameters);
 
                     _commandString.Append("), ");
                 }

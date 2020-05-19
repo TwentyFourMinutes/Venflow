@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Npgsql;
+using System;
 using System.Text;
 
 namespace Venflow.Modeling
@@ -14,15 +15,17 @@ namespace Venflow.Modeling
         internal Type? ProxyEntityType { get; }
         internal Func<ChangeTracker<TEntity>, TEntity>? ChangeTrackerFactory { get; }
         internal Func<ChangeTracker<TEntity>, TEntity, TEntity>? ChangeTrackerApplier { get; }
+        internal Action<TEntity, StringBuilder, string, NpgsqlParameterCollection> InsertWriter { get; }
 
         internal QueryCommandCache<TEntity> QueryCommandCache { get; }
 
         internal string ColumnListString { get; }
         internal string NonPrimaryColumnListString { get; }
 
-        internal Entity(Type entityType, Type? proxyEntityType, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier, string tableName, EntityColumnCollection<TEntity> columns, int regularColumnsOffset, PrimaryEntityColumn<TEntity> primaryColumn)
+        internal Entity(Type entityType, Action<TEntity, StringBuilder, string, NpgsqlParameterCollection> insertWriter, Type? proxyEntityType, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier, string tableName, EntityColumnCollection<TEntity> columns, int regularColumnsOffset, PrimaryEntityColumn<TEntity> primaryColumn)
         {
             EntityType = entityType;
+            InsertWriter = insertWriter;
             ChangeTrackerFactory = changeTrackerFactory;
             ChangeTrackerApplier = changeTrackerApplier;
             TableName = "\"" + tableName + "\"";

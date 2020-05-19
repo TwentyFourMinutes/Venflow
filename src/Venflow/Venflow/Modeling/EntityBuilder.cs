@@ -1,9 +1,10 @@
-﻿using Npgsql;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
 
 namespace Venflow.Modeling
 {
@@ -120,7 +121,8 @@ namespace Venflow.Modeling
             PrimaryEntityColumn<TEntity>? primaryColumn = null;
 
             var notMappedAttributeType = typeof(NotMappedAttribute);
-            var npgsqlParameterType = typeof(NpgsqlParameter<>);
+            var baseGenericNpgsqlParameterType = typeof(NpgsqlParameter<>);
+            var npgsqlParameterType = typeof(NpgsqlParameter);
             var npgsqlDataReaderType = typeof(NpgsqlDataReader);
 
             var constructorTypes = new Type[2];
@@ -131,6 +133,17 @@ namespace Venflow.Modeling
             var valueParameter = Expression.Parameter(typeof(object), "value");
 
             var stringConcatMethod = constructorTypes[0].GetMethod("Concat", new[] { constructorTypes[0], constructorTypes[0] });
+
+            var stringBuilderType = typeof(StringBuilder);
+            var npgsqlParameterCollectionType = typeof(NpgsqlParameterCollection);
+
+            var stringBuilderParameter = Expression.Parameter(stringBuilderType, "commandString");
+            var stringBuilderAppend = stringBuilderType.GetMethod("Append", new[] { constructorTypes[0] });
+            var npgsqlParameterCollectionParameter = Expression.Parameter(npgsqlParameterCollectionType, "parameters");
+            var npgsqlParameterCollectionAdd = npgsqlParameterCollectionType.GetMethod("Add", new Type[] { npgsqlParameterType });
+
+            var insertWriterVariables = new List<ParameterExpression>();
+            var insertWriterStatments = new List<Expression>();
 
             var columnIndex = 0;
             var regularColumnsOffset = 0;
@@ -147,15 +160,21 @@ namespace Venflow.Modeling
 
                 var hasCustomDefinition = false;
 
+                #region ParameterValueRetriever
+
                 constructorTypes[1] = property.PropertyType;
 
                 var valueProperty = Expression.Property(entityParameter, property);
 
-                var constructor = npgsqlParameterType.MakeGenericType(property.PropertyType).GetConstructor(constructorTypes)!;
+                var genericNpgsqlParameter = baseGenericNpgsqlParameterType.MakeGenericType(property.PropertyType);
+
+                var constructor = genericNpgsqlParameter.GetConstructor(constructorTypes)!;
 
                 var parameterInstance = Expression.New(constructor, Expression.Add(Expression.Constant("@" + property.Name), indexParameter, stringConcatMethod), valueProperty);
 
                 var parameterValueRetriever = Expression.Lambda<Func<TEntity, string, NpgsqlParameter>>(parameterInstance, entityParameter, indexParameter).Compile();
+
+                #endregion
 
                 Expression valueAssignment;
                 var valueRetriever = GetDbValueRetrieverMethod(property, npgsqlDataReaderType);
@@ -170,6 +189,8 @@ namespace Venflow.Modeling
                 }
 
                 var valueWriter = Expression.Lambda<Action<TEntity, object>>(valueAssignment, entityParameter, valueParameter).Compile();
+
+                var isPrimaryColumn = false;
 
                 if (_columnDefinitions.TryGetValue(property.Name, out var definition))
                 {
@@ -190,7 +211,7 @@ namespace Venflow.Modeling
                             nameToColumn.Add(definition.Name, columnIndex);
 
                             hasCustomDefinition = true;
-
+                            isPrimaryColumn = true;
                             break;
                     }
                 }
@@ -209,6 +230,22 @@ namespace Venflow.Modeling
                     }
 
                     nameToColumn.Add(columnName, columnIndex);
+                }
+
+                if (!isPrimaryColumn)
+                {
+                    #region InsertWriter
+
+                    var parameterVariable = Expression.Variable(genericNpgsqlParameter, property.Name.ToLower());
+
+                    insertWriterVariables.Add(parameterVariable);
+
+                    insertWriterStatments.Add(Expression.Assign(parameterVariable, parameterInstance));
+                    insertWriterStatments.Add(Expression.Call(stringBuilderParameter, stringBuilderAppend, Expression.Property(parameterVariable, "ParameterName")));
+                    insertWriterStatments.Add(Expression.Call(npgsqlParameterCollectionParameter, npgsqlParameterCollectionAdd, parameterVariable));
+                    insertWriterStatments.Add(Expression.Call(stringBuilderParameter, stringBuilderAppend, Expression.Constant(", ")));
+
+                    #endregion
                 }
 
                 columnIndex++;
@@ -236,7 +273,11 @@ namespace Venflow.Modeling
                 (proxyType, factory, applier) = _changeTrackerFactory.GenerateEntityProxyFactories(_type, changeTrackingColumns, entityColumns);
             }
 
-            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_type, proxyType, factory, applier, _tableName, entityColumns, regularColumnsOffset, primaryColumn));
+            insertWriterStatments.RemoveAt(insertWriterStatments.Count - 1);
+
+            var insertWriter = Expression.Lambda<Action<TEntity, StringBuilder, string, NpgsqlParameterCollection>>(Expression.Block(insertWriterVariables, insertWriterStatments), entityParameter, stringBuilderParameter, indexParameter, npgsqlParameterCollectionParameter).Compile();
+
+            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_type, insertWriter, proxyType, factory, applier, _tableName, entityColumns, regularColumnsOffset, primaryColumn));
         }
 
         private MethodInfo GetDbValueRetrieverMethod(PropertyInfo property, Type readerType)
