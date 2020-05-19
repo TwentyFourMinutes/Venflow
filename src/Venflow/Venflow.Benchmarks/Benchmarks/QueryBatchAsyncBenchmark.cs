@@ -5,53 +5,59 @@ using RepoDb.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Venflow.Benchmarks.Benchmarks.Models;
+using Venflow.Commands;
 
 namespace Venflow.Benchmarks.Benchmarks
 {
-	public class QueryBatchAsyncBenchmark
-	{
-		public MyDbConfiguration Configuration { get; set; }
-		public VenflowDbConnection VenflowDbConnection { get; set; }
+    [MemoryDiagnoser]
+    public class QueryBatchAsyncBenchmark : BenchmarkBase
+    {
+        private IQueryCommand<Person> _command;
 
-		[GlobalSetup]
-		public async Task Setup()
-		{
-			Configuration = new MyDbConfiguration();
+        [GlobalSetup]
+        public override async Task Setup()
+        {
+            await base.Setup();
 
-			PostgreSqlBootstrap.Initialize();
-			ClassMapper.Add<Person>("\"Persons\"");
+            _command = VenflowDbConnection.Query<Person>().Batch(10000);
 
-			VenflowDbConnection = await Configuration.NewConnectionScopeAsync();
+            var persons = new List<Person>();
 
-			await VenflowDbConnection.Connection.QueryAllAsync<Person>();
-			await VenflowDbConnection.QueryBatchAsync<Person>();
-		}
+            for (int i = 0; i < 10000; i++)
+            {
+                persons.Add(new Person { Name = "QueryBatchAsync" + i.ToString() });
+            }
 
-		[Benchmark]
-		public Task<List<Person>> VenflowQueryAllAsync()
-		{
-			return VenflowDbConnection.QueryBatchAsync<Person>();
-		}
+            await VenflowDbConnection.InsertBatchAsync(persons);
 
-		[Benchmark]
-		public Task<List<Person>> RepoDbQueryAllAsync()
-		{
-			return VenflowDbConnection.Connection.QueryAllAsync<Person>().ContinueWith(x => EnumerableExtension.AsList(x.Result));
-		}
+            await VenflowDbConnection.Connection.QueryAsync<Person>(whereOrPrimaryKey: null, top: 10000);
+            await VenflowDbConnection.QueryBatchAsync(_command);
+        }
 
-		[Benchmark]
-		public Task<List<Person>> DapperQueryAllAsync()
-		{
-			return SqlMapper.QueryAsync<Person>(VenflowDbConnection.Connection, "SELECT \"Id\", \"Name\" FROM \"Persons\"").ContinueWith(x=> SqlMapper.AsList(x.Result));
-		}
+        [Benchmark]
+        public Task<List<Person>> VenflowQueryBatchAsync()
+        {
+            return VenflowDbConnection.QueryBatchAsync(_command);
+        }
+
+        [Benchmark]
+        public Task<List<Person>> RepoDbQueryBatchAsync()
+        {
+            return VenflowDbConnection.Connection.QueryAsync<Person>(whereOrPrimaryKey: null, top: 10000).ContinueWith(x => EnumerableExtension.AsList(x.Result));
+        }
+
+        [Benchmark]
+        public Task<List<Person>> DapperQueryBatchAsync()
+        {
+            return SqlMapper.QueryAsync<Person>(VenflowDbConnection.Connection, "SELECT \"Id\", \"Name\" FROM \"Persons\" LIMIT 10000").ContinueWith(x => SqlMapper.AsList(x.Result));
+        }
 
 
-		[GlobalCleanup]
-		public async Task Cleanup()
-		{
-			Configuration = new MyDbConfiguration();
-
-			await VenflowDbConnection.DisposeAsync();
-		}
-	}
+        [GlobalCleanup]
+        public override Task Cleanup()
+        {
+            _command.Dispose();
+            return base.Cleanup();
+        }
+    }
 }

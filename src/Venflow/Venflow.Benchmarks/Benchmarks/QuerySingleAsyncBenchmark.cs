@@ -4,31 +4,30 @@ using RepoDb;
 using System.Linq;
 using System.Threading.Tasks;
 using Venflow.Benchmarks.Benchmarks.Models;
+using Venflow.Commands;
 
 namespace Venflow.Benchmarks.Benchmarks
 {
-    public class QuerySingleAsyncBenchmark
+    [MemoryDiagnoser]
+    public class QuerySingleAsyncBenchmark : BenchmarkBase
     {
-        public MyDbConfiguration Configuration { get; set; }
-        public VenflowDbConnection VenflowDbConnection { get; set; }
+        private IQueryCommand<Person> _command;
 
         [GlobalSetup]
-        public async Task Setup()
+        public override async Task Setup()
         {
-            Configuration = new MyDbConfiguration();
+            await base.Setup();
 
-            PostgreSqlBootstrap.Initialize();
-            ClassMapper.Add<Person>("\"Persons\"");
+            _command = VenflowDbConnection.Query<Person>().Single();
 
-            VenflowDbConnection = await Configuration.NewConnectionScopeAsync();
-
-            await DbConnectionExtension.QueryAsync<Person>(VenflowDbConnection.Connection, whereOrPrimaryKey: null, top: 1);
+            await VenflowDbConnection.Connection.QueryAsync<Person>(whereOrPrimaryKey: null, top: 1);
+            await VenflowDbConnection.QuerySingleAsync(_command);
         }
 
         [Benchmark]
         public Task<Person> VenflowQuerySingleAsync()
         {
-            return VenflowDbConnection.QuerySingleAsync<Person>();
+            return VenflowDbConnection.QuerySingleAsync(_command);
         }
 
         [Benchmark]
@@ -45,11 +44,10 @@ namespace Venflow.Benchmarks.Benchmarks
 
 
         [GlobalCleanup]
-        public async Task Cleanup()
+        public override Task Cleanup()
         {
-            Configuration = new MyDbConfiguration();
-
-            await VenflowDbConnection.DisposeAsync();
+            _command.Dispose();
+            return base.Cleanup();
         }
     }
 }

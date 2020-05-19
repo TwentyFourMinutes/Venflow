@@ -13,8 +13,8 @@
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0-preview.3.20215.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0-preview.3.20215.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.0" />
-    <PackageReference Include="RepoDb" Version="1.11.0-beta4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0-preview.3.20215.2" />
+    <PackageReference Include="RepoDb" Version="1.11.1-beta2" />
     <PackageReference Include="RepoDb.PostgreSql" Version="1.0.7-beta1" />
   </ItemGroup>
 

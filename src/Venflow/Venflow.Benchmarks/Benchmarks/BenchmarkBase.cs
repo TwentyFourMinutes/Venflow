@@ -15,6 +15,8 @@ namespace Venflow.Benchmarks.Benchmarks
 
             PostgreSqlBootstrap.Initialize();
             ClassMapper.Add<Person>("\"Persons\"");
+            IdentityMapper.Add<Person>(x => x.Id);
+            PrimaryMapper.Add<Person>(x => x.Id);
 
             VenflowDbConnection = await Configuration.NewConnectionScopeAsync();
         }

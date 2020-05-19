@@ -1,35 +1,42 @@
-﻿namespace Venflow.Benchmarks.Benchmarks
+﻿using BenchmarkDotNet.Attributes;
+using RepoDb;
+using System.Threading.Tasks;
+using Venflow.Benchmarks.Benchmarks.Models;
+
+namespace Venflow.Benchmarks.Benchmarks
 {
+    [MemoryDiagnoser]
     public class InsertSingleAsyncBenchmark : BenchmarkBase
     {
-        //public InsertCommand<Person> Command { get; set; }
+        public Person _person;
 
-        //[GlobalSetup]
-        //public override async Task Setup()
-        //{
-        //    await base.Setup();
+        [GlobalSetup]
+        public override async Task Setup()
+        {
+            await base.Setup();
 
-        //    Command = VenflowDbConnection.CompileInsertCommand<Person>();
-        //}
+            _person = new Person { Name = "InsertSingleAsync" };
 
-        //[Benchmark]
-        //public Task VenflowInsertSingleAsync()
-        //{
-        //    return VenflowDbConnection.InsertAsync(Command, new Person { Name = "VenflowInsertSingleAsync" }, true);
-        //}
+            await VenflowDbConnection.Connection.InsertAsync(_person);
+            await VenflowDbConnection.InsertSingleAsync(_person);
+        }
 
-        //[Benchmark]
-        //public Task RepoDbInsertSingleAsync()
-        //{
-        //    return VenflowDbConnection.Connection.InsertAsync(new Person { Name = "RepoDbInsertSingleAsync" });
-        //}
+        [Benchmark]
+        public Task VenflowInsertSingleAsync()
+        {
+            return VenflowDbConnection.InsertSingleAsync(_person);
+        }
 
-        //[GlobalCleanup]
-        //public override Task Cleanup()
-        //{
-        //    Command.Dispose();
+        [Benchmark]
+        public Task RepoDbInsertSingleAsync()
+        {
+            return VenflowDbConnection.Connection.InsertAsync(_person);
+        }
 
-        //    return base.Cleanup();
-        //}
+        [GlobalCleanup]
+        public override Task Cleanup()
+        {
+            return base.Cleanup();
+        }
     }
 }
