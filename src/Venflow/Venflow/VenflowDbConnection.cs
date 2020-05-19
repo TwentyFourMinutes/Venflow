@@ -80,7 +80,7 @@ namespace Venflow
 
         public Task<int> InsertSingleAsync<TEntity>(TEntity entity, bool returnComputedColumns = false, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var command = Insert<TEntity>().ReturnComputedColumns(returnComputedColumns).Single(entity);
+            var command = Insert<TEntity>(true).ReturnComputedColumns(returnComputedColumns).Single(entity);
 
             return InsertSingleAsync(command, returnComputedColumns ? entity : null, cancellationToken);
         }
@@ -97,30 +97,41 @@ namespace Venflow
 
                 command.EntityConfiguration.PrimaryColumn.ValueWriter(entity, value);
 
+                if (command.DisposeCommand)
+                    command.Dispose();
+
                 return 1;
             }
             else
             {
-                return await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+                var result = await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+                if (command.DisposeCommand)
+                    command.Dispose();
+
+                return result;
             }
         }
 
-        public Task<int> InsertBatchAsync<TEntity>(IEnumerable<TEntity> entities, bool returnComputedColumns = false, CancellationToken cancellationToken = default) where TEntity : class
+        public ValueTask<int> InsertBatchAsync<TEntity>(IEnumerable<TEntity> entities, bool returnComputedColumns = false, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var command = Insert<TEntity>().ReturnComputedColumns(returnComputedColumns).Batch(entities);
+            var command = Insert<TEntity>(true).ReturnComputedColumns(returnComputedColumns).Batch(entities);
 
             return InsertBatchAsync(command, returnComputedColumns ? entities : null, cancellationToken);
         }
 
-        public async Task<int> InsertBatchAsync<TEntity>(IInsertCommand<TEntity> insertCommand, IEnumerable<TEntity>? entities = null, CancellationToken cancellationToken = default) where TEntity : class
+        public async ValueTask<int> InsertBatchAsync<TEntity>(IInsertCommand<TEntity>? insertCommand, IEnumerable<TEntity>? entities = null, CancellationToken cancellationToken = default) where TEntity : class
         {
+            if (insertCommand is null)
+                return 0;
+
             var command = (VenflowCommand<TEntity>)insertCommand;
 
             command.UnderlyingCommand.Connection = Connection;
 
             if (command.GetComputedColumns && entities is { })
             {
-                var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
+                await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
                 var valueWriter = command.EntityConfiguration.PrimaryColumn.ValueWriter;
 
@@ -145,7 +156,12 @@ namespace Venflow
                 }
             }
 
-            return await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+            var result = await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+            if (command.DisposeCommand)
+                command.Dispose();
+
+            return result;
         }
 
         #endregion
@@ -154,7 +170,7 @@ namespace Venflow
 
         public Task<TEntity?> QuerySingleAsync<TEntity>(bool changeTracking = false, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var command = Query<TEntity>().TrackChanges(changeTracking).Single();
+            var command = Query<TEntity>(true).TrackChanges(changeTracking).Single();
 
             return QuerySingleAsync(command, cancellationToken);
         }
@@ -174,12 +190,17 @@ namespace Venflow
 
             var isChangeTracking = command.TrackingChanges && command.EntityConfiguration.ChangeTrackerFactory is { };
 
-            return command.EntityConfiguration.QueryCommandCache.GetOrCreateFactory(reader.GetColumnSchema(), isChangeTracking).Invoke(reader);
+            var entity = command.EntityConfiguration.QueryCommandCache.GetOrCreateFactory(reader.GetColumnSchema(), isChangeTracking).Invoke(reader);
+
+            if (command.DisposeCommand)
+                command.Dispose();
+
+            return entity;
         }
 
         public Task<List<TEntity>> QueryBatchAsync<TEntity>(bool changeTracking = false, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var command = Query<TEntity>().TrackChanges(changeTracking).Batch();
+            var command = Query<TEntity>(true).TrackChanges(changeTracking).Batch();
 
             return QueryBatchAsync(command, cancellationToken);
         }
@@ -203,6 +224,9 @@ namespace Venflow
                 entities.Add(factory.Invoke(reader));
             }
 
+            if (command.DisposeCommand)
+                command.Dispose();
+
             return entities;
         }
 
@@ -212,25 +236,28 @@ namespace Venflow
 
         public Task DeleteSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var command = Delete<TEntity>().Single(entity);
+            var command = Delete<TEntity>(true).Single(entity);
 
             return DeleteAsync(command, cancellationToken);
         }
 
         public Task DeleteBatchAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var command = Delete<TEntity>().Batch(entities);
+            var command = Delete<TEntity>(true).Batch(entities);
 
             return DeleteAsync(command, cancellationToken);
         }
 
-        public Task DeleteAsync<TEntity>(IDeleteCommand<TEntity> deleteCommand, CancellationToken cancellationToken = default) where TEntity : class
+        public async Task DeleteAsync<TEntity>(IDeleteCommand<TEntity> deleteCommand, CancellationToken cancellationToken = default) where TEntity : class
         {
             var command = (VenflowCommand<TEntity>)deleteCommand;
 
             command.UnderlyingCommand.Connection = Connection;
 
-            return command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+            await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+            if (command.DisposeCommand)
+                command.Dispose();
         }
 
         #endregion
@@ -239,28 +266,33 @@ namespace Venflow
 
         public ValueTask<int> UpdateSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var command = Update<TEntity>().Single(entity);
+            var command = Update<TEntity>(true).Single(entity);
 
             return UpdateAsync(command, cancellationToken);
         }
 
         public ValueTask<int> UpdateBatchAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
         {
-            using var command = Update<TEntity>().Batch(entities);
+            var command = Update<TEntity>(true).Batch(entities);
 
             return UpdateAsync(command, cancellationToken);
         }
 
-        public ValueTask<int> UpdateAsync<TEntity>(IUpdateCommand<TEntity> updateCommand, CancellationToken cancellationToken = default) where TEntity : class
+        public async ValueTask<int> UpdateAsync<TEntity>(IUpdateCommand<TEntity> updateCommand, CancellationToken cancellationToken = default) where TEntity : class
         {
             if (updateCommand is null)
-                return new ValueTask<int>(0);
+                return 0;
 
             var command = (VenflowCommand<TEntity>)updateCommand;
 
             command.UnderlyingCommand.Connection = Connection;
 
-            return new ValueTask<int>(command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken));
+            var result = await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+            if (command.DisposeCommand)
+                command.Dispose();
+
+            return result;
         }
 
         #endregion
@@ -270,14 +302,26 @@ namespace Venflow
         public IQueryCommandBuilder<TEntity> Query<TEntity>() where TEntity : class
             => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>()).Query();
 
+        internal IQueryCommandBuilder<TEntity> Query<TEntity>(bool disposeCommand) where TEntity : class
+            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>(), disposeCommand).Query();
+
         public IInsertCommandBuilder<TEntity> Insert<TEntity>() where TEntity : class
             => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>()).Insert();
+
+        public IInsertCommandBuilder<TEntity> Insert<TEntity>(bool disposeCommand) where TEntity : class
+         => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>(), disposeCommand).Insert();
 
         public IDeleteCommandBuilder<TEntity> Delete<TEntity>() where TEntity : class
             => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>()).Delete();
 
+        public IDeleteCommandBuilder<TEntity> Delete<TEntity>(bool disposeCommand) where TEntity : class
+            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>(), disposeCommand).Delete();
+
         public IUpdateCommandBuilder<TEntity> Update<TEntity>() where TEntity : class
             => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>()).Update();
+
+        public IUpdateCommandBuilder<TEntity> Update<TEntity>(bool disposeCommand) where TEntity : class
+            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>(), disposeCommand).Update();
 
         #endregion
 
@@ -310,11 +354,6 @@ namespace Venflow
             }
 
             return (Entity<TEntity>)entityModel;
-        }
-
-        private void EnableChangeTracking<TEntity>(TEntity entity) where TEntity : class
-        {
-            ((IEntityProxy<TEntity>)entity).ChangeTracker.TrackChanges = true;
         }
 
         #endregion

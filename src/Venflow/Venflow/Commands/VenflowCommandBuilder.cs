@@ -14,15 +14,17 @@ namespace Venflow.Commands
         internal bool IsSingle { get; private set; }
         internal bool TrackingChanges { get; private set; }
         internal bool GetComputedColumns { get; private set; }
+        internal bool DisposeCommand { get; }
 
         private NpgsqlParameter[] _parameters;
 
         private readonly Entity<TEntity> _entityConfiguration;
         private readonly StringBuilder _commandString;
 
-        internal VenflowCommandBuilder(Entity<TEntity> entityConfiguration)
+        internal VenflowCommandBuilder(Entity<TEntity> entityConfiguration, bool disposeCommand = false)
         {
             _entityConfiguration = entityConfiguration;
+            DisposeCommand = disposeCommand;
             _commandString = new StringBuilder();
         }
 
@@ -131,7 +133,14 @@ namespace Venflow.Commands
 
             var parameterIndex = 0;
 
-            BaseInsert(entity, columns, _parameters, columnStartIndex, 0, ref parameterIndex);
+            for (int columnIndex = columnStartIndex; columnIndex < columns.Count; columnIndex++)
+            {
+                var parameter = columns[columnIndex].ValueRetriever(entity, "0");
+
+                _parameters[parameterIndex++] = parameter;
+
+                _commandString.Append(parameter.ParameterName);
+            }
 
             _commandString.Append(')');
 
@@ -147,7 +156,7 @@ namespace Venflow.Commands
             return BuildCommand();
         }
 
-        IInsertCommand<TEntity> IInsertCommandBuilder<TEntity>.Batch(IEnumerable<TEntity> entities)
+        IInsertCommand<TEntity>? IInsertCommandBuilder<TEntity>.Batch(IEnumerable<TEntity> entities)
         {
             _commandString.Append("INSERT INTO ");
             _commandString.Append(_entityConfiguration.TableName);
@@ -155,33 +164,76 @@ namespace Venflow.Commands
             _commandString.Append(_entityConfiguration.NonPrimaryColumnListString);
             _commandString.AppendLine(")");
 
-            _commandString.Append("VALUES (");
+            _commandString.Append("VALUES ");
 
             var columnStartIndex = _entityConfiguration.RegularColumnsOffset;
             var columns = _entityConfiguration.Columns;
 
-            _parameters = new NpgsqlParameter[columns.Count - columnStartIndex];
-
-            var parameterIndex = 0;
+            var index = 0;
 
             if (entities is IList<TEntity> entitiesList)
             {
-                for (int i = 0; i < entitiesList.Count; i++)
+                if (entitiesList.Count == 0)
                 {
-                    BaseInsert(entitiesList[i], columns, _parameters, columnStartIndex, i, ref parameterIndex);
+                    return null;
+                }
+
+                var parameterIndex = 0;
+
+                _parameters = new NpgsqlParameter[(columns.Count - columnStartIndex) * entitiesList.Count];
+
+                while (true)
+                {
+                    _commandString.Append("(");
+
+                    for (int columnIndex = columnStartIndex; columnIndex < columns.Count; columnIndex++)
+                    {
+                        var parameter = columns[columnIndex].ValueRetriever(entitiesList[index], index++.ToString());
+
+                        _parameters[parameterIndex++] = parameter;
+
+                        _commandString.Append(parameter.ParameterName);
+                    }
+
+                    if (index < entitiesList.Count)
+                    {
+                        _commandString.Append("), ");
+                    }
+                    else
+                    {
+                        _commandString.Append(")");
+
+                        break;
+                    }
                 }
             }
             else
             {
-                int index = 0;
+                var parameters = new List<NpgsqlParameter>();
 
                 foreach (var entity in entities)
                 {
-                    BaseInsert(entity, columns, _parameters, columnStartIndex, index++, ref parameterIndex);
-                }
-            }
+                    _commandString.Append("(");
 
-            _commandString.Append(')');
+                    for (int columnIndex = columnStartIndex; columnIndex < columns.Count; columnIndex++)
+                    {
+                        var parameter = columns[columnIndex].ValueRetriever(entity, index++.ToString());
+
+                        parameters.Add(parameter);
+
+                        _commandString.Append(parameter.ParameterName);
+                    }
+
+                    _commandString.Append("), ");
+                }
+
+                if (index == 0)
+                    return null;
+
+                _commandString.Remove(_commandString.Length - 3, 3);
+
+                _parameters = parameters.ToArray();
+            }
 
             if (GetComputedColumns)
             {
@@ -193,28 +245,6 @@ namespace Venflow.Commands
             }
 
             return BuildCommand();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void BaseInsert(TEntity entity, EntityColumnCollection<TEntity> columns, NpgsqlParameter[] parameters, int columnIndex, int index, ref int parameterIndex)
-        {
-            while (true)
-            {
-                var parameter = columns[columnIndex++].ValueRetriever(entity, index.ToString());
-
-                parameters[parameterIndex++] = parameter;
-
-                _commandString.Append(parameter.ParameterName);
-
-                if (columnIndex < columns.Count)
-                {
-                    _commandString.Append(", ");
-                }
-                else
-                {
-                    break;
-                }
-            }
         }
 
         #endregion
@@ -417,7 +447,7 @@ namespace Venflow.Commands
             if (_parameters is { })
                 command.Parameters.AddRange(_parameters);
 
-            return new VenflowCommand<TEntity>(command, _entityConfiguration) { GetComputedColumns = GetComputedColumns, IsSingle = IsSingle, TrackingChanges = TrackingChanges };
+            return new VenflowCommand<TEntity>(command, _entityConfiguration) { GetComputedColumns = GetComputedColumns, IsSingle = IsSingle, TrackingChanges = TrackingChanges, DisposeCommand = DisposeCommand };
         }
     }
 

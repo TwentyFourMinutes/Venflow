@@ -5,14 +5,15 @@ using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
-    public class VenflowCommand<TEntity> : IQueryCommand<TEntity>, IInsertCommand<TEntity>, IDeleteCommand<TEntity>, IUpdateCommand<TEntity> where TEntity : class
+    internal class VenflowCommand<TEntity> : IQueryCommand<TEntity>, IInsertCommand<TEntity>, IDeleteCommand<TEntity>, IUpdateCommand<TEntity> where TEntity : class
     {
-        public NpgsqlCommand UnderlyingCommand { get; set; }
+        internal NpgsqlCommand UnderlyingCommand { get; set; }
 
         internal Entity<TEntity> EntityConfiguration { get; set; }
         internal bool IsSingle { get; set; }
         internal bool TrackingChanges { get; set; }
         internal bool GetComputedColumns { get; set; }
+        internal bool DisposeCommand { get; set; }
 
         internal VenflowCommand(NpgsqlCommand underlyingCommand, Entity<TEntity> entity)
         {
