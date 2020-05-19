@@ -120,27 +120,19 @@ namespace Venflow.Modeling
             var changeTrackingColumns = new Dictionary<int, EntityColumn<TEntity>>();
             PrimaryEntityColumn<TEntity>? primaryColumn = null;
 
-            var notMappedAttributeType = typeof(NotMappedAttribute);
-            var baseGenericNpgsqlParameterType = typeof(NpgsqlParameter<>);
-            var npgsqlParameterType = typeof(NpgsqlParameter);
-            var npgsqlDataReaderType = typeof(NpgsqlDataReader);
-
             var constructorTypes = new Type[2];
-            constructorTypes[0] = typeof(string);
-            var indexParameter = Expression.Parameter(constructorTypes[0], "index");
+            constructorTypes[0] = TypeCache.String;
+            var indexParameter = Expression.Parameter(TypeCache.String, "index");
 
             var entityParameter = Expression.Parameter(_type, "entity");
-            var valueParameter = Expression.Parameter(typeof(object), "value");
+            var valueParameter = Expression.Parameter(TypeCache.Object, "value");
 
-            var stringConcatMethod = constructorTypes[0].GetMethod("Concat", new[] { constructorTypes[0], constructorTypes[0] });
+            var stringConcatMethod = TypeCache.String.GetMethod("Concat", new[] { TypeCache.String, TypeCache.String });
 
-            var stringBuilderType = typeof(StringBuilder);
-            var npgsqlParameterCollectionType = typeof(NpgsqlParameterCollection);
-
-            var stringBuilderParameter = Expression.Parameter(stringBuilderType, "commandString");
-            var stringBuilderAppend = stringBuilderType.GetMethod("Append", new[] { constructorTypes[0] });
-            var npgsqlParameterCollectionParameter = Expression.Parameter(npgsqlParameterCollectionType, "parameters");
-            var npgsqlParameterCollectionAdd = npgsqlParameterCollectionType.GetMethod("Add", new Type[] { npgsqlParameterType });
+            var stringBuilderParameter = Expression.Parameter(TypeCache.StringBuilder, "commandString");
+            var stringBuilderAppend = TypeCache.StringBuilder.GetMethod("Append", new[] { TypeCache.String });
+            var npgsqlParameterCollectionParameter = Expression.Parameter(TypeCache.NpgsqlParameterCollection, "parameters");
+            var npgsqlParameterCollectionAdd = TypeCache.NpgsqlParameterCollection.GetMethod("Add", new Type[] { TypeCache.GenericNpgsqlParameter });
 
             var insertWriterVariables = new List<ParameterExpression>();
             var insertWriterStatments = new List<Expression>();
@@ -153,7 +145,7 @@ namespace Venflow.Modeling
             {
                 var property = properties[i];
 
-                if (!property.CanWrite || !property.SetMethod!.IsPublic || Attribute.IsDefined(property, notMappedAttributeType))
+                if (!property.CanWrite || !property.SetMethod!.IsPublic || Attribute.IsDefined(property, TypeCache.NotMappedAttribute))
                 {
                     continue;
                 }
@@ -166,7 +158,7 @@ namespace Venflow.Modeling
 
                 var valueProperty = Expression.Property(entityParameter, property);
 
-                var genericNpgsqlParameter = baseGenericNpgsqlParameterType.MakeGenericType(property.PropertyType);
+                var genericNpgsqlParameter = TypeCache.GenericNpgsqlParameter.MakeGenericType(property.PropertyType);
 
                 var constructor = genericNpgsqlParameter.GetConstructor(constructorTypes)!;
 
@@ -177,7 +169,7 @@ namespace Venflow.Modeling
                 #endregion
 
                 Expression valueAssignment;
-                var valueRetriever = GetDbValueRetrieverMethod(property, npgsqlDataReaderType);
+                var valueRetriever = GetDbValueRetrieverMethod(property, TypeCache.NpgsqlDataReader);
 
                 if (property.PropertyType.IsClass || Nullable.GetUnderlyingType(property.PropertyType) is { })
                 {
