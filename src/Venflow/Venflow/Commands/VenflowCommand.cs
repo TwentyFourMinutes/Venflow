@@ -1,4 +1,5 @@
 ﻿using Npgsql;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Venflow.Modeling;
@@ -79,5 +80,10 @@ namespace Venflow.Commands
 
             UnderlyingCommand.Dispose();
         }
+    }
+
+    public interface IVenflowCommand<TEntity> : IDisposable where TEntity : class
+    {
+
     }
 }

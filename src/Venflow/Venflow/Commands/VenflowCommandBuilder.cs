@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Venflow.Modeling;
 
 namespace Venflow.Commands
@@ -401,81 +399,5 @@ namespace Venflow.Commands
 
             return new VenflowCommand<TEntity>(_command, _entityConfiguration) { GetComputedColumns = GetComputedColumns, IsSingle = IsSingle, TrackingChanges = TrackingChanges, DisposeCommand = DisposeCommand };
         }
-    }
-
-    public interface IVenflowCommandBuilder<TEntity> : IQueryCommandBuilder<TEntity>, IInsertCommandBuilder<TEntity>, IDeleteCommandBuilder<TEntity>, IUpdateCommandBuilder<TEntity> where TEntity : class
-    {
-        IQueryCommandBuilder<TEntity> Query();
-
-        IInsertCommandBuilder<TEntity> Insert();
-
-        IDeleteCommandBuilder<TEntity> Delete();
-
-        IUpdateCommandBuilder<TEntity> Update();
-    }
-
-    public interface IQueryCommandBuilder<TEntity> where TEntity : class
-    {
-        IQueryCommandBuilder<TEntity> TrackChanges(bool trackChanges = true);
-
-        IQueryCommand<TEntity> Single();
-        IQueryCommand<TEntity> Single(string sql, params NpgsqlParameter[] parameters);
-
-        IQueryCommand<TEntity> Batch();
-        IQueryCommand<TEntity> Batch(ulong count);
-        IQueryCommand<TEntity> Batch(string sql, params NpgsqlParameter[] parameters);
-    }
-
-    public interface IQueryCommand<TEntity> : IVenflowCommand<TEntity> where TEntity : class
-    {
-        Task<IQueryCommand<TEntity>> PrepareAsync(CancellationToken cancellationToken = default);
-        IQueryCommand<TEntity> Unprepare();
-    }
-
-    public interface IInsertCommandBuilder<TEntity> where TEntity : class
-    {
-        IInsertCommandBuilder<TEntity> ReturnComputedColumns(bool returnComputedColumns = true);
-
-        IInsertCommand<TEntity> Single(TEntity entity);
-
-        IInsertCommand<TEntity> Batch(IEnumerable<TEntity> entities);
-    }
-
-    public interface IInsertCommand<TEntity> : IVenflowCommand<TEntity> where TEntity : class
-    {
-        Task<IInsertCommand<TEntity>> PrepareAsync(CancellationToken cancellationToken = default);
-        IInsertCommand<TEntity> Unprepare();
-    }
-
-    public interface IDeleteCommandBuilder<TEntity> where TEntity : class
-    {
-        IDeleteCommand<TEntity> Single(TEntity entity);
-
-        IDeleteCommand<TEntity> Batch(IEnumerable<TEntity> entities);
-    }
-
-    public interface IDeleteCommand<TEntity> : IVenflowCommand<TEntity> where TEntity : class
-    {
-        Task<IDeleteCommand<TEntity>> PrepareAsync(CancellationToken cancellationToken = default);
-        IDeleteCommand<TEntity> Unprepare();
-    }
-
-    public interface IUpdateCommandBuilder<TEntity> where TEntity : class
-    {
-        IUpdateCommand<TEntity> Single(TEntity entity);
-
-        IUpdateCommand<TEntity> Batch(IEnumerable<TEntity> entities);
-    }
-
-    public interface IUpdateCommand<TEntity> : IVenflowCommand<TEntity> where TEntity : class
-    {
-        Task<IUpdateCommand<TEntity>> PrepareAsync(CancellationToken cancellationToken = default);
-        IUpdateCommand<TEntity> Unprepare();
-    }
-
-
-    public interface IVenflowCommand<TEntity> : IDisposable where TEntity : class
-    {
-
     }
 }

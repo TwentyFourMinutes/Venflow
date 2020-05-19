@@ -350,3 +350,5 @@ MigrationBackup/
 .ionide/
 
 src/Venflow/Venflow.ExecutionTests/
+
+*.lnk

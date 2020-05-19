@@ -115,27 +115,30 @@ namespace Venflow.Modeling
                 throw new TypeArgumentException("The provided generic type argument doesn't contain any public properties with a getter and a setter.");
             }
 
+            #region ExpressionVariables
+
             var columns = new List<EntityColumn<TEntity>>();
             var nameToColumn = new Dictionary<string, int>();
             var changeTrackingColumns = new Dictionary<int, EntityColumn<TEntity>>();
             PrimaryEntityColumn<TEntity>? primaryColumn = null;
 
-            var constructorTypes = new Type[2];
-            constructorTypes[0] = TypeCache.String;
-            var indexParameter = Expression.Parameter(TypeCache.String, "index");
-
-            var entityParameter = Expression.Parameter(_type, "entity");
-            var valueParameter = Expression.Parameter(TypeCache.Object, "value");
-
-            var stringConcatMethod = TypeCache.String.GetMethod("Concat", new[] { TypeCache.String, TypeCache.String });
-
-            var stringBuilderParameter = Expression.Parameter(TypeCache.StringBuilder, "commandString");
-            var stringBuilderAppend = TypeCache.StringBuilder.GetMethod("Append", new[] { TypeCache.String });
-            var npgsqlParameterCollectionParameter = Expression.Parameter(TypeCache.NpgsqlParameterCollection, "parameters");
-            var npgsqlParameterCollectionAdd = TypeCache.NpgsqlParameterCollection.GetMethod("Add", new Type[] { TypeCache.GenericNpgsqlParameter });
-
             var insertWriterVariables = new List<ParameterExpression>();
             var insertWriterStatments = new List<Expression>();
+
+            var constructorTypes = new Type[2];
+            constructorTypes[0] = TypeCache.String;
+
+            var indexParameter = Expression.Parameter(TypeCache.String, "index");
+            var entityParameter = Expression.Parameter(_type, "entity");
+            var valueParameter = Expression.Parameter(TypeCache.Object, "value");
+            var stringBuilderParameter = Expression.Parameter(TypeCache.StringBuilder, "commandString");
+            var npgsqlParameterCollectionParameter = Expression.Parameter(TypeCache.NpgsqlParameterCollection, "parameters");
+
+            var stringConcatMethod = TypeCache.String.GetMethod("Concat", new[] { TypeCache.String, TypeCache.String });
+            var stringBuilderAppend = TypeCache.StringBuilder.GetMethod("Append", new[] { TypeCache.String });
+            var npgsqlParameterCollectionAdd = TypeCache.NpgsqlParameterCollection.GetMethod("Add", new Type[] { TypeCache.GenericNpgsqlParameter });
+
+            #endregion
 
             var columnIndex = 0;
             var regularColumnsOffset = 0;
