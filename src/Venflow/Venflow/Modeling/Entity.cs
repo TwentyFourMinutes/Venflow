@@ -6,8 +6,9 @@ namespace Venflow.Modeling
 {
     internal class Entity<TEntity> : IEntity where TEntity : class
     {
+        string IEntity.EntityName => EntityType.Name;
+
         internal EntityColumnCollection<TEntity> Columns { get; }
-        internal int RegularColumnsOffset { get; }
         internal PrimaryEntityColumn<TEntity> PrimaryColumn { get; }
 
         internal string TableName { get; }
@@ -22,42 +23,19 @@ namespace Venflow.Modeling
         internal string ColumnListString { get; }
         internal string NonPrimaryColumnListString { get; }
 
-        internal Entity(Type entityType, Action<TEntity, StringBuilder, string, NpgsqlParameterCollection> insertWriter, Type? proxyEntityType, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier, string tableName, EntityColumnCollection<TEntity> columns, int regularColumnsOffset, PrimaryEntityColumn<TEntity> primaryColumn)
+        internal Entity(Type entityType, Type? proxyEntityType, string tableName, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn, string columnListString, string nonPrimaryColumnListString, Action<TEntity, StringBuilder, string, NpgsqlParameterCollection> insertWriter, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier)
         {
             EntityType = entityType;
+            TableName = "\"" + tableName + "\"";
             InsertWriter = insertWriter;
             ChangeTrackerFactory = changeTrackerFactory;
             ChangeTrackerApplier = changeTrackerApplier;
-            TableName = "\"" + tableName + "\"";
             Columns = columns;
-            RegularColumnsOffset = regularColumnsOffset;
             PrimaryColumn = primaryColumn;
+            ColumnListString = columnListString;
+            NonPrimaryColumnListString = nonPrimaryColumnListString;
 
             QueryCommandCache = new QueryCommandCache<TEntity>(entityType, proxyEntityType, Columns);
-
-            ColumnListString = GetColumnListString(false);
-            NonPrimaryColumnListString = GetColumnListString(true);
-        }
-
-        private string GetColumnListString(bool excludePrimaryColumns)
-        {
-            var sb = new StringBuilder();
-
-            foreach (var column in Columns.Values)
-            {
-                if (excludePrimaryColumns && column is PrimaryEntityColumn<TEntity>)
-                {
-                    continue;
-                }
-
-                sb.Append('"');
-                sb.Append(column.ColumnName);
-                sb.Append("\",");
-            }
-
-            sb.Remove(sb.Length - 1, 1);
-
-            return sb.ToString();
         }
 
         internal TEntity GetProxiedEntity(bool trackChanges = false)
@@ -73,5 +51,6 @@ namespace Venflow.Modeling
 
     internal interface IEntity
     {
+        string EntityName { get; }
     }
 }

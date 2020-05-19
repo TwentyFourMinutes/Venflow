@@ -9,33 +9,47 @@ using System.Runtime.CompilerServices;
 
 namespace Venflow.Modeling
 {
-    internal class ChangeTrackerFactory
+    internal static class ChangeTrackerFactory
     {
-        private static readonly ModuleBuilder _proxyModule;
+        internal static ModuleBuilder ProxyModule { get; }
 
         static ChangeTrackerFactory()
         {
             var assemblyName = new AssemblyName("Venflow.Runtime.ProxyTypes");
             var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
 
-            _proxyModule = assemblyBuilder.DefineDynamicModule(assemblyName.Name + ".dll");
+            ProxyModule = assemblyBuilder.DefineDynamicModule(assemblyName.Name + ".dll");
+        }
+    }
+
+    internal class ChangeTrackerFactory<TEntity> where TEntity : class
+    {
+        internal Type ProxyType { get; private set; }
+
+        private readonly Type _entityType;
+        private readonly Type _changeTrackerType;
+
+        internal ChangeTrackerFactory(Type entityType)
+        {
+            _entityType = entityType;
+            _changeTrackerType = typeof(ChangeTracker<TEntity>);
         }
 
-        internal (Type proxyType, Func<ChangeTracker<TEntity>, TEntity> factory, Func<ChangeTracker<TEntity>, TEntity, TEntity> applier) GenerateEntityProxyFactories<TEntity>(Type entityType, Dictionary<int, EntityColumn<TEntity>> trackingProperties, EntityColumnCollection<TEntity> columns) where TEntity : class
+        internal void GenerateEntityProxy(Dictionary<int, EntityColumn<TEntity>> trackingProperties)
         {
             var proxyInterfaceType = typeof(IEntityProxy<TEntity>);
-            var changeTrackerType = typeof(ChangeTracker<TEntity>);
-            var changeTrackerMakeDirtyType = changeTrackerType.GetMethod("MakeDirty", BindingFlags.NonPublic | BindingFlags.Instance)!;
 
-            var proxyTypeBuilder = _proxyModule.DefineType(entityType.Name, TypeAttributes.NotPublic | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.BeforeFieldInit, entityType, new[] { proxyInterfaceType });
+            var changeTrackerMakeDirtyType = _changeTrackerType.GetMethod("MakeDirty", BindingFlags.NonPublic | BindingFlags.Instance)!;
+
+            var proxyTypeBuilder = ChangeTrackerFactory.ProxyModule.DefineType(_entityType.Name, TypeAttributes.NotPublic | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.BeforeFieldInit, _entityType, new[] { proxyInterfaceType });
 
             // Create ChangeTracker backing field
-            var changeTrackerField = proxyTypeBuilder.DefineField("_changeTracker", changeTrackerType, FieldAttributes.Private | FieldAttributes.InitOnly);
+            var changeTrackerField = proxyTypeBuilder.DefineField("_changeTracker", _changeTrackerType, FieldAttributes.Private | FieldAttributes.InitOnly);
 
             // Create ChangeTracker set property method
             var changeTrackerPropertyGet = proxyTypeBuilder.DefineMethod("get_ChangeTracker", MethodAttributes.Public | MethodAttributes.SpecialName |
                                                                                               MethodAttributes.NewSlot | MethodAttributes.HideBySig |
-                                                                                              MethodAttributes.Virtual | MethodAttributes.Final, changeTrackerType, Type.EmptyTypes);
+                                                                                              MethodAttributes.Virtual | MethodAttributes.Final, _changeTrackerType, Type.EmptyTypes);
             var changeTrackerPropertyGetIL = changeTrackerPropertyGet.GetILGenerator();
 
             changeTrackerPropertyGetIL.Emit(OpCodes.Ldarg_0);
@@ -43,7 +57,7 @@ namespace Venflow.Modeling
             changeTrackerPropertyGetIL.Emit(OpCodes.Ret);
 
             // Create ChangeTracker property
-            var changeTrackerProperty = proxyTypeBuilder.DefineProperty("ChangeTracker", PropertyAttributes.HasDefault, changeTrackerType, Type.EmptyTypes);
+            var changeTrackerProperty = proxyTypeBuilder.DefineProperty("ChangeTracker", PropertyAttributes.HasDefault, _changeTrackerType, Type.EmptyTypes);
             changeTrackerProperty.SetGetMethod(changeTrackerPropertyGet);
 
             // Create All Entity properties
@@ -70,7 +84,7 @@ namespace Venflow.Modeling
             }
 
             // Create Constructor
-            var constructor = proxyTypeBuilder.DefineConstructor(MethodAttributes.Assembly | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, CallingConventions.Standard, new[] { changeTrackerType });
+            var constructor = proxyTypeBuilder.DefineConstructor(MethodAttributes.Assembly | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, CallingConventions.Standard, new[] { _changeTrackerType });
             var constructorIL = constructor.GetILGenerator();
 
             constructorIL.Emit(OpCodes.Ldarg_0);
@@ -79,14 +93,22 @@ namespace Venflow.Modeling
             constructorIL.Emit(OpCodes.Ret);
 
             // Create Proxy Type
-            var proxyType = proxyTypeBuilder.CreateType();
+            ProxyType = proxyTypeBuilder.CreateType();
+        }
 
-            var changeTrackerParameter = Expression.Parameter(changeTrackerType, "changeTracker");
-            var entityParameter = Expression.Parameter(entityType, "entity");
+        internal Func<ChangeTracker<TEntity>, TEntity> GetProxyFactory()
+        {
+            var changeTrackerParameter = Expression.Parameter(_changeTrackerType, "changeTracker");
 
-            var proxyInstance = Expression.New(proxyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { changeTrackerType }, null), changeTrackerParameter);
+            var proxyInstance = Expression.New(ProxyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { _changeTrackerType }, null), changeTrackerParameter);
 
-            var factory = Expression.Lambda<Func<ChangeTracker<TEntity>, TEntity>>(Expression.Convert(proxyInstance, entityType), changeTrackerParameter).Compile();
+            return Expression.Lambda<Func<ChangeTracker<TEntity>, TEntity>>(Expression.Convert(proxyInstance, _entityType), changeTrackerParameter).Compile();
+        }
+
+        internal Func<ChangeTracker<TEntity>, TEntity, TEntity> GetProxyApplyingFactory(EntityColumnCollection<TEntity> columns)
+        {
+            var changeTrackerParameter = Expression.Parameter(_changeTrackerType, "changeTracker");
+            var entityParameter = Expression.Parameter(_entityType, "entity");
 
             var bindings = new MemberBinding[columns.Count];
 
@@ -96,19 +118,19 @@ namespace Venflow.Modeling
             {
                 var column = columns[i];
 
-                bindings[index++] = Expression.Bind(proxyType.GetProperty(column.PropertyInfo.Name), Expression.Property(entityParameter, column.PropertyInfo.Name));
+                bindings[index++] = Expression.Bind(ProxyType.GetProperty(column.PropertyInfo.Name), Expression.Property(entityParameter, column.PropertyInfo.Name));
             }
 
-            var proxyVariable = Expression.Variable(proxyType, "proxy");
+            var proxyVariable = Expression.Variable(ProxyType, "proxy");
 
-            var block = Expression.Block(entityType, new[] { proxyVariable },
+            var proxyInstance = Expression.New(ProxyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { _changeTrackerType }, null), changeTrackerParameter);
+
+            var block = Expression.Block(_entityType, new[] { proxyVariable },
                                          Expression.Assign(proxyVariable, Expression.MemberInit(proxyInstance, bindings)),
-                                         Expression.Assign(Expression.Property(Expression.Property(proxyVariable, "ChangeTracker"), changeTrackerType.GetProperty("TrackChanges", BindingFlags.NonPublic | BindingFlags.Instance)), Expression.Constant(true)),
-                                         Expression.Convert(proxyVariable, entityType));
+                                         Expression.Assign(Expression.Property(Expression.Property(proxyVariable, "ChangeTracker"), _changeTrackerType.GetProperty("TrackChanges", BindingFlags.NonPublic | BindingFlags.Instance)), ExpressionCache.TrueConstant),
+                                         Expression.Convert(proxyVariable, _entityType));
 
-            var applier = Expression.Lambda<Func<ChangeTracker<TEntity>, TEntity, TEntity>>(block, changeTrackerParameter, entityParameter).Compile();
-
-            return (proxyType, factory, applier);
+            return Expression.Lambda<Func<ChangeTracker<TEntity>, TEntity, TEntity>>(block, changeTrackerParameter, entityParameter).Compile();
         }
     }
 }

@@ -6,26 +6,31 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
-namespace Venflow.Modeling
+namespace Venflow.Modeling.Definitions
 {
     public class EntityBuilder<TEntity> where TEntity : class
     {
-        private readonly Type _type;
+        internal Type Type { get; }
+
+        internal ChangeTrackerFactory<TEntity>? ChangeTrackerFactory { get; private set; }
+        internal Action<TEntity, StringBuilder, string, NpgsqlParameterCollection> InsertWriter { get; private set; }
+        internal string TableName { get; private set; }
+        internal List<EntityRelationDefinition> Relations { get;}
+
         private readonly IDictionary<string, ColumnDefinition<TEntity>> _columnDefinitions;
-        private readonly ChangeTrackerFactory _changeTrackerFactory;
+        private readonly HashSet<string> _ignoredColumns;
 
-        private string? _tableName;
-
-        internal EntityBuilder(ChangeTrackerFactory changeTrackerFactory)
+        internal EntityBuilder()
         {
-            _changeTrackerFactory = changeTrackerFactory;
-            _type = typeof(TEntity);
+            Type = typeof(TEntity);
+            Relations = new List<EntityRelationDefinition>();
             _columnDefinitions = new Dictionary<string, ColumnDefinition<TEntity>>();
+            _ignoredColumns = new HashSet<string>();
         }
 
         public EntityBuilder<TEntity> MapToTable(string tableName)
         {
-            _tableName = tableName;
+            TableName = tableName;
 
             return this;
         }
@@ -44,6 +49,15 @@ namespace Venflow.Modeling
 
                 _columnDefinitions.Add(property.Name, definition);
             }
+
+            return this;
+        }
+
+        public EntityBuilder<TEntity> Ignore<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector)
+        {
+            var property = ValidatePropertySelector(propertySelector);
+
+            _ignoredColumns.Add(property.Name);
 
             return this;
         }
@@ -67,6 +81,18 @@ namespace Venflow.Modeling
             }
 
             _columnDefinitions.Add(property.Name, columnDefinition);
+
+            return this;
+        }
+
+        public EntityBuilder<TEntity> MapOneToOne<TRelation, TForeignKey>(Expression<Func<TEntity, TRelation>> relationSelector, Expression<Func<TEntity, TForeignKey>> foreignSelector)
+        {
+            var relation = ValidatePropertySelector(relationSelector);
+            var foreignKey = ValidatePropertySelector(foreignSelector);
+
+            _ignoredColumns.Add(relation.Name);
+
+            Relations.Add(new EntityRelationDefinition(relation, foreignKey, relation.PropertyType.Name));
 
             return this;
         }
@@ -97,8 +123,8 @@ namespace Venflow.Modeling
                 throw new ArgumentException($"The provided property doesn't contain a setter or it isn't public.", nameof(propertySelector));
             }
 
-            if (_type != property.ReflectedType &&
-                !_type.IsSubclassOf(property.ReflectedType!))
+            if (Type != property.ReflectedType &&
+                !Type.IsSubclassOf(property.ReflectedType!))
             {
                 throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property on the entity itself.", nameof(propertySelector));
             }
@@ -106,16 +132,16 @@ namespace Venflow.Modeling
             return property;
         }
 
-        internal KeyValuePair<string, IEntity> Build()
+        internal EntityColumnCollection<TEntity> Build()
         {
-            var properties = _type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var properties = Type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
             if (properties is null || properties.Length == 0)
             {
                 throw new TypeArgumentException("The provided generic type argument doesn't contain any public properties with a getter and a setter.");
             }
 
-            #region ExpressionVariables
+            // ExpressionVariables
 
             var columns = new List<EntityColumn<TEntity>>();
             var nameToColumn = new Dictionary<string, int>();
@@ -129,7 +155,7 @@ namespace Venflow.Modeling
             constructorTypes[0] = TypeCache.String;
 
             var indexParameter = Expression.Parameter(TypeCache.String, "index");
-            var entityParameter = Expression.Parameter(_type, "entity");
+            var entityParameter = Expression.Parameter(Type, "entity");
             var valueParameter = Expression.Parameter(TypeCache.Object, "value");
             var stringBuilderParameter = Expression.Parameter(TypeCache.StringBuilder, "commandString");
             var npgsqlParameterCollectionParameter = Expression.Parameter(TypeCache.NpgsqlParameterCollection, "parameters");
@@ -138,7 +164,7 @@ namespace Venflow.Modeling
             var stringBuilderAppend = TypeCache.StringBuilder.GetMethod("Append", new[] { TypeCache.String });
             var npgsqlParameterCollectionAdd = TypeCache.NpgsqlParameterCollection.GetMethod("Add", new Type[] { TypeCache.GenericNpgsqlParameter });
 
-            #endregion
+            // Important column specifications
 
             var columnIndex = 0;
             var regularColumnsOffset = 0;
@@ -148,14 +174,14 @@ namespace Venflow.Modeling
             {
                 var property = properties[i];
 
-                if (!property.CanWrite || !property.SetMethod!.IsPublic || Attribute.IsDefined(property, TypeCache.NotMappedAttribute))
+                if (!property.CanWrite || !property.SetMethod!.IsPublic || _ignoredColumns.Contains(property.Name) || Attribute.IsDefined(property, TypeCache.NotMappedAttribute))
                 {
                     continue;
                 }
 
                 var hasCustomDefinition = false;
 
-                #region ParameterValueRetriever
+                // ParameterValueRetriever
 
                 constructorTypes[1] = property.PropertyType;
 
@@ -169,10 +195,8 @@ namespace Venflow.Modeling
 
                 var parameterValueRetriever = Expression.Lambda<Func<TEntity, string, NpgsqlParameter>>(parameterInstance, entityParameter, indexParameter).Compile();
 
-                #endregion
-
                 Expression valueAssignment;
-                var valueRetriever = GetDbValueRetrieverMethod(property, TypeCache.NpgsqlDataReader);
+                var valueRetriever = TypeCache.NpgsqlDataReader!.GetMethod("GetFieldValue", BindingFlags.Instance | BindingFlags.Public).MakeGenericMethod(property.PropertyType);
 
                 if (property.PropertyType.IsClass || Nullable.GetUnderlyingType(property.PropertyType) is { })
                 {
@@ -186,6 +210,8 @@ namespace Venflow.Modeling
                 var valueWriter = Expression.Lambda<Action<TEntity, object>>(valueAssignment, entityParameter, valueParameter).Compile();
 
                 var isPrimaryColumn = false;
+
+                // Handle custom columns
 
                 if (_columnDefinitions.TryGetValue(property.Name, out var definition))
                 {
@@ -229,8 +255,6 @@ namespace Venflow.Modeling
 
                 if (!isPrimaryColumn)
                 {
-                    #region InsertWriter
-
                     var parameterVariable = Expression.Variable(genericNpgsqlParameter, property.Name.ToLower());
 
                     insertWriterVariables.Add(parameterVariable);
@@ -239,8 +263,6 @@ namespace Venflow.Modeling
                     insertWriterStatments.Add(Expression.Call(stringBuilderParameter, stringBuilderAppend, Expression.Property(parameterVariable, "ParameterName")));
                     insertWriterStatments.Add(Expression.Call(npgsqlParameterCollectionParameter, npgsqlParameterCollectionAdd, parameterVariable));
                     insertWriterStatments.Add(Expression.Call(stringBuilderParameter, stringBuilderAppend, Expression.Constant(", ")));
-
-                    #endregion
                 }
 
                 columnIndex++;
@@ -249,35 +271,26 @@ namespace Venflow.Modeling
 
             if (primaryColumn is null)
             {
-                throw new InvalidOperationException("The entityBuilder didn't configure the primary key nor is any property named 'Id'.");
+                throw new InvalidOperationException("The EntityBuilder didn't configure the primary key nor is any property named 'Id'.");
             }
 
-            if (_tableName is null)
+            if (TableName is null)
             {
-                _tableName = _type.Name + "s";
+                TableName = Type.Name + "s";
             }
-
-            Type? proxyType = null;
-            Func<ChangeTracker<TEntity>, TEntity>? factory = null;
-            Func<ChangeTracker<TEntity>, TEntity, TEntity>? applier = null;
-
-            var entityColumns = new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn);
 
             if (changeTrackingColumns.Count != 0)
             {
-                (proxyType, factory, applier) = _changeTrackerFactory.GenerateEntityProxyFactories(_type, changeTrackingColumns, entityColumns);
+                ChangeTrackerFactory = new ChangeTrackerFactory<TEntity>(Type);
+
+                ChangeTrackerFactory.GenerateEntityProxy(changeTrackingColumns);
             }
 
             insertWriterStatments.RemoveAt(insertWriterStatments.Count - 1);
 
-            var insertWriter = Expression.Lambda<Action<TEntity, StringBuilder, string, NpgsqlParameterCollection>>(Expression.Block(insertWriterVariables, insertWriterStatments), entityParameter, stringBuilderParameter, indexParameter, npgsqlParameterCollectionParameter).Compile();
+            InsertWriter = Expression.Lambda<Action<TEntity, StringBuilder, string, NpgsqlParameterCollection>>(Expression.Block(insertWriterVariables, insertWriterStatments), entityParameter, stringBuilderParameter, indexParameter, npgsqlParameterCollectionParameter).Compile();
 
-            return new KeyValuePair<string, IEntity>(_type.Name, new Entity<TEntity>(_type, insertWriter, proxyType, factory, applier, _tableName, entityColumns, regularColumnsOffset, primaryColumn));
-        }
-
-        private MethodInfo GetDbValueRetrieverMethod(PropertyInfo property, Type readerType)
-        {
-            return readerType!.GetMethod("GetFieldValue", BindingFlags.Instance | BindingFlags.Public).MakeGenericMethod(property.PropertyType);
+            return new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn, regularColumnsOffset);
         }
     }
 }

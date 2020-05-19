@@ -2,25 +2,22 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Venflow.Modeling.Definitions;
 
 namespace Venflow.Modeling
 {
     public class DbConfigurator
     {
-        private readonly IDictionary<string, IEntity> _entities;
-        private readonly ChangeTrackerFactory _changeTrackerFactory;
+        private readonly List<IEntityFactory> _entityFactories;
 
-
-        internal DbConfigurator(ChangeTrackerFactory changeTrackerFactory)
+        internal DbConfigurator()
         {
-            _entities = new Dictionary<string, IEntity>();
-
-            _changeTrackerFactory = changeTrackerFactory;
+            _entityFactories = new List<IEntityFactory>();
         }
 
         public DbConfigurator AddEntity<TEntity>(EntityConfiguration<TEntity> configuration) where TEntity : class
         {
-            _entities.Add(configuration.BuildConfiguration(_changeTrackerFactory));
+            _entityFactories.Add(configuration.BuildConfiguration());
 
             return this;
         }
@@ -28,7 +25,8 @@ namespace Venflow.Modeling
         public DbConfigurator AddEntity<TEntityConfiguration, TEntity>() where TEntity : class
                                                                          where TEntityConfiguration : EntityConfiguration<TEntity>, new()
         {
-            _entities.Add(new TEntityConfiguration().BuildConfiguration(_changeTrackerFactory));
+            _entityFactories.Add(new TEntityConfiguration().BuildConfiguration());
+
             return this;
         }
 
@@ -48,14 +46,30 @@ namespace Venflow.Modeling
 
             var configurationInstance = (EntityConfiguration)Activator.CreateInstance(configuration)!;
 
-            _entities.Add(configurationInstance.BuildConfiguration(_changeTrackerFactory));
+            _entityFactories.Add(configurationInstance.BuildConfiguration());
 
             return this;
         }
 
         internal IReadOnlyDictionary<string, IEntity> BuildConfiguration()
         {
-            return new ReadOnlyDictionary<string, IEntity>(_entities);
+            var entities = new Dictionary<string, IEntity>();
+
+            for (int i = 0; i < _entityFactories.Count; i++)
+            {
+                var factory = _entityFactories[i];
+
+                factory.BuildEntity();
+
+                entities.Add(factory.Entity.EntityName, factory.Entity);
+            }
+
+            for (int i = 0; i < _entityFactories.Count; i++)
+            {
+                _entityFactories[i].ApplyRelations(entities);
+            }
+
+            return new ReadOnlyDictionary<string, IEntity>(entities);
         }
     }
 }
