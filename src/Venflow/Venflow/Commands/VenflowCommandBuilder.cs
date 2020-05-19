@@ -16,16 +16,16 @@ namespace Venflow.Commands
         internal bool GetComputedColumns { get; private set; }
         internal bool DisposeCommand { get; }
 
-        private NpgsqlParameter[] _parameters;
-
         private readonly Entity<TEntity> _entityConfiguration;
         private readonly StringBuilder _commandString;
+        private readonly NpgsqlCommand _command;
 
         internal VenflowCommandBuilder(Entity<TEntity> entityConfiguration, bool disposeCommand = false)
         {
             _entityConfiguration = entityConfiguration;
             DisposeCommand = disposeCommand;
             _commandString = new StringBuilder();
+            _command = new NpgsqlCommand();
         }
 
         #region Query
@@ -53,7 +53,10 @@ namespace Venflow.Commands
         {
             IsSingle = true;
 
-            _parameters = parameters;
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                _command.Parameters.Add(parameters[i]);
+            }
 
             _commandString.Append(sql);
 
@@ -68,7 +71,10 @@ namespace Venflow.Commands
 
         IQueryCommand<TEntity> IQueryCommandBuilder<TEntity>.Batch(string sql, params NpgsqlParameter[] parameters)
         {
-            _parameters = parameters;
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                _command.Parameters.Add(parameters[i]);
+            }
 
             _commandString.Append(sql);
 
@@ -129,15 +135,11 @@ namespace Venflow.Commands
             var columnStartIndex = _entityConfiguration.RegularColumnsOffset;
             var columns = _entityConfiguration.Columns;
 
-            _parameters = new NpgsqlParameter[columns.Count - columnStartIndex];
-
-            var parameterIndex = 0;
-
             for (int columnIndex = columnStartIndex; columnIndex < columns.Count; columnIndex++)
             {
                 var parameter = columns[columnIndex].ValueRetriever(entity, "0");
 
-                _parameters[parameterIndex++] = parameter;
+                _command.Parameters.Add(parameter);
 
                 _commandString.Append(parameter.ParameterName);
             }
@@ -178,10 +180,6 @@ namespace Venflow.Commands
                     return null;
                 }
 
-                var parameterIndex = 0;
-
-                _parameters = new NpgsqlParameter[(columns.Count - columnStartIndex) * entitiesList.Count];
-
                 while (true)
                 {
                     _commandString.Append("(");
@@ -190,7 +188,7 @@ namespace Venflow.Commands
                     {
                         var parameter = columns[columnIndex].ValueRetriever(entitiesList[index], index++.ToString());
 
-                        _parameters[parameterIndex++] = parameter;
+                        _command.Parameters.Add(parameter);
 
                         _commandString.Append(parameter.ParameterName);
                     }
@@ -209,8 +207,6 @@ namespace Venflow.Commands
             }
             else
             {
-                var parameters = new List<NpgsqlParameter>();
-
                 foreach (var entity in entities)
                 {
                     _commandString.Append("(");
@@ -219,7 +215,7 @@ namespace Venflow.Commands
                     {
                         var parameter = columns[columnIndex].ValueRetriever(entity, index++.ToString());
 
-                        parameters.Add(parameter);
+                        _command.Parameters.Add(parameter);
 
                         _commandString.Append(parameter.ParameterName);
                     }
@@ -231,8 +227,6 @@ namespace Venflow.Commands
                     return null;
 
                 _commandString.Remove(_commandString.Length - 3, 3);
-
-                _parameters = parameters.ToArray();
             }
 
             if (GetComputedColumns)
@@ -268,7 +262,7 @@ namespace Venflow.Commands
 
             var primaryParameter = _entityConfiguration.PrimaryColumn.ValueRetriever(entity, "0");
 
-            _parameters = new[] { primaryParameter };
+            _command.Parameters.Add(primaryParameter);
 
             _commandString.Append(primaryParameter.ParameterName);
             _commandString.Append(';');
@@ -288,8 +282,6 @@ namespace Venflow.Commands
 
             if (entities is IList<TEntity> list)
             {
-                _parameters = new NpgsqlParameter[list.Count];
-
                 for (int i = 0; i < list.Count; i++)
                 {
                     var parameter = valueRetriever.Invoke(list[i], i.ToString());
@@ -297,14 +289,12 @@ namespace Venflow.Commands
                     _commandString.Append(parameter.ParameterName);
                     _commandString.Append(", ");
 
-                    _parameters[i] = parameter;
+                    _command.Parameters.Add(parameter);
                 }
             }
             else
             {
                 var index = 0;
-
-                var parameters = new List<NpgsqlParameter>();
 
                 foreach (var entity in entities)
                 {
@@ -313,10 +303,8 @@ namespace Venflow.Commands
                     _commandString.Append(parameter.ParameterName);
                     _commandString.Append(", ");
 
-                    parameters.Add(parameter);
+                    _command.Parameters.Add(parameter);
                 }
-
-                _parameters = parameters.ToArray();
             }
 
             _commandString.Remove(_commandString.Length - 2, 2);
@@ -338,27 +326,21 @@ namespace Venflow.Commands
         {
             IsSingle = true;
 
-            var parameters = new List<NpgsqlParameter>();
+            BaseUpdate(entity, 0);
 
-            BaseUpdate(entity, parameters, 0);
-
-            if (parameters.Count == 0)
+            if (_command.Parameters.Count == 0)
                 return null;
-
-            _parameters = parameters.ToArray();
 
             return BuildCommand();
         }
 
         IUpdateCommand<TEntity>? IUpdateCommandBuilder<TEntity>.Batch(IEnumerable<TEntity> entities)
         {
-            var parameters = new List<NpgsqlParameter>();
-
             if (entities is IList<TEntity> entitiesList)
             {
                 for (int i = 0; i < entitiesList.Count; i++)
                 {
-                    BaseUpdate(entitiesList[i], parameters, i);
+                    BaseUpdate(entitiesList[i], i);
                 }
             }
             else
@@ -367,20 +349,18 @@ namespace Venflow.Commands
 
                 foreach (var entity in entities)
                 {
-                    BaseUpdate(entity, parameters, index++);
+                    BaseUpdate(entity, index++);
                 }
             }
 
-            if (parameters.Count == 0)
+            if (_command.Parameters.Count == 0)
                 return null;
-
-            _parameters = parameters.ToArray();
 
             return BuildCommand();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void BaseUpdate(TEntity entity, List<NpgsqlParameter> parameters, int index)
+        private void BaseUpdate(TEntity entity, int index)
         {
             if (!(entity is IEntityProxy<TEntity> proxy))
             {
@@ -416,7 +396,7 @@ namespace Venflow.Commands
 
                 _commandString.Append(parameter.ParameterName);
 
-                parameters.Add(parameter);
+                _command.Parameters.Add(parameter);
 
                 _commandString.Append(", ");
             }
@@ -431,7 +411,7 @@ namespace Venflow.Commands
 
             var primaryParameter = _entityConfiguration.PrimaryColumn.ValueRetriever(entity, "Return" + index.ToString());
 
-            parameters.Add(primaryParameter);
+            _command.Parameters.Add(primaryParameter);
 
             _commandString.Append(primaryParameter.ParameterName);
 
@@ -442,12 +422,9 @@ namespace Venflow.Commands
 
         internal VenflowCommand<TEntity> BuildCommand()
         {
-            var command = new NpgsqlCommand(_commandString.ToString());
+            _command.CommandText = _commandString.ToString();
 
-            if (_parameters is { })
-                command.Parameters.AddRange(_parameters);
-
-            return new VenflowCommand<TEntity>(command, _entityConfiguration) { GetComputedColumns = GetComputedColumns, IsSingle = IsSingle, TrackingChanges = TrackingChanges, DisposeCommand = DisposeCommand };
+            return new VenflowCommand<TEntity>(_command, _entityConfiguration) { GetComputedColumns = GetComputedColumns, IsSingle = IsSingle, TrackingChanges = TrackingChanges, DisposeCommand = DisposeCommand };
         }
     }
 
