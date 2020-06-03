@@ -9,7 +9,7 @@ namespace Venflow
     public class TypeArgumentException : Exception
     {
         /// <inheritdoc/>
-        public TypeArgumentException(string type) : base($"The provided generic type argument '{type}' for the method was not valid.") { }
+        public TypeArgumentException(string message) : base(message) { }
 
         /// <inheritdoc/>
         public TypeArgumentException(string message, string type) : base(message + " Type: " + type) { }

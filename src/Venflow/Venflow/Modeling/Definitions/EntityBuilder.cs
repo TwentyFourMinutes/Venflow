@@ -2,44 +2,44 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using Venflow.Enums;
 
 namespace Venflow.Modeling.Definitions
 {
-    public class EntityBuilder<TEntity> where TEntity : class
+    internal class EntityBuilder<TEntity> : EntityBuilder, IEntityBuilder<TEntity> where TEntity : class
     {
-        internal Type Type { get; }
+        internal override Type Type { get; }
 
         internal ChangeTrackerFactory<TEntity>? ChangeTrackerFactory { get; private set; }
         internal Action<TEntity, StringBuilder, string, NpgsqlParameterCollection> InsertWriter { get; private set; }
         internal string TableName { get; private set; }
-        internal List<EntityRelationDefinition> Relations { get;}
+        internal IDictionary<string, ColumnDefinition<TEntity>> ColumnDefinitions { get; }
 
-        private readonly IDictionary<string, ColumnDefinition<TEntity>> _columnDefinitions;
         private readonly HashSet<string> _ignoredColumns;
 
         internal EntityBuilder()
         {
             Type = typeof(TEntity);
-            Relations = new List<EntityRelationDefinition>();
-            _columnDefinitions = new Dictionary<string, ColumnDefinition<TEntity>>();
+            ColumnDefinitions = new Dictionary<string, ColumnDefinition<TEntity>>();
             _ignoredColumns = new HashSet<string>();
         }
 
-        public EntityBuilder<TEntity> MapToTable(string tableName)
+        public IEntityBuilder<TEntity> MapToTable(string tableName)
         {
             TableName = tableName;
 
             return this;
         }
 
-        public EntityBuilder<TEntity> MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string columnName)
+        public IEntityBuilder<TEntity> MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string columnName)
         {
-            var property = ValidatePropertySelector(propertySelector);
+            var property = ValidatePropertySelector<TTarget>(propertySelector);
 
-            if (_columnDefinitions.TryGetValue(property.Name, out var definition))
+            if (ColumnDefinitions.TryGetValue(property.Name, out var definition))
             {
                 definition.Name = columnName;
             }
@@ -47,24 +47,24 @@ namespace Venflow.Modeling.Definitions
             {
                 definition = new ColumnDefinition<TEntity>(columnName);
 
-                _columnDefinitions.Add(property.Name, definition);
+                ColumnDefinitions.Add(property.Name, definition);
             }
 
             return this;
         }
 
-        public EntityBuilder<TEntity> Ignore<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector)
+        public IEntityBuilder<TEntity> Ignore<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector)
         {
-            var property = ValidatePropertySelector(propertySelector);
+            var property = ValidatePropertySelector<TTarget>(propertySelector);
 
             _ignoredColumns.Add(property.Name);
 
             return this;
         }
 
-        public EntityBuilder<TEntity> MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option)
+        public IEntityBuilder<TEntity> MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option)
         {
-            var property = ValidatePropertySelector(propertySelector);
+            var property = ValidatePropertySelector<TTarget>(propertySelector);
 
             var isServerSideGenerated = option != DatabaseGeneratedOption.None;
 
@@ -73,26 +73,60 @@ namespace Venflow.Modeling.Definitions
                 IsServerSideGenerated = isServerSideGenerated
             };
 
-            if (_columnDefinitions.TryGetValue(property.Name, out var definition))
+            if (ColumnDefinitions.TryGetValue(property.Name, out var definition))
             {
                 columnDefinition.Name = definition.Name;
 
-                _columnDefinitions.Remove(property.Name);
+                ColumnDefinitions.Remove(property.Name);
             }
 
-            _columnDefinitions.Add(property.Name, columnDefinition);
+            ColumnDefinitions.Add(property.Name, columnDefinition);
 
             return this;
         }
 
-        public EntityBuilder<TEntity> MapOneToOne<TRelation, TForeignKey>(Expression<Func<TEntity, TRelation>> relationSelector, Expression<Func<TEntity, TForeignKey>> foreignSelector)
+        public IEntityBuilder<TEntity> MapOneToOne<TRelation, TForeignKey>(Expression<Func<TEntity, TRelation>> relationSelector, Expression<Func<TEntity, TForeignKey>> foreignSelector) where TRelation : class?
         {
-            var relation = ValidatePropertySelector(relationSelector);
+            var relation = ValidatePropertySelector<TRelation>(relationSelector);
+            var foreignKey = ValidatePropertySelector<TForeignKey>(foreignSelector);
+
+            _ignoredColumns.Add(relation.Name);
+
+            Relations.Add(new EntityRelationDefinition(relation, false, foreignKey, relation.PropertyType.Name, RelationType.OneToOne));
+
+            return this;
+        }
+
+        public IEntityBuilder<TEntity> MapOneToOne<TRelation, TForeignKey>(Expression<Func<TEntity, TRelation>> relationSelector, Expression<Func<TRelation, TForeignKey>> foreignSelector) where TRelation : class?
+        {
+            var relation = ValidatePropertySelector<TRelation>(relationSelector);
+            var foreignKey = ValidatePropertySelector<TRelation, TForeignKey>(foreignSelector);
+
+            _ignoredColumns.Add(relation.Name);
+
+            Relations.Add(new EntityRelationDefinition(relation, true, foreignKey, relation.PropertyType.Name, RelationType.OneToOne));
+
+            return this;
+        }
+
+        public IEntityBuilder<TEntity> MapOneToMany<TRelation, TForeignKey>(Expression<Func<TEntity, IList<TRelation>>> relationSelector, Expression<Func<TRelation, TForeignKey>> foreignSelector) where TRelation : class?
+        {
+            var relation = ValidatePropertySelector<IList<TRelation>>(relationSelector);
             var foreignKey = ValidatePropertySelector(foreignSelector);
 
             _ignoredColumns.Add(relation.Name);
 
-            Relations.Add(new EntityRelationDefinition(relation, foreignKey, relation.PropertyType.Name));
+            Relations.Add(new EntityRelationDefinition(relation, true, foreignKey, relation.PropertyType.Name, RelationType.OneToMany));
+
+            return this;
+        }
+
+        public IEntityBuilder<TEntity> MapManyToOne<TRelation, TForeignKey>(Expression<Func<TRelation, IList<TEntity>>> relationSelector, Expression<Func<TEntity, TForeignKey>> foreignSelector) where TRelation : class?
+        {
+            var relation = ValidatePropertySelector(relationSelector);
+            var foreignKey = ValidatePropertySelector<TForeignKey>(foreignSelector);
+
+            Relations.Add(new EntityRelationDefinition(relation, false, foreignKey, relation.PropertyType.Name, RelationType.OneToMany));
 
             return this;
         }
@@ -132,6 +166,46 @@ namespace Venflow.Modeling.Definitions
             return property;
         }
 
+        private PropertyInfo ValidatePropertySelector<TFrom, TTarget>(Expression<Func<TFrom, TTarget>> propertySelector)
+        {
+            if (propertySelector is null)
+            {
+                throw new ArgumentNullException(nameof(propertySelector));
+            }
+
+            var body = propertySelector.Body as MemberExpression;
+
+            if (body is null)
+            {
+                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property.", nameof(propertySelector));
+            }
+
+            var property = body.Member as PropertyInfo;
+
+            if (property is null)
+            {
+                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property.", nameof(propertySelector));
+            }
+
+            if (!property.CanWrite || !property.SetMethod.IsPublic)
+            {
+                throw new ArgumentException($"The provided property doesn't contain a setter or it isn't public.", nameof(propertySelector));
+            }
+
+            var type = typeof(TFrom);
+
+            if (type != property.ReflectedType &&
+                !type.IsSubclassOf(property.ReflectedType!))
+            {
+                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property on the entity itself.", nameof(propertySelector));
+            }
+
+            return property;
+        }
+
+        internal override void IgnoreProperty(string propertyName)
+            => _ignoredColumns.Add(propertyName);
+
         internal EntityColumnCollection<TEntity> Build()
         {
             var properties = Type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -144,7 +218,7 @@ namespace Venflow.Modeling.Definitions
             // ExpressionVariables
 
             var columns = new List<EntityColumn<TEntity>>();
-            var nameToColumn = new Dictionary<string, int>();
+            var nameToColumn = new Dictionary<string, EntityColumn<TEntity>>();
             var changeTrackingColumns = new Dictionary<int, EntityColumn<TEntity>>();
             PrimaryEntityColumn<TEntity>? primaryColumn = null;
 
@@ -213,7 +287,7 @@ namespace Venflow.Modeling.Definitions
 
                 // Handle custom columns
 
-                if (_columnDefinitions.TryGetValue(property.Name, out var definition))
+                if (ColumnDefinitions.TryGetValue(property.Name, out var definition))
                 {
                     switch (definition)
                     {
@@ -229,7 +303,7 @@ namespace Venflow.Modeling.Definitions
                                 changeTrackingColumns.Add(columnIndex, primaryColumn);
                             }
 
-                            nameToColumn.Add(definition.Name, columnIndex);
+                            nameToColumn.Add(definition.Name, primaryColumn);
 
                             hasCustomDefinition = true;
                             isPrimaryColumn = true;
@@ -239,7 +313,23 @@ namespace Venflow.Modeling.Definitions
 
                 if (!hasCustomDefinition)
                 {
-                    var columnName = definition?.Name ?? property.Name;
+                    string columnName;
+
+                    if (definition is not null)
+                    {
+                        columnName = definition.Name;
+
+                        var relation = Relations.FirstOrDefault(x => x.ForeignKeyProperty.Name == property.Name);
+
+                        if (relation is not null)
+                        {
+                            relation.ForeignKeyColumnName = columnName;
+                        }
+                    }
+                    else
+                    {
+                        columnName = property.Name;
+                    }
 
                     var column = new EntityColumn<TEntity>(property, columnName, propertyFlagValue, valueRetriever, valueWriter, parameterValueRetriever);
 
@@ -250,7 +340,7 @@ namespace Venflow.Modeling.Definitions
                         changeTrackingColumns.Add(columnIndex, column);
                     }
 
-                    nameToColumn.Add(columnName, columnIndex);
+                    nameToColumn.Add(columnName, column);
                 }
 
                 if (!isPrimaryColumn)
@@ -292,5 +382,37 @@ namespace Venflow.Modeling.Definitions
 
             return new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn, regularColumnsOffset);
         }
+    }
+
+    internal abstract class EntityBuilder
+    {
+        internal List<EntityRelationDefinition> Relations { get; }
+        internal abstract Type Type { get; }
+
+        protected EntityBuilder()
+        {
+            Relations = new List<EntityRelationDefinition>();
+        }
+
+        internal abstract void IgnoreProperty(string propertyName);
+    }
+
+    public interface IEntityBuilder<TEntity> where TEntity : class
+    {
+        IEntityBuilder<TEntity> MapToTable(string tableName);
+
+        IEntityBuilder<TEntity> MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string columnName);
+
+        IEntityBuilder<TEntity> Ignore<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector);
+
+        IEntityBuilder<TEntity> MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option);
+
+        IEntityBuilder<TEntity> MapOneToOne<TRelation, TForeignKey>(Expression<Func<TEntity, TRelation>> relationSelector, Expression<Func<TEntity, TForeignKey>> foreignSelector) where TRelation : class?;
+
+        IEntityBuilder<TEntity> MapOneToOne<TRelation, TForeignKey>(Expression<Func<TEntity, TRelation>> relationSelector, Expression<Func<TRelation, TForeignKey>> foreignSelector) where TRelation : class?;
+
+        IEntityBuilder<TEntity> MapOneToMany<TRelation, TForeignKey>(Expression<Func<TEntity, IList<TRelation>>> relationSelector, Expression<Func<TRelation, TForeignKey>> foreignSelector) where TRelation : class?;
+
+        IEntityBuilder<TEntity> MapManyToOne<TRelation, TForeignKey>(Expression<Func<TRelation, IList<TEntity>>> relationSelector, Expression<Func<TEntity, TForeignKey>> foreignSelector) where TRelation : class?;
     }
 }

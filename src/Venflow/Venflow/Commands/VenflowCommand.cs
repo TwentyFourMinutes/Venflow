@@ -11,6 +11,7 @@ namespace Venflow.Commands
         internal NpgsqlCommand UnderlyingCommand { get; set; }
 
         internal Entity<TEntity> EntityConfiguration { get; set; }
+        internal ForeignEntity[] Relations { get; set; }
         internal bool IsSingle { get; set; }
         internal bool TrackingChanges { get; set; }
         internal bool GetComputedColumns { get; set; }

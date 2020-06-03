@@ -2,9 +2,9 @@
 {
     public abstract class EntityConfiguration<TEntity> : EntityConfiguration where TEntity : class
     {
-        protected abstract void Configure(EntityBuilder<TEntity> entityBuilder);
+        protected abstract void Configure(IEntityBuilder<TEntity> entityBuilder);
 
-        internal sealed override IEntityFactory BuildConfiguration()
+        internal sealed override EntityFactory BuildConfiguration()
         {
             var entityBuilder = new EntityBuilder<TEntity>();
 
@@ -16,6 +16,6 @@
 
     public abstract class EntityConfiguration
     {
-        internal abstract IEntityFactory BuildConfiguration();
+        internal abstract EntityFactory BuildConfiguration();
     }
 }

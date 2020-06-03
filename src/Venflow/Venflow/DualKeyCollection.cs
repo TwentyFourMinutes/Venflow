@@ -6,7 +6,7 @@ namespace Venflow
                                                       where TValue : class
     {
         private readonly TValue[] _oneToValue;
-        private readonly IDictionary<TKeyTwo, int> _twoToOne;
+        private readonly IDictionary<TKeyTwo, TValue> _twoToOne;
 
         internal int Count => _oneToValue.Length;
 
@@ -14,7 +14,7 @@ namespace Venflow
 
         internal TValue[] Values => _oneToValue;
 
-        internal DualKeyCollection(TValue[] firstCollction, Dictionary<TKeyTwo, int> twoToOne)
+        internal DualKeyCollection(TValue[] firstCollction, Dictionary<TKeyTwo, TValue> twoToOne)
         {
             _oneToValue = firstCollction;
             _twoToOne = twoToOne;
@@ -22,6 +22,11 @@ namespace Venflow
 
         internal TValue this[int key] => _oneToValue[key];
 
-        internal TValue this[TKeyTwo key] => this[_twoToOne[key]];
+        internal TValue this[TKeyTwo key] => _twoToOne[key];
+
+        internal bool TryGetValue(TKeyTwo key, out TValue? value)
+        {
+            return _twoToOne.TryGetValue(key, out value);
+        }
     }
 }

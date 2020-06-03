@@ -6,7 +6,7 @@ namespace Venflow.Modeling
     {
         internal int RegularColumnsOffset { get; }
 
-        internal EntityColumnCollection(EntityColumn<TEntity>[] firstCollction, Dictionary<string, int> twoToOne, int regularColumnsOffset) : base(firstCollction, twoToOne)
+        internal EntityColumnCollection(EntityColumn<TEntity>[] firstCollction, Dictionary<string, EntityColumn<TEntity>> twoToOne, int regularColumnsOffset) : base(firstCollction, twoToOne)
         {
             RegularColumnsOffset = regularColumnsOffset;
         }

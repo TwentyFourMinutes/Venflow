@@ -4,7 +4,20 @@ using System.Reflection;
 
 namespace Venflow.Modeling
 {
-    internal class EntityColumn<TEntity> where TEntity : class
+    internal class EntityColumn<TEntity> : EntityColumn where TEntity : class
+    {
+        internal Action<TEntity, object> ValueWriter { get; }
+
+        internal Func<TEntity, string, NpgsqlParameter> ValueRetriever { get; }
+
+        internal EntityColumn(PropertyInfo propertyInfo, string columnName, ulong flagValue, MethodInfo dbValueRetriever, Action<TEntity, object> valueWriter, Func<TEntity, string, NpgsqlParameter> valueRetriever) : base(propertyInfo, columnName, flagValue, dbValueRetriever)
+        {
+            ValueWriter = valueWriter;
+            ValueRetriever = valueRetriever;
+        }
+    }
+
+    internal abstract class EntityColumn
     {
         internal string ColumnName { get; }
 
@@ -14,18 +27,12 @@ namespace Venflow.Modeling
 
         internal MethodInfo DbValueRetriever { get; }
 
-        internal Action<TEntity, object> ValueWriter { get; }
-
-        internal Func<TEntity, string, NpgsqlParameter> ValueRetriever { get; }
-
-        internal EntityColumn(PropertyInfo propertyInfo, string columnName, ulong flagValue, MethodInfo dbValueRetriever, Action<TEntity, object> valueWriter, Func<TEntity, string, NpgsqlParameter> valueRetriever)
+        internal EntityColumn(PropertyInfo propertyInfo, string columnName, ulong flagValue, MethodInfo dbValueRetriever)
         {
             PropertyInfo = propertyInfo;
             ColumnName = columnName;
             FlagValue = flagValue;
             DbValueRetriever = dbValueRetriever;
-            ValueWriter = valueWriter;
-            ValueRetriever = valueRetriever;
         }
     }
 }

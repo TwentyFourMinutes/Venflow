@@ -10,7 +10,7 @@ namespace Venflow.Modeling
         internal string ConnectionString { get; }
         internal bool UseLazyEntityEvaluation { get; }
 
-        internal IReadOnlyDictionary<string, IEntity> Entities { get; private set; }
+        internal IReadOnlyDictionary<string, Entity> Entities { get; private set; }
         internal bool IsBuild { get; private set; }
 
         protected DbConfiguration(string connectionString, bool useLazyEntityEvaluation = false)

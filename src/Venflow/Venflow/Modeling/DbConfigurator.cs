@@ -8,16 +8,18 @@ namespace Venflow.Modeling
 {
     public class DbConfigurator
     {
-        private readonly List<IEntityFactory> _entityFactories;
+        private readonly List<EntityFactory> _entityFactories;
+        private readonly Dictionary<string, EntityBuilder> _entityBuilders;
 
         internal DbConfigurator()
         {
-            _entityFactories = new List<IEntityFactory>();
+            _entityFactories = new List<EntityFactory>();
+            _entityBuilders = new Dictionary<string, EntityBuilder>();
         }
 
         public DbConfigurator AddEntity<TEntity>(EntityConfiguration<TEntity> configuration) where TEntity : class
         {
-            _entityFactories.Add(configuration.BuildConfiguration());
+            AddToConfigurations(configuration.BuildConfiguration());
 
             return this;
         }
@@ -25,7 +27,7 @@ namespace Venflow.Modeling
         public DbConfigurator AddEntity<TEntityConfiguration, TEntity>() where TEntity : class
                                                                          where TEntityConfiguration : EntityConfiguration<TEntity>, new()
         {
-            _entityFactories.Add(new TEntityConfiguration().BuildConfiguration());
+            AddToConfigurations(new TEntityConfiguration().BuildConfiguration());
 
             return this;
         }
@@ -46,30 +48,41 @@ namespace Venflow.Modeling
 
             var configurationInstance = (EntityConfiguration)Activator.CreateInstance(configuration)!;
 
-            _entityFactories.Add(configurationInstance.BuildConfiguration());
+            AddToConfigurations(configurationInstance.BuildConfiguration());
 
             return this;
         }
 
-        internal IReadOnlyDictionary<string, IEntity> BuildConfiguration()
+        internal IReadOnlyDictionary<string, Entity> BuildConfiguration()
         {
-            var entities = new Dictionary<string, IEntity>();
+            var entities = new Dictionary<string, Entity>();
 
             for (int i = 0; i < _entityFactories.Count; i++)
             {
-                var factory = _entityFactories[i];
-
-                factory.BuildEntity();
-
-                entities.Add(factory.Entity.EntityName, factory.Entity);
+                _entityFactories[i].ConfigureForeignRelations(_entityBuilders);
             }
 
             for (int i = 0; i < _entityFactories.Count; i++)
             {
-                _entityFactories[i].ApplyRelations(entities);
+                var entityFactory = _entityFactories[i].BuildEntity();
+
+                entities.Add(entityFactory.EntityName, entityFactory);
             }
 
-            return new ReadOnlyDictionary<string, IEntity>(entities);
+            for (int i = 0; i < _entityFactories.Count; i++)
+            {
+                var entityFactory = _entityFactories[i];
+
+                entityFactory.ApplyForeignRelations(entities);
+            }
+
+            return new ReadOnlyDictionary<string, Entity>(entities);
+        }
+
+        private void AddToConfigurations(EntityFactory entityFactory)
+        {
+            _entityFactories.Add(entityFactory);
+            _entityBuilders.Add(entityFactory.EntityBuilder.Type.Name, entityFactory.EntityBuilder);
         }
     }
 }

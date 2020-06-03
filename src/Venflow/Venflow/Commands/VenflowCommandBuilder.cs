@@ -1,9 +1,12 @@
 ﻿using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Venflow.Enums;
 using Venflow.Modeling;
+using Venflow.Models;
 
 namespace Venflow.Commands
 {
@@ -12,30 +15,50 @@ namespace Venflow.Commands
         internal bool IsSingle { get; private set; }
         internal bool TrackingChanges { get; private set; }
         internal bool GetComputedColumns { get; private set; }
+        internal List<JoinOptions> JoinOptions { get; private set; }
         internal bool DisposeCommand { get; }
 
         private readonly Entity<TEntity> _entityConfiguration;
         private readonly StringBuilder _commandString;
         private readonly NpgsqlCommand _command;
 
-        internal VenflowCommandBuilder(Entity<TEntity> entityConfiguration, bool disposeCommand = false)
+        internal VenflowCommandBuilder(Entity<TEntity> entityConfiguration, bool disposeCommand = false, NpgsqlCommand? command = null)
         {
             _entityConfiguration = entityConfiguration;
             DisposeCommand = disposeCommand;
             _commandString = new StringBuilder();
-            _command = new NpgsqlCommand();
+            _command = command ?? new NpgsqlCommand();
         }
 
         #region Query
 
         public IQueryCommandBuilder<TEntity> Query()
         {
+            JoinOptions = new List<JoinOptions>();
             return this;
         }
 
         IQueryCommandBuilder<TEntity> IQueryCommandBuilder<TEntity>.TrackChanges(bool trackChanges)
         {
             TrackingChanges = trackChanges;
+
+            return this;
+        }
+
+        IQueryCommandBuilder<TEntity> IQueryCommandBuilder<TEntity>.JoinWith<TEntity2>(JoinBehaviour joinBehaviour) where TEntity2 : class
+        {
+            ForeignEntity? foreignEntity = default;
+
+            if (_entityConfiguration.Relations is null)
+            {
+                throw new InvalidOperationException($"The current entity '{typeof(TEntity).Name}' doesn't have any relation with other entities.");
+            }
+            else if (!_entityConfiguration.Relations.TryGetValue(typeof(TEntity2).Name, out foreignEntity))
+            {
+                throw new TypeArgumentException($"The provided entity '{typeof(TEntity2).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
+            }
+
+            JoinOptions.Add(new JoinOptions(foreignEntity!, joinBehaviour));
 
             return this;
         }
@@ -81,22 +104,95 @@ namespace Venflow.Commands
 
         private IQueryCommand<TEntity> BaseQuery(ulong count)
         {
-            _commandString.Append("SELECT ");
-
-            _commandString.Append(_entityConfiguration.ColumnListString);
-
-            _commandString.Append(" FROM ");
-
-            _commandString.Append(_entityConfiguration.TableName);
-
-            if (count > 0)
+            if (JoinOptions.Count == 0)
             {
-                _commandString.Append(" LIMIT ");
-                _commandString.Append(count);
+                AppendBaseQuery(_commandString, count);
+            }
+            else
+            {
+                _commandString.Append("SELECT ");
+
+                _commandString.Append(_entityConfiguration.ExplicitColumnListString);
+
+                var commandBuilder = new StringBuilder();
+
+                commandBuilder.Append('(');
+
+                AppendBaseQuery(commandBuilder, count);
+
+                commandBuilder.Append(") AS ");
+
+                commandBuilder.Append(_entityConfiguration.RawTableName);
+
+                for (int i = 0; i < JoinOptions.Count; i++)
+                {
+                    var joinOptions = JoinOptions[i];
+
+                    var foreignEntity = joinOptions.JoinWith.Entity;
+
+                    _commandString.Append(", ");
+                    _commandString.Append(foreignEntity.ExplicitColumnListString);
+
+                    commandBuilder.AppendLine();
+
+                    switch (joinOptions.JoinBehaviour)
+                    {
+                        case JoinBehaviour.InnerJoin:
+                            commandBuilder.Append("INNER JOIN ");
+                            break;
+                        case JoinBehaviour.LeftJoin:
+                            commandBuilder.Append("LEFT JOIN ");
+                            break;
+                        case JoinBehaviour.RightJoin:
+                            commandBuilder.Append("RIGHT JOIN ");
+                            break;
+                        case JoinBehaviour.FullJoin:
+                            commandBuilder.Append("FULL JOIN ");
+                            break;
+                        default:
+                            throw new InvalidOperationException($"Invalid state '{joinOptions.JoinBehaviour}' for the JoinBehaviour on entity {foreignEntity.EntityName}");
+                    }
+
+                    commandBuilder.Append(foreignEntity.TableName);
+                    commandBuilder.Append(" AS ");
+                    commandBuilder.Append(foreignEntity.RawTableName);
+                    commandBuilder.Append(" ON ");
+                    commandBuilder.Append(_entityConfiguration.RawTableName);
+                    commandBuilder.Append(".\"");
+                    commandBuilder.Append(joinOptions.JoinWith.ForeignKey.ColumnName);
+                    commandBuilder.Append("\" = ");
+                    commandBuilder.Append(foreignEntity.RawTableName);
+                    commandBuilder.Append(".\"");
+                    commandBuilder.Append(foreignEntity.GetPrimaryColumn().ColumnName);
+                    commandBuilder.Append('"');
+                }
+
+                _commandString.Append(" FROM ");
+
+                _commandString.Append(commandBuilder);
+
                 _commandString.Append(';');
             }
 
             return BuildCommand();
+        }
+
+        private void AppendBaseQuery(StringBuilder sb, ulong count)
+        {
+            sb.Append("SELECT ");
+
+            sb.Append(_entityConfiguration.ColumnListString);
+
+            sb.Append(" FROM ");
+
+            sb.Append(_entityConfiguration.TableName);
+
+            if (count > 0)
+            {
+                sb.Append(" LIMIT ");
+                sb.Append(count);
+                sb.Append(';');
+            }
         }
 
         #endregion
@@ -397,7 +493,7 @@ namespace Venflow.Commands
         {
             _command.CommandText = _commandString.ToString();
 
-            return new VenflowCommand<TEntity>(_command, _entityConfiguration) { GetComputedColumns = GetComputedColumns, IsSingle = IsSingle, TrackingChanges = TrackingChanges, DisposeCommand = DisposeCommand };
+            return new VenflowCommand<TEntity>(_command, _entityConfiguration) { GetComputedColumns = GetComputedColumns, IsSingle = IsSingle, TrackingChanges = TrackingChanges, DisposeCommand = DisposeCommand, Relations = JoinOptions?.Select(x => x.JoinWith).ToArray() };
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using Npgsql;
+using Venflow.Enums;
 
 namespace Venflow.Commands
 {
     public interface IQueryCommandBuilder<TEntity> where TEntity : class
     {
         IQueryCommandBuilder<TEntity> TrackChanges(bool trackChanges = true);
+        IQueryCommandBuilder<TEntity> JoinWith<TEntity2>(JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TEntity2 : class;
 
         IQueryCommand<TEntity> Single();
         IQueryCommand<TEntity> Single(string sql, params NpgsqlParameter[] parameters);
