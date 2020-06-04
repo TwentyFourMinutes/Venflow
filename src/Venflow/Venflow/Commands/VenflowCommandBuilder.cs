@@ -1,9 +1,13 @@
 ﻿using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using Venflow.Enums;
 using Venflow.Modeling;
 using Venflow.Models;
@@ -12,10 +16,12 @@ namespace Venflow.Commands
 {
     internal class VenflowCommandBuilder<TEntity> : IVenflowCommandBuilder<TEntity> where TEntity : class
     {
+        internal JoinBuilderValues? JoinValues { get; set; }
+
         internal bool IsSingle { get; private set; }
         internal bool TrackingChanges { get; private set; }
         internal bool GetComputedColumns { get; private set; }
-        internal List<JoinOptions> JoinOptions { get; private set; }
+
         internal bool DisposeCommand { get; }
 
         private readonly Entity<TEntity> _entityConfiguration;
@@ -34,7 +40,7 @@ namespace Venflow.Commands
 
         public IQueryCommandBuilder<TEntity> Query()
         {
-            JoinOptions = new List<JoinOptions>();
+            //JoinOptions = new List<JoinOptions>();
             return this;
         }
 
@@ -45,32 +51,28 @@ namespace Venflow.Commands
             return this;
         }
 
-        IQueryCommandBuilder<TEntity> IQueryCommandBuilder<TEntity>.JoinWith<TEntity2>(JoinBehaviour joinBehaviour) where TEntity2 : class
+        public JoinBuilder<TEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
         {
-            ForeignEntity? foreignEntity = default;
+            var builder = new JoinBuilder<TEntity, TToEntity>(_entityConfiguration, this);
 
-            if (_entityConfiguration.Relations is null)
-            {
-                throw new InvalidOperationException($"The current entity '{typeof(TEntity).Name}' doesn't have any relation with other entities.");
-            }
-            else if (!_entityConfiguration.Relations.TryGetValue(typeof(TEntity2).Name, out foreignEntity))
-            {
-                throw new TypeArgumentException($"The provided entity '{typeof(TEntity2).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
-            }
-
-            JoinOptions.Add(new JoinOptions(foreignEntity!, joinBehaviour));
-
-            return this;
+            return builder.JoinWith(propertySelector, joinBehaviour);
         }
 
-        IQueryCommand<TEntity> IQueryCommandBuilder<TEntity>.Single()
+        public JoinBuilder<TEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TEntity, IEnumerable<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        {
+            var builder = new JoinBuilder<TEntity, TToEntity>(_entityConfiguration, this);
+
+            return builder.JoinWith(propertySelector, joinBehaviour);
+        }
+
+        public IQueryCommand<TEntity> Single()
         {
             IsSingle = true;
 
             return BaseQuery(1);
         }
 
-        IQueryCommand<TEntity> IQueryCommandBuilder<TEntity>.Single(string sql, params NpgsqlParameter[] parameters)
+        public IQueryCommand<TEntity> Single(string sql, params NpgsqlParameter[] parameters)
         {
             IsSingle = true;
 
@@ -84,13 +86,13 @@ namespace Venflow.Commands
             return BuildCommand();
         }
 
-        IQueryCommand<TEntity> IQueryCommandBuilder<TEntity>.Batch()
+        public IQueryCommand<TEntity> Batch()
              => BaseQuery(0);
 
-        IQueryCommand<TEntity> IQueryCommandBuilder<TEntity>.Batch(ulong count)
+        public IQueryCommand<TEntity> Batch(ulong count)
              => BaseQuery(count);
 
-        IQueryCommand<TEntity> IQueryCommandBuilder<TEntity>.Batch(string sql, params NpgsqlParameter[] parameters)
+        public IQueryCommand<TEntity> Batch(string sql, params NpgsqlParameter[] parameters)
         {
             for (int i = 0; i < parameters.Length; i++)
             {
@@ -104,77 +106,82 @@ namespace Venflow.Commands
 
         private IQueryCommand<TEntity> BaseQuery(ulong count)
         {
-            if (JoinOptions.Count == 0)
+            if (JoinValues is null)
             {
                 AppendBaseQuery(_commandString, count);
             }
             else
             {
-                _commandString.Append("SELECT ");
 
-                _commandString.Append(_entityConfiguration.ExplicitColumnListString);
-
-                var commandBuilder = new StringBuilder();
-
-                commandBuilder.Append('(');
-
-                AppendBaseQuery(commandBuilder, count);
-
-                commandBuilder.Append(") AS ");
-
-                commandBuilder.Append(_entityConfiguration.RawTableName);
-
-                for (int i = 0; i < JoinOptions.Count; i++)
-                {
-                    var joinOptions = JoinOptions[i];
-
-                    var foreignEntity = joinOptions.JoinWith.Entity;
-
-                    _commandString.Append(", ");
-                    _commandString.Append(foreignEntity.ExplicitColumnListString);
-
-                    commandBuilder.AppendLine();
-
-                    switch (joinOptions.JoinBehaviour)
-                    {
-                        case JoinBehaviour.InnerJoin:
-                            commandBuilder.Append("INNER JOIN ");
-                            break;
-                        case JoinBehaviour.LeftJoin:
-                            commandBuilder.Append("LEFT JOIN ");
-                            break;
-                        case JoinBehaviour.RightJoin:
-                            commandBuilder.Append("RIGHT JOIN ");
-                            break;
-                        case JoinBehaviour.FullJoin:
-                            commandBuilder.Append("FULL JOIN ");
-                            break;
-                        default:
-                            throw new InvalidOperationException($"Invalid state '{joinOptions.JoinBehaviour}' for the JoinBehaviour on entity {foreignEntity.EntityName}");
-                    }
-
-                    commandBuilder.Append(foreignEntity.TableName);
-                    commandBuilder.Append(" AS ");
-                    commandBuilder.Append(foreignEntity.RawTableName);
-                    commandBuilder.Append(" ON ");
-                    commandBuilder.Append(_entityConfiguration.RawTableName);
-                    commandBuilder.Append(".\"");
-                    commandBuilder.Append(joinOptions.JoinWith.ForeignKey.ColumnName);
-                    commandBuilder.Append("\" = ");
-                    commandBuilder.Append(foreignEntity.RawTableName);
-                    commandBuilder.Append(".\"");
-                    commandBuilder.Append(foreignEntity.GetPrimaryColumn().ColumnName);
-                    commandBuilder.Append('"');
-                }
-
-                _commandString.Append(" FROM ");
-
-                _commandString.Append(commandBuilder);
-
-                _commandString.Append(';');
             }
 
             return BuildCommand();
+        }
+
+        private void BaseOneToManyQuery()
+        {
+            //_commandString.Append("SELECT ");
+
+            //_commandString.Append(_entityConfiguration.ExplicitColumnListString);
+
+            //var commandBuilder = new StringBuilder();
+
+            //commandBuilder.Append('(');
+
+            //AppendBaseQuery(commandBuilder, count);
+
+            //commandBuilder.Append(") AS ");
+
+            //commandBuilder.Append(_entityConfiguration.RawTableName);
+
+            //for (int i = 0; i < JoinOptions.Count; i++)
+            //{
+            //    var joinOptions = JoinOptions[i];
+
+            //    var foreignEntity = joinOptions.JoinWith.Entity;
+
+            //    _commandString.Append(", ");
+            //    _commandString.Append(foreignEntity.ExplicitColumnListString);
+
+            //    commandBuilder.AppendLine();
+
+            //    switch (joinOptions.JoinBehaviour)
+            //    {
+            //        case JoinBehaviour.InnerJoin:
+            //            commandBuilder.Append("INNER JOIN ");
+            //            break;
+            //        case JoinBehaviour.LeftJoin:
+            //            commandBuilder.Append("LEFT JOIN ");
+            //            break;
+            //        case JoinBehaviour.RightJoin:
+            //            commandBuilder.Append("RIGHT JOIN ");
+            //            break;
+            //        case JoinBehaviour.FullJoin:
+            //            commandBuilder.Append("FULL JOIN ");
+            //            break;
+            //        default:
+            //            throw new InvalidOperationException($"Invalid state '{joinOptions.JoinBehaviour}' for the JoinBehaviour on entity {foreignEntity.EntityName}");
+            //    }
+
+            //    commandBuilder.Append(foreignEntity.TableName);
+            //    commandBuilder.Append(" AS ");
+            //    commandBuilder.Append(foreignEntity.RawTableName);
+            //    commandBuilder.Append(" ON ");
+            //    commandBuilder.Append(_entityConfiguration.RawTableName);
+            //    commandBuilder.Append(".\"");
+            //    commandBuilder.Append(joinOptions.JoinWith.ForeignKey.ColumnName);
+            //    commandBuilder.Append("\" = ");
+            //    commandBuilder.Append(foreignEntity.RawTableName);
+            //    commandBuilder.Append(".\"");
+            //    commandBuilder.Append(foreignEntity.GetPrimaryColumn().ColumnName);
+            //    commandBuilder.Append('"');
+            //}
+
+            //_commandString.Append(" FROM ");
+
+            //_commandString.Append(commandBuilder);
+
+            //_commandString.Append(';');
         }
 
         private void AppendBaseQuery(StringBuilder sb, ulong count)
@@ -493,7 +500,250 @@ namespace Venflow.Commands
         {
             _command.CommandText = _commandString.ToString();
 
-            return new VenflowCommand<TEntity>(_command, _entityConfiguration) { GetComputedColumns = GetComputedColumns, IsSingle = IsSingle, TrackingChanges = TrackingChanges, DisposeCommand = DisposeCommand, Relations = JoinOptions?.Select(x => x.JoinWith).ToArray() };
+            return new VenflowCommand<TEntity>(_command, _entityConfiguration) { GetComputedColumns = GetComputedColumns, IsSingle = IsSingle, TrackingChanges = TrackingChanges, DisposeCommand = DisposeCommand, Relations = null };
+        }
+    }
+
+    internal class JoinBuilderValues
+    {
+        internal Entity Root { get; }
+        internal List<JoinPath> FullPath { get; }
+
+        private JoinPath _currentPath;
+
+        internal JoinBuilderValues(Entity root)
+        {
+            FullPath = new List<JoinPath>();
+            Root = root;
+        }
+
+        internal void AddToPath(JoinOptions joinOptions, bool newFullPath)
+        {
+            if (newFullPath)
+            {
+                for (int i = 0; i < FullPath.Count; i++)
+                {
+                    var path = FullPath[i];
+
+                    if (object.ReferenceEquals(path.JoinOptions.JoinWith, joinOptions.JoinWith))
+                    {
+                        _currentPath = path;
+
+                        return;
+                    }
+
+                    var match = path.GetPath(joinOptions.JoinWith);
+
+                    if (match is { })
+                    {
+                        _currentPath = match;
+
+                        return;
+                    }
+                }
+
+                FullPath.Add(new JoinPath(joinOptions));
+            }
+            else
+            {
+                var match = _currentPath.GetPath(joinOptions.JoinWith);
+
+                if (match is { })
+                {
+                    _currentPath = match;
+
+                    return;
+                }
+
+                _currentPath.TrailingJoinPath.Add(_currentPath);
+            }
+
+            _currentPath = new JoinPath(joinOptions);
+        }
+    }
+
+    internal class JoinPath
+    {
+        internal JoinOptions JoinOptions { get; }
+
+        internal List<JoinPath> TrailingJoinPath { get; }
+
+        internal JoinPath(JoinOptions joinOptions)
+        {
+            JoinOptions = joinOptions;
+            TrailingJoinPath = new List<JoinPath>();
+        }
+
+        internal JoinPath? GetPath(ForeignEntity foreignEntity)
+        {
+            for (int i = 0; i < TrailingJoinPath.Count; i++)
+            {
+                var joingingEntity = TrailingJoinPath[i];
+
+                if (object.ReferenceEquals(TrailingJoinPath[i].JoinOptions.JoinWith, foreignEntity))
+                {
+                    return joingingEntity;
+                }
+            }
+
+            return null;
+        }
+    }
+
+    public class JoinBuilder<TBaseEntity, TEntity> where TBaseEntity : class where TEntity : class
+    {
+        private readonly DualKeyCollection<string, ForeignEntity>? _relations;
+        private readonly JoinBuilderValues _joinBuilderValues;
+        private readonly VenflowCommandBuilder<TBaseEntity> _commandBuilder;
+
+        internal JoinBuilder(Entity root, VenflowCommandBuilder<TBaseEntity> commandBuilder)
+        {
+            _joinBuilderValues = new JoinBuilderValues(root);
+
+            _relations = root.Relations;
+
+            _commandBuilder = commandBuilder;
+        }
+
+        internal JoinBuilder(JoinOptions joinOptions, JoinBuilderValues joinBuilderValues, VenflowCommandBuilder<TBaseEntity> commandBuilder, bool newFullPath)
+        {
+            if (newFullPath)
+            {
+                _relations = joinBuilderValues.Root.Relations;
+            }
+            else
+            {
+                _relations = joinOptions.JoinWith.Entity.Relations;
+            }
+
+            joinBuilderValues.AddToPath(joinOptions, newFullPath);
+
+            _joinBuilderValues = joinBuilderValues;
+
+            _commandBuilder = commandBuilder;
+        }
+
+        public JoinBuilder<TBaseEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TBaseEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        {
+            ThrowIfJoinIsInvalid(propertySelector);
+
+            if (!_relations!.TryGetValue(typeof(TToEntity).Name, out var joiningEntity))
+            {
+                throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
+            }
+
+            return new JoinBuilder<TBaseEntity, TToEntity>(new JoinOptions(joiningEntity!, joinBehaviour), _joinBuilderValues, _commandBuilder, true);
+        }
+
+        public JoinBuilder<TBaseEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TBaseEntity, IEnumerable<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        {
+            ThrowIfJoinIsInvalid(propertySelector);
+
+            if (!_relations!.TryGetValue(typeof(TToEntity).Name, out var joiningEntity))
+            {
+                throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
+            }
+
+            return new JoinBuilder<TBaseEntity, TToEntity>(new JoinOptions(joiningEntity!, joinBehaviour), _joinBuilderValues, _commandBuilder, true);
+        }
+
+        public JoinBuilder<TBaseEntity, TToEntity> ThenWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        {
+            ThrowIfJoinIsInvalid(propertySelector);
+
+            if (!_relations!.TryGetValue(typeof(TToEntity).Name, out var joiningEntity))
+            {
+                throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
+            }
+
+            return new JoinBuilder<TBaseEntity, TToEntity>(new JoinOptions(joiningEntity!, joinBehaviour), _joinBuilderValues, _commandBuilder, false);
+        }
+
+        public JoinBuilder<TBaseEntity, TToEntity> ThenWith<TToEntity>(Expression<Func<TEntity, IEnumerable<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        {
+            ThrowIfJoinIsInvalid(propertySelector);
+
+            if (!_relations!.TryGetValue(typeof(TToEntity).Name, out var joiningEntity))
+            {
+                throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
+            }
+
+            return new JoinBuilder<TBaseEntity, TToEntity>(new JoinOptions(joiningEntity!, joinBehaviour), _joinBuilderValues, _commandBuilder, false);
+        }
+
+        public IQueryCommand<TBaseEntity> Single()
+        {
+            _commandBuilder.JoinValues = _joinBuilderValues;
+
+            return _commandBuilder.Single();
+        }
+
+        public IQueryCommand<TBaseEntity> Single(string sql, params NpgsqlParameter[] parameters)
+        {
+            _commandBuilder.JoinValues = _joinBuilderValues;
+
+            return _commandBuilder.Single(sql, parameters);
+        }
+
+        public IQueryCommand<TBaseEntity> Batch()
+        {
+            _commandBuilder.JoinValues = _joinBuilderValues;
+
+            return _commandBuilder.Batch();
+        }
+
+        public IQueryCommand<TBaseEntity> Batch(ulong count)
+        {
+            _commandBuilder.JoinValues = _joinBuilderValues;
+
+            return _commandBuilder.Batch(count);
+        }
+
+        public IQueryCommand<TBaseEntity> Batch(string sql, params NpgsqlParameter[] parameters)
+        {
+            _commandBuilder.JoinValues = _joinBuilderValues;
+
+            return _commandBuilder.Batch(sql, parameters);
+        }
+
+        private void ThrowIfJoinIsInvalid<TFromEntity, TToEntity>(Expression<Func<TFromEntity, TToEntity>> propertySelector) where TFromEntity : class where TToEntity : class
+        {
+            if (_relations is null)
+            {
+                throw new InvalidOperationException($"The current entity '{typeof(TFromEntity).Name}' doesn't have any relation with other entities.");
+            }
+
+            if (propertySelector is null)
+            {
+                throw new ArgumentNullException(nameof(propertySelector));
+            }
+
+            var body = propertySelector.Body as MemberExpression;
+
+            if (body is null)
+            {
+                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property.", nameof(propertySelector));
+            }
+
+            var property = body.Member as PropertyInfo;
+
+            if (property is null)
+            {
+                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property.", nameof(propertySelector));
+            }
+
+            if (!property.CanWrite || !property.SetMethod.IsPublic)
+            {
+                throw new ArgumentException($"The provided property doesn't contain a setter or it isn't public.", nameof(propertySelector));
+            }
+
+            var baseType = typeof(TFromEntity);
+
+            if (baseType != property.ReflectedType &&
+                !baseType.IsSubclassOf(property.ReflectedType!))
+            {
+                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property on the entity itself.", nameof(propertySelector));
+            }
         }
     }
 }

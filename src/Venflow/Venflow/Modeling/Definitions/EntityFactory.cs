@@ -86,7 +86,7 @@ namespace Venflow.Modeling.Definitions
                     keyColumn = _entity.GetColumn(relation.ForeignKeyColumnName);
                 }
 
-                var foreignEntity = new ForeignEntity(relationEntity, keyColumn, relation.ForeignProperty);
+                var foreignEntity = new ForeignEntity(relationEntity, keyColumn, relation.ForeignProperty, relation.RelationType);
 
                 if (nameToEntity.TryGetValue(relation.RelationEntityName, out var existingRelation) &&
                     existingRelation.ForeignEntityColumn == foreignEntity.ForeignEntityColumn)

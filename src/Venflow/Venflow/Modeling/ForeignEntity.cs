@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Venflow.Enums;
 
 namespace Venflow.Modeling
 {
@@ -10,11 +11,14 @@ namespace Venflow.Modeling
 
         internal PropertyInfo ForeignEntityColumn { get; }
 
-        internal ForeignEntity(Entity entity, EntityColumn foreignKey, PropertyInfo foreignEntityColumn)
+        internal RelationType RelationType { get; }
+
+        internal ForeignEntity(Entity entity, EntityColumn foreignKey, PropertyInfo foreignEntityColumn, RelationType relationType)
         {
             Entity = entity;
             ForeignKey = foreignKey;
             ForeignEntityColumn = foreignEntityColumn;
+            RelationType = RelationType;
         }
     }
 }
