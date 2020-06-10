@@ -92,7 +92,7 @@ namespace Venflow.Modeling.Definitions
 
             _ignoredColumns.Add(relation.Name);
 
-            Relations.Add(new EntityRelationDefinition(relation, false, foreignKey, relation.PropertyType.Name, RelationType.OneToOne));
+            Relations.Add(new EntityRelationDefinition(relation, false, foreignKey, foreignKey.Name, relation.PropertyType.Name, RelationType.OneToOne));
 
             return this;
         }
@@ -104,32 +104,32 @@ namespace Venflow.Modeling.Definitions
 
             _ignoredColumns.Add(relation.Name);
 
-            Relations.Add(new EntityRelationDefinition(relation, true, foreignKey, relation.PropertyType.Name, RelationType.OneToOne));
+            Relations.Add(new EntityRelationDefinition(relation, true, foreignKey, foreignKey.Name, relation.PropertyType.Name, RelationType.OneToOne));
 
             return this;
         }
 
-        public IEntityBuilder<TEntity> MapOneToMany<TRelation, TForeignKey>(Expression<Func<TEntity, IList<TRelation>>> relationSelector, Expression<Func<TRelation, TForeignKey>> foreignSelector) where TRelation : class?
+        public IEntityBuilder<TEntity> MapOneToMany<TRelation, TForeignKey>(Expression<Func<TEntity, IEnumerable<TRelation>>> relationSelector, Expression<Func<TRelation, TForeignKey>> foreignSelector) where TRelation : class?
         {
-            var relation = ValidatePropertySelector<IList<TRelation>>(relationSelector);
+            var relation = ValidatePropertySelector<IEnumerable<TRelation>>(relationSelector);
             var foreignKey = ValidatePropertySelector(foreignSelector);
 
             _ignoredColumns.Add(relation.Name);
 
-            Relations.Add(new EntityRelationDefinition(relation, true, foreignKey, relation.PropertyType.Name, RelationType.OneToMany));
+            Relations.Add(new EntityRelationDefinition(relation, true, foreignKey, foreignKey.Name, relation.PropertyType.GetGenericArguments()[0].Name, RelationType.OneToMany));
 
             return this;
         }
 
-        public IEntityBuilder<TEntity> MapManyToOne<TRelation, TForeignKey>(Expression<Func<TRelation, IList<TEntity>>> relationSelector, Expression<Func<TEntity, TForeignKey>> foreignSelector) where TRelation : class?
-        {
-            var relation = ValidatePropertySelector(relationSelector);
-            var foreignKey = ValidatePropertySelector<TForeignKey>(foreignSelector);
+        //public IEntityBuilder<TEntity> MapManyToOne<TRelation, TForeignKey>(Expression<Func<TRelation, IEnumerable<TEntity>>> relationSelector, Expression<Func<TEntity, TForeignKey>> foreignSelector) where TRelation : class?
+        //{
+        //    var relation = ValidatePropertySelector(relationSelector, true);
+        //    var foreignKey = ValidatePropertySelector(foreignSelector, false);
 
-            Relations.Add(new EntityRelationDefinition(relation, false, foreignKey, relation.PropertyType.Name, RelationType.OneToMany));
+        //    Relations.Add(new EntityRelationDefinition(relation, false, foreignKey, relation.PropertyType.Name, RelationType.OneToMany));
 
-            return this;
-        }
+        //    return this;
+        //}
 
         private PropertyInfo ValidatePropertySelector<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector)
         {
@@ -194,8 +194,9 @@ namespace Venflow.Modeling.Definitions
 
             var type = typeof(TFrom);
 
+
             if (type != property.ReflectedType &&
-                !type.IsSubclassOf(property.ReflectedType!))
+                !type.IsSubclassOf(property.ReflectedType))
             {
                 throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property on the entity itself.", nameof(propertySelector));
             }
@@ -411,8 +412,8 @@ namespace Venflow.Modeling.Definitions
 
         IEntityBuilder<TEntity> MapOneToOne<TRelation, TForeignKey>(Expression<Func<TEntity, TRelation>> relationSelector, Expression<Func<TRelation, TForeignKey>> foreignSelector) where TRelation : class?;
 
-        IEntityBuilder<TEntity> MapOneToMany<TRelation, TForeignKey>(Expression<Func<TEntity, IList<TRelation>>> relationSelector, Expression<Func<TRelation, TForeignKey>> foreignSelector) where TRelation : class?;
+        IEntityBuilder<TEntity> MapOneToMany<TRelation, TForeignKey>(Expression<Func<TEntity, IEnumerable<TRelation>>> relationSelector, Expression<Func<TRelation, TForeignKey>> foreignSelector) where TRelation : class?;
 
-        IEntityBuilder<TEntity> MapManyToOne<TRelation, TForeignKey>(Expression<Func<TRelation, IList<TEntity>>> relationSelector, Expression<Func<TEntity, TForeignKey>> foreignSelector) where TRelation : class?;
+        //IEntityBuilder<TEntity> MapManyToOne<TRelation, TForeignKey>(Expression<Func<TRelation, IList<TEntity>>> relationSelector, Expression<Func<TEntity, TForeignKey>> foreignSelector) where TRelation : class?;
     }
 }

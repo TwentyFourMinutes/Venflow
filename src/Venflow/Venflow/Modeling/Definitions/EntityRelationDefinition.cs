@@ -19,12 +19,12 @@ namespace Venflow.Modeling.Definitions
 
         internal bool IsProcessed { get; set; }
 
-        internal EntityRelationDefinition(PropertyInfo foreignProperty, bool isKeyInRelation, PropertyInfo foreignKeyProperty, string relationEntityName, RelationType relationType)
+        internal EntityRelationDefinition(PropertyInfo foreignProperty, bool isKeyInRelation, PropertyInfo foreignKeyProperty, string foreignKeyColumnName, string relationEntityName, RelationType relationType)
         {
             ForeignProperty = foreignProperty;
             IsKeyInRelation = isKeyInRelation;
             ForeignKeyProperty = foreignKeyProperty;
-            ForeignKeyColumnName = foreignKeyProperty.Name;
+            ForeignKeyColumnName = foreignKeyColumnName;
             RelationEntityName = relationEntityName;
             RelationType = relationType;
         }

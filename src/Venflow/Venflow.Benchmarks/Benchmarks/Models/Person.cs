@@ -26,7 +26,7 @@ namespace Venflow.Benchmarks.Benchmarks.Models
 
     public class PersonConfiguration : EntityConfiguration<Person>
     {
-        protected override void Configure(EntityBuilder<Person> entityBuilder)
+        protected override void Configure(IEntityBuilder<Person> entityBuilder)
         {
             entityBuilder.MapId(x => x.Id, DatabaseGeneratedOption.Computed);
         }

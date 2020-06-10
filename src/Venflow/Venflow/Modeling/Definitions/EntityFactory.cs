@@ -46,10 +46,10 @@ namespace Venflow.Modeling.Definitions
 
                     if (relation.IsKeyInRelation)
                     {
-                        foreignEntity.IgnoreProperty(relation.ForeignKeyColumnName);
+                        foreignEntity.IgnoreProperty(relation.ForeignProperty.Name);
                     }
 
-                    foreignEntity.Relations.Add(new EntityRelationDefinition(relation.ForeignProperty, !relation.IsKeyInRelation, relation.ForeignKeyProperty, _entityBuilder.Type.Name, GetReverseRelationType(relation.RelationType))
+                    foreignEntity.Relations.Add(new EntityRelationDefinition(relation.ForeignProperty, !relation.IsKeyInRelation, relation.ForeignKeyProperty, relation.ForeignKeyColumnName, _entityBuilder.Type.Name, GetReverseRelationType(relation.RelationType))
                     {
                         IsProcessed = true
                     });
