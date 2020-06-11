@@ -1,4 +1,4 @@
-﻿using Npgsql;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -519,15 +519,23 @@ namespace Venflow.Commands
 
                     return;
                 }
-            }
 
-            if (_currentPath.TrailingJoinPath.Count == 0)
-            {
-                _currentPath = new JoinPath(joinOptions, _currentPath.SqlJoins);
-            }
-            else
-            {
-                _currentPath = new JoinPath(joinOptions, _currentPath.GetNewSqlJoinsFromBasePath(_currentPath));
+                if (_currentPath.TrailingJoinPath.Count == 0)
+                {
+                    var joinPath = new JoinPath(joinOptions, _currentPath.SqlJoins);
+
+                    _currentPath.TrailingJoinPath.Add(joinPath);
+
+                    _currentPath = joinPath;
+                }
+                else
+                {
+                    var joinPath = new JoinPath(joinOptions, _currentPath.GetNewSqlJoinsFromBasePath(_currentPath));
+
+                    _currentPath.TrailingJoinPath.Add(joinPath);
+
+                    _currentPath = joinPath;
+                }
             }
         }
 
