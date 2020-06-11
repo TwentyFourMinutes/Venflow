@@ -40,7 +40,6 @@ namespace Venflow.Commands
 
         public IQueryCommandBuilder<TEntity> Query()
         {
-            //JoinOptions = new List<JoinOptions>();
             return this;
         }
 
@@ -57,6 +56,14 @@ namespace Venflow.Commands
 
             return builder.JoinWith(propertySelector, joinBehaviour);
         }
+
+        public JoinBuilder<TEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        {
+            var builder = new JoinBuilder<TEntity, TToEntity>(_entityConfiguration, this);
+
+            return builder.JoinWith(propertySelector, joinBehaviour);
+        }
+
 
         public IQueryCommand<TEntity> Single()
         {
@@ -508,10 +515,10 @@ namespace Venflow.Commands
                 {
                     _currentPath = match;
 
+                    _currentPath.TrailingJoinPath.Add(match);
+
                     return;
                 }
-
-                _currentPath.TrailingJoinPath.Add(_currentPath);
             }
 
             if (_currentPath.TrailingJoinPath.Count == 0)
@@ -593,6 +600,9 @@ namespace Venflow.Commands
 
         private void AppendJoin()
         {
+            if (SqlJoins.Length > 0)
+                SqlJoins.AppendLine();
+
             switch (JoinOptions.JoinBehaviour)
             {
                 case JoinBehaviour.InnerJoin:
@@ -644,14 +654,7 @@ namespace Venflow.Commands
 
         internal JoinBuilder(JoinOptions joinOptions, Entity lastEntity, JoinBuilderValues joinBuilderValues, VenflowCommandBuilder<TBaseEntity> commandBuilder, bool newFullPath)
         {
-            if (newFullPath)
-            {
-                _relations = joinBuilderValues.Root.Relations;
-            }
-            else
-            {
-                _relations = joinOptions.JoinWith.Entity.Relations;
-            }
+            _relations = joinOptions.JoinWith.Entity.Relations;
 
             joinBuilderValues.AddToPath(joinOptions, newFullPath);
 
@@ -668,7 +671,7 @@ namespace Venflow.Commands
 
             var propertyName = foreignPropertyType.IsGenericType ? foreignPropertyType.GetGenericArguments()[0].Name : foreignPropertyType.Name;
 
-            if (!_relations!.TryGetValue(propertyName, out var joiningEntity))
+            if (!_joinBuilderValues.Root.Relations!.TryGetValue(propertyName, out var joiningEntity))
             {
                 throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
             }
@@ -676,11 +679,44 @@ namespace Venflow.Commands
             return new JoinBuilder<TBaseEntity, TToEntity>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.Entity, _joinBuilderValues, _commandBuilder, true);
         }
 
-        public JoinBuilder<TBaseEntity, TToEntity> ThenWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        public JoinBuilder<TBaseEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TBaseEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
         {
             ThrowIfJoinIsInvalid(propertySelector);
 
             var foreignPropertyType = typeof(TEntity);
+
+            var propertyName = foreignPropertyType.IsGenericType ? foreignPropertyType.GetGenericArguments()[0].Name : foreignPropertyType.Name;
+
+            if (!_joinBuilderValues.Root.Relations!.TryGetValue(propertyName, out var joiningEntity))
+            {
+                throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
+            }
+
+            return new JoinBuilder<TBaseEntity, TToEntity>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.Entity, _joinBuilderValues, _commandBuilder, true);
+        }
+
+
+        public JoinBuilder<TBaseEntity, TToEntity> ThenWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        {
+            ThrowIfJoinIsInvalid(propertySelector);
+
+            var foreignPropertyType = typeof(TToEntity);
+
+            var propertyName = foreignPropertyType.IsGenericType ? foreignPropertyType.GetGenericArguments()[0].Name : foreignPropertyType.Name;
+
+            if (!_relations!.TryGetValue(propertyName, out var joiningEntity))
+            {
+                throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
+            }
+
+            return new JoinBuilder<TBaseEntity, TToEntity>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.Entity, _joinBuilderValues, _commandBuilder, false);
+        }
+
+        public JoinBuilder<TBaseEntity, TToEntity> ThenWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        {
+            ThrowIfJoinIsInvalid(propertySelector);
+
+            var foreignPropertyType = typeof(TToEntity);
 
             var propertyName = foreignPropertyType.IsGenericType ? foreignPropertyType.GetGenericArguments()[0].Name : foreignPropertyType.Name;
 

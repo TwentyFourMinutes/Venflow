@@ -18,7 +18,7 @@ namespace Venflow.Modeling
             Entity = entity;
             ForeignKey = foreignKey;
             ForeignEntityColumn = foreignEntityColumn;
-            RelationType = RelationType;
+            RelationType = relationType;
         }
     }
 }

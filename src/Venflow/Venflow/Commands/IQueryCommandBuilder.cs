@@ -11,6 +11,7 @@ namespace Venflow.Commands
         IQueryCommandBuilder<TEntity> TrackChanges(bool trackChanges = true);
 
         JoinBuilder<TEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class;
+        JoinBuilder<TEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class;
 
         IQueryCommand<TEntity> Single();
         IQueryCommand<TEntity> Single(string sql, params NpgsqlParameter[] parameters);
