@@ -409,17 +409,13 @@ namespace Venflow
             return Connection.DisposeAsync();
         }
 
-        public Task<List<TEntity>> TestAsync<TEntity>(NpgsqlDataReader reader) where TEntity : class
+        public Func<NpgsqlDataReader, Task<List<TEntity>>> Test<TEntity>(NpgsqlDataReader reader) where TEntity : class
         {
             var config = GetEntityConfiguration<TEntity>();
 
             var yey = new MaterializerFactory<TEntity>(config);
 
-            var ok = yey.CreateMaterializer(new List<KeyValuePair<Entity, List<Npgsql.Schema.NpgsqlDbColumn>>> {
-                new KeyValuePair<Entity, List<Npgsql.Schema.NpgsqlDbColumn>>(config, reader.GetColumnSchema().ToList())
-                });
-
-            return ok(reader);
+            return yey.GetOrCreateMaterializer(reader.GetColumnSchema());
         }
     }
 }

@@ -18,39 +18,38 @@ namespace Venflow.Dynamic
     internal class MaterializerFactory<TEntity> where TEntity : class
     {
         private readonly Entity<TEntity> _entity;
-        private readonly Dictionary<int, Func<DbDataReader, Task<List<TEntity>>>> _materializerCache;
+        private readonly Dictionary<int, Func<NpgsqlDataReader, Task<List<TEntity>>>> _materializerCache;
         private readonly object _materializerLock;
 
         internal MaterializerFactory(Entity<TEntity> entity)
         {
             _entity = entity;
 
-            _materializerCache = new Dictionary<int, Func<DbDataReader, Task<List<TEntity>>>>();
+            _materializerCache = new Dictionary<int, Func<NpgsqlDataReader, Task<List<TEntity>>>>();
             _materializerLock = new object();
         }
 
-        internal Func<DbDataReader, Task<List<TEntity>>> GetOrCreateMaterializer(
+        internal Func<NpgsqlDataReader, Task<List<TEntity>>> GetOrCreateMaterializer(
             ReadOnlyCollection<NpgsqlDbColumn> columnSchema)
         {
             var cacheKeyBuilder = new HashCode();
 
-            var firstColumn = columnSchema[0];
+            cacheKeyBuilder.Add(_entity.TableName);
 
-            if (TryGetEntityOfTable(firstColumn, true, out _, out _))
-            {
-                cacheKeyBuilder.Add(firstColumn.ColumnName);
-            }
-            else
-            {
-                throw new InvalidOperationException(
-                    "The provided SQL Statement doesn't prefix every primary column with $TableName$.");
-            }
-
-            for (int i = 1; i < columnSchema.Count; i++)
+            for (int i = 0; i < columnSchema.Count; i++)
             {
                 var column = columnSchema[i];
 
-                cacheKeyBuilder.Add(column.ColumnName);
+                if (TryGetEntityOfTable(column, false, out var entity, out var columnName))
+                {
+
+                    cacheKeyBuilder.Add(entity.Entity.TableName);
+                    cacheKeyBuilder.Add(columnName);
+                }
+                else
+                {
+                    cacheKeyBuilder.Add(column.ColumnName);
+                }
             }
 
             var cacheKey = cacheKeyBuilder.ToHashCode();
@@ -63,7 +62,32 @@ namespace Venflow.Dynamic
                 }
                 else
                 {
-                    // materializer = CreateMaterializer(columnSchema);
+                    var entities = new List<KeyValuePair<Entity, List<NpgsqlDbColumn>>>();
+                    var columns = new List<NpgsqlDbColumn>();
+
+                    entities.Add(new KeyValuePair<Entity, List<NpgsqlDbColumn>>(_entity, columns));
+
+                    for (int i = 0; i < columnSchema.Count; i++)
+                    {
+                        var column = columnSchema[i];
+
+                        if (TryGetEntityOfTable(column, false, out var entity, out var columnName))
+                        {
+
+                            columns = new List<NpgsqlDbColumn>
+                            {
+                                column
+                            };
+
+                            entities.Add(new KeyValuePair<Entity, List<NpgsqlDbColumn>>(_entity, columns)); // TODO: Entity should be from actual entity
+                        }
+                        else
+                        {
+                            columns.Add(column);
+                        }
+                    }
+
+                    materializer = CreateMaterializer(entities);
 
                     _materializerCache.TryAdd(cacheKey, materializer);
 
@@ -72,7 +96,7 @@ namespace Venflow.Dynamic
             }
         }
 
-        internal Func<NpgsqlDataReader, Task<List<TEntity>>> CreateMaterializer(List<KeyValuePair<Entity, List<NpgsqlDbColumn>>> entities)
+        private Func<NpgsqlDataReader, Task<List<TEntity>>> CreateMaterializer(List<KeyValuePair<Entity, List<NpgsqlDbColumn>>> entities)
         {
             var primaryEntity = entities[0];
             var primaryEntityListType = typeof(List<>).MakeGenericType(primaryEntity.Key.EntityType);
@@ -501,254 +525,5 @@ namespace Venflow.Dynamic
 
             return true;
         }
-    }
-
-    public class ILGhostGenerator
-    {
-        private IILBaseInst[] _ilInstructions;
-        private int _index;
-
-        public ILGhostGenerator()
-        {
-            _ilInstructions = new IILBaseInst[16];
-        }
-
-        public void EnsureCapacity()
-        {
-            if (_ilInstructions.Length - 1 != _index)
-                return;
-
-            var tempArr = new IILBaseInst[_ilInstructions.Length * 2];
-
-            Array.Copy(_ilInstructions, 0, tempArr, 0, _ilInstructions.Length - 1);
-
-            _ilInstructions = tempArr;
-        }
-
-        public void Emit(OpCode opCode)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILInst(opCode);
-        }
-
-        public void Emit(OpCode opCode, sbyte value)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILSbyteInst(opCode, value);
-        }
-
-        public void Emit(OpCode opCode, int value)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILIntInst(opCode, value);
-        }
-
-        public void Emit(OpCode opCode, MethodInfo method)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILMethodInfo(opCode, method);
-        }
-
-        public void Emit(OpCode opCode, FieldInfo field)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILFieldInfo(opCode, field);
-        }
-
-        public void Emit(OpCode opCode, LocalBuilder local)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILLocalBuilder(opCode, local);
-        }
-
-        public void Emit(OpCode opCode, ConstructorInfo constructor)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILConstructorInfo(opCode, constructor);
-        }
-
-        public void Emit(OpCode opCode, Label label)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILLabel(opCode, label);
-        }
-
-
-        public void MarkLabel(Label label)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILMarkLabel(label);
-        }
-
-        public void WriteIL(ILGenerator ilGenerator)
-        {
-            for (var i = 0; i < _index; i++)
-            {
-                _ilInstructions[i].WriteIL(ilGenerator);
-            }
-        }
-    }
-
-    public struct ILMarkLabel : IILBaseInst
-    {
-        private readonly Label _label;
-
-        public ILMarkLabel(Label label)
-        {
-            _label = label;
-        }
-
-        public void WriteIL(ILGenerator ilGenerator)
-        {
-            ilGenerator.MarkLabel(_label);
-        }
-    }
-
-    public struct ILLabel : IILBaseInst
-    {
-        private readonly OpCode _opCode;
-        private readonly Label _label;
-
-        public ILLabel(OpCode opCode, Label label)
-        {
-            _opCode = opCode;
-            _label = label;
-        }
-
-        public void WriteIL(ILGenerator ilGenerator)
-        {
-            ilGenerator.Emit(_opCode, _label);
-        }
-    }
-
-    public struct ILInst : IILBaseInst
-    {
-        private readonly OpCode _opCode;
-
-        public ILInst(OpCode opCode)
-        {
-            _opCode = opCode;
-        }
-
-        public void WriteIL(ILGenerator ilGenerator)
-        {
-            ilGenerator.Emit(_opCode);
-        }
-    }
-
-    public struct ILIntInst : IILBaseInst
-    {
-        private readonly OpCode _opCode;
-        private readonly int _value;
-
-        public ILIntInst(OpCode opCode, int value)
-        {
-            _opCode = opCode;
-            _value = value;
-        }
-
-        public void WriteIL(ILGenerator ilGenerator)
-        {
-            ilGenerator.Emit(_opCode, _value);
-        }
-    }
-
-    public struct ILSbyteInst : IILBaseInst
-    {
-        private readonly OpCode _opCode;
-        private readonly sbyte _value;
-
-        public ILSbyteInst(OpCode opCode, sbyte value)
-        {
-            _opCode = opCode;
-            _value = value;
-        }
-
-        public void WriteIL(ILGenerator ilGenerator)
-        {
-            ilGenerator.Emit(_opCode, _value);
-        }
-    }
-
-    public struct ILLocalBuilder : IILBaseInst
-    {
-        private readonly OpCode _opCode;
-        private readonly LocalBuilder _value;
-
-        public ILLocalBuilder(OpCode opCode, LocalBuilder value)
-        {
-            _opCode = opCode;
-            _value = value;
-        }
-
-        public void WriteIL(ILGenerator ilGenerator)
-        {
-            ilGenerator.Emit(_opCode, _value);
-        }
-    }
-
-    public struct ILConstructorInfo : IILBaseInst
-    {
-        private readonly OpCode _opCode;
-        private readonly ConstructorInfo _value;
-
-        public ILConstructorInfo(OpCode opCode, ConstructorInfo value)
-        {
-            _opCode = opCode;
-            _value = value;
-        }
-
-        public void WriteIL(ILGenerator ilGenerator)
-        {
-            ilGenerator.Emit(_opCode, _value);
-        }
-    }
-
-    public struct ILFieldInfo : IILBaseInst
-    {
-        private readonly OpCode _opCode;
-        private readonly FieldInfo _value;
-
-        public ILFieldInfo(OpCode opCode, FieldInfo value)
-        {
-            _opCode = opCode;
-            _value = value;
-        }
-
-        public void WriteIL(ILGenerator ilGenerator)
-        {
-            ilGenerator.Emit(_opCode, _value);
-        }
-    }
-
-    public struct ILMethodInfo : IILBaseInst
-    {
-        private readonly OpCode _opCode;
-        private readonly MethodInfo _value;
-
-        public ILMethodInfo(OpCode opCode, MethodInfo value)
-        {
-            _opCode = opCode;
-            _value = value;
-        }
-
-        public void WriteIL(ILGenerator ilGenerator)
-        {
-            ilGenerator.Emit(_opCode, _value);
-        }
-    }
-
-    public interface IILBaseInst
-    {
-        public void WriteIL(ILGenerator ilGenerator);
     }
 }
