@@ -98,6 +98,14 @@ namespace Venflow.Dynamic
             var primaryEntity = entities[0];
             var primaryEntityListType = typeof(List<>).MakeGenericType(primaryEntity.Key.EntityType);
 
+            var asyncStateMachineType = typeof(IAsyncStateMachine);
+            var asyncMethodBuilderType = typeof(AsyncTaskMethodBuilder<>).MakeGenericType(primaryEntityListType);
+            var npgsqlDataReaderType = typeof(NpgsqlDataReader);
+            var taskAwaiterType = typeof(NpgsqlDataReader);
+            var intType = typeof(int);
+            var taskBoolType = typeof(Task<bool>);
+            var exceptionType = typeof(Exception);
+
             var materializerTypeBuilder = TypeFactory.GetNewMaterializerBuilder(_entity.EntityName,
                 TypeAttributes.Public | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Abstract |
                 TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit);
@@ -105,28 +113,22 @@ namespace Venflow.Dynamic
             var stateMachineTypeBuilder = materializerTypeBuilder.DefineNestedType("StateMachine",
                 TypeAttributes.NestedPrivate | TypeAttributes.AutoClass | TypeAttributes.AnsiClass |
                 TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, typeof(ValueType),
-                new[] { typeof(IAsyncStateMachine) });
+                new[] { asyncStateMachineType });
 
-            var stateField = stateMachineTypeBuilder.DefineField("_state", typeof(int), FieldAttributes.Public);
-            var methodBuilderField = stateMachineTypeBuilder.DefineField("_builder", typeof(AsyncTaskMethodBuilder<>).MakeGenericType(primaryEntityListType), FieldAttributes.Public);
-            var dataReaderField = stateMachineTypeBuilder.DefineField("_dataReader", typeof(NpgsqlDataReader), FieldAttributes.Public);
-            var taskAwaiterField = stateMachineTypeBuilder.DefineField("_awaiter", typeof(TaskAwaiter<bool>), FieldAttributes.Private);
-
-            // -- Actual Field Declaration
-
-
-
-            // -- End of Field Declaration
+            var stateField = stateMachineTypeBuilder.DefineField("_state", intType, FieldAttributes.Public);
+            var methodBuilderField = stateMachineTypeBuilder.DefineField("_builder", asyncMethodBuilderType, FieldAttributes.Public);
+            var dataReaderField = stateMachineTypeBuilder.DefineField("_dataReader", npgsqlDataReaderType, FieldAttributes.Public);
+            var taskAwaiterField = stateMachineTypeBuilder.DefineField("_awaiter", taskAwaiterType, FieldAttributes.Private);
 
             var moveNextMethod = stateMachineTypeBuilder.DefineMethod("MoveNext",
                 MethodAttributes.Private | MethodAttributes.Final | MethodAttributes.HideBySig |
                 MethodAttributes.NewSlot | MethodAttributes.Virtual);
             var moveNextMethodIL = moveNextMethod.GetILGenerator();
 
-            var stateLocal = moveNextMethodIL.DeclareLocal(typeof(int));
-            var awaiterLocal = moveNextMethodIL.DeclareLocal(typeof(TaskAwaiter<bool>));
-            var exceptionLocal = moveNextMethodIL.DeclareLocal(typeof(Exception));
-            var primaryListLocal = moveNextMethodIL.DeclareLocal(typeof(List<TEntity>));
+            var stateLocal = moveNextMethodIL.DeclareLocal(intType);
+            var awaiterLocal = moveNextMethodIL.DeclareLocal(taskAwaiterType);
+            var exceptionLocal = moveNextMethodIL.DeclareLocal(exceptionType);
+            var primaryListLocal = moveNextMethodIL.DeclareLocal(primaryEntityListType);
 
             var endOfMethodLabel = moveNextMethodIL.DefineLabel();
 
@@ -160,6 +162,8 @@ namespace Venflow.Dynamic
 
             if (entities.Count > 1)
             {
+                var gernericDictionaryType = typeof(Dictionary<,>);
+
                 for (int i = 0; i < entities.Count; i++)
                 {
                     var entityWithColumns = entities[i];
@@ -167,7 +171,7 @@ namespace Venflow.Dynamic
                     var columns = entityWithColumns.Value;
 
                     var primaryKeyType = entity.GetPrimaryColumn().PropertyInfo.PropertyType;
-                    var entityDictionaryType = typeof(Dictionary<,>).MakeGenericType(primaryKeyType, entity.EntityType);
+                    var entityDictionaryType = gernericDictionaryType.MakeGenericType(primaryKeyType, entity.EntityType);
 
                     var lastEntityField = stateMachineTypeBuilder.DefineField("last" + entity.EntityName + i, entity.EntityType, FieldAttributes.Private);
                     var entityDictionaryField = stateMachineTypeBuilder.DefineField(entity.EntityName + "Dict" + i, entityDictionaryType, FieldAttributes.Private);
@@ -331,15 +335,15 @@ namespace Venflow.Dynamic
             moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
             moveNextMethodIL.Emit(OpCodes.Callvirt,
-                typeof(NpgsqlDataReader).GetMethod("ReadAsync", Type.EmptyTypes));
+                npgsqlDataReaderType.GetMethod("ReadAsync", Type.EmptyTypes));
             moveNextMethodIL.Emit(OpCodes.Callvirt,
-                typeof(Task<bool>).GetMethod("GetAwaiter")); // GetAwaiter
+                taskBoolType.GetMethod("GetAwaiter")); // GetAwaiter
             moveNextMethodIL.Emit(OpCodes.Stloc, awaiterLocal);
 
             // Check if TaskAwaiter isn't complete
 
             moveNextMethodIL.Emit(OpCodes.Ldloca, awaiterLocal);
-            moveNextMethodIL.Emit(OpCodes.Call, typeof(TaskAwaiter<bool>).GetProperty("IsCompleted").GetGetMethod());
+            moveNextMethodIL.Emit(OpCodes.Call, taskAwaiterType.GetProperty("IsCompleted").GetGetMethod());
 
             var catchEndLabel = moveNextMethodIL.DefineLabel();
             moveNextMethodIL.Emit(OpCodes.Brtrue, catchEndLabel);
@@ -359,8 +363,8 @@ namespace Venflow.Dynamic
             moveNextMethodIL.Emit(OpCodes.Ldloca, awaiterLocal);
             moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             moveNextMethodIL.Emit(OpCodes.Call,
-                typeof(AsyncTaskMethodBuilder<>).MakeGenericType(primaryEntityListType).GetMethod("AwaitUnsafeOnCompleted")
-                    .MakeGenericMethod(typeof(TaskAwaiter<bool>), stateMachineTypeBuilder));
+               asyncMethodBuilderType.GetMethod("AwaitUnsafeOnCompleted")
+                    .MakeGenericMethod(taskAwaiterType, stateMachineTypeBuilder));
 
             moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
 
@@ -372,7 +376,7 @@ namespace Venflow.Dynamic
             moveNextMethodIL.Emit(OpCodes.Stloc, awaiterLocal);
             moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             moveNextMethodIL.Emit(OpCodes.Ldflda, taskAwaiterField);
-            moveNextMethodIL.Emit(OpCodes.Initobj, typeof(TaskAwaiter<bool>));
+            moveNextMethodIL.Emit(OpCodes.Initobj, taskAwaiterType);
             moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             moveNextMethodIL.Emit(OpCodes.Ldc_I4_M1);
             moveNextMethodIL.Emit(OpCodes.Dup);
@@ -385,7 +389,7 @@ namespace Venflow.Dynamic
 
             moveNextMethodIL.MarkLabel(catchEndLabel);
             moveNextMethodIL.Emit(OpCodes.Ldloca, awaiterLocal);
-            moveNextMethodIL.Emit(OpCodes.Call, typeof(TaskAwaiter<bool>).GetMethod("GetResult"));
+            moveNextMethodIL.Emit(OpCodes.Call, taskAwaiterType.GetMethod("GetResult"));
             moveNextMethodIL.Emit(OpCodes.Brtrue, beforeBodyLabel);
 
             moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -396,7 +400,7 @@ namespace Venflow.Dynamic
 
             // Start of Catch Block
 
-            moveNextMethodIL.BeginCatchBlock(typeof(Exception));
+            moveNextMethodIL.BeginCatchBlock(exceptionType);
 
             moveNextMethodIL.Emit(OpCodes.Stloc, exceptionLocal);
             moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -408,7 +412,7 @@ namespace Venflow.Dynamic
             moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             moveNextMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
             moveNextMethodIL.Emit(OpCodes.Ldloc, exceptionLocal);
-            moveNextMethodIL.Emit(OpCodes.Call, typeof(AsyncTaskMethodBuilder<>).MakeGenericType(primaryEntityListType).GetMethod("SetException"));
+            moveNextMethodIL.Emit(OpCodes.Call, asyncMethodBuilderType.GetMethod("SetException"));
             moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
 
             moveNextMethodIL.EndExceptionBlock();
@@ -424,7 +428,7 @@ namespace Venflow.Dynamic
             moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             moveNextMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
             moveNextMethodIL.Emit(OpCodes.Ldloc, primaryListLocal);
-            moveNextMethodIL.Emit(OpCodes.Call, typeof(AsyncTaskMethodBuilder<>).MakeGenericType(primaryEntityListType).GetMethod("SetResult"));
+            moveNextMethodIL.Emit(OpCodes.Call, asyncMethodBuilderType.GetMethod("SetResult"));
 
             // End of Method
 
@@ -432,25 +436,25 @@ namespace Venflow.Dynamic
             moveNextMethodIL.Emit(OpCodes.Ret);
 
             stateMachineTypeBuilder.DefineMethodOverride(moveNextMethod,
-                typeof(IAsyncStateMachine).GetMethod("MoveNext"));
+                asyncStateMachineType.GetMethod("MoveNext"));
 
             var setStateMachineMethod = stateMachineTypeBuilder.DefineMethod("SetStateMachine",
                 MethodAttributes.Private | MethodAttributes.Final | MethodAttributes.HideBySig |
-                MethodAttributes.NewSlot | MethodAttributes.Virtual, null, new[] { typeof(IAsyncStateMachine) });
+                MethodAttributes.NewSlot | MethodAttributes.Virtual, null, new[] { asyncStateMachineType });
             var setStateMachineMethodIL = setStateMachineMethod.GetILGenerator();
 
             setStateMachineMethodIL.Emit(OpCodes.Ldarg_0);
             setStateMachineMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
             setStateMachineMethodIL.Emit(OpCodes.Ldarg_1);
-            setStateMachineMethodIL.Emit(OpCodes.Call, typeof(AsyncTaskMethodBuilder<>).MakeGenericType(primaryEntityListType).GetMethod("SetStateMachine"));
+            setStateMachineMethodIL.Emit(OpCodes.Call, asyncMethodBuilderType.GetMethod("SetStateMachine"));
             setStateMachineMethodIL.Emit(OpCodes.Ret);
 
             stateMachineTypeBuilder.DefineMethodOverride(setStateMachineMethod,
-                typeof(IAsyncStateMachine).GetMethod("SetStateMachine"));
+                asyncStateMachineType.GetMethod("SetStateMachine"));
 
             var materializeMethod = materializerTypeBuilder.DefineMethod("MaterializeAsync",
                 MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Static, typeof(Task<List<TEntity>>),
-                new[] { typeof(NpgsqlDataReader) });
+                new[] { npgsqlDataReaderType });
 
             materializeMethod.SetCustomAttribute(new CustomAttributeBuilder(
                 typeof(AsyncStateMachineAttribute).GetConstructor(new[] { typeof(Type) }),
@@ -467,7 +471,7 @@ namespace Venflow.Dynamic
             materializeMethodIL.Emit(OpCodes.Stfld, dataReaderField);
             materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
             materializeMethodIL.Emit(OpCodes.Call,
-                typeof(AsyncTaskMethodBuilder<>).MakeGenericType(primaryEntityListType).GetMethod("Create", BindingFlags.Public | BindingFlags.Static));
+                asyncMethodBuilderType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static));
             materializeMethodIL.Emit(OpCodes.Stfld, methodBuilderField);
             materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
             materializeMethodIL.Emit(OpCodes.Ldc_I4_M1);
@@ -476,11 +480,11 @@ namespace Venflow.Dynamic
             materializeMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
             materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
             materializeMethodIL.Emit(OpCodes.Call,
-                typeof(AsyncTaskMethodBuilder<>).MakeGenericType(primaryEntityListType).GetMethod("Start", BindingFlags.Public | BindingFlags.Instance)
+               asyncMethodBuilderType.GetMethod("Start", BindingFlags.Public | BindingFlags.Instance)
                     .MakeGenericMethod(stateMachineTypeBuilder));
             materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
             materializeMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
-            materializeMethodIL.Emit(OpCodes.Call, typeof(AsyncTaskMethodBuilder<>).MakeGenericType(primaryEntityListType).GetProperty("Task").GetGetMethod());
+            materializeMethodIL.Emit(OpCodes.Call, asyncMethodBuilderType.GetProperty("Task").GetGetMethod());
 
             materializeMethodIL.Emit(OpCodes.Ret);
 
