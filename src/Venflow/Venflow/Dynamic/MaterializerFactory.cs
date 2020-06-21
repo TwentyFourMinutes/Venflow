@@ -27,7 +27,7 @@ namespace Venflow.Dynamic
             _materializerLock = new object();
         }
 
-        internal Func<NpgsqlDataReader, Task<List<TEntity>>> GetOrCreateMaterializer(ReadOnlyCollection<NpgsqlDbColumn> columnSchema)
+        internal Func<NpgsqlDataReader, Task<List<TEntity>>> GetOrCreateMaterializer(DbConfiguration dbConfiguration, ReadOnlyCollection<NpgsqlDbColumn> columnSchema)
         {
             var cacheKeyBuilder = new HashCode();
 
@@ -37,10 +37,10 @@ namespace Venflow.Dynamic
             {
                 var column = columnSchema[i];
 
-                if (TryGetEntityOfTable(column, false, out var entity, out var columnName))
+                if (TryGetEntityOfTable(dbConfiguration, column, out var entity, out var columnName))
                 {
 
-                    cacheKeyBuilder.Add(entity.Entity.TableName);
+                    cacheKeyBuilder.Add(entity.TableName);
                     cacheKeyBuilder.Add(columnName);
                 }
                 else
@@ -68,15 +68,14 @@ namespace Venflow.Dynamic
                     {
                         var column = columnSchema[i];
 
-                        if (TryGetEntityOfTable(column, false, out var entity, out var columnName))
+                        if (TryGetEntityOfTable(dbConfiguration, column, out var entity, out var columnName))
                         {
-
                             columns = new List<NpgsqlDbColumn>
                             {
                                 column
                             };
 
-                            entities.Add(new KeyValuePair<Entity, List<NpgsqlDbColumn>>(_entity, columns)); // TODO: Entity should be from actual entity
+                            entities.Add(new KeyValuePair<Entity, List<NpgsqlDbColumn>>(entity, columns));
                         }
                         else
                         {
@@ -236,7 +235,11 @@ namespace Venflow.Dynamic
                     for (int k = 1; k < columns.Count; k++)
                     {
                         var columnScheme = columns[k];
-                        var column = entity.GetColumn(columnScheme.ColumnName);
+
+                        if (!entity.TryGetColumn(columnScheme.ColumnName, out var column))
+                        {
+                            throw new InvalidOperationException($"There is no column mapped to column '{columnScheme.ColumnName}' on Entity '{entity.EntityName}'");
+                        }
 
                         iLGhostBodyGen.Emit(OpCodes.Dup);
                         iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
@@ -494,7 +497,7 @@ namespace Venflow.Dynamic
             return (Func<NpgsqlDataReader, Task<List<TEntity>>>)materializerType.GetMethod("MaterializeAsync").CreateDelegate(typeof(Func<NpgsqlDataReader, Task<List<TEntity>>>));
         }
 
-        private bool TryGetEntityOfTable(NpgsqlDbColumn column, bool isFirst, out ForeignEntity? entity,
+        private bool TryGetEntityOfTable(DbConfiguration dbConfiguration, NpgsqlDbColumn column, out Entity? entity,
             out string? columnName)
         {
             entity = null;
@@ -526,24 +529,9 @@ namespace Venflow.Dynamic
 
             var tableName = tableNameBuilder.ToString();
 
-            if (isFirst)
+            if (!dbConfiguration.Entities.TryGetValue(tableName, out entity))
             {
-                if (_entity.TableName != tableName)
-                {
-                    columnName = null;
-
-                    return false;
-                }
-            }
-            else
-            {
-                if (_entity.Relations is null || !_entity.Relations.TryGetValue(tableName, out entity)
-                ) // TODO: Use tables/entities form before defined JoinInformation
-                {
-                    columnName = null;
-
-                    return false;
-                }
+                throw new InvalidOperationException($"There is so entity mapped to the table '{tableName}'.");
             }
 
             columnName = column.ColumnName.Substring(index, column.ColumnName.Length - index);

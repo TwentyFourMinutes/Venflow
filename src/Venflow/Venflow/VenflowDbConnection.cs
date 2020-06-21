@@ -211,15 +211,15 @@ namespace Venflow
         }
 
         public Task<List<TEntity>> QueryBatchAsync<TEntity>(bool changeTracking = false,
-            CancellationToken cancellationToken = default) where TEntity : class
+            CancellationToken cancellationToken = default, bool newThing = false) where TEntity : class
         {
             var command = Query<TEntity>(true).TrackChanges(changeTracking).Batch();
 
-            return QueryBatchAsync(command, cancellationToken);
+            return QueryBatchAsync(command, cancellationToken, newThing);
         }
 
         public async Task<List<TEntity>> QueryBatchAsync<TEntity>(IQueryCommand<TEntity> queryCommand,
-            CancellationToken cancellationToken = default) where TEntity : class
+            CancellationToken cancellationToken = default, bool newThing = false) where TEntity : class
         {
             var command = (VenflowCommand<TEntity>)queryCommand;
 
@@ -227,39 +227,37 @@ namespace Venflow
 
             var isChangeTracking = command.TrackingChanges && command.EntityConfiguration.ChangeTrackerFactory is { };
 
-            //if (command is null)
-            //{
-            //    await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
+            if (!newThing)
+            {
+                await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
-            //    var entities = new List<TEntity>();
+                var entities = new List<TEntity>();
 
-            //    var factory = command.EntityConfiguration.QueryCommandCache.GetOrCreateFactory(reader.GetColumnSchema(), isChangeTracking);
+                var factory = command.EntityConfiguration.QueryCommandCache.GetOrCreateFactory(reader.GetColumnSchema(), isChangeTracking);
 
-            //    while (await reader.ReadAsync())
-            //    {
-            //        entities.Add(factory.Invoke(reader));
-            //    }
+                while (await reader.ReadAsync())
+                {
+                    entities.Add(factory.Invoke(reader));
+                }
 
-            //    if (command.DisposeCommand)
-            //        command.Dispose();
+                if (command.DisposeCommand)
+                    command.Dispose();
 
-            //    return entities;
-            //}
-            //else
-            //{
-            //    await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(CommandBehavior.KeyInfo, cancellationToken);
+                return entities;
+            }
+            else
+            {
+                await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
-            //    //reader.GetColumnSchema()
+                var factory = command.EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(_dbConfiguration, reader.GetColumnSchema());
 
-            //    while (await reader.ReadAsync())
-            //    {
+                var entities = await factory(reader);
 
-            //    }
+                if (command.DisposeCommand)
+                    command.Dispose();
 
-            //    return default!;
-            //}
-
-            return default!;
+                return entities;
+            }
         }
 
         #endregion
@@ -401,15 +399,6 @@ namespace Venflow
         public ValueTask DisposeAsync()
         {
             return Connection.DisposeAsync();
-        }
-
-        public Func<NpgsqlDataReader, Task<List<TEntity>>> Test<TEntity>(NpgsqlDataReader reader) where TEntity : class
-        {
-            var config = GetEntityConfiguration<TEntity>();
-
-            var yey = new MaterializerFactory<TEntity>(config);
-
-            return yey.GetOrCreateMaterializer(reader.GetColumnSchema());
         }
     }
 }

@@ -1,6 +1,7 @@
 using Npgsql;
 using System;
 using System.Text;
+using Venflow.Dynamic;
 
 namespace Venflow.Modeling
 {
@@ -14,6 +15,7 @@ namespace Venflow.Modeling
         internal Func<ChangeTracker<TEntity>, TEntity, TEntity>? ChangeTrackerApplier { get; }
 
         internal QueryCommandCache<TEntity> QueryCommandCache { get; }
+        internal MaterializerFactory<TEntity> MaterializerFactory { get; }
 
         internal Entity(Type entityType, Type? proxyEntityType, string tableName, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, Action<TEntity, StringBuilder, string, NpgsqlParameterCollection> insertWriter, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier) : base(entityType, proxyEntityType, tableName, columnListString, explicitColumnListString, nonPrimaryColumnListString)
         {
@@ -24,6 +26,7 @@ namespace Venflow.Modeling
             PrimaryColumn = primaryColumn;
 
             QueryCommandCache = new QueryCommandCache<TEntity>(entityType, proxyEntityType, Columns);
+            MaterializerFactory = new MaterializerFactory<TEntity>(this);
         }
 
         internal TEntity GetProxiedEntity(bool trackChanges = false)
@@ -44,6 +47,22 @@ namespace Venflow.Modeling
         internal override EntityColumn GetColumn(string columnName)
         {
             return Columns[columnName];
+        }
+
+        internal override bool TryGetColumn(string columnName, out EntityColumn? entityColumn)
+        {
+            if (Columns.TryGetValue(columnName, out var tempColumn))
+            {
+                entityColumn = tempColumn;
+
+                return true;
+            }
+            else
+            {
+                entityColumn = null;
+
+                return false;
+            }
         }
     }
 
@@ -76,5 +95,6 @@ namespace Venflow.Modeling
 
         internal abstract EntityColumn GetPrimaryColumn();
         internal abstract EntityColumn GetColumn(string columnName);
+        internal abstract bool TryGetColumn(string columnName, out EntityColumn? entityColumn);
     }
 }

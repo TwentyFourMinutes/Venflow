@@ -5,7 +5,9 @@ namespace Venflow.Modeling
 {
     internal class ForeignEntity
     {
-        internal Entity Entity { get; }
+        internal Entity BaseEntity { get; }
+
+        internal Entity RelationEntity { get; }
 
         internal EntityColumn ForeignKey { get; }
 
@@ -13,9 +15,10 @@ namespace Venflow.Modeling
 
         internal RelationType RelationType { get; }
 
-        internal ForeignEntity(Entity entity, EntityColumn foreignKey, PropertyInfo foreignEntityColumn, RelationType relationType)
+        internal ForeignEntity(Entity baseEntity, Entity relationEntity, EntityColumn foreignKey, PropertyInfo foreignEntityColumn, RelationType relationType)
         {
-            Entity = entity;
+            BaseEntity = baseEntity;
+            RelationEntity = relationEntity;
             ForeignKey = foreignKey;
             ForeignEntityColumn = foreignEntityColumn;
             RelationType = relationType;
