@@ -24,6 +24,7 @@ namespace Venflow.Commands
         internal JoinBuilderValues(Entity root)
         {
             FullPath = new List<JoinPath>();
+            Joins = new List<JoinOptions>();
             Root = root;
         }
 
@@ -69,7 +70,7 @@ namespace Venflow.Commands
                     _currentPath = match;
 
                     _currentPath.TrailingJoinPath.Add(match);
-                    // Lets see
+
                     return;
                 }
 

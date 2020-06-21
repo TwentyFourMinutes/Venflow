@@ -249,7 +249,7 @@ namespace Venflow
             {
                 await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
-                var factory = command.EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(_dbConfiguration, reader.GetColumnSchema());
+                var factory = command.EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(command.JoinBuilderValues, _dbConfiguration, reader.GetColumnSchema());
 
                 var entities = await factory(reader);
 

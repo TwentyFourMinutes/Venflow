@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using Npgsql;
 using Venflow.Modeling;
 using Venflow.Enums;
+using Venflow.Commands;
+using Venflow.Models;
 
 namespace Venflow.Dynamic
 {
@@ -27,7 +29,7 @@ namespace Venflow.Dynamic
             _materializerLock = new object();
         }
 
-        internal Func<NpgsqlDataReader, Task<List<TEntity>>> GetOrCreateMaterializer(DbConfiguration dbConfiguration, ReadOnlyCollection<NpgsqlDbColumn> columnSchema)
+        internal Func<NpgsqlDataReader, Task<List<TEntity>>> GetOrCreateMaterializer(JoinBuilderValues? joinBuilderValues, DbConfiguration dbConfiguration, ReadOnlyCollection<NpgsqlDbColumn> columnSchema)
         {
             var cacheKeyBuilder = new HashCode();
 
@@ -59,10 +61,10 @@ namespace Venflow.Dynamic
                 }
                 else
                 {
-                    var entities = new List<KeyValuePair<Entity, List<NpgsqlDbColumn>>>();
-                    var columns = new List<NpgsqlDbColumn>();
+                    var entities = new List<KeyValuePair<Entity, List<KeyValuePair<string, int>>>>();
+                    var columns = new List<KeyValuePair<string, int>>();
 
-                    entities.Add(new KeyValuePair<Entity, List<NpgsqlDbColumn>>(_entity, columns));
+                    entities.Add(new KeyValuePair<Entity, List<KeyValuePair<string, int>>>(_entity, columns));
 
                     for (int i = 0; i < columnSchema.Count; i++)
                     {
@@ -70,20 +72,37 @@ namespace Venflow.Dynamic
 
                         if (TryGetEntityOfTable(dbConfiguration, column, out var entity, out var columnName))
                         {
-                            columns = new List<NpgsqlDbColumn>
+                            columns = new List<KeyValuePair<string, int>>()
                             {
-                                column
+                                new KeyValuePair<string, int>(columnName, column.ColumnOrdinal.Value)
                             };
 
-                            entities.Add(new KeyValuePair<Entity, List<NpgsqlDbColumn>>(entity, columns));
+                            entities.Add(new KeyValuePair<Entity, List<KeyValuePair<string, int>>>(entity, columns));
                         }
                         else
                         {
-                            columns.Add(column);
+                            columns.Add(new KeyValuePair<string, int>(column.ColumnName, column.ColumnOrdinal.Value));
                         }
                     }
 
-                    materializer = CreateMaterializer(entities);
+                    //if (joinBuilderValues is null)
+                    //    throw new InvalidOperationException("The result set contained multiple tables, however the query was configured to only expect one. Try specifying the tables you are joining with JoinWith, while declaring the query.");
+
+                    //if (joinBuilderValues.Joins.Count > entities.Count)
+                    //{
+                    //    throw new InvalidOperationException("You configured more joins than entities returned by the query.");
+                    //}
+                    //else if (joinBuilderValues.Joins.Count < entities.Count)
+                    //{
+                    //    throw new InvalidOperationException("You configured fewer joins than entities returned by the query.");
+                    //}
+
+                    //if (!object.ReferenceEquals(entity, expectedJoin.JoinWith.RelationEntity))
+                    //{
+                    //    throw new InvalidOperationException($"You configured the joins in a different order than in the query. Expected Entity '{expectedJoin.JoinWith.RelationEntity.TableName}', actual '{entity.TableName}'.");
+                    //}
+
+                    materializer = CreateMaterializer(joinBuilderValues, entities);
 
                     _materializerCache.TryAdd(cacheKey, materializer);
 
@@ -92,7 +111,7 @@ namespace Venflow.Dynamic
             }
         }
 
-        private Func<NpgsqlDataReader, Task<List<TEntity>>> CreateMaterializer(List<KeyValuePair<Entity, List<NpgsqlDbColumn>>> entities)
+        private Func<NpgsqlDataReader, Task<List<TEntity>>> CreateMaterializer(JoinBuilderValues? joinBuilderValues, List<KeyValuePair<Entity, List<KeyValuePair<string, int>>>> entities)
         {
             var primaryEntity = entities[0];
             var primaryEntityListType = typeof(List<>).MakeGenericType(primaryEntity.Key.EntityType);
@@ -163,8 +182,18 @@ namespace Venflow.Dynamic
             {
                 var gernericDictionaryType = typeof(Dictionary<,>);
 
+                FieldBuilder lastEntityLocal = default!;
+                Label? nextIfStartLabel = default;
+
                 for (int i = 0; i < entities.Count; i++)
                 {
+                    JoinOptions? expectedJoin = null;
+
+                    if (i > 0)
+                    {
+                        expectedJoin = joinBuilderValues.Joins[i - 1];
+                    }
+
                     var entityWithColumns = entities[i];
                     var entity = entityWithColumns.Key;
                     var columns = entityWithColumns.Value;
@@ -176,7 +205,7 @@ namespace Venflow.Dynamic
                     var entityDictionaryField = stateMachineTypeBuilder.DefineField(entity.EntityName + "Dict" + i, entityDictionaryType, FieldAttributes.Private);
 
                     var primaryKeyLocal = moveNextMethodIL.DeclareLocal(primaryKeyType);
-                    var tempEntityLocal = moveNextMethodIL.DeclareLocal(entity.EntityType);
+                    var entityLocal = moveNextMethodIL.DeclareLocal(entity.EntityType);
 
                     moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     moveNextMethodIL.Emit(OpCodes.Ldnull);
@@ -187,11 +216,16 @@ namespace Venflow.Dynamic
                     moveNextMethodIL.Emit(OpCodes.Stfld, entityDictionaryField);
 
                     var primaryKeyColumnScheme = columns[0];
-                    var primaryKeyColumn = entity.GetColumn(primaryKeyColumnScheme.ColumnName);
+                    var primaryKeyColumn = entity.GetColumn(primaryKeyColumnScheme.Key);
+
+                    if (nextIfStartLabel is { })
+                    {
+                        iLGhostBodyGen.MarkLabel(nextIfStartLabel.Value);
+                    }
 
                     iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
                     iLGhostBodyGen.Emit(OpCodes.Ldfld, dataReaderField);
-                    iLGhostBodyGen.Emit(OpCodes.Ldc_I4, primaryKeyColumnScheme.ColumnOrdinal.Value);
+                    iLGhostBodyGen.Emit(OpCodes.Ldc_I4, primaryKeyColumnScheme.Value);
                     iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryKeyColumn.DbValueRetriever);
                     iLGhostBodyGen.Emit(OpCodes.Stloc, primaryKeyLocal);
 
@@ -201,11 +235,13 @@ namespace Venflow.Dynamic
                     iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
                     iLGhostBodyGen.Emit(OpCodes.Brfalse, lastEntityIfBody);
 
+                    nextIfStartLabel = i == entities.Count - 1 ? default : moveNextMethodIL.DefineLabel();
+
                     iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
                     iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
                     iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
                     iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryKeyColumn.PropertyInfo.GetGetMethod());
-                    iLGhostBodyGen.Emit(OpCodes.Beq, afterBodyLabel);
+                    iLGhostBodyGen.Emit(OpCodes.Beq, i == entities.Count - 1 ? afterBodyLabel : nextIfStartLabel.Value);
 
                     iLGhostBodyGen.MarkLabel(lastEntityIfBody);
 
@@ -214,14 +250,14 @@ namespace Venflow.Dynamic
                     iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
                     iLGhostBodyGen.Emit(OpCodes.Ldfld, entityDictionaryField);
                     iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                    iLGhostBodyGen.Emit(OpCodes.Ldloca, tempEntityLocal);
+                    iLGhostBodyGen.Emit(OpCodes.Ldloca, entityLocal);
                     iLGhostBodyGen.Emit(OpCodes.Callvirt, entityDictionaryType.GetMethod("TryGetValue"));
                     iLGhostBodyGen.Emit(OpCodes.Brfalse, entityDictionaryIfBodyEnd);
 
                     iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                    iLGhostBodyGen.Emit(OpCodes.Ldloca, tempEntityLocal);
+                    iLGhostBodyGen.Emit(OpCodes.Ldloca, entityLocal);
                     iLGhostBodyGen.Emit(OpCodes.Stfld, lastEntityField);
-                    iLGhostBodyGen.Emit(OpCodes.Br, afterBodyLabel);
+                    iLGhostBodyGen.Emit(OpCodes.Br, i == entities.Count - 1 ? afterBodyLabel : nextIfStartLabel.Value);
 
                     iLGhostBodyGen.MarkLabel(entityDictionaryIfBodyEnd);
 
@@ -236,15 +272,15 @@ namespace Venflow.Dynamic
                     {
                         var columnScheme = columns[k];
 
-                        if (!entity.TryGetColumn(columnScheme.ColumnName, out var column))
+                        if (!entity.TryGetColumn(columnScheme.Key, out var column))
                         {
-                            throw new InvalidOperationException($"There is no column mapped to column '{columnScheme.ColumnName}' on Entity '{entity.EntityName}'");
+                            throw new InvalidOperationException($"There is no column mapped to column '{columnScheme.Key}' on Entity '{entity.EntityName}'");
                         }
 
                         iLGhostBodyGen.Emit(OpCodes.Dup);
                         iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
                         iLGhostBodyGen.Emit(OpCodes.Ldfld, dataReaderField);
-                        iLGhostBodyGen.Emit(OpCodes.Ldc_I4, columnScheme.ColumnOrdinal.Value);
+                        iLGhostBodyGen.Emit(OpCodes.Ldc_I4, columnScheme.Value);
                         iLGhostBodyGen.Emit(OpCodes.Callvirt, column.DbValueRetriever);
                         iLGhostBodyGen.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod());
                     }
@@ -284,6 +320,25 @@ namespace Venflow.Dynamic
                         iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
                         iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryEntityListType.GetMethod("Add"));
                     }
+                    else
+                    {
+                        iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                        iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityLocal);
+
+                        if (expectedJoin.JoinWith.RelationType == RelationType.OneToMany)
+                        {
+                            iLGhostBodyGen.Emit(OpCodes.Callvirt, expectedJoin.JoinWith.ForeignEntityColumn.GetGetMethod());
+                            iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                            iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
+                            iLGhostBodyGen.Emit(OpCodes.Callvirt, expectedJoin.JoinWith.ForeignEntityColumn.PropertyType.GetMethod("Add"));
+                        }
+                        else
+                        {
+                            iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                            iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
+                            iLGhostBodyGen.Emit(OpCodes.Callvirt, expectedJoin.JoinWith.ForeignEntityColumn.GetSetMethod());
+                        }
+                    }
 
                     iLSetNullGhostGen.Emit(OpCodes.Ldarg_0);
                     iLSetNullGhostGen.Emit(OpCodes.Ldnull);
@@ -292,6 +347,8 @@ namespace Venflow.Dynamic
                     iLSetNullGhostGen.Emit(OpCodes.Ldarg_0);
                     iLSetNullGhostGen.Emit(OpCodes.Ldnull);
                     iLSetNullGhostGen.Emit(OpCodes.Stfld, entityDictionaryField);
+
+                    lastEntityLocal = lastEntityField;
                 }
             }
             else
@@ -305,12 +362,12 @@ namespace Venflow.Dynamic
                 for (int k = 0; k < columns.Count; k++)
                 {
                     var columnScheme = columns[k];
-                    var column = _entity.GetColumn(columnScheme.ColumnName);
+                    var column = _entity.GetColumn(columnScheme.Key);
 
                     iLGhostBodyGen.Emit(OpCodes.Dup);
                     iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
                     iLGhostBodyGen.Emit(OpCodes.Ldfld, dataReaderField);
-                    iLGhostBodyGen.Emit(OpCodes.Ldc_I4, columnScheme.ColumnOrdinal.Value);
+                    iLGhostBodyGen.Emit(OpCodes.Ldc_I4, columnScheme.Value);
                     iLGhostBodyGen.Emit(OpCodes.Callvirt, column.DbValueRetriever);
                     iLGhostBodyGen.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod());
                 }
@@ -534,7 +591,7 @@ namespace Venflow.Dynamic
                 throw new InvalidOperationException($"There is so entity mapped to the table '{tableName}'.");
             }
 
-            columnName = column.ColumnName.Substring(index, column.ColumnName.Length - index);
+            columnName = column.ColumnName.Substring(index + 1, column.ColumnName.Length - index - 1);
 
             return true;
         }

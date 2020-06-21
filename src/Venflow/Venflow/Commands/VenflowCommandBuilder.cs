@@ -457,7 +457,8 @@ namespace Venflow.Commands
                 GetComputedColumns = GetComputedColumns,
                 IsSingle = IsSingle,
                 TrackingChanges = TrackingChanges,
-                DisposeCommand = DisposeCommand
+                DisposeCommand = DisposeCommand,
+                JoinBuilderValues = JoinValues
             };
         }
     }

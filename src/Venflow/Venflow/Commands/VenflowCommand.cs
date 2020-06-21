@@ -9,6 +9,7 @@ namespace Venflow.Commands
     internal class VenflowCommand<TEntity> : IQueryCommand<TEntity>, IInsertCommand<TEntity>, IDeleteCommand<TEntity>, IUpdateCommand<TEntity> where TEntity : class
     {
         internal NpgsqlCommand UnderlyingCommand { get; set; }
+        internal JoinBuilderValues? JoinBuilderValues { get; set; }
 
         internal Entity<TEntity> EntityConfiguration { get; set; }
         internal QueryMaterializer<TEntity>? QueryMaterializer { get; set; }
