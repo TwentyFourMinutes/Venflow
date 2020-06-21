@@ -1,17 +1,24 @@
-﻿using Npgsql;
+﻿using Microsoft.VisualBasic;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
+using System.Linq;
+using System.Net.Http.Headers;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using Venflow.Commands;
+using Venflow.Dynamic;
 using Venflow.Enums;
 using Venflow.Modeling;
 
 namespace Venflow
 {
-    public class VenflowDbConnection : IAsyncDisposable
+    public partial class VenflowDbConnection : IAsyncDisposable
     {
         public NpgsqlConnection Connection { get; }
 
@@ -25,10 +32,13 @@ namespace Venflow
 
         #region Misc
 
-        public Task TruncateTableAsync<TEntity>(ForeignTruncateOptions foreignOptions, CancellationToken cancellationToken = default) where TEntity : class
+        public Task TruncateTableAsync<TEntity>(ForeignTruncateOptions foreignOptions,
+            CancellationToken cancellationToken = default) where TEntity : class
             => TruncateTableAsync<TEntity>(IdentityTruncateOptions.None, foreignOptions, cancellationToken);
 
-        public Task TruncateTableAsync<TEntity>(IdentityTruncateOptions truncateOptions = IdentityTruncateOptions.None, ForeignTruncateOptions foreignOptions = ForeignTruncateOptions.None, CancellationToken cancellationToken = default) where TEntity : class
+        public Task TruncateTableAsync<TEntity>(IdentityTruncateOptions truncateOptions = IdentityTruncateOptions.None,
+            ForeignTruncateOptions foreignOptions = ForeignTruncateOptions.None,
+            CancellationToken cancellationToken = default) where TEntity : class
         {
             var entityConfiguration = GetEntityConfiguration<TEntity>();
 
@@ -78,14 +88,16 @@ namespace Venflow
 
         #region InsertAsync
 
-        public Task<int> InsertSingleAsync<TEntity>(TEntity entity, bool returnComputedColumns = false, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> InsertSingleAsync<TEntity>(TEntity entity, bool returnComputedColumns = false,
+            CancellationToken cancellationToken = default) where TEntity : class
         {
             var command = Insert<TEntity>(true).ReturnComputedColumns(returnComputedColumns).Single(entity);
 
             return InsertSingleAsync(command, returnComputedColumns ? entity : null, cancellationToken);
         }
 
-        public async Task<int> InsertSingleAsync<TEntity>(IInsertCommand<TEntity> insertCommand, TEntity? entity = null, CancellationToken cancellationToken = default) where TEntity : class
+        public async Task<int> InsertSingleAsync<TEntity>(IInsertCommand<TEntity> insertCommand, TEntity? entity = null,
+            CancellationToken cancellationToken = default) where TEntity : class
         {
             var command = (VenflowCommand<TEntity>)insertCommand;
 
@@ -113,14 +125,16 @@ namespace Venflow
             }
         }
 
-        public ValueTask<int> InsertBatchAsync<TEntity>(IEnumerable<TEntity> entities, bool returnComputedColumns = false, CancellationToken cancellationToken = default) where TEntity : class
+        public ValueTask<int> InsertBatchAsync<TEntity>(IEnumerable<TEntity> entities,
+            bool returnComputedColumns = false, CancellationToken cancellationToken = default) where TEntity : class
         {
             var command = Insert<TEntity>(true).ReturnComputedColumns(returnComputedColumns).Batch(entities);
 
             return InsertBatchAsync(command, returnComputedColumns ? entities : null, cancellationToken);
         }
 
-        public async ValueTask<int> InsertBatchAsync<TEntity>(IInsertCommand<TEntity>? insertCommand, IEnumerable<TEntity>? entities = null, CancellationToken cancellationToken = default) where TEntity : class
+        public async ValueTask<int> InsertBatchAsync<TEntity>(IInsertCommand<TEntity>? insertCommand,
+            IEnumerable<TEntity>? entities = null, CancellationToken cancellationToken = default) where TEntity : class
         {
             if (insertCommand is null)
                 return 0;
@@ -168,20 +182,23 @@ namespace Venflow
 
         #region QueryAsync
 
-        public Task<TEntity?> QuerySingleAsync<TEntity>(bool changeTracking = false, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<TEntity?> QuerySingleAsync<TEntity>(bool changeTracking = false,
+            CancellationToken cancellationToken = default) where TEntity : class
         {
             var command = Query<TEntity>(true).TrackChanges(changeTracking).Single();
 
             return QuerySingleAsync(command, cancellationToken);
         }
 
-        public async Task<TEntity?> QuerySingleAsync<TEntity>(IQueryCommand<TEntity> queryCommand, CancellationToken cancellationToken = default) where TEntity : class
+        public async Task<TEntity?> QuerySingleAsync<TEntity>(IQueryCommand<TEntity> queryCommand,
+            CancellationToken cancellationToken = default) where TEntity : class
         {
             var command = (VenflowCommand<TEntity>)queryCommand;
 
             command.UnderlyingCommand.Connection = Connection;
 
-            await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(CommandBehavior.SingleRow, cancellationToken);
+            await using var reader =
+                await command.UnderlyingCommand.ExecuteReaderAsync(CommandBehavior.SingleRow, cancellationToken);
 
             if (!await reader.ReadAsync())
             {
@@ -190,7 +207,8 @@ namespace Venflow
 
             var isChangeTracking = command.TrackingChanges && command.EntityConfiguration.ChangeTrackerFactory is { };
 
-            var entity = command.EntityConfiguration.QueryCommandCache.GetOrCreateFactory(reader.GetColumnSchema(), isChangeTracking).Invoke(reader);
+            var entity = command.EntityConfiguration.QueryCommandCache
+                .GetOrCreateFactory(reader.GetColumnSchema(), isChangeTracking).Invoke(reader);
 
             if (command.DisposeCommand)
                 command.Dispose();
@@ -198,62 +216,80 @@ namespace Venflow
             return entity;
         }
 
-        public Task<List<TEntity>> QueryBatchAsync<TEntity>(bool changeTracking = false, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<List<TEntity>> QueryBatchAsync<TEntity>(bool changeTracking = false,
+            CancellationToken cancellationToken = default) where TEntity : class
         {
             var command = Query<TEntity>(true).TrackChanges(changeTracking).Batch();
 
             return QueryBatchAsync(command, cancellationToken);
         }
 
-        public async Task<List<TEntity>> QueryBatchAsync<TEntity>(IQueryCommand<TEntity> queryCommand, CancellationToken cancellationToken = default) where TEntity : class
+        public async Task<List<TEntity>> QueryBatchAsync<TEntity>(IQueryCommand<TEntity> queryCommand,
+            CancellationToken cancellationToken = default) where TEntity : class
         {
             var command = (VenflowCommand<TEntity>)queryCommand;
 
             command.UnderlyingCommand.Connection = Connection;
 
-            await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
-
             var isChangeTracking = command.TrackingChanges && command.EntityConfiguration.ChangeTrackerFactory is { };
 
-            var entities = new List<TEntity>();
+            //if (command is null)
+            //{
+            //    await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
-            var factory = command.EntityConfiguration.QueryCommandCache.GetOrCreateFactory(reader.GetColumnSchema(), isChangeTracking);
+            //    var entities = new List<TEntity>();
 
-            while (await reader.ReadAsync())
-            {
-                entities.Add(factory.Invoke(reader));
-            }
+            //    var factory = command.EntityConfiguration.QueryCommandCache.GetOrCreateFactory(reader.GetColumnSchema(), isChangeTracking);
 
-            if (command.DisposeCommand)
-                command.Dispose();
+            //    while (await reader.ReadAsync())
+            //    {
+            //        entities.Add(factory.Invoke(reader));
+            //    }
 
-            return entities;
-        }
+            //    if (command.DisposeCommand)
+            //        command.Dispose();
 
-        private async Task Materialize()
-        {
+            //    return entities;
+            //}
+            //else
+            //{
+            //    await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(CommandBehavior.KeyInfo, cancellationToken);
 
+            //    //reader.GetColumnSchema()
+
+            //    while (await reader.ReadAsync())
+            //    {
+
+            //    }
+
+            //    return default!;
+            //}
+
+            return default!;
         }
 
         #endregion
 
         #region DeleteAsync
 
-        public Task DeleteSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
+        public Task DeleteSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+            where TEntity : class
         {
             var command = Delete<TEntity>(true).Single(entity);
 
             return DeleteAsync(command, cancellationToken);
         }
 
-        public Task DeleteBatchAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
+        public Task DeleteBatchAsync<TEntity>(IEnumerable<TEntity> entities,
+            CancellationToken cancellationToken = default) where TEntity : class
         {
             var command = Delete<TEntity>(true).Batch(entities);
 
             return DeleteAsync(command, cancellationToken);
         }
 
-        public async Task DeleteAsync<TEntity>(IDeleteCommand<TEntity> deleteCommand, CancellationToken cancellationToken = default) where TEntity : class
+        public async Task DeleteAsync<TEntity>(IDeleteCommand<TEntity> deleteCommand,
+            CancellationToken cancellationToken = default) where TEntity : class
         {
             var command = (VenflowCommand<TEntity>)deleteCommand;
 
@@ -269,21 +305,24 @@ namespace Venflow
 
         #region UpdateAsync
 
-        public ValueTask<int> UpdateSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
+        public ValueTask<int> UpdateSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+            where TEntity : class
         {
             var command = Update<TEntity>(true).Single(entity);
 
             return UpdateAsync(command, cancellationToken);
         }
 
-        public ValueTask<int> UpdateBatchAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
+        public ValueTask<int> UpdateBatchAsync<TEntity>(IEnumerable<TEntity> entities,
+            CancellationToken cancellationToken = default) where TEntity : class
         {
             var command = Update<TEntity>(true).Batch(entities);
 
             return UpdateAsync(command, cancellationToken);
         }
 
-        public async ValueTask<int> UpdateAsync<TEntity>(IUpdateCommand<TEntity> updateCommand, CancellationToken cancellationToken = default) where TEntity : class
+        public async ValueTask<int> UpdateAsync<TEntity>(IUpdateCommand<TEntity> updateCommand,
+            CancellationToken cancellationToken = default) where TEntity : class
         {
             if (updateCommand is null)
                 return 0;
@@ -314,7 +353,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>()).Insert();
 
         public IInsertCommandBuilder<TEntity> Insert<TEntity>(bool disposeCommand) where TEntity : class
-         => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>(), disposeCommand).Insert();
+            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>(), disposeCommand).Insert();
 
         public IDeleteCommandBuilder<TEntity> Delete<TEntity>() where TEntity : class
             => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>()).Delete();
@@ -355,7 +394,9 @@ namespace Venflow
         {
             if (!_dbConfiguration.Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
             {
-                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the DbConfiguration.", nameof(TEntity));
+                throw new TypeArgumentException(
+                    "The provided generic type argument doesn't have any configuration class registered in the DbConfiguration.",
+                    nameof(TEntity));
             }
 
             return (Entity<TEntity>)entityModel;
@@ -366,6 +407,19 @@ namespace Venflow
         public ValueTask DisposeAsync()
         {
             return Connection.DisposeAsync();
+        }
+
+        public Task<List<TEntity>> TestAsync<TEntity>(NpgsqlDataReader reader) where TEntity : class
+        {
+            var config = GetEntityConfiguration<TEntity>();
+
+            var yey = new MaterializerFactory<TEntity>(config);
+
+            var ok = yey.CreateMaterializer(new List<KeyValuePair<Entity, List<Npgsql.Schema.NpgsqlDbColumn>>> {
+                new KeyValuePair<Entity, List<Npgsql.Schema.NpgsqlDbColumn>>(config, reader.GetColumnSchema().ToList())
+                });
+
+            return ok(reader);
         }
     }
 }

@@ -457,7 +457,13 @@ namespace Venflow.Commands
         {
             _command.CommandText = _commandString.ToString();
 
-            return new VenflowCommand<TEntity>(_command, _entityConfiguration) { GetComputedColumns = GetComputedColumns, IsSingle = IsSingle, TrackingChanges = TrackingChanges, DisposeCommand = DisposeCommand, Relations = null };
+            return new VenflowCommand<TEntity>(_command, _entityConfiguration)
+            {
+                GetComputedColumns = GetComputedColumns,
+                IsSingle = IsSingle,
+                TrackingChanges = TrackingChanges,
+                DisposeCommand = DisposeCommand
+            };
         }
     }
 
@@ -465,6 +471,8 @@ namespace Venflow.Commands
     {
         internal Entity Root { get; }
         internal List<JoinPath> FullPath { get; }
+
+        internal List<JoinOptions> Joins { get; }
 
         private JoinPath _currentPath;
 
@@ -505,7 +513,7 @@ namespace Venflow.Commands
 
                 _currentPath = newPath;
 
-                return;
+                Joins.Add(joinOptions);
             }
             else
             {
@@ -516,7 +524,7 @@ namespace Venflow.Commands
                     _currentPath = match;
 
                     _currentPath.TrailingJoinPath.Add(match);
-
+                    // Lets see
                     return;
                 }
 
@@ -527,6 +535,8 @@ namespace Venflow.Commands
                     _currentPath.TrailingJoinPath.Add(joinPath);
 
                     _currentPath = joinPath;
+
+                    Joins.Add(joinOptions);
                 }
                 else
                 {
@@ -535,6 +545,8 @@ namespace Venflow.Commands
                     _currentPath.TrailingJoinPath.Add(joinPath);
 
                     _currentPath = joinPath;
+
+                    Joins.Add(joinOptions);
                 }
             }
         }

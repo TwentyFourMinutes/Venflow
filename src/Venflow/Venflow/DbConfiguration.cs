@@ -1,5 +1,7 @@
 ﻿using Npgsql;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,6 +13,8 @@ namespace Venflow.Modeling
         internal bool UseLazyEntityEvaluation { get; }
 
         internal IReadOnlyDictionary<string, Entity> Entities { get; private set; }
+        internal IReadOnlyDictionary<string, Entity> TableEntities { get; private set; }
+
         internal bool IsBuild { get; private set; }
 
         protected DbConfiguration(string connectionString, bool useLazyEntityEvaluation = false)
@@ -18,6 +22,7 @@ namespace Venflow.Modeling
             ConnectionString = connectionString;
             UseLazyEntityEvaluation = useLazyEntityEvaluation;
             Entities = null!;
+            TableEntities = null!;
         }
 
         public async ValueTask<VenflowDbConnection> NewConnectionScopeAsync(bool openConnection = true, CancellationToken cancellationToken = default)
@@ -106,6 +111,15 @@ namespace Venflow.Modeling
             Configure(dbConfigurator);
 
             Entities = dbConfigurator.BuildConfiguration();
+
+            var tableEntities = new Dictionary<string, Entity>();
+
+            foreach (var entity in Entities.Values)
+            {
+                tableEntities.Add(entity.TableName, entity);
+            }
+
+            TableEntities = new ReadOnlyDictionary<string, Entity>(tableEntities);
 
             IsBuild = true;
         }

@@ -1,5 +1,6 @@
 ﻿using Npgsql;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
@@ -17,5 +18,6 @@ namespace Venflow.Modeling
         internal static readonly Type String = typeof(string);
         internal static readonly Type StringBuilder = typeof(StringBuilder);
         internal static readonly Type NpgsqlParameterCollection = typeof(NpgsqlParameterCollection);
+        internal static readonly Type GenericDictionary = typeof(Dictionary<,>);
     }
 }
