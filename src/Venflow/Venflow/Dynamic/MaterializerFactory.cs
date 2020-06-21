@@ -100,7 +100,7 @@ namespace Venflow.Dynamic
             var asyncStateMachineType = typeof(IAsyncStateMachine);
             var asyncMethodBuilderType = typeof(AsyncTaskMethodBuilder<>).MakeGenericType(primaryEntityListType);
             var npgsqlDataReaderType = typeof(NpgsqlDataReader);
-            var taskAwaiterType = typeof(NpgsqlDataReader);
+            var taskAwaiterType = typeof(TaskAwaiter<bool>);
             var intType = typeof(int);
             var taskBoolType = typeof(Task<bool>);
             var exceptionType = typeof(Exception);
