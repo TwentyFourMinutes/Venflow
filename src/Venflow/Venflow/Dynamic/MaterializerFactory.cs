@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.Common;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
@@ -131,10 +129,6 @@ namespace Venflow.Dynamic
             var exceptionLocal = moveNextMethodIL.DeclareLocal(typeof(Exception));
             var primaryListLocal = moveNextMethodIL.DeclareLocal(typeof(List<TEntity>));
 
-            // -- Actual Local Declaration
-
-            // -- End of actual Local Declaration
-
             var endOfMethodLabel = moveNextMethodIL.DefineLabel();
 
             moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -160,7 +154,6 @@ namespace Venflow.Dynamic
             iLSetNullGhostGen.Emit(OpCodes.Ldarg_0);
             iLSetNullGhostGen.Emit(OpCodes.Ldnull);
             iLSetNullGhostGen.Emit(OpCodes.Stfld, primaryEntityListField);
-
 
             var iLGhostBodyGen = new ILGhostGenerator();
 
