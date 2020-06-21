@@ -27,8 +27,7 @@ namespace Venflow.Dynamic
             _materializerLock = new object();
         }
 
-        internal Func<NpgsqlDataReader, Task<List<TEntity>>> GetOrCreateMaterializer(
-            ReadOnlyCollection<NpgsqlDbColumn> columnSchema)
+        internal Func<NpgsqlDataReader, Task<List<TEntity>>> GetOrCreateMaterializer(ReadOnlyCollection<NpgsqlDbColumn> columnSchema)
         {
             var cacheKeyBuilder = new HashCode();
 
@@ -159,79 +158,147 @@ namespace Venflow.Dynamic
 
             var afterBodyLabel = moveNextMethodIL.DefineLabel();
 
-            for (int i = 0; i < entities.Count; i++)
+            if (entities.Count > 1)
             {
-                var entityWithColumns = entities[i];
-                var entity = entityWithColumns.Key;
-                var columns = entityWithColumns.Value;
+                for (int i = 0; i < entities.Count; i++)
+                {
+                    var entityWithColumns = entities[i];
+                    var entity = entityWithColumns.Key;
+                    var columns = entityWithColumns.Value;
 
-                var primaryKeyType = entity.GetPrimaryColumn().PropertyInfo.PropertyType;
-                var entityDictionaryType = typeof(Dictionary<,>).MakeGenericType(primaryKeyType, entity.EntityType);
+                    var primaryKeyType = entity.GetPrimaryColumn().PropertyInfo.PropertyType;
+                    var entityDictionaryType = typeof(Dictionary<,>).MakeGenericType(primaryKeyType, entity.EntityType);
 
-                var lastEntityField = stateMachineTypeBuilder.DefineField("last" + entity.EntityName + i, entity.EntityType, FieldAttributes.Private);
-                var entityDictionaryField = stateMachineTypeBuilder.DefineField(entity.EntityName + "Dict" + i, entityDictionaryType, FieldAttributes.Private);
+                    var lastEntityField = stateMachineTypeBuilder.DefineField("last" + entity.EntityName + i, entity.EntityType, FieldAttributes.Private);
+                    var entityDictionaryField = stateMachineTypeBuilder.DefineField(entity.EntityName + "Dict" + i, entityDictionaryType, FieldAttributes.Private);
 
-                var primaryKeyLocal = moveNextMethodIL.DeclareLocal(primaryKeyType);
-                var tempEntityLocal = moveNextMethodIL.DeclareLocal(entity.EntityType);
+                    var primaryKeyLocal = moveNextMethodIL.DeclareLocal(primaryKeyType);
+                    var tempEntityLocal = moveNextMethodIL.DeclareLocal(entity.EntityType);
 
-                moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                moveNextMethodIL.Emit(OpCodes.Ldnull);
-                moveNextMethodIL.Emit(OpCodes.Stfld, lastEntityField);
+                    moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    moveNextMethodIL.Emit(OpCodes.Ldnull);
+                    moveNextMethodIL.Emit(OpCodes.Stfld, lastEntityField);
 
-                moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                moveNextMethodIL.Emit(OpCodes.Newobj, entityDictionaryType.GetConstructor(Type.EmptyTypes));
-                moveNextMethodIL.Emit(OpCodes.Stfld, entityDictionaryField);
+                    moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    moveNextMethodIL.Emit(OpCodes.Newobj, entityDictionaryType.GetConstructor(Type.EmptyTypes));
+                    moveNextMethodIL.Emit(OpCodes.Stfld, entityDictionaryField);
 
-                var primaryKeyColumnScheme = columns[0];
-                var primaryKeyColumn = entity.GetColumn(primaryKeyColumnScheme.ColumnName);
+                    var primaryKeyColumnScheme = columns[0];
+                    var primaryKeyColumn = entity.GetColumn(primaryKeyColumnScheme.ColumnName);
+
+                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                    iLGhostBodyGen.Emit(OpCodes.Ldfld, dataReaderField);
+                    iLGhostBodyGen.Emit(OpCodes.Ldc_I4, primaryKeyColumnScheme.ColumnOrdinal.Value);
+                    iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryKeyColumn.DbValueRetriever);
+                    iLGhostBodyGen.Emit(OpCodes.Stloc, primaryKeyLocal);
+
+                    var lastEntityIfBody = moveNextMethodIL.DefineLabel();
+
+                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                    iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
+                    iLGhostBodyGen.Emit(OpCodes.Brfalse, lastEntityIfBody);
+
+                    iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
+                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                    iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
+                    iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryKeyColumn.PropertyInfo.GetGetMethod());
+                    iLGhostBodyGen.Emit(OpCodes.Beq, afterBodyLabel);
+
+                    iLGhostBodyGen.MarkLabel(lastEntityIfBody);
+
+                    var entityDictionaryIfBodyEnd = moveNextMethodIL.DefineLabel();
+
+                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                    iLGhostBodyGen.Emit(OpCodes.Ldfld, entityDictionaryField);
+                    iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
+                    iLGhostBodyGen.Emit(OpCodes.Ldloca, tempEntityLocal);
+                    iLGhostBodyGen.Emit(OpCodes.Callvirt, entityDictionaryType.GetMethod("TryGetValue"));
+                    iLGhostBodyGen.Emit(OpCodes.Brfalse, entityDictionaryIfBodyEnd);
+
+                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                    iLGhostBodyGen.Emit(OpCodes.Ldloca, tempEntityLocal);
+                    iLGhostBodyGen.Emit(OpCodes.Stfld, lastEntityField);
+                    iLGhostBodyGen.Emit(OpCodes.Br, afterBodyLabel);
+
+                    iLGhostBodyGen.MarkLabel(entityDictionaryIfBodyEnd);
+
+                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                    iLGhostBodyGen.Emit(OpCodes.Newobj, entity.EntityType.GetConstructor(Type.EmptyTypes));
+
+                    iLGhostBodyGen.Emit(OpCodes.Dup);
+                    iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
+                    iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryKeyColumn.PropertyInfo.GetSetMethod());
+
+                    for (int k = 1; k < columns.Count; k++)
+                    {
+                        var columnScheme = columns[k];
+                        var column = entity.GetColumn(columnScheme.ColumnName);
+
+                        iLGhostBodyGen.Emit(OpCodes.Dup);
+                        iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                        iLGhostBodyGen.Emit(OpCodes.Ldfld, dataReaderField);
+                        iLGhostBodyGen.Emit(OpCodes.Ldc_I4, columnScheme.ColumnOrdinal.Value);
+                        iLGhostBodyGen.Emit(OpCodes.Callvirt, column.DbValueRetriever);
+                        iLGhostBodyGen.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod());
+                    }
+
+                    if (entity.Relations is { })
+                    {
+                        for (int k = 0; k < entity.Relations.Count; k++)
+                        {
+                            var relation = entity.Relations[k];
+
+                            if (relation.RelationType != RelationType.OneToMany)
+                            {
+                                continue;
+                            }
+
+                            iLGhostBodyGen.Emit(OpCodes.Dup);
+
+                            iLGhostBodyGen.Emit(OpCodes.Newobj, relation.ForeignEntityColumn.PropertyType.GetConstructor(Type.EmptyTypes));
+                            iLGhostBodyGen.Emit(OpCodes.Callvirt, relation.ForeignEntityColumn.GetSetMethod());
+                        }
+                    }
+
+                    iLGhostBodyGen.Emit(OpCodes.Stfld, lastEntityField);
+
+                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                    iLGhostBodyGen.Emit(OpCodes.Ldfld, entityDictionaryField);
+                    iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
+                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                    iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
+                    iLGhostBodyGen.Emit(OpCodes.Callvirt, entityDictionaryType.GetMethod("Add"));
+
+                    if (i == 0)
+                    {
+                        iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                        iLGhostBodyGen.Emit(OpCodes.Ldfld, primaryEntityListField);
+                        iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                        iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
+                        iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryEntityListType.GetMethod("Add"));
+                    }
+
+                    iLSetNullGhostGen.Emit(OpCodes.Ldarg_0);
+                    iLSetNullGhostGen.Emit(OpCodes.Ldnull);
+                    iLSetNullGhostGen.Emit(OpCodes.Stfld, lastEntityField);
+
+                    iLSetNullGhostGen.Emit(OpCodes.Ldarg_0);
+                    iLSetNullGhostGen.Emit(OpCodes.Ldnull);
+                    iLSetNullGhostGen.Emit(OpCodes.Stfld, entityDictionaryField);
+                }
+            }
+            else
+            {
+                var columns = entities[0].Value;
 
                 iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                iLGhostBodyGen.Emit(OpCodes.Ldfld, dataReaderField);
-                iLGhostBodyGen.Emit(OpCodes.Ldc_I4, primaryKeyColumnScheme.ColumnOrdinal.Value);
-                iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryKeyColumn.DbValueRetriever);
-                iLGhostBodyGen.Emit(OpCodes.Stloc, primaryKeyLocal);
+                iLGhostBodyGen.Emit(OpCodes.Ldfld, primaryEntityListField);
+                iLGhostBodyGen.Emit(OpCodes.Newobj, _entity.EntityType.GetConstructor(Type.EmptyTypes));
 
-                var lastEntityIfBody = moveNextMethodIL.DefineLabel();
-
-                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
-                iLGhostBodyGen.Emit(OpCodes.Brfalse, lastEntityIfBody);
-
-                iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
-                iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryKeyColumn.PropertyInfo.GetGetMethod());
-                iLGhostBodyGen.Emit(OpCodes.Beq, afterBodyLabel);
-
-                iLGhostBodyGen.MarkLabel(lastEntityIfBody);
-
-                var entityDictionaryIfBodyEnd = moveNextMethodIL.DefineLabel();
-
-                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                iLGhostBodyGen.Emit(OpCodes.Ldfld, entityDictionaryField);
-                iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                iLGhostBodyGen.Emit(OpCodes.Ldloca, tempEntityLocal);
-                iLGhostBodyGen.Emit(OpCodes.Callvirt, entityDictionaryType.GetMethod("TryGetValue"));
-                iLGhostBodyGen.Emit(OpCodes.Brfalse, entityDictionaryIfBodyEnd);
-
-                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                iLGhostBodyGen.Emit(OpCodes.Ldloca, tempEntityLocal);
-                iLGhostBodyGen.Emit(OpCodes.Stfld, lastEntityField);
-                iLGhostBodyGen.Emit(OpCodes.Br, afterBodyLabel);
-
-                iLGhostBodyGen.MarkLabel(entityDictionaryIfBodyEnd);
-
-                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                iLGhostBodyGen.Emit(OpCodes.Newobj, entity.EntityType.GetConstructor(Type.EmptyTypes));
-
-                iLGhostBodyGen.Emit(OpCodes.Dup);
-                iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryKeyColumn.PropertyInfo.GetSetMethod());
-
-                for (int k = 1; k < columns.Count; k++)
+                for (int k = 0; k < columns.Count; k++)
                 {
                     var columnScheme = columns[k];
-                    var column = entity.GetColumn(columnScheme.ColumnName);
+                    var column = _entity.GetColumn(columnScheme.ColumnName);
 
                     iLGhostBodyGen.Emit(OpCodes.Dup);
                     iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
@@ -241,46 +308,7 @@ namespace Venflow.Dynamic
                     iLGhostBodyGen.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod());
                 }
 
-                for (int k = 0; k < entity.Relations.Count; k++)
-                {
-                    var relation = entity.Relations[k];
-
-                    if (relation.RelationType != RelationType.OneToMany)
-                    {
-                        continue;
-                    }
-
-                    iLGhostBodyGen.Emit(OpCodes.Dup);
-
-                    iLGhostBodyGen.Emit(OpCodes.Newobj, relation.ForeignEntityColumn.PropertyType.GetConstructor(Type.EmptyTypes));
-                    iLGhostBodyGen.Emit(OpCodes.Callvirt, relation.ForeignEntityColumn.GetSetMethod());
-                }
-
-                iLGhostBodyGen.Emit(OpCodes.Stfld, lastEntityField);
-
-                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                iLGhostBodyGen.Emit(OpCodes.Ldfld, entityDictionaryField);
-                iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
-                iLGhostBodyGen.Emit(OpCodes.Callvirt, entityDictionaryType.GetMethod("Add"));
-
-                if (i == 0)
-                {
-                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                    iLGhostBodyGen.Emit(OpCodes.Ldfld, primaryEntityListField);
-                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                    iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
-                    iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryEntityListType.GetMethod("Add"));
-                }
-
-                iLSetNullGhostGen.Emit(OpCodes.Ldarg_0);
-                iLSetNullGhostGen.Emit(OpCodes.Ldnull);
-                iLSetNullGhostGen.Emit(OpCodes.Stfld, lastEntityField);
-
-                iLSetNullGhostGen.Emit(OpCodes.Ldarg_0);
-                iLSetNullGhostGen.Emit(OpCodes.Ldnull);
-                iLSetNullGhostGen.Emit(OpCodes.Stfld, entityDictionaryField);
+                iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryEntityListType.GetMethod("Add"));
             }
 
 
