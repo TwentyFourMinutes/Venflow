@@ -14,7 +14,6 @@ namespace Venflow.Modeling
         internal Func<ChangeTracker<TEntity>, TEntity>? ChangeTrackerFactory { get; }
         internal Func<ChangeTracker<TEntity>, TEntity, TEntity>? ChangeTrackerApplier { get; }
 
-        internal QueryCommandCache<TEntity> QueryCommandCache { get; }
         internal MaterializerFactory<TEntity> MaterializerFactory { get; }
 
         internal Entity(Type entityType, Type? proxyEntityType, string tableName, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, Action<TEntity, StringBuilder, string, NpgsqlParameterCollection> insertWriter, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier) : base(entityType, proxyEntityType, tableName, columnListString, explicitColumnListString, nonPrimaryColumnListString)
@@ -25,7 +24,6 @@ namespace Venflow.Modeling
             Columns = columns;
             PrimaryColumn = primaryColumn;
 
-            QueryCommandCache = new QueryCommandCache<TEntity>(entityType, proxyEntityType, Columns);
             MaterializerFactory = new MaterializerFactory<TEntity>(this);
         }
 
