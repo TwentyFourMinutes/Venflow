@@ -41,3 +41,9 @@ I also want to mention all the other great ORM's out there, build by awesome peo
 ### Contact information
 
 If you feel like something is not working as intended or you are experiencing issues, feel free to create an issue. Also for feature requests just create an issue. For further information feel free to send me a [mail](mailto:office@twenty-four.dev) to `office@twenty-four.dev` or message me on Discord `24_minutes#7496`.
+
+## Sponsors
+
+I wanna thank [JetBrains](https://www.jetbrains.com/?from=DulcisX) for providing me and the project with a free Open Source license for their whole JetBrains suite. Their Tools greatly improve the development speed of this Project. If you want to get a free Open Source license for your own project and their collaborators, visit their [Open Source page](https://www.jetbrains.com/opensource/).
+
+<a href="https://www.jetbrains.com/?from=DulcisX"><img width="350px" src="images/jetbrains_logo.png"></a>
