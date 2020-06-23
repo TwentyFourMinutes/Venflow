@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Venflow.Enums;
@@ -22,11 +22,10 @@ namespace Venflow.Modeling.Definitions
         {
             var columns = _entityBuilder.Build();
 
-            _entity = new Entity<TEntity>(_entityBuilder.Type, _entityBuilder.ChangeTrackerFactory?.ProxyType,
-                                          _entityBuilder.TableName, columns, (PrimaryEntityColumn<TEntity>)columns[0],
-                                          GetColumnListString(columns, false, false), GetColumnListString(columns, false, true), GetColumnListString(columns, true, false),
-                                          _entityBuilder.InsertWriter, _entityBuilder.ChangeTrackerFactory?.GetProxyFactory(),
-                                          _entityBuilder.ChangeTrackerFactory?.GetProxyApplyingFactory(columns));
+            _entity = new Entity<TEntity>(_entityBuilder.Type, _entityBuilder.ChangeTrackerFactory?.ProxyType, _entityBuilder.TableName, columns,
+                (PrimaryEntityColumn<TEntity>) columns[0], GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns), GetColumnListString(columns,  ColumnListStringOptions.IncludePrimaryColumns |  ColumnListStringOptions.ExplicitNames),
+                GetColumnListString(columns,  ColumnListStringOptions.None), _entityBuilder.InsertWriter, _entityBuilder.ChangeTrackerFactory?.GetProxyFactory(),
+                _entityBuilder.ChangeTrackerFactory?.GetProxyApplyingFactory(columns));
 
             return _entity;
         }
@@ -102,30 +101,17 @@ namespace Venflow.Modeling.Definitions
             _entity.Relations = new DualKeyCollection<string, ForeignEntity>(foreignEntities, nameToEntity);
         }
 
-        private RelationType GetReverseRelationType(RelationType relationType)
-        {
-            switch (relationType)
-            {
-                case RelationType.OneToOne:
-                    return RelationType.OneToOne;
-                case RelationType.OneToMany:
-                    return RelationType.ManyToOne;
-                case RelationType.ManyToOne:
-                    return RelationType.OneToMany;
-                default:
-                    throw new NotSupportedException();
-            }
-        }
-
-        private string GetColumnListString(EntityColumnCollection<TEntity> columns, bool excludePrimaryColumns, bool explictNames)
+        private string GetColumnListString(EntityColumnCollection<TEntity> columns, ColumnListStringOptions options)
         {
             var sb = new StringBuilder();
 
-            var offset = excludePrimaryColumns ? columns.RegularColumnsOffset : 0;
+            var explictNames = (options & ColumnListStringOptions.ExplicitNames) != 0;
 
-            for (int i = offset; i < columns.Count; i++)
+            var index = (options & ColumnListStringOptions.IncludePrimaryColumns) != 0 ? 0 : columns.RegularColumnsOffset;
+
+            for (; index < columns.Count; index++)
             {
-                var column = columns[i];
+                var column = columns[index];
 
                 if (explictNames)
                 {
@@ -139,7 +125,7 @@ namespace Venflow.Modeling.Definitions
                 sb.Append("\", ");
             }
 
-            sb.Remove(sb.Length - 2, 2);
+            sb.Length -= 2;
 
             return sb.ToString();
         }
