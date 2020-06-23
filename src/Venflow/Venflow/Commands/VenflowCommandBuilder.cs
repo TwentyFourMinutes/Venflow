@@ -254,7 +254,7 @@ namespace Venflow.Commands
                 if (index == 0)
                     return null;
 
-                _commandString.Remove(_commandString.Length - 3, 3);
+                _commandString.Length -= 3;
             }
 
             if (GetComputedColumns)
@@ -335,7 +335,7 @@ namespace Venflow.Commands
                 }
             }
 
-            _commandString.Remove(_commandString.Length - 2, 2);
+            _commandString.Length -= 2;
             _commandString.Append(");");
 
             return BuildCommand();
@@ -429,7 +429,7 @@ namespace Venflow.Commands
                 _commandString.Append(", ");
             }
 
-            _commandString.Remove(_commandString.Length - 2, 2);
+            _commandString.Length -= 2;
 
             _commandString.Append(" WHERE \"");
 
