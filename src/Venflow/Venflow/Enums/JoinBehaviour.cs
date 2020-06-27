@@ -1,6 +1,6 @@
 ﻿namespace Venflow.Enums
 {
-    public enum JoinBehaviour
+    public enum JoinBehaviour : byte
     {
         InnerJoin,
         LeftJoin,

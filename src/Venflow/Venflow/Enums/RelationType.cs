@@ -1,6 +1,6 @@
-﻿namespace Venflow.Enums
+namespace Venflow.Enums
 {
-    internal enum RelationType
+    internal enum RelationType : byte
     {
         OneToOne,
         OneToMany,
