@@ -28,16 +28,16 @@ namespace Venflow.Modeling.Definitions
             _ignoredColumns = new HashSet<string>();
         }
 
-        public IEntityBuilder<TEntity> MapToTable(string tableName)
+        IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapToTable(string tableName)
         {
             TableName = tableName;
 
             return this;
         }
 
-        public IEntityBuilder<TEntity> MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string columnName)
+        IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string columnName)
         {
-            var property = ValidatePropertySelector<TTarget>(propertySelector);
+            var property = propertySelector.ValidatePropertySelector();
 
             if (ColumnDefinitions.TryGetValue(property.Name, out var definition))
             {
@@ -53,18 +53,18 @@ namespace Venflow.Modeling.Definitions
             return this;
         }
 
-        public IEntityBuilder<TEntity> Ignore<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector)
+        IEntityBuilder<TEntity> IEntityBuilder<TEntity>.Ignore<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector)
         {
-            var property = ValidatePropertySelector<TTarget>(propertySelector);
+            var property = propertySelector.ValidatePropertySelector();
 
             _ignoredColumns.Add(property.Name);
 
             return this;
         }
 
-        public IEntityBuilder<TEntity> MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option)
+        IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option)
         {
-            var property = ValidatePropertySelector<TTarget>(propertySelector);
+            var property = propertySelector.ValidatePropertySelector();
 
             var isServerSideGenerated = option != DatabaseGeneratedOption.None;
 
@@ -85,123 +85,19 @@ namespace Venflow.Modeling.Definitions
             return this;
         }
 
-        public IEntityBuilder<TEntity> MapOneToOne<TRelation, TForeignKey>(Expression<Func<TEntity, TRelation>> relationSelector, Expression<Func<TEntity, TForeignKey>> foreignSelector) where TRelation : class?
+        INotRequiredSingleRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasMany<TRelation>(Expression<Func<TEntity, IList<TRelation>>> navigationProperty) where TRelation : class
         {
-            var relation = ValidatePropertySelector<TRelation>(relationSelector);
-            var foreignKey = ValidatePropertySelector<TForeignKey>(foreignSelector);
-
-            _ignoredColumns.Add(relation.Name);
-
-            Relations.Add(new EntityRelationDefinition(this, relation, relation.PropertyType.Name, null, foreignKey.Name, RelationType.OneToOne, ForeignKeyLoaction.Right));
-
-            return this;
+            return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.Many, navigationProperty.ValidatePropertySelector(), this);
         }
 
-        public IEntityBuilder<TEntity> MapOneToOne<TRelation, TForeignKey>(Expression<Func<TEntity, TRelation>> relationSelector, Expression<Func<TRelation, TForeignKey>> foreignSelector) where TRelation : class?
+        INotRequiredMultiRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasOne<TRelation>(Expression<Func<TEntity, TRelation>> navigationProperty) where TRelation : class
         {
-            var relation = ValidatePropertySelector<TRelation>(relationSelector);
-            var foreignKey = ValidatePropertySelector<TRelation, TForeignKey>(foreignSelector);
-
-            _ignoredColumns.Add(relation.Name);
-
-            Relations.Add(new EntityRelationDefinition(this, relation, relation.PropertyType.Name, null, foreignKey.Name, RelationType.OneToOne, ForeignKeyLoaction.Left));
-
-            return this;
+            return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.One, navigationProperty.ValidatePropertySelector(), this);
         }
 
-        public IEntityBuilder<TEntity> MapOneToMany<TRelation, TForeignKey>(Expression<Func<TEntity, IEnumerable<TRelation>>> relationSelector, Expression<Func<TRelation, TForeignKey>> foreignSelector) where TRelation : class?
+        IRequiredMultiRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasOne<TRelation>()
         {
-            var relation = ValidatePropertySelector<IEnumerable<TRelation>>(relationSelector);
-            var foreignKey = ValidatePropertySelector(foreignSelector);
-
-            _ignoredColumns.Add(relation.Name);
-
-            Relations.Add(new EntityRelationDefinition(this, relation, relation.PropertyType.GetGenericArguments()[0].Name, null, foreignKey.Name, RelationType.OneToMany, ForeignKeyLoaction.Right));
-
-            return this;
-        }
-
-        //public IEntityBuilder<TEntity> MapManyToOne<TRelation, TForeignKey>(Expression<Func<TRelation, IEnumerable<TEntity>>> relationSelector, Expression<Func<TEntity, TForeignKey>> foreignSelector) where TRelation : class?
-        //{
-        //    var relation = ValidatePropertySelector(relationSelector, true);
-        //    var foreignKey = ValidatePropertySelector(foreignSelector, false);
-
-        //    Relations.Add(new EntityRelationDefinition(relation, false, foreignKey, relation.PropertyType.Name, RelationType.OneToMany));
-
-        //    return this;
-        //}
-
-        private PropertyInfo ValidatePropertySelector<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector)
-        {
-            if (propertySelector is null)
-            {
-                throw new ArgumentNullException(nameof(propertySelector));
-            }
-
-            var body = propertySelector.Body as MemberExpression;
-
-            if (body is null)
-            {
-                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property.", nameof(propertySelector));
-            }
-
-            var property = body.Member as PropertyInfo;
-
-            if (property is null)
-            {
-                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property.", nameof(propertySelector));
-            }
-
-            if (!property.CanWrite || !property.SetMethod.IsPublic)
-            {
-                throw new ArgumentException($"The provided property doesn't contain a setter or it isn't public.", nameof(propertySelector));
-            }
-
-            if (Type != property.ReflectedType &&
-                !Type.IsSubclassOf(property.ReflectedType!))
-            {
-                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property on the entity itself.", nameof(propertySelector));
-            }
-
-            return property;
-        }
-
-        private PropertyInfo ValidatePropertySelector<TFrom, TTarget>(Expression<Func<TFrom, TTarget>> propertySelector)
-        {
-            if (propertySelector is null)
-            {
-                throw new ArgumentNullException(nameof(propertySelector));
-            }
-
-            var body = propertySelector.Body as MemberExpression;
-
-            if (body is null)
-            {
-                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property.", nameof(propertySelector));
-            }
-
-            var property = body.Member as PropertyInfo;
-
-            if (property is null)
-            {
-                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property.", nameof(propertySelector));
-            }
-
-            if (!property.CanWrite || !property.SetMethod.IsPublic)
-            {
-                throw new ArgumentException($"The provided property doesn't contain a setter or it isn't public.", nameof(propertySelector));
-            }
-
-            var type = typeof(TFrom);
-
-
-            if (type != property.ReflectedType &&
-                !type.IsSubclassOf(property.ReflectedType))
-            {
-                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property on the entity itself.", nameof(propertySelector));
-            }
-
-            return property;
+            return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.One, null, this);
         }
 
         internal override void IgnoreProperty(string propertyName)
@@ -398,7 +294,7 @@ namespace Venflow.Modeling.Definitions
         internal abstract void IgnoreProperty(string propertyName);
     }
 
-    public interface IEntityBuilder<TEntity> where TEntity : class
+    public interface IEntityBuilder<TEntity> : ILeftRelationBuilder<TEntity> where TEntity : class
     {
         IEntityBuilder<TEntity> MapToTable(string tableName);
 
@@ -407,11 +303,5 @@ namespace Venflow.Modeling.Definitions
         IEntityBuilder<TEntity> Ignore<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector);
 
         IEntityBuilder<TEntity> MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option);
-
-        IEntityBuilder<TEntity> MapOneToOne<TRelation, TForeignKey>(Expression<Func<TEntity, TRelation>> relationSelector, Expression<Func<TEntity, TForeignKey>> foreignSelector) where TRelation : class?;
-
-        IEntityBuilder<TEntity> MapOneToOne<TRelation, TForeignKey>(Expression<Func<TEntity, TRelation>> relationSelector, Expression<Func<TRelation, TForeignKey>> foreignSelector) where TRelation : class?;
-
-        IEntityBuilder<TEntity> MapOneToMany<TRelation, TForeignKey>(Expression<Func<TEntity, IEnumerable<TRelation>>> relationSelector, Expression<Func<TRelation, TForeignKey>> foreignSelector) where TRelation : class?;
     }
 }

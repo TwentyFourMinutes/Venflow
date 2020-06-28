@@ -1,4 +1,4 @@
-﻿using Npgsql.Schema;
+using Npgsql.Schema;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
