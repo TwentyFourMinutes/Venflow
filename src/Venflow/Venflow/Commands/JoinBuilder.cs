@@ -11,7 +11,7 @@ namespace Venflow.Commands
 {
     public class JoinBuilder<TRelationEntity, TEntity> where TRelationEntity : class where TEntity : class
     {
-        private readonly DualKeyCollection<string, ForeignEntity>? _relations;
+        private readonly DualKeyCollection<string, EntityRelation>? _relations;
         private readonly JoinBuilderValues _joinBuilderValues;
         private readonly VenflowCommandBuilder<TRelationEntity> _commandBuilder;
         private readonly Entity _lastEntity;
@@ -27,7 +27,7 @@ namespace Venflow.Commands
 
         internal JoinBuilder(JoinOptions joinOptions, Entity lastEntity, JoinBuilderValues joinBuilderValues, VenflowCommandBuilder<TRelationEntity> commandBuilder, bool newFullPath)
         {
-            _relations = joinOptions.JoinWith.RelationEntity.Relations;
+            _relations = joinOptions.JoinWith.RightEntity.Relations;
 
             joinBuilderValues.AddToPath(joinOptions, newFullPath);
 
@@ -49,7 +49,7 @@ namespace Venflow.Commands
                 throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
             }
 
-            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.RelationEntity, _joinBuilderValues, _commandBuilder, true);
+            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, true);
         }
 
         public JoinBuilder<TRelationEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
@@ -65,7 +65,7 @@ namespace Venflow.Commands
                 throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
             }
 
-            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.RelationEntity, _joinBuilderValues, _commandBuilder, true);
+            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, true);
         }
 
 
@@ -82,7 +82,7 @@ namespace Venflow.Commands
                 throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
             }
 
-            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.RelationEntity, _joinBuilderValues, _commandBuilder, false);
+            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, false);
         }
 
         public JoinBuilder<TRelationEntity, TToEntity> ThenWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
@@ -98,7 +98,7 @@ namespace Venflow.Commands
                 throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
             }
 
-            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.RelationEntity, _joinBuilderValues, _commandBuilder, false);
+            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, false);
         }
 
         public IQueryCommand<TRelationEntity> Single()

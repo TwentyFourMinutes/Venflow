@@ -73,7 +73,7 @@ namespace Venflow.Modeling
         internal Type EntityType { get; }
         internal Type? ProxyEntityType { get; }
 
-        internal DualKeyCollection<string, ForeignEntity>? Relations { get; set; }
+        internal DualKeyCollection<string, EntityRelation>? Relations { get; set; }
 
         internal string ColumnListString { get; }
         internal string ExplicitColumnListString { get; }

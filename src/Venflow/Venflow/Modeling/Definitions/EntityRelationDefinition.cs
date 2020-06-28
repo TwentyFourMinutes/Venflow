@@ -5,28 +5,28 @@ namespace Venflow.Modeling.Definitions
 {
     internal class EntityRelationDefinition
     {
-        internal PropertyInfo ForeignProperty { get; }
+        internal bool IsProcessed { get; set; }
 
-        internal bool IsKeyInRelation { get; }
+        internal EntityBuilder LeftEntity { get; }
+        internal PropertyInfo? LeftNavigationProperty { get; }
 
-        internal PropertyInfo ForeignKeyProperty { get; }
-
-        internal string RelationEntityName { get; }
-
-        internal RelationType RelationType { get; }
+        internal string RightEntityName { get; }
+        internal PropertyInfo? RightNavigationProperty { get; }
 
         internal string ForeignKeyColumnName { get; set; }
 
-        internal bool IsProcessed { get; set; }
+        internal RelationType RelationType { get; }
+        internal ForeignKeyLoaction ForeignKeyLoaction { get; }
 
-        internal EntityRelationDefinition(PropertyInfo foreignProperty, bool isKeyInRelation, PropertyInfo foreignKeyProperty, string foreignKeyColumnName, string relationEntityName, RelationType relationType)
+        internal EntityRelationDefinition(EntityBuilder leftEntity, PropertyInfo? leftNavigationProperty, string rightEntityName, PropertyInfo? rightNavigationProperty, string foreignKeyColumnName, RelationType relationType, ForeignKeyLoaction foreignKeyLoaction)
         {
-            ForeignProperty = foreignProperty;
-            IsKeyInRelation = isKeyInRelation;
-            ForeignKeyProperty = foreignKeyProperty;
+            LeftEntity = leftEntity;
+            LeftNavigationProperty = leftNavigationProperty;
+            RightEntityName = rightEntityName;
+            RightNavigationProperty = rightNavigationProperty;
             ForeignKeyColumnName = foreignKeyColumnName;
-            RelationEntityName = relationEntityName;
             RelationType = relationType;
+            ForeignKeyLoaction = foreignKeyLoaction;
         }
     }
 }

@@ -12,7 +12,6 @@ namespace Venflow.Commands
         internal JoinBuilderValues? JoinBuilderValues { get; set; }
 
         internal Entity<TEntity> EntityConfiguration { get; set; }
-        internal QueryMaterializer<TEntity>? QueryMaterializer { get; set; }
         internal bool IsSingle { get; set; }
         internal bool TrackingChanges { get; set; }
         internal bool GetComputedColumns { get; set; }

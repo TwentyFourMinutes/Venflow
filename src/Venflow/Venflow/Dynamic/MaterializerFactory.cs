@@ -11,7 +11,6 @@ using Npgsql;
 using Venflow.Modeling;
 using Venflow.Enums;
 using Venflow.Commands;
-using Venflow.Models;
 
 namespace Venflow.Dynamic
 {
@@ -114,7 +113,8 @@ namespace Venflow.Dynamic
         private Func<NpgsqlDataReader, Task<List<TEntity>>> CreateMaterializer(JoinBuilderValues? joinBuilderValues, List<KeyValuePair<Entity, List<KeyValuePair<string, int>>>> entities)
         {
             var primaryEntity = entities[0];
-            var primaryEntityListType = typeof(List<>).MakeGenericType(primaryEntity.Key.EntityType);
+            var genericListType = typeof(List<>);
+            var primaryEntityListType = genericListType.MakeGenericType(primaryEntity.Key.EntityType);
 
             var asyncStateMachineType = typeof(IAsyncStateMachine);
             var asyncMethodBuilderType = typeof(AsyncTaskMethodBuilder<>).MakeGenericType(primaryEntityListType);
@@ -177,23 +177,19 @@ namespace Venflow.Dynamic
             var iLGhostBodyGen = new ILGhostGenerator();
 
             var afterBodyLabel = moveNextMethodIL.DefineLabel();
+            var beforeBodyLabel = moveNextMethodIL.DefineLabel();
 
             if (entities.Count > 1)
             {
                 var gernericDictionaryType = typeof(Dictionary<,>);
 
-                FieldBuilder lastEntityLocal = default!;
                 Label? nextIfStartLabel = default;
+
+                var lastEntityFieldDictionary = new Dictionary<string, FieldInfo>();
+                var relationAssignments = new List<EntityRelationAssignment>();
 
                 for (int i = 0; i < entities.Count; i++)
                 {
-                    JoinOptions? expectedJoin = null;
-
-                    if (i > 0)
-                    {
-                        expectedJoin = joinBuilderValues.Joins[i - 1];
-                    }
-
                     var entityWithColumns = entities[i];
                     var entity = entityWithColumns.Key;
                     var columns = entityWithColumns.Value;
@@ -203,6 +199,14 @@ namespace Venflow.Dynamic
 
                     var lastEntityField = stateMachineTypeBuilder.DefineField("last" + entity.EntityName + i, entity.EntityType, FieldAttributes.Private);
                     var entityDictionaryField = stateMachineTypeBuilder.DefineField(entity.EntityName + "Dict" + i, entityDictionaryType, FieldAttributes.Private);
+
+                    // TODO: Try to find a way to avoid useless field.
+
+                    var hasEntityChangedField = stateMachineTypeBuilder.DefineField("has" + entity.EntityName + "Changed" + i, entityDictionaryType, FieldAttributes.Private);
+
+                    moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                    moveNextMethodIL.Emit(OpCodes.Stfld, hasEntityChangedField);
 
                     var primaryKeyLocal = moveNextMethodIL.DeclareLocal(primaryKeyType);
                     var entityLocal = moveNextMethodIL.DeclareLocal(entity.EntityType);
@@ -285,11 +289,17 @@ namespace Venflow.Dynamic
                         iLGhostBodyGen.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod());
                     }
 
-                    if (entity.Relations is { })
+                    if (entity.Relations is { } && entity.Relations.Count > 0)
                     {
+                        var entityRelationAssignment = new EntityRelationAssignment(lastEntityField, hasEntityChangedField);
+
                         for (int k = 0; k < entity.Relations.Count; k++)
                         {
                             var relation = entity.Relations[k];
+
+                            lastEntityFieldDictionary.Add(entity.EntityName + relation.RightEntity.EntityName + (relation.LeftNavigationProperty ?? relation.RightNavigationProperty).Name, lastEntityField);
+
+                            entityRelationAssignment.Relations.Add(new RelationAssignmentInformation(relation, relation.RightEntity.EntityName + entity.EntityName + (relation.LeftNavigationProperty ?? relation.RightNavigationProperty).Name));
 
                             if (relation.RelationType != RelationType.OneToMany)
                             {
@@ -298,9 +308,11 @@ namespace Venflow.Dynamic
 
                             iLGhostBodyGen.Emit(OpCodes.Dup);
 
-                            iLGhostBodyGen.Emit(OpCodes.Newobj, relation.ForeignEntityColumn.PropertyType.GetConstructor(Type.EmptyTypes));
-                            iLGhostBodyGen.Emit(OpCodes.Callvirt, relation.ForeignEntityColumn.GetSetMethod());
+                            iLGhostBodyGen.Emit(OpCodes.Newobj, relation.LeftNavigationProperty.PropertyType.GetConstructor(Type.EmptyTypes));
+                            iLGhostBodyGen.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
                         }
+
+                        relationAssignments.Add(entityRelationAssignment);
                     }
 
                     iLGhostBodyGen.Emit(OpCodes.Stfld, lastEntityField);
@@ -320,25 +332,10 @@ namespace Venflow.Dynamic
                         iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
                         iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryEntityListType.GetMethod("Add"));
                     }
-                    else
-                    {
-                        iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                        iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityLocal);
 
-                        if (expectedJoin.JoinWith.RelationType == RelationType.OneToMany)
-                        {
-                            iLGhostBodyGen.Emit(OpCodes.Callvirt, expectedJoin.JoinWith.ForeignEntityColumn.GetGetMethod());
-                            iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                            iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
-                            iLGhostBodyGen.Emit(OpCodes.Callvirt, expectedJoin.JoinWith.ForeignEntityColumn.PropertyType.GetMethod("Add"));
-                        }
-                        else
-                        {
-                            iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                            iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
-                            iLGhostBodyGen.Emit(OpCodes.Callvirt, expectedJoin.JoinWith.ForeignEntityColumn.GetSetMethod());
-                        }
-                    }
+                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                    iLGhostBodyGen.Emit(OpCodes.Ldc_I4_1);
+                    iLGhostBodyGen.Emit(OpCodes.Stfld, hasEntityChangedField);
 
                     iLSetNullGhostGen.Emit(OpCodes.Ldarg_0);
                     iLSetNullGhostGen.Emit(OpCodes.Ldnull);
@@ -347,8 +344,65 @@ namespace Venflow.Dynamic
                     iLSetNullGhostGen.Emit(OpCodes.Ldarg_0);
                     iLSetNullGhostGen.Emit(OpCodes.Ldnull);
                     iLSetNullGhostGen.Emit(OpCodes.Stfld, entityDictionaryField);
+                }
 
-                    lastEntityLocal = lastEntityField;
+                Label? nextAssignmentIfStartLabel = default;
+
+                for (int i = 0; i < relationAssignments.Count; i++)
+                {
+                    var entityRelationAssignment = relationAssignments[i];
+
+                    for (int k = 0; k < entityRelationAssignment.Relations.Count; k++)
+                    {
+                        var relationAssignment = entityRelationAssignment.Relations[k];
+
+                        if (!lastEntityFieldDictionary.TryGetValue(relationAssignment.LastRightName, out var lastRightEntityField))
+                        {
+                            continue;
+                        }
+
+                        if (i > 0)
+                        {
+                            iLGhostBodyGen.MarkLabel(nextAssignmentIfStartLabel.Value);
+                        }
+
+                        nextAssignmentIfStartLabel = moveNextMethodIL.DefineLabel();
+
+                        iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                        iLGhostBodyGen.Emit(OpCodes.Ldfld, entityRelationAssignment.HasLastLeftEntityChanged);
+                        iLGhostBodyGen.Emit(OpCodes.Brfalse, i == relationAssignments.Count - 1 ? afterBodyLabel : nextAssignmentIfStartLabel.Value);
+
+                        if (relationAssignment.EntityRelation.RelationType == RelationType.OneToOne)
+                        {
+                            if (relationAssignment.EntityRelation.LeftNavigationProperty is { } &&
+                                relationAssignment.EntityRelation.LeftNavigationProperty.PropertyType == entityRelationAssignment.LastLeftEntity.FieldType)
+                            {
+                                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                                iLGhostBodyGen.Emit(OpCodes.Ldfld, lastRightEntityField);
+                                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                                iLGhostBodyGen.Emit(OpCodes.Ldfld, entityRelationAssignment.LastLeftEntity);
+                                iLGhostBodyGen.Emit(OpCodes.Callvirt, relationAssignment.EntityRelation.LeftNavigationProperty.GetSetMethod());
+                            }
+                            else if (relationAssignment.EntityRelation.RightNavigationProperty is { } &&
+                                     relationAssignment.EntityRelation.RightNavigationProperty.PropertyType == entityRelationAssignment.LastLeftEntity.FieldType)
+                            {
+                                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                                iLGhostBodyGen.Emit(OpCodes.Ldfld, lastRightEntityField);
+                                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                                iLGhostBodyGen.Emit(OpCodes.Ldfld, entityRelationAssignment.LastLeftEntity);
+                                iLGhostBodyGen.Emit(OpCodes.Callvirt, relationAssignment.EntityRelation.RightNavigationProperty.GetSetMethod());
+                            }
+                        }
+                        else if (relationAssignment.EntityRelation.RelationType == RelationType.ManyToOne)
+                        {
+                            iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                            iLGhostBodyGen.Emit(OpCodes.Ldfld, lastRightEntityField);
+                            iLGhostBodyGen.Emit(OpCodes.Callvirt, relationAssignment.EntityRelation.RightNavigationProperty.GetGetMethod());
+                            iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                            iLGhostBodyGen.Emit(OpCodes.Ldfld, entityRelationAssignment.LastLeftEntity);
+                            iLGhostBodyGen.Emit(OpCodes.Callvirt, genericListType.MakeGenericType(relationAssignment.EntityRelation.LeftEntity.EntityType).GetMethod("Add"));
+                        }
+                    }
                 }
             }
             else
@@ -377,8 +431,6 @@ namespace Venflow.Dynamic
 
 
             // -- End of actual Local and Field Assignment
-
-            var beforeBodyLabel = moveNextMethodIL.DefineLabel();
 
             moveNextMethodIL.Emit(OpCodes.Br, afterBodyLabel);
 

@@ -16,7 +16,7 @@ namespace Venflow.Modeling.Definitions
 
         internal ChangeTrackerFactory<TEntity>? ChangeTrackerFactory { get; private set; }
         internal Action<TEntity, StringBuilder, string, NpgsqlParameterCollection> InsertWriter { get; private set; }
-        internal string TableName { get; private set; }
+        internal string? TableName { get; private set; }
         internal IDictionary<string, ColumnDefinition<TEntity>> ColumnDefinitions { get; }
 
         private readonly HashSet<string> _ignoredColumns;
@@ -92,7 +92,7 @@ namespace Venflow.Modeling.Definitions
 
             _ignoredColumns.Add(relation.Name);
 
-            Relations.Add(new EntityRelationDefinition(relation, false, foreignKey, foreignKey.Name, relation.PropertyType.Name, RelationType.OneToOne));
+            Relations.Add(new EntityRelationDefinition(this, relation, relation.PropertyType.Name, null, foreignKey.Name, RelationType.OneToOne, ForeignKeyLoaction.Right));
 
             return this;
         }
@@ -104,7 +104,7 @@ namespace Venflow.Modeling.Definitions
 
             _ignoredColumns.Add(relation.Name);
 
-            Relations.Add(new EntityRelationDefinition(relation, true, foreignKey, foreignKey.Name, relation.PropertyType.Name, RelationType.OneToOne));
+            Relations.Add(new EntityRelationDefinition(this, relation, relation.PropertyType.Name, null, foreignKey.Name, RelationType.OneToOne, ForeignKeyLoaction.Left));
 
             return this;
         }
@@ -116,7 +116,7 @@ namespace Venflow.Modeling.Definitions
 
             _ignoredColumns.Add(relation.Name);
 
-            Relations.Add(new EntityRelationDefinition(relation, true, foreignKey, foreignKey.Name, relation.PropertyType.GetGenericArguments()[0].Name, RelationType.OneToMany));
+            Relations.Add(new EntityRelationDefinition(this, relation, relation.PropertyType.GetGenericArguments()[0].Name, null, foreignKey.Name, RelationType.OneToMany, ForeignKeyLoaction.Right));
 
             return this;
         }
@@ -320,7 +320,7 @@ namespace Venflow.Modeling.Definitions
                     {
                         columnName = definition.Name;
 
-                        var relation = Relations.FirstOrDefault(x => x.ForeignKeyProperty.Name == property.Name);
+                        var relation = Relations.FirstOrDefault(x => x.ForeignKeyColumnName == property.Name);
 
                         if (relation is not null)
                         {
@@ -413,7 +413,5 @@ namespace Venflow.Modeling.Definitions
         IEntityBuilder<TEntity> MapOneToOne<TRelation, TForeignKey>(Expression<Func<TEntity, TRelation>> relationSelector, Expression<Func<TRelation, TForeignKey>> foreignSelector) where TRelation : class?;
 
         IEntityBuilder<TEntity> MapOneToMany<TRelation, TForeignKey>(Expression<Func<TEntity, IEnumerable<TRelation>>> relationSelector, Expression<Func<TRelation, TForeignKey>> foreignSelector) where TRelation : class?;
-
-        //IEntityBuilder<TEntity> MapManyToOne<TRelation, TForeignKey>(Expression<Func<TRelation, IList<TEntity>>> relationSelector, Expression<Func<TEntity, TForeignKey>> foreignSelector) where TRelation : class?;
     }
 }

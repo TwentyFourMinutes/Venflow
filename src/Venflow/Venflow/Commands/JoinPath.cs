@@ -1,9 +1,5 @@
-﻿using Npgsql;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 using Venflow.Enums;
 using Venflow.Modeling;
@@ -33,7 +29,7 @@ namespace Venflow.Commands
             _joinLength = SqlJoins.Length;
         }
 
-        internal JoinPath? GetPath(ForeignEntity foreignEntity)
+        internal JoinPath? GetPath(EntityRelation foreignEntity)
         {
             for (int i = 0; i < TrailingJoinPath.Count; i++)
             {
@@ -56,7 +52,7 @@ namespace Venflow.Commands
         internal void AppendColumnNamesAndJoins(StringBuilder sqlColumns, StringBuilder sqlJoins)
         {
             sqlColumns.Append(", ");
-            sqlColumns.Append(JoinOptions.JoinWith.RelationEntity.ExplicitColumnListString);
+            sqlColumns.Append(JoinOptions.JoinWith.RightEntity.ExplicitColumnListString);
 
             if (TrailingJoinPath.Count == 0)
             {
@@ -90,16 +86,16 @@ namespace Venflow.Commands
                     SqlJoins.Append("FULL JOIN ");
                     break;
                 default:
-                    throw new InvalidOperationException($"Invalid state '{JoinOptions.JoinBehaviour}' for the JoinBehaviour on entity {JoinOptions.JoinWith.RelationEntity.EntityName}");
+                    throw new InvalidOperationException($"Invalid state '{JoinOptions.JoinBehaviour}' for the JoinBehaviour on entity {JoinOptions.JoinWith.RightEntity.EntityName}");
             }
 
-            SqlJoins.Append(JoinOptions.JoinWith.RelationEntity.TableName);
+            SqlJoins.Append(JoinOptions.JoinWith.RightEntity.TableName);
             SqlJoins.Append(" AS ");
-            SqlJoins.Append(JoinOptions.JoinWith.RelationEntity.RawTableName);
+            SqlJoins.Append(JoinOptions.JoinWith.RightEntity.RawTableName);
             SqlJoins.Append(" ON ");
-            SqlJoins.Append(JoinOptions.JoinWith.RelationEntity.RawTableName);
+            SqlJoins.Append(JoinOptions.JoinWith.RightEntity.RawTableName);
             SqlJoins.Append(".\"");
-            SqlJoins.Append(JoinOptions.JoinWith.ForeignKey.ColumnName);
+            SqlJoins.Append(JoinOptions.JoinWith.ForeignKeyColumn.ColumnName);
             SqlJoins.Append("\" = ");
             SqlJoins.Append(JoinOptions.JoinFrom.RawTableName);
             SqlJoins.Append(".\"");
