@@ -84,22 +84,22 @@ namespace Venflow.Dynamic
                         }
                     }
 
-                    //if (joinBuilderValues is null)
-                    //    throw new InvalidOperationException("The result set contained multiple tables, however the query was configured to only expect one. Try specifying the tables you are joining with JoinWith, while declaring the query.");
+                    if (joinBuilderValues is { })
+                    {
+                        if (joinBuilderValues.Joins.Count > entities.Count)
+                        {
+                            throw new InvalidOperationException("You configured more joins than entities returned by the query.");
+                        }
+                        else if (joinBuilderValues.Joins.Count < entities.Count)
+                        {
+                            throw new InvalidOperationException("You configured fewer joins than entities returned by the query.");
+                        }
+                    }
+                    else if (entities.Count > 0)
+                    {
 
-                    //if (joinBuilderValues.Joins.Count > entities.Count)
-                    //{
-                    //    throw new InvalidOperationException("You configured more joins than entities returned by the query.");
-                    //}
-                    //else if (joinBuilderValues.Joins.Count < entities.Count)
-                    //{
-                    //    throw new InvalidOperationException("You configured fewer joins than entities returned by the query.");
-                    //}
-
-                    //if (!object.ReferenceEquals(entity, expectedJoin.JoinWith.RelationEntity))
-                    //{
-                    //    throw new InvalidOperationException($"You configured the joins in a different order than in the query. Expected Entity '{expectedJoin.JoinWith.RelationEntity.TableName}', actual '{entity.TableName}'.");
-                    //}
+                        throw new InvalidOperationException("The result set contained multiple tables, however the query was configured to only expect one. Try specifying the tables you are joining with JoinWith, while declaring the query.");
+                    }
 
                     materializer = CreateMaterializer(joinBuilderValues, entities);
 
