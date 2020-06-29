@@ -16,7 +16,7 @@ namespace Venflow.Modeling
 
         internal MaterializerFactory<TEntity> MaterializerFactory { get; }
 
-        internal Entity(Type entityType, Type? proxyEntityType, string tableName, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, Action<TEntity, StringBuilder, string, NpgsqlParameterCollection> insertWriter, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier) : base(entityType, proxyEntityType, tableName, columnListString, explicitColumnListString, nonPrimaryColumnListString)
+        internal Entity(Type entityType, Type? proxyEntityType, string tableName, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, string primaryKeyPrefiexColumnListString, Action<TEntity, StringBuilder, string, NpgsqlParameterCollection> insertWriter, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier) : base(entityType, proxyEntityType, tableName, columnListString, explicitColumnListString, nonPrimaryColumnListString, primaryKeyPrefiexColumnListString)
         {
             InsertWriter = insertWriter;
             ChangeTrackerFactory = changeTrackerFactory;
@@ -76,10 +76,11 @@ namespace Venflow.Modeling
         internal DualKeyCollection<string, EntityRelation>? Relations { get; set; }
 
         internal string ColumnListString { get; }
+        internal string PrimaryKeyPrefiexColumnListString { get; }
         internal string ExplicitColumnListString { get; }
         internal string NonPrimaryColumnListString { get; }
 
-        protected Entity(Type entityType, Type? proxyEntityType, string tableName, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString)
+        protected Entity(Type entityType, Type? proxyEntityType, string tableName, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, string primaryKeyPrefiexColumnListString)
         {
             EntityType = entityType;
             ProxyEntityType = proxyEntityType;
@@ -89,6 +90,7 @@ namespace Venflow.Modeling
             ColumnListString = columnListString;
             ExplicitColumnListString = explicitColumnListString;
             NonPrimaryColumnListString = nonPrimaryColumnListString;
+            PrimaryKeyPrefiexColumnListString = primaryKeyPrefiexColumnListString;
         }
 
         internal abstract EntityColumn GetPrimaryColumn();

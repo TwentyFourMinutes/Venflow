@@ -8,6 +8,6 @@ namespace Venflow.Enums
         None = 0,
         IncludePrimaryColumns = 1,
         ExplicitNames = 2,
-        PrefixedPrimaryKeys = 3
+        PrefixedPrimaryKeys = 4
     }
 }

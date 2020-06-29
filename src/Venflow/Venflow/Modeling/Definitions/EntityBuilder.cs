@@ -87,12 +87,19 @@ namespace Venflow.Modeling.Definitions
 
         INotRequiredSingleRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasMany<TRelation>(Expression<Func<TEntity, IList<TRelation>>> navigationProperty) where TRelation : class
         {
-            return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.Many, navigationProperty.ValidatePropertySelector(), this);
+            var property = navigationProperty.ValidatePropertySelector();
+
+            IgnoreProperty(property.Name);
+
+            return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.Many, property, this);
         }
 
         INotRequiredMultiRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasOne<TRelation>(Expression<Func<TEntity, TRelation>> navigationProperty) where TRelation : class
         {
-            return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.One, navigationProperty.ValidatePropertySelector(), this);
+            var property = navigationProperty.ValidatePropertySelector();
+
+            IgnoreProperty(property.Name);
+            return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.One, property, this);
         }
 
         IRequiredMultiRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasOne<TRelation>()

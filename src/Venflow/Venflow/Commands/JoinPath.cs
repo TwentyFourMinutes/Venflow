@@ -52,7 +52,7 @@ namespace Venflow.Commands
         internal void AppendColumnNamesAndJoins(StringBuilder sqlColumns, StringBuilder sqlJoins)
         {
             sqlColumns.Append(", ");
-            sqlColumns.Append(JoinOptions.JoinWith.RightEntity.ExplicitColumnListString);
+            sqlColumns.Append(JoinOptions.JoinWith.RightEntity.PrimaryKeyPrefiexColumnListString);
 
             if (TrailingJoinPath.Count == 0)
             {

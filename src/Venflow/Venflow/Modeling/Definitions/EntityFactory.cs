@@ -23,8 +23,10 @@ namespace Venflow.Modeling.Definitions
             var columns = _entityBuilder.Build();
 
             _entity = new Entity<TEntity>(_entityBuilder.Type, _entityBuilder.ChangeTrackerFactory?.ProxyType, _entityBuilder.TableName, columns,
-                (PrimaryEntityColumn<TEntity>)columns[0], GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns), GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames),
-                GetColumnListString(columns, ColumnListStringOptions.None), _entityBuilder.InsertWriter, _entityBuilder.ChangeTrackerFactory?.GetProxyFactory(),
+                (PrimaryEntityColumn<TEntity>)columns[0], GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns),
+                GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames),
+                GetColumnListString(columns, ColumnListStringOptions.None), GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames | ColumnListStringOptions.PrefixedPrimaryKeys),
+                _entityBuilder.InsertWriter, _entityBuilder.ChangeTrackerFactory?.GetProxyFactory(),
                 _entityBuilder.ChangeTrackerFactory?.GetProxyApplyingFactory(columns));
 
             return _entity;
@@ -110,6 +112,7 @@ namespace Venflow.Modeling.Definitions
             {
                 var column = columns[index];
 
+
                 if (explictNames)
                 {
                     sb.Append(_entityBuilder.TableName);
@@ -119,6 +122,17 @@ namespace Venflow.Modeling.Definitions
                 sb.Append('"');
 
                 sb.Append(column.ColumnName);
+
+                if (index == 0 &&
+                    (options & ColumnListStringOptions.PrefixedPrimaryKeys) != 0)
+                {
+                    sb.Append("\" AS \"$");
+
+                    sb.Append(_entityBuilder.TableName);
+                    sb.Append("$.");
+                    sb.Append(column.ColumnName);
+                }
+
                 sb.Append("\", ");
             }
 
