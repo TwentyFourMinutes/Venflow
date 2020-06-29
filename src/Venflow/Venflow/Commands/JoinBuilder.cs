@@ -40,7 +40,7 @@ namespace Venflow.Commands
         {
             propertySelector.ValidatePropertySelector();
 
-            var foreignPropertyType = typeof(TEntity);
+            var foreignPropertyType = typeof(TToEntity);
 
             var propertyName = foreignPropertyType.IsGenericType ? foreignPropertyType.GetGenericArguments()[0].Name : foreignPropertyType.Name;
 
@@ -49,14 +49,14 @@ namespace Venflow.Commands
                 throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
             }
 
-            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, true);
+            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _joinBuilderValues.Root, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, true);
         }
 
         public JoinBuilder<TRelationEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
         {
             propertySelector.ValidatePropertySelector();
 
-            var foreignPropertyType = typeof(TEntity);
+            var foreignPropertyType = typeof(TToEntity);
 
             var propertyName = foreignPropertyType.IsGenericType ? foreignPropertyType.GetGenericArguments()[0].Name : foreignPropertyType.Name;
 
@@ -65,7 +65,7 @@ namespace Venflow.Commands
                 throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
             }
 
-            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, true);
+            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _joinBuilderValues.Root, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, true);
         }
 
 
