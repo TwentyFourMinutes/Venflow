@@ -128,7 +128,7 @@ namespace Venflow.Modeling.Definitions
                 {
                     sb.Append("\" AS \"$");
 
-                    sb.Append(_entityBuilder.TableName);
+                    sb.Append(_entityBuilder.Type.Name);
                     sb.Append("$.");
                     sb.Append(column.ColumnName);
                 }
