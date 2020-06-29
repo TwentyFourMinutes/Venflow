@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -45,6 +45,13 @@ namespace Venflow.Dynamic
             EnsureCapacity();
 
             _ilInstructions[_index++] = new ILIntInst(opCode, value);
+        }
+
+        internal void Emit(OpCode opCode, string value)
+        {
+            EnsureCapacity();
+
+            _ilInstructions[_index++] = new ILString(opCode, value);
         }
 
         internal void Emit(OpCode opCode, MethodInfo method)
