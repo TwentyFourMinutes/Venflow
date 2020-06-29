@@ -86,18 +86,17 @@ namespace Venflow.Dynamic
 
                     if (joinBuilderValues is { })
                     {
-                        if (joinBuilderValues.Joins.Count > entities.Count)
+                        if (joinBuilderValues.Joins.Count + 1 > entities.Count)
                         {
                             throw new InvalidOperationException("You configured more joins than entities returned by the query.");
                         }
-                        else if (joinBuilderValues.Joins.Count < entities.Count)
+                        else if (joinBuilderValues.Joins.Count + 1 < entities.Count)
                         {
                             throw new InvalidOperationException("You configured fewer joins than entities returned by the query.");
                         }
                     }
                     else if (entities.Count > 0)
                     {
-
                         throw new InvalidOperationException("The result set contained multiple tables, however the query was configured to only expect one. Try specifying the tables you are joining with JoinWith, while declaring the query.");
                     }
 
