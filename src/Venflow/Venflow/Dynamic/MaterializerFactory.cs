@@ -199,13 +199,46 @@ namespace Venflow.Dynamic
                     var lastEntityField = stateMachineTypeBuilder.DefineField("last" + entity.EntityName + i, entity.EntityType, FieldAttributes.Private);
                     var entityDictionaryField = stateMachineTypeBuilder.DefineField(entity.EntityName + "Dict" + i, entityDictionaryType, FieldAttributes.Private);
 
+                    var shouldCheckForChange = false;
+
+                    if (entity.Relations is { } && entity.Relations.Count > 0)
+                    {
+                        for (int k = 0; k < joinBuilderValues.UsedRelations.Count; k++)
+                        {
+                            var expectedJoinId = joinBuilderValues.UsedRelations[k];
+
+                            for (int z = 0; z < entity.Relations.Count; z++)
+                            {
+                                var relation = entity.Relations[z];
+
+                                if (relation.RelationId == expectedJoinId &&
+                                    relation.RelationType != RelationType.OneToMany)
+                                {
+                                    shouldCheckForChange = true;
+
+                                    break;
+                                }
+                            }
+
+                            if (shouldCheckForChange)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
                     // TODO: Try to find a way to avoid useless field.
 
-                    var hasEntityChangedField = stateMachineTypeBuilder.DefineField("has" + entity.EntityName + "Changed" + i, entityDictionaryType, FieldAttributes.Private);
+                    FieldBuilder? hasEntityChangedField = null;
 
-                    moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
-                    moveNextMethodIL.Emit(OpCodes.Stfld, hasEntityChangedField);
+                    if (shouldCheckForChange)
+                    {
+                        hasEntityChangedField = stateMachineTypeBuilder.DefineField("has" + entity.EntityName + "Changed" + i, entityDictionaryType, FieldAttributes.Private);
+
+                        moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                        moveNextMethodIL.Emit(OpCodes.Stfld, hasEntityChangedField);
+                    }
 
                     var primaryKeyLocal = moveNextMethodIL.DeclareLocal(primaryKeyType);
                     var entityLocal = moveNextMethodIL.DeclareLocal(entity.EntityType);
@@ -290,7 +323,12 @@ namespace Venflow.Dynamic
 
                     if (entity.Relations is { } && entity.Relations.Count > 0)
                     {
-                        var entityRelationAssignment = new EntityRelationAssignment(lastEntityField, hasEntityChangedField);
+                        EntityRelationAssignment? entityRelationAssignment = null;
+
+                        if (shouldCheckForChange)
+                        {
+                            entityRelationAssignment = new EntityRelationAssignment(lastEntityField, hasEntityChangedField);
+                        }
 
                         for (int k = 0; k < entity.Relations.Count; k++)
                         {
@@ -298,10 +336,13 @@ namespace Venflow.Dynamic
 
                             lastEntityFieldDictionary.Add(entity.EntityName + relation.RightEntity.EntityName + (relation.LeftNavigationProperty ?? relation.RightNavigationProperty).Name, lastEntityField);
 
-                            entityRelationAssignment.Relations.Add(new RelationAssignmentInformation(relation, relation.RightEntity.EntityName + entity.EntityName + (relation.RightNavigationProperty ?? relation.LeftNavigationProperty).Name));
-
                             if (relation.RelationType != RelationType.OneToMany)
                             {
+                                if (shouldCheckForChange)
+                                {
+                                    entityRelationAssignment.Relations.Add(new RelationAssignmentInformation(relation, relation.RightEntity.EntityName + entity.EntityName + (relation.RightNavigationProperty ?? relation.LeftNavigationProperty).Name));
+                                }
+
                                 continue;
                             }
 

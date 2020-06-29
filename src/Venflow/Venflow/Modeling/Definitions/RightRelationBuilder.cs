@@ -59,7 +59,7 @@ namespace Venflow.Modeling.Definitions
 
         private void ApplyRelation(PropertyInfo foreignKey, ForeignKeyLoaction keyLoaction)
         {
-            _entityBuilder.Relations.Add(new EntityRelationDefinition(_entityBuilder, _leftNavigationProperty, typeof(TRelation).Name, _rightNavigationProperty, foreignKey.Name, GetRelationFromParts(_leftRelationType, _rightRelationType), keyLoaction));
+            _entityBuilder.Relations.Add(new EntityRelationDefinition(EntityBuilder.RelationCounter++, _entityBuilder, _leftNavigationProperty, typeof(TRelation).Name, _rightNavigationProperty, foreignKey.Name, GetRelationFromParts(_leftRelationType, _rightRelationType), keyLoaction));
         }
 
         private RelationType GetRelationFromParts(RelationPartType leftPart, RelationPartType rightPart)

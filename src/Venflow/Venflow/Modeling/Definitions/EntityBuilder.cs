@@ -293,6 +293,8 @@ namespace Venflow.Modeling.Definitions
         internal List<EntityRelationDefinition> Relations { get; }
         internal abstract Type Type { get; }
 
+        internal static uint RelationCounter { get; set; }
+
         protected EntityBuilder()
         {
             Relations = new List<EntityRelationDefinition>();

@@ -7,6 +7,8 @@ namespace Venflow.Modeling.Definitions
     {
         internal bool IsProcessed { get; set; }
 
+        internal uint RelationId { get; }
+
         internal EntityBuilder LeftEntity { get; }
         internal PropertyInfo? LeftNavigationProperty { get; }
 
@@ -18,8 +20,9 @@ namespace Venflow.Modeling.Definitions
         internal RelationType RelationType { get; }
         internal ForeignKeyLoaction ForeignKeyLoaction { get; }
 
-        internal EntityRelationDefinition(EntityBuilder leftEntity, PropertyInfo? leftNavigationProperty, string rightEntityName, PropertyInfo? rightNavigationProperty, string foreignKeyColumnName, RelationType relationType, ForeignKeyLoaction foreignKeyLoaction)
+        internal EntityRelationDefinition(uint relationId, EntityBuilder leftEntity, PropertyInfo? leftNavigationProperty, string rightEntityName, PropertyInfo? rightNavigationProperty, string foreignKeyColumnName, RelationType relationType, ForeignKeyLoaction foreignKeyLoaction)
         {
+            RelationId = relationId;
             LeftEntity = leftEntity;
             LeftNavigationProperty = leftNavigationProperty;
             RightEntityName = rightEntityName;

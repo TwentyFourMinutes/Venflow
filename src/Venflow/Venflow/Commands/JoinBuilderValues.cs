@@ -5,7 +5,6 @@ using Venflow.Models;
 
 namespace Venflow.Commands
 {
-
     internal class JoinBuilderValues
     {
         internal Entity Root { get; }
@@ -13,12 +12,15 @@ namespace Venflow.Commands
 
         internal List<JoinOptions> Joins { get; }
 
+        internal List<uint> UsedRelations { get; }
+
         private JoinPath _currentPath;
 
         internal JoinBuilderValues(Entity root)
         {
             FullPath = new List<JoinPath>();
             Joins = new List<JoinOptions>();
+            UsedRelations = new List<uint>();
             Root = root;
         }
 
@@ -54,6 +56,7 @@ namespace Venflow.Commands
                 _currentPath = newPath;
 
                 Joins.Add(joinOptions);
+                UsedRelations.Add(joinOptions.JoinWith.RelationId);
             }
             else
             {
@@ -77,6 +80,7 @@ namespace Venflow.Commands
                     _currentPath = joinPath;
 
                     Joins.Add(joinOptions);
+                    UsedRelations.Add(joinOptions.JoinWith.RelationId);
                 }
                 else
                 {
@@ -87,6 +91,7 @@ namespace Venflow.Commands
                     _currentPath = joinPath;
 
                     Joins.Add(joinOptions);
+                    UsedRelations.Add(joinOptions.JoinWith.RelationId);
                 }
             }
         }

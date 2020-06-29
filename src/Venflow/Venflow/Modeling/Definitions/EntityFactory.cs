@@ -54,7 +54,7 @@ namespace Venflow.Modeling.Definitions
                     foreignEntity.IgnoreProperty(relation.RightNavigationProperty.Name);
                 }
 
-                foreignEntity.Relations.Add(new EntityRelationDefinition(foreignEntity, relation.RightNavigationProperty, relation.LeftEntity.Type.Name, relation.LeftNavigationProperty, relation.ForeignKeyColumnName, ReverseRelationType(relation.RelationType), ReverseKeyLocation(relation.ForeignKeyLoaction))
+                foreignEntity.Relations.Add(new EntityRelationDefinition(relation.RelationId, foreignEntity, relation.RightNavigationProperty, relation.LeftEntity.Type.Name, relation.LeftNavigationProperty, relation.ForeignKeyColumnName, ReverseRelationType(relation.RelationType), ReverseKeyLocation(relation.ForeignKeyLoaction))
                 {
                     IsProcessed = true
                 });
@@ -90,7 +90,7 @@ namespace Venflow.Modeling.Definitions
                     keyColumn = relationEntity.GetColumn(relation.ForeignKeyColumnName);
                 }
 
-                var entityRelation = new EntityRelation(_entity, relation.LeftNavigationProperty, relationEntity, relation.RightNavigationProperty, keyColumn, relation.RelationType, relation.ForeignKeyLoaction);
+                var entityRelation = new EntityRelation(relation.RelationId, _entity, relation.LeftNavigationProperty, relationEntity, relation.RightNavigationProperty, keyColumn, relation.RelationType, relation.ForeignKeyLoaction);
 
                 foreignEntities[i] = entityRelation;
 
