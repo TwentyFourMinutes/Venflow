@@ -1,8 +1,6 @@
 ﻿using Npgsql;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +10,7 @@ using Venflow.Modeling;
 
 namespace Venflow
 {
-    public partial class VenflowDbConnection : IAsyncDisposable
+    public class VenflowDbConnection : IAsyncDisposable
     {
         public NpgsqlConnection Connection { get; }
 
@@ -176,68 +174,20 @@ namespace Venflow
 
         #region QueryAsync
 
-        public Task<TEntity?> QuerySingleAsync<TEntity>(bool changeTracking = false,
+        public Task<TEntity?> QuerySingleAsync<TEntity>(IQueryCommand<TEntity> queryCommand,
             CancellationToken cancellationToken = default) where TEntity : class
         {
-            var command = Query<TEntity>(true).TrackChanges(changeTracking).Single();
+            ((VenflowCommand<TEntity>)queryCommand).UnderlyingCommand.Connection = Connection;
 
-            return QuerySingleAsync(command, cancellationToken);
+            return queryCommand.QuerySingleAsync(cancellationToken);
         }
 
-        public async Task<TEntity?> QuerySingleAsync<TEntity>(IQueryCommand<TEntity> queryCommand,
+        public Task<List<TEntity>> QueryBatchAsync<TEntity>(IQueryCommand<TEntity> queryCommand,
             CancellationToken cancellationToken = default) where TEntity : class
         {
-            var command = (VenflowCommand<TEntity>)queryCommand;
+            ((VenflowCommand<TEntity>)queryCommand).UnderlyingCommand.Connection = Connection;
 
-            command.UnderlyingCommand.Connection = Connection;
-
-            await using var reader =
-                await command.UnderlyingCommand.ExecuteReaderAsync(CommandBehavior.SingleRow, cancellationToken);
-
-            if (!await reader.ReadAsync())
-            {
-                return default!;
-            }
-
-            var isChangeTracking = command.TrackingChanges && command.EntityConfiguration.ChangeTrackerFactory is { };
-
-            var factory = command.EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(command.JoinBuilderValues, _dbConfiguration, reader.GetColumnSchema());
-
-            var entity = (await factory(reader)).FirstOrDefault(); // TODO: Refactor code to build more efficient materializer
-
-            if (command.DisposeCommand)
-                command.Dispose();
-
-            return entity;
-        }
-
-        public Task<List<TEntity>> QueryBatchAsync<TEntity>(bool changeTracking = false,
-            CancellationToken cancellationToken = default) where TEntity : class
-        {
-            var command = Query<TEntity>(true).TrackChanges(changeTracking).Batch();
-
-            return QueryBatchAsync(command, cancellationToken);
-        }
-
-        public async Task<List<TEntity>> QueryBatchAsync<TEntity>(IQueryCommand<TEntity> queryCommand,
-            CancellationToken cancellationToken = default) where TEntity : class
-        {
-            var command = (VenflowCommand<TEntity>)queryCommand;
-
-            command.UnderlyingCommand.Connection = Connection;
-
-            var isChangeTracking = command.TrackingChanges && command.EntityConfiguration.ChangeTrackerFactory is { };
-
-            await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
-
-            var factory = command.EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(command.JoinBuilderValues, _dbConfiguration, reader.GetColumnSchema());
-
-            var entities = await factory(reader);
-
-            if (command.DisposeCommand)
-                command.Dispose();
-
-            return entities;
+            return queryCommand.QueryBatchAsync(cancellationToken);
         }
 
         #endregion
@@ -316,28 +266,28 @@ namespace Venflow
         #region Builder
 
         public IQueryCommandBuilder<TEntity> Query<TEntity>() where TEntity : class
-            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>()).Query();
+            => new VenflowCommandBuilder<TEntity>(this, _dbConfiguration, GetEntityConfiguration<TEntity>()).Query();
 
         internal IQueryCommandBuilder<TEntity> Query<TEntity>(bool disposeCommand) where TEntity : class
-            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>(), disposeCommand).Query();
+            => new VenflowCommandBuilder<TEntity>(this, _dbConfiguration, GetEntityConfiguration<TEntity>(), disposeCommand).Query();
 
         public IInsertCommandBuilder<TEntity> Insert<TEntity>() where TEntity : class
-            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>()).Insert();
+            => new VenflowCommandBuilder<TEntity>(this, _dbConfiguration, GetEntityConfiguration<TEntity>()).Insert();
 
         public IInsertCommandBuilder<TEntity> Insert<TEntity>(bool disposeCommand) where TEntity : class
-            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>(), disposeCommand).Insert();
+            => new VenflowCommandBuilder<TEntity>(this, _dbConfiguration, GetEntityConfiguration<TEntity>(), disposeCommand).Insert();
 
         public IDeleteCommandBuilder<TEntity> Delete<TEntity>() where TEntity : class
-            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>()).Delete();
+            => new VenflowCommandBuilder<TEntity>(this, _dbConfiguration, GetEntityConfiguration<TEntity>()).Delete();
 
         public IDeleteCommandBuilder<TEntity> Delete<TEntity>(bool disposeCommand) where TEntity : class
-            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>(), disposeCommand).Delete();
+            => new VenflowCommandBuilder<TEntity>(this, _dbConfiguration, GetEntityConfiguration<TEntity>(), disposeCommand).Delete();
 
         public IUpdateCommandBuilder<TEntity> Update<TEntity>() where TEntity : class
-            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>()).Update();
+            => new VenflowCommandBuilder<TEntity>(this, _dbConfiguration, GetEntityConfiguration<TEntity>()).Update();
 
         public IUpdateCommandBuilder<TEntity> Update<TEntity>(bool disposeCommand) where TEntity : class
-            => new VenflowCommandBuilder<TEntity>(GetEntityConfiguration<TEntity>(), disposeCommand).Update();
+            => new VenflowCommandBuilder<TEntity>(this, _dbConfiguration, GetEntityConfiguration<TEntity>(), disposeCommand).Update();
 
         #endregion
 

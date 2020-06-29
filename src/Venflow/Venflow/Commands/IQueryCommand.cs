@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Venflow.Commands
@@ -7,5 +8,7 @@ namespace Venflow.Commands
     {
         Task<IQueryCommand<TEntity>> PrepareAsync(CancellationToken cancellationToken = default);
         IQueryCommand<TEntity> Unprepare();
+        Task<TEntity?> QuerySingleAsync(CancellationToken cancellationToken = default);
+        Task<List<TEntity>> QueryBatchAsync(CancellationToken cancellationToken = default);
     }
 }

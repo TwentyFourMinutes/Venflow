@@ -19,16 +19,18 @@ namespace Venflow.Commands
 
         internal bool DisposeCommand { get; }
 
+        private readonly DbConfiguration _dbConfiguration;
         private readonly Entity<TEntity> _entityConfiguration;
         private readonly StringBuilder _commandString;
         private readonly NpgsqlCommand _command;
 
-        internal VenflowCommandBuilder(Entity<TEntity> entityConfiguration, bool disposeCommand = false, NpgsqlCommand? command = null)
+        internal VenflowCommandBuilder(VenflowDbConnection dbConnection, DbConfiguration dbConfiguration, Entity<TEntity> entityConfiguration, bool disposeCommand = false, NpgsqlCommand? command = null)
         {
+            _dbConfiguration = dbConfiguration;
             _entityConfiguration = entityConfiguration;
             DisposeCommand = disposeCommand;
             _commandString = new StringBuilder();
-            _command = command ?? new NpgsqlCommand();
+            _command = command ?? new NpgsqlCommand("", dbConnection.Connection);
         }
 
         #region Query
@@ -452,7 +454,7 @@ namespace Venflow.Commands
         {
             _command.CommandText = _commandString.ToString();
 
-            return new VenflowCommand<TEntity>(_command, _entityConfiguration)
+            return new VenflowCommand<TEntity>(_dbConfiguration, _entityConfiguration, _command)
             {
                 GetComputedColumns = GetComputedColumns,
                 IsSingle = IsSingle,
