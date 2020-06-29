@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Venflow.Enums;
 using Venflow.Modeling;
+using Venflow.Modeling.Definitions;
 using Venflow.Models;
 
 namespace Venflow.Commands
@@ -38,7 +39,7 @@ namespace Venflow.Commands
 
         public JoinBuilder<TRelationEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TRelationEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
         {
-            ThrowIfJoinIsInvalid(propertySelector);
+            propertySelector.ValidatePropertySelector();
 
             var foreignPropertyType = typeof(TEntity);
 
@@ -54,7 +55,7 @@ namespace Venflow.Commands
 
         public JoinBuilder<TRelationEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
         {
-            ThrowIfJoinIsInvalid(propertySelector);
+            propertySelector.ValidatePropertySelector();
 
             var foreignPropertyType = typeof(TEntity);
 
@@ -71,7 +72,7 @@ namespace Venflow.Commands
 
         public JoinBuilder<TRelationEntity, TToEntity> ThenWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
         {
-            ThrowIfJoinIsInvalid(propertySelector);
+            propertySelector.ValidatePropertySelector();
 
             var foreignPropertyType = typeof(TToEntity);
 
@@ -87,7 +88,7 @@ namespace Venflow.Commands
 
         public JoinBuilder<TRelationEntity, TToEntity> ThenWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
         {
-            ThrowIfJoinIsInvalid(propertySelector);
+            propertySelector.ValidatePropertySelector();
 
             var foreignPropertyType = typeof(TToEntity);
 
@@ -134,46 +135,6 @@ namespace Venflow.Commands
             _commandBuilder.JoinValues = _joinBuilderValues;
 
             return _commandBuilder.Batch(sql, parameters);
-        }
-
-        private void ThrowIfJoinIsInvalid<TFromEntity, TToEntity>(Expression<Func<TFromEntity, TToEntity>> propertySelector) where TFromEntity : class where TToEntity : class
-        {
-            if (_relations is null)
-            {
-                throw new InvalidOperationException($"The current entity '{typeof(TFromEntity).Name}' doesn't have any relation with other entities.");
-            }
-
-            if (propertySelector is null)
-            {
-                throw new ArgumentNullException(nameof(propertySelector));
-            }
-
-            var body = propertySelector.Body as MemberExpression;
-
-            if (body is null)
-            {
-                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property.", nameof(propertySelector));
-            }
-
-            var property = body.Member as PropertyInfo;
-
-            if (property is null)
-            {
-                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property.", nameof(propertySelector));
-            }
-
-            if (!property.CanWrite || !property.SetMethod.IsPublic)
-            {
-                throw new ArgumentException($"The provided property doesn't contain a setter or it isn't public.", nameof(propertySelector));
-            }
-
-            var baseType = typeof(TFromEntity);
-
-            if (baseType != property.ReflectedType &&
-                !baseType.IsSubclassOf(property.ReflectedType!))
-            {
-                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property on the entity itself.", nameof(propertySelector));
-            }
         }
     }
 }

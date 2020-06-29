@@ -227,8 +227,6 @@ namespace Venflow.Dynamic
                         }
                     }
 
-                    // TODO: Try to find a way to avoid useless field.
-
                     FieldBuilder? hasEntityChangedField = null;
 
                     if (shouldCheckForChange)
