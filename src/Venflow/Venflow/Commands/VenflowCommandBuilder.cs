@@ -25,7 +25,7 @@ namespace Venflow.Commands
         private readonly StringBuilder _commandString;
         private readonly NpgsqlCommand _command;
 
-        internal VenflowCommandBuilder(VenflowDbConnection dbConnection, DbConfiguration dbConfiguration, Entity<TEntity> entityConfiguration, bool disposeCommand = false, NpgsqlCommand? command = null)
+        internal VenflowCommandBuilder(VenflowDbConnection dbConnection, DbConfiguration dbConfiguration, Entity<TEntity> entityConfiguration, bool disposeCommand = true, NpgsqlCommand? command = null)
         {
             _dbConfiguration = dbConfiguration;
             _entityConfiguration = entityConfiguration;

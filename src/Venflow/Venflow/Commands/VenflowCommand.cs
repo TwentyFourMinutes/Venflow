@@ -22,6 +22,8 @@ namespace Venflow.Commands
         internal Entity<TEntity> EntityConfiguration { get; }
         internal NpgsqlCommand UnderlyingCommand { get; }
 
+        internal Delegate? Materializer { get; private set; }
+
         internal VenflowCommand(DbConfiguration dbConfiguration, Entity<TEntity> entity, NpgsqlCommand underlyingCommand)
         {
             DbConfiguration = dbConfiguration;
@@ -52,9 +54,18 @@ namespace Venflow.Commands
 
             var isChangeTracking = TrackingChanges && EntityConfiguration.ChangeTrackerFactory is { };
 
-            var factory = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(JoinBuilderValues, DbConfiguration, reader.GetColumnSchema());
+            Func<NpgsqlDataReader, Task<List<TEntity>>> materializer;
 
-            var entity = (await factory(reader)).FirstOrDefault(); // TODO: Refactor code to build more efficient materializer
+            if (Materializer is { })
+            {
+                materializer = (Func<NpgsqlDataReader, Task<List<TEntity>>>)Materializer;
+            }
+            else
+            {
+                Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(JoinBuilderValues, DbConfiguration, reader.GetColumnSchema());
+            }
+
+            var entity = (await materializer(reader)).FirstOrDefault(); // TODO: Refactor code to build more efficient materializer
 
             if (DisposeCommand)
                 this.Dispose();
@@ -68,9 +79,18 @@ namespace Venflow.Commands
 
             await using var reader = await UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
-            var factory = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(JoinBuilderValues, DbConfiguration, reader.GetColumnSchema());
+            Func<NpgsqlDataReader, Task<List<TEntity>>> materializer;
 
-            var entities = await factory(reader);
+            if (Materializer is { })
+            {
+                materializer = (Func<NpgsqlDataReader, Task<List<TEntity>>>)Materializer;
+            }
+            else
+            {
+                Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(JoinBuilderValues, DbConfiguration, reader.GetColumnSchema());
+            }
+
+            var entities = await materializer(reader);
 
             if (DisposeCommand)
                 this.Dispose();
