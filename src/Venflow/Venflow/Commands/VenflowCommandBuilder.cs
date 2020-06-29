@@ -16,6 +16,7 @@ namespace Venflow.Commands
         internal bool IsSingle { get; private set; }
         internal bool TrackingChanges { get; private set; }
         internal bool GetComputedColumns { get; private set; }
+        internal bool GenerateSql { get; private set; }
 
         internal bool DisposeCommand { get; }
 
@@ -37,6 +38,30 @@ namespace Venflow.Commands
 
         public IQueryCommandBuilder<TEntity> Query()
         {
+            GenerateSql = true;
+            return this;
+        }
+
+        public IQueryCommandBuilder<TEntity> Query(string sql)
+        {
+            GenerateSql = false;
+
+            _commandString.Append(sql);
+
+            return this;
+        }
+
+        public IQueryCommandBuilder<TEntity> Query(string sql, params NpgsqlParameter[] parameters)
+        {
+            GenerateSql = false;
+
+            _commandString.Append(sql);
+
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                _command.Parameters.Add(parameters[i]);
+            }
+
             return this;
         }
 
@@ -49,18 +74,17 @@ namespace Venflow.Commands
 
         public JoinBuilder<TEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
         {
-            var builder = new JoinBuilder<TEntity, TToEntity>(_entityConfiguration, this);
+            var builder = new JoinBuilder<TEntity, TToEntity>(_entityConfiguration, this, GenerateSql);
 
             return builder.JoinWith(propertySelector, joinBehaviour);
         }
 
         public JoinBuilder<TEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
         {
-            var builder = new JoinBuilder<TEntity, TToEntity>(_entityConfiguration, this);
+            var builder = new JoinBuilder<TEntity, TToEntity>(_entityConfiguration, this, GenerateSql);
 
             return builder.JoinWith(propertySelector, joinBehaviour);
         }
-
 
         public IQueryCommand<TEntity> Single()
         {
@@ -69,54 +93,28 @@ namespace Venflow.Commands
             return BaseQuery(1);
         }
 
-        public IQueryCommand<TEntity> Single(string sql, params NpgsqlParameter[] parameters)
-        {
-            IsSingle = true;
-
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                _command.Parameters.Add(parameters[i]);
-            }
-
-            _commandString.Append(sql);
-
-            return BuildCommand();
-        }
-
         public IQueryCommand<TEntity> Batch()
              => BaseQuery(0);
 
-        public IQueryCommand<TEntity> Batch(ulong count)
-             => BaseQuery(count);
-
-        public IQueryCommand<TEntity> Batch(string sql, params NpgsqlParameter[] parameters)
-        {
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                _command.Parameters.Add(parameters[i]);
-            }
-
-            _commandString.Append(sql);
-
-            return BuildCommand();
-        }
-
         private IQueryCommand<TEntity> BaseQuery(ulong count)
         {
-            if (JoinValues is null)
+            if (GenerateSql)
             {
-                AppendBaseQuery(_commandString, count);
-                _commandString.Append(';');
-            }
-            else
-            {
-                BaseOneToManyQuery(count);
+                if (JoinValues is null)
+                {
+                    AppendBaseQuery(_commandString, count);
+                    _commandString.Append(';');
+                }
+                else
+                {
+                    BaseRelationQuery(count);
+                }
             }
 
             return BuildCommand();
         }
 
-        private void BaseOneToManyQuery(ulong count)
+        private void BaseRelationQuery(ulong count)
         {
             _commandString.Append("SELECT ");
 

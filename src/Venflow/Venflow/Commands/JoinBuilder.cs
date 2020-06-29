@@ -1,5 +1,4 @@
-﻿using Npgsql;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Venflow.Enums;
@@ -16,9 +15,9 @@ namespace Venflow.Commands
         private readonly VenflowCommandBuilder<TRelationEntity> _commandBuilder;
         private readonly Entity _lastEntity;
 
-        internal JoinBuilder(Entity root, VenflowCommandBuilder<TRelationEntity> commandBuilder)
+        internal JoinBuilder(Entity root, VenflowCommandBuilder<TRelationEntity> commandBuilder, bool generateSql)
         {
-            _joinBuilderValues = new JoinBuilderValues(root);
+            _joinBuilderValues = new JoinBuilderValues(root, generateSql);
 
             _relations = root.Relations;
             _lastEntity = root;
@@ -68,7 +67,6 @@ namespace Venflow.Commands
             return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _joinBuilderValues.Root, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, true);
         }
 
-
         public JoinBuilder<TRelationEntity, TToEntity> ThenWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
         {
             propertySelector.ValidatePropertySelector();
@@ -108,32 +106,11 @@ namespace Venflow.Commands
             return _commandBuilder.Single();
         }
 
-        public IQueryCommand<TRelationEntity> Single(string sql, params NpgsqlParameter[] parameters)
-        {
-            _commandBuilder.JoinValues = _joinBuilderValues;
-
-            return _commandBuilder.Single(sql, parameters);
-        }
-
         public IQueryCommand<TRelationEntity> Batch()
         {
             _commandBuilder.JoinValues = _joinBuilderValues;
 
             return _commandBuilder.Batch();
-        }
-
-        public IQueryCommand<TRelationEntity> Batch(ulong count)
-        {
-            _commandBuilder.JoinValues = _joinBuilderValues;
-
-            return _commandBuilder.Batch(count);
-        }
-
-        public IQueryCommand<TRelationEntity> Batch(string sql, params NpgsqlParameter[] parameters)
-        {
-            _commandBuilder.JoinValues = _joinBuilderValues;
-
-            return _commandBuilder.Batch(sql, parameters);
         }
     }
 }

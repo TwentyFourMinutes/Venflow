@@ -16,12 +16,15 @@ namespace Venflow.Commands
 
         private JoinPath _currentPath;
 
-        internal JoinBuilderValues(Entity root)
+        private readonly bool _generateSql;
+
+        internal JoinBuilderValues(Entity root, bool generateSql)
         {
             FullPath = new List<JoinPath>();
             Joins = new List<JoinOptions>();
             UsedRelations = new List<uint>();
             Root = root;
+            _generateSql = generateSql;
         }
 
         internal void AddToPath(JoinOptions joinOptions, bool newFullPath)
@@ -49,7 +52,7 @@ namespace Venflow.Commands
                     }
                 }
 
-                var newPath = new JoinPath(joinOptions, new StringBuilder());
+                var newPath = new JoinPath(joinOptions, _generateSql ? new StringBuilder() : null);
 
                 FullPath.Add(newPath);
 
@@ -84,7 +87,7 @@ namespace Venflow.Commands
                 }
                 else
                 {
-                    var joinPath = new JoinPath(joinOptions, _currentPath.GetNewSqlJoinsFromBasePath(_currentPath));
+                    var joinPath = new JoinPath(joinOptions, _generateSql ? _currentPath.GetNewSqlJoinsFromBasePath(_currentPath) : null);
 
                     _currentPath.TrailingJoinPath.Add(joinPath);
 

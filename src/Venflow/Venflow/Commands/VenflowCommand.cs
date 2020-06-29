@@ -115,8 +115,6 @@ namespace Venflow.Commands
 
         }
 
-
-
         public void Dispose()
         {
             if (UnderlyingCommand.IsPrepared)

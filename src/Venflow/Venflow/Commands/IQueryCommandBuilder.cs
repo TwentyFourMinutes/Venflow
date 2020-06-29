@@ -1,5 +1,4 @@
-﻿using Npgsql;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Venflow.Enums;
@@ -14,10 +13,7 @@ namespace Venflow.Commands
         JoinBuilder<TEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class;
 
         IQueryCommand<TEntity> Single();
-        IQueryCommand<TEntity> Single(string sql, params NpgsqlParameter[] parameters);
 
         IQueryCommand<TEntity> Batch();
-        IQueryCommand<TEntity> Batch(ulong count);
-        IQueryCommand<TEntity> Batch(string sql, params NpgsqlParameter[] parameters);
     }
 }

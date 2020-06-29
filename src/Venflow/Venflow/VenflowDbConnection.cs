@@ -265,11 +265,17 @@ namespace Venflow
 
         #region Builder
 
-        public IQueryCommandBuilder<TEntity> Query<TEntity>() where TEntity : class
-            => new VenflowCommandBuilder<TEntity>(this, _dbConfiguration, GetEntityConfiguration<TEntity>()).Query();
-
-        internal IQueryCommandBuilder<TEntity> Query<TEntity>(bool disposeCommand) where TEntity : class
+        public IQueryCommandBuilder<TEntity> Query<TEntity>(bool disposeCommand = false) where TEntity : class
             => new VenflowCommandBuilder<TEntity>(this, _dbConfiguration, GetEntityConfiguration<TEntity>(), disposeCommand).Query();
+
+        public IQueryCommandBuilder<TEntity> Query<TEntity>(string sql, bool disposeCommand = false) where TEntity : class
+            => new VenflowCommandBuilder<TEntity>(this, _dbConfiguration, GetEntityConfiguration<TEntity>(), disposeCommand).Query(sql);
+
+        public IQueryCommandBuilder<TEntity> Query<TEntity>(string sql, params NpgsqlParameter[] parameters) where TEntity : class
+            => new VenflowCommandBuilder<TEntity>(this, _dbConfiguration, GetEntityConfiguration<TEntity>()).Query(sql, parameters);
+
+        public IQueryCommandBuilder<TEntity> Query<TEntity>(bool disposeCommand, string sql, params NpgsqlParameter[] parameters) where TEntity : class
+            => new VenflowCommandBuilder<TEntity>(this, _dbConfiguration, GetEntityConfiguration<TEntity>(), disposeCommand).Query(sql, parameters);
 
         public IInsertCommandBuilder<TEntity> Insert<TEntity>() where TEntity : class
             => new VenflowCommandBuilder<TEntity>(this, _dbConfiguration, GetEntityConfiguration<TEntity>()).Insert();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Text;
 using Venflow.Enums;
 using Venflow.Modeling;
@@ -7,26 +8,28 @@ using Venflow.Models;
 
 namespace Venflow.Commands
 {
-
     internal class JoinPath
     {
         internal JoinOptions JoinOptions { get; }
 
         internal List<JoinPath> TrailingJoinPath { get; }
 
-        internal StringBuilder SqlJoins { get; }
+        internal StringBuilder? SqlJoins { get; }
 
         private readonly int _joinLength;
 
-        internal JoinPath(JoinOptions joinOptions, StringBuilder sqlJoins)
+        internal JoinPath(JoinOptions joinOptions, StringBuilder? sqlJoins)
         {
             JoinOptions = joinOptions;
             TrailingJoinPath = new List<JoinPath>();
             SqlJoins = sqlJoins;
 
-            AppendJoin();
+            if (sqlJoins is { })
+            {
+                AppendJoin();
 
-            _joinLength = SqlJoins.Length;
+                _joinLength = SqlJoins.Length;
+            }
         }
 
         internal JoinPath? GetPath(EntityRelation foreignEntity)
