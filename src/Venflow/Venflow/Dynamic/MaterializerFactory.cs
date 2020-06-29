@@ -377,22 +377,13 @@ namespace Venflow.Dynamic
                         if (relationAssignment.EntityRelation.RelationType == RelationType.OneToOne)
                         {
                             if (relationAssignment.EntityRelation.LeftNavigationProperty is { } &&
-                                relationAssignment.EntityRelation.LeftNavigationProperty.PropertyType == entityRelationAssignment.LastLeftEntity.FieldType)
+                                relationAssignment.EntityRelation.LeftNavigationProperty.PropertyType == lastRightEntityField.FieldType)
                             {
                                 iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                                iLGhostBodyGen.Emit(OpCodes.Ldfld, lastRightEntityField);
-                                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
                                 iLGhostBodyGen.Emit(OpCodes.Ldfld, entityRelationAssignment.LastLeftEntity);
+                                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                                iLGhostBodyGen.Emit(OpCodes.Ldfld, lastRightEntityField);
                                 iLGhostBodyGen.Emit(OpCodes.Callvirt, relationAssignment.EntityRelation.LeftNavigationProperty.GetSetMethod());
-                            }
-                            if (relationAssignment.EntityRelation.RightNavigationProperty is { } &&
-                                     relationAssignment.EntityRelation.RightNavigationProperty.PropertyType == entityRelationAssignment.LastLeftEntity.FieldType)
-                            {
-                                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                                iLGhostBodyGen.Emit(OpCodes.Ldfld, lastRightEntityField);
-                                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                                iLGhostBodyGen.Emit(OpCodes.Ldfld, entityRelationAssignment.LastLeftEntity);
-                                iLGhostBodyGen.Emit(OpCodes.Callvirt, relationAssignment.EntityRelation.RightNavigationProperty.GetSetMethod());
                             }
                         }
                         else if (relationAssignment.EntityRelation.RelationType == RelationType.ManyToOne)
