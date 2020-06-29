@@ -326,6 +326,7 @@ namespace Venflow.Dynamic
                         if (shouldCheckForChange)
                         {
                             entityRelationAssignment = new EntityRelationAssignment(lastEntityField, hasEntityChangedField);
+                            relationAssignments.Add(entityRelationAssignment);
                         }
 
                         for (int k = 0; k < entity.Relations.Count; k++)
@@ -349,8 +350,6 @@ namespace Venflow.Dynamic
                             iLGhostBodyGen.Emit(OpCodes.Newobj, relation.LeftNavigationProperty.PropertyType.GetConstructor(Type.EmptyTypes));
                             iLGhostBodyGen.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
                         }
-
-                        relationAssignments.Add(entityRelationAssignment);
                     }
 
                     iLGhostBodyGen.Emit(OpCodes.Stfld, lastEntityField);
@@ -371,9 +370,12 @@ namespace Venflow.Dynamic
                         iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryEntityListType.GetMethod("Add"));
                     }
 
-                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                    iLGhostBodyGen.Emit(OpCodes.Ldc_I4_1);
-                    iLGhostBodyGen.Emit(OpCodes.Stfld, hasEntityChangedField);
+                    if (shouldCheckForChange)
+                    {
+                        iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                        iLGhostBodyGen.Emit(OpCodes.Ldc_I4_1);
+                        iLGhostBodyGen.Emit(OpCodes.Stfld, hasEntityChangedField);
+                    }
 
                     iLSetNullGhostGen.Emit(OpCodes.Ldarg_0);
                     iLSetNullGhostGen.Emit(OpCodes.Ldnull);
