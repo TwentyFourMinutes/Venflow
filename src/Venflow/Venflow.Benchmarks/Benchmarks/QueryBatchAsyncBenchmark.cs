@@ -1,8 +1,10 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 using RepoDb;
 using RepoDb.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Venflow.Benchmarks.Benchmarks.Models;
 using Venflow.Commands;
@@ -19,7 +21,7 @@ namespace Venflow.Benchmarks.Benchmarks
         {
             await base.Setup();
 
-            _command = VenflowDbConnection.Query<Person>().Batch(10000);
+            _command = VenflowDbConnection.Query<Person>(false).Batch(10000);
 
             var persons = new List<Person>();
 
@@ -30,8 +32,19 @@ namespace Venflow.Benchmarks.Benchmarks
 
             await VenflowDbConnection.InsertBatchAsync(persons);
 
-            await VenflowDbConnection.Connection.QueryAsync<Person>(whereOrPrimaryKey: null, top: 10000);
             await VenflowDbConnection.QueryBatchAsync(_command);
+
+            await VenflowDbConnection.Connection.QueryAsync<Person>(whereOrPrimaryKey: null, top: 10000);
+
+            await PersonDbContext.People.AsNoTracking().Take(10000).ToListAsync();
+
+            await SqlMapper.QueryAsync<Person>(VenflowDbConnection.Connection, "SELECT \"Id\", \"Name\" FROM \"People\" LIMIT 10000").ContinueWith(x => SqlMapper.AsList(x.Result));
+        }
+
+        [Benchmark]
+        public Task<List<Person>> EFCoreQueryBatchAsync()
+        {
+            return PersonDbContext.People.AsNoTracking().Take(10000).ToListAsync();
         }
 
         [Benchmark]
@@ -49,7 +62,7 @@ namespace Venflow.Benchmarks.Benchmarks
         [Benchmark]
         public Task<List<Person>> DapperQueryBatchAsync()
         {
-            return SqlMapper.QueryAsync<Person>(VenflowDbConnection.Connection, "SELECT \"Id\", \"Name\" FROM \"Persons\" LIMIT 10000").ContinueWith(x => SqlMapper.AsList(x.Result));
+            return SqlMapper.QueryAsync<Person>(VenflowDbConnection.Connection, "SELECT \"Id\", \"Name\" FROM \"People\" LIMIT 10000").ContinueWith(x => SqlMapper.AsList(x.Result));
         }
 
 
