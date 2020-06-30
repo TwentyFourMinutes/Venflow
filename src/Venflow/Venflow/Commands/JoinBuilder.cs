@@ -112,5 +112,12 @@ namespace Venflow.Commands
 
             return _commandBuilder.Batch();
         }
+
+        public IQueryCommand<TRelationEntity> Batch(ulong count)
+        {
+            _commandBuilder.JoinValues = _joinBuilderValues;
+
+            return _commandBuilder.Batch(count);
+        }
     }
 }

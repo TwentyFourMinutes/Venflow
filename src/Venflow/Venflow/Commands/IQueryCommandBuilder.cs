@@ -15,5 +15,6 @@ namespace Venflow.Commands
         IQueryCommand<TEntity> Single();
 
         IQueryCommand<TEntity> Batch();
+        IQueryCommand<TEntity> Batch(ulong count);
     }
 }

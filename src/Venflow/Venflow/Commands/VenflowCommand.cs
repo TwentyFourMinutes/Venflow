@@ -122,6 +122,16 @@ namespace Venflow.Commands
             return this;
         }
 
+        async Task<int> IDeleteCommand<TEntity>.DeleteAsync(CancellationToken cancellationToken)
+        {
+            var affectedRows = await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+            if (DisposeCommand)
+                this.Dispose();
+
+            return affectedRows;
+        }
+
         Task<IUpdateCommand<TEntity>> IUpdateCommand<TEntity>.PrepareAsync(CancellationToken cancellationToken)
         {
             return UnderlyingCommand.PrepareAsync(cancellationToken).ContinueWith(_ => (IUpdateCommand<TEntity>)this);

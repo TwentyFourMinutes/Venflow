@@ -210,17 +210,12 @@ namespace Venflow
             return DeleteAsync(command, cancellationToken);
         }
 
-        public async Task DeleteAsync<TEntity>(IDeleteCommand<TEntity> deleteCommand,
+        public Task<int> DeleteAsync<TEntity>(IDeleteCommand<TEntity> deleteCommand,
             CancellationToken cancellationToken = default) where TEntity : class
         {
-            var command = (VenflowCommand<TEntity>)deleteCommand;
+            ((VenflowCommand<TEntity>)deleteCommand).UnderlyingCommand.Connection = Connection;
 
-            command.UnderlyingCommand.Connection = Connection;
-
-            await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-
-            if (command.DisposeCommand)
-                command.Dispose();
+            return deleteCommand.DeleteAsync(cancellationToken);
         }
 
         #endregion

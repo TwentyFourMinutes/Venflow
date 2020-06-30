@@ -96,6 +96,20 @@ namespace Venflow.Commands
         public IQueryCommand<TEntity> Batch()
              => BaseQuery(0);
 
+        public IQueryCommand<TEntity> Batch(ulong count)
+        {
+            if (IsSingle)
+            {
+                throw new InvalidOperationException("You can't call Batch on a query which got defined as Single.");
+            }
+            else if(!GenerateSql)
+            {
+                throw new InvalidOperationException("You can not specif the count, if you provided custom sql.");
+            }
+
+            return BaseQuery(count);
+        }
+
         private IQueryCommand<TEntity> BaseQuery(ulong count)
         {
             if (GenerateSql)
