@@ -54,7 +54,7 @@ namespace Venflow.Modeling.Definitions
                     foreignEntity.IgnoreProperty(relation.RightNavigationProperty.Name);
                 }
 
-                foreignEntity.Relations.Add(new EntityRelationDefinition(relation.RelationId, foreignEntity, relation.RightNavigationProperty, relation.LeftEntity.Type.Name, relation.LeftNavigationProperty, relation.ForeignKeyColumnName, ReverseRelationType(relation.RelationType), ReverseKeyLocation(relation.ForeignKeyLoaction))
+                foreignEntity.Relations.Add(new EntityRelationDefinition(relation.RelationId, foreignEntity, relation.RightNavigationProperty, relation.LeftEntity.Type.Name, relation.LeftNavigationProperty, relation.ForeignKeyColumnName, ReverseRelationType(relation.RelationType), ReverseKeyLocation(relation.ForeignKeyLocation))
                 {
                     IsProcessed = true
                 });
@@ -81,7 +81,7 @@ namespace Venflow.Modeling.Definitions
 
                 EntityColumn keyColumn;
 
-                if (relation.ForeignKeyLoaction == ForeignKeyLoaction.Left)
+                if (relation.ForeignKeyLocation == ForeignKeyLocation.Left)
                 {
                     keyColumn = _entity.GetColumn(relation.ForeignKeyColumnName);
                 }
@@ -90,7 +90,7 @@ namespace Venflow.Modeling.Definitions
                     keyColumn = relationEntity.GetColumn(relation.ForeignKeyColumnName);
                 }
 
-                var entityRelation = new EntityRelation(relation.RelationId, _entity, relation.LeftNavigationProperty, relationEntity, relation.RightNavigationProperty, keyColumn, relation.RelationType, relation.ForeignKeyLoaction);
+                var entityRelation = new EntityRelation(relation.RelationId, _entity, relation.LeftNavigationProperty, relationEntity, relation.RightNavigationProperty, keyColumn, relation.RelationType, relation.ForeignKeyLocation);
 
                 foreignEntities[i] = entityRelation;
 
@@ -141,11 +141,11 @@ namespace Venflow.Modeling.Definitions
             return sb.ToString();
         }
 
-        private ForeignKeyLoaction ReverseKeyLocation(ForeignKeyLoaction foreignKeyLocation) =>
+        private ForeignKeyLocation ReverseKeyLocation(ForeignKeyLocation foreignKeyLocation) =>
             foreignKeyLocation switch
             {
-                ForeignKeyLoaction.Left => ForeignKeyLoaction.Right,
-                ForeignKeyLoaction.Right => ForeignKeyLoaction.Left,
+                ForeignKeyLocation.Left => ForeignKeyLocation.Right,
+                ForeignKeyLocation.Right => ForeignKeyLocation.Left,
                 _ => throw new NotImplementedException()
             };
 

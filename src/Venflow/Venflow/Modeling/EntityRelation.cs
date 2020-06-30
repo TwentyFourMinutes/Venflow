@@ -15,10 +15,10 @@ namespace Venflow.Modeling
 
         internal EntityColumn ForeignKeyColumn { get; }
         internal RelationType RelationType { get; }
-        internal ForeignKeyLoaction ForeignKeyLoaction { get; }
+        internal ForeignKeyLocation ForeignKeyLocation { get; }
 
         internal EntityRelation(uint relationId, Entity leftEntity, PropertyInfo? leftNavigationProperty, Entity rightEntity,
-            PropertyInfo? rightNavigationProperty, EntityColumn foreignKeyColumn, RelationType relationType, ForeignKeyLoaction foreignKeyLoaction)
+            PropertyInfo? rightNavigationProperty, EntityColumn foreignKeyColumn, RelationType relationType, ForeignKeyLocation foreignKeyLocation)
         {
             RelationId = relationId;
             LeftEntity = leftEntity;
@@ -27,7 +27,7 @@ namespace Venflow.Modeling
             RightNavigationProperty = rightNavigationProperty;
             ForeignKeyColumn = foreignKeyColumn;
             RelationType = relationType;
-            ForeignKeyLoaction = foreignKeyLoaction;
+            ForeignKeyLocation = foreignKeyLocation;
         }
     }
 }

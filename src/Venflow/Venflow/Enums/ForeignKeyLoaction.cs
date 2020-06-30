@@ -1,6 +1,6 @@
 ﻿namespace Venflow.Enums
 {
-    internal enum ForeignKeyLoaction
+    internal enum ForeignKeyLocation
     {
         Left,
         Right

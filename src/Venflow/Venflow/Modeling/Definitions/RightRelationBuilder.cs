@@ -49,15 +49,15 @@ namespace Venflow.Modeling.Definitions
 
         void IForeignKeyRelationBuilder<TEntity, TRelation>.UsingForeignKey<TKey>(Expression<Func<TEntity, TKey>> navigationProperty)
         {
-            ApplyRelation(navigationProperty.ValidatePropertySelector(), ForeignKeyLoaction.Left);
+            ApplyRelation(navigationProperty.ValidatePropertySelector(), ForeignKeyLocation.Left);
         }
 
         void IForeignKeyRelationBuilder<TEntity, TRelation>.UsingForeignKey<TKey>(Expression<Func<TRelation, TKey>> navigationProperty)
         {
-            ApplyRelation(navigationProperty.ValidatePropertySelector(), ForeignKeyLoaction.Right);
+            ApplyRelation(navigationProperty.ValidatePropertySelector(), ForeignKeyLocation.Right);
         }
 
-        private void ApplyRelation(PropertyInfo foreignKey, ForeignKeyLoaction keyLoaction)
+        private void ApplyRelation(PropertyInfo foreignKey, ForeignKeyLocation keyLoaction)
         {
             _entityBuilder.Relations.Add(new EntityRelationDefinition(EntityBuilder.RelationCounter++, _entityBuilder, _leftNavigationProperty, typeof(TRelation).Name, _rightNavigationProperty, foreignKey.Name, GetRelationFromParts(_leftRelationType, _rightRelationType), keyLoaction));
         }
