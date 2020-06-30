@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Venflow.Dynamic
 {
@@ -95,6 +96,12 @@ namespace Venflow.Dynamic
             EnsureCapacity();
 
             _ilInstructions[_index++] = new ILMarkLabel(label);
+        }
+
+        internal void EmitWriteLine(string value)
+        {
+            Emit(OpCodes.Ldstr, value);
+            Emit(OpCodes.Call, typeof(Console).GetMethod("WriteLine", new[] { typeof(string) }));
         }
 
         internal void WriteIL(ILGenerator ilGenerator)

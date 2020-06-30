@@ -289,7 +289,7 @@ namespace Venflow.Dynamic
                     iLGhostBodyGen.Emit(OpCodes.Brfalse, entityDictionaryIfBodyEnd);
 
                     iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                    iLGhostBodyGen.Emit(OpCodes.Ldloca, entityLocal);
+                    iLGhostBodyGen.Emit(OpCodes.Ldloc, entityLocal);
                     iLGhostBodyGen.Emit(OpCodes.Stfld, lastEntityField);
                     iLGhostBodyGen.Emit(OpCodes.Br, nextIfStartLabel.Value);
 
@@ -435,11 +435,14 @@ namespace Venflow.Dynamic
                             iLGhostBodyGen.Emit(OpCodes.Ldfld, entityRelationAssignment.LastLeftEntity);
                             iLGhostBodyGen.Emit(OpCodes.Callvirt, genericListType.MakeGenericType(relationAssignment.EntityRelation.LeftEntity.EntityType).GetMethod("Add"));
 
-                            iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                            iLGhostBodyGen.Emit(OpCodes.Ldfld, entityRelationAssignment.LastLeftEntity);
-                            iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                            iLGhostBodyGen.Emit(OpCodes.Ldfld, lastRightEntityField);
-                            iLGhostBodyGen.Emit(OpCodes.Callvirt, relationAssignment.EntityRelation.LeftNavigationProperty.GetSetMethod());
+                            if (relationAssignment.EntityRelation.LeftNavigationProperty is { })
+                            {
+                                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                                iLGhostBodyGen.Emit(OpCodes.Ldfld, entityRelationAssignment.LastLeftEntity);
+                                iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                                iLGhostBodyGen.Emit(OpCodes.Ldfld, lastRightEntityField);
+                                iLGhostBodyGen.Emit(OpCodes.Callvirt, relationAssignment.EntityRelation.LeftNavigationProperty.GetSetMethod());
+                            }
                         }
                     }
                 }
