@@ -45,6 +45,8 @@ namespace Venflow.Commands
 
         async Task<TEntity?> IQueryCommand<TEntity>.QuerySingleAsync(CancellationToken cancellationToken)
         {
+            EnsureValidConnection();
+
             await using var reader = await UnderlyingCommand.ExecuteReaderAsync(CommandBehavior.SingleRow, cancellationToken);
 
             if (!await reader.ReadAsync())
@@ -75,6 +77,8 @@ namespace Venflow.Commands
 
         async Task<List<TEntity>> IQueryCommand<TEntity>.QueryBatchAsync(CancellationToken cancellationToken)
         {
+            EnsureValidConnection();
+
             var isChangeTracking = TrackingChanges && EntityConfiguration.ChangeTrackerFactory is { };
 
             await using var reader = await UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
@@ -124,6 +128,8 @@ namespace Venflow.Commands
 
         async Task<int> IDeleteCommand<TEntity>.DeleteAsync(CancellationToken cancellationToken)
         {
+            EnsureValidConnection();
+
             var affectedRows = await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
 
             if (DisposeCommand)
@@ -143,6 +149,14 @@ namespace Venflow.Commands
 
             return this;
 
+        }
+
+        private void EnsureValidConnection()
+        {
+            if (UnderlyingCommand.Connection is null || UnderlyingCommand.Connection.State != ConnectionState.Open)
+            {
+                throw new InvalidOperationException($"The connection state is invalid. Expected: 'Open'. Actual: '{UnderlyingCommand.Connection?.State.ToString() ?? "Connection is null"}'");
+            }
         }
 
         public void Dispose()
