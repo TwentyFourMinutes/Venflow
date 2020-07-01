@@ -95,13 +95,28 @@ namespace Venflow.Commands
             SqlJoins.Append(" AS ");
             SqlJoins.Append(JoinOptions.JoinWith.RightEntity.RawTableName);
             SqlJoins.Append(" ON ");
-            SqlJoins.Append(JoinOptions.JoinWith.RightEntity.RawTableName);
-            SqlJoins.Append(".\"");
-            SqlJoins.Append(JoinOptions.JoinWith.ForeignKeyColumn.ColumnName);
-            SqlJoins.Append("\" = ");
-            SqlJoins.Append(JoinOptions.JoinFrom.RawTableName);
-            SqlJoins.Append(".\"");
-            SqlJoins.Append(JoinOptions.JoinFrom.GetPrimaryColumn().ColumnName);
+
+            if (JoinOptions.JoinWith.ForeignKeyLocation == ForeignKeyLocation.Left)
+            {
+                SqlJoins.Append(JoinOptions.JoinWith.LeftEntity.RawTableName);
+                SqlJoins.Append(".\"");
+                SqlJoins.Append(JoinOptions.JoinWith.ForeignKeyColumn.ColumnName);
+                SqlJoins.Append("\" = ");
+                SqlJoins.Append(JoinOptions.JoinWith.RightEntity.RawTableName);
+                SqlJoins.Append(".\"");
+                SqlJoins.Append(JoinOptions.JoinWith.RightEntity.GetPrimaryColumn().ColumnName);
+            }
+            else
+            {
+                SqlJoins.Append(JoinOptions.JoinWith.RightEntity.RawTableName);
+                SqlJoins.Append(".\"");
+                SqlJoins.Append(JoinOptions.JoinWith.ForeignKeyColumn.ColumnName);
+                SqlJoins.Append("\" = ");
+                SqlJoins.Append(JoinOptions.JoinWith.LeftEntity.RawTableName);
+                SqlJoins.Append(".\"");
+                SqlJoins.Append(JoinOptions.JoinWith.LeftEntity.GetPrimaryColumn().ColumnName);
+            }
+
             SqlJoins.Append('"');
         }
     }
