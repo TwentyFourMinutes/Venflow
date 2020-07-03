@@ -62,6 +62,21 @@ namespace Venflow.Modeling
                 return false;
             }
         }
+
+        internal override int GetColumnCount()
+        {
+            return Columns.Count;
+        }
+
+        internal override int GetRegularColumnOffset()
+        {
+            return Columns.RegularColumnsOffset;
+        }
+
+        internal override EntityColumn GetColumn(int index)
+        {
+            return Columns[index];
+        }
     }
 
     internal abstract class Entity
@@ -94,6 +109,9 @@ namespace Venflow.Modeling
         }
 
         internal abstract EntityColumn GetPrimaryColumn();
+        internal abstract int GetColumnCount();
+        internal abstract int GetRegularColumnOffset();
+        internal abstract EntityColumn GetColumn(int index);
         internal abstract EntityColumn GetColumn(string columnName);
         internal abstract bool TryGetColumn(string columnName, out EntityColumn? entityColumn);
     }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Venflow.Commands;
+using Venflow.Dynamic;
 using Venflow.Enums;
 using Venflow.Modeling;
 
@@ -84,6 +85,8 @@ namespace Venflow
             CancellationToken cancellationToken = default) where TEntity : class
         {
             var command = Insert<TEntity>(true).ReturnComputedColumns(returnComputedColumns).Single(entity);
+
+
 
             return InsertSingleAsync(command, returnComputedColumns ? entity : null, cancellationToken);
         }
@@ -194,7 +197,7 @@ namespace Venflow
 
         #region DeleteAsync
 
-        public Task DeleteSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+        public Task<int> DeleteSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
             where TEntity : class
         {
             var command = Delete<TEntity>(true).Single(entity);
@@ -202,7 +205,7 @@ namespace Venflow
             return DeleteAsync(command, cancellationToken);
         }
 
-        public Task DeleteBatchAsync<TEntity>(IEnumerable<TEntity> entities,
+        public Task<int> DeleteBatchAsync<TEntity>(IEnumerable<TEntity> entities,
             CancellationToken cancellationToken = default) where TEntity : class
         {
             var command = Delete<TEntity>(true).Batch(entities);

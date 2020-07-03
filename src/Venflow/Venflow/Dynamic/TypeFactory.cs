@@ -34,6 +34,11 @@ namespace Venflow.Dynamic
             return _dynamicModule.DefineType(GetTypeName(NamespaceType.Materializer, typeName + "_" + Interlocked.Increment(ref _typeNumberIdentifier)), typeAttributes, parent, interfaces);
         }
 
+        internal static TypeBuilder GetNewInserterBuilder(string typeName, TypeAttributes typeAttributes, Type? parent = null, Type[]? interfaces = null)
+        {
+            return _dynamicModule.DefineType(GetTypeName(NamespaceType.Inserter, typeName + "_" + Interlocked.Increment(ref _typeNumberIdentifier)), typeAttributes, parent, interfaces);
+        }
+
         private static string GetTypeName(NamespaceType namespaceType, string typeName)
         {
             return _namespaceNames[(int)namespaceType] + typeName;
@@ -42,7 +47,8 @@ namespace Venflow.Dynamic
         private enum NamespaceType
         {
             Proxies = 0,
-            Materializer = 1
+            Materializer = 1,
+            Inserter = 2
         }
     }
 }
