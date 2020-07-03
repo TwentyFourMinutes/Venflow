@@ -298,11 +298,6 @@ namespace Venflow.Dynamic
             moveNextMethodIL.Emit(OpCodes.Newobj, commandBuilderField.FieldType.GetConstructor(Type.EmptyTypes));
             moveNextMethodIL.Emit(OpCodes.Stfld, commandBuilderField);
 
-            // Instantiate CommandParameters
-            moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            moveNextMethodIL.Emit(OpCodes.Newobj, commandParametersField.FieldType.GetConstructor(Type.EmptyTypes));
-            moveNextMethodIL.Emit(OpCodes.Stfld, commandParametersField);
-
             // Instantiate Command
             moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             moveNextMethodIL.Emit(OpCodes.Newobj, commandField.FieldType.GetConstructor(Type.EmptyTypes));
@@ -498,6 +493,7 @@ namespace Venflow.Dynamic
 
                     moveNextMethodIL.Emit(OpCodes.Ldloca, taskAwaiterField);
                     moveNextMethodIL.Emit(OpCodes.Call, taskAwaiterField.FieldType.GetProperty("IsCompleted").GetGetMethod());
+                    moveNextMethodIL.Emit(OpCodes.Brtrue, taskAwaiterField.FieldType.GetProperty("IsCompleted").GetGetMethod());
                 }
             }
 
