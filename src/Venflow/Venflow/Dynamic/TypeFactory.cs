@@ -21,7 +21,7 @@ namespace Venflow.Dynamic
             _assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(_assemblyName, AssemblyBuilderAccess.Run);
             _dynamicModule = _assemblyBuilder.DefineDynamicModule(_assemblyName.Name + ".dll");
 
-            _namespaceNames = new[] { "Venflow.Dynamic.Proxies", "Venflow.Dynamic.Materializer." };
+            _namespaceNames = new[] { "Venflow.Dynamic.Proxies.", "Venflow.Dynamic.Materializer.", "Venflow.Dynamic.Inserter." };
         }
 
         internal static TypeBuilder GetNewProxyBuilder(string typeName, TypeAttributes typeAttributes, Type? parent = null, Type[]? interfaces = null)

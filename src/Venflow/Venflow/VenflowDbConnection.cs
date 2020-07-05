@@ -1,6 +1,7 @@
 ﻿using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -129,43 +130,16 @@ namespace Venflow
         }
 
         public async ValueTask<int> InsertBatchAsync<TEntity>(IInsertCommand<TEntity>? insertCommand,
-            IEnumerable<TEntity>? entities = null, CancellationToken cancellationToken = default) where TEntity : class
+            IEnumerable<TEntity>? entities, CancellationToken cancellationToken = default) where TEntity : class
         {
             if (insertCommand is null)
                 return 0;
 
             var command = (VenflowCommand<TEntity>)insertCommand;
 
-            command.UnderlyingCommand.Connection = Connection;
+            var insertionFactory = new InsertionFactory<TEntity>(command.EntityConfiguration);
 
-            if (command.GetComputedColumns && entities is { })
-            {
-                await using var reader = await command.UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
-
-                var valueWriter = command.EntityConfiguration.PrimaryColumn.ValueWriter;
-
-                var index = 0;
-
-                if (entities is IList<TEntity> list)
-                {
-                    while (await reader.ReadAsync())
-                    {
-                        valueWriter.Invoke(list[index++], reader.GetValue(0));
-                    }
-                }
-                else
-                {
-                    foreach (var entity in entities)
-                    {
-                        if (!await reader.ReadAsync())
-                            break;
-
-                        valueWriter.Invoke(entity, reader.GetValue(0));
-                    }
-                }
-            }
-
-            var result = await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+            var result = await insertionFactory.GetOrCreateInserter(_dbConfiguration).Invoke(Connection, entities.ToList());
 
             if (command.DisposeCommand)
                 command.Dispose();
