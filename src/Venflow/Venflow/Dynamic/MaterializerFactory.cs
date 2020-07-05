@@ -621,11 +621,11 @@ namespace Venflow.Dynamic
             // Create and execute the StateMachine
 
             materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
-            materializeMethodIL.Emit(OpCodes.Ldarg_0);
-            materializeMethodIL.Emit(OpCodes.Stfld, dataReaderField);
-            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
             materializeMethodIL.Emit(OpCodes.Call,
                 asyncMethodBuilderType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static));
+            materializeMethodIL.Emit(OpCodes.Stfld, dataReaderField);
+            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+            materializeMethodIL.Emit(OpCodes.Ldarg_0);
             materializeMethodIL.Emit(OpCodes.Stfld, methodBuilderField);
             materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
             materializeMethodIL.Emit(OpCodes.Ldc_I4_M1);
