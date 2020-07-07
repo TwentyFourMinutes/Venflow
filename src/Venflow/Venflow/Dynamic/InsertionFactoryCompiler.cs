@@ -1,15 +1,15 @@
-﻿using System;
+using Npgsql;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using Npgsql;
-using Venflow.Modeling;
 using Venflow.Enums;
-using System.Runtime.Serialization;
-using System.Data;
+using Venflow.Modeling;
 
 namespace Venflow.Dynamic
 {

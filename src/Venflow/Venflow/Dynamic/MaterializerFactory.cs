@@ -1,3 +1,4 @@
+using Npgsql;
 using Npgsql.Schema;
 using System;
 using System.Collections.Generic;
@@ -7,10 +8,9 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using Npgsql;
-using Venflow.Modeling;
-using Venflow.Enums;
 using Venflow.Commands;
+using Venflow.Enums;
+using Venflow.Modeling;
 
 namespace Venflow.Dynamic
 {

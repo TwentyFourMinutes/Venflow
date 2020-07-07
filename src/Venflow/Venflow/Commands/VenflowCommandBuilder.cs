@@ -102,7 +102,7 @@ namespace Venflow.Commands
             {
                 throw new InvalidOperationException("You can't call Batch on a query which got defined as Single.");
             }
-            else if(!GenerateSql)
+            else if (!GenerateSql)
             {
                 throw new InvalidOperationException("You can not specif the count, if you provided custom sql.");
             }

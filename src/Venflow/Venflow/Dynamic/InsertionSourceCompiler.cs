@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Venflow.Modeling;
 using Venflow.Enums;
+using Venflow.Modeling;
 
 namespace Venflow.Dynamic
 {

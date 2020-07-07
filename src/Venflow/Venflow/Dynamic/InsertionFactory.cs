@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Npgsql;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Npgsql;
 using Venflow.Modeling;
 
 namespace Venflow.Dynamic
