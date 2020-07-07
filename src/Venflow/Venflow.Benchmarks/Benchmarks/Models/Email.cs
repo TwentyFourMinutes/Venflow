@@ -24,9 +24,9 @@ namespace Venflow.Benchmarks.Benchmarks.Models
         {
             entityBuilder.MapId(x => x.Id, DatabaseGeneratedOption.Computed);
 
-            entityBuilder.HasMany(x=> x.Contents)
-                         .WithOne(x=> x.Email)
-                         .UsingForeignKey(x=> x.EmailId);
+            entityBuilder.HasMany(x => x.Contents)
+                         .WithOne(x => x.Email)
+                         .UsingForeignKey(x => x.EmailId);
         }
     }
 }

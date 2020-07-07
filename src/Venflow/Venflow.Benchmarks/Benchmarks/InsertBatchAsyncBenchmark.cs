@@ -10,7 +10,6 @@ namespace Venflow.Benchmarks.Benchmarks
     [MemoryDiagnoser]
     public class InsertBatchAsyncBenchmark : BenchmarkBase
     {
-        private List<Person> _people;
         private IInsertCommand<Person> _command;
 
         [GlobalSetup]
@@ -18,33 +17,38 @@ namespace Venflow.Benchmarks.Benchmarks
         {
             await base.Setup();
 
-            _people = new List<Person>();
+            _command = VenflowDbConnection.Insert<Person>(false).Todo();
+            await VenflowDbConnection.InsertBatchAsync(_command, GetDummyPeople());
+
+            await VenflowDbConnection.Connection.InsertAllAsync(GetDummyPeople());
+
+            PersonDbContext.People.AddRange(GetDummyPeople());
+
+            await PersonDbContext.SaveChangesAsync();
+        }
+
+        private List<Person> GetDummyPeople()
+        {
+            var people = new List<Person>();
 
             for (int i = 0; i < 100; i++)
             {
-                _people.Add(new Person { Name = "InsertBatchAsync" + i.ToString() });
+                people.Add(new Person { Name = "InsertBatchAsync" + i.ToString() });
             }
 
-            _command = VenflowDbConnection.Insert<Person>(false).Todo();
-            await VenflowDbConnection.InsertBatchAsync(_command, _people);
-
-            await VenflowDbConnection.Connection.InsertAllAsync(_people);
-
-            PersonDbContext.People.AddRange(_people);
-
-            await PersonDbContext.SaveChangesAsync();
+            return people;
         }
 
         [Benchmark]
         public Task<int> VenflowInsertBatchAsync()
         {
-            return VenflowDbConnection.InsertBatchAsync(_command, _people);
+            return VenflowDbConnection.InsertBatchAsync(_command, GetDummyPeople());
         }
 
         [Benchmark]
         public Task EfCoreInsertBatchAsync()
         {
-            PersonDbContext.People.AddRange(_people);
+            PersonDbContext.People.AddRange(GetDummyPeople());
 
             return PersonDbContext.SaveChangesAsync();
         }
@@ -52,7 +56,7 @@ namespace Venflow.Benchmarks.Benchmarks
         [Benchmark]
         public Task<int> RepoDbInsertBatchAsync()
         {
-            return VenflowDbConnection.Connection.InsertAllAsync(_people);
+            return VenflowDbConnection.Connection.InsertAllAsync(GetDummyPeople());
         }
 
         [GlobalCleanup]

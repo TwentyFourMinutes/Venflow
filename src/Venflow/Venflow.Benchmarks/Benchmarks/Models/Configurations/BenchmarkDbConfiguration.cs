@@ -2,7 +2,7 @@
 
 namespace Venflow.Benchmarks.Benchmarks.Models.Configurations
 {
-    public class BenchmarkDbConfiguration: DbConfiguration
+    public class BenchmarkDbConfiguration : DbConfiguration
     {
         public BenchmarkDbConfiguration() : base(SecretsHandler.GetConnectionString())
         {

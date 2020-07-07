@@ -17,7 +17,7 @@ namespace Venflow.Benchmarks.Benchmarks.Models.Configurations
         {
             modelBuilder.Entity<Person>()
                 .HasMany(x => x.Emails)
-                .WithOne(x=> x.Person)
+                .WithOne(x => x.Person)
                 .HasForeignKey(x => x.PersonId);
 
             modelBuilder.Entity<Person>()
@@ -25,7 +25,7 @@ namespace Venflow.Benchmarks.Benchmarks.Models.Configurations
 
             modelBuilder.Entity<Email>()
                 .HasMany(x => x.Contents)
-                .WithOne(x=> x.Email)
+                .WithOne(x => x.Email)
                 .HasForeignKey(x => x.EmailId);
 
             modelBuilder.Entity<Email>()

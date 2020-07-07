@@ -33,7 +33,7 @@ namespace Venflow.Benchmarks.Benchmarks
         [Benchmark]
         public Task<Person> RepoDbQuerySingleAsync()
         {
-            return DbConnectionExtension.QueryAsync<Person>(VenflowDbConnection.Connection, whereOrPrimaryKey: null, top: 1).ContinueWith(x=> x.Result.First());
+            return DbConnectionExtension.QueryAsync<Person>(VenflowDbConnection.Connection, whereOrPrimaryKey: null, top: 1).ContinueWith(x => x.Result.First());
         }
 
         [Benchmark]

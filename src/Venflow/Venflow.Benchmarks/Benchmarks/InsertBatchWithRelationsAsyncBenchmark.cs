@@ -1,9 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
-using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,11 +19,6 @@ namespace Venflow.Benchmarks.Benchmarks
         public override async Task Setup()
         {
             await base.Setup();
-
-            PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
-            PersonDbContext.ChangeTracker.LazyLoadingEnabled = false;
-            PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-
 
             PersonDbContext.Emails.AddRange(GetDummyEmails());
 
