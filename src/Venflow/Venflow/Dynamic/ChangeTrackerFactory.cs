@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using Venflow.Modeling;
 
-[assembly: InternalsVisibleTo("Venflow.Dynamic.Proxies")]
+[assembly: InternalsVisibleTo("Venflow.Dynamic")]
 
 namespace Venflow.Dynamic
 {
@@ -27,7 +27,7 @@ namespace Venflow.Dynamic
         {
             var proxyInterfaceType = typeof(IEntityProxy<TEntity>);
 
-            var changeTrackerMakeDirtyType = _changeTrackerType.GetMethod("MakeDirty", BindingFlags.NonPublic | BindingFlags.Instance)!;
+            var changeTrackerMakeDirtyMethod = _changeTrackerType.GetMethod("MakeDirty", BindingFlags.NonPublic | BindingFlags.Instance)!;
 
             var proxyTypeBuilder = TypeFactory.GetNewProxyBuilder(_entityType.Name, TypeAttributes.NotPublic | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.BeforeFieldInit, _entityType, new[] { proxyInterfaceType });
 
@@ -65,7 +65,7 @@ namespace Venflow.Dynamic
                 propertySetIL.Emit(OpCodes.Ldarg_0);
                 propertySetIL.Emit(OpCodes.Call, changeTrackerPropertyGet);
                 propertySetIL.Emit(OpCodes.Ldc_I4_S, property.Key);
-                propertySetIL.Emit(OpCodes.Callvirt, changeTrackerMakeDirtyType);
+                propertySetIL.Emit(OpCodes.Callvirt, changeTrackerMakeDirtyMethod);
                 propertySetIL.Emit(OpCodes.Ret);
 
                 proxyTypeBuilder.DefineMethodOverride(propertySet, baseSetter);

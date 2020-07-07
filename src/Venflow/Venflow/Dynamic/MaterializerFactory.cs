@@ -28,7 +28,7 @@ namespace Venflow.Dynamic
             _materializerLock = new object();
         }
 
-        internal Func<NpgsqlDataReader, Task<List<TEntity>>> GetOrCreateMaterializer(JoinBuilderValues? joinBuilderValues, DbConfiguration dbConfiguration, ReadOnlyCollection<NpgsqlDbColumn> columnSchema)
+        internal Func<NpgsqlDataReader, Task<List<TEntity>>> GetOrCreateMaterializer(JoinBuilderValues? joinBuilderValues, DbConfiguration dbConfiguration, ReadOnlyCollection<NpgsqlDbColumn> columnSchema, bool changeTracking)
         {
             var cacheKeyBuilder = new HashCode();
 
@@ -49,6 +49,8 @@ namespace Venflow.Dynamic
                     cacheKeyBuilder.Add(column.ColumnName);
                 }
             }
+
+            cacheKeyBuilder.Add(changeTracking);
 
             var cacheKey = cacheKeyBuilder.ToHashCode();
 
@@ -100,7 +102,7 @@ namespace Venflow.Dynamic
                         throw new InvalidOperationException("The result set contained multiple tables, however the query was configured to only expect one. Try specifying the tables you are joining with JoinWith, while declaring the query.");
                     }
 
-                    materializer = CreateMaterializer(joinBuilderValues, entities);
+                    materializer = CreateMaterializer(joinBuilderValues, entities, changeTracking);
 
                     _materializerCache.TryAdd(cacheKey, materializer);
 
@@ -109,7 +111,7 @@ namespace Venflow.Dynamic
             }
         }
 
-        private Func<NpgsqlDataReader, Task<List<TEntity>>> CreateMaterializer(JoinBuilderValues? joinBuilderValues, List<KeyValuePair<Entity, List<KeyValuePair<string, int>>>> entities)
+        private Func<NpgsqlDataReader, Task<List<TEntity>>> CreateMaterializer(JoinBuilderValues? joinBuilderValues, List<KeyValuePair<Entity, List<KeyValuePair<string, int>>>> entities, bool changeTracking)
         {
             var primaryEntity = entities[0];
             var genericListType = typeof(List<>);
@@ -120,8 +122,10 @@ namespace Venflow.Dynamic
             var npgsqlDataReaderType = typeof(NpgsqlDataReader);
             var taskAwaiterType = typeof(TaskAwaiter<bool>);
             var intType = typeof(int);
+            var boolType = typeof(bool);
             var taskBoolType = typeof(Task<bool>);
             var exceptionType = typeof(Exception);
+            var genericChangeTracker = typeof(ChangeTracker<>);
 
             var materializerTypeBuilder = TypeFactory.GetNewMaterializerBuilder(_entity.EntityName,
                 TypeAttributes.Public | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Abstract |
@@ -295,8 +299,33 @@ namespace Venflow.Dynamic
 
                     iLGhostBodyGen.MarkLabel(entityDictionaryIfBodyEnd);
 
+                    var hasChangeTracking = changeTracking && entity.ProxyEntityType is { };
+
+                    LocalBuilder? changeTrackerLocal = default;
+                    Type? changeTracker = default;
+
+                    if (hasChangeTracking)
+                    {
+                        changeTracker = genericChangeTracker.MakeGenericType(entity.EntityType);
+                        changeTrackerLocal = moveNextMethodIL.DeclareLocal(entity.ProxyEntityType);
+
+                        iLGhostBodyGen.Emit(OpCodes.Ldc_I4, columns.Count);
+                        iLGhostBodyGen.Emit(OpCodes.Ldc_I4_0);
+                        iLGhostBodyGen.Emit(OpCodes.Newobj, changeTracker.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { intType, boolType }, null));
+                        iLGhostBodyGen.Emit(OpCodes.Stloc, changeTrackerLocal);
+                    }
+
                     iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                    iLGhostBodyGen.Emit(OpCodes.Newobj, entity.EntityType.GetConstructor(Type.EmptyTypes));
+
+                    if (hasChangeTracking)
+                    {
+                        iLGhostBodyGen.Emit(OpCodes.Ldloc, changeTrackerLocal);
+                        iLGhostBodyGen.Emit(OpCodes.Newobj, entity.ProxyEntityType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { changeTracker }, null));
+                    }
+                    else
+                    {
+                        iLGhostBodyGen.Emit(OpCodes.Newobj, entity.EntityType.GetConstructor(Type.EmptyTypes));
+                    }
 
                     iLGhostBodyGen.Emit(OpCodes.Dup);
                     iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
@@ -368,6 +397,13 @@ namespace Venflow.Dynamic
                         iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
                         iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
                         iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryEntityListType.GetMethod("Add"));
+                    }
+
+                    if (hasChangeTracking)
+                    {
+                        iLGhostBodyGen.Emit(OpCodes.Ldloc, changeTrackerLocal);
+                        iLGhostBodyGen.Emit(OpCodes.Ldc_I4_1);
+                        iLGhostBodyGen.Emit(OpCodes.Callvirt, changeTracker.GetProperty("TrackChanges", BindingFlags.NonPublic | BindingFlags.Instance).GetSetMethod(true));
                     }
 
                     if (shouldCheckForChange)
@@ -451,9 +487,34 @@ namespace Venflow.Dynamic
             {
                 var columns = entities[0].Value;
 
+                var hasChangeTracking = changeTracking && _entity.ProxyEntityType is { };
+
+                LocalBuilder? changeTrackerLocal = default;
+                Type? changeTracker = default;
+
+                if (hasChangeTracking)
+                {
+                    changeTracker = genericChangeTracker.MakeGenericType(_entity.EntityType);
+                    changeTrackerLocal = moveNextMethodIL.DeclareLocal(_entity.ProxyEntityType);
+
+                    iLGhostBodyGen.Emit(OpCodes.Ldc_I4, columns.Count);
+                    iLGhostBodyGen.Emit(OpCodes.Ldc_I4_0);
+                    iLGhostBodyGen.Emit(OpCodes.Newobj, changeTracker.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { intType, boolType }, null));
+                    iLGhostBodyGen.Emit(OpCodes.Stloc, changeTrackerLocal);
+                }
+
                 iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
                 iLGhostBodyGen.Emit(OpCodes.Ldfld, primaryEntityListField);
-                iLGhostBodyGen.Emit(OpCodes.Newobj, _entity.EntityType.GetConstructor(Type.EmptyTypes));
+
+                if (hasChangeTracking)
+                {
+                    iLGhostBodyGen.Emit(OpCodes.Ldloc, changeTrackerLocal);
+                    iLGhostBodyGen.Emit(OpCodes.Newobj, _entity.ProxyEntityType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { changeTracker }, null));
+                }
+                else
+                {
+                    iLGhostBodyGen.Emit(OpCodes.Newobj, _entity.EntityType.GetConstructor(Type.EmptyTypes));
+                }
 
                 for (int k = 0; k < columns.Count; k++)
                 {
@@ -469,11 +530,16 @@ namespace Venflow.Dynamic
                 }
 
                 iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryEntityListType.GetMethod("Add"));
+
+                if (hasChangeTracking)
+                {
+                    iLGhostBodyGen.Emit(OpCodes.Ldloc, changeTrackerLocal);
+                    iLGhostBodyGen.Emit(OpCodes.Ldc_I4_1);
+                    iLGhostBodyGen.Emit(OpCodes.Callvirt, changeTracker.GetProperty("TrackChanges", BindingFlags.NonPublic | BindingFlags.Instance).GetSetMethod(true));
+                }
             }
 
-
             // -- End of actual Local and Field Assignment
-
             moveNextMethodIL.Emit(OpCodes.Br, afterBodyLabel);
 
             moveNextMethodIL.MarkLabel(beforeBodyLabel);
@@ -621,12 +687,11 @@ namespace Venflow.Dynamic
             // Create and execute the StateMachine
 
             materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
-            materializeMethodIL.Emit(OpCodes.Call,
-                asyncMethodBuilderType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static));
-            materializeMethodIL.Emit(OpCodes.Stfld, dataReaderField);
+            materializeMethodIL.Emit(OpCodes.Call, asyncMethodBuilderType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static));
+            materializeMethodIL.Emit(OpCodes.Stfld, methodBuilderField);
             materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
             materializeMethodIL.Emit(OpCodes.Ldarg_0);
-            materializeMethodIL.Emit(OpCodes.Stfld, methodBuilderField);
+            materializeMethodIL.Emit(OpCodes.Stfld, dataReaderField);
             materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
             materializeMethodIL.Emit(OpCodes.Ldc_I4_M1);
             materializeMethodIL.Emit(OpCodes.Stfld, stateField);

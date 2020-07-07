@@ -55,8 +55,6 @@ namespace Venflow.Commands
                 return default!;
             }
 
-            var isChangeTracking = TrackingChanges && EntityConfiguration.ChangeTrackerFactory is { };
-
             Func<NpgsqlDataReader, Task<List<TEntity>>> materializer;
 
             if (Delegate is { })
@@ -65,7 +63,7 @@ namespace Venflow.Commands
             }
             else
             {
-                Delegate = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(JoinBuilderValues, DbConfiguration, reader.GetColumnSchema());
+                Delegate = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(JoinBuilderValues, DbConfiguration, reader.GetColumnSchema(), TrackingChanges && EntityConfiguration.ChangeTrackerFactory is { });
             }
 
             var entity = (await materializer(reader)).FirstOrDefault(); // TODO: Refactor code to build more efficient materializer
@@ -80,8 +78,6 @@ namespace Venflow.Commands
         {
             EnsureValidConnection();
 
-            var isChangeTracking = TrackingChanges && EntityConfiguration.ChangeTrackerFactory is { };
-
             await using var reader = await UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
             Func<NpgsqlDataReader, Task<List<TEntity>>> materializer;
@@ -92,7 +88,7 @@ namespace Venflow.Commands
             }
             else
             {
-                Delegate = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(JoinBuilderValues, DbConfiguration, reader.GetColumnSchema());
+                Delegate = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(JoinBuilderValues, DbConfiguration, reader.GetColumnSchema(), TrackingChanges);
             }
 
             var entities = await materializer(reader);

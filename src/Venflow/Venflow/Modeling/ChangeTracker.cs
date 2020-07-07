@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Venflow.Modeling.ProxyTypes")]
+[assembly: InternalsVisibleTo("Venflow.Dynamic")]
 
 namespace Venflow.Modeling
 {
