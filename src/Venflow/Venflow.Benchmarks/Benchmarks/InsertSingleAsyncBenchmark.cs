@@ -16,7 +16,7 @@ namespace Venflow.Benchmarks.Benchmarks
         {
             await base.Setup();
 
-            _command = VenflowDbConnection.Insert<Person>(false).Todo();
+            _command = VenflowDbConnection.Insert<Person>(false).Compile();
 
             await VenflowDbConnection.InsertSingleAsync(_command, GetDummyPerson());
 

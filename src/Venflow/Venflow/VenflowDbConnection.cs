@@ -1,12 +1,10 @@
 ﻿using Npgsql;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Venflow.Commands;
-using Venflow.Dynamic;
 using Venflow.Enums;
 using Venflow.Modeling;
 
@@ -84,7 +82,7 @@ namespace Venflow
 
         public Task<int> InsertSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
         {
-            return Insert<TEntity>().Todo().InsertAsync(entity, cancellationToken);
+            return Insert<TEntity>(true).Compile().InsertAsync(entity, cancellationToken);
         }
 
         public Task<int> InsertSingleAsync<TEntity>(IInsertCommand<TEntity> insertCommand, TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
@@ -96,7 +94,7 @@ namespace Venflow
 
         public Task<int> InsertBatchAsync<TEntity>(List<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
         {
-            return Insert<TEntity>().Todo().InsertAsync(entities, cancellationToken);
+            return Insert<TEntity>(true).Compile().InsertAsync(entities, cancellationToken);
         }
 
         public Task<int> InsertBatchAsync<TEntity>(IInsertCommand<TEntity> insertCommand, List<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
@@ -133,25 +131,30 @@ namespace Venflow
         public Task<int> DeleteSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
             where TEntity : class
         {
-            var command = Delete<TEntity>(true).Single(entity);
+            var command = Delete<TEntity>(true).Compile();
 
-            return DeleteAsync(command, cancellationToken);
+            return command.DeleteAsync(entity, cancellationToken);
         }
 
-        public Task<int> DeleteBatchAsync<TEntity>(IEnumerable<TEntity> entities,
-            CancellationToken cancellationToken = default) where TEntity : class
-        {
-            var command = Delete<TEntity>(true).Batch(entities);
-
-            return DeleteAsync(command, cancellationToken);
-        }
-
-        public Task<int> DeleteAsync<TEntity>(IDeleteCommand<TEntity> deleteCommand,
-            CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> DeleteSingleAsync<TEntity>(IDeleteCommand<TEntity> deleteCommand, TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
         {
             ((VenflowCommand<TEntity>)deleteCommand).UnderlyingCommand.Connection = Connection;
 
-            return deleteCommand.DeleteAsync(cancellationToken);
+            return deleteCommand.DeleteAsync(entity, cancellationToken);
+        }
+
+        public Task<int> DeleteBatchAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            var command = Delete<TEntity>(true).Compile();
+
+            return command.DeleteAsync(entities, cancellationToken);
+        }
+
+        public Task<int> DeleteBatchAsync<TEntity>(IDeleteCommand<TEntity> deleteCommand, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
+        {
+            ((VenflowCommand<TEntity>)deleteCommand).UnderlyingCommand.Connection = Connection;
+
+            return deleteCommand.DeleteAsync(entities, cancellationToken);
         }
 
         #endregion

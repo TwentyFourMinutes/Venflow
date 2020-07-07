@@ -24,7 +24,7 @@ namespace Venflow.Benchmarks.Benchmarks
 
             await PersonDbContext.SaveChangesAsync();
 
-            _command = VenflowDbConnection.Insert<Email>(false).Todo();
+            _command = VenflowDbConnection.Insert<Email>(false).Compile();
             await VenflowDbConnection.InsertBatchAsync(_command, GetDummyEmails());
         }
 

@@ -187,7 +187,7 @@ namespace Venflow.Commands
             return this;
         }
 
-        IInsertCommand<TEntity> IInsertCommandBuilder<TEntity>.Todo()
+        IInsertCommand<TEntity> IInsertCommandBuilder<TEntity>.Compile()
         {
             return BuildCommand();
         }
@@ -201,66 +201,8 @@ namespace Venflow.Commands
             return this;
         }
 
-        IDeleteCommand<TEntity> IDeleteCommandBuilder<TEntity>.Single(TEntity entity)
+        IDeleteCommand<TEntity> IDeleteCommandBuilder<TEntity>.Compile()
         {
-            IsSingle = true;
-
-            _commandString.Append("DELETE FROM ");
-            _commandString.AppendLine(_entityConfiguration.TableName);
-            _commandString.Append(" WHERE \"");
-            _commandString.Append(_entityConfiguration.PrimaryColumn.ColumnName);
-            _commandString.Append("\" = ");
-
-            var primaryParameter = _entityConfiguration.PrimaryColumn.ValueRetriever(entity, "0");
-
-            _command.Parameters.Add(primaryParameter);
-
-            _commandString.Append(primaryParameter.ParameterName);
-            _commandString.Append(';');
-
-            return BuildCommand();
-        }
-
-        IDeleteCommand<TEntity> IDeleteCommandBuilder<TEntity>.Batch(IEnumerable<TEntity> entities)
-        {
-            _commandString.Append("DELETE FROM ");
-            _commandString.AppendLine(_entityConfiguration.TableName);
-            _commandString.Append(" WHERE \"");
-            _commandString.Append(_entityConfiguration.PrimaryColumn.ColumnName);
-            _commandString.Append("\" IN (");
-
-            var valueRetriever = _entityConfiguration.PrimaryColumn.ValueRetriever;
-
-            if (entities is IList<TEntity> list)
-            {
-                for (int i = 0; i < list.Count; i++)
-                {
-                    var parameter = valueRetriever.Invoke(list[i], i.ToString());
-
-                    _commandString.Append(parameter.ParameterName);
-                    _commandString.Append(", ");
-
-                    _command.Parameters.Add(parameter);
-                }
-            }
-            else
-            {
-                var index = 0;
-
-                foreach (var entity in entities)
-                {
-                    var parameter = valueRetriever.Invoke(entity, index++.ToString());
-
-                    _commandString.Append(parameter.ParameterName);
-                    _commandString.Append(", ");
-
-                    _command.Parameters.Add(parameter);
-                }
-            }
-
-            _commandString.Length -= 2;
-            _commandString.Append(");");
-
             return BuildCommand();
         }
 

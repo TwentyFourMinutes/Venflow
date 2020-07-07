@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Venflow.Commands
@@ -8,6 +9,7 @@ namespace Venflow.Commands
         Task<IDeleteCommand<TEntity>> PrepareAsync(CancellationToken cancellationToken = default);
         IDeleteCommand<TEntity> Unprepare();
 
-        Task<int> DeleteAsync(CancellationToken cancellationToken = default);
+        Task<int> DeleteAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+        Task<int> DeleteAsync(TEntity entity, CancellationToken cancellationToken = default);
     }
 }

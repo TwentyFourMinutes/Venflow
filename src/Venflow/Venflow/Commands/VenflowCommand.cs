@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Venflow.Modeling;
@@ -172,9 +173,80 @@ namespace Venflow.Commands
             return this;
         }
 
-        async Task<int> IDeleteCommand<TEntity>.DeleteAsync(CancellationToken cancellationToken)
+        async Task<int> IDeleteCommand<TEntity>.DeleteAsync(TEntity entity, CancellationToken cancellationToken)
         {
             EnsureValidConnection();
+
+            var commandString = new StringBuilder();
+
+            commandString.Append("DELETE FROM ")
+                         .AppendLine(EntityConfiguration.TableName)
+                         .Append(" WHERE \"")
+                         .Append(EntityConfiguration.PrimaryColumn.ColumnName)
+                         .Append("\" = ");
+
+            var primaryParameter = EntityConfiguration.PrimaryColumn.ValueRetriever(entity, "0");
+
+            UnderlyingCommand.Parameters.Add(primaryParameter);
+
+            commandString.Append(primaryParameter.ParameterName)
+                         .Append(';');
+
+            UnderlyingCommand.CommandText = commandString.ToString();
+
+            var affectedRows = await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+            if (DisposeCommand)
+                this.Dispose();
+
+            return affectedRows;
+        }
+
+        async Task<int> IDeleteCommand<TEntity>.DeleteAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
+        {
+            EnsureValidConnection();
+
+            var commandString = new StringBuilder();
+
+            commandString.Append("DELETE FROM ")
+                         .AppendLine(EntityConfiguration.TableName)
+                         .Append(" WHERE \"")
+                         .Append(EntityConfiguration.PrimaryColumn.ColumnName)
+                         .Append("\" IN (");
+
+            var valueRetriever = EntityConfiguration.PrimaryColumn.ValueRetriever;
+
+            if (entities is IList<TEntity> list)
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var parameter = valueRetriever.Invoke(list[i], i.ToString());
+
+                    commandString.Append(parameter.ParameterName)
+                                 .Append(", ");
+
+                    UnderlyingCommand.Parameters.Add(parameter);
+                }
+            }
+            else
+            {
+                var index = 0;
+
+                foreach (var entity in entities)
+                {
+                    var parameter = valueRetriever.Invoke(entity, index++.ToString());
+
+                    commandString.Append(parameter.ParameterName)
+                                 .Append(", ");
+
+                    UnderlyingCommand.Parameters.Add(parameter);
+                }
+            }
+
+            commandString.Length -= 2;
+            commandString.Append(");");
+
+            UnderlyingCommand.CommandText = commandString.ToString();
 
             var affectedRows = await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
 
