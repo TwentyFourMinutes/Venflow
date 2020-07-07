@@ -1,4 +1,4 @@
-using Npgsql;
+﻿using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -53,6 +53,9 @@ namespace Venflow.Dynamic
 
         private LocalBuilder? _valueTaskLocal;
         private LocalBuilder ValueTaskLocal => _valueTaskLocal ??= _moveNextMethodIL.DeclareLocal(_valueTaskType);
+
+        private LocalBuilder? _resultTempLocal;
+        private LocalBuilder ResultTempLocal => _resultTempLocal ??= _moveNextMethodIL.DeclareLocal(_intType);
 
         #endregion
 
@@ -119,8 +122,9 @@ namespace Venflow.Dynamic
             var commandBuilderField = _stateMachineTypeBuilder.DefineField("_commandBuilder", typeof(StringBuilder), FieldAttributes.Private);
             var commandField = _stateMachineTypeBuilder.DefineField("_command", typeof(NpgsqlCommand), FieldAttributes.Private);
 
+            var resultField = _stateMachineTypeBuilder.DefineField("insertedRows", _intType, FieldAttributes.Private);
+
             var stateLocal = _moveNextMethodIL.DeclareLocal(_intType);
-            var resultLocal = _moveNextMethodIL.DeclareLocal(_intType);
             var exceptionLocal = _moveNextMethodIL.DeclareLocal(exceptionType);
 
             var endOfMethodLabel = _moveNextMethodIL.DefineLabel();
@@ -163,6 +167,11 @@ namespace Venflow.Dynamic
             var beforeDefaultRootListCheckBodyLabel = _moveNextMethodIL.DefineLabel();
             var afterDefaultRootListCheckBodyLabel = _moveNextMethodIL.DefineLabel();
 
+            // Assign the result 0
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+            _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
+
             // Check if list is null
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldfld, rootEntityListField);
@@ -179,8 +188,6 @@ namespace Venflow.Dynamic
 
             // DefaultRootListCheckBody
 
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
-            _moveNextMethodIL.Emit(OpCodes.Stloc, resultLocal);
             _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
 
             _moveNextMethodIL.MarkLabel(afterDefaultRootListCheckBodyLabel);
@@ -624,6 +631,16 @@ namespace Venflow.Dynamic
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetProperty("Count").GetGetMethod());
                     _moveNextMethodIL.Emit(OpCodes.Blt, startLoopBodyLabel);
 
+                    // Add returned rows to total inserted rows
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, entityListField);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetProperty("Count").GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Add);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
+
                     // dispose data reader
                     afterAwaitLabel = _moveNextMethodIL.DefineLabel();
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -745,15 +762,18 @@ namespace Venflow.Dynamic
                     _moveNextMethodIL.MarkLabel(afterAwaitLabel);
                     _moveNextMethodIL.Emit(OpCodes.Ldloca, IntTaskAwaiterLocal);
                     _moveNextMethodIL.Emit(OpCodes.Call, _intTaskAwaiterType.GetMethod("GetResult"));
-                    _moveNextMethodIL.Emit(OpCodes.Pop);
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, ResultTempLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, ResultTempLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Add);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
                 }
 
                 _moveNextMethodIL.MarkLabel(afterEntityInsertionLabel);
             }
 
-            // Set the result to 0 TODO: Change that to the actual amount of inserted entities
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
-            _moveNextMethodIL.Emit(OpCodes.Stloc, resultLocal);
             _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
 
             _moveNextMethodIL.BeginCatchBlock(exceptionType);
@@ -809,7 +829,8 @@ namespace Venflow.Dynamic
             // Set the result to the method builder
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
-            _moveNextMethodIL.Emit(OpCodes.Ldloc, resultLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
             _moveNextMethodIL.Emit(OpCodes.Call, _asyncMethodBuilderIntType.GetMethod("SetResult"));
 
             _moveNextMethodIL.MarkLabel(retOfMethodLabel);
