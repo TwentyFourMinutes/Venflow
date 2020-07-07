@@ -565,6 +565,12 @@ namespace Venflow.Dynamic
                     {
                         var relation = entityHolder.AssigningRelations[k];
 
+                        // Check if navigation property is not null
+                        var afterNavigationPropertyAssignmentLabel = _moveNextMethodIL.DefineLabel();
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Brfalse, afterNavigationPropertyAssignmentLabel);
+
                         if (relation.RelationType == RelationType.OneToMany)
                         {
                             var nestedLoopConditionLabel = _moveNextMethodIL.DefineLabel();
@@ -608,6 +614,8 @@ namespace Venflow.Dynamic
                             _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
                             _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
                         }
+
+                        _moveNextMethodIL.MarkLabel(afterNavigationPropertyAssignmentLabel);
                     }
 
                     // loop iterator increment
