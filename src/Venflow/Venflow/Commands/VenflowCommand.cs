@@ -22,7 +22,7 @@ namespace Venflow.Commands
         internal Entity<TEntity> EntityConfiguration { get; }
         internal NpgsqlCommand UnderlyingCommand { get; }
 
-        internal Delegate? Materializer { get; private set; }
+        internal Delegate? Delegate { get; private set; }
 
         internal VenflowCommand(DbConfiguration dbConfiguration, Entity<TEntity> entity, NpgsqlCommand underlyingCommand)
         {
@@ -58,13 +58,13 @@ namespace Venflow.Commands
 
             Func<NpgsqlDataReader, Task<List<TEntity>>> materializer;
 
-            if (Materializer is { })
+            if (Delegate is { })
             {
-                materializer = (Func<NpgsqlDataReader, Task<List<TEntity>>>)Materializer;
+                materializer = (Func<NpgsqlDataReader, Task<List<TEntity>>>)Delegate;
             }
             else
             {
-                Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(JoinBuilderValues, DbConfiguration, reader.GetColumnSchema());
+                Delegate = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(JoinBuilderValues, DbConfiguration, reader.GetColumnSchema());
             }
 
             var entity = (await materializer(reader)).FirstOrDefault(); // TODO: Refactor code to build more efficient materializer
@@ -85,13 +85,13 @@ namespace Venflow.Commands
 
             Func<NpgsqlDataReader, Task<List<TEntity>>> materializer;
 
-            if (Materializer is { })
+            if (Delegate is { })
             {
-                materializer = (Func<NpgsqlDataReader, Task<List<TEntity>>>)Materializer;
+                materializer = (Func<NpgsqlDataReader, Task<List<TEntity>>>)Delegate;
             }
             else
             {
-                Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(JoinBuilderValues, DbConfiguration, reader.GetColumnSchema());
+                Delegate = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer(JoinBuilderValues, DbConfiguration, reader.GetColumnSchema());
             }
 
             var entities = await materializer(reader);
@@ -112,6 +112,52 @@ namespace Venflow.Commands
             UnderlyingCommand.Unprepare();
 
             return this;
+        }
+
+        async Task<int> IInsertCommand<TEntity>.InsertAsync(List<TEntity> entities, CancellationToken cancellationToken)
+        {
+            EnsureValidConnection();
+
+            Func<NpgsqlConnection, List<TEntity>, Task<int>> inserter;
+
+            if (Delegate is { })
+            {
+                inserter = (Func<NpgsqlConnection, List<TEntity>, Task<int>>)Delegate;
+            }
+            else
+            {
+                Delegate = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter(DbConfiguration);
+            }
+
+            var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entities);
+
+            if (DisposeCommand)
+                this.Dispose();
+
+            return affectedRows;
+        }
+
+        async Task<int> IInsertCommand<TEntity>.InsertAsync(TEntity entity, CancellationToken cancellationToken)
+        {
+            EnsureValidConnection();
+
+            Func<NpgsqlConnection, List<TEntity>, Task<int>> inserter;
+
+            if (Delegate is { })
+            {
+                inserter = (Func<NpgsqlConnection, List<TEntity>, Task<int>>)Delegate;
+            }
+            else
+            {
+                Delegate = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter(DbConfiguration);
+            }
+
+            var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, new List<TEntity> { entity });
+
+            if (DisposeCommand)
+                this.Dispose();
+
+            return affectedRows;
         }
 
         Task<IDeleteCommand<TEntity>> IDeleteCommand<TEntity>.PrepareAsync(CancellationToken cancellationToken)

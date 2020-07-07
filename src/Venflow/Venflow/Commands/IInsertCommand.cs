@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Venflow.Commands
@@ -7,5 +8,8 @@ namespace Venflow.Commands
     {
         Task<IInsertCommand<TEntity>> PrepareAsync(CancellationToken cancellationToken = default);
         IInsertCommand<TEntity> Unprepare();
+
+        Task<int> InsertAsync(TEntity entity, CancellationToken cancellationToken = default);
+        Task<int> InsertAsync(List<TEntity> entities, CancellationToken cancellationToken = default);
     }
 }

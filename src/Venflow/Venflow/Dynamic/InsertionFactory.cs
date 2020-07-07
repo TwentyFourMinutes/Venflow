@@ -19,7 +19,7 @@ namespace Venflow.Dynamic
 
         internal Func<NpgsqlConnection, List<TEntity>, Task<int>> GetOrCreateInserter(DbConfiguration dbConfiguration)
         {
-            if (_entity.Relations is { })
+            if (_entity.Relations is { }) // TODO: Check for relations with no left Foreign properties
             {
                 if (_inserter is null)
                 {
