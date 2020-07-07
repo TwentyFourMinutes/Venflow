@@ -45,7 +45,7 @@ namespace Venflow.Benchmarks.Benchmarks
                 toDelete.Add(toDeleteRepo);
             }
 
-            VenflowDbConnection.InsertBatchAsync(toDelete, true).GetAwaiter().GetResult();
+            VenflowDbConnection.InsertBatchAsync(toDelete).GetAwaiter().GetResult();
         }
 
         [Benchmark]

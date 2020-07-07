@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using RepoDb;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Venflow.Benchmarks.Benchmarks.Models;
 
@@ -31,7 +32,7 @@ namespace Venflow.Benchmarks.Benchmarks
             _toDeleteVenflow = new Person { Name = "toDeleteVenflow" };
             _toDeleteRepoDb = new Person { Name = "toDeleteRepoDb" };
 
-            VenflowDbConnection.InsertBatchAsync(new[] { _toDeleteVenflow, _toDeleteRepoDb }, true).GetAwaiter().GetResult();
+            VenflowDbConnection.InsertBatchAsync(new List<Person> { _toDeleteVenflow, _toDeleteRepoDb }).GetAwaiter().GetResult();
         }
 
         [Benchmark]

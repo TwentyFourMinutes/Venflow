@@ -1,18 +1,22 @@
 ﻿using BenchmarkDotNet.Attributes;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System.Collections.Generic;
 using System.Data;
-using System.Runtime.CompilerServices;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Venflow.Benchmarks.Benchmarks.Models;
+using Venflow.Commands;
 
 namespace Venflow.Benchmarks.Benchmarks
 {
     [MemoryDiagnoser]
-    public class MiscBenchmarks : BenchmarkBase
+    public class InsertBatchWithRelationsAsyncBenchmark : BenchmarkBase
     {
+        private IInsertCommand<Email> _command;
+
         [GlobalSetup]
         public override async Task Setup()
         {
@@ -20,18 +24,22 @@ namespace Venflow.Benchmarks.Benchmarks
 
             PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
             PersonDbContext.ChangeTracker.LazyLoadingEnabled = false;
+            PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
 
             PersonDbContext.Emails.AddRange(GetDummyEmails());
 
             await PersonDbContext.SaveChangesAsync();
+
+            _command = VenflowDbConnection.Insert<Email>(false).Todo();
+            await VenflowDbConnection.InsertBatchAsync(_command, GetDummyEmails());
         }
 
         private List<Email> GetDummyEmails()
         {
             var emails = new List<Email>();
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 20; i++)
             {
                 var person = new Person { Name = "Test" + i.ToString(), Emails = new List<Email>() };
 
@@ -54,7 +62,7 @@ namespace Venflow.Benchmarks.Benchmarks
         }
 
         [Benchmark]
-        public Task InsertEFCore()
+        public Task InsertEFCoreAsync()
         {
             PersonDbContext.Emails.AddRange(GetDummyEmails());
 
@@ -62,183 +70,13 @@ namespace Venflow.Benchmarks.Benchmarks
         }
 
         [Benchmark]
-        public async Task InsertHand()
+        public Task InsertVenflowAsync()
         {
-            var emails = GetDummyEmails();
-
-            if (emails is null || emails.Count == 0)
-                return;
-
-            var people = new List<Person>();
-            var visitedPeople = new HashSet<int>();
-            var emailContents = new List<EmailContent>();
-
-            for (int i = 0; i < emails.Count; i++)
-            {
-                var email = emails[i];
-
-                var personIdentifier = RuntimeHelpers.GetHashCode(email.Person);
-
-                if (email.Person is { } && !visitedPeople.Contains(personIdentifier))
-                {
-                    people.Add(email.Person);
-                    visitedPeople.Add(personIdentifier);
-                }
-
-                if (email.Contents is { } && email.Contents.Count > 0)
-                    emailContents.AddRange(email.Contents);
-            }
-
-            var builder = new StringBuilder();
-
-            var parameters = new List<NpgsqlParameter>();
-
-            var command = new NpgsqlCommand();
-
-            command.Connection = VenflowDbConnection.Connection;
-
-            if (people.Count > 0)
-            {
-                builder.Append("INSERT INTO \"People\" (\"Name\") VALUES ");
-
-                for (int i = 0; i < people.Count; i++)
-                {
-                    var person = people[i];
-
-                    builder.Append($"(@Name{i}), ");
-
-                    parameters.Add(new NpgsqlParameter<string>($"@Name{i}", person.Name));
-                }
-
-                builder.Length -= 2;
-
-                builder.Append(" RETURNING \"Id\"");
-
-                command.CommandText = builder.ToString();
-
-                for (int i = 0; i < parameters.Count; i++)
-                {
-                    command.Parameters.Add(parameters[i]);
-                }
-
-                var reader = await command.ExecuteReaderAsync();
-
-                for (int i = 0; i < people.Count; i++)
-                {
-                    await reader.ReadAsync();
-
-                    var key = reader.GetFieldValue<int>(0);
-
-                    var person = people[i];
-
-                    person.Id = key;
-
-                    for (int k = 0; k < person.Emails.Count; k++)
-                    {
-                        person.Emails[k].PersonId = key;
-                    }
-                }
-
-                await reader.DisposeAsync(); // EMAIL
-            }
-
-            if (emails.Count > 0)
-            {
-                builder.Clear();
-
-                builder.Append("INSERT INTO \"Emails\" (\"Address\", \"PersonId\") VALUES ");
-
-                for (int i = 0; i < emails.Count; i++)
-                {
-                    var email = emails[i];
-
-                    builder.Append($"(@Address{i}, @PersonId{i}), ");
-
-                    parameters.Add(new NpgsqlParameter<string>($"@Address{i}", email.Address));
-                    parameters.Add(new NpgsqlParameter<int>($"@PersonId{i}", email.PersonId));
-                }
-
-                builder.Length -= 2;
-
-                builder.Append(" RETURNING \"Id\"");
-
-                command.Parameters.Clear();
-                command.CommandText = builder.ToString();
-
-                for (int i = 0; i < parameters.Count; i++)
-                {
-                    command.Parameters.Add(parameters[i]);
-                }
-
-                var reader = await command.ExecuteReaderAsync();
-
-                for (int i = 0; i < emails.Count; i++)
-                {
-                    await reader.ReadAsync();
-
-                    var key = reader.GetFieldValue<int>(0);
-
-                    var email = emails[i];
-
-                    email.Id = key;
-
-                    for (int k = 0; k < email.Contents.Count; k++)
-                    {
-                        email.Contents[k].EmailId = key;
-                    }
-                }
-
-                await reader.DisposeAsync(); // EMAIL CONTENT
-            }
-
-            if (emailContents.Count > 0)
-            {
-                builder.Clear();
-
-                builder.Append("INSERT INTO \"EmailContents\" (\"Content\", \"EmailId\") VALUES ");
-
-                for (int i = 0; i < emailContents.Count; i++)
-                {
-                    var emailContent = emailContents[i];
-
-                    builder.Append($"(@Content{i}, @EmailId{i}), ");
-
-                    parameters.Add(new NpgsqlParameter<string>($"@Content{i}", emailContent.Content));
-                    parameters.Add(new NpgsqlParameter<int>($"@EmailId{i}", emailContent.EmailId));
-                }
-
-                builder.Length -= 2;
-
-                builder.Append(" RETURNING \"Id\"");
-
-                command.Parameters.Clear();
-                command.CommandText = builder.ToString();
-
-                for (int i = 0; i < parameters.Count; i++)
-                {
-                    command.Parameters.Add(parameters[i]);
-                }
-
-                var reader = await command.ExecuteReaderAsync();
-
-                for (int i = 0; i < emailContents.Count; i++)
-                {
-                    await reader.ReadAsync();
-
-                    var key = reader.GetFieldValue<int>(0);
-
-                    var emailContent = emailContents[i];
-
-                    emailContent.Id = key;
-                }
-
-                await reader.DisposeAsync();
-            }
+            return VenflowDbConnection.InsertBatchAsync(_command, GetDummyEmails());
         }
 
-
         [Benchmark]
-        public async Task InsertHand2()
+        public async Task InsertHandAsync()
         {
             var emails = GetDummyEmails();
 
@@ -313,7 +151,7 @@ namespace Venflow.Benchmarks.Benchmarks
                     }
                 }
 
-                await reader.DisposeAsync(); // EMAIL
+                await reader.DisposeAsync();
             }
 
             if (emails.Count > 0)
@@ -339,7 +177,7 @@ namespace Venflow.Benchmarks.Benchmarks
 
                 command.CommandText = builder.ToString();
 
-                var reader = await command.ExecuteReaderAsync(emails.Count == 1 ? CommandBehavior.SingleRow : CommandBehavior.Default);
+                var reader = await command.ExecuteReaderAsync(emails.Count == 1 ? CommandBehavior.SingleRow : CommandBehavior.Default).ConfigureAwait(false);
 
                 for (int i = 0; i < emails.Count; i++)
                 {
@@ -357,7 +195,7 @@ namespace Venflow.Benchmarks.Benchmarks
                     }
                 }
 
-                await reader.DisposeAsync(); // EMAIL CONTENT
+                await reader.DisposeAsync();
             }
 
             if (emailContents.Count > 0)
@@ -405,6 +243,5 @@ namespace Venflow.Benchmarks.Benchmarks
         {
             await base.Cleanup();
         }
-
     }
 }
