@@ -82,69 +82,28 @@ namespace Venflow
 
         #region InsertAsync
 
-        public Task<int> InsertSingleAsync<TEntity>(TEntity entity, bool returnComputedColumns = false,
-            CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> InsertSingleAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
         {
-            var command = Insert<TEntity>(true).ReturnComputedColumns(returnComputedColumns).Single(entity);
-
-
-
-            return InsertSingleAsync(command, returnComputedColumns ? entity : null, cancellationToken);
+            return Insert<TEntity>().Todo().InsertAsync(entity, cancellationToken);
         }
 
-        public async Task<int> InsertSingleAsync<TEntity>(IInsertCommand<TEntity> insertCommand, TEntity? entity = null,
-            CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> InsertSingleAsync<TEntity>(IInsertCommand<TEntity> insertCommand, TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
         {
-            var command = (VenflowCommand<TEntity>)insertCommand;
+            ((VenflowCommand<TEntity>)insertCommand).UnderlyingCommand.Connection = Connection;
 
-            command.UnderlyingCommand.Connection = Connection;
-
-            if (command.GetComputedColumns && entity is { })
-            {
-                var value = await command.UnderlyingCommand.ExecuteScalarAsync(cancellationToken);
-
-                command.EntityConfiguration.PrimaryColumn.ValueWriter(entity, value);
-
-                if (command.DisposeCommand)
-                    command.Dispose();
-
-                return 1;
-            }
-            else
-            {
-                var result = await command.UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-
-                if (command.DisposeCommand)
-                    command.Dispose();
-
-                return result;
-            }
+            return insertCommand.InsertAsync(entity, cancellationToken);
         }
 
-        public ValueTask<int> InsertBatchAsync<TEntity>(IEnumerable<TEntity> entities,
-            bool returnComputedColumns = false, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> InsertBatchAsync<TEntity>(List<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
         {
-            var command = Insert<TEntity>(true).ReturnComputedColumns(returnComputedColumns).Batch(entities);
-
-            return InsertBatchAsync(command, returnComputedColumns ? entities : null, cancellationToken);
+            return Insert<TEntity>().Todo().InsertAsync(entities, cancellationToken);
         }
 
-        public async ValueTask<int> InsertBatchAsync<TEntity>(IInsertCommand<TEntity>? insertCommand,
-            IEnumerable<TEntity>? entities, CancellationToken cancellationToken = default) where TEntity : class
+        public Task<int> InsertBatchAsync<TEntity>(IInsertCommand<TEntity> insertCommand, List<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
         {
-            if (insertCommand is null)
-                return 0;
+            ((VenflowCommand<TEntity>)insertCommand).UnderlyingCommand.Connection = Connection;
 
-            var command = (VenflowCommand<TEntity>)insertCommand;
-
-            var insertionFactory = new InsertionFactory<TEntity>(command.EntityConfiguration);
-
-            var result = await insertionFactory.GetOrCreateInserter(_dbConfiguration).Invoke(Connection, entities.ToList());
-
-            if (command.DisposeCommand)
-                command.Dispose();
-
-            return result;
+            return insertCommand.InsertAsync(entities, cancellationToken);
         }
 
         #endregion
