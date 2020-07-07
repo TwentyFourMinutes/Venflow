@@ -4,24 +4,12 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using Venflow.Modeling;
 
-[assembly: InternalsVisibleTo("Venflow.Runtime.ProxyTypes")]
+[assembly: InternalsVisibleTo("Venflow.Dynamic.Proxies")]
 
-namespace Venflow.Modeling
+namespace Venflow.Dynamic
 {
-    internal static class ChangeTrackerFactory
-    {
-        internal static ModuleBuilder ProxyModule { get; }
-
-        static ChangeTrackerFactory()
-        {
-            var assemblyName = new AssemblyName("Venflow.Runtime.ProxyTypes");
-            var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
-
-            ProxyModule = assemblyBuilder.DefineDynamicModule(assemblyName.Name + ".dll");
-        }
-    }
-
     internal class ChangeTrackerFactory<TEntity> where TEntity : class
     {
         internal Type ProxyType { get; private set; }
@@ -41,7 +29,7 @@ namespace Venflow.Modeling
 
             var changeTrackerMakeDirtyType = _changeTrackerType.GetMethod("MakeDirty", BindingFlags.NonPublic | BindingFlags.Instance)!;
 
-            var proxyTypeBuilder = ChangeTrackerFactory.ProxyModule.DefineType(_entityType.Name, TypeAttributes.NotPublic | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.BeforeFieldInit, _entityType, new[] { proxyInterfaceType });
+            var proxyTypeBuilder = TypeFactory.GetNewProxyBuilder(_entityType.Name, TypeAttributes.NotPublic | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.BeforeFieldInit, _entityType, new[] { proxyInterfaceType });
 
             // Create ChangeTracker backing field
             var changeTrackerField = proxyTypeBuilder.DefineField("_changeTracker", _changeTrackerType, FieldAttributes.Private | FieldAttributes.InitOnly);
