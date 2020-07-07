@@ -28,6 +28,10 @@ namespace Venflow.Benchmarks.Benchmarks
 
             PersonDbContext = new BenchmarkDbContext();
 
+            PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
+            PersonDbContext.ChangeTracker.LazyLoadingEnabled = false;
+            PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
             VenflowDbConnection = await Configuration.NewConnectionScopeAsync();
         }
 
