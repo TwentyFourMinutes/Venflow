@@ -489,7 +489,7 @@ namespace Venflow.Dynamic
             moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
             moveNextMethodIL.Emit(OpCodes.Callvirt,
-                npgsqlDataReaderType.GetMethod("ReadAsync", Type.EmptyTypes));
+                npgsqlDataReaderType.GetMethod("ReadAsync", Type.EmptyTypes)); // TODO: Add Cancellation Token
             moveNextMethodIL.Emit(OpCodes.Callvirt,
                 taskBoolType.GetMethod("GetAwaiter")); // GetAwaiter
             moveNextMethodIL.Emit(OpCodes.Stloc, awaiterLocal);
