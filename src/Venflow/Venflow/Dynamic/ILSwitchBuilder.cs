@@ -2,14 +2,14 @@
 
 namespace Venflow.Dynamic
 {
-    internal class SwitchBuilder
+    internal class ILSwitchBuilder
     {
         private int _labelIndex;
 
         private readonly Label[] _labels;
         private readonly ILGenerator _iLGenerator;
 
-        internal SwitchBuilder(ILGenerator iLGenerator, int labelCount)
+        internal ILSwitchBuilder(ILGenerator iLGenerator, int labelCount)
         {
             _iLGenerator = iLGenerator;
             _labels = new Label[labelCount];

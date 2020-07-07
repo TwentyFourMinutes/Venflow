@@ -4,9 +4,9 @@ namespace Venflow.Dynamic
 {
     internal static class ILGeneratorExtensions
     {
-        internal static SwitchBuilder EmitSwitch(this ILGenerator ilGenerator, int labelCount)
+        internal static ILSwitchBuilder EmitSwitch(this ILGenerator ilGenerator, int labelCount)
         {
-            var switchBuilder = new SwitchBuilder(ilGenerator, labelCount);
+            var switchBuilder = new ILSwitchBuilder(ilGenerator, labelCount);
 
             ilGenerator.Emit(OpCodes.Switch, switchBuilder.GetLabels());
 
