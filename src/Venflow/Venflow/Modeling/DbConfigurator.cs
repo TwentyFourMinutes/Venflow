@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.Reflection;
 using Venflow.Modeling.Definitions;
 
 namespace Venflow.Modeling
 {
-    public class DbConfigurator
+    internal class DbConfigurator
     {
         private readonly List<EntityFactory> _entityFactories;
         private readonly Dictionary<string, EntityBuilder> _entityBuilders;
@@ -17,44 +17,10 @@ namespace Venflow.Modeling
             _entityBuilders = new Dictionary<string, EntityBuilder>();
         }
 
-        public DbConfigurator AddEntity<TEntity>(EntityConfiguration<TEntity> configuration) where TEntity : class
+        internal IReadOnlyDictionary<string, Entity> BuildConfiguration(DbConfiguration dbConfiguration, Type dbConfigurationType)
         {
-            AddToConfigurations(configuration.BuildConfiguration());
+            var tables = FindDbConfigurations(dbConfigurationType);
 
-            return this;
-        }
-
-        public DbConfigurator AddEntity<TEntityConfiguration, TEntity>() where TEntity : class
-                                                                         where TEntityConfiguration : EntityConfiguration<TEntity>, new()
-        {
-            AddToConfigurations(new TEntityConfiguration().BuildConfiguration());
-
-            return this;
-        }
-
-        public DbConfigurator AddEntity<TEntity>() where TEntity : class
-        {
-            var entityType = typeof(TEntity);
-
-            var entityConfigurationBaseType = typeof(EntityConfiguration<>);
-            var configuration = entityType.Assembly.GetTypes().FirstOrDefault(x => x.IsPublic && x.IsClass && x.BaseType is { } &&
-                                                                              x.BaseType.IsGenericType && x.BaseType.GenericTypeArguments.Length == 1 &&
-                                                                              x.BaseType == entityConfigurationBaseType.MakeGenericType(entityType));
-
-            if (configuration is null)
-            {
-                throw new TypeArgumentException("The provided generic type argument doesn't contain any public Configuration class inheriting IEntityConfiguration.");
-            }
-
-            var configurationInstance = (EntityConfiguration)Activator.CreateInstance(configuration)!;
-
-            AddToConfigurations(configurationInstance.BuildConfiguration());
-
-            return this;
-        }
-
-        internal IReadOnlyDictionary<string, Entity> BuildConfiguration()
-        {
             var entities = new Dictionary<string, Entity>();
 
             for (int i = 0; i < _entityFactories.Count; i++)
@@ -64,9 +30,13 @@ namespace Venflow.Modeling
 
             for (int i = 0; i < _entityFactories.Count; i++)
             {
-                var entityFactory = _entityFactories[i].BuildEntity();
+                var entity = _entityFactories[i].BuildEntity();
 
-                entities.Add(entityFactory.EntityName, entityFactory);
+                var table = tables[i];
+
+                table.GetSetMethod().Invoke(dbConfiguration, new object[] { table.PropertyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(DbConfiguration), entity.GetType() }, null).Invoke(new object[] { dbConfiguration, entity }) });
+
+                entities.Add(entity.EntityName, entity);
             }
 
             for (int i = 0; i < _entityFactories.Count; i++)
@@ -77,6 +47,58 @@ namespace Venflow.Modeling
             }
 
             return new ReadOnlyDictionary<string, Entity>(entities);
+        }
+
+        private List<PropertyInfo> FindDbConfigurations(Type dbConfigurationType)
+        {
+            var properties = dbConfigurationType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            var assembly = dbConfigurationType.Assembly;
+
+            var tableType = typeof(Table<>);
+            var configurationType = typeof(EntityConfiguration<>);
+            var assemblyTypes = assembly.GetTypes();
+
+            var configurations = new Dictionary<Type, Type>();
+
+            for (int i = 0; i < assemblyTypes.Length; i++)
+            {
+                var assemblyType = assemblyTypes[i];
+
+                if (assemblyType.IsNotPublic || assemblyType.BaseType is null || !assemblyType.BaseType.IsGenericType || assemblyType.BaseType.GetGenericTypeDefinition() != configurationType)
+                    continue;
+
+                var entityType = assemblyType.BaseType.GetGenericArguments()[0];
+
+                configurations.Add(entityType, assemblyType);
+            }
+
+            var tables = new List<PropertyInfo>();
+
+            for (int i = 0; i < properties.Length; i++)
+            {
+                var property = properties[i];
+
+                if (property.PropertyType.GetGenericTypeDefinition() != tableType)
+                {
+                    continue;
+                }
+
+                var entityType = property.PropertyType.GetGenericArguments()[0];
+
+                if (!configurations.TryGetValue(entityType, out var configuration))
+                {
+                    throw new InvalidOperationException($"There is no entity configuration for the entity '{property.PropertyType.Name}'.");
+                }
+
+                tables.Add(property);
+
+                var entityConfiguration = (EntityConfiguration)Activator.CreateInstance(configuration)!;
+
+                AddToConfigurations(entityConfiguration.BuildConfiguration());
+            }
+
+            return tables;
         }
 
         private void AddToConfigurations(EntityFactory entityFactory)

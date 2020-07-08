@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Venflow.Commands
+﻿namespace Venflow.Commands
 {
-    public interface IUpdateCommandBuilder<TEntity> where TEntity : class
+    public interface IUpdateCommandBuilder<TEntity> : ISpecficVenflowCommandBuilder<IUpdateCommand<TEntity>> where TEntity : class
     {
-        IUpdateCommand<TEntity> Single(TEntity entity);
 
-        IUpdateCommand<TEntity> Batch(IEnumerable<TEntity> entities);
     }
 }

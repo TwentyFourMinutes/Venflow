@@ -8,14 +8,14 @@ using Venflow.Models;
 
 namespace Venflow.Commands
 {
-    public class JoinBuilder<TRelationEntity, TEntity> where TRelationEntity : class where TEntity : class
+    public class JoinBuilder<TRelationEntity, TEntity, TReturn> where TRelationEntity : class where TEntity : class where TReturn : class
     {
         private readonly DualKeyCollection<string, EntityRelation>? _relations;
         private readonly JoinBuilderValues _joinBuilderValues;
-        private readonly VenflowCommandBuilder<TRelationEntity> _commandBuilder;
+        private readonly VenflowQueryCommandBuilder<TRelationEntity, TReturn> _commandBuilder;
         private readonly Entity _lastEntity;
 
-        internal JoinBuilder(Entity root, VenflowCommandBuilder<TRelationEntity> commandBuilder, bool generateSql)
+        internal JoinBuilder(Entity root, VenflowQueryCommandBuilder<TRelationEntity, TReturn> commandBuilder, bool generateSql)
         {
             _joinBuilderValues = new JoinBuilderValues(root, generateSql);
 
@@ -24,7 +24,7 @@ namespace Venflow.Commands
             _commandBuilder = commandBuilder;
         }
 
-        internal JoinBuilder(JoinOptions joinOptions, Entity lastEntity, JoinBuilderValues joinBuilderValues, VenflowCommandBuilder<TRelationEntity> commandBuilder, bool newFullPath)
+        internal JoinBuilder(JoinOptions joinOptions, Entity lastEntity, JoinBuilderValues joinBuilderValues, VenflowQueryCommandBuilder<TRelationEntity, TReturn> commandBuilder, bool newFullPath)
         {
             _relations = joinOptions.JoinWith.RightEntity.Relations;
 
@@ -35,7 +35,7 @@ namespace Venflow.Commands
             _commandBuilder = commandBuilder;
         }
 
-        public JoinBuilder<TRelationEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TRelationEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        public JoinBuilder<TRelationEntity, TToEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TRelationEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
         {
             propertySelector.ValidatePropertySelector();
 
@@ -48,10 +48,10 @@ namespace Venflow.Commands
                 throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
             }
 
-            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _joinBuilderValues.Root, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, true);
+            return new JoinBuilder<TRelationEntity, TToEntity, TReturn>(new JoinOptions(joiningEntity!, _joinBuilderValues.Root, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, true);
         }
 
-        public JoinBuilder<TRelationEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        public JoinBuilder<TRelationEntity, TToEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
         {
             propertySelector.ValidatePropertySelector();
 
@@ -64,10 +64,10 @@ namespace Venflow.Commands
                 throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
             }
 
-            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _joinBuilderValues.Root, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, true);
+            return new JoinBuilder<TRelationEntity, TToEntity, TReturn>(new JoinOptions(joiningEntity!, _joinBuilderValues.Root, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, true);
         }
 
-        public JoinBuilder<TRelationEntity, TToEntity> ThenWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        public JoinBuilder<TRelationEntity, TToEntity, TReturn> ThenWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
         {
             propertySelector.ValidatePropertySelector();
 
@@ -80,10 +80,10 @@ namespace Venflow.Commands
                 throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
             }
 
-            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, false);
+            return new JoinBuilder<TRelationEntity, TToEntity, TReturn>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, false);
         }
 
-        public JoinBuilder<TRelationEntity, TToEntity> ThenWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        public JoinBuilder<TRelationEntity, TToEntity, TReturn> ThenWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
         {
             propertySelector.ValidatePropertySelector();
 
@@ -96,28 +96,21 @@ namespace Venflow.Commands
                 throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}'.");
             }
 
-            return new JoinBuilder<TRelationEntity, TToEntity>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, false);
+            return new JoinBuilder<TRelationEntity, TToEntity, TReturn>(new JoinOptions(joiningEntity!, _lastEntity, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, false);
         }
 
-        public IQueryCommand<TRelationEntity> Single()
+        public IQueryCommand<TRelationEntity, TReturn> Build()
         {
-            _commandBuilder.JoinValues = _joinBuilderValues;
+            _commandBuilder.JoinBuilderValues = _joinBuilderValues;
 
-            return _commandBuilder.Single();
+            return _commandBuilder.Build();
         }
 
-        public IQueryCommand<TRelationEntity> Batch()
+        public IQueryCommandBuilder<TRelationEntity, TReturn> TrackChanges(bool trackChanges = true)
         {
-            _commandBuilder.JoinValues = _joinBuilderValues;
+            _commandBuilder.JoinBuilderValues = _joinBuilderValues;
 
-            return _commandBuilder.Batch();
-        }
-
-        public IQueryCommand<TRelationEntity> Batch(ulong count)
-        {
-            _commandBuilder.JoinValues = _joinBuilderValues;
-
-            return _commandBuilder.Batch(count);
+            return _commandBuilder.TrackChanges(trackChanges);
         }
     }
 }

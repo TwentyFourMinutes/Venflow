@@ -1,42 +1,33 @@
 ﻿using Npgsql;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading;
 using System.Threading.Tasks;
+using Venflow.Modeling;
 
-namespace Venflow.Modeling
+namespace Venflow
 {
-    public abstract class DbConfiguration
+    internal static class DbConfigurationCache
     {
-        internal string ConnectionString { get; }
-        internal bool UseLazyEntityEvaluation { get; }
+        internal static ConcurrentDictionary<Type, IReadOnlyDictionary<string, Entity>> EntitiesCache { get; } = new ConcurrentDictionary<Type, IReadOnlyDictionary<string, Entity>>();
 
+        internal static object BuildLocker { get; } = new object();
+    }
+
+    public abstract class DbConfiguration : IAsyncDisposable
+    {
         internal IReadOnlyDictionary<string, Entity> Entities { get; private set; }
-        internal IReadOnlyDictionary<string, Entity> TableEntities { get; private set; }
-
         internal bool IsBuild { get; private set; }
 
-        protected DbConfiguration(string connectionString, bool useLazyEntityEvaluation = false)
+        internal string ConnectionString { get; }
+
+        private NpgsqlConnection? _connection;
+
+        protected DbConfiguration(string connectionString)
         {
             ConnectionString = connectionString;
-            UseLazyEntityEvaluation = useLazyEntityEvaluation;
-            Entities = null!;
-            TableEntities = null!;
-        }
 
-        public async ValueTask<VenflowDbConnection> NewConnectionScopeAsync(bool openConnection = true, CancellationToken cancellationToken = default)
-        {
-            if (!this.IsBuild)
-                Build();
-
-            var connection = new NpgsqlConnection(ConnectionString);
-
-            if (openConnection)
-            {
-                await connection.OpenAsync(cancellationToken);
-            }
-
-            return new VenflowDbConnection(this, connection);
+            Build();
         }
 
         public void TrackChanges<TEntity>(ref TEntity entity) where TEntity : class
@@ -98,29 +89,51 @@ namespace Venflow.Modeling
             }
         }
 
-        protected abstract void Configure(DbConfigurator dbConfigurator);
+        public NpgsqlConnection GetConnection()
+        {
+            if (_connection is { })
+                return _connection;
+
+            return _connection = new NpgsqlConnection(ConnectionString);
+        }
 
         public void Build()
         {
             if (IsBuild)
                 return;
 
-            var dbConfigurator = new DbConfigurator();
-
-            Configure(dbConfigurator);
-
-            Entities = dbConfigurator.BuildConfiguration();
-
-            var tableEntities = new Dictionary<string, Entity>();
-
-            foreach (var entity in Entities.Values)
+            lock (DbConfigurationCache.BuildLocker)
             {
-                tableEntities.Add(entity.TableName, entity);
+                if (IsBuild)
+                    return;
+
+                var type = this.GetType();
+
+                if (DbConfigurationCache.EntitiesCache.TryGetValue(type, out var entities))
+                {
+                    Entities = entities;
+                }
+                else
+                {
+                    var dbConfigurator = new DbConfigurator();
+
+                    Entities = dbConfigurator.BuildConfiguration(this, this.GetType());
+
+                    DbConfigurationCache.EntitiesCache.TryAdd(type, Entities);
+                }
+
+                IsBuild = true;
+            }
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            if (_connection is { })
+            {
+                return _connection.DisposeAsync();
             }
 
-            TableEntities = new ReadOnlyDictionary<string, Entity>(tableEntities);
-
-            IsBuild = true;
+            return new ValueTask();
         }
     }
 }

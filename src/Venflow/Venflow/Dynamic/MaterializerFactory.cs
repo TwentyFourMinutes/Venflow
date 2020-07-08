@@ -17,21 +17,22 @@ namespace Venflow.Dynamic
     internal class MaterializerFactory<TEntity> where TEntity : class
     {
         private readonly Entity<TEntity> _entity;
-        private readonly Dictionary<int, Func<NpgsqlDataReader, Task<List<TEntity>>>> _materializerCache;
+        private readonly Dictionary<int, Delegate> _materializerCache;
         private readonly object _materializerLock;
 
         internal MaterializerFactory(Entity<TEntity> entity)
         {
             _entity = entity;
 
-            _materializerCache = new Dictionary<int, Func<NpgsqlDataReader, Task<List<TEntity>>>>();
+            _materializerCache = new Dictionary<int, Delegate>();
             _materializerLock = new object();
         }
 
-        internal Func<NpgsqlDataReader, Task<List<TEntity>>> GetOrCreateMaterializer(JoinBuilderValues? joinBuilderValues, DbConfiguration dbConfiguration, ReadOnlyCollection<NpgsqlDbColumn> columnSchema, bool changeTracking)
+        internal Func<NpgsqlDataReader, Task<TReturn>> GetOrCreateMaterializer<TReturn>(JoinBuilderValues? joinBuilderValues, DbConfiguration dbConfiguration, ReadOnlyCollection<NpgsqlDbColumn> columnSchema, bool changeTracking) where TReturn : class
         {
             var cacheKeyBuilder = new HashCode();
 
+            cacheKeyBuilder.Add(typeof(TReturn));
             cacheKeyBuilder.Add(_entity.TableName);
 
             for (int i = 0; i < columnSchema.Count; i++)
@@ -56,9 +57,9 @@ namespace Venflow.Dynamic
 
             lock (_materializerLock)
             {
-                if (_materializerCache.TryGetValue(cacheKey, out var materializer))
+                if (_materializerCache.TryGetValue(cacheKey, out var tempMaterializer))
                 {
-                    return materializer;
+                    return (Func<NpgsqlDataReader, Task<TReturn>>)tempMaterializer;
                 }
                 else
                 {
@@ -102,7 +103,7 @@ namespace Venflow.Dynamic
                         throw new InvalidOperationException("The result set contained multiple tables, however the query was configured to only expect one. Try specifying the tables you are joining with JoinWith, while declaring the query.");
                     }
 
-                    materializer = CreateMaterializer(joinBuilderValues, entities, changeTracking);
+                    var materializer = CreateMaterializer<TReturn>(joinBuilderValues, entities, changeTracking);
 
                     _materializerCache.TryAdd(cacheKey, materializer);
 
@@ -111,14 +112,17 @@ namespace Venflow.Dynamic
             }
         }
 
-        private Func<NpgsqlDataReader, Task<List<TEntity>>> CreateMaterializer(JoinBuilderValues? joinBuilderValues, List<KeyValuePair<Entity, List<KeyValuePair<string, int>>>> entities, bool changeTracking)
+        private Func<NpgsqlDataReader, Task<TReturn>> CreateMaterializer<TReturn>(JoinBuilderValues? joinBuilderValues, List<KeyValuePair<Entity, List<KeyValuePair<string, int>>>> entities, bool changeTracking) where TReturn : class
         {
             var primaryEntity = entities[0];
+            var returnType = typeof(TReturn);
+            var isSingleResult = returnType == primaryEntity.Key.EntityType;
             var genericListType = typeof(List<>);
-            var primaryEntityListType = genericListType.MakeGenericType(primaryEntity.Key.EntityType);
+
+            var primaryEntityType = returnType;
 
             var asyncStateMachineType = typeof(IAsyncStateMachine);
-            var asyncMethodBuilderType = typeof(AsyncTaskMethodBuilder<>).MakeGenericType(primaryEntityListType);
+            var asyncMethodBuilderType = typeof(AsyncTaskMethodBuilder<>).MakeGenericType(returnType);
             var npgsqlDataReaderType = typeof(NpgsqlDataReader);
             var taskAwaiterType = typeof(TaskAwaiter<bool>);
             var intType = typeof(int);
@@ -149,7 +153,7 @@ namespace Venflow.Dynamic
             var stateLocal = moveNextMethodIL.DeclareLocal(intType);
             var awaiterLocal = moveNextMethodIL.DeclareLocal(taskAwaiterType);
             var exceptionLocal = moveNextMethodIL.DeclareLocal(exceptionType);
-            var primaryListLocal = moveNextMethodIL.DeclareLocal(primaryEntityListType);
+            var primaryEntityLocal = moveNextMethodIL.DeclareLocal(primaryEntityType);
 
             var endOfMethodLabel = moveNextMethodIL.DefineLabel();
 
@@ -165,17 +169,28 @@ namespace Venflow.Dynamic
 
             // -- Actual Local and Field Assignment
 
-            var primaryEntityListField = stateMachineTypeBuilder.DefineField(primaryEntity.Key.EntityName + "List", primaryEntityListType, FieldAttributes.Private);
+            FieldBuilder primaryEntityField;
 
-            moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            moveNextMethodIL.Emit(OpCodes.Newobj, primaryEntityListType.GetConstructor(Type.EmptyTypes));
-            moveNextMethodIL.Emit(OpCodes.Stfld, primaryEntityListField);
+
+
+            if (isSingleResult)
+            {
+                primaryEntityField = stateMachineTypeBuilder.DefineField(primaryEntity.Key.EntityName, primaryEntityType, FieldAttributes.Private);
+            }
+            else
+            {
+                primaryEntityField = stateMachineTypeBuilder.DefineField(primaryEntity.Key.EntityName + "List", primaryEntityType, FieldAttributes.Private);
+
+                moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                moveNextMethodIL.Emit(OpCodes.Newobj, primaryEntityType.GetConstructor(Type.EmptyTypes));
+                moveNextMethodIL.Emit(OpCodes.Stfld, primaryEntityField);
+            }
 
             var iLSetNullGhostGen = new ILGhostGenerator();
 
             iLSetNullGhostGen.Emit(OpCodes.Ldarg_0);
             iLSetNullGhostGen.Emit(OpCodes.Ldnull);
-            iLSetNullGhostGen.Emit(OpCodes.Stfld, primaryEntityListField);
+            iLSetNullGhostGen.Emit(OpCodes.Stfld, primaryEntityField);
 
             var iLGhostBodyGen = new ILGhostGenerator();
 
@@ -200,8 +215,14 @@ namespace Venflow.Dynamic
                     var primaryKeyType = entity.GetPrimaryColumn().PropertyInfo.PropertyType;
                     var entityDictionaryType = gernericDictionaryType.MakeGenericType(primaryKeyType, entity.EntityType);
 
-                    var lastEntityField = stateMachineTypeBuilder.DefineField("last" + entity.EntityName + i, entity.EntityType, FieldAttributes.Private);
-                    var entityDictionaryField = stateMachineTypeBuilder.DefineField(entity.EntityName + "Dict" + i, entityDictionaryType, FieldAttributes.Private);
+                    FieldBuilder? lastEntityField = default;
+                    FieldBuilder? entityDictionaryField = default;
+
+                    if (!isSingleResult || i > 0)
+                    {
+                        lastEntityField = stateMachineTypeBuilder.DefineField("last" + entity.EntityName + i, entity.EntityType, FieldAttributes.Private);
+                        entityDictionaryField = stateMachineTypeBuilder.DefineField(entity.EntityName + "Dict" + i, entityDictionaryType, FieldAttributes.Private);
+                    }
 
                     var shouldCheckForChange = false;
 
@@ -245,13 +266,16 @@ namespace Venflow.Dynamic
                     var primaryKeyLocal = moveNextMethodIL.DeclareLocal(primaryKeyType);
                     var entityLocal = moveNextMethodIL.DeclareLocal(entity.EntityType);
 
-                    moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    moveNextMethodIL.Emit(OpCodes.Ldnull);
-                    moveNextMethodIL.Emit(OpCodes.Stfld, lastEntityField);
+                    if (!isSingleResult || i > 0)
+                    {
+                        moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        moveNextMethodIL.Emit(OpCodes.Ldnull);
+                        moveNextMethodIL.Emit(OpCodes.Stfld, lastEntityField);
 
-                    moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    moveNextMethodIL.Emit(OpCodes.Newobj, entityDictionaryType.GetConstructor(Type.EmptyTypes));
-                    moveNextMethodIL.Emit(OpCodes.Stfld, entityDictionaryField);
+                        moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        moveNextMethodIL.Emit(OpCodes.Newobj, entityDictionaryType.GetConstructor(Type.EmptyTypes));
+                        moveNextMethodIL.Emit(OpCodes.Stfld, entityDictionaryField);
+                    }
 
                     var primaryKeyColumnScheme = columns[0];
                     var primaryKeyColumn = entity.GetColumn(primaryKeyColumnScheme.Key);
@@ -267,37 +291,46 @@ namespace Venflow.Dynamic
                     iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryKeyColumn.DbValueRetriever);
                     iLGhostBodyGen.Emit(OpCodes.Stloc, primaryKeyLocal);
 
-                    var lastEntityIfBody = moveNextMethodIL.DefineLabel();
-
-                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                    iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
-                    iLGhostBodyGen.Emit(OpCodes.Brfalse, lastEntityIfBody);
-
                     nextIfStartLabel = moveNextMethodIL.DefineLabel();
 
-                    iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                    iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
-                    iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryKeyColumn.PropertyInfo.GetGetMethod());
-                    iLGhostBodyGen.Emit(OpCodes.Beq, nextIfStartLabel.Value);
+                    if (!isSingleResult || i > 0)
+                    {
+                        var lastEntityIfBody = moveNextMethodIL.DefineLabel();
 
-                    iLGhostBodyGen.MarkLabel(lastEntityIfBody);
+                        iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                        iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
+                        iLGhostBodyGen.Emit(OpCodes.Brfalse, lastEntityIfBody);
 
-                    var entityDictionaryIfBodyEnd = moveNextMethodIL.DefineLabel();
+                        iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
+                        iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                        iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
+                        iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryKeyColumn.PropertyInfo.GetGetMethod());
+                        iLGhostBodyGen.Emit(OpCodes.Beq, nextIfStartLabel.Value);
 
-                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                    iLGhostBodyGen.Emit(OpCodes.Ldfld, entityDictionaryField);
-                    iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                    iLGhostBodyGen.Emit(OpCodes.Ldloca, entityLocal);
-                    iLGhostBodyGen.Emit(OpCodes.Callvirt, entityDictionaryType.GetMethod("TryGetValue"));
-                    iLGhostBodyGen.Emit(OpCodes.Brfalse, entityDictionaryIfBodyEnd);
+                        iLGhostBodyGen.MarkLabel(lastEntityIfBody);
 
-                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                    iLGhostBodyGen.Emit(OpCodes.Ldloc, entityLocal);
-                    iLGhostBodyGen.Emit(OpCodes.Stfld, lastEntityField);
-                    iLGhostBodyGen.Emit(OpCodes.Br, nextIfStartLabel.Value);
+                        var entityDictionaryIfBodyEnd = moveNextMethodIL.DefineLabel();
 
-                    iLGhostBodyGen.MarkLabel(entityDictionaryIfBodyEnd);
+                        iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                        iLGhostBodyGen.Emit(OpCodes.Ldfld, entityDictionaryField);
+                        iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
+                        iLGhostBodyGen.Emit(OpCodes.Ldloca, entityLocal);
+                        iLGhostBodyGen.Emit(OpCodes.Callvirt, entityDictionaryType.GetMethod("TryGetValue"));
+                        iLGhostBodyGen.Emit(OpCodes.Brfalse, entityDictionaryIfBodyEnd);
+
+                        iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                        iLGhostBodyGen.Emit(OpCodes.Ldloc, entityLocal);
+                        iLGhostBodyGen.Emit(OpCodes.Stfld, lastEntityField);
+                        iLGhostBodyGen.Emit(OpCodes.Br, nextIfStartLabel.Value);
+
+                        iLGhostBodyGen.MarkLabel(entityDictionaryIfBodyEnd);
+                    }
+                    else
+                    {
+                        iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                        iLGhostBodyGen.Emit(OpCodes.Ldfld, primaryEntityField);
+                        iLGhostBodyGen.Emit(OpCodes.Brtrue, nextIfStartLabel.Value);
+                    }
 
                     var hasChangeTracking = changeTracking && entity.ProxyEntityType is { };
 
@@ -354,7 +387,7 @@ namespace Venflow.Dynamic
 
                         if (shouldCheckForChange)
                         {
-                            entityRelationAssignment = new EntityRelationAssignment(lastEntityField, hasEntityChangedField);
+                            entityRelationAssignment = new EntityRelationAssignment(isSingleResult && i == 0 ? primaryEntityField : lastEntityField, hasEntityChangedField);
                             relationAssignments.Add(entityRelationAssignment);
                         }
 
@@ -362,7 +395,7 @@ namespace Venflow.Dynamic
                         {
                             var relation = entity.Relations[k];
 
-                            lastEntityFieldDictionary.Add(entity.EntityName + relation.RightEntity.EntityName + (relation.LeftNavigationProperty ?? relation.RightNavigationProperty).Name, lastEntityField);
+                            lastEntityFieldDictionary.Add(entity.EntityName + relation.RightEntity.EntityName + (relation.LeftNavigationProperty ?? relation.RightNavigationProperty).Name, isSingleResult && i == 0 ? primaryEntityField : lastEntityField);
 
                             if (relation.RelationType != RelationType.OneToMany)
                             {
@@ -380,23 +413,29 @@ namespace Venflow.Dynamic
                             iLGhostBodyGen.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
                         }
                     }
-
-                    iLGhostBodyGen.Emit(OpCodes.Stfld, lastEntityField);
-
-                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                    iLGhostBodyGen.Emit(OpCodes.Ldfld, entityDictionaryField);
-                    iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                    iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                    iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
-                    iLGhostBodyGen.Emit(OpCodes.Callvirt, entityDictionaryType.GetMethod("Add"));
-
-                    if (i == 0)
+                    if (!isSingleResult || i > 0)
                     {
+                        iLGhostBodyGen.Emit(OpCodes.Stfld, lastEntityField);
+
                         iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                        iLGhostBodyGen.Emit(OpCodes.Ldfld, primaryEntityListField);
+                        iLGhostBodyGen.Emit(OpCodes.Ldfld, entityDictionaryField);
+                        iLGhostBodyGen.Emit(OpCodes.Ldloc, primaryKeyLocal);
                         iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
                         iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
-                        iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryEntityListType.GetMethod("Add"));
+                        iLGhostBodyGen.Emit(OpCodes.Callvirt, entityDictionaryType.GetMethod("Add"));
+
+                        if (i == 0)
+                        {
+                            iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                            iLGhostBodyGen.Emit(OpCodes.Ldfld, primaryEntityField);
+                            iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
+                            iLGhostBodyGen.Emit(OpCodes.Ldfld, lastEntityField);
+                            iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryEntityType.GetMethod("Add"));
+                        }
+                    }
+                    else
+                    {
+                        iLGhostBodyGen.Emit(OpCodes.Stfld, primaryEntityField);
                     }
 
                     if (hasChangeTracking)
@@ -413,13 +452,16 @@ namespace Venflow.Dynamic
                         iLGhostBodyGen.Emit(OpCodes.Stfld, hasEntityChangedField);
                     }
 
-                    iLSetNullGhostGen.Emit(OpCodes.Ldarg_0);
-                    iLSetNullGhostGen.Emit(OpCodes.Ldnull);
-                    iLSetNullGhostGen.Emit(OpCodes.Stfld, lastEntityField);
+                    if (!isSingleResult || i > 0)
+                    {
+                        iLSetNullGhostGen.Emit(OpCodes.Ldarg_0);
+                        iLSetNullGhostGen.Emit(OpCodes.Ldnull);
+                        iLSetNullGhostGen.Emit(OpCodes.Stfld, lastEntityField);
 
-                    iLSetNullGhostGen.Emit(OpCodes.Ldarg_0);
-                    iLSetNullGhostGen.Emit(OpCodes.Ldnull);
-                    iLSetNullGhostGen.Emit(OpCodes.Stfld, entityDictionaryField);
+                        iLSetNullGhostGen.Emit(OpCodes.Ldarg_0);
+                        iLSetNullGhostGen.Emit(OpCodes.Ldnull);
+                        iLSetNullGhostGen.Emit(OpCodes.Stfld, entityDictionaryField);
+                    }
                 }
 
                 iLGhostBodyGen.MarkLabel(nextIfStartLabel.Value);
@@ -504,7 +546,11 @@ namespace Venflow.Dynamic
                 }
 
                 iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
-                iLGhostBodyGen.Emit(OpCodes.Ldfld, primaryEntityListField);
+
+                if (!isSingleResult)
+                {
+                    iLGhostBodyGen.Emit(OpCodes.Ldfld, primaryEntityField);
+                }
 
                 if (hasChangeTracking)
                 {
@@ -529,7 +575,14 @@ namespace Venflow.Dynamic
                     iLGhostBodyGen.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod());
                 }
 
-                iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryEntityListType.GetMethod("Add"));
+                if (isSingleResult)
+                {
+                    iLGhostBodyGen.Emit(OpCodes.Stfld, primaryEntityField);
+                }
+                else
+                {
+                    iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryEntityType.GetMethod("Add"));
+                }
 
                 if (hasChangeTracking)
                 {
@@ -613,8 +666,8 @@ namespace Venflow.Dynamic
             moveNextMethodIL.Emit(OpCodes.Brtrue, beforeBodyLabel);
 
             moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            moveNextMethodIL.Emit(OpCodes.Ldfld, primaryEntityListField);
-            moveNextMethodIL.Emit(OpCodes.Stloc, primaryListLocal);
+            moveNextMethodIL.Emit(OpCodes.Ldfld, primaryEntityField);
+            moveNextMethodIL.Emit(OpCodes.Stloc, primaryEntityLocal);
 
             moveNextMethodIL.Emit(OpCodes.Leave, exceptionBlock);
 
@@ -647,7 +700,8 @@ namespace Venflow.Dynamic
 
             moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             moveNextMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
-            moveNextMethodIL.Emit(OpCodes.Ldloc, primaryListLocal);
+            moveNextMethodIL.Emit(OpCodes.Ldloc, primaryEntityLocal);
+
             moveNextMethodIL.Emit(OpCodes.Call, asyncMethodBuilderType.GetMethod("SetResult"));
 
             // End of Method
@@ -673,7 +727,7 @@ namespace Venflow.Dynamic
                 asyncStateMachineType.GetMethod("SetStateMachine"));
 
             var materializeMethod = materializerTypeBuilder.DefineMethod("MaterializeAsync",
-                MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Static, typeof(Task<List<TEntity>>),
+                MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Static, typeof(Task<>).MakeGenericType(returnType),
                 new[] { npgsqlDataReaderType });
 
             materializeMethod.SetCustomAttribute(new CustomAttributeBuilder(
@@ -710,7 +764,7 @@ namespace Venflow.Dynamic
             stateMachineTypeBuilder.CreateType();
             var materializerType = materializerTypeBuilder.CreateType();
 
-            return (Func<NpgsqlDataReader, Task<List<TEntity>>>)materializerType.GetMethod("MaterializeAsync").CreateDelegate(typeof(Func<NpgsqlDataReader, Task<List<TEntity>>>));
+            return (Func<NpgsqlDataReader, Task<TReturn>>)materializerType.GetMethod("MaterializeAsync").CreateDelegate(typeof(Func<NpgsqlDataReader, Task<TReturn>>));
         }
 
         private bool TryGetEntityOfTable(DbConfiguration dbConfiguration, NpgsqlDbColumn column, out Entity? entity,

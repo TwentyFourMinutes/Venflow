@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RepoDb;
+﻿using RepoDb;
 using System.Threading.Tasks;
 using Venflow.Benchmarks.Benchmarks.Models;
 using Venflow.Benchmarks.Benchmarks.Models.Configurations;
@@ -9,7 +8,6 @@ namespace Venflow.Benchmarks.Benchmarks
     public abstract class BenchmarkBase
     {
         public BenchmarkDbConfiguration Configuration { get; set; }
-        public VenflowDbConnection VenflowDbConnection { get; set; }
         public BenchmarkDbContext PersonDbContext { get; set; }
 
         public virtual async Task Setup()
@@ -27,20 +25,18 @@ namespace Venflow.Benchmarks.Benchmarks
             PrimaryMapper.Add<Email>(x => x.Id);
             PrimaryMapper.Add<EmailContent>(x => x.Id);
 
-            PersonDbContext = new BenchmarkDbContext();
+            //PersonDbContext = new BenchmarkDbContext();
 
-            PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
-            PersonDbContext.ChangeTracker.LazyLoadingEnabled = false;
-            PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-
-            VenflowDbConnection = await Configuration.NewConnectionScopeAsync();
+            //PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
+            //PersonDbContext.ChangeTracker.LazyLoadingEnabled = false;
+            //PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         public virtual async Task Cleanup()
         {
-            await VenflowDbConnection.DisposeAsync();
+            await Configuration.DisposeAsync();
 
-            await PersonDbContext.DisposeAsync();
+            //await PersonDbContext.DisposeAsync();
         }
     }
 }

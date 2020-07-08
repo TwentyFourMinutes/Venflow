@@ -1,7 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Venflow.Benchmarks.Benchmarks.Models;
 using Venflow.Commands;
@@ -11,14 +9,14 @@ namespace Venflow.Benchmarks.Benchmarks
     [MemoryDiagnoser]
     public class QueryBatchWithRelationsAsyncBenchmark : BenchmarkBase
     {
-        private IQueryCommand<Person> _command;
+        private IQueryCommand<Person, List<Person>> _command;
 
         [GlobalSetup]
         public override async Task Setup()
         {
             await base.Setup();
 
-            _command = VenflowDbConnection.Query<Person>(false).JoinWith(x => x.Emails).ThenWith(x => x.Contents).Batch(5000);
+            _command = Configuration.People.QueryBatch(5000, false).JoinWith(x => x.Emails).ThenWith(x => x.Contents).Build();
 
             //var people = new List<Person>();
 
@@ -45,16 +43,16 @@ namespace Venflow.Benchmarks.Benchmarks
 
             //await PersonDbContext.SaveChangesAsync();
 
-            await VenflowDbConnection.QueryBatchAsync(_command);
+            await Configuration.People.QueryAsync(_command);
 
-            await PersonDbContext.People.AsNoTracking().Include(x => x.Emails).ThenInclude(x => x.Contents).Take(5000).ToListAsync();
+            //await PersonDbContext.People.AsNoTracking().Include(x => x.Emails).ThenInclude(x => x.Contents).Take(5000).ToListAsync();
 
             var people = new List<Person>();
             var peopleDict = new Dictionary<int, Person>();
             var emailDict = new Dictionary<int, Email>();
             var emailContentDict = new Dictionary<int, EmailContent>();
 
-            await Dapper.SqlMapper.QueryAsync<Person, Email, EmailContent, Person>(VenflowDbConnection.Connection, "SELECT * FROM (SELECT * FROM \"People\" LIMIT 10000) As People JOIN \"Emails\" As Emails On Emails.\"PersonId\" = People.\"Id\" JOIN \"EmailContents\" As EmailContents On EmailContents.\"EmailId\" = Emails.\"Id\"", (person, email, emailContent) =>
+            await Dapper.SqlMapper.QueryAsync<Person, Email, EmailContent, Person>(Configuration.GetConnection(), "SELECT * FROM (SELECT * FROM \"People\" LIMIT 5000) As People JOIN \"Emails\" As Emails On Emails.\"PersonId\" = People.\"Id\" JOIN \"EmailContents\" As EmailContents On EmailContents.\"EmailId\" = Emails.\"Id\"", (person, email, emailContent) =>
             {
                 var isEmailNew = false;
                 var isEmailContentNew = false;
@@ -105,16 +103,16 @@ namespace Venflow.Benchmarks.Benchmarks
             });
         }
 
-        [Benchmark]
-        public async Task<List<Person>> EFCoreQueryBatchAsync()
-        {
-            return await PersonDbContext.People.AsNoTracking().Include(x => x.Emails).ThenInclude(x => x.Contents).Take(5000).ToListAsync();
-        }
+        //[Benchmark]
+        //public async Task<List<Person>> EFCoreQueryBatchAsync()
+        //{
+        //    return await PersonDbContext.People.AsNoTracking().Include(x => x.Emails).ThenInclude(x => x.Contents).Take(5000).ToListAsync();
+        //}
 
         [Benchmark]
         public async Task<List<Person>> VenflowQueryBatchAsync()
         {
-            return await VenflowDbConnection.QueryBatchAsync(_command);
+            return await Configuration.People.QueryAsync(_command);
         }
 
         [Benchmark]
@@ -125,7 +123,7 @@ namespace Venflow.Benchmarks.Benchmarks
             var emailDict = new Dictionary<int, Email>();
             var emailContentDict = new Dictionary<int, EmailContent>();
 
-            await Dapper.SqlMapper.QueryAsync<Person, Email, EmailContent, Person>(VenflowDbConnection.Connection, "SELECT * FROM (SELECT * FROM \"People\" LIMIT 10000) As People JOIN \"Emails\" As Emails On Emails.\"PersonId\" = People.\"Id\" JOIN \"EmailContents\" As EmailContents On EmailContents.\"EmailId\" = Emails.\"Id\"", (person, email, emailContent) =>
+            await Dapper.SqlMapper.QueryAsync<Person, Email, EmailContent, Person>(Configuration.GetConnection(), "SELECT * FROM (SELECT * FROM \"People\" LIMIT 5000) As People JOIN \"Emails\" As Emails On Emails.\"PersonId\" = People.\"Id\" JOIN \"EmailContents\" As EmailContents On EmailContents.\"EmailId\" = Emails.\"Id\"", (person, email, emailContent) =>
             {
                 var isEmailNew = false;
                 var isEmailContentNew = false;
@@ -179,10 +177,10 @@ namespace Venflow.Benchmarks.Benchmarks
         }
 
         [GlobalCleanup]
-        public override Task Cleanup()
+        public override async Task Cleanup()
         {
-            _command.Dispose();
-            return base.Cleanup();
+            await _command.DisposeAsync();
+            await base.Cleanup();
         }
     }
 }
