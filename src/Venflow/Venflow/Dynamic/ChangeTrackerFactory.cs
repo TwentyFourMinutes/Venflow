@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -54,9 +54,8 @@ namespace Venflow.Dynamic
                 var baseSetter = property.Value.PropertyInfo.GetSetMethod()!;
 
                 // Create Property set property method
-                var propertySet = proxyTypeBuilder.DefineMethod("set_" + property.Value.PropertyInfo.Name, MethodAttributes.Private | MethodAttributes.SpecialName |
-                                                                                                           MethodAttributes.NewSlot | MethodAttributes.HideBySig |
-                                                                                                           MethodAttributes.Virtual | MethodAttributes.Final, null, new[] { property.Value.PropertyInfo.PropertyType });
+                var propertySet = proxyTypeBuilder.DefineMethod("set_" + property.Value.PropertyInfo.Name, MethodAttributes.Public | MethodAttributes.SpecialName |
+                                                                                                           MethodAttributes.Virtual | MethodAttributes.HideBySig, null, new[] { property.Value.PropertyInfo.PropertyType });
                 var propertySetIL = propertySet.GetILGenerator();
 
                 propertySetIL.Emit(OpCodes.Ldarg_0);

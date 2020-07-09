@@ -208,7 +208,9 @@ namespace Venflow.Modeling.Definitions
 
                             regularColumnsOffset++;
 
-                            if (property.GetSetMethod().IsVirtual)
+                            var setMethod = property.GetSetMethod();
+
+                            if (setMethod.IsVirtual && !setMethod.IsFinal)
                             {
                                 changeTrackingColumns.Add(columnIndex + 1, primaryColumn);
                             }
@@ -245,7 +247,9 @@ namespace Venflow.Modeling.Definitions
 
                     columns.Add(column);
 
-                    if (property.GetSetMethod().IsVirtual)
+                    var setMethod = property.GetSetMethod();
+
+                    if (setMethod.IsVirtual && !setMethod.IsFinal)
                     {
                         changeTrackingColumns.Add(columnIndex + 1, column);
                     }
