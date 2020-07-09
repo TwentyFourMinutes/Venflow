@@ -31,6 +31,14 @@ namespace Venflow.Modeling.Definitions
             return this;
         }
 
+
+        IForeignKeyRelationBuilder<TEntity, TRelation> INotRequiredMultiRightRelationBuilder<TEntity, TRelation>.WithMany()
+        {
+            _leftRelationType = RelationPartType.Many;
+
+            return this;
+        }
+
         IForeignKeyRelationBuilder<TEntity, TRelation> IRequiredSingleRightRelationBuilder<TEntity, TRelation>.WithOne(Expression<Func<TRelation, TEntity>> navigationProperty)
         {
             _leftRelationType = RelationPartType.One;

@@ -9,5 +9,6 @@ namespace Venflow.Modeling.Definitions
         INotRequiredMultiRightRelationBuilder<TEntity, TRelation> HasOne<TRelation>(Expression<Func<TEntity, TRelation>> navigationProperty) where TRelation : class;
         IRequiredMultiRightRelationBuilder<TEntity, TRelation> HasOne<TRelation>() where TRelation : class;
         INotRequiredSingleRightRelationBuilder<TEntity, TRelation> HasMany<TRelation>(Expression<Func<TEntity, IList<TRelation>>> navigationProperty) where TRelation : class;
+        IRequiredSingleRightRelationBuilder<TEntity, TRelation> HasMany<TRelation>() where TRelation : class;
     }
 }
