@@ -78,24 +78,24 @@ namespace Venflow.Modeling
 
         #region InsertAsync
 
-        public Task<int> InsertSingleAsync(TEntity entity, CancellationToken cancellationToken = default)
+        public Task<int> InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
             return Insert(true).Build().InsertAsync(entity, cancellationToken);
         }
 
-        public Task<int> InsertSingleAsync(IInsertCommand<TEntity> insertCommand, TEntity entity, CancellationToken cancellationToken = default)
+        public Task<int> InsertAsync(IInsertCommand<TEntity> insertCommand, TEntity entity, CancellationToken cancellationToken = default)
         {
             ((VenflowBaseCommand<TEntity>)insertCommand).UnderlyingCommand.Connection = _dbConfiguration.GetConnection();
 
             return insertCommand.InsertAsync(entity, cancellationToken);
         }
 
-        public Task<int> InsertBatchAsync(List<TEntity> entities, CancellationToken cancellationToken = default)
+        public Task<int> InsertAsync(List<TEntity> entities, CancellationToken cancellationToken = default)
         {
             return Insert(true).Build().InsertAsync(entities, cancellationToken);
         }
 
-        public Task<int> InsertBatchAsync(IInsertCommand<TEntity> insertCommand, List<TEntity> entities, CancellationToken cancellationToken = default)
+        public Task<int> InsertAsync(IInsertCommand<TEntity> insertCommand, List<TEntity> entities, CancellationToken cancellationToken = default)
         {
             ((VenflowBaseCommand<TEntity>)insertCommand).UnderlyingCommand.Connection = _dbConfiguration.GetConnection();
 
