@@ -7,7 +7,7 @@ namespace Venflow.Modeling
     internal class ChangeTracker<TEntity> where TEntity : class
     {
         internal bool TrackChanges { get; set; }
-        internal bool IsDirty { get; private set; }
+        internal bool IsDirty { get; set; }
 
         private byte[]? _changedColumns;
 

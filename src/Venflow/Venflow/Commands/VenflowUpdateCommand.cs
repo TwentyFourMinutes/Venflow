@@ -74,6 +74,8 @@ namespace Venflow.Commands
                 return;
             }
 
+            proxy.ChangeTracker.IsDirty = false;
+
             commandString.Append("UPDATE ")
                          .Append(EntityConfiguration.TableName)
                          .Append(" SET ");
@@ -89,7 +91,9 @@ namespace Venflow.Commands
                 if (columnIndex == 0)
                     continue;
 
-                var column = entityColumns[columnIndex];
+                columns[i] = 0;
+
+                var column = entityColumns[columnIndex - 1];
 
                 commandString.Append('"')
                              .Append(column.ColumnName)

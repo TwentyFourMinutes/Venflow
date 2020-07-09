@@ -210,7 +210,7 @@ namespace Venflow.Modeling.Definitions
 
                             if (property.GetSetMethod().IsVirtual)
                             {
-                                changeTrackingColumns.Add(columnIndex, primaryColumn);
+                                changeTrackingColumns.Add(columnIndex + 1, primaryColumn);
                             }
 
                             nameToColumn.Add(definition.Name, primaryColumn);
@@ -247,7 +247,7 @@ namespace Venflow.Modeling.Definitions
 
                     if (property.GetSetMethod().IsVirtual)
                     {
-                        changeTrackingColumns.Add(columnIndex, column);
+                        changeTrackingColumns.Add(columnIndex + 1, column);
                     }
 
                     nameToColumn.Add(columnName, column);
