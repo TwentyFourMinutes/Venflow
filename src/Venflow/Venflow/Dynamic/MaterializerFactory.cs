@@ -105,7 +105,11 @@ namespace Venflow.Dynamic
 
                     var materializer = CreateMaterializer<TReturn>(joinBuilderValues, entities, changeTracking);
 
+#if NET48
+                    _materializerCache.Add(cacheKey, materializer);
+#else
                     _materializerCache.TryAdd(cacheKey, materializer);
+#endif
 
                     return materializer;
                 }

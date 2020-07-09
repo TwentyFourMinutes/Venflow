@@ -47,8 +47,13 @@ namespace Venflow.Commands
         }
 
         internal StringBuilder GetNewSqlJoinsFromBasePath(JoinPath fromPath)
-            => new StringBuilder()
-                .Append(fromPath.SqlJoins, 0, fromPath._joinLength);
+        {
+#if NET48
+            return new StringBuilder().Append(fromPath.SqlJoins.ToString(), 0, fromPath._joinLength);
+#else
+            return new StringBuilder().Append(fromPath.SqlJoins, 0, fromPath._joinLength);
+#endif
+        }
 
         // TODO: Build this while generating
         internal void AppendColumnNamesAndJoins(StringBuilder sqlColumns, StringBuilder sqlJoins)
