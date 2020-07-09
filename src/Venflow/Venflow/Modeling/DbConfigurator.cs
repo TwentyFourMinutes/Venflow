@@ -70,7 +70,21 @@ namespace Venflow.Modeling
 
                 var entityType = assemblyType.BaseType.GetGenericArguments()[0];
 
-                configurations.Add(entityType, assemblyType);
+#if NET48
+                if (configurations.ContainsKey(entityType))
+                {
+                    throw new InvalidOperationException($"There are two or more configurations for the entity '{entityType.Name}'");
+                }
+                else
+                {
+                    configurations.Add(entityType, assemblyType);
+                }
+#else
+                if (!configurations.TryAdd(entityType, assemblyType))
+                {
+                    throw new InvalidOperationException($"There are two or more configurations for the entity '{entityType.Name}'");
+                }
+#endif
             }
 
             var tables = new List<PropertyInfo>();
@@ -88,7 +102,7 @@ namespace Venflow.Modeling
 
                 if (!configurations.TryGetValue(entityType, out var configuration))
                 {
-                    throw new InvalidOperationException($"There is no entity configuration for the entity '{property.PropertyType.Name}'.");
+                    throw new InvalidOperationException($"There is no entity configuration for the entity '{entityType.Name}'.");
                 }
 
                 tables.Add(property);

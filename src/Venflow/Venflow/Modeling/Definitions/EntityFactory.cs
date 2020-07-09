@@ -47,7 +47,11 @@ namespace Venflow.Modeling.Definitions
                 {
                     continue;
                 }
-                var foreignEntity = entityBuilders[relation.RightEntityName];
+
+                if (!entityBuilders.TryGetValue(relation.RightEntityName, out var foreignEntity))
+                {
+                    throw new InvalidOperationException($"The entity '{relation.RightEntityName}' is being used in a relation on '{relation.LeftEntity.Type.Name}', but doesn't contain a 'Table<{relation.RightEntityName}>' entry in the DbConfiguration.");
+                }
 
                 if (relation.RightNavigationProperty is { })
                 {
