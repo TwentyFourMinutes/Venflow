@@ -9,7 +9,7 @@ namespace Venflow.Benchmarks
         public static void Main(string[] args)
         {
             //BenchmarkSwitcher.FromAssembly(typeof(Startup).Assembly).Run(args);
-            BenchmarkSwitcher.FromTypes(new[] { typeof(QuerySingleAsyncBenchmark), typeof(QueryBatchWithRelationsAsyncBenchmark)/*, typeof(InsertBatchWithRelationsAsyncBenchmark)*/ }).Run(args);
+            BenchmarkSwitcher.FromTypes(new[] { typeof(QueryBatchAsyncBenchmark)/*, typeof(InsertBatchWithRelationsAsyncBenchmark)*/ }).Run(args);
             Console.ReadKey();
         }
     }
