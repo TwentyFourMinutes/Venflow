@@ -1,7 +1,7 @@
-using Npgsql;
 using System;
-using System.Text;
-using Venflow.Dynamic;
+using Venflow.Dynamic.Inserter;
+using Venflow.Dynamic.Materializer;
+using Venflow.Dynamic.Proxies;
 
 namespace Venflow.Modeling
 {
@@ -10,16 +10,14 @@ namespace Venflow.Modeling
         internal EntityColumnCollection<TEntity> Columns { get; }
         internal PrimaryEntityColumn<TEntity> PrimaryColumn { get; }
 
-        internal Action<TEntity, StringBuilder, string, NpgsqlParameterCollection> InsertWriter { get; }
         internal Func<ChangeTracker<TEntity>, TEntity>? ChangeTrackerFactory { get; }
         internal Func<ChangeTracker<TEntity>, TEntity, TEntity>? ChangeTrackerApplier { get; }
 
         internal MaterializerFactory<TEntity> MaterializerFactory { get; }
         internal InsertionFactory<TEntity> InsertionFactory { get; }
 
-        internal Entity(Type entityType, Type? proxyEntityType, string tableName, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, string primaryKeyPrefiexColumnListString, Action<TEntity, StringBuilder, string, NpgsqlParameterCollection> insertWriter, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier) : base(entityType, proxyEntityType, tableName, columnListString, explicitColumnListString, nonPrimaryColumnListString, primaryKeyPrefiexColumnListString)
+        internal Entity(Type entityType, Type? proxyEntityType, string tableName, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, string primaryKeyPrefiexColumnListString, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier) : base(entityType, proxyEntityType, tableName, columnListString, explicitColumnListString, nonPrimaryColumnListString, primaryKeyPrefiexColumnListString)
         {
-            InsertWriter = insertWriter;
             ChangeTrackerFactory = changeTrackerFactory;
             ChangeTrackerApplier = changeTrackerApplier;
             Columns = columns;
@@ -42,6 +40,11 @@ namespace Venflow.Modeling
         internal override EntityColumn GetPrimaryColumn()
         {
             return PrimaryColumn;
+        }
+
+        internal override EntityColumn GetColumn(int index)
+        {
+            return Columns[index];
         }
 
         internal override EntityColumn GetColumn(string columnName)
@@ -73,11 +76,6 @@ namespace Venflow.Modeling
         internal override int GetRegularColumnOffset()
         {
             return Columns.RegularColumnsOffset;
-        }
-
-        internal override EntityColumn GetColumn(int index)
-        {
-            return Columns[index];
         }
     }
 

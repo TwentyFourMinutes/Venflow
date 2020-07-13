@@ -1,10 +1,5 @@
 using Npgsql;
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using System.Text;
-using Venflow.Enums;
 using Venflow.Modeling;
 
 namespace Venflow.Commands
@@ -13,159 +8,55 @@ namespace Venflow.Commands
     {
         internal JoinBuilderValues? JoinValues { get; set; }
 
-        internal bool IsSingle { get; private set; }
-        internal bool TrackingChanges { get; private set; }
-        internal bool GetComputedColumns { get; private set; }
-        internal bool GenerateSql { get; private set; }
-
-        internal bool DisposeCommand { get; }
-
-        private readonly DbConfiguration _dbConfiguration;
+        private readonly bool _disposeCommand;
+        private readonly Database _database;
         private readonly Entity<TEntity> _entityConfiguration;
-        private readonly StringBuilder _commandString;
         private readonly NpgsqlCommand _command;
 
-        internal VenflowCommandBuilder(VenflowDbConnection dbConnection, DbConfiguration dbConfiguration, Entity<TEntity> entityConfiguration, bool disposeCommand = true, NpgsqlCommand? command = null)
+        internal VenflowCommandBuilder(NpgsqlConnection dbConnection, Database database, Entity<TEntity> entityConfiguration, bool disposeCommand = true)
         {
-            _dbConfiguration = dbConfiguration;
+            _database = database;
             _entityConfiguration = entityConfiguration;
-            DisposeCommand = disposeCommand;
-            _commandString = new StringBuilder();
-            _command = command ?? new NpgsqlCommand("", dbConnection.Connection);
+            _disposeCommand = disposeCommand;
+            _command = new NpgsqlCommand();
+            _command.Connection = dbConnection;
         }
 
         #region Query
 
-        public IQueryCommandBuilder<TEntity> Query()
+        public IQueryCommandBuilder<TEntity, TEntity> QuerySingle()
         {
-            GenerateSql = true;
-            return this;
+            return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, true, _disposeCommand);
         }
 
-        public IQueryCommandBuilder<TEntity> Query(string sql)
+        public IQueryCommandBuilder<TEntity, TEntity> QuerySingle(string sql)
         {
-            GenerateSql = false;
-
-            _commandString.Append(sql);
-
-            return this;
+            return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, _disposeCommand);
         }
 
-        public IQueryCommandBuilder<TEntity> Query(string sql, params NpgsqlParameter[] parameters)
+        public IQueryCommandBuilder<TEntity, TEntity> QuerySingle(string sql, params NpgsqlParameter[] parameters)
         {
-            GenerateSql = false;
-
-            _commandString.Append(sql);
-
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                _command.Parameters.Add(parameters[i]);
-            }
-
-            return this;
+            return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, parameters, _disposeCommand);
         }
 
-        IQueryCommandBuilder<TEntity> IQueryCommandBuilder<TEntity>.TrackChanges(bool trackChanges)
+        public IQueryCommandBuilder<TEntity, List<TEntity>> QueryBatch()
         {
-            TrackingChanges = trackChanges;
-
-            return this;
+            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, true, _disposeCommand);
         }
 
-        public JoinBuilder<TEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        public IQueryCommandBuilder<TEntity, List<TEntity>> QueryBatch(ulong count)
         {
-            var builder = new JoinBuilder<TEntity, TToEntity>(_entityConfiguration, this, GenerateSql);
-
-            return builder.JoinWith(propertySelector, joinBehaviour);
+            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, count, _disposeCommand);
         }
 
-        public JoinBuilder<TEntity, TToEntity> JoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        public IQueryCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql)
         {
-            var builder = new JoinBuilder<TEntity, TToEntity>(_entityConfiguration, this, GenerateSql);
-
-            return builder.JoinWith(propertySelector, joinBehaviour);
+            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, sql, _disposeCommand);
         }
 
-        public IQueryCommand<TEntity> Single()
+        public IQueryCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, params NpgsqlParameter[] parameters)
         {
-            IsSingle = true;
-
-            return BaseQuery(1);
-        }
-
-        public IQueryCommand<TEntity> Batch()
-             => BaseQuery(0);
-
-        public IQueryCommand<TEntity> Batch(ulong count)
-        {
-            if (IsSingle)
-            {
-                throw new InvalidOperationException("You can't call Batch on a query which got defined as Single.");
-            }
-            else if (!GenerateSql)
-            {
-                throw new InvalidOperationException("You can not specif the count, if you provided custom sql.");
-            }
-
-            return BaseQuery(count);
-        }
-
-        private IQueryCommand<TEntity> BaseQuery(ulong count)
-        {
-            if (GenerateSql)
-            {
-                if (JoinValues is null)
-                {
-                    AppendBaseQuery(_commandString, count);
-                    _commandString.Append(';');
-                }
-                else
-                {
-                    BaseRelationQuery(count);
-                }
-            }
-
-            return BuildCommand();
-        }
-
-        private void BaseRelationQuery(ulong count)
-        {
-            _commandString.Append("SELECT ");
-
-            _commandString.Append(_entityConfiguration.ExplicitColumnListString);
-
-            var subQuery = new StringBuilder();
-
-            subQuery.Append(" FROM (");
-
-            AppendBaseQuery(subQuery, count);
-
-            subQuery.Append(") AS ");
-
-            subQuery.Append(_entityConfiguration.RawTableName);
-
-            JoinValues!.AppendColumnNamesAndJoins(_commandString, subQuery);
-
-            _commandString.Append(subQuery);
-
-            _commandString.Append(';');
-        }
-
-        private void AppendBaseQuery(StringBuilder sb, ulong count)
-        {
-            sb.Append("SELECT ");
-
-            sb.Append(_entityConfiguration.ColumnListString);
-
-            sb.Append(" FROM ");
-
-            sb.Append(_entityConfiguration.TableName);
-
-            if (count > 0)
-            {
-                sb.Append(" LIMIT ");
-                sb.Append(count);
-            }
+            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, sql, parameters, _disposeCommand);
         }
 
         #endregion
@@ -174,22 +65,7 @@ namespace Venflow.Commands
 
         public IInsertCommandBuilder<TEntity> Insert()
         {
-            return this;
-        }
-
-        IInsertCommandBuilder<TEntity> IInsertCommandBuilder<TEntity>.ReturnComputedColumns(bool returnComputedColumns)
-        {
-            if (returnComputedColumns)
-            {
-                GetComputedColumns = _entityConfiguration.PrimaryColumn.IsServerSideGenerated;
-            }
-
-            return this;
-        }
-
-        IInsertCommand<TEntity> IInsertCommandBuilder<TEntity>.Compile()
-        {
-            return BuildCommand();
+            return new VenflowInsertCommandBuilder<TEntity>(_database, _entityConfiguration, _command, _disposeCommand);
         }
 
         #endregion
@@ -198,12 +74,7 @@ namespace Venflow.Commands
 
         public IDeleteCommandBuilder<TEntity> Delete()
         {
-            return this;
-        }
-
-        IDeleteCommand<TEntity> IDeleteCommandBuilder<TEntity>.Compile()
-        {
-            return BuildCommand();
+            return new VenflowDeleteCommandBuilder<TEntity>(_database, _entityConfiguration, _command, _disposeCommand);
         }
 
         #endregion
@@ -212,119 +83,9 @@ namespace Venflow.Commands
 
         public IUpdateCommandBuilder<TEntity> Update()
         {
-            return this;
-        }
-
-        IUpdateCommand<TEntity>? IUpdateCommandBuilder<TEntity>.Single(TEntity entity)
-        {
-            IsSingle = true;
-
-            BaseUpdate(entity, 0);
-
-            if (_command.Parameters.Count == 0)
-                return null;
-
-            return BuildCommand();
-        }
-
-        IUpdateCommand<TEntity>? IUpdateCommandBuilder<TEntity>.Batch(IEnumerable<TEntity> entities)
-        {
-            if (entities is IList<TEntity> entitiesList)
-            {
-                for (int i = 0; i < entitiesList.Count; i++)
-                {
-                    BaseUpdate(entitiesList[i], i);
-                }
-            }
-            else
-            {
-                var index = 0;
-
-                foreach (var entity in entities)
-                {
-                    BaseUpdate(entity, index++);
-                }
-            }
-
-            if (_command.Parameters.Count == 0)
-                return null;
-
-            return BuildCommand();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void BaseUpdate(TEntity entity, int index)
-        {
-            if (!(entity is IEntityProxy<TEntity> proxy))
-            {
-                throw new InvalidOperationException("The provided entity is currently not being change tracked.");
-            }
-            else if (!proxy.ChangeTracker.IsDirty)
-            {
-                return;
-            }
-
-            _commandString.Append("UPDATE ");
-            _commandString.Append(_entityConfiguration.TableName);
-            _commandString.Append(" SET ");
-
-            var columns = proxy.ChangeTracker.GetColumns()!;
-
-            var entityColumns = _entityConfiguration.Columns;
-
-            for (int i = 0; i < columns.Length; i++)
-            {
-                var columnIndex = columns[i];
-
-                if (columnIndex == 0)
-                    continue;
-
-                var column = entityColumns[columnIndex];
-
-                _commandString.Append('"');
-                _commandString.Append(column.ColumnName);
-                _commandString.Append("\" = ");
-
-                var parameter = column.ValueRetriever(entity, index.ToString());
-
-                _commandString.Append(parameter.ParameterName);
-
-                _command.Parameters.Add(parameter);
-
-                _commandString.Append(", ");
-            }
-
-            _commandString.Length -= 2;
-
-            _commandString.Append(" WHERE \"");
-
-            _commandString.Append(_entityConfiguration.PrimaryColumn.ColumnName);
-
-            _commandString.Append("\" = ");
-
-            var primaryParameter = _entityConfiguration.PrimaryColumn.ValueRetriever(entity, "Return" + index.ToString());
-
-            _command.Parameters.Add(primaryParameter);
-
-            _commandString.Append(primaryParameter.ParameterName);
-
-            _commandString.Append(';');
+            return new VenflowUpdateCommandBuilder<TEntity>(_database, _entityConfiguration, _command, _disposeCommand);
         }
 
         #endregion
-
-        internal VenflowCommand<TEntity> BuildCommand()
-        {
-            _command.CommandText = _commandString.ToString();
-
-            return new VenflowCommand<TEntity>(_dbConfiguration, _entityConfiguration, _command)
-            {
-                GetComputedColumns = GetComputedColumns,
-                IsSingle = IsSingle,
-                TrackingChanges = TrackingChanges,
-                DisposeCommand = DisposeCommand,
-                JoinBuilderValues = JoinValues
-            };
-        }
     }
 }

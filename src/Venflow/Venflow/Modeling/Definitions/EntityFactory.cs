@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Venflow.Enums;
+using Venflow.Modeling.Definitions.Builder;
 
 namespace Venflow.Modeling.Definitions
 {
@@ -25,8 +26,9 @@ namespace Venflow.Modeling.Definitions
             _entity = new Entity<TEntity>(_entityBuilder.Type, _entityBuilder.ChangeTrackerFactory?.ProxyType, _entityBuilder.TableName, columns,
                 (PrimaryEntityColumn<TEntity>)columns[0], GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns),
                 GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames),
-                GetColumnListString(columns, ColumnListStringOptions.None), GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames | ColumnListStringOptions.PrefixedPrimaryKeys),
-                _entityBuilder.InsertWriter, _entityBuilder.ChangeTrackerFactory?.GetProxyFactory(),
+                GetColumnListString(columns, ColumnListStringOptions.None),
+                GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames | ColumnListStringOptions.PrefixedPrimaryKeys),
+                _entityBuilder.ChangeTrackerFactory?.GetProxyFactory(),
                 _entityBuilder.ChangeTrackerFactory?.GetProxyApplyingFactory(columns));
 
             return _entity;
@@ -47,7 +49,11 @@ namespace Venflow.Modeling.Definitions
                 {
                     continue;
                 }
-                var foreignEntity = entityBuilders[relation.RightEntityName];
+
+                if (!entityBuilders.TryGetValue(relation.RightEntityName, out var foreignEntity))
+                {
+                    throw new InvalidOperationException($"The entity '{relation.RightEntityName}' is being used in a relation on '{relation.LeftEntity.Type.Name}', but doesn't contain a 'Table<{relation.RightEntityName}>' entry in the Database.");
+                }
 
                 if (relation.RightNavigationProperty is { })
                 {

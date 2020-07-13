@@ -13,7 +13,7 @@ namespace Venflow.Dynamic
 
         private static readonly string[] _namespaceNames;
 
-        private static ulong _typeNumberIdentifier;
+        private static int _typeNumberIdentifier;
 
         static TypeFactory()
         {

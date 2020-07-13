@@ -11,43 +11,53 @@ namespace Venflow.Benchmarks.Benchmarks
     [MemoryDiagnoser]
     public class QuerySingleAsyncBenchmark : BenchmarkBase
     {
-        private IQueryCommand<Person> _command;
+        private IQueryCommand<Person, Person> _command;
 
         [GlobalSetup]
         public override async Task Setup()
         {
             await base.Setup();
 
-            _command = VenflowDbConnection.Query<Person>().Single();
+            _command = Configuration.People.QuerySingle(false).Build();
 
-            await VenflowDbConnection.Connection.QueryAsync<Person>(whereOrPrimaryKey: null, top: 1);
-            await VenflowDbConnection.QuerySingleAsync(_command);
+            await Configuration.GetConnection().QueryAsync<Person>(whereOrPrimaryKey: null, top: 1);
+
+            await Configuration.People.QueryAsync(_command);
+
+            //await PersonDbContext.People.AsNoTracking().FirstOrDefaultAsync();
         }
+
+        //[Benchmark]
+        //public Task<Person> EfCoreQuerySingleAsync()
+        //{
+        //    return PersonDbContext.People.AsNoTracking().FirstOrDefaultAsync();
+        //}
+
 
         [Benchmark]
         public Task<Person> VenflowQuerySingleAsync()
         {
-            return VenflowDbConnection.QuerySingleAsync(_command);
+            return Configuration.People.QueryAsync(_command);
         }
 
         [Benchmark]
         public Task<Person> RepoDbQuerySingleAsync()
         {
-            return DbConnectionExtension.QueryAsync<Person>(VenflowDbConnection.Connection, whereOrPrimaryKey: null, top: 1).ContinueWith(x => x.Result.First());
+            return DbConnectionExtension.QueryAsync<Person>(Configuration.GetConnection(), whereOrPrimaryKey: null, top: 1).ContinueWith(x => x.Result.First());
         }
 
         [Benchmark]
         public Task<Person> DapperQuerySingleAsync()
         {
-            return VenflowDbConnection.Connection.QueryFirstAsync<Person>("SELECT \"Id\", \"Name\" FROM \"Persons\" LIMIT 1");
+            return Configuration.GetConnection().QueryFirstAsync<Person>("SELECT \"Id\", \"Name\" FROM \"Persons\" LIMIT 1");
         }
 
 
         [GlobalCleanup]
-        public override Task Cleanup()
+        public override async Task Cleanup()
         {
-            _command.Dispose();
-            return base.Cleanup();
+            await _command.DisposeAsync();
+            await base.Cleanup();
         }
     }
 }

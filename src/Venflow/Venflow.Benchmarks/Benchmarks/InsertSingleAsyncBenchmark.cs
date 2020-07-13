@@ -1,62 +1,62 @@
-﻿using BenchmarkDotNet.Attributes;
-using RepoDb;
-using System.Threading.Tasks;
-using Venflow.Benchmarks.Benchmarks.Models;
-using Venflow.Commands;
+﻿//using BenchmarkDotNet.Attributes;
+//using RepoDb;
+//using System.Threading.Tasks;
+//using Venflow.Benchmarks.Benchmarks.Models;
+//using Venflow.Commands;
 
-namespace Venflow.Benchmarks.Benchmarks
-{
-    [MemoryDiagnoser]
-    public class InsertSingleAsyncBenchmark : BenchmarkBase
-    {
-        private IInsertCommand<Person> _command;
+//namespace Venflow.Benchmarks.Benchmarks
+//{
+//    [MemoryDiagnoser]
+//    public class InsertSingleAsyncBenchmark : BenchmarkBase
+//    {
+//        private IInsertCommand<Person> _command;
 
-        [GlobalSetup]
-        public override async Task Setup()
-        {
-            await base.Setup();
+//        [GlobalSetup]
+//        public override async Task Setup()
+//        {
+//            await base.Setup();
 
-            _command = VenflowDbConnection.Insert<Person>(false).Compile();
+//            _command = VenflowDbConnection.Insert<Person>(false).Compile();
 
-            await VenflowDbConnection.InsertSingleAsync(_command, GetDummyPerson());
+//            await VenflowDbConnection.InsertSingleAsync(_command, GetDummyPerson());
 
-            await VenflowDbConnection.Connection.InsertAsync(GetDummyPerson());
+//            await VenflowDbConnection.Connection.InsertAsync(GetDummyPerson());
 
-            PersonDbContext.People.Add(GetDummyPerson());
+//            PersonDbContext.People.Add(GetDummyPerson());
 
-            await PersonDbContext.SaveChangesAsync();
-        }
+//            await PersonDbContext.SaveChangesAsync();
+//        }
 
-        private Person GetDummyPerson()
-        {
-            return new Person { Name = "InsertSingleAsync" };
-        }
+//        private Person GetDummyPerson()
+//        {
+//            return new Person { Name = "InsertSingleAsync" };
+//        }
 
-        [Benchmark]
-        public Task VenflowInsertSingleAsync()
-        {
-            return VenflowDbConnection.InsertSingleAsync(_command, GetDummyPerson());
-        }
+//        [Benchmark]
+//        public Task VenflowInsertSingleAsync()
+//        {
+//            return VenflowDbConnection.InsertSingleAsync(_command, GetDummyPerson());
+//        }
 
-        [Benchmark]
-        public Task EFCoreInsertSingleAsync()
-        {
-            PersonDbContext.People.Add(GetDummyPerson());
+//        [Benchmark]
+//        public Task EFCoreInsertSingleAsync()
+//        {
+//            PersonDbContext.People.Add(GetDummyPerson());
 
-            return PersonDbContext.SaveChangesAsync();
-        }
+//            return PersonDbContext.SaveChangesAsync();
+//        }
 
 
-        [Benchmark]
-        public Task RepoDbInsertSingleAsync()
-        {
-            return VenflowDbConnection.Connection.InsertAsync(GetDummyPerson());
-        }
+//        [Benchmark]
+//        public Task RepoDbInsertSingleAsync()
+//        {
+//            return VenflowDbConnection.Connection.InsertAsync(GetDummyPerson());
+//        }
 
-        [GlobalCleanup]
-        public override Task Cleanup()
-        {
-            return base.Cleanup();
-        }
-    }
-}
+//        [GlobalCleanup]
+//        public override Task Cleanup()
+//        {
+//            return base.Cleanup();
+//        }
+//    }
+//}

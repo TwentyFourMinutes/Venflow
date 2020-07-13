@@ -1,11 +1,12 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Venflow.Commands
 {
     public interface IUpdateCommand<TEntity> : IVenflowCommand<TEntity> where TEntity : class
     {
-        Task<IUpdateCommand<TEntity>> PrepareAsync(CancellationToken cancellationToken = default);
-        IUpdateCommand<TEntity> Unprepare();
+        Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
+        Task UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
     }
 }
