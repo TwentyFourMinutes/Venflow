@@ -14,7 +14,7 @@ namespace Venflow.Commands
 
         private readonly bool _returnComputedColumns;
 
-        internal VenflowInsertCommand(DbConfiguration dbConfiguration, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool returnComputedColumns, bool disposeCommand) : base(dbConfiguration, entityConfiguration, underlyingCommand, disposeCommand)
+        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool returnComputedColumns, bool disposeCommand) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
         {
             _returnComputedColumns = returnComputedColumns;
         }
@@ -31,7 +31,7 @@ namespace Venflow.Commands
             }
             else
             {
-                SingleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter(DbConfiguration);
+                SingleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter(Database);
             }
 
             var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, new List<TEntity> { entity });
@@ -54,7 +54,7 @@ namespace Venflow.Commands
             }
             else
             {
-                BatchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter(DbConfiguration);
+                BatchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter(Database);
             }
 
             var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entities);

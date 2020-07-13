@@ -19,12 +19,12 @@ namespace Venflow.Commands
         private readonly ulong _count;
         private readonly StringBuilder _commandString;
         private readonly NpgsqlCommand _command;
-        private readonly DbConfiguration _dbConfiguration;
+        private readonly Database _database;
         private readonly Entity<TEntity> _entityConfiguration;
 
-        internal VenflowQueryCommandBuilder(DbConfiguration dbConfiguration, Entity<TEntity> entityConfiguration, NpgsqlCommand command, bool generateSQL, bool disposeCommand)
+        internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, bool generateSQL, bool disposeCommand)
         {
-            _dbConfiguration = dbConfiguration;
+            _database = database;
             _entityConfiguration = entityConfiguration;
             _generateSQL = generateSQL;
             _command = command;
@@ -32,17 +32,17 @@ namespace Venflow.Commands
             _commandString = new StringBuilder();
         }
 
-        internal VenflowQueryCommandBuilder(DbConfiguration dbConfiguration, Entity<TEntity> entityConfiguration, NpgsqlCommand command, ulong count, bool disposeCommand) : this(dbConfiguration, entityConfiguration, command, true, disposeCommand)
+        internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, ulong count, bool disposeCommand) : this(database, entityConfiguration, command, true, disposeCommand)
         {
             _count = count;
         }
 
-        internal VenflowQueryCommandBuilder(DbConfiguration dbConfiguration, Entity<TEntity> entityConfiguration, NpgsqlCommand command, string sql, bool disposeCommand) : this(dbConfiguration, entityConfiguration, command, false, disposeCommand)
+        internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, string sql, bool disposeCommand) : this(database, entityConfiguration, command, false, disposeCommand)
         {
             _commandString.Append(sql);
         }
 
-        internal VenflowQueryCommandBuilder(DbConfiguration dbConfiguration, Entity<TEntity> entityConfiguration, NpgsqlCommand command, string sql, IList<NpgsqlParameter> parameters, bool disposeCommand) : this(dbConfiguration, entityConfiguration, command, sql, disposeCommand)
+        internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, string sql, IList<NpgsqlParameter> parameters, bool disposeCommand) : this(database, entityConfiguration, command, sql, disposeCommand)
         {
             for (int i = 0; i < parameters.Count; i++)
             {
@@ -88,7 +88,7 @@ namespace Venflow.Commands
 
             _command.CommandText = _commandString.ToString();
 
-            return new VenflowQueryCommand<TEntity, TReturn>(_dbConfiguration, _entityConfiguration, _command, JoinBuilderValues, _trackChanges, _disposeCommand);
+            return new VenflowQueryCommand<TEntity, TReturn>(_database, _entityConfiguration, _command, JoinBuilderValues, _trackChanges, _disposeCommand);
         }
 
         private void BuildRelationQuery(ulong count)

@@ -2,29 +2,27 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 using Venflow.Modeling;
 
 namespace Venflow
 {
-    internal static class DbConfigurationCache
+    internal static class DatabaseConfigurationCache
     {
-        internal static ConcurrentDictionary<Type, IReadOnlyDictionary<string, Entity>> EntitiesCache { get; } = new ConcurrentDictionary<Type, IReadOnlyDictionary<string, Entity>>();
+        internal static ConcurrentDictionary<Type, DatabaseConfiguration> DatabaseConfigurations { get; } = new ConcurrentDictionary<Type, DatabaseConfiguration>();
 
         internal static object BuildLocker { get; } = new object();
     }
 
-    public abstract class DbConfiguration : IAsyncDisposable
+    public abstract class Database : IAsyncDisposable
     {
         internal IReadOnlyDictionary<string, Entity> Entities { get; private set; }
-        internal bool IsBuild { get; private set; }
 
         internal string ConnectionString { get; }
 
         private NpgsqlConnection? _connection;
 
-        protected DbConfiguration(string connectionString)
+        protected Database(string connectionString)
         {
             ConnectionString = connectionString;
 
@@ -35,7 +33,7 @@ namespace Venflow
         {
             if (!Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
             {
-                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the DbConfiguration.", nameof(TEntity));
+                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the Database.", nameof(TEntity));
             }
 
             var entityConfiguration = (Entity<TEntity>)entityModel;
@@ -50,7 +48,7 @@ namespace Venflow
         {
             if (!Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
             {
-                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the DbConfiguration.", nameof(TEntity));
+                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the Database.", nameof(TEntity));
             }
 
             var entityConfiguration = (Entity<TEntity>)entityModel;
@@ -72,7 +70,7 @@ namespace Venflow
         {
             if (!Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
             {
-                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the DbConfiguration.", nameof(TEntity));
+                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the Database.", nameof(TEntity));
             }
 
             var entityConfiguration = (Entity<TEntity>)entityModel;
@@ -98,52 +96,33 @@ namespace Venflow
             return _connection = new NpgsqlConnection(ConnectionString);
         }
 
-        public void Build()
+        private void Build()
         {
-            if (IsBuild)
-                return;
+            var type = this.GetType();
 
-            lock (DbConfigurationCache.BuildLocker)
+            if (DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(type, out var configuration))
             {
-                if (IsBuild)
-                    return;
+                Entities = configuration.Entities;
 
-                var type = this.GetType();
+                configuration.InstantiateDatabase(this);
 
-                if (DbConfigurationCache.EntitiesCache.TryGetValue(type, out var entities))
+                return;
+            }
+
+            lock (DatabaseConfigurationCache.BuildLocker)
+            {
+                if (!DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(type, out configuration))
                 {
-                    Entities = entities;
+                    var dbConfigurator = new DatabaseConfigurationFactory();
 
-                    // Craete custom function for that
+                    configuration = dbConfigurator.BuildConfiguration(this.GetType());
 
-                    var tableType = typeof(Table<>);
-
-                    var properties = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-                    for (int i = 0; i < properties.Length; i++)
-                    {
-                        var property = properties[i];
-
-                        if (property.PropertyType.GetGenericTypeDefinition() != tableType)
-                        {
-                            continue;
-                        }
-
-                        var entityType = property.PropertyType.GetGenericArguments()[0];
-
-                        property.GetSetMethod().Invoke(this, new object[] { property.PropertyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(DbConfiguration), entities[entityType.Name].GetType() }, null).Invoke(new object[] { this, entities[entityType.Name] }) });
-                    }
-                }
-                else
-                {
-                    var dbConfigurator = new DbConfigurator();
-
-                    Entities = dbConfigurator.BuildConfiguration(this, this.GetType());
-
-                    DbConfigurationCache.EntitiesCache.TryAdd(type, Entities);
+                    DatabaseConfigurationCache.DatabaseConfigurations.TryAdd(type, configuration);
                 }
 
-                IsBuild = true;
+                Entities = configuration.Entities;
+
+                configuration.InstantiateDatabase(this);
             }
         }
 

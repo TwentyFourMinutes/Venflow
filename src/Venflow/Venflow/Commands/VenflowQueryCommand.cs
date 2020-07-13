@@ -13,7 +13,7 @@ namespace Venflow.Commands
         private readonly JoinBuilderValues _joinBuilderValues;
         private readonly bool _trackingChanges;
 
-        internal VenflowQueryCommand(DbConfiguration dbConfiguration, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, JoinBuilderValues joinBuilderValues, bool trackingChanges, bool disposeCommand) : base(dbConfiguration, entityConfiguration, underlyingCommand, disposeCommand)
+        internal VenflowQueryCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, JoinBuilderValues joinBuilderValues, bool trackingChanges, bool disposeCommand) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
         {
             _joinBuilderValues = joinBuilderValues;
             _trackingChanges = trackingChanges;
@@ -33,7 +33,7 @@ namespace Venflow.Commands
             }
             else
             {
-                Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer<TReturn>(_joinBuilderValues, DbConfiguration, reader.GetColumnSchema(), _trackingChanges);
+                Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer<TReturn>(_joinBuilderValues, Database, reader.GetColumnSchema(), _trackingChanges);
             }
 
             var entities = await materializer(reader);

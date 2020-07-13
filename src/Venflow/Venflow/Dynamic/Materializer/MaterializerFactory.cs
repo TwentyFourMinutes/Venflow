@@ -30,7 +30,7 @@ namespace Venflow.Dynamic.Materializer
             _materializerLock = new object();
         }
 
-        internal Func<NpgsqlDataReader, Task<TReturn>> GetOrCreateMaterializer<TReturn>(JoinBuilderValues? joinBuilderValues, DbConfiguration dbConfiguration, ReadOnlyCollection<NpgsqlDbColumn> columnSchema, bool changeTracking) where TReturn : class
+        internal Func<NpgsqlDataReader, Task<TReturn>> GetOrCreateMaterializer<TReturn>(JoinBuilderValues? joinBuilderValues, Database database, ReadOnlyCollection<NpgsqlDbColumn> columnSchema, bool changeTracking) where TReturn : class
         {
             var cacheKeyBuilder = new HashCode();
 
@@ -41,7 +41,7 @@ namespace Venflow.Dynamic.Materializer
             {
                 var column = columnSchema[i];
 
-                if (TryGetEntityOfTable(dbConfiguration, column, out var entity, out var columnName))
+                if (TryGetEntityOfTable(database, column, out var entity, out var columnName))
                 {
 
                     cacheKeyBuilder.Add(entity.TableName);
@@ -74,7 +74,7 @@ namespace Venflow.Dynamic.Materializer
                     {
                         var column = columnSchema[i];
 
-                        if (TryGetEntityOfTable(dbConfiguration, column, out var entity, out var columnName))
+                        if (TryGetEntityOfTable(database, column, out var entity, out var columnName))
                         {
                             columns = new List<KeyValuePair<string, int>>()
                             {
@@ -776,7 +776,7 @@ namespace Venflow.Dynamic.Materializer
             return (Func<NpgsqlDataReader, Task<TReturn>>)materializerType.GetMethod("MaterializeAsync").CreateDelegate(typeof(Func<NpgsqlDataReader, Task<TReturn>>));
         }
 
-        private bool TryGetEntityOfTable(DbConfiguration dbConfiguration, NpgsqlDbColumn column, out Entity? entity,
+        private bool TryGetEntityOfTable(Database database, NpgsqlDbColumn column, out Entity? entity,
             out string? columnName)
         {
             entity = null;
@@ -808,7 +808,7 @@ namespace Venflow.Dynamic.Materializer
 
             var tableName = tableNameBuilder.ToString();
 
-            if (!dbConfiguration.Entities.TryGetValue(tableName, out entity))
+            if (!database.Entities.TryGetValue(tableName, out entity))
             {
                 throw new InvalidOperationException($"There is so entity mapped to the table '{tableName}'.");
             }

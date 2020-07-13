@@ -12,12 +12,12 @@ namespace Venflow.Modeling
 {
     public class Table<TEntity> where TEntity : class
     {
-        private readonly DbConfiguration _dbConfiguration;
+        private readonly Database _database;
         private readonly Entity<TEntity> _configuration;
 
-        internal Table(DbConfiguration dbConfiguration, Entity<TEntity> configuration)
+        internal Table(Database database, Entity<TEntity> configuration)
         {
-            _dbConfiguration = dbConfiguration;
+            _database = database;
             _configuration = configuration;
         }
 
@@ -60,7 +60,7 @@ namespace Venflow.Modeling
                     break;
             }
 
-            using var command = new NpgsqlCommand(sb.ToString(), _dbConfiguration.GetConnection());
+            using var command = new NpgsqlCommand(sb.ToString(), _database.GetConnection());
 
             await command.ExecuteNonQueryAsync(cancellationToken);
         }
@@ -69,7 +69,7 @@ namespace Venflow.Modeling
         {
             await ValidateConnectionAsync();
 
-            using var command = new NpgsqlCommand("SELECT COUNT(*) FROM " + _configuration.TableName, _dbConfiguration.GetConnection());
+            using var command = new NpgsqlCommand("SELECT COUNT(*) FROM " + _configuration.TableName, _database.GetConnection());
 
             return (long)await command.ExecuteScalarAsync(cancellationToken);
         }
@@ -85,7 +85,7 @@ namespace Venflow.Modeling
 
         public Task<int> InsertAsync(IInsertCommand<TEntity> insertCommand, TEntity entity, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)insertCommand).UnderlyingCommand.Connection = _dbConfiguration.GetConnection();
+            ((VenflowBaseCommand<TEntity>)insertCommand).UnderlyingCommand.Connection = _database.GetConnection();
 
             return insertCommand.InsertAsync(entity, cancellationToken);
         }
@@ -97,7 +97,7 @@ namespace Venflow.Modeling
 
         public Task<int> InsertAsync(IInsertCommand<TEntity> insertCommand, List<TEntity> entities, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)insertCommand).UnderlyingCommand.Connection = _dbConfiguration.GetConnection();
+            ((VenflowBaseCommand<TEntity>)insertCommand).UnderlyingCommand.Connection = _database.GetConnection();
 
             return insertCommand.InsertAsync(entities, cancellationToken);
         }
@@ -108,7 +108,7 @@ namespace Venflow.Modeling
 
         public Task<TReturn> QueryAsync<TReturn>(IQueryCommand<TEntity, TReturn> queryCommand, CancellationToken cancellationToken = default) where TReturn : class
         {
-            ((VenflowBaseCommand<TEntity>)queryCommand).UnderlyingCommand.Connection = _dbConfiguration.GetConnection();
+            ((VenflowBaseCommand<TEntity>)queryCommand).UnderlyingCommand.Connection = _database.GetConnection();
 
             return queryCommand.QueryAsync(cancellationToken);
         }
@@ -124,7 +124,7 @@ namespace Venflow.Modeling
 
         public Task<int> DeleteAsync(IDeleteCommand<TEntity> deleteCommand, TEntity entity, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)deleteCommand).UnderlyingCommand.Connection = _dbConfiguration.GetConnection();
+            ((VenflowBaseCommand<TEntity>)deleteCommand).UnderlyingCommand.Connection = _database.GetConnection();
 
             return deleteCommand.DeleteAsync(entity, cancellationToken);
         }
@@ -136,7 +136,7 @@ namespace Venflow.Modeling
 
         public Task<int> DeleteAsync(IDeleteCommand<TEntity> deleteCommand, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)deleteCommand).UnderlyingCommand.Connection = _dbConfiguration.GetConnection();
+            ((VenflowBaseCommand<TEntity>)deleteCommand).UnderlyingCommand.Connection = _database.GetConnection();
 
             return deleteCommand.DeleteAsync(entities, cancellationToken);
         }
@@ -152,7 +152,7 @@ namespace Venflow.Modeling
 
         public Task UpdateAsync(IUpdateCommand<TEntity> updateCommand, TEntity entity, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)updateCommand).UnderlyingCommand.Connection = _dbConfiguration.GetConnection();
+            ((VenflowBaseCommand<TEntity>)updateCommand).UnderlyingCommand.Connection = _database.GetConnection();
 
             return updateCommand.UpdateAsync(entity, cancellationToken);
         }
@@ -164,7 +164,7 @@ namespace Venflow.Modeling
 
         public Task UpdateAsync(IUpdateCommand<TEntity> updateCommand, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)updateCommand).UnderlyingCommand.Connection = _dbConfiguration.GetConnection();
+            ((VenflowBaseCommand<TEntity>)updateCommand).UnderlyingCommand.Connection = _database.GetConnection();
 
             return updateCommand.UpdateAsync(entities, cancellationToken);
         }
@@ -174,70 +174,70 @@ namespace Venflow.Modeling
         #region Builder
 
         public IQueryCommandBuilder<TEntity, TEntity> QuerySingle(bool disposeCommand = true)
-            => new VenflowCommandBuilder<TEntity>(_dbConfiguration.GetConnection(), _dbConfiguration, _configuration, disposeCommand).QuerySingle();
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QuerySingle();
 
         public IQueryCommandBuilder<TEntity, TEntity> QuerySingle(string sql, bool disposeCommand = true)
-            => new VenflowCommandBuilder<TEntity>(_dbConfiguration.GetConnection(), _dbConfiguration, _configuration, disposeCommand).QuerySingle(sql);
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QuerySingle(sql);
 
         public IQueryCommandBuilder<TEntity, TEntity> QuerySingle(string sql, params NpgsqlParameter[] parameters)
-            => new VenflowCommandBuilder<TEntity>(_dbConfiguration.GetConnection(), _dbConfiguration, _configuration, false).QuerySingle(sql, parameters);
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, false).QuerySingle(sql, parameters);
 
         public IQueryCommandBuilder<TEntity, TEntity> QuerySingle(string sql, bool disposeCommand, params NpgsqlParameter[] parameters)
-           => new VenflowCommandBuilder<TEntity>(_dbConfiguration.GetConnection(), _dbConfiguration, _configuration, disposeCommand).QuerySingle(sql, parameters);
+           => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QuerySingle(sql, parameters);
 
         public IQueryCommandBuilder<TEntity, List<TEntity>> QueryBatch(bool disposeCommand = true)
-            => new VenflowCommandBuilder<TEntity>(_dbConfiguration.GetConnection(), _dbConfiguration, _configuration, disposeCommand).QueryBatch();
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QueryBatch();
 
         public IQueryCommandBuilder<TEntity, List<TEntity>> QueryBatch(ulong count, bool disposeCommand = true)
-            => new VenflowCommandBuilder<TEntity>(_dbConfiguration.GetConnection(), _dbConfiguration, _configuration, disposeCommand).QueryBatch(count);
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QueryBatch(count);
 
         public IQueryCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, bool disposeCommand = true)
-            => new VenflowCommandBuilder<TEntity>(_dbConfiguration.GetConnection(), _dbConfiguration, _configuration, disposeCommand).QueryBatch(sql);
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QueryBatch(sql);
 
         public IQueryCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, params NpgsqlParameter[] parameters)
-            => new VenflowCommandBuilder<TEntity>(_dbConfiguration.GetConnection(), _dbConfiguration, _configuration, false).QueryBatch(sql, parameters);
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, false).QueryBatch(sql, parameters);
 
         public IQueryCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, bool disposeCommand, params NpgsqlParameter[] parameters)
-            => new VenflowCommandBuilder<TEntity>(_dbConfiguration.GetConnection(), _dbConfiguration, _configuration, disposeCommand).QueryBatch(sql, parameters);
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QueryBatch(sql, parameters);
 
         public IInsertCommandBuilder<TEntity> Insert()
-            => new VenflowCommandBuilder<TEntity>(_dbConfiguration.GetConnection(), _dbConfiguration, _configuration, false).Insert();
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, false).Insert();
 
         public IInsertCommandBuilder<TEntity> Insert(bool disposeCommand)
-            => new VenflowCommandBuilder<TEntity>(_dbConfiguration.GetConnection(), _dbConfiguration, _configuration, disposeCommand).Insert();
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).Insert();
 
         public IDeleteCommandBuilder<TEntity> Delete()
-            => new VenflowCommandBuilder<TEntity>(_dbConfiguration.GetConnection(), _dbConfiguration, _configuration, false).Delete();
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, false).Delete();
 
         public IDeleteCommandBuilder<TEntity> Delete(bool disposeCommand)
-            => new VenflowCommandBuilder<TEntity>(_dbConfiguration.GetConnection(), _dbConfiguration, _configuration, disposeCommand).Delete();
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).Delete();
 
         public IUpdateCommandBuilder<TEntity> Update()
-            => new VenflowCommandBuilder<TEntity>(_dbConfiguration.GetConnection(), _dbConfiguration, _configuration, false).Update();
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, false).Update();
 
         public IUpdateCommandBuilder<TEntity> Update(bool disposeCommand)
-            => new VenflowCommandBuilder<TEntity>(_dbConfiguration.GetConnection(), _dbConfiguration, _configuration, disposeCommand).Update();
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).Update();
 
         #endregion
 
         public void TrackChanges(ref TEntity entity)
         {
-            _dbConfiguration.TrackChanges(ref entity);
+            _database.TrackChanges(ref entity);
         }
 
         public void TrackChanges(ref IList<TEntity> entities)
         {
-            _dbConfiguration.TrackChanges(ref entities);
+            _database.TrackChanges(ref entities);
         }
 
         public void TrackChanges(ref IEnumerable<TEntity> entities)
         {
-            _dbConfiguration.TrackChanges(ref entities);
+            _database.TrackChanges(ref entities);
         }
 
         protected ValueTask ValidateConnectionAsync()
         {
-            var connection = _dbConfiguration.GetConnection();
+            var connection = _database.GetConnection();
 
             if (connection.State == ConnectionState.Open)
                 return default;

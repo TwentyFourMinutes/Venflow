@@ -2,27 +2,29 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using Venflow.Dynamic.Instantiater;
 using Venflow.Modeling.Definitions;
 using Venflow.Modeling.Definitions.Builder;
 
 namespace Venflow.Modeling
 {
-    internal class DbConfigurator
+    internal class DatabaseConfigurationFactory
     {
         private readonly List<EntityFactory> _entityFactories;
         private readonly Dictionary<string, EntityBuilder> _entityBuilders;
 
-        internal DbConfigurator()
+        internal DatabaseConfigurationFactory()
         {
             _entityFactories = new List<EntityFactory>();
             _entityBuilders = new Dictionary<string, EntityBuilder>();
         }
 
-        internal IReadOnlyDictionary<string, Entity> BuildConfiguration(DbConfiguration dbConfiguration, Type dbConfigurationType)
+        internal DatabaseConfiguration BuildConfiguration(Type dbConfigurationType)
         {
             var tables = FindDbConfigurations(dbConfigurationType);
 
             var entities = new Dictionary<string, Entity>();
+            var entitiesArray = new Entity[_entityFactories.Count];
 
             for (int i = 0; i < _entityFactories.Count; i++)
             {
@@ -33,11 +35,8 @@ namespace Venflow.Modeling
             {
                 var entity = _entityFactories[i].BuildEntity();
 
-                var table = tables[i];
-
-                table.GetSetMethod().Invoke(dbConfiguration, new object[] { table.PropertyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(DbConfiguration), entity.GetType() }, null).Invoke(new object[] { dbConfiguration, entity }) });
-
                 entities.Add(entity.EntityName, entity);
+                entitiesArray[i] = entity;
             }
 
             for (int i = 0; i < _entityFactories.Count; i++)
@@ -47,7 +46,7 @@ namespace Venflow.Modeling
                 entityFactory.ApplyForeignRelations(entities);
             }
 
-            return new ReadOnlyDictionary<string, Entity>(entities);
+            return new DatabaseConfiguration(DatabaseTableFactory.CreateInstantiater(tables, entitiesArray), new ReadOnlyDictionary<string, Entity>(entities), entitiesArray);
         }
 
         private List<PropertyInfo> FindDbConfigurations(Type dbConfigurationType)

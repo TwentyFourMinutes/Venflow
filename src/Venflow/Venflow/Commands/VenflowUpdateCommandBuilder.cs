@@ -7,12 +7,12 @@ namespace Venflow.Commands
     {
         private readonly bool _disposeCommand;
         private readonly NpgsqlCommand _command;
-        private readonly DbConfiguration _dbConfiguration;
+        private readonly Database _database;
         private readonly Entity<TEntity> _entityConfiguration;
 
-        internal VenflowUpdateCommandBuilder(DbConfiguration dbConfiguration, Entity<TEntity> entityConfiguration, NpgsqlCommand command, bool disposeCommand)
+        internal VenflowUpdateCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, bool disposeCommand)
         {
-            _dbConfiguration = dbConfiguration;
+            _database = database;
             _entityConfiguration = entityConfiguration;
             _command = command;
             _disposeCommand = disposeCommand;
@@ -20,7 +20,7 @@ namespace Venflow.Commands
 
         IUpdateCommand<TEntity> ISpecficVenflowCommandBuilder<IUpdateCommand<TEntity>>.Build()
         {
-            return new VenflowUpdateCommand<TEntity>(_dbConfiguration, _entityConfiguration, _command, _disposeCommand);
+            return new VenflowUpdateCommand<TEntity>(_database, _entityConfiguration, _command, _disposeCommand);
         }
     }
 }

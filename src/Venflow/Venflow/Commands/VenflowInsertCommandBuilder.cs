@@ -9,12 +9,12 @@ namespace Venflow.Commands
 
         private readonly bool _disposeCommand;
         private readonly NpgsqlCommand _command;
-        private readonly DbConfiguration _dbConfiguration;
+        private readonly Database _database;
         private readonly Entity<TEntity> _entityConfiguration;
 
-        internal VenflowInsertCommandBuilder(DbConfiguration dbConfiguration, Entity<TEntity> entityConfiguration, NpgsqlCommand command, bool disposeCommand)
+        internal VenflowInsertCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, bool disposeCommand)
         {
-            _dbConfiguration = dbConfiguration;
+            _database = database;
             _entityConfiguration = entityConfiguration;
             _command = command;
             _disposeCommand = disposeCommand;
@@ -22,7 +22,7 @@ namespace Venflow.Commands
 
         IInsertCommand<TEntity> ISpecficVenflowCommandBuilder<IInsertCommand<TEntity>>.Build()
         {
-            return new VenflowInsertCommand<TEntity>(_dbConfiguration, _entityConfiguration, _command, _returnComputedColumns, _disposeCommand);
+            return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _command, _returnComputedColumns, _disposeCommand);
         }
 
         IInsertCommandBuilder<TEntity> IInsertCommandBuilder<TEntity>.ReturnComputedColumns(bool returnComputedColumns)
