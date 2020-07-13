@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 using Venflow.Dynamic.Proxies;
 using Venflow.Enums;
 
@@ -16,7 +15,6 @@ namespace Venflow.Modeling.Definitions.Builder
         internal override Type Type { get; }
 
         internal ChangeTrackerFactory<TEntity>? ChangeTrackerFactory { get; private set; }
-        internal Action<TEntity, StringBuilder, string, NpgsqlParameterCollection> InsertWriter { get; private set; }
         internal string? TableName { get; private set; }
         internal IDictionary<string, ColumnDefinition<TEntity>> ColumnDefinitions { get; }
 
@@ -291,8 +289,6 @@ namespace Venflow.Modeling.Definitions.Builder
             }
 
             insertWriterStatments.RemoveAt(insertWriterStatments.Count - 1);
-
-            InsertWriter = Expression.Lambda<Action<TEntity, StringBuilder, string, NpgsqlParameterCollection>>(Expression.Block(insertWriterVariables, insertWriterStatments), entityParameter, stringBuilderParameter, indexParameter, npgsqlParameterCollectionParameter).Compile();
 
             return new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn, regularColumnsOffset);
         }
