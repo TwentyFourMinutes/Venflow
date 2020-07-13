@@ -1,4 +1,6 @@
-﻿namespace Venflow.Modeling.Definitions
+﻿using Venflow.Modeling.Definitions.Builder;
+
+namespace Venflow.Modeling.Definitions
 {
     public abstract class EntityConfiguration<TEntity> : EntityConfiguration where TEntity : class
     {

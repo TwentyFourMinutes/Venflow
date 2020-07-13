@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using Venflow.Enums;
 using Venflow.Modeling;
-using Venflow.Models;
 
 namespace Venflow.Commands
 {

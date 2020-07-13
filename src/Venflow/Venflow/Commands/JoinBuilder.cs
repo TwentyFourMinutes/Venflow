@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using Venflow.Enums;
 using Venflow.Modeling;
 using Venflow.Modeling.Definitions;
-using Venflow.Models;
 
 namespace Venflow.Commands
 {

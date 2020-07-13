@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Venflow.Enums;
+using Venflow.Modeling.Definitions.Builder;
 
 namespace Venflow.Modeling.Definitions
 {
