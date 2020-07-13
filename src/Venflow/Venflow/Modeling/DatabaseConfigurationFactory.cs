@@ -19,9 +19,9 @@ namespace Venflow.Modeling
             _entityBuilders = new Dictionary<string, EntityBuilder>();
         }
 
-        internal DatabaseConfiguration BuildConfiguration(Type dbConfigurationType)
+        internal DatabaseConfiguration BuildConfiguration(Type databaseType)
         {
-            var tables = FindDbConfigurations(dbConfigurationType);
+            var tables = FindEntityConfigurations(databaseType);
 
             var entities = new Dictionary<string, Entity>();
             var entitiesArray = new Entity[_entityFactories.Count];
@@ -49,11 +49,11 @@ namespace Venflow.Modeling
             return new DatabaseConfiguration(DatabaseTableFactory.CreateInstantiater(tables, entitiesArray), new ReadOnlyDictionary<string, Entity>(entities), entitiesArray);
         }
 
-        private List<PropertyInfo> FindDbConfigurations(Type dbConfigurationType)
+        private List<PropertyInfo> FindEntityConfigurations(Type databaseType)
         {
-            var properties = dbConfigurationType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var properties = databaseType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-            var assembly = dbConfigurationType.Assembly;
+            var assembly = databaseType.Assembly;
 
             var tableType = typeof(Table<>);
             var configurationType = typeof(EntityConfiguration<>);

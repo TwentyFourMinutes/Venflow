@@ -10,13 +10,13 @@ namespace Venflow.Commands
     {
         internal bool DisposeCommand { get; set; }
 
-        internal Database DbConfiguration { get; }
+        internal Database Database { get; }
         internal Entity<TEntity> EntityConfiguration { get; }
         internal NpgsqlCommand UnderlyingCommand { get; }
 
-        protected VenflowBaseCommand(Database dbConfiguration, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand)
+        protected VenflowBaseCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand)
         {
-            DbConfiguration = dbConfiguration;
+            Database = database;
             EntityConfiguration = entityConfiguration;
             UnderlyingCommand = underlyingCommand;
             DisposeCommand = disposeCommand;
