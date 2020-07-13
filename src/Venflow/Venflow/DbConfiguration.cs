@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Venflow.Modeling;
-using Venflow.Modeling.Definitions;
 
 namespace Venflow
 {
