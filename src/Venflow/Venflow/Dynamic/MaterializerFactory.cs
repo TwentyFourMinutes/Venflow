@@ -399,13 +399,16 @@ namespace Venflow.Dynamic
                         {
                             var relation = entity.Relations[k];
 
-                            lastEntityFieldDictionary.Add(entity.EntityName + relation.RightEntity.EntityName + (relation.LeftNavigationProperty ?? relation.RightNavigationProperty).Name, isSingleResult && i == 0 ? primaryEntityField : lastEntityField);
+                            if (relation.LeftNavigationProperty is null)
+                                continue;
+
+                            lastEntityFieldDictionary.Add(entity.EntityName + relation.RightEntity.EntityName + relation.LeftNavigationProperty.Name, isSingleResult && i == 0 ? primaryEntityField : lastEntityField);
 
                             if (relation.RelationType != RelationType.OneToMany)
                             {
-                                if (shouldCheckForChange)
+                                if (shouldCheckForChange && relation.RightNavigationProperty is { })
                                 {
-                                    entityRelationAssignment.Relations.Add(new RelationAssignmentInformation(relation, relation.RightEntity.EntityName + entity.EntityName + (relation.RightNavigationProperty ?? relation.LeftNavigationProperty).Name));
+                                    //entityRelationAssignment.Relations.Add(new RelationAssignmentInformation(relation, relation.RightEntity.EntityName + entity.EntityName + relation.RightNavigationProperty.Name));
                                 }
 
                                 continue;
