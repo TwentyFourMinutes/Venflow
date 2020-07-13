@@ -26,8 +26,9 @@ namespace Venflow.Modeling.Definitions
             _entity = new Entity<TEntity>(_entityBuilder.Type, _entityBuilder.ChangeTrackerFactory?.ProxyType, _entityBuilder.TableName, columns,
                 (PrimaryEntityColumn<TEntity>)columns[0], GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns),
                 GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames),
-                GetColumnListString(columns, ColumnListStringOptions.None), GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames | ColumnListStringOptions.PrefixedPrimaryKeys),
-                _entityBuilder.InsertWriter, _entityBuilder.ChangeTrackerFactory?.GetProxyFactory(),
+                GetColumnListString(columns, ColumnListStringOptions.None),
+                GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames | ColumnListStringOptions.PrefixedPrimaryKeys),
+                _entityBuilder.ChangeTrackerFactory?.GetProxyFactory(),
                 _entityBuilder.ChangeTrackerFactory?.GetProxyApplyingFactory(columns));
 
             return _entity;
