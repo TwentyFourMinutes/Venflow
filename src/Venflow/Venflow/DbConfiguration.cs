@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using Venflow.Modeling;
+using Venflow.Modeling.Definitions;
 
 namespace Venflow
 {
@@ -112,6 +114,26 @@ namespace Venflow
                 if (DbConfigurationCache.EntitiesCache.TryGetValue(type, out var entities))
                 {
                     Entities = entities;
+
+                    // Craete custom function for that
+
+                    var tableType = typeof(Table<>);
+
+                    var properties = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+                    for (int i = 0; i < properties.Length; i++)
+                    {
+                        var property = properties[i];
+
+                        if (property.PropertyType.GetGenericTypeDefinition() != tableType)
+                        {
+                            continue;
+                        }
+
+                        var entityType = property.PropertyType.GetGenericArguments()[0];
+
+                        property.GetSetMethod().Invoke(this, new object[] { property.PropertyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(DbConfiguration), entities[entityType.Name].GetType() }, null).Invoke(new object[] { this, entities[entityType.Name] }) });
+                    }
                 }
                 else
                 {
