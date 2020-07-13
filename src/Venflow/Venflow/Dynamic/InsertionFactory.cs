@@ -36,8 +36,19 @@ namespace Venflow.Dynamic
             }
             else
             {
-                //Create single inserter
-                throw new NotImplementedException();
+                // TODO: Create Single Inserter
+                if (_inserter is null)
+                {
+                    var sourceCompiler = new InsertionSourceCompiler();
+
+                    sourceCompiler.Compile(_entity);
+
+                    return _inserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(sourceCompiler.GenerateSortedEntities());
+                }
+                else
+                {
+                    return _inserter;
+                }
             }
         }
     }
