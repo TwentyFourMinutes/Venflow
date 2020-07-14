@@ -1,10 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Dapper;
-using Microsoft.EntityFrameworkCore;
 using RepoDb;
 using RepoDb.Extensions;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Venflow.Benchmarks.Benchmarks.Models;
 using Venflow.Commands;
