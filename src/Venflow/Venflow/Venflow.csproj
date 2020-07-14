@@ -11,7 +11,8 @@
     <Description>A brand new, lightweight and fast ORM, build for PostgreSQL.</Description>
     <Company>Twenty</Company>
     <Authors>Twenty</Authors>
-    <Version>1.0.0.0-alpha1</Version>
+    <Language>en</Language>
+    <Version>1.0.0.0-alpha2</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Title>Venflow</Title>
     <PackageOutputPath>bin\Package</PackageOutputPath>
