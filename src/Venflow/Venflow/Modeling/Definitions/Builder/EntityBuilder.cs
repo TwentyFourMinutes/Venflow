@@ -20,8 +20,10 @@ namespace Venflow.Modeling.Definitions.Builder
 
         private readonly HashSet<string> _ignoredColumns;
 
-        internal EntityBuilder()
+        internal EntityBuilder(string tableName)
         {
+            TableName = tableName;
+
             Type = typeof(TEntity);
             ColumnDefinitions = new Dictionary<string, ColumnDefinition<TEntity>>();
             _ignoredColumns = new HashSet<string>();
@@ -274,11 +276,6 @@ namespace Venflow.Modeling.Definitions.Builder
             if (primaryColumn is null)
             {
                 throw new InvalidOperationException("The EntityBuilder didn't configure the primary key nor is any property named 'Id'.");
-            }
-
-            if (TableName is null)
-            {
-                TableName = Type.Name + "s";
             }
 
             if (changeTrackingColumns.Count != 0)

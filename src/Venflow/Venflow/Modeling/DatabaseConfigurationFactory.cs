@@ -109,7 +109,7 @@ namespace Venflow.Modeling
 
                 var entityConfiguration = (EntityConfiguration)Activator.CreateInstance(configuration)!;
 
-                AddToConfigurations(entityConfiguration.BuildConfiguration());
+                AddToConfigurations(entityConfiguration.BuildConfiguration(property.Name));
             }
 
             return tables;
