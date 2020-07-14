@@ -139,10 +139,8 @@ namespace Venflow.Modeling.Definitions.Builder
                     {
                         annotedPrimaryKey = property;
                     }
-                    else
-                    {
-                        filteredProperties.Add(property);
-                    }
+
+                    filteredProperties.Add(property);
                 }
             }
 

@@ -89,6 +89,9 @@ namespace Venflow.Modeling
 
             var tables = new List<PropertyInfo>();
 
+            var genericEntityBuilderType = typeof(EntityBuilder<>);
+            var genericEntityFactoryType = typeof(EntityFactory<>);
+
             for (int i = 0; i < properties.Length; i++)
             {
                 var property = properties[i];
@@ -100,16 +103,24 @@ namespace Venflow.Modeling
 
                 var entityType = property.PropertyType.GetGenericArguments()[0];
 
-                if (!configurations.TryGetValue(entityType, out var configuration))
+                if (configurations.TryGetValue(entityType, out var configuration))
                 {
-                    throw new InvalidOperationException($"There is no entity configuration for the entity '{entityType.Name}'.");
+                    var entityConfiguration = (EntityConfiguration)Activator.CreateInstance(configuration)!;
+
+                    AddToConfigurations(entityConfiguration.BuildConfiguration(property.Name));
+                }
+                else
+                {
+                    var entityBuilderType = genericEntityBuilderType.MakeGenericType(entityType);
+                    var entityFactoryType = genericEntityFactoryType.MakeGenericType(entityType);
+
+                    var entityBuilderInstance = Activator.CreateInstance(entityBuilderType, BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { property.Name }, null);
+                    var entityFactoryInstance = Activator.CreateInstance(entityFactoryType, BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { entityBuilderInstance }, null);
+
+                    AddToConfigurations((EntityFactory)entityFactoryInstance);
                 }
 
                 tables.Add(property);
-
-                var entityConfiguration = (EntityConfiguration)Activator.CreateInstance(configuration)!;
-
-                AddToConfigurations(entityConfiguration.BuildConfiguration(property.Name));
             }
 
             return tables;
