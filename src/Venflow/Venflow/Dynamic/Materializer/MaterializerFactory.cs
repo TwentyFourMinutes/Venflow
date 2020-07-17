@@ -376,7 +376,7 @@ namespace Venflow.Dynamic.Materializer
 
                         if (!entity.TryGetColumn(columnScheme.Key, out var column))
                         {
-                            throw new InvalidOperationException($"There is no column mapped to column '{columnScheme.Key}' on Entity '{entity.EntityName}'");
+                            throw new InvalidOperationException($"The query returned the column '{columnScheme.Key}' however the entity '{entity.EntityName}' doesn't contain a matching property.");
                         }
 
                         iLGhostBodyGen.Emit(OpCodes.Dup);
@@ -574,7 +574,11 @@ namespace Venflow.Dynamic.Materializer
                 for (int k = 0; k < columns.Count; k++)
                 {
                     var columnScheme = columns[k];
-                    var column = _entity.GetColumn(columnScheme.Key);
+
+                    if (!_entity.TryGetColumn(columnScheme.Key, out var column))
+                    {
+                        throw new InvalidOperationException($"The query returned the column '{columnScheme.Key}' however the entity '{_entity.EntityName}' doesn't contain a matching property.");
+                    }
 
                     iLGhostBodyGen.Emit(OpCodes.Dup);
                     iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
