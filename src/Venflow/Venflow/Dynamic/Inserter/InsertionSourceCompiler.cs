@@ -80,10 +80,15 @@ namespace Venflow.Dynamic.Inserter
             {
                 var relation = entity.Relations[i];
 
-                if (_visitedEntities.Contains(RuntimeHelpers.GetHashCode(relation.RightEntity)))
+                if (relation.LeftNavigationProperty is null || _visitedEntities.Contains(RuntimeHelpers.GetHashCode(relation.RightEntity)))
                     continue;
 
                 Compile(relation.RightEntity);
+            }
+
+            if (_visitedEntities.Count == 1)
+            {
+                _entityRelations.AddFirst(new EntityRelationHolder(entity));
             }
         }
 
