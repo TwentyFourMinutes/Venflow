@@ -167,8 +167,6 @@ namespace Venflow.Modeling.Definitions.Builder
             var npgsqlParameterCollectionAdd = TypeCache.NpgsqlParameterCollection.GetMethod("Add", new Type[] { TypeCache.GenericNpgsqlParameter });
 
             // Important column specifications
-
-            var columnIndex = 0;
             var regularColumnsOffset = 0;
 
             for (int i = 0; i < filteredProperties.Count; i++)
@@ -224,7 +222,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                             if (setMethod.IsVirtual && !setMethod.IsFinal)
                             {
-                                changeTrackingColumns.Add(columnIndex + 1, primaryColumn);
+                                changeTrackingColumns.Add(i, primaryColumn);
                             }
 
                             nameToColumn.Add(definition.Name, primaryColumn);
@@ -246,7 +244,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                     if (setMethod.IsVirtual && !setMethod.IsFinal)
                     {
-                        changeTrackingColumns.Add(columnIndex + 1, primaryColumn);
+                        changeTrackingColumns.Add(i, primaryColumn);
                     }
 
                     nameToColumn.Add(annotedPrimaryKey.Name, primaryColumn);
@@ -283,7 +281,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                     if (setMethod.IsVirtual && !setMethod.IsFinal)
                     {
-                        changeTrackingColumns.Add(columnIndex + 1, column);
+                        changeTrackingColumns.Add(i, column);
                     }
 
                     nameToColumn.Add(columnName, column);

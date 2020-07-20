@@ -177,8 +177,6 @@ namespace Venflow.Dynamic.Materializer
 
             FieldBuilder primaryEntityField;
 
-
-
             if (isSingleResult)
             {
                 primaryEntityField = stateMachineTypeBuilder.DefineField(primaryEntity.Key.EntityName, primaryEntityType, FieldAttributes.Private);
