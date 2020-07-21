@@ -28,6 +28,11 @@ namespace Venflow.Dynamic.Inserter
 
             if (entity.Relations is null)
             {
+                if (_visitedEntities.Count == 1)
+                {
+                    _entityRelations.AddFirst(new EntityRelationHolder(entity));
+                }
+
                 return;
             }
 
