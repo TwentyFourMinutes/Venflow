@@ -12,7 +12,7 @@
     <Company>Twenty</Company>
     <Authors>Twenty</Authors>
     <Language>en</Language>
-    <Version>1.0.0.0-alpha2</Version>
+    <Version>1.0.0.0-alpha3</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Title>Venflow</Title>
     <PackageOutputPath>bin\Package</PackageOutputPath>
