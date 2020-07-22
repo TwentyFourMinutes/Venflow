@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data;
+using System.Threading;
 using System.Threading.Tasks;
 using Venflow.Modeling;
 
@@ -33,7 +35,7 @@ namespace Venflow
         {
             await ValidateConnectionAsync();
 
-            using var command = new NpgsqlCommand(sql, _database.GetConnection());
+            using var command = new NpgsqlCommand(sql, GetConnection());
 
             return await command.ExecuteNonQueryAsync(cancellationToken);
         }
@@ -42,7 +44,7 @@ namespace Venflow
         {
             await ValidateConnectionAsync();
 
-            using var command = new NpgsqlCommand(sql, _database.GetConnection());
+            using var command = new NpgsqlCommand(sql, GetConnection());
 
             for (int i = 0; i < parameters.Count; i++)
             {
@@ -56,7 +58,7 @@ namespace Venflow
         {
             await ValidateConnectionAsync();
 
-            using var command = new NpgsqlCommand(sql, _database.GetConnection());
+            using var command = new NpgsqlCommand(sql, GetConnection());
 
             return (T)await command.ExecuteScalarAsync(cancellationToken);
         }
@@ -65,7 +67,7 @@ namespace Venflow
         {
             await ValidateConnectionAsync();
 
-            using var command = new NpgsqlCommand(sql, _database.GetConnection());
+            using var command = new NpgsqlCommand(sql, GetConnection());
 
             for (int i = 0; i < parameters.Count; i++)
             {
@@ -74,7 +76,6 @@ namespace Venflow
 
             return (T)await command.ExecuteScalarAsync(cancellationToken);
         }
-
 
         public void TrackChanges<TEntity>(ref TEntity entity) where TEntity : class
         {
@@ -170,6 +171,23 @@ namespace Venflow
                 Entities = configuration.Entities;
 
                 configuration.InstantiateDatabase(this);
+            }
+        }
+
+        private ValueTask ValidateConnectionAsync()
+        {
+            var connection = GetConnection();
+
+            if (connection.State == ConnectionState.Open)
+                return default;
+
+            if (connection.State == ConnectionState.Closed)
+            {
+                return new ValueTask(connection.OpenAsync());
+            }
+            else
+            {
+                throw new InvalidOperationException($"The current connection state is invalid. Expected: '{ConnectionState.Open}' or '{ConnectionState.Closed}'. Actual: '{connection.State}'.");
             }
         }
 
