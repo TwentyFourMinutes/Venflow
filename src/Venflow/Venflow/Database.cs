@@ -29,6 +29,53 @@ namespace Venflow
             Build();
         }
 
+        public async Task<int> ExecuteAsync(string sql, CancellationToken cancellationToken = default)
+        {
+            await ValidateConnectionAsync();
+
+            using var command = new NpgsqlCommand(sql, _database.GetConnection());
+
+            return await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        public async Task<int> ExecuteAsync(string sql, IList<NpgsqlParameter> parameters, CancellationToken cancellationToken = default)
+        {
+            await ValidateConnectionAsync();
+
+            using var command = new NpgsqlCommand(sql, _database.GetConnection());
+
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                command.Parameters.Add(parameters[i]);
+            }
+
+            return await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        public async Task<T> ExecuteAsync<T>(string sql, CancellationToken cancellationToken = default) where T : struct
+        {
+            await ValidateConnectionAsync();
+
+            using var command = new NpgsqlCommand(sql, _database.GetConnection());
+
+            return (T)await command.ExecuteScalarAsync(cancellationToken);
+        }
+
+        public async Task<T> ExecuteAsync<T>(string sql, IList<NpgsqlParameter> parameters, CancellationToken cancellationToken = default) where T : struct
+        {
+            await ValidateConnectionAsync();
+
+            using var command = new NpgsqlCommand(sql, _database.GetConnection());
+
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                command.Parameters.Add(parameters[i]);
+            }
+
+            return (T)await command.ExecuteScalarAsync(cancellationToken);
+        }
+
+
         public void TrackChanges<TEntity>(ref TEntity entity) where TEntity : class
         {
             if (!Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
