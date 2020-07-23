@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Venflow.Modeling.Definitions;
+using Venflow.Modeling.Definitions.Builder;
 
 namespace Venflow.Benchmarks.Benchmarks.Models
 {
@@ -22,8 +23,6 @@ namespace Venflow.Benchmarks.Benchmarks.Models
     {
         protected override void Configure(IEntityBuilder<Email> entityBuilder)
         {
-            entityBuilder.MapId(x => x.Id, DatabaseGeneratedOption.Computed);
-
             entityBuilder.HasMany(x => x.Contents)
                          .WithOne(x => x.Email)
                          .UsingForeignKey(x => x.EmailId);

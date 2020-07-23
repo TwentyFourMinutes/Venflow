@@ -22,17 +22,20 @@ namespace Venflow.Dynamic.Proxies
 
         internal void MakeDirty(byte propertyIndex)
         {
-            if (!TrackChanges)
-                return;
-
-            if (!IsDirty)
+            lock (this)
             {
-                _changedColumns = new byte[_columnLength];
+                if (!TrackChanges)
+                    return;
 
-                IsDirty = true;
+                if (!IsDirty)
+                {
+                    _changedColumns = new byte[_columnLength];
+
+                    IsDirty = true;
+                }
+
+                _changedColumns[propertyIndex] = (byte)(propertyIndex + 1);
             }
-
-            _changedColumns[propertyIndex] = propertyIndex;
         }
 
         internal byte[]? GetColumns()

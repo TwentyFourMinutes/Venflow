@@ -68,54 +68,56 @@ namespace Venflow.Commands
         {
             if (!(entity is IEntityProxy<TEntity> proxy))
             {
-                throw new InvalidOperationException("The provided entity is currently not being change tracked.");
+                throw new InvalidOperationException("The provided entity is currently not being change tracked. Also ensure that the entity itself has properties which are marked as virtual.");
             }
             else if (!proxy.ChangeTracker.IsDirty)
             {
                 return;
             }
 
-            proxy.ChangeTracker.IsDirty = false;
-
-            commandString.Append("UPDATE ")
-                         .Append(EntityConfiguration.TableName)
-                         .Append(" SET ");
-
-            var columns = proxy.ChangeTracker.GetColumns()!;
-
-            var entityColumns = EntityConfiguration.Columns;
-
-            for (int i = 0; i < columns.Length; i++)
+            lock (proxy.ChangeTracker)
             {
-                var columnIndex = columns[i];
+                proxy.ChangeTracker.IsDirty = false;
 
-                if (columnIndex == 0)
-                    continue;
+                commandString.Append("UPDATE ")
+                             .Append(EntityConfiguration.TableName)
+                             .Append(" SET ");
 
-                columns[i] = 0;
+                var columns = proxy.ChangeTracker.GetColumns()!;
 
-                var column = entityColumns[columnIndex - 1];
+                var entityColumns = EntityConfiguration.Columns;
 
-                commandString.Append('"')
-                             .Append(column.ColumnName)
-                             .Append("\" = ");
+                for (int i = 0; i < columns.Length; i++)
+                {
+                    var columnIndex = columns[i];
 
-                var parameter = column.ValueRetriever(entity, index.ToString());
+                    if (columnIndex == 0)
+                        continue;
 
-                commandString.Append(parameter.ParameterName);
+                    columns[i] = 0;
 
-                UnderlyingCommand.Parameters.Add(parameter);
+                    var column = entityColumns[columnIndex - 1];
 
-                commandString.Append(", ");
+                    commandString.Append('"')
+                                 .Append(column.ColumnName)
+                                 .Append("\" = ");
+
+                    var parameter = column.ValueRetriever(entity, index.ToString());
+
+                    commandString.Append(parameter.ParameterName);
+
+                    UnderlyingCommand.Parameters.Add(parameter);
+
+                    commandString.Append(", ");
+                }
             }
-
             commandString.Length -= 2;
 
             commandString.Append(" WHERE \"")
                          .Append(EntityConfiguration.PrimaryColumn.ColumnName)
                          .Append("\" = ");
 
-            var primaryParameter = EntityConfiguration.PrimaryColumn.ValueRetriever(entity, "Return" + index.ToString());
+            var primaryParameter = EntityConfiguration.PrimaryColumn.ValueRetriever(entity, "PK");
 
             UnderlyingCommand.Parameters.Add(primaryParameter);
 

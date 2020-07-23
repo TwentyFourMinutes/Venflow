@@ -10,7 +10,7 @@ using Venflow.Enums;
 
 namespace Venflow.Modeling
 {
-    public class Table<TEntity> where TEntity : class
+    public sealed class Table<TEntity> where TEntity : class
     {
         private readonly Database _database;
         private readonly Entity<TEntity> _configuration;
@@ -235,7 +235,7 @@ namespace Venflow.Modeling
             _database.TrackChanges(ref entities);
         }
 
-        protected ValueTask ValidateConnectionAsync()
+        private ValueTask ValidateConnectionAsync()
         {
             var connection = _database.GetConnection();
 

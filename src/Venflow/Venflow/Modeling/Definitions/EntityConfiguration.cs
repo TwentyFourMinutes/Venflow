@@ -6,9 +6,9 @@ namespace Venflow.Modeling.Definitions
     {
         protected abstract void Configure(IEntityBuilder<TEntity> entityBuilder);
 
-        internal sealed override EntityFactory BuildConfiguration()
+        internal sealed override EntityFactory BuildConfiguration(string tableName)
         {
-            var entityBuilder = new EntityBuilder<TEntity>();
+            var entityBuilder = new EntityBuilder<TEntity>(tableName);
 
             Configure(entityBuilder);
 
@@ -18,6 +18,6 @@ namespace Venflow.Modeling.Definitions
 
     public abstract class EntityConfiguration
     {
-        internal abstract EntityFactory BuildConfiguration();
+        internal abstract EntityFactory BuildConfiguration(string tableName);
     }
 }

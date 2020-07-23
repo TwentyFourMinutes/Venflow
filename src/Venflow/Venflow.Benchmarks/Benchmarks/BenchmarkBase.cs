@@ -7,12 +7,12 @@ namespace Venflow.Benchmarks.Benchmarks
 {
     public abstract class BenchmarkBase
     {
-        public BenchmarkDbConfiguration Configuration { get; set; }
+        public BenchmarkDb Configuration { get; set; }
         public BenchmarkDbContext PersonDbContext { get; set; }
 
         public virtual async Task Setup()
         {
-            Configuration = new BenchmarkDbConfiguration();
+            Configuration = new BenchmarkDb();
 
             PostgreSqlBootstrap.Initialize();
             ClassMapper.Add<Person>("\"People\"");

@@ -560,11 +560,12 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, entityHolder.Entity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
 
-                    // TODO: Cover from null right entities
-
                     for (int k = 0; k < entityHolder.AssigningRelations.Count; k++)
                     {
                         var relation = entityHolder.AssigningRelations[k];
+
+                        if (relation.LeftNavigationProperty is null)
+                            continue;
 
                         // Check if navigation property is not null
                         var afterNavigationPropertyAssignmentLabel = _moveNextMethodIL.DefineLabel();

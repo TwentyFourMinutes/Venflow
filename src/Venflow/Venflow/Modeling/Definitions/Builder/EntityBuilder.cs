@@ -20,8 +20,10 @@ namespace Venflow.Modeling.Definitions.Builder
 
         private readonly HashSet<string> _ignoredColumns;
 
-        internal EntityBuilder()
+        internal EntityBuilder(string tableName)
         {
+            TableName = tableName;
+
             Type = typeof(TEntity);
             ColumnDefinitions = new Dictionary<string, ColumnDefinition<TEntity>>();
             _ignoredColumns = new HashSet<string>();
@@ -123,6 +125,24 @@ namespace Venflow.Modeling.Definitions.Builder
                 throw new TypeArgumentException("The provided generic type argument doesn't contain any public properties with a getter and a setter.");
             }
 
+            var filteredProperties = new List<PropertyInfo>();
+            PropertyInfo? annotedPrimaryKey = default;
+
+            for (int i = 0; i < properties.Length; i++)
+            {
+                var property = properties[i];
+
+                if (property.CanWrite && property.SetMethod!.IsPublic && !_ignoredColumns.Contains(property.Name) && !Attribute.IsDefined(property, TypeCache.NotMappedAttribute))
+                {
+                    if (Attribute.IsDefined(property, TypeCache.KeyAttribute) || property.Name == "Id")
+                    {
+                        annotedPrimaryKey = property;
+                    }
+
+                    filteredProperties.Add(property);
+                }
+            }
+
             // ExpressionVariables
 
             var columns = new List<EntityColumn<TEntity>>();
@@ -147,19 +167,11 @@ namespace Venflow.Modeling.Definitions.Builder
             var npgsqlParameterCollectionAdd = TypeCache.NpgsqlParameterCollection.GetMethod("Add", new Type[] { TypeCache.GenericNpgsqlParameter });
 
             // Important column specifications
-
-            var columnIndex = 0;
             var regularColumnsOffset = 0;
-            var propertyFlagValue = 1uL;
 
-            for (int i = 0; i < properties.Length; i++)
+            for (int i = 0; i < filteredProperties.Count; i++)
             {
-                var property = properties[i];
-
-                if (!property.CanWrite || !property.SetMethod!.IsPublic || _ignoredColumns.Contains(property.Name) || Attribute.IsDefined(property, TypeCache.NotMappedAttribute))
-                {
-                    continue;
-                }
+                var property = filteredProperties[i];
 
                 var hasCustomDefinition = false;
 
@@ -200,7 +212,7 @@ namespace Venflow.Modeling.Definitions.Builder
                     switch (definition)
                     {
                         case PrimaryColumnDefinition<TEntity> primaryDefintion:
-                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, propertyFlagValue, valueRetriever, valueWriter, parameterValueRetriever, primaryDefintion.IsServerSideGenerated);
+                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, valueRetriever, valueWriter, parameterValueRetriever, primaryDefintion.IsServerSideGenerated);
 
                             columns.Insert(0, primaryColumn);
 
@@ -210,7 +222,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                             if (setMethod.IsVirtual && !setMethod.IsFinal)
                             {
-                                changeTrackingColumns.Add(columnIndex + 1, primaryColumn);
+                                changeTrackingColumns.Add(i, primaryColumn);
                             }
 
                             nameToColumn.Add(definition.Name, primaryColumn);
@@ -219,6 +231,26 @@ namespace Venflow.Modeling.Definitions.Builder
                             isPrimaryColumn = true;
                             break;
                     }
+                }
+                else if (annotedPrimaryKey == property)
+                {
+                    primaryColumn = new PrimaryEntityColumn<TEntity>(property, annotedPrimaryKey.Name, valueRetriever, valueWriter, parameterValueRetriever, true);
+
+                    columns.Insert(0, primaryColumn);
+
+                    regularColumnsOffset++;
+
+                    var setMethod = property.GetSetMethod();
+
+                    if (setMethod.IsVirtual && !setMethod.IsFinal)
+                    {
+                        changeTrackingColumns.Add(i, primaryColumn);
+                    }
+
+                    nameToColumn.Add(annotedPrimaryKey.Name, primaryColumn);
+
+                    hasCustomDefinition = true;
+                    isPrimaryColumn = true;
                 }
 
                 if (!hasCustomDefinition)
@@ -241,7 +273,7 @@ namespace Venflow.Modeling.Definitions.Builder
                         columnName = property.Name;
                     }
 
-                    var column = new EntityColumn<TEntity>(property, columnName, propertyFlagValue, valueRetriever, valueWriter, parameterValueRetriever);
+                    var column = new EntityColumn<TEntity>(property, columnName, valueRetriever, valueWriter, parameterValueRetriever);
 
                     columns.Add(column);
 
@@ -249,7 +281,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                     if (setMethod.IsVirtual && !setMethod.IsFinal)
                     {
-                        changeTrackingColumns.Add(columnIndex + 1, column);
+                        changeTrackingColumns.Add(i, column);
                     }
 
                     nameToColumn.Add(columnName, column);
@@ -266,19 +298,11 @@ namespace Venflow.Modeling.Definitions.Builder
                     insertWriterStatments.Add(Expression.Call(npgsqlParameterCollectionParameter, npgsqlParameterCollectionAdd, parameterVariable));
                     insertWriterStatments.Add(Expression.Call(stringBuilderParameter, stringBuilderAppend, Expression.Constant(", ")));
                 }
-
-                columnIndex++;
-                propertyFlagValue <<= 1;
             }
 
             if (primaryColumn is null)
             {
-                throw new InvalidOperationException("The EntityBuilder didn't configure the primary key nor is any property named 'Id'.");
-            }
-
-            if (TableName is null)
-            {
-                TableName = Type.Name + "s";
+                throw new InvalidOperationException("The EntityBuilder couldn't find the primary key, it isn't named 'Id', the KeyAttribute wasn't set nor was any property in the configuration defined as the primary key.");
             }
 
             if (changeTrackingColumns.Count != 0)
