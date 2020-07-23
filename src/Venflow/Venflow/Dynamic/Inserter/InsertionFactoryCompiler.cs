@@ -251,8 +251,6 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).PropertyType.GetMethod("Clear"));
                 }
 
-                _moveNextMethodIL.EmitWriteLine("yee");
-
                 var stringBuilder = new StringBuilder();
 
                 var skipPrimaryKey = ((IPrimaryEntityColumn)entityHolder.Entity.GetPrimaryColumn()).IsServerSideGenerated;
@@ -275,8 +273,6 @@ namespace Venflow.Dynamic.Inserter
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, entityListField);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetProperty("Count", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
-                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)(columnCount - columnOffset));
-                _moveNextMethodIL.Emit(OpCodes.Mul);
                 _moveNextMethodIL.Emit(OpCodes.Stloc, totalLocal);
 
                 // Assign 0 to the current local
@@ -296,8 +292,6 @@ namespace Venflow.Dynamic.Inserter
                 // loop body
                 _moveNextMethodIL.MarkLabel(outerStartLoopBodyLabel);
 
-                _moveNextMethodIL.EmitWriteLine("yee2");
-
                 // Append base Insert Command to command builder
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
@@ -307,24 +301,23 @@ namespace Venflow.Dynamic.Inserter
 
                 var leftLocal = _moveNextMethodIL.DeclareLocal(_intType);
 
+                var totalColumns = columnCount - columnOffset;
+
                 // Assign the amount of left items to the left local
                 _moveNextMethodIL.Emit(OpCodes.Ldloc, totalLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4, totalColumns);
+                _moveNextMethodIL.Emit(OpCodes.Mul);
                 _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4, totalColumns);
+                _moveNextMethodIL.Emit(OpCodes.Mul);
                 _moveNextMethodIL.Emit(OpCodes.Sub);
                 _moveNextMethodIL.Emit(OpCodes.Ldc_I4, ushort.MaxValue);
                 _moveNextMethodIL.Emit(OpCodes.Call, typeof(Math).GetMethod("Min", new[] { _intType, _intType }));
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4, totalColumns);
+                _moveNextMethodIL.Emit(OpCodes.Div);
                 _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
                 _moveNextMethodIL.Emit(OpCodes.Add);
                 _moveNextMethodIL.Emit(OpCodes.Stloc, leftLocal);
-
-                _moveNextMethodIL.EmitWriteLine(currentLocal);
-                _moveNextMethodIL.EmitWriteLine(totalLocal);
-                _moveNextMethodIL.EmitWriteLine(leftLocal);
-
-                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                _moveNextMethodIL.Emit(OpCodes.Ldfld, entityListField);
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetProperty("Count", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
-                _moveNextMethodIL.Emit(OpCodes.Call, typeof(Console).GetMethod("WriteLine", new[] { _intType }));
 
                 var iteratorElementLocal = _moveNextMethodIL.DeclareLocal(entityListField.FieldType);
                 var placeholderLocal = _moveNextMethodIL.DeclareLocal(typeof(string));
@@ -426,7 +419,7 @@ namespace Venflow.Dynamic.Inserter
                 _moveNextMethodIL.MarkLabel(outerLoopConditionLabel);
                 _moveNextMethodIL.Emit(OpCodes.Ldloc, totalLocal);
                 _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
-                _moveNextMethodIL.Emit(OpCodes.Bne_Un, startLoopBodyLabel);
+                _moveNextMethodIL.Emit(OpCodes.Bne_Un, outerStartLoopBodyLabel);
 
                 // Assign the commandBuilder text to the command
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -540,6 +533,81 @@ namespace Venflow.Dynamic.Inserter
 
                     // loop body
                     _moveNextMethodIL.MarkLabel(startLoopBodyLabel);
+
+                    // check if counter is equal to ushort.MaxValue
+
+                    var afterIfBody = _moveNextMethodIL.DefineLabel();
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, counterField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, ushort.MaxValue / totalColumns);
+                    _moveNextMethodIL.Emit(OpCodes.Bne_Un, afterIfBody);
+
+                    // Assign 0 to the counter
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, counterField);
+
+                    // Call the next result
+                    afterAwaitLabel = _moveNextMethodIL.DefineLabel();
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, DataReaderField);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, _npgsqlDataReaderType.GetMethod("NextResultAsync", Type.EmptyTypes));// TODO: use CancellationToken
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, taskBoolType.GetMethod("GetAwaiter"));
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, BoolTaskAwaiterLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloca, BoolTaskAwaiterLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Call, boolTaskAwaiterType.GetProperty("IsCompleted").GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Brtrue, afterAwaitLabel);
+
+                    // Await Handler
+
+                    // stateField = stateLocal
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, asyncStateIndex++);
+                    _moveNextMethodIL.Emit(OpCodes.Dup);
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
+
+                    // taskAwaiterField = taskAwaiterLocal
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, BoolTaskAwaiterLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, BoolTaskAwaiterField);
+
+                    // Call AwaitUnsafeOnCompleted
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloca, BoolTaskAwaiterLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Call, _asyncMethodBuilderIntType.GetMethod("AwaitUnsafeOnCompleted").MakeGenericMethod(boolTaskAwaiterType, _stateMachineTypeBuilder));
+                    _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
+
+                    switchBuilder.MarkCase();
+
+                    // taskAwaiterLocal = taskAwaiterField
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, BoolTaskAwaiterField);
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, BoolTaskAwaiterLocal);
+
+                    // taskAwaiterField = default
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldflda, BoolTaskAwaiterField);
+                    _moveNextMethodIL.Emit(OpCodes.Initobj, boolTaskAwaiterType);
+
+                    // stateField = stateLocal = -1
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_M1);
+                    _moveNextMethodIL.Emit(OpCodes.Dup);
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
+
+                    // wait of the result from the TaskAwaiter
+                    _moveNextMethodIL.MarkLabel(afterAwaitLabel);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloca, BoolTaskAwaiterLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Call, boolTaskAwaiterType.GetMethod("GetResult"));
+                    _moveNextMethodIL.Emit(OpCodes.Pop);
+
+                    _moveNextMethodIL.MarkLabel(afterIfBody);
 
                     // read data reader
                     afterAwaitLabel = _moveNextMethodIL.DefineLabel();
@@ -685,81 +753,6 @@ namespace Venflow.Dynamic.Inserter
 
                         _moveNextMethodIL.MarkLabel(afterNavigationPropertyAssignmentLabel);
                     }
-
-                    // check if counter is equal to ushort.MaxValue
-
-                    var afterIfBody = _moveNextMethodIL.DefineLabel();
-
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, counterField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, ushort.MaxValue);
-                    _moveNextMethodIL.Emit(OpCodes.Bne_Un, afterIfBody);
-
-                    // Assign 0 to the counter
-
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, counterField);
-
-                    // Call the next result
-                    afterAwaitLabel = _moveNextMethodIL.DefineLabel();
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, DataReaderField);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, _npgsqlDataReaderType.GetMethod("NextResultAsync", Type.EmptyTypes));// TODO: use CancellationToken
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, taskBoolType.GetMethod("GetAwaiter"));
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, BoolTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, BoolTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Call, boolTaskAwaiterType.GetProperty("IsCompleted").GetGetMethod());
-                    _moveNextMethodIL.Emit(OpCodes.Brtrue, afterAwaitLabel);
-
-                    // Await Handler
-
-                    // stateField = stateLocal
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, asyncStateIndex++);
-                    _moveNextMethodIL.Emit(OpCodes.Dup);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
-
-                    // taskAwaiterField = taskAwaiterLocal
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloc, BoolTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, BoolTaskAwaiterField);
-
-                    // Call AwaitUnsafeOnCompleted
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, BoolTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Call, _asyncMethodBuilderIntType.GetMethod("AwaitUnsafeOnCompleted").MakeGenericMethod(boolTaskAwaiterType, _stateMachineTypeBuilder));
-                    _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
-
-                    switchBuilder.MarkCase();
-
-                    // taskAwaiterLocal = taskAwaiterField
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, BoolTaskAwaiterField);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, BoolTaskAwaiterLocal);
-
-                    // taskAwaiterField = default
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldflda, BoolTaskAwaiterField);
-                    _moveNextMethodIL.Emit(OpCodes.Initobj, boolTaskAwaiterType);
-
-                    // stateField = stateLocal = -1
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_M1);
-                    _moveNextMethodIL.Emit(OpCodes.Dup);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
-
-                    // wait of the result from the TaskAwaiter
-                    _moveNextMethodIL.MarkLabel(afterAwaitLabel);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, BoolTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Call, boolTaskAwaiterType.GetMethod("GetResult"));
-                    _moveNextMethodIL.Emit(OpCodes.Pop);
-
-                    _moveNextMethodIL.MarkLabel(afterIfBody);
 
                     // loop iterator increment
                     var tempIteratorLocal = _moveNextMethodIL.DeclareLocal(_intType);
