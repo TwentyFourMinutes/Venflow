@@ -193,7 +193,7 @@ namespace Venflow.Dynamic.Inserter
                 Compilev2(relation.RightEntity);
             }
 
-            if (_visitedEntitiesCount == 1)
+            if (_visitedEntitiesCount == 1 && _entities.Count == 0)
             {
                 _entities.AddFirst(new EntityRelationHolder(entity));
             }
