@@ -125,14 +125,11 @@ namespace Venflow.Commands
                          .Append(';');
         }
 
-        public async ValueTask DisposeAsync()
+        public ValueTask DisposeAsync()
         {
             UnderlyingCommand.Dispose();
 
-            if (UnderlyingCommand.IsPrepared)
-            {
-                await UnderlyingCommand.UnprepareAsync();
-            }
+            return new ValueTask();
         }
     }
 }
