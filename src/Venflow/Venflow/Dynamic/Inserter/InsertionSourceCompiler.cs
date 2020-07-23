@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Venflow.Enums;
 using Venflow.Modeling;
@@ -10,8 +9,6 @@ namespace Venflow.Dynamic.Inserter
     internal class InsertionSourceCompiler
     {
         private int _visitedEntitiesCount;
-        private readonly HashSet<long> _visitedEntities;
-        private readonly HashSet<uint> _visitedRelations;
         private readonly LinkedList<EntityRelationHolder> _entities;
         private readonly Dictionary<long, LinkedListNode<EntityRelationHolder>> _entityRelationLookup;
         private readonly ObjectIDGenerator _visitedEntityIds;
@@ -19,89 +16,10 @@ namespace Venflow.Dynamic.Inserter
 
         internal InsertionSourceCompiler()
         {
-            _visitedEntities = new HashSet<long>();
-            _visitedRelations = new HashSet<uint>();
             _entities = new LinkedList<EntityRelationHolder>();
             _entityRelationLookup = new Dictionary<long, LinkedListNode<EntityRelationHolder>>();
             _visitedEntityIds = new ObjectIDGenerator();
             _visitedEntityHolderIds = new ObjectIDGenerator();
-        }
-
-        internal void Compile(Entity entity)
-        {
-            var entityId = RuntimeHelpers.GetHashCode(entity);
-
-            _visitedEntities.Add(entityId);
-
-            if (entity.Relations is null)
-            {
-                if (_visitedEntities.Count == 1)
-                {
-                    _entities.AddFirst(new EntityRelationHolder(entity));
-                }
-
-                return;
-            }
-
-            for (int i = 0; i < entity.Relations.Count; i++)
-            {
-                var relation = entity.Relations[i];
-
-                var leftHashCode = RuntimeHelpers.GetHashCode(relation.LeftEntity);
-                var rightHashCode = RuntimeHelpers.GetHashCode(relation.RightEntity);
-
-                if (relation.ForeignKeyLocation == ForeignKeyLocation.Left && relation.LeftNavigationProperty is { } && !_visitedRelations.Contains(relation.RelationId))
-                {
-                    var hasLeftEntityHolder = _entityRelationLookup.TryGetValue(leftHashCode, out var leftEntityHolder);
-
-                    if (!_entityRelationLookup.TryGetValue(rightHashCode, out var rightEntityHolder))
-                    {
-                        rightEntityHolder = new LinkedListNode<EntityRelationHolder>(new EntityRelationHolder(relation.RightEntity));
-
-                        _entityRelationLookup.Add(rightHashCode, rightEntityHolder);
-
-                        if (hasLeftEntityHolder)
-                        {
-                            _entities.AddBefore(leftEntityHolder, rightEntityHolder);
-
-                        }
-                        else
-                        {
-                            _entities.AddLast(rightEntityHolder);
-                        }
-                    }
-
-                    if (!hasLeftEntityHolder)
-                    {
-                        leftEntityHolder = new LinkedListNode<EntityRelationHolder>(new EntityRelationHolder(relation.LeftEntity));
-
-                        _entityRelationLookup.Add(leftHashCode, leftEntityHolder);
-
-                        _entities.AddAfter(rightEntityHolder, leftEntityHolder);
-                    }
-
-                    _visitedRelations.Add(relation.RelationId);
-
-                    leftEntityHolder.Value.Relations.Add(relation);
-
-                    rightEntityHolder.Value.AssigningRelations.Add(relation.RightEntity.Relations[relation.LeftEntity.EntityName]);
-                }
-            }
-
-            for (int i = 0; i < entity.Relations.Count; i++)
-            {
-                var relation = entity.Relations[i];
-
-                if (relation.LeftNavigationProperty is null || _visitedEntities.Contains(RuntimeHelpers.GetHashCode(relation.RightEntity)))
-                    continue;
-
-                Compile(relation.RightEntity);
-            }
-
-            if (_visitedEntities.Count == 1)
-            {
-                _entities.AddFirst(new EntityRelationHolder(entity));
-            }
         }
 
         internal EntityRelationHolder[] GenerateSortedEntities()
@@ -118,7 +36,7 @@ namespace Venflow.Dynamic.Inserter
             return entities;
         }
 
-        internal void Compilev2(Entity entity)
+        internal void Compile(Entity entity)
         {
             _visitedEntitiesCount++;
 
@@ -190,7 +108,7 @@ namespace Venflow.Dynamic.Inserter
                     continue;
                 }
 
-                Compilev2(relation.RightEntity);
+                Compile(relation.RightEntity);
             }
 
             if (_visitedEntitiesCount == 1 && _entities.Count == 0)

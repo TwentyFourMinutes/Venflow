@@ -25,7 +25,7 @@ namespace Venflow.Dynamic.Inserter
                 {
                     var sourceCompiler = new InsertionSourceCompiler();
 
-                    sourceCompiler.Compilev2(_entity);
+                    sourceCompiler.Compile(_entity);
 
                     return _inserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(sourceCompiler.GenerateSortedEntities());
                 }
@@ -41,7 +41,7 @@ namespace Venflow.Dynamic.Inserter
                 {
                     var sourceCompiler = new InsertionSourceCompiler();
 
-                    sourceCompiler.Compilev2(_entity);
+                    sourceCompiler.Compile(_entity);
 
                     return _inserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(sourceCompiler.GenerateSortedEntities());
                 }
