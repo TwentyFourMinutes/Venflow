@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Venflow.Dynamic.Proxies
+﻿namespace Venflow.Dynamic.Proxies
 {
     internal interface IEntityProxy<TEntity> where TEntity : class
     {

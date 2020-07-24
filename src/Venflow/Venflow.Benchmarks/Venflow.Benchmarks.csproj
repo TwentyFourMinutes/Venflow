@@ -6,6 +6,8 @@
     <LangVersion>8</LangVersion>
     <Nullable>enable</Nullable>
     <UserSecretsId>9ee3e386-8d57-4d94-bde3-820b26e3efdf</UserSecretsId>
+    <AssemblyOriginatorKeyFile>../../../Twenty.pfx</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>

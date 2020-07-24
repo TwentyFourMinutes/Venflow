@@ -17,6 +17,8 @@
     <Title>Venflow</Title>
     <PackageOutputPath>bin\Package</PackageOutputPath>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>../../../Twenty.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
