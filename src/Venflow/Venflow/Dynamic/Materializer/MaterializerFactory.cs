@@ -408,7 +408,7 @@ namespace Venflow.Dynamic.Materializer
                             {
                                 if (shouldCheckForChange && relation.RightNavigationProperty is { })
                                 {
-                                    //entityRelationAssignment.Relations.Add(new RelationAssignmentInformation(relation, relation.RightEntity.EntityName + entity.EntityName + relation.RightNavigationProperty.Name));
+                                    entityRelationAssignment.Relations.Add(new RelationAssignmentInformation(relation, relation.RightEntity.EntityName + entity.EntityName + relation.RightNavigationProperty.Name));
                                 }
 
                                 continue;
