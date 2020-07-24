@@ -2,7 +2,7 @@
 
 <a href="https://www.nuget.org/packages/Venflow"><img alt="Nuget" src="https://img.shields.io/nuget/v/Venflow"></a> <a href="https://www.nuget.org/packages/Venflow"><img alt="Nuget" src="https://img.shields.io/nuget/dt/Venflow"></a> <a href="https://github.com/TwentyFourMinutes/Venflow/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/TwentyFourMinutes/DulcisX"></a> <a href="https://github.com/TwentyFourMinutes/Venflow/blob/master/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/TwentyFourMinutes/DulcisX"></a> <a href="https://discordapp.com/invite/EYKxkce"><img alt="Discord" src="https://discordapp.com/api/guilds/275377268728135680/widget.png"></a>
 
-Venflow is a brand new and from the ground up written ORM which tries to provide an alternative to EF-Core and many other ORMs. It allows you to define Models and their relations with each other. Additionally it maps all queries on its own while still maintain great performance, with options for custom SQL.
+Venflow is a brand new and from the ground up written ORM which tries to provide an alternative to EF-Core and many other ORMs. It allows you to define Models and their relations with each other. Additionally it maps all queries on its own while still maintaining great performance, with options for custom SQL.
 
 ## About
 
