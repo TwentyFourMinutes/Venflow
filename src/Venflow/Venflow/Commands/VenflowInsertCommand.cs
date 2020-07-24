@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Venflow.Enums;
 using Venflow.Modeling;
 
 namespace Venflow.Commands
@@ -12,11 +13,11 @@ namespace Venflow.Commands
         internal Delegate? SingleInserter { get; set; }
         internal Delegate? BatchInserter { get; set; }
 
-        private readonly bool _returnComputedColumns;
+        private readonly InsertOptions _insertOptions;
 
-        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool returnComputedColumns, bool disposeCommand) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
+        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, InsertOptions insertOptions, bool disposeCommand) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
         {
-            _returnComputedColumns = returnComputedColumns;
+            _insertOptions = insertOptions;
         }
 
         async Task<int> IInsertCommand<TEntity>.InsertAsync(TEntity entity, CancellationToken cancellationToken)
@@ -31,7 +32,7 @@ namespace Venflow.Commands
             }
             else
             {
-                SingleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter(Database);
+                SingleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter(_insertOptions);
             }
 
             var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, new List<TEntity> { entity });
@@ -54,7 +55,7 @@ namespace Venflow.Commands
             }
             else
             {
-                BatchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter(Database);
+                BatchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter(_insertOptions);
             }
 
             var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entities);

@@ -2,6 +2,7 @@
 {
     public interface IInsertCommandBuilder<TEntity> : ISpecficVenflowCommandBuilder<IInsertCommand<TEntity>> where TEntity : class
     {
-        IInsertCommandBuilder<TEntity> ReturnComputedColumns(bool returnComputedColumns = true);
+        IInsertCommandBuilder<TEntity> SetIdentityColumns();
+        IInsertCommandBuilder<TEntity> PopulateRelation();
     }
 }

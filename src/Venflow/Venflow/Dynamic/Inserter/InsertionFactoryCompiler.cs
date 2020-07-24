@@ -60,6 +60,8 @@ namespace Venflow.Dynamic.Inserter
 
         #endregion
 
+        private InsertOptions _insertOptions;
+
         private readonly Entity _rootEntity;
         private readonly TypeBuilder _inserterTypeBuilder;
         private readonly TypeBuilder _stateMachineTypeBuilder;
@@ -87,6 +89,8 @@ namespace Venflow.Dynamic.Inserter
 
         private readonly Dictionary<long, FieldBuilder> _entityListDict = new Dictionary<long, FieldBuilder>();
         private readonly ObjectIDGenerator _knownEntities = new ObjectIDGenerator();
+        private readonly ObjectIDGenerator _visitedSeperaterEntities = new ObjectIDGenerator();
+        private readonly HashSet<uint> _visitedSeperaterRelations = new HashSet<uint>();
 
         internal InsertionFactoryCompiler(Entity rootEntity)
         {
@@ -99,8 +103,10 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL = _moveNextMethod.GetILGenerator();
         }
 
-        internal Func<NpgsqlConnection, List<TEntity>, Task<int>> CreateInserter(EntityRelationHolder[] entities)
+        internal Func<NpgsqlConnection, List<TEntity>, Task<int>> CreateInserter(EntityRelationHolder[] entities, InsertOptions insertOptions)
         {
+            _insertOptions = insertOptions;
+
             var rootEntityListType = _genericListType.MakeGenericType(_rootEntity.EntityType);
 
             var taskAwaiterType = typeof(TaskAwaiter<>);
@@ -150,7 +156,7 @@ namespace Venflow.Dynamic.Inserter
             {
                 var entity = entities[i].Entity;
 
-                if (((IPrimaryEntityColumn)entity.GetPrimaryColumn()).IsServerSideGenerated)
+                if (((IPrimaryEntityColumn)entity.GetPrimaryColumn()).IsServerSideGenerated && HasOptionsFlag(InsertOptions.SetIdentityColumns))
                 {
                     labelCount += 4;
                 }
@@ -253,7 +259,7 @@ namespace Venflow.Dynamic.Inserter
 
                 var stringBuilder = new StringBuilder();
 
-                var skipPrimaryKey = ((IPrimaryEntityColumn)entityHolder.Entity.GetPrimaryColumn()).IsServerSideGenerated;
+                var skipPrimaryKey = ((IPrimaryEntityColumn)entityHolder.Entity.GetPrimaryColumn()).IsServerSideGenerated && HasOptionsFlag(InsertOptions.SetIdentityColumns);
 
                 var columnCount = entityHolder.Entity.GetColumnCount();
                 var columnOffset = skipPrimaryKey ? entityHolder.Entity.GetRegularColumnOffset() : 0;
@@ -1046,6 +1052,37 @@ namespace Venflow.Dynamic.Inserter
 
         private void SeperateRootEntity(Entity entity, FieldBuilder? entityListField = null, LocalBuilder? entityListLocal = null)
         {
+            if (entity.Relations is null)
+                return;
+
+            _ = _visitedSeperaterEntities.GetId(entity, out var firstTime);
+
+            if (!firstTime)
+                return;
+
+
+            var hasValidRelation = false;
+
+            for (int i = 0; i < entity.Relations.Count; i++)
+            {
+                var relation = entity.Relations[i];
+
+                if (relation.LeftNavigationProperty is null)
+                    continue;
+
+                if (!_visitedSeperaterRelations.Contains(relation.RelationId))
+                {
+                    hasValidRelation = true;
+
+                    _visitedSeperaterRelations.Add(relation.RelationId);
+                }
+            }
+
+            if (!HasOptionsFlag(InsertOptions.PopulateRelations) && !hasValidRelation)
+            {
+                return;
+            }
+
             var iteratorLocal = _moveNextMethodIL.DeclareLocal(_intType);
             var iteratorElementLocal = _moveNextMethodIL.DeclareLocal(entity.EntityType);
 
@@ -1116,14 +1153,11 @@ namespace Venflow.Dynamic.Inserter
             {
                 var relation = entity.Relations[i];
 
-                if (relation.LeftNavigationProperty is null)
-                    continue;
-
                 FieldBuilder? newEntityListField;
 
                 var id = _knownEntities.GetId(relation.RightEntity, out var isNew);
 
-                if (!isNew)
+                if (relation.LeftNavigationProperty is null)
                 {
                     continue;
                 }
@@ -1170,7 +1204,7 @@ namespace Venflow.Dynamic.Inserter
 
                     _defaultEntitySeperationGhostIL.MarkLabel(afterListBodyLabel);
                 }
-                else
+                else if (relation.RelationType == RelationType.ManyToOne)
                 {
                     if (isNew)
                     {
@@ -1208,13 +1242,132 @@ namespace Venflow.Dynamic.Inserter
                     _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, isVisitedEntityLocal);
                     _defaultEntitySeperationGhostIL.Emit(OpCodes.Brfalse, afterCheckBodyLabel);
 
+                    if (HasOptionsFlag(InsertOptions.PopulateRelations) && relation.RightNavigationProperty is { })
+                    {
+                        // Assign root to entity navigation
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Newobj, relation.RightNavigationProperty.PropertyType.GetConstructor(Type.EmptyTypes));
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetSetMethod());
+                    }
+
                     // Assign entity to the list
                     _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldarg_0);
                     _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldfld, newEntityListField);
                     _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
                     _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, newEntityListField.FieldType.GetMethod("Add"));
 
-                    SeperateEntities(relation.RightEntity, entityLocal);
+                    if (relation.RightEntity.Relations is { })
+                    {
+                        _ = _visitedSeperaterEntities.GetId(relation.RightEntity, out var firstTime);
+
+                        if (firstTime)
+                        {
+                            var hasValidRelation = false;
+
+                            for (int k = 0; k < relation.RightEntity.Relations.Count; k++)
+                            {
+                                var foreignRelation = relation.RightEntity.Relations[k];
+
+                                if (foreignRelation.LeftNavigationProperty is null)
+                                    continue;
+
+                                if (!_visitedSeperaterRelations.Contains(foreignRelation.RelationId))
+                                {
+                                    hasValidRelation = true;
+                                }
+
+                                _visitedSeperaterRelations.Add(foreignRelation.RelationId);
+                            }
+
+                            if (hasValidRelation)
+                            {
+                                SeperateEntities(relation.RightEntity, entityLocal);
+                            }
+                        }
+                    }
+
+                    if (HasOptionsFlag(InsertOptions.PopulateRelations) && relation.RightNavigationProperty is { })
+                    {
+                        // Assign root to entity navigation
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, rootLocal);
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
+                    }
+
+                    _defaultEntitySeperationGhostIL.MarkLabel(afterCheckBodyLabel);
+                }
+                else
+                {
+                    if (isNew)
+                    {
+                        newEntityListField = _stateMachineTypeBuilder.DefineField("_" + entity.EntityName + relation.RightEntity.EntityName + "List", _genericListType.MakeGenericType(relation.LeftNavigationProperty.PropertyType), FieldAttributes.Private);
+
+                        _entityListDict.Add(id, newEntityListField);
+                    }
+                    else
+                    {
+                        newEntityListField = _entityListDict[id];
+                    }
+
+                    var afterCheckBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                    // Check if navigation property is set
+                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
+                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Brfalse, afterCheckBodyLabel);
+
+                    // Assign entity to the list
+                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldarg_0);
+                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldfld, newEntityListField);
+                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
+                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, newEntityListField.FieldType.GetMethod("Add"));
+
+                    if (relation.RightEntity.Relations is { })
+                    {
+                        _ = _visitedSeperaterEntities.GetId(relation.RightEntity, out var firstTime);
+
+                        if (firstTime)
+                        {
+                            var hasValidRelation = false;
+
+                            for (int k = 0; k < relation.RightEntity.Relations.Count; k++)
+                            {
+                                var foreignRelation = relation.RightEntity.Relations[k];
+
+                                if (foreignRelation.LeftNavigationProperty is null)
+                                    continue;
+
+                                if (!_visitedSeperaterRelations.Contains(foreignRelation.RelationId))
+                                {
+                                    hasValidRelation = true;
+                                }
+
+                                _visitedSeperaterRelations.Add(foreignRelation.RelationId);
+                            }
+
+                            if (hasValidRelation)
+                            {
+                                SeperateEntities(relation.RightEntity, entityLocal);
+                            }
+                        }
+                    }
+
+                    if (HasOptionsFlag(InsertOptions.PopulateRelations) && relation.RightNavigationProperty is { })
+                    {
+                        // Assign root to entity navigation
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, rootLocal);
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
+                    }
+
+                    if (HasOptionsFlag(InsertOptions.PopulateRelations) && relation.RightNavigationProperty is { })
+                    {
+                        // Assign root to entity navigation
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Newobj, relation.RightNavigationProperty.PropertyType.GetConstructor(Type.EmptyTypes));
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetSetMethod());
+                    }
 
                     _defaultEntitySeperationGhostIL.MarkLabel(afterCheckBodyLabel);
                 }
@@ -1229,6 +1382,11 @@ namespace Venflow.Dynamic.Inserter
                 _setListsToNullGhostIL.Emit(OpCodes.Ldnull);
                 _setListsToNullGhostIL.Emit(OpCodes.Stfld, newEntityListField);
             }
+        }
+
+        private bool HasOptionsFlag(InsertOptions flag)
+        {
+            return (_insertOptions & flag) != 0;
         }
     }
 }
