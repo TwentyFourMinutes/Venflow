@@ -1,10 +1,7 @@
-﻿using Npgsql;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Venflow.Tests.Models;
 using Xunit;
-using Xunit.Priority;
 
 namespace Venflow.Tests.InsertTests
 {
