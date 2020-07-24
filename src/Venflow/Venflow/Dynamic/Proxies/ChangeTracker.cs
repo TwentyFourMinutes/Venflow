@@ -1,7 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Venflow.Dynamic")]
-
 namespace Venflow.Dynamic.Proxies
 {
     internal class ChangeTracker<TEntity> where TEntity : class

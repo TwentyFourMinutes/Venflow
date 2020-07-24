@@ -6,8 +6,6 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using Venflow.Modeling;
 
-[assembly: InternalsVisibleTo("Venflow.Dynamic")]
-
 namespace Venflow.Dynamic.Proxies
 {
     internal class ChangeTrackerFactory<TEntity> where TEntity : class
