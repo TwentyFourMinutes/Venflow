@@ -46,7 +46,7 @@ namespace Venflow.Modeling
                 entityFactory.ApplyForeignRelations(entities);
             }
 
-            return new DatabaseConfiguration(DatabaseTableFactory.CreateInstantiater(tables, entitiesArray), new ReadOnlyDictionary<string, Entity>(entities), entitiesArray);
+            return new DatabaseConfiguration(DatabaseTableFactory.CreateInstantiater(databaseType, tables, entitiesArray), new ReadOnlyDictionary<string, Entity>(entities), entitiesArray);
         }
 
         private List<PropertyInfo> FindEntityConfigurations(Type databaseType)

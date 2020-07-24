@@ -8,7 +8,7 @@ namespace Venflow.Dynamic.Instantiater
 {
     internal static class DatabaseTableFactory
     {
-        internal static Action<Database, IList<Entity>> CreateInstantiater(IList<PropertyInfo> tableProperties, IList<Entity> entities)
+        internal static Action<Database, IList<Entity>> CreateInstantiater(Type customDatabaseType, IList<PropertyInfo> tableProperties, IList<Entity> entities)
         {
             var databaseType = typeof(Database);
             var entitiesListType = typeof(IList<Entity>);
@@ -17,9 +17,7 @@ namespace Venflow.Dynamic.Instantiater
 
             var entitiesIndexerMethod = entitiesListType.GetMethod("get_Item");
 
-            var instantiaterMethod = new DynamicMethod("DatabaseInstantiater", null, new[] { databaseType, entitiesListType });
-
-            var kek = instantiaterMethod.DeclaringType;
+            var instantiaterMethod = new DynamicMethod($"Venflow.Dynamic.Instantiater.{customDatabaseType.Name}Instantiater", null, new[] { databaseType, entitiesListType }, TypeFactory.DynamicModule);
 
             var instantiaterMethodIL = instantiaterMethod.GetILGenerator();
 

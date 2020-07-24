@@ -7,6 +7,8 @@ namespace Venflow.Dynamic
 {
     internal static class TypeFactory
     {
+        internal static Module DynamicModule => _dynamicModule;
+
         private static readonly AssemblyName _assemblyName;
         private static readonly AssemblyBuilder _assemblyBuilder;
         private static readonly ModuleBuilder _dynamicModule;
