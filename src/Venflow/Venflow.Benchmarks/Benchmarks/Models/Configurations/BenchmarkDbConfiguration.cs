@@ -1,4 +1,5 @@
 ﻿using Venflow.Modeling;
+using Venflow.Shared;
 
 namespace Venflow.Benchmarks.Benchmarks.Models.Configurations
 {
@@ -8,7 +9,7 @@ namespace Venflow.Benchmarks.Benchmarks.Models.Configurations
         public Table<Email> Emails { get; set; }
         public Table<EmailContent> EmailContents { get; set; }
 
-        public BenchmarkDb() : base(SecretsHandler.GetConnectionString())
+        public BenchmarkDb() : base(SecretsHandler.GetConnectionString<Startup>())
         {
         }
     }

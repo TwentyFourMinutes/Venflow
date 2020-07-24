@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Venflow.Shared;
 
 namespace Venflow.Benchmarks.Benchmarks.Models.Configurations
 {
@@ -8,7 +9,7 @@ namespace Venflow.Benchmarks.Benchmarks.Models.Configurations
         public DbSet<Email> Emails { get; set; }
         public DbSet<EmailContent> EmailContents { get; set; }
 
-        public BenchmarkDbContext() : base(new DbContextOptionsBuilder().UseNpgsql(SecretsHandler.GetConnectionString()).Options)
+        public BenchmarkDbContext() : base(new DbContextOptionsBuilder().UseNpgsql(SecretsHandler.GetConnectionString<Startup>()).Options)
         {
 
         }

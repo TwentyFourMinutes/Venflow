@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30021.99
@@ -10,6 +10,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Benchmarks", "Venflow.Benchmarks\Venflow.Benchmarks.csproj", "{14283B7A-E5F9-4D42-899A-E2438C39DE0D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepoDb", "..\..\..\..\..\source\repos\RepoDb\RepoDb.Core\RepoDb\RepoDb.csproj", "{84FA8A1F-0CFA-4560-8512-6B3893522E32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venflow.Shared", "Venflow.Shared\Venflow.Shared.csproj", "{C03CA4A2-4B42-45E0-BB89-6965E4D8123D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{84FA8A1F-0CFA-4560-8512-6B3893522E32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84FA8A1F-0CFA-4560-8512-6B3893522E32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84FA8A1F-0CFA-4560-8512-6B3893522E32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C03CA4A2-4B42-45E0-BB89-6965E4D8123D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C03CA4A2-4B42-45E0-BB89-6965E4D8123D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C03CA4A2-4B42-45E0-BB89-6965E4D8123D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C03CA4A2-4B42-45E0-BB89-6965E4D8123D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

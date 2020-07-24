@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace Venflow.Benchmarks
+namespace Venflow.Shared
 {
     public static class SecretsHandler
     {
-        public static string GetConnectionString()
+        public static string GetConnectionString<T>() where T : class
         {
-            var configuration = new ConfigurationBuilder().AddUserSecrets<Startup>();
+            var configuration = new ConfigurationBuilder().AddUserSecrets<T>();
 
             var config = configuration.Build();
 
