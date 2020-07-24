@@ -18,7 +18,7 @@ namespace Venflow.Dynamic
         static TypeFactory()
         {
             _assemblyName = new AssemblyName("Venflow.Dynamic");
-            _assemblyName.SetPublicKey(Convert.FromBase64String("ACQAAASAAACUAAAABgIAAAAkAABSU0ExAAQAAAEAAQA9X4kArvYaUMNY0RZ/4ZeLJxXPuHxVR07JfrlO1U1YuB/8tFfxWIMwI3GJBV/PiOKP32DaRP7BNGlBaJO9UOFKh+hq7hqlm3Hy9yZmPphflGna36uzwlY9zWiE2Bm0WfzDeyMal4PELZp8u7xt0ZjBP8GWRjzeQCIKRcyV1wFlvA=="));
+            _assemblyName.SetPublicKey(typeof(TypeFactory).Assembly.GetName().GetPublicKey());
             _assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(_assemblyName, AssemblyBuilderAccess.Run);
             _dynamicModule = _assemblyBuilder.DefineDynamicModule(_assemblyName.Name + ".dll");
 
