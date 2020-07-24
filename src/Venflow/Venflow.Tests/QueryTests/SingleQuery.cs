@@ -1,12 +1,14 @@
-﻿using Npgsql;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Venflow.Tests.Models;
 using Xunit;
+using Xunit.Priority;
 
 namespace Venflow.Tests.QueryTests
 {
+    [TestCaseOrderer(PriorityOrderer.Name, PriorityOrderer.Assembly)]
     public class SingleQuery : TestBase
     {
         [Fact]
@@ -21,6 +23,19 @@ namespace Venflow.Tests.QueryTests
             Assert.Equal(person.Id, queriedPerson.Id);
             Assert.Equal(person.Name, queriedPerson.Name);
             Assert.Null(queriedPerson.Emails);
+
+            await Database.People.DeleteAsync(person);
+        }
+
+        [Fact, Priority(0)]
+        public async Task QueryWithNoRelationAndIncludeAsync()
+        {
+            var person = await InsertPersonAsync();
+
+            await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            {
+                await Database.People.QuerySingle(@"SELECT * FROM ""People"" WHERE ""People"".""Id"" = @id", new NpgsqlParameter("@id", person.Id)).JoinWith(x => x.Emails).Build().QueryAsync();
+            });
 
             await Database.People.DeleteAsync(person);
         }
@@ -49,7 +64,7 @@ namespace Venflow.Tests.QueryTests
             await Database.People.DeleteAsync(person);
         }
 
-        [Fact]
+        [Fact, Priority(0)]
         public async Task QueryWithRelationAsyncAndNoIncludeAsync()
         {
             var person = await InsertPersonAsync();
