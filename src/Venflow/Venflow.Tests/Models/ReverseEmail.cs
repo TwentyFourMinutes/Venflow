@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Venflow.Tests.DatabaseTests.Models
+namespace Venflow.Tests.Models
 {
     public class ReverseEmail
     {

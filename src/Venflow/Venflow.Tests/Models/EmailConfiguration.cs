@@ -1,7 +1,7 @@
 ﻿using Venflow.Modeling.Definitions;
 using Venflow.Modeling.Definitions.Builder;
 
-namespace Venflow.Tests.DatabaseTests.Models
+namespace Venflow.Tests.Models
 {
     public class EmailConfiguration : EntityConfiguration<Email>
     {

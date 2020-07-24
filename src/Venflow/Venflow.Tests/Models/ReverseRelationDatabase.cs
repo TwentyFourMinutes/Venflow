@@ -1,7 +1,7 @@
 ﻿using Venflow.Modeling;
 using Venflow.Shared;
 
-namespace Venflow.Tests.DatabaseTests.Models
+namespace Venflow.Tests.Models
 {
     public class ReverseRelationDatabase : Database
     {

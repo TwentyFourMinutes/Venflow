@@ -1,4 +1,4 @@
-﻿namespace Venflow.Tests.DatabaseTests.Models
+﻿namespace Venflow.Tests.Models
 {
     public class ReverseEmailContent
     {

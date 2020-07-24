@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Venflow.Modeling;
-using Venflow.Tests.DatabaseTests.Models;
+using Venflow.Tests.Models;
 using Xunit;
 
 namespace Venflow.Tests.DatabaseTests
