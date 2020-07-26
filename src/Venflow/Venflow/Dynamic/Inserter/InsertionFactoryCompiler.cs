@@ -1238,9 +1238,11 @@ namespace Venflow.Dynamic.Inserter
                     _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, typeof(ObjectIDGenerator).GetMethod("GetId"));
                     _defaultEntitySeperationGhostIL.Emit(OpCodes.Pop);
 
+                    var afterNotVisistedLabel = _moveNextMethodIL.DefineLabel();
+
                     // Check if instance hasn't been visited yet
                     _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, isVisitedEntityLocal);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Brfalse, afterCheckBodyLabel);
+                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Brfalse, afterNotVisistedLabel);
 
                     if (HasOptionsFlag(InsertOptions.PopulateRelations) && relation.RightNavigationProperty is { })
                     {
@@ -1285,6 +1287,8 @@ namespace Venflow.Dynamic.Inserter
                             }
                         }
                     }
+
+                    _defaultEntitySeperationGhostIL.MarkLabel(afterNotVisistedLabel);
 
                     if (HasOptionsFlag(InsertOptions.PopulateRelations) && relation.RightNavigationProperty is { })
                     {
