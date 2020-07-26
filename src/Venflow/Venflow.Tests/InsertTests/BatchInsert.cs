@@ -38,7 +38,7 @@ namespace Venflow.Tests.InsertTests
 
             var insertCount = await Database.Emails.InsertAsync(emails);
 
-            Assert.Equal(4, insertCount);
+            Assert.Equal(3, insertCount);
 
             Assert.Equal(2, await Database.Emails.DeleteAsync(emails));
         }
@@ -67,8 +67,10 @@ namespace Venflow.Tests.InsertTests
         {
             var emails = new List<Email>();
 
-            emails.Add(new Email { Address = "None1", Person = new Person { Name = "None1" } });
-            emails.Add(new Email { Address = "None2", Person = new Person { Name = "None2" } });
+            var person = new Person { Name = "None" };
+
+            emails.Add(new Email { Address = "None1", Person = person });
+            emails.Add(new Email { Address = "None2", Person = person });
 
             return emails;
         }
