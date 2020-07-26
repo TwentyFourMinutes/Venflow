@@ -1,4 +1,5 @@
-﻿using RepoDb;
+﻿using Microsoft.EntityFrameworkCore;
+using RepoDb;
 using System.Threading.Tasks;
 using Venflow.Benchmarks.Benchmarks.Models;
 using Venflow.Benchmarks.Benchmarks.Models.Configurations;
@@ -25,18 +26,18 @@ namespace Venflow.Benchmarks.Benchmarks
             PrimaryMapper.Add<Email>(x => x.Id);
             PrimaryMapper.Add<EmailContent>(x => x.Id);
 
-            //PersonDbContext = new BenchmarkDbContext();
+            PersonDbContext = new BenchmarkDbContext();
 
-            //PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
-            //PersonDbContext.ChangeTracker.LazyLoadingEnabled = false;
-            //PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
+            PersonDbContext.ChangeTracker.LazyLoadingEnabled = false;
+            PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         public virtual async Task Cleanup()
         {
             await Configuration.DisposeAsync();
 
-            //await PersonDbContext.DisposeAsync();
+            await PersonDbContext.DisposeAsync();
         }
     }
 }
