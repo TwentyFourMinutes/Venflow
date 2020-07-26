@@ -29,11 +29,21 @@ namespace Venflow.Modeling
 
         internal TEntity GetProxiedEntity(bool trackChanges = false)
         {
+            if (ChangeTrackerFactory is null)
+            {
+                throw new InvalidOperationException($"The entity {EntityType.Name} doesn't contain any properties which are marked as virtual. Therefor no proxy entity exists.");
+            }
+
             return ChangeTrackerFactory.Invoke(new ChangeTracker<TEntity>(Columns.Count, trackChanges));
         }
 
         internal TEntity ApplyChangeTracking(TEntity entity)
         {
+            if (ChangeTrackerApplier is null)
+            {
+                throw new InvalidOperationException($"The entity {EntityType.Name} doesn't contain any properties which are marked as virtual. Therefor no proxy entity exists.");
+            }
+
             return ChangeTrackerApplier.Invoke(new ChangeTracker<TEntity>(Columns.Count, false), entity);
         }
 

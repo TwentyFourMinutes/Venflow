@@ -1,4 +1,4 @@
-﻿using Npgsql;
+using Npgsql;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -81,55 +81,26 @@ namespace Venflow
         {
             if (!Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
             {
-                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the Database.", nameof(TEntity));
+                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the Database.", typeof(TEntity).Name);
             }
 
             var entityConfiguration = (Entity<TEntity>)entityModel;
 
-            if (entityConfiguration.ChangeTrackerApplier is { })
-            {
-                entity = entityConfiguration.ApplyChangeTracking(entity);
-            }
+            entity = entityConfiguration.ApplyChangeTracking(entity);
         }
 
         public void TrackChanges<TEntity>(ref IList<TEntity> entities) where TEntity : class
         {
             if (!Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
             {
-                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the Database.", nameof(TEntity));
+                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the Database.", typeof(TEntity).Name);
             }
 
             var entityConfiguration = (Entity<TEntity>)entityModel;
-
-            if (entityConfiguration.ChangeTrackerApplier is { })
-            {
-                var proxiedEntities = new List<TEntity>();
 
                 for (int i = 0; i < entities.Count; i++)
                 {
                     proxiedEntities.Add(entityConfiguration.ApplyChangeTracking(entities[i]));
-                }
-
-                entities = proxiedEntities;
-            }
-        }
-
-        public void TrackChanges<TEntity>(ref IEnumerable<TEntity> entities) where TEntity : class
-        {
-            if (!Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
-            {
-                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the Database.", nameof(TEntity));
-            }
-
-            var entityConfiguration = (Entity<TEntity>)entityModel;
-
-            if (entityConfiguration.ChangeTrackerApplier is { })
-            {
-                var proxiedEntities = new List<TEntity>();
-
-                foreach (var entity in entities)
-                {
-                    proxiedEntities.Add(entityConfiguration.ApplyChangeTracking(entity));
                 }
 
                 entities = proxiedEntities;
