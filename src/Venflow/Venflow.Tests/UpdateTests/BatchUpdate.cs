@@ -37,7 +37,7 @@ namespace Venflow.Tests.UpdateTests
         {
             var people = await InsertPeopleAsync();
 
-            Database.TrackChanges(people);
+            Database.People.TrackChanges(people);
 
             people[0].Name = "NoneUpdated";
             people[1].Name = "NoneUpdated";
@@ -64,7 +64,7 @@ namespace Venflow.Tests.UpdateTests
                 new EmailContent()
             };
 
-            Assert.Throws<InvalidOperationException>(() => Database.TrackChanges(emailContents));
+            Assert.Throws<InvalidOperationException>(() => Database.EmailContents.TrackChanges(emailContents));
         }
 
         private async Task<List<Person>> InsertPeopleAsync()

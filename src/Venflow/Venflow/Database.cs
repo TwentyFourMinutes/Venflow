@@ -77,33 +77,6 @@ namespace Venflow
             return (T)await command.ExecuteScalarAsync(cancellationToken);
         }
 
-        public void TrackChanges<TEntity>(ref TEntity entity) where TEntity : class
-        {
-            if (!Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
-            {
-                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the Database.", typeof(TEntity).Name);
-            }
-
-            var entityConfiguration = (Entity<TEntity>)entityModel;
-
-            entity = entityConfiguration.ApplyChangeTracking(entity);
-        }
-
-        public void TrackChanges<TEntity>(IList<TEntity> entities) where TEntity : class
-        {
-            if (!Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
-            {
-                throw new TypeArgumentException("The provided generic type argument doesn't have any configuration class registered in the Database.", typeof(TEntity).Name);
-            }
-
-            var entityConfiguration = (Entity<TEntity>)entityModel;
-
-            for (int i = 0; i < entities.Count; i++)
-            {
-                entities[i] = entityConfiguration.ApplyChangeTracking(entities[i]);
-            }
-        }
-
         public NpgsqlConnection GetConnection()
         {
             if (_connection is { })

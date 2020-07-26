@@ -220,20 +220,22 @@ namespace Venflow.Modeling
 
         #endregion
 
+        #region ChangeTracking
+
         public void TrackChanges(ref TEntity entity)
         {
-            _database.TrackChanges(ref entity);
+            entity = _configuration.ApplyChangeTracking(entity);
         }
 
-        public void TrackChanges(ref IList<TEntity> entities)
+        public void TrackChanges(IList<TEntity> entities)
         {
-            _database.TrackChanges(ref entities);
+            for (int i = 0; i < entities.Count; i++)
+            {
+                entities[i] = _configuration.ApplyChangeTracking(entities[i]);
+            }
         }
 
-        public void TrackChanges(ref IEnumerable<TEntity> entities)
-        {
-            _database.TrackChanges(ref entities);
-        }
+        #endregion
 
         private ValueTask ValidateConnectionAsync()
         {
