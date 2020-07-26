@@ -46,7 +46,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         [Benchmark]
         public Task<List<Person>> EfCoreQueryBatchNoChangeTrackingAsync()
         {
-            return PersonDbContext.People.AsNoTracking().ToListAsync();
+            return PersonDbContext.People.Take(QueryCount).AsNoTracking().ToListAsync();
         }
 
         [Benchmark]
