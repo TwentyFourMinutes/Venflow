@@ -29,10 +29,11 @@ namespace Venflow.Tests.QueryTests
         {
             var people = await InsertPeopleAsync();
 
-            await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            try
             {
-                await Database.People.QuerySingle(@"SELECT * FROM ""People"" WHERE ""People"".""Id""=@id1 OR ""People"".""Id""=@id2", new NpgsqlParameter("@id1", people[0].Id), new NpgsqlParameter("@id2", people[1].Id)).JoinWith(x => x.Emails).Build().QueryAsync();
-            });
+                await Database.People.QueryBatch(@"SELECT * FROM ""People"" WHERE ""People"".""Id""=@id1 OR ""People"".""Id""=@id2", new NpgsqlParameter("@id1", people[0].Id), new NpgsqlParameter("@id2", people[1].Id)).JoinWith(x => x.Emails).Build().QueryAsync();
+            }
+            catch (InvalidOperationException) { }
 
             await Database.People.DeleteAsync(people);
         }
