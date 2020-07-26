@@ -117,7 +117,7 @@ namespace Venflow.Commands
                          .Append(EntityConfiguration.PrimaryColumn.ColumnName)
                          .Append("\" = ");
 
-            var primaryParameter = EntityConfiguration.PrimaryColumn.ValueRetriever(entity, "PK");
+            var primaryParameter = EntityConfiguration.PrimaryColumn.ValueRetriever(entity, "PK" + index);
 
             UnderlyingCommand.Parameters.Add(primaryParameter);
 
