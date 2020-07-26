@@ -8,11 +8,6 @@ namespace Venflow.Modeling.Definitions
     {
         internal static PropertyInfo ValidatePropertySelector<TSource, TTarget>(this Expression<Func<TSource, TTarget>> propertySelector)
         {
-            if (propertySelector is null)
-            {
-                throw new ArgumentNullException(nameof(propertySelector));
-            }
-
             var body = propertySelector.Body as MemberExpression;
 
             if (body is null)

@@ -1,4 +1,4 @@
-using Npgsql;
+﻿using Npgsql;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -89,7 +89,7 @@ namespace Venflow
             entity = entityConfiguration.ApplyChangeTracking(entity);
         }
 
-        public void TrackChanges<TEntity>(ref IList<TEntity> entities) where TEntity : class
+        public void TrackChanges<TEntity>(IList<TEntity> entities) where TEntity : class
         {
             if (!Entities.TryGetValue(typeof(TEntity).Name, out var entityModel))
             {
@@ -98,12 +98,9 @@ namespace Venflow
 
             var entityConfiguration = (Entity<TEntity>)entityModel;
 
-                for (int i = 0; i < entities.Count; i++)
-                {
-                    proxiedEntities.Add(entityConfiguration.ApplyChangeTracking(entities[i]));
-                }
-
-                entities = proxiedEntities;
+            for (int i = 0; i < entities.Count; i++)
+            {
+                entities[i] = entityConfiguration.ApplyChangeTracking(entities[i]);
             }
         }
 
