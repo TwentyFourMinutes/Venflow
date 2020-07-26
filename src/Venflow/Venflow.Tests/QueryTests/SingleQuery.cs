@@ -32,10 +32,11 @@ namespace Venflow.Tests.QueryTests
         {
             var person = await InsertPersonAsync();
 
-            await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            try
             {
                 await Database.People.QuerySingle(@"SELECT * FROM ""People"" WHERE ""People"".""Id"" = @id", new NpgsqlParameter("@id", person.Id)).JoinWith(x => x.Emails).Build().QueryAsync();
-            });
+            }
+            catch (InvalidOperationException) { }
 
             await Database.People.DeleteAsync(person);
         }
