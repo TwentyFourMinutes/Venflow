@@ -16,7 +16,7 @@ namespace Venflow.Tests.InsertTests
 
             Assert.Equal(1, insertCount);
 
-            await Database.People.DeleteAsync(person);
+            Assert.Equal(1, await Database.People.DeleteAsync(person));
         }
 
         [Fact]
@@ -28,7 +28,7 @@ namespace Venflow.Tests.InsertTests
 
             Assert.Equal(2, insertCount);
 
-            await Database.People.DeleteAsync(person);
+            Assert.Equal(1, await Database.People.DeleteAsync(person));
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace Venflow.Tests.InsertTests
 
             Assert.Equal(2, insertCount);
 
-            await Database.Emails.DeleteAsync(email);
+            Assert.Equal(1, await Database.Emails.DeleteAsync(email));
         }
 
         private Person GetPerson()
