@@ -115,6 +115,18 @@ namespace Venflow.Dynamic.Materializer
                                 nextJoin = joinBuilderValues.Joins[joinIndex].JoinWith.RightEntity;
                                 nextJoinPKName = nextJoin.GetPrimaryColumn().ColumnName;
 
+                                var currentJoinColumnCount = currentJoin.GetColumnCount();
+
+                                for (int i = currentJoin.GetRegularColumnOffset(); i < currentJoinColumnCount; i++)
+                                {
+                                    var currentJoinColumn = currentJoin.GetColumn(i);
+
+                                    if (currentJoinColumn.ColumnName == nextJoinPKName)
+                                    {
+                                        throw new InvalidOperationException($"The entity '{currentJoin.EntityName}' defines the column '{currentJoinColumn.ColumnName}' which can't have the same name, as the joining entity's '{nextJoin.EntityName}' primary key '{nextJoinPKName}'.");
+                                    }
+                                }
+
                                 joinIndex++;
                             }
                         }
