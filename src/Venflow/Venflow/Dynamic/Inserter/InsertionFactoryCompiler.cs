@@ -1390,7 +1390,7 @@ namespace Venflow.Dynamic.Inserter
 
         private bool HasOptionsFlag(InsertOptions flag)
         {
-            return (_insertOptions & flag) != 0;
+            return (_insertOptions & flag) == flag;
         }
     }
 }
