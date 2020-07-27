@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Venflow</name>
+    </assembly>
+    <members>
+        <member name="T:Venflow.Database">
+            <summary>
+            A <see cref="T:Venflow.Database"/> instance represents a session with the database and can be used to perform CRUD operations with your tables and entities.
+            </summary>
+            <remarks>
+            Typically you create a class that derives from <see cref="T:Venflow.Database"/> and contains <seealso cref="T:Venflow.Modeling.Table`1"/> properties for each entity in the Database. All the <seealso cref="T:Venflow.Modeling.Table`1"/> properties must have a public setter, they are automatically initialized when the instance of the derived type is created.
+            </remarks>
+        </member>
+        <member name="M:Venflow.Database.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Venflow.Database"/> class using the specified <paramref name="connectionString"/>.
+            </summary>
+            <param name="connectionString">The connection string to your PostgreSQL Database.</param>
+        </member>
+        <member name="M:Venflow.Database.ExecuteAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.
+            </summary>
+            <param name="sql">The SQL to execute.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+            <remarks>This method represents a <see cref="M:Npgsql.NpgsqlCommand.ExecuteNonQueryAsync(System.Threading.CancellationToken)"/> call.</remarks>
+        </member>
+        <member name="M:Venflow.Database.ExecuteAsync(System.String,System.Collections.Generic.IList{Npgsql.NpgsqlParameter},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.
+            </summary>
+            <param name="sql">The SQL to execute.</param>
+            <param name="parameters">The SQL Parameters which are being used for the current command.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+            <remarks>This method represents a <see cref="M:Npgsql.NpgsqlCommand.ExecuteNonQueryAsync(System.Threading.CancellationToken)"/> call.</remarks>
+        </member>
+        <member name="M:Venflow.Database.ExecuteAsync(System.String,Npgsql.NpgsqlParameter[])">
+            <summary>
+            Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.
+            </summary>
+            <param name="sql">The SQL to execute.</param>
+            <param name="parameters">The SQL Parameters which are being used for the current command.</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+            <remarks>This method represents a <see cref="M:System.Data.Common.DbCommand.ExecuteNonQueryAsync"/> call.</remarks>
+        </member>
+        <member name="M:Venflow.Database.ExecuteAsync``1(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.
+            </summary>
+            <typeparam name="T">The type of the scalar result.</typeparam>
+            <param name="sql">The SQL to execute.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+            <returns>A task representing the asynchronous operation, with the value of the scalar command.</returns>
+            <remarks>This method represents a <see cref="M:Npgsql.NpgsqlCommand.ExecuteScalarAsync(System.Threading.CancellationToken)"/> call.</remarks>
+        </member>
+        <member name="M:Venflow.Database.ExecuteAsync``1(System.String,System.Collections.Generic.IList{Npgsql.NpgsqlParameter},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.
+            </summary>
+            <typeparam name="T">The type of the scalar result.</typeparam>
+            <param name="sql">The SQL to execute.</param>
+            <param name="parameters">The SQL Parameters which are being used for the current command.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+            <returns>A task representing the asynchronous operation, with the value of the scalar command.</returns>
+            <remarks>This method represents a <see cref="M:Npgsql.NpgsqlCommand.ExecuteScalarAsync(System.Threading.CancellationToken)"/> call.</remarks>
+        </member>
+        <member name="M:Venflow.Database.ExecuteAsync``1(System.String,Npgsql.NpgsqlParameter[])">
+            <summary>
+            Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.
+            </summary>
+            <typeparam name="T">The type of the scalar result.</typeparam>
+            <param name="sql">The SQL to execute.</param>
+            <param name="parameters">The SQL Parameters which are being used for the current command.</param>
+            <returns>A task representing the asynchronous operation, with the value of the scalar command.</returns>
+            <remarks>This method represents a <see cref="M:System.Data.Common.DbCommand.ExecuteScalarAsync"/> call.</remarks>
+        </member>
+        <member name="M:Venflow.Database.GetConnection">
+            <summary>
+            Gets or creates a new connections, if none got created yet.
+            </summary>
+            <returns>the <see cref="T:Npgsql.NpgsqlConnection"/>.</returns>
+        </member>
+        <member name="M:Venflow.Database.DisposeAsync">
+            <summary>
+            Releases the allocated resources for this context. Also closes the underlying connection, if open.
+            </summary>
+            <returns>A value task representing the asynchronous operation</returns>
+        </member>
+        <member name="T:Venflow.InvalidEntityRelationException">
+            <summary>
+            Represents errors that occur during the relation entity generation.
+            </summary>
+        </member>
+        <member name="M:Venflow.InvalidEntityRelationException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Venflow.InvalidEntityRelationException"/> class.
+            </summary>
+        </member>
+        <member name="M:Venflow.InvalidEntityRelationException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Venflow.InvalidEntityRelationException"/> class.
+            </summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:Venflow.InvalidEntityRelationException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Venflow.InvalidEntityRelationException"/> class.
+            </summary>
+            <param name="message">The message that describes the error.</param>
+            <param name="inner">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        </member>
+        <member name="M:Venflow.InvalidEntityRelationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Venflow.InvalidEntityRelationException"/> class.
+            </summary>
+            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
+            <exception cref="T:System.ArgumentNullException">info is null.</exception>
+            <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or System.Exception.HResult is zero (0).</exception>
+        </member>
+        <member name="T:Venflow.NpgsqlCommandExtensions">
+            <summary>
+            Provides a set of useful extension methods for the <see cref="T:Npgsql.NpgsqlCommand"/> class.
+            </summary>
+        </member>
+        <member name="M:Venflow.NpgsqlCommandExtensions.AddParamter``1(Npgsql.NpgsqlCommand,System.String,``0)">
+            <summary>
+            Adds a new Parameter to the <see cref="P:Npgsql.NpgsqlCommand.Parameters"/> collection.
+            </summary>
+            <typeparam name="TType">The value type of the Parameter.</typeparam>
+            <param name="command">The command to which the Parameter should be added.</param>
+            <param name="parameterName">The name of the Parameter.</param>
+            <param name="value">The value of the Parameter.</param>
+            <returns>the just created <see cref="T:Npgsql.NpgsqlParameter`1"/>.</returns>
+        </member>
+        <member name="T:Venflow.TypeArgumentException">
+            <summary>
+            Represents an error which occur when an invalid type argument gets passed to a generic method.
+            </summary>
+        </member>
+        <member name="M:Venflow.TypeArgumentException.#ctor(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.TypeArgumentException.#ctor(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.TypeArgumentException.#ctor(System.String,System.Exception)">
+            <inheritdoc/>
+        </member>
+    </members>
+</doc>

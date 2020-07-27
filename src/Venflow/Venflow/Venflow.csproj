@@ -21,6 +21,10 @@
     <AssemblyOriginatorKeyFile>../../../Twenty.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net5.0|AnyCPU'">
+    <DocumentationFile>Venflow.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Npgsql" Version="5.0.0-alpha1" />
   </ItemGroup>
