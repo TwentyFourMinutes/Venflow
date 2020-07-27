@@ -33,7 +33,7 @@ namespace Venflow.Commands
             }
             else
             {
-                Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer<TReturn>(_joinBuilderValues, Database, reader.GetColumnSchema(), _trackingChanges);
+                Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer<TReturn>(_joinBuilderValues, reader.GetColumnSchema(), _trackingChanges);
             }
 
             var entities = await materializer(reader);

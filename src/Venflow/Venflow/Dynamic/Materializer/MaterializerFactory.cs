@@ -29,7 +29,7 @@ namespace Venflow.Dynamic.Materializer
             _materializerLock = new object();
         }
 
-        internal Func<NpgsqlDataReader, Task<TReturn>> GetOrCreateMaterializer<TReturn>(JoinBuilderValues? joinBuilderValues, Database database, ReadOnlyCollection<NpgsqlDbColumn> columnSchema, bool changeTracking) where TReturn : class
+        internal Func<NpgsqlDataReader, Task<TReturn>> GetOrCreateMaterializer<TReturn>(JoinBuilderValues? joinBuilderValues, ReadOnlyCollection<NpgsqlDbColumn> columnSchema, bool changeTracking) where TReturn : class
         {
             var cacheKeyBuilder = new HashCode();
 
