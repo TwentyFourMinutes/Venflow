@@ -46,6 +46,15 @@
             <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
             <remarks>This method represents a <see cref="M:System.Data.Common.DbCommand.ExecuteNonQueryAsync"/> call.</remarks>
         </member>
+        <member name="M:Venflow.Database.ExecuteInterpolatedAsync(System.FormattableString,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously executes a command against the current Database. This method does automatically parameterize queries from an interpolated string.
+            </summary>
+            <param name="sql">The interpolated SQL to execute.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+            <remarks>This method represents a <see cref="M:System.Data.Common.DbCommand.ExecuteNonQueryAsync"/> call.</remarks>
+        </member>
         <member name="M:Venflow.Database.ExecuteAsync``1(System.String,System.Threading.CancellationToken)">
             <summary>
             Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.
@@ -74,6 +83,16 @@
             <typeparam name="T">The type of the scalar result.</typeparam>
             <param name="sql">The SQL to execute.</param>
             <param name="parameters">The SQL Parameters which are being used for the current command.</param>
+            <returns>A task representing the asynchronous operation, with the value of the scalar command.</returns>
+            <remarks>This method represents a <see cref="M:System.Data.Common.DbCommand.ExecuteScalarAsync"/> call.</remarks>
+        </member>
+        <member name="M:Venflow.Database.ExecuteInterpolatedAsync``1(System.FormattableString,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously executes a command against the current Database. This method does automatically parameterize queries from an interpolated string.
+            </summary>
+            <typeparam name="T">The type of the scalar result.</typeparam>
+            <param name="sql">The SQL to execute.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation, with the value of the scalar command.</returns>
             <remarks>This method represents a <see cref="M:System.Data.Common.DbCommand.ExecuteScalarAsync"/> call.</remarks>
         </member>

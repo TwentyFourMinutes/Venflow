@@ -1,4 +1,5 @@
 using Npgsql;
+using System;
 using System.Collections.Generic;
 using Venflow.Enums;
 using Venflow.Modeling;
@@ -40,6 +41,11 @@ namespace Venflow.Commands
             return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, parameters, _disposeCommand);
         }
 
+        public IPreCommandBuilder<TEntity, TEntity> QueryInterpolatedSingle(FormattableString sql)
+        {
+            return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, _disposeCommand);
+        }
+
         public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch()
         {
             return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, QueryGenerationOptions.GenerateFullSQL, _disposeCommand);
@@ -58,6 +64,11 @@ namespace Venflow.Commands
         public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, params NpgsqlParameter[] parameters)
         {
             return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, sql, parameters, _disposeCommand);
+        }
+
+        public IPreCommandBuilder<TEntity, List<TEntity>> QueryInterpolatedBatch(FormattableString sql)
+        {
+            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, sql, _disposeCommand);
         }
 
         #endregion

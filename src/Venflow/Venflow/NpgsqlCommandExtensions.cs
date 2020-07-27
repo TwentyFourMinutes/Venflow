@@ -1,4 +1,6 @@
 ﻿using Npgsql;
+using System;
+using System.Text;
 
 namespace Venflow
 {
@@ -22,6 +24,48 @@ namespace Venflow
             command.Parameters.Add(parameter);
 
             return parameter;
+        }
+
+        public static void SetInterpolatedCommandText(this NpgsqlCommand command, FormattableString sql)
+        {
+            var commandBuilder = new StringBuilder(sql.Format);
+
+            var parameterCount = 0;
+
+            for (int i = 0; i < commandBuilder.Length - 2; i++)
+            {
+                if (commandBuilder[i] != '{')
+                    continue;
+
+                int digitCount = 0;
+
+                for (int k = i + 1; k < commandBuilder.Length; k++)
+                {
+                    var character = commandBuilder[k];
+
+                    if (!char.IsDigit(character))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        digitCount++;
+                    }
+                }
+
+                if (digitCount == 0)
+                    continue;
+
+                var parameterName = "@p" + parameterCount;
+
+                commandBuilder.Remove(i, digitCount + 2);
+                commandBuilder.Insert(i, parameterName);
+
+                command.Parameters.Add(new NpgsqlParameter(parameterName, sql.GetArgument(parameterCount++)));
+
+                i += parameterName.Length - 1;
+
+            }
         }
     }
 }

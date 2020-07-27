@@ -185,6 +185,9 @@ namespace Venflow.Modeling
         public IPreCommandBuilder<TEntity, TEntity> QuerySingle(string sql, bool disposeCommand, params NpgsqlParameter[] parameters)
            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QuerySingle(sql, parameters);
 
+        public IPreCommandBuilder<TEntity, TEntity> QueryInterpolatedSingle(FormattableString sql, bool disposeCommand = true)
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QueryInterpolatedSingle(sql);
+
         public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(bool disposeCommand = true)
             => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QueryBatch();
 
@@ -199,6 +202,9 @@ namespace Venflow.Modeling
 
         public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, bool disposeCommand, params NpgsqlParameter[] parameters)
             => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QueryBatch(sql, parameters);
+
+        public IPreCommandBuilder<TEntity, List<TEntity>> QueryInterpolatedBatch(FormattableString sql, bool disposeCommand = true)
+            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QueryInterpolatedBatch(sql);
 
         public IInsertCommandBuilder<TEntity> Insert()
             => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, false).Insert();

@@ -65,6 +65,30 @@ namespace Venflow.Tests.QueryTests
             await Database.People.DeleteAsync(person);
         }
 
+        [Fact]
+        public async Task QueryWithInterpolationRelationAsync()
+        {
+            var person = await InsertPersonWithRelationAsync();
+
+            var queriedPerson = await Database.People.QueryInterpolatedSingle($@"SELECT * FROM ""People"" >< WHERE ""People"".""Id"" = {person.Id}").AddFormatter().JoinWith(x => x.Emails).Build().QueryAsync();
+
+            Assert.NotNull(queriedPerson);
+
+            Assert.Equal(person.Id, queriedPerson.Id);
+            Assert.Equal(person.Name, queriedPerson.Name);
+
+            Assert.NotNull(queriedPerson.Emails);
+            Assert.Single(queriedPerson.Emails);
+
+            var email = queriedPerson.Emails[0];
+
+            Assert.Equal(person.Emails[0].Id, email.Id);
+            Assert.Equal(person.Emails[0].Address, email.Address);
+            Assert.Equal(person.Emails[0].PersonId, email.PersonId);
+
+            await Database.People.DeleteAsync(person);
+        }
+
         [Fact, Priority(0)]
         public async Task QueryWithRelationAsyncAndNoIncludeAsync()
         {

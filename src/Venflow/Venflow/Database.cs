@@ -101,6 +101,25 @@ namespace Venflow
         }
 
         /// <summary>
+        /// Asynchronously executes a command against the current Database. This method does automatically parameterize queries from an interpolated string.
+        /// </summary>
+        /// <param name="sql">The interpolated SQL to execute.</param>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+        /// <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+        /// <remarks>This method represents a <see cref="System.Data.Common.DbCommand.ExecuteNonQueryAsync()"/> call.</remarks>
+        public async Task<int> ExecuteInterpolatedAsync(FormattableString sql, CancellationToken cancellationToken = default)
+        {
+            await ValidateConnectionAsync();
+
+            using var command = new NpgsqlCommand();
+
+            command.Connection = GetConnection();
+            command.SetInterpolatedCommandText(sql);
+
+            return await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        /// <summary>
         /// Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.
         /// </summary>
         /// <typeparam name="T">The type of the scalar result.</typeparam>
@@ -160,6 +179,26 @@ namespace Venflow
             }
 
             return (T)await command.ExecuteScalarAsync();
+        }
+
+        /// <summary>
+        /// Asynchronously executes a command against the current Database. This method does automatically parameterize queries from an interpolated string.
+        /// </summary>
+        /// <typeparam name="T">The type of the scalar result.</typeparam>
+        /// <param name="sql">The SQL to execute.</param>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+        /// <returns>A task representing the asynchronous operation, with the value of the scalar command.</returns>
+        /// <remarks>This method represents a <see cref="System.Data.Common.DbCommand.ExecuteScalarAsync()"/> call.</remarks>
+        public async Task<T> ExecuteInterpolatedAsync<T>(FormattableString sql, CancellationToken cancellationToken = default) where T : struct
+        {
+            await ValidateConnectionAsync();
+
+            using var command = new NpgsqlCommand();
+
+            command.Connection = GetConnection();
+            command.SetInterpolatedCommandText(sql);
+
+            return (T)await command.ExecuteScalarAsync(cancellationToken);
         }
 
         /// <summary>

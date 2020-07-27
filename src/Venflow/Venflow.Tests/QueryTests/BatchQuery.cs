@@ -31,7 +31,7 @@ namespace Venflow.Tests.QueryTests
 
             try
             {
-                await Database.People.QueryBatch(@"SELECT * FROM ""People""{0} WHERE ""People"".""Id""=@id1 OR ""People"".""Id""=@id2", new NpgsqlParameter("@id1", people[0].Id), new NpgsqlParameter("@id2", people[1].Id)).AddFormatter().JoinWith(x => x.Emails).Build().QueryAsync();
+                await Database.People.QueryBatch(@"SELECT * FROM ""People"">< WHERE ""People"".""Id""=@id1 OR ""People"".""Id""=@id2", new NpgsqlParameter("@id1", people[0].Id), new NpgsqlParameter("@id2", people[1].Id)).AddFormatter().JoinWith(x => x.Emails).Build().QueryAsync();
             }
             catch (InvalidOperationException) { }
 
@@ -64,7 +64,7 @@ namespace Venflow.Tests.QueryTests
         {
             var people = await InsertPeopleWithRelationAsync();
 
-            var queriedPeople = await Database.People.QueryBatch(@"SELECT * FROM ""People""{0} WHERE ""People"".""Id""=@id1 OR ""People"".""Id""=@id2", new NpgsqlParameter("@id1", people[0].Id), new NpgsqlParameter("@id2", people[1].Id)).AddFormatter().JoinWith(x => x.Emails).Build().QueryAsync();
+            var queriedPeople = await Database.People.QueryBatch(@"SELECT * FROM ""People"">< WHERE ""People"".""Id""=@id1 OR ""People"".""Id""=@id2", new NpgsqlParameter("@id1", people[0].Id), new NpgsqlParameter("@id2", people[1].Id)).AddFormatter().JoinWith(x => x.Emails).Build().QueryAsync();
 
             Assert.NotNull(queriedPeople);
             Assert.Equal(people.Count, queriedPeople.Count);
