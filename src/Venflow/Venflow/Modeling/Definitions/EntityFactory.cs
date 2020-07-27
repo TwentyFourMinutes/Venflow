@@ -27,7 +27,6 @@ namespace Venflow.Modeling.Definitions
                 (PrimaryEntityColumn<TEntity>)columns[0], GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns),
                 GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames),
                 GetColumnListString(columns, ColumnListStringOptions.None),
-                GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames | ColumnListStringOptions.PrefixedPrimaryKeys),
                 _entityBuilder.ChangeTrackerFactory?.GetProxyFactory(),
                 _entityBuilder.ChangeTrackerFactory?.GetProxyApplyingFactory(columns));
 
@@ -118,28 +117,15 @@ namespace Venflow.Modeling.Definitions
             {
                 var column = columns[index];
 
-
                 if (explictNames)
                 {
-                    sb.Append(_entityBuilder.TableName);
-                    sb.Append('.');
+                    sb.Append(_entityBuilder.TableName)
+                      .Append('.');
                 }
 
-                sb.Append('"');
-
-                sb.Append(column.ColumnName);
-
-                if (index == 0 &&
-                    (options & ColumnListStringOptions.PrefixedPrimaryKeys) != 0)
-                {
-                    sb.Append("\" AS \"$");
-
-                    sb.Append(_entityBuilder.Type.Name);
-                    sb.Append("$.");
-                    sb.Append(column.ColumnName);
-                }
-
-                sb.Append("\", ");
+                sb.Append('"')
+                  .Append(column.ColumnName)
+                  .Append("\", ");
             }
 
             sb.Length -= 2;

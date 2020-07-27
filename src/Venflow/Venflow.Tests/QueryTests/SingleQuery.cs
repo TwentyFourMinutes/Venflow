@@ -46,7 +46,7 @@ namespace Venflow.Tests.QueryTests
         {
             var person = await InsertPersonWithRelationAsync();
 
-            var queriedPerson = await Database.People.QuerySingle(@"SELECT ""People"".*, ""Emails"".""Id"" AS ""$Email$.Id"", ""Emails"".""Address"", ""Emails"".""PersonId"" FROM ""People"" JOIN ""Emails"" ON ""Emails"".""PersonId"" = ""People"".""Id"" WHERE ""People"".""Id"" = @id", new NpgsqlParameter("@id", person.Id)).JoinWith(x => x.Emails).Build().QueryAsync();
+            var queriedPerson = await Database.People.QuerySingle(@"SELECT * FROM ""People"" JOIN ""Emails"" ON ""Emails"".""PersonId"" = ""People"".""Id"" WHERE ""People"".""Id"" = @id", new NpgsqlParameter("@id", person.Id)).JoinWith(x => x.Emails).Build().QueryAsync();
 
             Assert.NotNull(queriedPerson);
 
@@ -72,7 +72,7 @@ namespace Venflow.Tests.QueryTests
 
             await Assert.ThrowsAsync<InvalidOperationException>(() =>
             {
-                return Database.People.QuerySingle(@"SELECT ""People"".*, ""Emails"".""Id"" AS ""$Email$.Id"", ""Emails"".""Address"", ""Emails"".""PersonId"" FROM ""People"" JOIN ""Emails"" ON ""Emails"".""PersonId"" = ""People"".""Id"" WHERE ""People"".""Id"" = @id", new NpgsqlParameter("@id", person.Id)).Build().QueryAsync();
+                return Database.People.QuerySingle(@"SELECT * FROM ""People"" JOIN ""Emails"" ON ""Emails"".""PersonId"" = ""People"".""Id"" WHERE ""People"".""Id"" = @id", new NpgsqlParameter("@id", person.Id)).Build().QueryAsync();
             });
 
             await Database.People.DeleteAsync(person);

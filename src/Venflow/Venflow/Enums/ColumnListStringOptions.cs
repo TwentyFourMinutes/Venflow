@@ -7,7 +7,6 @@ namespace Venflow.Enums
     {
         None = 0,
         IncludePrimaryColumns = 1,
-        ExplicitNames = 2,
-        PrefixedPrimaryKeys = 4
+        ExplicitNames = 2
     }
 }

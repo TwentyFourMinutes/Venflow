@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using Venflow.Commands;
 using Venflow.Dynamic.IL;
@@ -35,22 +34,46 @@ namespace Venflow.Dynamic.Materializer
             var cacheKeyBuilder = new HashCode();
 
             cacheKeyBuilder.Add(typeof(TReturn));
-            cacheKeyBuilder.Add(_entity.TableName);
 
-            for (int i = 0; i < columnSchema.Count; i++)
+            var hasJoins = joinBuilderValues is { };
+
+            var columnIndex = 0;
+
+            if (hasJoins)
             {
-                var column = columnSchema[i];
+                var joinIndex = 0;
 
-                if (TryGetEntityOfTable(database, column, out var entity, out var columnName))
+                Entity nextJoin = _entity;
+                string? nextJoinPKName = _entity.PrimaryColumn.ColumnName;
+
+                for (; columnIndex < columnSchema.Count; columnIndex++)
                 {
+                    var columnName = columnSchema[columnIndex].ColumnName;
 
-                    cacheKeyBuilder.Add(entity.TableName);
+                    if (columnName == nextJoinPKName)
+                    {
+                        cacheKeyBuilder.Add(nextJoin.EntityName);
+
+                        if (joinBuilderValues.Joins.Count == joinIndex)
+                            break;
+
+                        nextJoin = joinBuilderValues.Joins[joinIndex].JoinWith.RightEntity;
+                        nextJoinPKName = nextJoin.GetPrimaryColumn().ColumnName;
+
+                        joinIndex++;
+                    }
+
                     cacheKeyBuilder.Add(columnName);
                 }
-                else
-                {
-                    cacheKeyBuilder.Add(column.ColumnName);
-                }
+            }
+            else
+            {
+                cacheKeyBuilder.Add(_entity.TableName);
+            }
+
+            for (; columnIndex < columnSchema.Count; columnIndex++)
+            {
+                cacheKeyBuilder.Add(columnSchema[columnIndex].ColumnName);
             }
 
             cacheKeyBuilder.Add(changeTracking);
@@ -66,30 +89,44 @@ namespace Venflow.Dynamic.Materializer
                 else
                 {
                     var entities = new List<KeyValuePair<Entity, List<KeyValuePair<string, int>>>>();
-                    var columns = new List<KeyValuePair<string, int>>();
+                    List<KeyValuePair<string, int>> columns = default;
 
-                    entities.Add(new KeyValuePair<Entity, List<KeyValuePair<string, int>>>(_entity, columns));
+                    var joinIndex = 0;
 
-                    for (int i = 0; i < columnSchema.Count; i++)
+                    Entity nextJoin = _entity;
+                    Entity currentJoin = _entity;
+                    var nextJoinPKName = _entity.PrimaryColumn.ColumnName;
+
+                    for (columnIndex = 0; columnIndex < columnSchema.Count; columnIndex++)
                     {
-                        var column = columnSchema[i];
+                        var column = columnSchema[columnIndex];
 
-                        if (TryGetEntityOfTable(database, column, out var entity, out var columnName))
+                        if (column.ColumnName == nextJoinPKName)
                         {
-                            columns = new List<KeyValuePair<string, int>>()
+                            if (columnIndex > 0)
+                                currentJoin = nextJoin;
+
+                            columns = new List<KeyValuePair<string, int>>();
+
+                            entities.Add(new KeyValuePair<Entity, List<KeyValuePair<string, int>>>(nextJoin, columns));
+
+                            if (hasJoins && joinIndex < joinBuilderValues.Joins.Count)
                             {
-                                new KeyValuePair<string, int>(columnName, column.ColumnOrdinal.Value)
-                            };
+                                nextJoin = joinBuilderValues.Joins[joinIndex].JoinWith.RightEntity;
+                                nextJoinPKName = nextJoin.GetPrimaryColumn().ColumnName;
 
-                            entities.Add(new KeyValuePair<Entity, List<KeyValuePair<string, int>>>(entity, columns));
+                                joinIndex++;
+                            }
                         }
-                        else
+                        else if (!currentJoin.TryGetColumn(column.ColumnName, out _))
                         {
-                            columns.Add(new KeyValuePair<string, int>(column.ColumnName, column.ColumnOrdinal.Value));
+                            throw new InvalidOperationException($"The column '{column.ColumnName}' on entity '{currentJoin.EntityName}' does not exist.");
                         }
+
+                        columns.Add(new KeyValuePair<string, int>(column.ColumnName, column.ColumnOrdinal.Value));
                     }
 
-                    if (joinBuilderValues is { })
+                    if (hasJoins)
                     {
                         if (joinBuilderValues.Joins.Count + 1 > entities.Count)
                         {
@@ -776,48 +813,6 @@ namespace Venflow.Dynamic.Materializer
             var materializerType = materializerTypeBuilder.CreateType();
 
             return (Func<NpgsqlDataReader, Task<TReturn>>)materializerType.GetMethod("MaterializeAsync").CreateDelegate(typeof(Func<NpgsqlDataReader, Task<TReturn>>));
-        }
-
-        private bool TryGetEntityOfTable(Database database, NpgsqlDbColumn column, out Entity? entity,
-            out string? columnName)
-        {
-            entity = null;
-
-            if (column.ColumnName[0] != '$')
-            {
-                columnName = null;
-
-                return false;
-            }
-
-            StringBuilder tableNameBuilder = new StringBuilder();
-
-            var index = 1;
-
-            while (true)
-            {
-                var character = column.ColumnName[index++];
-
-                if (character == '$')
-                {
-                    break;
-                }
-                else
-                {
-                    tableNameBuilder.Append(character);
-                }
-            }
-
-            var tableName = tableNameBuilder.ToString();
-
-            if (!database.Entities.TryGetValue(tableName, out entity))
-            {
-                throw new InvalidOperationException($"There is so entity mapped to the table '{tableName}'.");
-            }
-
-            columnName = column.ColumnName.Substring(index + 1, column.ColumnName.Length - index - 1);
-
-            return true;
         }
     }
 }

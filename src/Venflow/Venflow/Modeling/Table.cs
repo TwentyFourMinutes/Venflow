@@ -173,31 +173,31 @@ namespace Venflow.Modeling
 
         #region Builder
 
-        public IQueryCommandBuilder<TEntity, TEntity> QuerySingle(bool disposeCommand = true)
+        public IPreCommandBuilder<TEntity, TEntity> QuerySingle(bool disposeCommand = true)
             => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QuerySingle();
 
-        public IQueryCommandBuilder<TEntity, TEntity> QuerySingle(string sql, bool disposeCommand = true)
+        public IPreCommandBuilder<TEntity, TEntity> QuerySingle(string sql, bool disposeCommand = true)
             => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QuerySingle(sql);
 
-        public IQueryCommandBuilder<TEntity, TEntity> QuerySingle(string sql, params NpgsqlParameter[] parameters)
+        public IPreCommandBuilder<TEntity, TEntity> QuerySingle(string sql, params NpgsqlParameter[] parameters)
             => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, false).QuerySingle(sql, parameters);
 
-        public IQueryCommandBuilder<TEntity, TEntity> QuerySingle(string sql, bool disposeCommand, params NpgsqlParameter[] parameters)
+        public IPreCommandBuilder<TEntity, TEntity> QuerySingle(string sql, bool disposeCommand, params NpgsqlParameter[] parameters)
            => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QuerySingle(sql, parameters);
 
-        public IQueryCommandBuilder<TEntity, List<TEntity>> QueryBatch(bool disposeCommand = true)
+        public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(bool disposeCommand = true)
             => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QueryBatch();
 
-        public IQueryCommandBuilder<TEntity, List<TEntity>> QueryBatch(ulong count, bool disposeCommand = true)
+        public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(ulong count, bool disposeCommand = true)
             => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QueryBatch(count);
 
-        public IQueryCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, bool disposeCommand = true)
+        public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, bool disposeCommand = true)
             => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QueryBatch(sql);
 
-        public IQueryCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, params NpgsqlParameter[] parameters)
+        public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, params NpgsqlParameter[] parameters)
             => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, false).QueryBatch(sql, parameters);
 
-        public IQueryCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, bool disposeCommand, params NpgsqlParameter[] parameters)
+        public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, bool disposeCommand, params NpgsqlParameter[] parameters)
             => new VenflowCommandBuilder<TEntity>(_database.GetConnection(), _database, _configuration, disposeCommand).QueryBatch(sql, parameters);
 
         public IInsertCommandBuilder<TEntity> Insert()
