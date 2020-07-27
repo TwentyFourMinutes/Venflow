@@ -1,58 +1,70 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Venflow.Benchmarks.Benchmarks.Models;
-using Venflow.Commands;
 
-namespace Venflow.Benchmarks.Benchmarks
+namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
 {
     [MemoryDiagnoser]
+    [SimpleJob(RuntimeMoniker.Net48)]
+    [SimpleJob(RuntimeMoniker.NetCoreApp31)]
+    [SimpleJob(RuntimeMoniker.NetCoreApp50)]
+    [RPlotExporter]
     public class QueryBatchWithRelationsAsyncBenchmark : BenchmarkBase
     {
-        private IQueryCommand<Person, List<Person>> _command;
+        [Params(10, 100, 1000, 10000)]
+        public int QueryCount { get; set; }
+
+        private string sql => @"SELECT * FROM (SELECT * FROM ""People"" LIMIT " + QueryCount + @") AS ""People"" INNER JOIN ""Emails"" ON ""Emails"".""PersonId"" = ""People"".""Id"" INNER JOIN ""EmailContents"" ON ""EmailContents"".""EmailId"" = ""Emails"".""Id""";
 
         [GlobalSetup]
         public override async Task Setup()
         {
             await base.Setup();
 
-            _command = Configuration.People.QueryBatch(5000, false).JoinWith(x => x.Emails).ThenWith(x => x.Contents).Build();
+            await EfCoreQueryBatchAsync();
+            await EfCoreQueryBatchNoChangeTrackingAsync();
+            await VenflowQueryBatchAsync();
+            await VenflowQueryBatchNoChangeTrackingAsync();
+            await RecommendedDapperQueryBatchAsync();
+            await CustomDapperQueryBatchAsync();
+        }
 
-            //var people = new List<Person>();
+        [Benchmark]
+        public Task<List<Person>> EfCoreQueryBatchAsync()
+        {
+            return PersonDbContext.People.Include(x => x.Emails).ThenInclude(x => x.Contents).Take(QueryCount).ToListAsync();
+        }
 
-            //for (int i = 0; i < 5000; i++)
-            //{
-            //    var person = new Person { Name = "QueryBatchAsync" + i.ToString(), Emails = new List<Email>()};
+        [Benchmark]
+        public Task<List<Person>> EfCoreQueryBatchNoChangeTrackingAsync()
+        {
+            return PersonDbContext.People.AsNoTracking().Include(x => x.Emails).ThenInclude(x => x.Contents).Take(QueryCount).ToListAsync();
+        }
 
-            //    people.Add(person);
+        [Benchmark]
+        public Task<List<Person>> VenflowQueryBatchAsync()
+        {
+            return Database.People.QueryBatch(sql).JoinWith(x=> x.Emails).ThenWith(x=> x.Contents).TrackChanges().Build().QueryAsync();
+        }
 
-            //    for (int k = 0; k < 2; k++)
-            //    {
-            //        var email = new Email { Address = person.Name + k.ToString(), PersonId = person.Id, Contents = new List<EmailContent>()};
+        [Benchmark]
+        public Task<List<Person>> VenflowQueryBatchNoChangeTrackingAsync()
+        {
+            return Database.People.QueryBatch(sql).JoinWith(x => x.Emails).ThenWith(x => x.Contents).Build().QueryAsync();
+        }
 
-            //        person.Emails.Add(email);
-
-            //        for (int z = 0; z < 2; z++)
-            //        {
-            //            email.Contents.Add(new EmailContent { Content = email.Address + z.ToString(), EmailId = email.Id });
-            //        }
-            //    }
-            //}
-
-            //PersonDbContext.People.AddRange(people);
-
-            //await PersonDbContext.SaveChangesAsync();
-
-            await Configuration.People.QueryAsync(_command);
-
-            //await PersonDbContext.People.AsNoTracking().Include(x => x.Emails).ThenInclude(x => x.Contents).Take(5000).ToListAsync();
-
-            var people = new List<Person>();
+        [Benchmark]
+        public async Task<List<Person>> RecommendedDapperQueryBatchAsync()
+        {
             var peopleDict = new Dictionary<int, Person>();
             var emailDict = new Dictionary<int, Email>();
             var emailContentDict = new Dictionary<int, EmailContent>();
 
-            await Dapper.SqlMapper.QueryAsync<Person, Email, EmailContent, Person>(Configuration.GetConnection(), "SELECT * FROM (SELECT * FROM \"People\" LIMIT 5000) As People JOIN \"Emails\" As Emails On Emails.\"PersonId\" = People.\"Id\" JOIN \"EmailContents\" As EmailContents On EmailContents.\"EmailId\" = Emails.\"Id\"", (person, email, emailContent) =>
+            var people = (await Dapper.SqlMapper.QueryAsync<Person, Email, EmailContent, Person>(Database.GetConnection(), "SELECT * FROM (SELECT * FROM \"People\" LIMIT 5000) As People JOIN \"Emails\" As Emails On Emails.\"PersonId\" = People.\"Id\" JOIN \"EmailContents\" As EmailContents On EmailContents.\"EmailId\" = Emails.\"Id\"", (person, email, emailContent) =>
             {
                 var isEmailNew = false;
                 var isEmailContentNew = false;
@@ -64,7 +76,6 @@ namespace Venflow.Benchmarks.Benchmarks
                 else
                 {
                     person.Emails = new List<Email>();
-                    people.Add(person);
                     peopleDict.Add(person.Id, person);
                 }
 
@@ -99,31 +110,21 @@ namespace Venflow.Benchmarks.Benchmarks
                     email.Contents.Add(emailContent);
                 }
 
-                return null;
-            });
-        }
+                return person;
+            })).Distinct().ToList();
 
-        //[Benchmark]
-        //public async Task<List<Person>> EFCoreQueryBatchAsync()
-        //{
-        //    return await PersonDbContext.People.AsNoTracking().Include(x => x.Emails).ThenInclude(x => x.Contents).Take(5000).ToListAsync();
-        //}
-
-        [Benchmark]
-        public async Task<List<Person>> VenflowQueryBatchAsync()
-        {
-            return await Configuration.People.QueryAsync(_command);
+            return people;
         }
 
         [Benchmark]
-        public async Task<List<Person>> DapperQueryBatchAsync()
+        public async Task<List<Person>> CustomDapperQueryBatchAsync()
         {
             var people = new List<Person>();
             var peopleDict = new Dictionary<int, Person>();
             var emailDict = new Dictionary<int, Email>();
             var emailContentDict = new Dictionary<int, EmailContent>();
 
-            await Dapper.SqlMapper.QueryAsync<Person, Email, EmailContent, Person>(Configuration.GetConnection(), "SELECT * FROM (SELECT * FROM \"People\" LIMIT 5000) As People JOIN \"Emails\" As Emails On Emails.\"PersonId\" = People.\"Id\" JOIN \"EmailContents\" As EmailContents On EmailContents.\"EmailId\" = Emails.\"Id\"", (person, email, emailContent) =>
+            await Dapper.SqlMapper.QueryAsync<Person, Email, EmailContent, Person>(Database.GetConnection(), "SELECT * FROM (SELECT * FROM \"People\" LIMIT 5000) As People JOIN \"Emails\" As Emails On Emails.\"PersonId\" = People.\"Id\" JOIN \"EmailContents\" As EmailContents On EmailContents.\"EmailId\" = Emails.\"Id\"", (person, email, emailContent) =>
             {
                 var isEmailNew = false;
                 var isEmailContentNew = false;
@@ -177,10 +178,9 @@ namespace Venflow.Benchmarks.Benchmarks
         }
 
         [GlobalCleanup]
-        public override async Task Cleanup()
+        public override Task Cleanup()
         {
-            await _command.DisposeAsync();
-            await base.Cleanup();
+            return base.Cleanup();
         }
     }
 }

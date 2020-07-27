@@ -8,12 +8,12 @@ namespace Venflow.Benchmarks.Benchmarks
 {
     public abstract class BenchmarkBase
     {
-        public BenchmarkDb Configuration { get; set; }
+        public BenchmarkDb Database { get; set; }
         public BenchmarkDbContext PersonDbContext { get; set; }
 
         public virtual async Task Setup()
         {
-            Configuration = new BenchmarkDb();
+            Database = new BenchmarkDb();
 
             PostgreSqlBootstrap.Initialize();
             ClassMapper.Add<Person>("\"People\"");
@@ -35,7 +35,7 @@ namespace Venflow.Benchmarks.Benchmarks
 
         public virtual async Task Cleanup()
         {
-            await Configuration.DisposeAsync();
+            await Database.DisposeAsync();
 
             await PersonDbContext.DisposeAsync();
         }

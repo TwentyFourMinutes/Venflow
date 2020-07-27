@@ -58,25 +58,25 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         [Benchmark]
         public Task<List<Person>> VenflowQueryBatchAsync()
         {
-            return Configuration.People.QueryBatch(sql).TrackChanges().Build().QueryAsync();
+            return Database.People.QueryBatch(sql).TrackChanges().Build().QueryAsync();
         }
 
         [Benchmark]
         public Task<List<Person>> VenflowQueryBatchNoChangeTrackingAsync()
         {
-            return Configuration.People.QueryBatch(sql).Build().QueryAsync();
+            return Database.People.QueryBatch(sql).Build().QueryAsync();
         }
 
         [Benchmark]
         public async Task<List<Person>> RepoDbQueryBatchAsync()
         {
-            return EnumerableExtension.AsList(await DbConnectionExtension.QueryAsync<Person>(Configuration.GetConnection(), whereOrPrimaryKey: null, top: QueryCount));
+            return EnumerableExtension.AsList(await DbConnectionExtension.QueryAsync<Person>(Database.GetConnection(), whereOrPrimaryKey: null, top: QueryCount));
         }
 
         [Benchmark]
         public async Task<List<Person>> DapperQueryBatchAsync()
         {
-            return SqlMapper.AsList(await SqlMapper.QueryAsync<Person>(Configuration.GetConnection(), sql));
+            return SqlMapper.AsList(await SqlMapper.QueryAsync<Person>(Database.GetConnection(), sql));
         }
         [GlobalCleanup]
         public override Task Cleanup()

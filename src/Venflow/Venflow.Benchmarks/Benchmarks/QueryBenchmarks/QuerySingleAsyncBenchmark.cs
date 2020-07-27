@@ -53,25 +53,25 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         [Benchmark]
         public Task<Person> VenflowQuerySingleAsync()
         {
-            return Configuration.People.QuerySingle(sql).TrackChanges().Build().QueryAsync();
+            return Database.People.QuerySingle(sql).TrackChanges().Build().QueryAsync();
         }
 
         [Benchmark]
         public Task<Person> VenflowQuerySingleNoChangeTrackingAsync()
         {
-            return Configuration.People.QuerySingle(sql).Build().QueryAsync();
+            return Database.People.QuerySingle(sql).Build().QueryAsync();
         }
 
         [Benchmark]
         public Task<Person> RepoDbQuerySingleAsync()
         {
-            return DbConnectionExtension.QueryAsync<Person>(Configuration.GetConnection(), whereOrPrimaryKey: null, top: 1).ContinueWith(x => x.Result.First());
+            return DbConnectionExtension.QueryAsync<Person>(Database.GetConnection(), whereOrPrimaryKey: null, top: 1).ContinueWith(x => x.Result.First());
         }
 
         [Benchmark]
         public Task<Person> DapperQuerySingleAsync()
         {
-            return SqlMapper.QueryFirstAsync<Person>(Configuration.GetConnection(), sql);
+            return SqlMapper.QueryFirstAsync<Person>(Database.GetConnection(), sql);
         }
 
         [GlobalCleanup]
