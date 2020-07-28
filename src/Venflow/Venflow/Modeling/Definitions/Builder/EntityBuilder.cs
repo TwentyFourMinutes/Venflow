@@ -1,6 +1,7 @@
 using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Linq.Expressions;
@@ -333,14 +334,42 @@ namespace Venflow.Modeling.Definitions.Builder
         internal abstract void IgnoreProperty(string propertyName);
     }
 
+    /// <summary>
+    /// Instances of this class are returned from methods inside the <see cref="Table{TEntity}"/> class when using the Fluid API and it is not designed to be directly constructed in your application code.
+    /// </summary>
+    /// <typeparam name="TEntity">The entity type being configured.</typeparam>
     public interface IEntityBuilder<TEntity> : ILeftRelationBuilder<TEntity> where TEntity : class
     {
+        /// <summary>
+        /// Configures the table that the entity type maps to, if not configured it will use the name of the <see cref="Table{TEntity}"/> property inside the <see cref="Database"/> class.
+        /// </summary>
+        /// <param name="tableName">The name of the table.</param>
+        /// <returns>The same builder instance so that multiple calls can be chained.</returns>
         IEntityBuilder<TEntity> MapToTable(string tableName);
 
+        /// <summary>
+        /// Configures the column that the property maps to, if not configured it will use the name of the property inside the entity.
+        /// </summary>
+        /// <typeparam name="TTarget">The type of the property.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the property on this entity type.</param>
+        /// <returns>The same builder instance so that multiple calls can be chained.</returns>
         IEntityBuilder<TEntity> MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string columnName);
 
+        /// <summary>
+        /// Ignores a property for this entity type. This is the Fluent API equivalent to the <see cref="NotMappedAttribute"/>.
+        /// </summary>
+        /// <typeparam name="TTarget">The type of the property.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the property on this entity type.</param>
+        /// <returns>The same builder instance so that multiple calls can be chained.</returns>
         IEntityBuilder<TEntity> Ignore<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector);
 
+        /// <summary>
+        /// Sets the property that defines the primary key for this entity type. This is the Fluent API equivalent to the <see cref="KeyAttribute"/>.
+        /// </summary>
+        /// <typeparam name="TTarget">The type of the primary key.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the primary key on this entity type.</param>
+        /// <param name="option">The option which define how the primary key is generate.</param>
+        /// <returns>The same builder instance so that multiple calls can be chained.</returns>
         IEntityBuilder<TEntity> MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option);
     }
 }
