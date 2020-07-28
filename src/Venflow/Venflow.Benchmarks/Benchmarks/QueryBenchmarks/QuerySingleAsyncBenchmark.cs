@@ -35,6 +35,8 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         [Benchmark(Baseline = true)]
         public Task<Person> EfCoreQuerySingleAsync()
         {
+            PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+            PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
             return PersonDbContext.People.FirstOrDefaultAsync();
         }
 

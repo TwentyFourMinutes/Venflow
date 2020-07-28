@@ -41,6 +41,8 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         [Benchmark(Baseline = true)]
         public Task<List<Person>> EfCoreQueryBatchAsync()
         {
+            PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+            PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
             return PersonDbContext.People.Take(QueryCount).ToListAsync();
         }
 
