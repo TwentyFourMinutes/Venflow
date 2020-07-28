@@ -1,6 +1,5 @@
 ﻿using BenchmarkDotNet.Running;
 using System;
-using Venflow.Benchmarks.Benchmarks.QueryBenchmarks;
 
 namespace Venflow.Benchmarks
 {
