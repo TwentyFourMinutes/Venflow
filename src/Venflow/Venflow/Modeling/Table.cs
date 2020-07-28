@@ -74,7 +74,7 @@ namespace Venflow.Modeling
                 case ForeignTruncateOptions.Cascade:
                     sb.Append(" CASCADE");
                     break;
-                case ForeignTruncateOptions.Restric:
+                case ForeignTruncateOptions.Restrict:
                     sb.Append(" RESTRICT");
                     break;
             }
