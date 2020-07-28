@@ -1,7 +1,7 @@
 ﻿using Venflow.Modeling;
 using Venflow.Shared;
 
-namespace Venflow.Benchmarks.Benchmarks.Models.Configurations
+namespace Venflow.Benchmarks.Models.Configurations
 {
     public class BenchmarkDb : Database
     {

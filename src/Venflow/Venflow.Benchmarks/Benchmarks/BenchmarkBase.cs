@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RepoDb;
 using System.Threading.Tasks;
-using Venflow.Benchmarks.Benchmarks.Models;
-using Venflow.Benchmarks.Benchmarks.Models.Configurations;
+using Venflow.Benchmarks.Models;
+using Venflow.Benchmarks.Models.Configurations;
 
 namespace Venflow.Benchmarks.Benchmarks
 {

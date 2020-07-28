@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Venflow.Shared;
 
-namespace Venflow.Benchmarks.Benchmarks.Models.Configurations
+namespace Venflow.Benchmarks.Models.Configurations
 {
     public class BenchmarkDbContext : DbContext
     {

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Venflow.Modeling.Definitions;
 using Venflow.Modeling.Definitions.Builder;
 
-namespace Venflow.Benchmarks.Benchmarks.Models
+namespace Venflow.Benchmarks.Models
 {
     [Table("People")]
     public class Person

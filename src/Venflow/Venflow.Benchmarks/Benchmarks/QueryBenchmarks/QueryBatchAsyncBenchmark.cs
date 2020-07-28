@@ -7,7 +7,7 @@ using RepoDb.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Venflow.Benchmarks.Benchmarks.Models;
+using Venflow.Benchmarks.Models;
 
 namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
 {
@@ -26,6 +26,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         [GlobalSetup]
         public override async Task Setup()
         {
+            System.Console.WriteLine("ye");
             await base.Setup();
 
             await EfCoreQueryBatchAsync();

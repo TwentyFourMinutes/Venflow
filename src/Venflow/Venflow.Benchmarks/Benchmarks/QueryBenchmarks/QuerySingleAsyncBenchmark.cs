@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using RepoDb;
 using System.Linq;
 using System.Threading.Tasks;
-using Venflow.Benchmarks.Benchmarks.Models;
+using Venflow.Benchmarks.Models;
 
 namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
 {

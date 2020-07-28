@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using System.Threading.Tasks;
-using Venflow.Benchmarks.Benchmarks.Models.Configurations;
+using Venflow.Benchmarks.Models.Configurations;
 
 namespace Venflow.Benchmarks.Benchmarks
 {

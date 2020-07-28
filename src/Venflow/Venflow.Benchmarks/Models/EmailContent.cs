@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Venflow.Benchmarks.Benchmarks.Models
+namespace Venflow.Benchmarks.Models
 {
     [Table("EmailContents")]
     public class EmailContent

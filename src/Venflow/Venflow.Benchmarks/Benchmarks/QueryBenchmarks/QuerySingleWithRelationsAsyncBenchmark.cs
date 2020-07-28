@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Venflow.Benchmarks.Benchmarks.Models;
+using Venflow.Benchmarks.Models;
 
 namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
 {
@@ -30,7 +30,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
             await CustomDapperQuerySingleAsync();
         }
 
-        [Benchmark]
+        [Benchmark(Baseline = true)]
         public Task<Person> EfCoreQuerySingleAsync()
         {
             return PersonDbContext.People.Include(x => x.Emails).ThenInclude(x => x.Contents).FirstOrDefaultAsync();
