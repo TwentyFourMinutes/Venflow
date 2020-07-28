@@ -6,7 +6,7 @@ Venflow is a brand new and from the ground up written ORM which tries to provide
 
 ## About
 
-Lets face it, EF-Core is awesome, but it can be slow, really slow. However this library tries to overcome that by providing similar features while providing great performance. Venflow comes with a very similar UX to Dapper and EF-Core, in order to keep the learning curve as low as possible. 
+Lets face it, EF-Core is awesome, but it can be slow, really slow. However this library tries to overcome that by providing similar features while maintaining great performance. Venflow comes with a very similar UX to Dapper and EF-Core, in order to keep the learning curve as low as possible. 
 
 #### Features
 
