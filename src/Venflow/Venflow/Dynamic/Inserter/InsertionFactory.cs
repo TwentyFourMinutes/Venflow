@@ -24,9 +24,6 @@ namespace Venflow.Dynamic.Inserter
         {
             if (_entity.Relations is { })
             {
-                if (_entity.PrimaryColumn.IsServerSideGenerated)
-                    insertOptions = InsertOptions.SetIdentityColumns;
-
                 if (insertOptions == InsertOptions.PopulateRelations)
                 {
                     if (_relationInserter is null)
@@ -61,11 +58,7 @@ namespace Venflow.Dynamic.Inserter
                 {
                     if (_defaultInserter is null)
                     {
-                        var sourceCompiler = new InsertionSourceCompiler();
-
-                        sourceCompiler.Compile(_entity);
-
-                        return _defaultInserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(sourceCompiler.GenerateSortedEntities(), insertOptions);
+                        return _defaultInserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(new EntityRelationHolder[] { new EntityRelationHolder(_entity) }, insertOptions);
                     }
                     else
                     {
@@ -81,11 +74,7 @@ namespace Venflow.Dynamic.Inserter
                 {
                     if (_defaultInserter is null)
                     {
-                        var sourceCompiler = new InsertionSourceCompiler();
-
-                        sourceCompiler.Compile(_entity);
-
-                        return _defaultInserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(sourceCompiler.GenerateSortedEntities(), insertOptions);
+                        return _defaultInserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(new EntityRelationHolder[] { new EntityRelationHolder(_entity) }, insertOptions);
                     }
                     else
                     {

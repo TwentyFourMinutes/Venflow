@@ -144,7 +144,8 @@ namespace Venflow.Dynamic.Inserter
 
             _entityListDict.Add(_knownEntities.GetId(rootEntityListField, out _), rootEntityListField);
 
-            SeperateRootEntity(_rootEntity, rootEntityListField);
+            if (HasOptionsFlag(InsertOptions.PopulateRelations))
+                SeperateRootEntity(_rootEntity, rootEntityListField);
 
             _moveNextMethodIL.BeginExceptionBlock();
 

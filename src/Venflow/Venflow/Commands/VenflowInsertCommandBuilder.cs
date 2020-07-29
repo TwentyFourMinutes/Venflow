@@ -6,7 +6,7 @@ namespace Venflow.Commands
 {
     internal class VenflowInsertCommandBuilder<TEntity> : IInsertCommandBuilder<TEntity> where TEntity : class
     {
-        private InsertOptions _insertOptions;
+        private InsertOptions _insertOptions = InsertOptions.SetIdentityColumns;
 
         private readonly bool _disposeCommand;
         private readonly NpgsqlCommand _command;
@@ -39,5 +39,20 @@ namespace Venflow.Commands
 
             return this;
         }
+
+        IInsertCommandBuilder<TEntity> IInsertCommandBuilder<TEntity>.DoNotSetIdentityColumns()
+        {
+            _insertOptions &= ~InsertOptions.PopulateRelations;
+
+            return this;
+        }
+
+        IInsertCommandBuilder<TEntity> IInsertCommandBuilder<TEntity>.DoNotDoNotSetPopulateRelation()
+        {
+            _insertOptions &= ~InsertOptions.SetIdentityColumns;
+
+            return this;
+        }
+
     }
 }
