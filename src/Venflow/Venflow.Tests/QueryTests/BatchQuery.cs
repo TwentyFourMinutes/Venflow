@@ -39,7 +39,6 @@ namespace Venflow.Tests.QueryTests
             await Database.People.DeleteAsync(people);
         }
 
-
         [Fact]
         public async Task QueryWithNoRelationAndNoResultAsync()
         {

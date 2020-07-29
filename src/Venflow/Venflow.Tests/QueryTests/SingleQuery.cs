@@ -28,6 +28,39 @@ namespace Venflow.Tests.QueryTests
         }
 
         [Fact]
+        public async Task QueryWithMissingColumnAsync()
+        {
+            var person = await InsertPersonAsync();
+
+            var queriedPerson = await Database.People.QuerySingle(@"SELECT ""Id"" FROM ""People"" WHERE ""People"".""Id""=@id", new NpgsqlParameter("@id", person.Id)).Build().QueryAsync();
+
+            Assert.NotNull(queriedPerson);
+
+            Assert.Equal(person.Id, queriedPerson.Id);
+            Assert.Null(queriedPerson.Name);
+            Assert.NotEqual(person.Name, queriedPerson.Name);
+            Assert.Null(queriedPerson.Emails);
+
+            await Database.People.DeleteAsync(person);
+        }
+
+        [Fact]
+        public async Task QueryWithMissingNullColumnAsync()
+        {
+            var person = await InsertPersonWithNullAsync();
+
+            var queriedPerson = await Database.People.QuerySingle(@"SELECT * FROM ""People"" WHERE ""People"".""Id""=@id", new NpgsqlParameter("@id", person.Id)).Build().QueryAsync();
+
+            Assert.NotNull(queriedPerson);
+
+            Assert.Equal(person.Id, queriedPerson.Id);
+            Assert.Equal(person.Name, queriedPerson.Name);
+            Assert.Null(queriedPerson.Emails);
+
+            await Database.People.DeleteAsync(person);
+        }
+
+        [Fact]
         public async Task QueryWithNoRelationAndNoResultAsync()
         {
             var queriedPerson = await Database.People.QueryInterpolatedSingle($@"SELECT * FROM ""People"" WHERE ""People"".""Id""={-1}").Build().QueryAsync();
@@ -114,6 +147,15 @@ namespace Venflow.Tests.QueryTests
         private async Task<Person> InsertPersonAsync()
         {
             var person = new Person { Name = "None" };
+
+            await Database.People.InsertAsync(person);
+
+            return person;
+        }
+
+        private async Task<Person> InsertPersonWithNullAsync()
+        {
+            var person = new Person { Name = null };
 
             await Database.People.InsertAsync(person);
 
