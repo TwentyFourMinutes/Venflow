@@ -29,13 +29,23 @@ namespace Venflow.Tests.QueryTests
         {
             var people = await InsertPeopleAsync();
 
-            try
+            Database.People.ClearMaterializerCache();
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
             {
-                await Database.People.QueryBatch(@"SELECT * FROM ""People"">< WHERE ""People"".""Id""=@id1 OR ""People"".""Id""=@id2", new NpgsqlParameter("@id1", people[0].Id), new NpgsqlParameter("@id2", people[1].Id)).AddFormatter().JoinWith(x => x.Emails).Build().QueryAsync();
-            }
-            catch (InvalidOperationException) { }
+                return Database.People.QueryBatch(@"SELECT * FROM ""People"" WHERE ""People"".""Id""=@id1 OR ""People"".""Id""=@id2", new NpgsqlParameter("@id1", people[0].Id), new NpgsqlParameter("@id2", people[1].Id)).AddFormatter().JoinWith(x => x.Emails).Build().QueryAsync();
+            });
 
             await Database.People.DeleteAsync(people);
+        }
+
+
+        [Fact]
+        public async Task QueryWithNoRelationAndNoResultAsync()
+        {
+            var queriedPeople = await Database.People.QueryInterpolatedBatch($@"SELECT * FROM ""People"" WHERE ""People"".""Id""={-1}").Build().QueryAsync();
+
+            Assert.Empty(queriedPeople);
         }
 
 

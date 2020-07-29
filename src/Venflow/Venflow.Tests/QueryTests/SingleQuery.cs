@@ -27,16 +27,25 @@ namespace Venflow.Tests.QueryTests
             await Database.People.DeleteAsync(person);
         }
 
+        [Fact]
+        public async Task QueryWithNoRelationAndNoResultAsync()
+        {
+            var queriedPerson = await Database.People.QueryInterpolatedSingle($@"SELECT * FROM ""People"" WHERE ""People"".""Id""={-1}").Build().QueryAsync();
+
+            Assert.Null(queriedPerson);
+        }
+
         [Fact, Priority(0)]
         public async Task QueryWithNoRelationAndIncludeAsync()
         {
             var person = await InsertPersonAsync();
 
-            try
+            Database.People.ClearMaterializerCache();
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
             {
-                await Database.People.QuerySingle(@"SELECT * FROM ""People"" WHERE ""People"".""Id"" = @id", new NpgsqlParameter("@id", person.Id)).JoinWith(x => x.Emails).Build().QueryAsync();
-            }
-            catch (InvalidOperationException) { }
+                return Database.People.QuerySingle(@"SELECT * FROM ""People"" WHERE ""People"".""Id"" = @id", new NpgsqlParameter("@id", person.Id)).JoinWith(x => x.Emails).Build().QueryAsync();
+            });
 
             await Database.People.DeleteAsync(person);
         }
