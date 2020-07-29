@@ -23,7 +23,8 @@ namespace Venflow.Modeling.Definitions
         {
             var columns = _entityBuilder.Build();
 
-            _entity = new Entity<TEntity>(_entityBuilder.Type, _entityBuilder.ChangeTrackerFactory?.ProxyType, _entityBuilder.TableName, columns,
+            _entity = new Entity<TEntity>(_entityBuilder.Type, _entityBuilder.ChangeTrackerFactory?.ProxyType, _entityBuilder.TableName,
+                _entityBuilder.EntityInNullableContext, _entityBuilder.DefaultPropNullability, columns,
                 (PrimaryEntityColumn<TEntity>)columns[0], GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns),
                 GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames),
                 GetColumnListString(columns, ColumnListStringOptions.None),

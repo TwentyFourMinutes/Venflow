@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Venflow.Dynamic.Proxies;
 using Venflow.Enums;
 
@@ -19,6 +20,9 @@ namespace Venflow.Modeling.Definitions.Builder
         internal string? TableName { get; private set; }
         internal IDictionary<string, ColumnDefinition<TEntity>> ColumnDefinitions { get; }
 
+        internal bool EntityInNullableContext { get; }
+        internal bool DefaultPropNullability { get; }
+
         private readonly HashSet<string> _ignoredColumns;
 
         internal EntityBuilder(string tableName)
@@ -28,6 +32,21 @@ namespace Venflow.Modeling.Definitions.Builder
             Type = typeof(TEntity);
             ColumnDefinitions = new Dictionary<string, ColumnDefinition<TEntity>>();
             _ignoredColumns = new HashSet<string>();
+
+            // Check if the entity has a NullableContextAttribute which means that it is in a null-able environment.
+            var nullableContextAttribute = Type.GetCustomAttribute<NullableContextAttribute>();
+
+            if (nullableContextAttribute is { })
+            {
+                // Flag == 1 All props are not null-able if not otherwise specified. Flag == 2 reversed.
+                DefaultPropNullability = nullableContextAttribute.Flag == 2;
+                EntityInNullableContext = true;
+            }
+            else
+            {
+                DefaultPropNullability = true;
+                EntityInNullableContext = false;
+            }
         }
 
         IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapToTable(string tableName)
@@ -151,21 +170,13 @@ namespace Venflow.Modeling.Definitions.Builder
             var changeTrackingColumns = new Dictionary<int, EntityColumn<TEntity>>();
             PrimaryEntityColumn<TEntity>? primaryColumn = null;
 
-            var insertWriterVariables = new List<ParameterExpression>();
-            var insertWriterStatments = new List<Expression>();
-
             var constructorTypes = new Type[2];
             constructorTypes[0] = TypeCache.String;
 
             var indexParameter = Expression.Parameter(TypeCache.String, "index");
             var entityParameter = Expression.Parameter(Type, "entity");
-            var valueParameter = Expression.Parameter(TypeCache.Object, "value");
-            var stringBuilderParameter = Expression.Parameter(TypeCache.StringBuilder, "commandString");
-            var npgsqlParameterCollectionParameter = Expression.Parameter(TypeCache.NpgsqlParameterCollection, "parameters");
 
             var stringConcatMethod = TypeCache.String.GetMethod("Concat", new[] { TypeCache.String, TypeCache.String });
-            var stringBuilderAppend = TypeCache.StringBuilder.GetMethod("Append", new[] { TypeCache.String });
-            var npgsqlParameterCollectionAdd = TypeCache.NpgsqlParameterCollection.GetMethod("Add", new Type[] { TypeCache.GenericNpgsqlParameter });
 
             // Important column specifications
             var regularColumnsOffset = 0;
@@ -190,21 +201,33 @@ namespace Venflow.Modeling.Definitions.Builder
 
                 var parameterValueRetriever = Expression.Lambda<Func<TEntity, string, NpgsqlParameter>>(parameterInstance, entityParameter, indexParameter).Compile();
 
-                Expression valueAssignment;
-                var valueRetriever = TypeCache.NpgsqlDataReader!.GetMethod("GetFieldValue", BindingFlags.Instance | BindingFlags.Public).MakeGenericMethod(property.PropertyType);
+                bool isPropertyTypeNullableReferenceType;
 
-                if (property.PropertyType.IsClass || Nullable.GetUnderlyingType(property.PropertyType) is { })
+                if (property.PropertyType.IsClass)
                 {
-                    valueAssignment = Expression.Assign(valueProperty, Expression.TypeAs(valueParameter, property.PropertyType));
+                    if (EntityInNullableContext)
+                    {
+                        var nullableAttribute = property.GetCustomAttribute<NullableAttribute>();
+
+                        if (nullableAttribute is { })
+                        {
+                            // Flag == 1 prop is not null-able if not otherwise specified. Flag == 2 reversed.
+                            isPropertyTypeNullableReferenceType = nullableAttribute.NullableFlags[0] == 2;
+                        }
+                        else
+                        {
+                            isPropertyTypeNullableReferenceType = DefaultPropNullability;
+                        }
+                    }
+                    else
+                    {
+                        isPropertyTypeNullableReferenceType = true;
+                    }
                 }
                 else
                 {
-                    valueAssignment = Expression.Assign(valueProperty, Expression.Convert(valueParameter, property.PropertyType));
+                    isPropertyTypeNullableReferenceType = false;
                 }
-
-                var valueWriter = Expression.Lambda<Action<TEntity, object>>(valueAssignment, entityParameter, valueParameter).Compile();
-
-                var isPrimaryColumn = false;
 
                 // Handle custom columns
 
@@ -213,7 +236,13 @@ namespace Venflow.Modeling.Definitions.Builder
                     switch (definition)
                     {
                         case PrimaryColumnDefinition<TEntity> primaryDefintion:
-                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, valueRetriever, valueWriter, parameterValueRetriever, primaryDefintion.IsServerSideGenerated);
+
+                            if (EntityInNullableContext && isPropertyTypeNullableReferenceType)
+                            {
+                                throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
+                            }
+
+                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, parameterValueRetriever, primaryDefintion.IsServerSideGenerated);
 
                             columns.Insert(0, primaryColumn);
 
@@ -229,13 +258,17 @@ namespace Venflow.Modeling.Definitions.Builder
                             nameToColumn.Add(definition.Name, primaryColumn);
 
                             hasCustomDefinition = true;
-                            isPrimaryColumn = true;
                             break;
                     }
                 }
                 else if (annotedPrimaryKey == property)
                 {
-                    primaryColumn = new PrimaryEntityColumn<TEntity>(property, annotedPrimaryKey.Name, valueRetriever, valueWriter, parameterValueRetriever, true);
+                    if (EntityInNullableContext && isPropertyTypeNullableReferenceType)
+                    {
+                        throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
+                    }
+
+                    primaryColumn = new PrimaryEntityColumn<TEntity>(property, annotedPrimaryKey.Name, parameterValueRetriever, true);
 
                     columns.Insert(0, primaryColumn);
 
@@ -251,7 +284,6 @@ namespace Venflow.Modeling.Definitions.Builder
                     nameToColumn.Add(annotedPrimaryKey.Name, primaryColumn);
 
                     hasCustomDefinition = true;
-                    isPrimaryColumn = true;
                 }
 
                 if (!hasCustomDefinition)
@@ -274,7 +306,7 @@ namespace Venflow.Modeling.Definitions.Builder
                         columnName = property.Name;
                     }
 
-                    var column = new EntityColumn<TEntity>(property, columnName, valueRetriever, valueWriter, parameterValueRetriever);
+                    var column = new EntityColumn<TEntity>(property, columnName, parameterValueRetriever, isPropertyTypeNullableReferenceType);
 
                     columns.Add(column);
 
@@ -286,18 +318,6 @@ namespace Venflow.Modeling.Definitions.Builder
                     }
 
                     nameToColumn.Add(columnName, column);
-                }
-
-                if (!isPrimaryColumn)
-                {
-                    var parameterVariable = Expression.Variable(genericNpgsqlParameter, property.Name.ToLower());
-
-                    insertWriterVariables.Add(parameterVariable);
-
-                    insertWriterStatments.Add(Expression.Assign(parameterVariable, parameterInstance));
-                    insertWriterStatments.Add(Expression.Call(stringBuilderParameter, stringBuilderAppend, Expression.Property(parameterVariable, "ParameterName")));
-                    insertWriterStatments.Add(Expression.Call(npgsqlParameterCollectionParameter, npgsqlParameterCollectionAdd, parameterVariable));
-                    insertWriterStatments.Add(Expression.Call(stringBuilderParameter, stringBuilderAppend, Expression.Constant(", ")));
                 }
             }
 
@@ -312,8 +332,6 @@ namespace Venflow.Modeling.Definitions.Builder
 
                 ChangeTrackerFactory.GenerateEntityProxy(changeTrackingColumns);
             }
-
-            insertWriterStatments.RemoveAt(insertWriterStatments.Count - 1);
 
             return new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn, regularColumnsOffset);
         }

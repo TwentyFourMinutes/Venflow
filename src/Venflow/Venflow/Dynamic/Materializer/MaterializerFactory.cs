@@ -341,7 +341,7 @@ namespace Venflow.Dynamic.Materializer
                     iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
                     iLGhostBodyGen.Emit(OpCodes.Ldfld, dataReaderField);
                     iLGhostBodyGen.Emit(OpCodes.Ldc_I4, primaryKeyColumnScheme.Value);
-                    iLGhostBodyGen.Emit(OpCodes.Callvirt, primaryKeyColumn.DbValueRetriever);
+                    GetColumnMaterializer(iLGhostBodyGen, primaryKeyColumn);
                     iLGhostBodyGen.Emit(OpCodes.Stloc, primaryKeyLocal);
 
                     nextIfStartLabel = moveNextMethodIL.DefineLabel();
@@ -430,7 +430,7 @@ namespace Venflow.Dynamic.Materializer
                         iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
                         iLGhostBodyGen.Emit(OpCodes.Ldfld, dataReaderField);
                         iLGhostBodyGen.Emit(OpCodes.Ldc_I4, columnScheme.Value);
-                        iLGhostBodyGen.Emit(OpCodes.Callvirt, column.DbValueRetriever);
+                        GetColumnMaterializer(iLGhostBodyGen, column);
                         iLGhostBodyGen.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod());
                     }
 
@@ -631,7 +631,7 @@ namespace Venflow.Dynamic.Materializer
                     iLGhostBodyGen.Emit(OpCodes.Ldarg_0);
                     iLGhostBodyGen.Emit(OpCodes.Ldfld, dataReaderField);
                     iLGhostBodyGen.Emit(OpCodes.Ldc_I4, columnScheme.Value);
-                    iLGhostBodyGen.Emit(OpCodes.Callvirt, column.DbValueRetriever);
+                    GetColumnMaterializer(iLGhostBodyGen, column);
                     iLGhostBodyGen.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod());
                 }
 
@@ -825,6 +825,23 @@ namespace Venflow.Dynamic.Materializer
             var materializerType = materializerTypeBuilder.CreateType();
 
             return (Func<NpgsqlDataReader, Task<TReturn>>)materializerType.GetMethod("MaterializeAsync").CreateDelegate(typeof(Func<NpgsqlDataReader, Task<TReturn>>));
+        }
+
+        private void GetColumnMaterializer(ILGhostGenerator iLGenerator, EntityColumn column)
+        {
+            if (column.IsNullableReferenceType)
+            {
+                var valueRetriever = typeof(NpgsqlDataReaderExtensions).GetMethod("GetValueOrDefault", BindingFlags.Static | BindingFlags.Public).MakeGenericMethod(column.PropertyInfo.PropertyType);
+
+                iLGenerator.Emit(OpCodes.Call, valueRetriever);
+            }
+            else
+            {
+
+                var valueRetriever = TypeCache.NpgsqlDataReader!.GetMethod("GetFieldValue", BindingFlags.Instance | BindingFlags.Public).MakeGenericMethod(column.PropertyInfo.PropertyType);
+
+                iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
+            }
         }
     }
 }

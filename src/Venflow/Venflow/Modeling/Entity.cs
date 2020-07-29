@@ -16,7 +16,7 @@ namespace Venflow.Modeling
         internal MaterializerFactory<TEntity> MaterializerFactory { get; }
         internal InsertionFactory<TEntity> InsertionFactory { get; }
 
-        internal Entity(Type entityType, Type? proxyEntityType, string tableName, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier) : base(entityType, proxyEntityType, tableName, columnListString, explicitColumnListString, nonPrimaryColumnListString)
+        internal Entity(Type entityType, Type? proxyEntityType, string tableName, bool isInNullableContext, bool defaultPropNullability, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier) : base(entityType, proxyEntityType, tableName, isInNullableContext, defaultPropNullability, columnListString, explicitColumnListString, nonPrimaryColumnListString)
         {
             ChangeTrackerFactory = changeTrackerFactory;
             ChangeTrackerApplier = changeTrackerApplier;
@@ -95,6 +95,9 @@ namespace Venflow.Modeling
         internal string TableName { get; }
         internal string RawTableName { get; }
 
+        internal bool IsInNullableContext { get; }
+        internal bool DefaultPropNullability { get; }
+
         internal Type EntityType { get; }
         internal Type? ProxyEntityType { get; }
 
@@ -104,13 +107,15 @@ namespace Venflow.Modeling
         internal string ExplicitColumnListString { get; }
         internal string NonPrimaryColumnListString { get; }
 
-        protected Entity(Type entityType, Type? proxyEntityType, string tableName, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString)
+        protected Entity(Type entityType, Type? proxyEntityType, string tableName, bool isInNullableContext, bool defaultPropNullability, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString)
         {
             EntityType = entityType;
             ProxyEntityType = proxyEntityType;
             EntityName = entityType.Name;
             TableName = "\"" + tableName + "\"";
             RawTableName = tableName;
+            IsInNullableContext = isInNullableContext;
+            DefaultPropNullability = defaultPropNullability;
             ColumnListString = columnListString;
             ExplicitColumnListString = explicitColumnListString;
             NonPrimaryColumnListString = nonPrimaryColumnListString;
