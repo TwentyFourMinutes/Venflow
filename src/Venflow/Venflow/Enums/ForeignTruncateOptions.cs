@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Venflow.Enums
+﻿namespace Venflow.Enums
 {
     /// <summary>
     /// Represents the truncate option for foreign keys.
