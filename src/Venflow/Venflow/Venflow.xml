@@ -108,6 +108,12 @@
             </summary>
             <returns>A value task representing the asynchronous operation</returns>
         </member>
+        <member name="M:Venflow.Database.Dispose">
+            <summary>
+            Releases the allocated resources for this context. Also closes the underlying connection, if open.
+            </summary>
+            <remarks>If you are in an asynchronous context you should consider using <see cref="M:Venflow.Database.DisposeAsync"/> instead.</remarks>
+        </member>
         <member name="T:Venflow.Enums.ForeignTruncateOptions">
             <summary>
             Represents the truncate option for foreign keys.
