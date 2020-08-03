@@ -22,7 +22,7 @@ namespace Venflow
     /// <remarks>
     /// Typically you create a class that derives from <see cref="Database"/> and contains <seealso cref="Table{TEntity}"/> properties for each entity in the Database. All the <seealso cref="Table{TEntity}"/> properties must have a public setter, they are automatically initialized when the instance of the derived type is created.
     /// </remarks>
-    public abstract class Database : IAsyncDisposable
+    public abstract class Database : IAsyncDisposable, IDisposable
     {
         internal IReadOnlyDictionary<string, Entity> Entities { get; private set; }
 
@@ -272,6 +272,18 @@ namespace Venflow
             }
 
             return new ValueTask();
+        }
+
+        /// <summary>
+        /// Releases the allocated resources for this context. Also closes the underlying connection, if open.
+        /// </summary>
+        /// <remarks>If you are in an asynchronous context you should consider using <see cref="DisposeAsync"/> instead.</remarks>
+        public void Dispose()
+        {
+            if (_connection is { })
+            {
+                _connection.Dispose();
+            }
         }
     }
 }
