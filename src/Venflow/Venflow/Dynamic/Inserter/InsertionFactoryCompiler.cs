@@ -1156,12 +1156,12 @@ namespace Venflow.Dynamic.Inserter
 
                 FieldBuilder? newEntityListField;
 
-                var id = _knownEntities.GetId(relation.RightEntity, out var isNew);
-
                 if (relation.LeftNavigationProperty is null)
                 {
                     continue;
                 }
+
+                var id = _knownEntities.GetId(relation.RightEntity, out var isNew);
 
                 var entityLocal = _moveNextMethodIL.DeclareLocal(relation.LeftNavigationProperty.PropertyType);
 
