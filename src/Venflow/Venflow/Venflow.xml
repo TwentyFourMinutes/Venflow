@@ -199,6 +199,38 @@
             Returns all records when there is a match in either left or right table
             </summary>
         </member>
+        <member name="T:Venflow.InvalidEntityRelationException">
+            <summary>
+            Represents errors that occur during the relation entity generation.
+            </summary>
+        </member>
+        <member name="M:Venflow.InvalidEntityRelationException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Venflow.InvalidEntityRelationException"/> class.
+            </summary>
+        </member>
+        <member name="M:Venflow.InvalidEntityRelationException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Venflow.InvalidEntityRelationException"/> class.
+            </summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:Venflow.InvalidEntityRelationException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Venflow.InvalidEntityRelationException"/> class.
+            </summary>
+            <param name="message">The message that describes the error.</param>
+            <param name="inner">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        </member>
+        <member name="M:Venflow.InvalidEntityRelationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Venflow.InvalidEntityRelationException"/> class.
+            </summary>
+            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
+            <exception cref="T:System.ArgumentNullException">info is null.</exception>
+            <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or System.Exception.HResult is zero (0).</exception>
+        </member>
         <member name="T:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1">
             <summary>
             Instances of this class are returned from methods inside the <see cref="T:Venflow.Modeling.Table`1"/> class when using the Fluid API and it is not designed to be directly constructed in your application code.
@@ -709,38 +741,6 @@
             <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
             <remarks>Any property which should be change tracked on an entity has to be marked virtual.</remarks>
             <exception cref="T:System.InvalidOperationException">Thrown when a provided entity does not contain any virtual properties.</exception>
-        </member>
-        <member name="T:Venflow.InvalidEntityRelationException">
-            <summary>
-            Represents errors that occur during the relation entity generation.
-            </summary>
-        </member>
-        <member name="M:Venflow.InvalidEntityRelationException.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Venflow.InvalidEntityRelationException"/> class.
-            </summary>
-        </member>
-        <member name="M:Venflow.InvalidEntityRelationException.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Venflow.InvalidEntityRelationException"/> class.
-            </summary>
-            <param name="message">The message that describes the error.</param>
-        </member>
-        <member name="M:Venflow.InvalidEntityRelationException.#ctor(System.String,System.Exception)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Venflow.InvalidEntityRelationException"/> class.
-            </summary>
-            <param name="message">The message that describes the error.</param>
-            <param name="inner">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
-        </member>
-        <member name="M:Venflow.InvalidEntityRelationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Venflow.InvalidEntityRelationException"/> class.
-            </summary>
-            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-            <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
-            <exception cref="T:System.ArgumentNullException">info is null.</exception>
-            <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or System.Exception.HResult is zero (0).</exception>
         </member>
         <member name="T:Venflow.NpgsqlCommandExtensions">
             <summary>

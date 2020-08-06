@@ -20,9 +20,9 @@ namespace Venflow.Modeling
             _entityBuilders = new Dictionary<string, EntityBuilder>();
         }
 
-        internal DatabaseConfiguration BuildConfiguration(Type databaseType)
+        internal DatabaseConfiguration BuildConfiguration(Type databaseType, IReadOnlyList<Assembly> configurationAssemblies)
         {
-            var tables = FindEntityConfigurations(databaseType);
+            var tables = FindEntityConfigurations(databaseType, configurationAssemblies);
 
             var entities = new Dictionary<string, Entity>();
             var entitiesArray = new Entity[_entityFactories.Count];
@@ -50,47 +50,49 @@ namespace Venflow.Modeling
             return new DatabaseConfiguration(DatabaseTableFactory.CreateInstantiater(databaseType, tables, entitiesArray), new ReadOnlyDictionary<string, Entity>(entities), entitiesArray);
         }
 
-        private List<PropertyInfo> FindEntityConfigurations(Type databaseType)
+        private List<PropertyInfo> FindEntityConfigurations(Type databaseType, IReadOnlyList<Assembly> configurationAssemblies)
         {
             var properties = databaseType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-            var assembly = databaseType.Assembly;
-
             if (!VenflowConfiguration.ValidationSettingSet)
             {
-                SetValidationSettings(assembly);
+                SetValidationSettings(databaseType.Assembly);
             }
 
             var tableType = typeof(Table<>);
             var configurationType = typeof(EntityConfiguration<>);
-            var assemblyTypes = assembly.GetTypes();
 
             var configurations = new Dictionary<Type, Type>();
 
-            for (int i = 0; i < assemblyTypes.Length; i++)
+            for (int assemblyIndex = 0; assemblyIndex < configurationAssemblies.Count; assemblyIndex++)
             {
-                var assemblyType = assemblyTypes[i];
+                var assemblyTypes = configurationAssemblies[assemblyIndex].GetTypes();
 
-                if (assemblyType.IsNotPublic || assemblyType.BaseType is null || !assemblyType.BaseType.IsGenericType || assemblyType.BaseType.GetGenericTypeDefinition() != configurationType)
-                    continue;
+                for (int typeIndex = 0; typeIndex < assemblyTypes.Length; typeIndex++)
+                {
+                    var assemblyType = assemblyTypes[typeIndex];
 
-                var entityType = assemblyType.BaseType.GetGenericArguments()[0];
+                    if (assemblyType.IsNotPublic || assemblyType.BaseType is null || !assemblyType.BaseType.IsGenericType || assemblyType.BaseType.GetGenericTypeDefinition() != configurationType)
+                        continue;
+
+                    var entityType = assemblyType.BaseType.GetGenericArguments()[0];
 
 #if NET48
-                if (configurations.ContainsKey(entityType))
-                {
-                    throw new InvalidOperationException($"There are two or more configurations for the entity '{entityType.Name}'");
-                }
-                else
-                {
-                    configurations.Add(entityType, assemblyType);
-                }
+                    if (configurations.ContainsKey(entityType))
+                    {
+                        throw new InvalidOperationException($"There are two or more configurations for the entity '{entityType.Name}'");
+                    }
+                    else
+                    {
+                        configurations.Add(entityType, assemblyType);
+                    }
 #else
-                if (!configurations.TryAdd(entityType, assemblyType))
-                {
-                    throw new InvalidOperationException($"There are two or more configurations for the entity '{entityType.Name}'");
-                }
+                    if (!configurations.TryAdd(entityType, assemblyType))
+                    {
+                        throw new InvalidOperationException($"There are two or more configurations for the entity '{entityType.Name}'");
+                    }
 #endif
+                }
             }
 
             var tables = new List<PropertyInfo>();

@@ -232,7 +232,13 @@ namespace Venflow
                 {
                     var dbConfigurator = new DatabaseConfigurationFactory();
 
-                    configuration = dbConfigurator.BuildConfiguration(this.GetType());
+                    var optionsBuilder = new DatabaseOptionsBuilder(type.Assembly);
+
+                    Configure(optionsBuilder);
+
+                    var options = optionsBuilder.Build();
+
+                    configuration = dbConfigurator.BuildConfiguration(type, options.ConfigurationAssemblies);
 
                     DatabaseConfigurationCache.DatabaseConfigurations.TryAdd(type, configuration);
                 }
@@ -259,6 +265,8 @@ namespace Venflow
                 throw new InvalidOperationException($"The current connection state is invalid. Expected: '{ConnectionState.Open}' or '{ConnectionState.Closed}'. Actual: '{connection.State}'.");
             }
         }
+
+        protected virtual void Configure(DatabaseOptionsBuilder optionsBuilder) { }
 
         /// <summary>
         /// Releases the allocated resources for this context. Also closes the underlying connection, if open.
