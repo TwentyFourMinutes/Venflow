@@ -1,11 +1,12 @@
 ﻿using Npgsql;
+using Venflow.Enums;
 using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
     internal class VenflowInsertCommandBuilder<TEntity> : IInsertCommandBuilder<TEntity> where TEntity : class
     {
-        private bool _returnComputedColumns;
+        private InsertOptions _insertOptions = InsertOptions.SetIdentityColumns;
 
         private readonly bool _disposeCommand;
         private readonly NpgsqlCommand _command;
@@ -22,17 +23,36 @@ namespace Venflow.Commands
 
         IInsertCommand<TEntity> ISpecficVenflowCommandBuilder<IInsertCommand<TEntity>>.Build()
         {
-            return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _command, _returnComputedColumns, _disposeCommand);
+            return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _command, _insertOptions, _disposeCommand);
         }
 
-        IInsertCommandBuilder<TEntity> IInsertCommandBuilder<TEntity>.ReturnComputedColumns(bool returnComputedColumns)
+        IInsertCommandBuilder<TEntity> IInsertCommandBuilder<TEntity>.SetIdentityColumns()
         {
-            if (returnComputedColumns)
-            {
-                _returnComputedColumns = _entityConfiguration.PrimaryColumn.IsServerSideGenerated;
-            }
+            _insertOptions |= InsertOptions.SetIdentityColumns;
 
             return this;
         }
+
+        IInsertCommandBuilder<TEntity> IInsertCommandBuilder<TEntity>.PopulateRelation()
+        {
+            _insertOptions |= InsertOptions.PopulateRelations;
+
+            return this;
+        }
+
+        IInsertCommandBuilder<TEntity> IInsertCommandBuilder<TEntity>.DoNotSetIdentityColumns()
+        {
+            _insertOptions &= ~InsertOptions.PopulateRelations;
+
+            return this;
+        }
+
+        IInsertCommandBuilder<TEntity> IInsertCommandBuilder<TEntity>.DoNotDoNotSetPopulateRelation()
+        {
+            _insertOptions &= ~InsertOptions.SetIdentityColumns;
+
+            return this;
+        }
+
     }
 }

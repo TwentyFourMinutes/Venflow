@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Venflow.Modeling
+namespace Venflow
 {
 
     internal static class ExpressionCache

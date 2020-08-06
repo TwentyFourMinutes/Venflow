@@ -12,11 +12,17 @@
     <Company>Twenty</Company>
     <Authors>Twenty</Authors>
     <Language>en</Language>
-    <Version>1.0.0.0-alpha4</Version>
+    <Version>1.0.0.0-alpha7</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Title>Venflow</Title>
     <PackageOutputPath>bin\Package</PackageOutputPath>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>../../../Twenty.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net5.0|AnyCPU'">
+    <DocumentationFile>Venflow.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net48' Or '$(TargetFramework)' == 'netstandard2.1'">
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0-preview.7.20364.11" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
     <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.0" />
   </ItemGroup>
 

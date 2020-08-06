@@ -1,9 +1,22 @@
 ﻿using Npgsql;
+using System;
+using System.Text;
 
 namespace Venflow
 {
+    /// <summary>
+    /// Provides a set of useful extension methods for the <see cref="NpgsqlCommand"/> class.
+    /// </summary>
     public static class NpgsqlCommandExtensions
     {
+        /// <summary>
+        /// Adds a new Parameter to the <see cref="NpgsqlCommand.Parameters"/> collection.
+        /// </summary>
+        /// <typeparam name="TType">The value type of the Parameter.</typeparam>
+        /// <param name="command">The command to which the Parameter should be added.</param>
+        /// <param name="parameterName">The name of the Parameter.</param>
+        /// <param name="value">The value of the Parameter.</param>
+        /// <returns>the just created <see cref="NpgsqlParameter{TType}"/>.</returns>
         public static NpgsqlParameter<TType> AddParamter<TType>(this NpgsqlCommand command, string parameterName, TType value)
         {
             var parameter = new NpgsqlParameter<TType>(parameterName, value);
@@ -11,6 +24,48 @@ namespace Venflow
             command.Parameters.Add(parameter);
 
             return parameter;
+        }
+
+        public static void SetInterpolatedCommandText(this NpgsqlCommand command, FormattableString sql)
+        {
+            var commandBuilder = new StringBuilder(sql.Format);
+
+            var parameterCount = 0;
+
+            for (int i = 0; i < commandBuilder.Length - 2; i++)
+            {
+                if (commandBuilder[i] != '{')
+                    continue;
+
+                int digitCount = 0;
+
+                for (int k = i + 1; k < commandBuilder.Length; k++)
+                {
+                    var character = commandBuilder[k];
+
+                    if (!char.IsDigit(character))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        digitCount++;
+                    }
+                }
+
+                if (digitCount == 0)
+                    continue;
+
+                var parameterName = "@p" + parameterCount;
+
+                commandBuilder.Remove(i, digitCount + 2);
+                commandBuilder.Insert(i, parameterName);
+
+                command.Parameters.Add(new NpgsqlParameter(parameterName, sql.GetArgument(parameterCount++)));
+
+                i += parameterName.Length - 1;
+
+            }
         }
     }
 }

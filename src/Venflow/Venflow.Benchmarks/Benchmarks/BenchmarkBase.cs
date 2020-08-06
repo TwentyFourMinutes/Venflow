@@ -1,18 +1,19 @@
-﻿using RepoDb;
+﻿using Microsoft.EntityFrameworkCore;
+using RepoDb;
 using System.Threading.Tasks;
-using Venflow.Benchmarks.Benchmarks.Models;
-using Venflow.Benchmarks.Benchmarks.Models.Configurations;
+using Venflow.Benchmarks.Models;
+using Venflow.Benchmarks.Models.Configurations;
 
 namespace Venflow.Benchmarks.Benchmarks
 {
     public abstract class BenchmarkBase
     {
-        public BenchmarkDb Configuration { get; set; }
+        public BenchmarkDb Database { get; set; }
         public BenchmarkDbContext PersonDbContext { get; set; }
 
         public virtual async Task Setup()
         {
-            Configuration = new BenchmarkDb();
+            Database = new BenchmarkDb();
 
             PostgreSqlBootstrap.Initialize();
             ClassMapper.Add<Person>("\"People\"");
@@ -25,18 +26,18 @@ namespace Venflow.Benchmarks.Benchmarks
             PrimaryMapper.Add<Email>(x => x.Id);
             PrimaryMapper.Add<EmailContent>(x => x.Id);
 
-            //PersonDbContext = new BenchmarkDbContext();
+            PersonDbContext = new BenchmarkDbContext();
 
-            //PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
-            //PersonDbContext.ChangeTracker.LazyLoadingEnabled = false;
-            //PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
+            PersonDbContext.ChangeTracker.LazyLoadingEnabled = false;
+            PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         public virtual async Task Cleanup()
         {
-            await Configuration.DisposeAsync();
+            await Database.DisposeAsync();
 
-            //await PersonDbContext.DisposeAsync();
+            await PersonDbContext.DisposeAsync();
         }
     }
 }

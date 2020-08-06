@@ -1,6 +1,5 @@
 ﻿using BenchmarkDotNet.Running;
 using System;
-using Venflow.Benchmarks.Benchmarks;
 
 namespace Venflow.Benchmarks
 {
@@ -8,8 +7,7 @@ namespace Venflow.Benchmarks
     {
         public static void Main(string[] args)
         {
-            //BenchmarkSwitcher.FromAssembly(typeof(Startup).Assembly).Run(args);
-            BenchmarkSwitcher.FromTypes(new[] { typeof(InstantiationBenchmark)/*, typeof(InsertBatchWithRelationsAsyncBenchmark)*/ }).Run(args);
+            BenchmarkSwitcher.FromAssembly(typeof(Startup).Assembly).Run(args);
             Console.ReadKey();
         }
     }

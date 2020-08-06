@@ -55,10 +55,13 @@ namespace Venflow.Commands
         }
 
         // TODO: Build this while generating
-        internal void AppendColumnNamesAndJoins(StringBuilder sqlColumns, StringBuilder sqlJoins)
+        internal void AppendColumnNamesAndJoins(StringBuilder? sqlColumns, StringBuilder sqlJoins)
         {
-            sqlColumns.Append(", ");
-            sqlColumns.Append(JoinOptions.JoinWith.RightEntity.PrimaryKeyPrefiexColumnListString);
+            if (sqlColumns is { })
+            {
+                sqlColumns.Append(", ");
+                sqlColumns.Append(JoinOptions.JoinWith.RightEntity.ExplicitColumnListString);
+            }
 
             if (TrailingJoinPath.Count == 0)
             {
@@ -96,27 +99,25 @@ namespace Venflow.Commands
             }
 
             SqlJoins.Append(JoinOptions.JoinWith.RightEntity.TableName);
-            SqlJoins.Append(" AS ");
-            SqlJoins.Append(JoinOptions.JoinWith.RightEntity.RawTableName);
             SqlJoins.Append(" ON ");
 
             if (JoinOptions.JoinWith.ForeignKeyLocation == ForeignKeyLocation.Left)
             {
-                SqlJoins.Append(JoinOptions.JoinWith.LeftEntity.RawTableName);
+                SqlJoins.Append(JoinOptions.JoinWith.LeftEntity.TableName);
                 SqlJoins.Append(".\"");
                 SqlJoins.Append(JoinOptions.JoinWith.ForeignKeyColumn.ColumnName);
                 SqlJoins.Append("\" = ");
-                SqlJoins.Append(JoinOptions.JoinWith.RightEntity.RawTableName);
+                SqlJoins.Append(JoinOptions.JoinWith.RightEntity.TableName);
                 SqlJoins.Append(".\"");
                 SqlJoins.Append(JoinOptions.JoinWith.RightEntity.GetPrimaryColumn().ColumnName);
             }
             else
             {
-                SqlJoins.Append(JoinOptions.JoinWith.RightEntity.RawTableName);
+                SqlJoins.Append(JoinOptions.JoinWith.RightEntity.TableName);
                 SqlJoins.Append(".\"");
                 SqlJoins.Append(JoinOptions.JoinWith.ForeignKeyColumn.ColumnName);
                 SqlJoins.Append("\" = ");
-                SqlJoins.Append(JoinOptions.JoinWith.LeftEntity.RawTableName);
+                SqlJoins.Append(JoinOptions.JoinWith.LeftEntity.TableName);
                 SqlJoins.Append(".\"");
                 SqlJoins.Append(JoinOptions.JoinWith.LeftEntity.GetPrimaryColumn().ColumnName);
             }

@@ -98,7 +98,7 @@ namespace Venflow.Commands
             }
         }
 
-        internal void AppendColumnNamesAndJoins(StringBuilder sqlColumns, StringBuilder sqlJoins)
+        internal void AppendColumnNamesAndJoins(StringBuilder? sqlColumns, StringBuilder sqlJoins)
         {
             for (int i = 0; i < FullPath.Count; i++)
             {

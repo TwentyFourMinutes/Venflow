@@ -60,6 +60,8 @@ namespace Venflow.Dynamic.Inserter
 
         #endregion
 
+        private InsertOptions _insertOptions;
+
         private readonly Entity _rootEntity;
         private readonly TypeBuilder _inserterTypeBuilder;
         private readonly TypeBuilder _stateMachineTypeBuilder;
@@ -87,6 +89,8 @@ namespace Venflow.Dynamic.Inserter
 
         private readonly Dictionary<long, FieldBuilder> _entityListDict = new Dictionary<long, FieldBuilder>();
         private readonly ObjectIDGenerator _knownEntities = new ObjectIDGenerator();
+        private readonly ObjectIDGenerator _visitedSeperaterEntities = new ObjectIDGenerator();
+        private readonly HashSet<uint> _visitedSeperaterRelations = new HashSet<uint>();
 
         internal InsertionFactoryCompiler(Entity rootEntity)
         {
@@ -99,8 +103,10 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL = _moveNextMethod.GetILGenerator();
         }
 
-        internal Func<NpgsqlConnection, List<TEntity>, Task<int>> CreateInserter(EntityRelationHolder[] entities)
+        internal Func<NpgsqlConnection, List<TEntity>, Task<int>> CreateInserter(EntityRelationHolder[] entities, InsertOptions insertOptions)
         {
+            _insertOptions = insertOptions;
+
             var rootEntityListType = _genericListType.MakeGenericType(_rootEntity.EntityType);
 
             var taskAwaiterType = typeof(TaskAwaiter<>);
@@ -138,7 +144,8 @@ namespace Venflow.Dynamic.Inserter
 
             _entityListDict.Add(_knownEntities.GetId(rootEntityListField, out _), rootEntityListField);
 
-            SeperateRootEntity(_rootEntity, rootEntityListField);
+            if (HasOptionsFlag(InsertOptions.PopulateRelations))
+                SeperateRootEntity(_rootEntity, rootEntityListField);
 
             _moveNextMethodIL.BeginExceptionBlock();
 
@@ -150,9 +157,9 @@ namespace Venflow.Dynamic.Inserter
             {
                 var entity = entities[i].Entity;
 
-                if (((IPrimaryEntityColumn)entity.GetPrimaryColumn()).IsServerSideGenerated)
+                if (((IPrimaryEntityColumn)entity.GetPrimaryColumn()).IsServerSideGenerated && HasOptionsFlag(InsertOptions.SetIdentityColumns))
                 {
-                    labelCount += 3;
+                    labelCount += 4;
                 }
                 else
                 {
@@ -253,13 +260,44 @@ namespace Venflow.Dynamic.Inserter
 
                 var stringBuilder = new StringBuilder();
 
-                var skipPrimaryKey = ((IPrimaryEntityColumn)entityHolder.Entity.GetPrimaryColumn()).IsServerSideGenerated;
+                var skipPrimaryKey = ((IPrimaryEntityColumn)entityHolder.Entity.GetPrimaryColumn()).IsServerSideGenerated && HasOptionsFlag(InsertOptions.SetIdentityColumns);
+
+                var columnCount = entityHolder.Entity.GetColumnCount();
+                var columnOffset = skipPrimaryKey ? entityHolder.Entity.GetRegularColumnOffset() : 0;
 
                 stringBuilder.Append("INSERT INTO ")
                              .Append(entityHolder.Entity.TableName)
                              .Append(" (")
                              .Append(skipPrimaryKey ? entityHolder.Entity.NonPrimaryColumnListString : entityHolder.Entity.ColumnListString)
                              .Append(") VALUES ");
+
+                // Outer loop to keep one single command under ushort.MaxValue parameters
+
+                var totalLocal = _moveNextMethodIL.DeclareLocal(_intType);
+                var currentLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
+                // Assign the total amount of parameters to the total local
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, entityListField);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetProperty("Count", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Stloc, totalLocal);
+
+                // Assign 0 to the current local
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                _moveNextMethodIL.Emit(OpCodes.Stloc, currentLocal);
+
+                var outerIteratorLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
+                var outerLoopConditionLabel = _moveNextMethodIL.DefineLabel();
+                var outerStartLoopBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                // Assign 0 to the iterator
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                _moveNextMethodIL.Emit(OpCodes.Stloc, outerIteratorLocal);
+                _moveNextMethodIL.Emit(OpCodes.Br, outerLoopConditionLabel);
+
+                // loop body
+                _moveNextMethodIL.MarkLabel(outerStartLoopBodyLabel);
 
                 // Append base Insert Command to command builder
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -268,17 +306,31 @@ namespace Venflow.Dynamic.Inserter
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
                 _moveNextMethodIL.Emit(OpCodes.Pop);
 
-                var iteratorLocal = _moveNextMethodIL.DeclareLocal(_intType);
+                var leftLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
+                var totalColumns = columnCount - columnOffset;
+
+                // Assign the amount of left items to the left local
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, totalLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4, totalColumns);
+                _moveNextMethodIL.Emit(OpCodes.Mul);
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4, totalColumns);
+                _moveNextMethodIL.Emit(OpCodes.Mul);
+                _moveNextMethodIL.Emit(OpCodes.Sub);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4, ushort.MaxValue);
+                _moveNextMethodIL.Emit(OpCodes.Call, typeof(Math).GetMethod("Min", new[] { _intType, _intType }));
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4, totalColumns);
+                _moveNextMethodIL.Emit(OpCodes.Div);
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+                _moveNextMethodIL.Emit(OpCodes.Add);
+                _moveNextMethodIL.Emit(OpCodes.Stloc, leftLocal);
+
                 var iteratorElementLocal = _moveNextMethodIL.DeclareLocal(entityListField.FieldType);
                 var placeholderLocal = _moveNextMethodIL.DeclareLocal(typeof(string));
 
                 var loopConditionLabel = _moveNextMethodIL.DefineLabel();
                 var startLoopBodyLabel = _moveNextMethodIL.DefineLabel();
-
-                // Assign 0 to the iterator
-                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
-                _moveNextMethodIL.Emit(OpCodes.Stloc, iteratorLocal);
-                _moveNextMethodIL.Emit(OpCodes.Br, loopConditionLabel);
 
                 // loop body
                 _moveNextMethodIL.MarkLabel(startLoopBodyLabel);
@@ -286,7 +338,7 @@ namespace Venflow.Dynamic.Inserter
                 // get element at iterator from list
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, entityListField);
-                _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetMethod("get_Item"));
                 _moveNextMethodIL.Emit(OpCodes.Stloc, iteratorElementLocal);
 
@@ -297,15 +349,13 @@ namespace Venflow.Dynamic.Inserter
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(char) }));
                 _moveNextMethodIL.Emit(OpCodes.Pop);
 
-                var columnCount = entityHolder.Entity.GetColumnCount();
-
-                for (int k = skipPrimaryKey ? entityHolder.Entity.GetRegularColumnOffset() : 0; k < columnCount; k++)
+                for (int k = columnOffset; k < columnCount; k++)
                 {
                     var column = entityHolder.Entity.GetColumn(k);
 
                     // Create the placeholder
                     _moveNextMethodIL.Emit(OpCodes.Ldstr, "@" + column.ColumnName);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, iteratorLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloca, currentLocal);
                     _moveNextMethodIL.Emit(OpCodes.Call, _intType.GetMethod("ToString", Type.EmptyTypes));
                     _moveNextMethodIL.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new[] { typeof(string), typeof(string) }));
                     _moveNextMethodIL.Emit(OpCodes.Stloc, placeholderLocal);
@@ -332,19 +382,15 @@ namespace Venflow.Dynamic.Inserter
                 }
 
                 // loop iterator increment
-
-                _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
                 _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
                 _moveNextMethodIL.Emit(OpCodes.Add);
-                _moveNextMethodIL.Emit(OpCodes.Stloc, iteratorLocal);
+                _moveNextMethodIL.Emit(OpCodes.Stloc, currentLocal);
 
                 // loop condition
                 _moveNextMethodIL.MarkLabel(loopConditionLabel);
-                _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorLocal);
-                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-
-                _moveNextMethodIL.Emit(OpCodes.Ldfld, entityListField);
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetProperty("Count").GetGetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, leftLocal);
                 _moveNextMethodIL.Emit(OpCodes.Blt, startLoopBodyLabel);
 
                 // Remove the last the values form the command string e.g. ", "
@@ -369,6 +415,18 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
                     _moveNextMethodIL.Emit(OpCodes.Pop);
                 }
+
+                // outer loop iterator increment
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, outerIteratorLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
+                _moveNextMethodIL.Emit(OpCodes.Add);
+                _moveNextMethodIL.Emit(OpCodes.Stloc, outerIteratorLocal);
+
+                // outer loop condition
+                _moveNextMethodIL.MarkLabel(outerLoopConditionLabel);
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, totalLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+                _moveNextMethodIL.Emit(OpCodes.Bne_Un, outerStartLoopBodyLabel);
 
                 // Assign the commandBuilder text to the command
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -464,9 +522,15 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Stfld, DataReaderField);
 
                     var iteratorField = _stateMachineTypeBuilder.DefineField("_i" + entityHolder.Entity.EntityName, _intType, FieldAttributes.Private);
+                    var counterField = _stateMachineTypeBuilder.DefineField("_counter" + entityHolder.Entity.EntityName, _intType, FieldAttributes.Private);
 
                     loopConditionLabel = _moveNextMethodIL.DefineLabel();
                     startLoopBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                    // Assign 0 to the counter
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, counterField);
 
                     // Assign 0 to the iterator
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -476,6 +540,81 @@ namespace Venflow.Dynamic.Inserter
 
                     // loop body
                     _moveNextMethodIL.MarkLabel(startLoopBodyLabel);
+
+                    // check if counter is equal to ushort.MaxValue
+
+                    var afterIfBody = _moveNextMethodIL.DefineLabel();
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, counterField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, ushort.MaxValue / totalColumns);
+                    _moveNextMethodIL.Emit(OpCodes.Bne_Un, afterIfBody);
+
+                    // Assign 0 to the counter
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, counterField);
+
+                    // Call the next result
+                    afterAwaitLabel = _moveNextMethodIL.DefineLabel();
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, DataReaderField);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, _npgsqlDataReaderType.GetMethod("NextResultAsync", Type.EmptyTypes));// TODO: use CancellationToken
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, taskBoolType.GetMethod("GetAwaiter"));
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, BoolTaskAwaiterLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloca, BoolTaskAwaiterLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Call, boolTaskAwaiterType.GetProperty("IsCompleted").GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Brtrue, afterAwaitLabel);
+
+                    // Await Handler
+
+                    // stateField = stateLocal
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, asyncStateIndex++);
+                    _moveNextMethodIL.Emit(OpCodes.Dup);
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
+
+                    // taskAwaiterField = taskAwaiterLocal
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, BoolTaskAwaiterLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, BoolTaskAwaiterField);
+
+                    // Call AwaitUnsafeOnCompleted
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloca, BoolTaskAwaiterLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Call, _asyncMethodBuilderIntType.GetMethod("AwaitUnsafeOnCompleted").MakeGenericMethod(boolTaskAwaiterType, _stateMachineTypeBuilder));
+                    _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
+
+                    switchBuilder.MarkCase();
+
+                    // taskAwaiterLocal = taskAwaiterField
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, BoolTaskAwaiterField);
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, BoolTaskAwaiterLocal);
+
+                    // taskAwaiterField = default
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldflda, BoolTaskAwaiterField);
+                    _moveNextMethodIL.Emit(OpCodes.Initobj, boolTaskAwaiterType);
+
+                    // stateField = stateLocal = -1
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_M1);
+                    _moveNextMethodIL.Emit(OpCodes.Dup);
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
+
+                    // wait of the result from the TaskAwaiter
+                    _moveNextMethodIL.MarkLabel(afterAwaitLabel);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloca, BoolTaskAwaiterLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Call, boolTaskAwaiterType.GetMethod("GetResult"));
+                    _moveNextMethodIL.Emit(OpCodes.Pop);
+
+                    _moveNextMethodIL.MarkLabel(afterIfBody);
 
                     // read data reader
                     afterAwaitLabel = _moveNextMethodIL.DefineLabel();
@@ -560,6 +699,8 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, entityHolder.Entity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
 
+                    var iteratorLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
                     for (int k = 0; k < entityHolder.AssigningRelations.Count; k++)
                     {
                         var relation = entityHolder.AssigningRelations[k];
@@ -622,6 +763,7 @@ namespace Venflow.Dynamic.Inserter
 
                     // loop iterator increment
                     var tempIteratorLocal = _moveNextMethodIL.DeclareLocal(_intType);
+                    var tempCounterLocal = _moveNextMethodIL.DeclareLocal(_intType);
 
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, iteratorField);
@@ -631,6 +773,15 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
                     _moveNextMethodIL.Emit(OpCodes.Add);
                     _moveNextMethodIL.Emit(OpCodes.Stfld, iteratorField);
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, counterField);
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, tempCounterLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, tempCounterLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
+                    _moveNextMethodIL.Emit(OpCodes.Add);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, counterField);
 
                     // loop condition
                     _moveNextMethodIL.MarkLabel(loopConditionLabel);
@@ -902,6 +1053,37 @@ namespace Venflow.Dynamic.Inserter
 
         private void SeperateRootEntity(Entity entity, FieldBuilder? entityListField = null, LocalBuilder? entityListLocal = null)
         {
+            if (entity.Relations is null)
+                return;
+
+            _ = _visitedSeperaterEntities.GetId(entity, out var firstTime);
+
+            if (!firstTime)
+                return;
+
+
+            var hasValidRelation = false;
+
+            for (int i = 0; i < entity.Relations.Count; i++)
+            {
+                var relation = entity.Relations[i];
+
+                if (relation.LeftNavigationProperty is null)
+                    continue;
+
+                if (!_visitedSeperaterRelations.Contains(relation.RelationId))
+                {
+                    hasValidRelation = true;
+
+                    _visitedSeperaterRelations.Add(relation.RelationId);
+                }
+            }
+
+            if (!HasOptionsFlag(InsertOptions.PopulateRelations) && !hasValidRelation)
+            {
+                return;
+            }
+
             var iteratorLocal = _moveNextMethodIL.DeclareLocal(_intType);
             var iteratorElementLocal = _moveNextMethodIL.DeclareLocal(entity.EntityType);
 
@@ -972,17 +1154,14 @@ namespace Venflow.Dynamic.Inserter
             {
                 var relation = entity.Relations[i];
 
-                if (relation.LeftNavigationProperty is null)
-                    continue;
-
                 FieldBuilder? newEntityListField;
 
-                var id = _knownEntities.GetId(relation.RightEntity, out var isNew);
-
-                if (!isNew)
+                if (relation.LeftNavigationProperty is null)
                 {
                     continue;
                 }
+
+                var id = _knownEntities.GetId(relation.RightEntity, out var isNew);
 
                 var entityLocal = _moveNextMethodIL.DeclareLocal(relation.LeftNavigationProperty.PropertyType);
 
@@ -1026,7 +1205,7 @@ namespace Venflow.Dynamic.Inserter
 
                     _defaultEntitySeperationGhostIL.MarkLabel(afterListBodyLabel);
                 }
-                else
+                else if (relation.RelationType == RelationType.ManyToOne)
                 {
                     if (isNew)
                     {
@@ -1060,8 +1239,86 @@ namespace Venflow.Dynamic.Inserter
                     _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, typeof(ObjectIDGenerator).GetMethod("GetId"));
                     _defaultEntitySeperationGhostIL.Emit(OpCodes.Pop);
 
+                    var afterNotVisistedLabel = _moveNextMethodIL.DefineLabel();
+
                     // Check if instance hasn't been visited yet
                     _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, isVisitedEntityLocal);
+                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Brfalse, afterNotVisistedLabel);
+
+                    if (HasOptionsFlag(InsertOptions.PopulateRelations) && relation.RightNavigationProperty is { })
+                    {
+                        // Assign root to entity navigation
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Newobj, relation.RightNavigationProperty.PropertyType.GetConstructor(Type.EmptyTypes));
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetSetMethod());
+                    }
+
+                    // Assign entity to the list
+                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldarg_0);
+                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldfld, newEntityListField);
+                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
+                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, newEntityListField.FieldType.GetMethod("Add"));
+
+                    if (relation.RightEntity.Relations is { })
+                    {
+                        _ = _visitedSeperaterEntities.GetId(relation.RightEntity, out var firstTime);
+
+                        if (firstTime)
+                        {
+                            var hasValidRelation = false;
+
+                            for (int k = 0; k < relation.RightEntity.Relations.Count; k++)
+                            {
+                                var foreignRelation = relation.RightEntity.Relations[k];
+
+                                if (foreignRelation.LeftNavigationProperty is null)
+                                    continue;
+
+                                if (!_visitedSeperaterRelations.Contains(foreignRelation.RelationId))
+                                {
+                                    hasValidRelation = true;
+                                }
+
+                                _visitedSeperaterRelations.Add(foreignRelation.RelationId);
+                            }
+
+                            if (hasValidRelation)
+                            {
+                                SeperateEntities(relation.RightEntity, entityLocal);
+                            }
+                        }
+                    }
+
+                    _defaultEntitySeperationGhostIL.MarkLabel(afterNotVisistedLabel);
+
+                    if (HasOptionsFlag(InsertOptions.PopulateRelations) && relation.RightNavigationProperty is { })
+                    {
+                        // Assign root to entity navigation
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, rootLocal);
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
+                    }
+
+                    _defaultEntitySeperationGhostIL.MarkLabel(afterCheckBodyLabel);
+                }
+                else
+                {
+                    if (isNew)
+                    {
+                        newEntityListField = _stateMachineTypeBuilder.DefineField("_" + entity.EntityName + relation.RightEntity.EntityName + "List", _genericListType.MakeGenericType(relation.LeftNavigationProperty.PropertyType), FieldAttributes.Private);
+
+                        _entityListDict.Add(id, newEntityListField);
+                    }
+                    else
+                    {
+                        newEntityListField = _entityListDict[id];
+                    }
+
+                    var afterCheckBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                    // Check if navigation property is set
+                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
                     _defaultEntitySeperationGhostIL.Emit(OpCodes.Brfalse, afterCheckBodyLabel);
 
                     // Assign entity to the list
@@ -1070,7 +1327,52 @@ namespace Venflow.Dynamic.Inserter
                     _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
                     _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, newEntityListField.FieldType.GetMethod("Add"));
 
-                    SeperateEntities(relation.RightEntity, entityLocal);
+                    if (relation.RightEntity.Relations is { })
+                    {
+                        _ = _visitedSeperaterEntities.GetId(relation.RightEntity, out var firstTime);
+
+                        if (firstTime)
+                        {
+                            var hasValidRelation = false;
+
+                            for (int k = 0; k < relation.RightEntity.Relations.Count; k++)
+                            {
+                                var foreignRelation = relation.RightEntity.Relations[k];
+
+                                if (foreignRelation.LeftNavigationProperty is null)
+                                    continue;
+
+                                if (!_visitedSeperaterRelations.Contains(foreignRelation.RelationId))
+                                {
+                                    hasValidRelation = true;
+                                }
+
+                                _visitedSeperaterRelations.Add(foreignRelation.RelationId);
+                            }
+
+                            if (hasValidRelation)
+                            {
+                                SeperateEntities(relation.RightEntity, entityLocal);
+                            }
+                        }
+                    }
+
+                    if (HasOptionsFlag(InsertOptions.PopulateRelations) && relation.RightNavigationProperty is { })
+                    {
+                        // Assign root to entity navigation
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, rootLocal);
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
+                    }
+
+                    if (HasOptionsFlag(InsertOptions.PopulateRelations) && relation.RightNavigationProperty is { })
+                    {
+                        // Assign root to entity navigation
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Newobj, relation.RightNavigationProperty.PropertyType.GetConstructor(Type.EmptyTypes));
+                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetSetMethod());
+                    }
 
                     _defaultEntitySeperationGhostIL.MarkLabel(afterCheckBodyLabel);
                 }
@@ -1085,6 +1387,11 @@ namespace Venflow.Dynamic.Inserter
                 _setListsToNullGhostIL.Emit(OpCodes.Ldnull);
                 _setListsToNullGhostIL.Emit(OpCodes.Stfld, newEntityListField);
             }
+        }
+
+        private bool HasOptionsFlag(InsertOptions flag)
+        {
+            return (_insertOptions & flag) == flag;
         }
     }
 }

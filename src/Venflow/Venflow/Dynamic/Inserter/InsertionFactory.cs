@@ -2,13 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Venflow.Enums;
 using Venflow.Modeling;
 
 namespace Venflow.Dynamic.Inserter
 {
     internal class InsertionFactory<TEntity> where TEntity : class
     {
-        private Func<NpgsqlConnection, List<TEntity>, Task<int>>? _inserter;
+        private Func<NpgsqlConnection, List<TEntity>, Task<int>>? _defaultInserter;
+        private Func<NpgsqlConnection, List<TEntity>, Task<int>>? _relationInserter;
+        private Func<NpgsqlConnection, List<TEntity>, Task<int>>? _identityInserter;
 
         private readonly Entity<TEntity> _entity;
 
@@ -17,37 +20,81 @@ namespace Venflow.Dynamic.Inserter
             _entity = entity;
         }
 
-        internal Func<NpgsqlConnection, List<TEntity>, Task<int>> GetOrCreateInserter(Database database)
+        internal Func<NpgsqlConnection, List<TEntity>, Task<int>> GetOrCreateInserter(InsertOptions insertOptions)
         {
-            if (_entity.Relations is { }) // TODO: Check for relations with no left Foreign properties
+            if (_entity.Relations is { })
             {
-                if (_inserter is null)
+                if (insertOptions == InsertOptions.PopulateRelations)
                 {
-                    var sourceCompiler = new InsertionSourceCompiler();
+                    if (_relationInserter is null)
+                    {
+                        var sourceCompiler = new InsertionSourceCompiler();
 
-                    sourceCompiler.Compile(_entity);
+                        sourceCompiler.Compile(_entity);
 
-                    return _inserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(sourceCompiler.GenerateSortedEntities());
+                        return _relationInserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(sourceCompiler.GenerateSortedEntities(), insertOptions);
+                    }
+                    else
+                    {
+                        return _relationInserter;
+                    }
+                }
+                else if (insertOptions == InsertOptions.SetIdentityColumns)
+                {
+                    if (_identityInserter is null)
+                    {
+                        var sourceCompiler = new InsertionSourceCompiler();
+
+                        sourceCompiler.Compile(_entity);
+
+                        return _identityInserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(sourceCompiler.GenerateSortedEntities(), insertOptions);
+                    }
+                    else
+                    {
+                        return _identityInserter;
+                    }
                 }
                 else
                 {
-                    return _inserter;
+                    if (_defaultInserter is null)
+                    {
+                        return _defaultInserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(new EntityRelationHolder[] { new EntityRelationHolder(_entity) }, insertOptions);
+                    }
+                    else
+                    {
+                        return _defaultInserter;
+                    }
                 }
             }
             else
             {
                 // TODO: Create Single Inserter
-                if (_inserter is null)
+
+                if (insertOptions == InsertOptions.None)
                 {
-                    var sourceCompiler = new InsertionSourceCompiler();
-
-                    sourceCompiler.Compile(_entity);
-
-                    return _inserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(sourceCompiler.GenerateSortedEntities());
+                    if (_defaultInserter is null)
+                    {
+                        return _defaultInserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(new EntityRelationHolder[] { new EntityRelationHolder(_entity) }, insertOptions);
+                    }
+                    else
+                    {
+                        return _defaultInserter;
+                    }
                 }
                 else
                 {
-                    return _inserter;
+                    if (_identityInserter is null)
+                    {
+                        var sourceCompiler = new InsertionSourceCompiler();
+
+                        sourceCompiler.Compile(_entity);
+
+                        return _identityInserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(sourceCompiler.GenerateSortedEntities(), insertOptions);
+                    }
+                    else
+                    {
+                        return _identityInserter;
+                    }
                 }
             }
         }

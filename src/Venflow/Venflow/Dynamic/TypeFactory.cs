@@ -7,6 +7,8 @@ namespace Venflow.Dynamic
 {
     internal static class TypeFactory
     {
+        internal static Module DynamicModule => _dynamicModule;
+
         private static readonly AssemblyName _assemblyName;
         private static readonly AssemblyBuilder _assemblyBuilder;
         private static readonly ModuleBuilder _dynamicModule;
@@ -18,6 +20,7 @@ namespace Venflow.Dynamic
         static TypeFactory()
         {
             _assemblyName = new AssemblyName("Venflow.Dynamic");
+            _assemblyName.SetPublicKey(typeof(TypeFactory).Assembly.GetName().GetPublicKey());
             _assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(_assemblyName, AssemblyBuilderAccess.Run);
             _dynamicModule = _assemblyBuilder.DefineDynamicModule(_assemblyName.Name + ".dll");
 

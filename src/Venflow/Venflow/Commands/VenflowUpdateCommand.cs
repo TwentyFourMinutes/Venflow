@@ -117,7 +117,7 @@ namespace Venflow.Commands
                          .Append(EntityConfiguration.PrimaryColumn.ColumnName)
                          .Append("\" = ");
 
-            var primaryParameter = EntityConfiguration.PrimaryColumn.ValueRetriever(entity, "PK");
+            var primaryParameter = EntityConfiguration.PrimaryColumn.ValueRetriever(entity, "PK" + index);
 
             UnderlyingCommand.Parameters.Add(primaryParameter);
 
@@ -125,14 +125,11 @@ namespace Venflow.Commands
                          .Append(';');
         }
 
-        public async ValueTask DisposeAsync()
+        public ValueTask DisposeAsync()
         {
             UnderlyingCommand.Dispose();
 
-            if (UnderlyingCommand.IsPrepared)
-            {
-                await UnderlyingCommand.UnprepareAsync();
-            }
+            return new ValueTask();
         }
     }
 }

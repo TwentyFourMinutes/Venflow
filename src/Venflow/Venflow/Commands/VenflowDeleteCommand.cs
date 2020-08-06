@@ -97,14 +97,11 @@ namespace Venflow.Commands
             return affectedRows;
         }
 
-        public async ValueTask DisposeAsync()
+        public ValueTask DisposeAsync()
         {
             UnderlyingCommand.Dispose();
 
-            if (UnderlyingCommand.IsPrepared)
-            {
-                await UnderlyingCommand.UnprepareAsync();
-            }
+            return new ValueTask();
         }
     }
 }

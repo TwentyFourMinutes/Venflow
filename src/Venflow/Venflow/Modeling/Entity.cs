@@ -16,7 +16,7 @@ namespace Venflow.Modeling
         internal MaterializerFactory<TEntity> MaterializerFactory { get; }
         internal InsertionFactory<TEntity> InsertionFactory { get; }
 
-        internal Entity(Type entityType, Type? proxyEntityType, string tableName, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, string primaryKeyPrefiexColumnListString, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier) : base(entityType, proxyEntityType, tableName, columnListString, explicitColumnListString, nonPrimaryColumnListString, primaryKeyPrefiexColumnListString)
+        internal Entity(Type entityType, Type? proxyEntityType, string tableName, bool isInNullableContext, bool defaultPropNullability, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity> primaryColumn, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier) : base(entityType, proxyEntityType, tableName, isInNullableContext, defaultPropNullability, columnListString, explicitColumnListString, nonPrimaryColumnListString)
         {
             ChangeTrackerFactory = changeTrackerFactory;
             ChangeTrackerApplier = changeTrackerApplier;
@@ -29,11 +29,21 @@ namespace Venflow.Modeling
 
         internal TEntity GetProxiedEntity(bool trackChanges = false)
         {
+            if (ChangeTrackerFactory is null)
+            {
+                throw new InvalidOperationException($"The entity {EntityType.Name} doesn't contain any properties which are marked as virtual. Therefor no proxy entity exists.");
+            }
+
             return ChangeTrackerFactory.Invoke(new ChangeTracker<TEntity>(Columns.Count, trackChanges));
         }
 
         internal TEntity ApplyChangeTracking(TEntity entity)
         {
+            if (ChangeTrackerApplier is null)
+            {
+                throw new InvalidOperationException($"The entity {EntityType.Name} doesn't contain any properties which are marked as virtual. Therefor no proxy entity exists.");
+            }
+
             return ChangeTrackerApplier.Invoke(new ChangeTracker<TEntity>(Columns.Count, false), entity);
         }
 
@@ -85,27 +95,30 @@ namespace Venflow.Modeling
         internal string TableName { get; }
         internal string RawTableName { get; }
 
+        internal bool IsInNullableContext { get; }
+        internal bool DefaultPropNullability { get; }
+
         internal Type EntityType { get; }
         internal Type? ProxyEntityType { get; }
 
         internal DualKeyCollection<string, EntityRelation>? Relations { get; set; }
 
         internal string ColumnListString { get; }
-        internal string PrimaryKeyPrefiexColumnListString { get; }
         internal string ExplicitColumnListString { get; }
         internal string NonPrimaryColumnListString { get; }
 
-        protected Entity(Type entityType, Type? proxyEntityType, string tableName, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, string primaryKeyPrefiexColumnListString)
+        protected Entity(Type entityType, Type? proxyEntityType, string tableName, bool isInNullableContext, bool defaultPropNullability, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString)
         {
             EntityType = entityType;
             ProxyEntityType = proxyEntityType;
             EntityName = entityType.Name;
             TableName = "\"" + tableName + "\"";
             RawTableName = tableName;
+            IsInNullableContext = isInNullableContext;
+            DefaultPropNullability = defaultPropNullability;
             ColumnListString = columnListString;
             ExplicitColumnListString = explicitColumnListString;
             NonPrimaryColumnListString = nonPrimaryColumnListString;
-            PrimaryKeyPrefiexColumnListString = primaryKeyPrefiexColumnListString;
         }
 
         internal abstract EntityColumn GetPrimaryColumn();
