@@ -36,7 +36,7 @@ namespace Venflow.Commands
             {
                 var joingingEntity = TrailingJoinPath[i];
 
-                if (object.ReferenceEquals(TrailingJoinPath[i].JoinOptions.JoinWith, foreignEntity))
+                if (object.ReferenceEquals(TrailingJoinPath[i].JoinOptions.Join, foreignEntity))
                 {
                     return joingingEntity;
                 }
@@ -60,7 +60,7 @@ namespace Venflow.Commands
             if (sqlColumns is { })
             {
                 sqlColumns.Append(", ");
-                sqlColumns.Append(JoinOptions.JoinWith.RightEntity.ExplicitColumnListString);
+                sqlColumns.Append(JoinOptions.Join.RightEntity.ExplicitColumnListString);
             }
 
             if (TrailingJoinPath.Count == 0)
@@ -95,31 +95,31 @@ namespace Venflow.Commands
                     SqlJoins.Append("FULL JOIN ");
                     break;
                 default:
-                    throw new InvalidOperationException($"Invalid state '{JoinOptions.JoinBehaviour}' for the JoinBehaviour on entity {JoinOptions.JoinWith.RightEntity.EntityName}");
+                    throw new InvalidOperationException($"Invalid state '{JoinOptions.JoinBehaviour}' for the JoinBehaviour on entity {JoinOptions.Join.RightEntity.EntityName}");
             }
 
-            SqlJoins.Append(JoinOptions.JoinWith.RightEntity.TableName);
+            SqlJoins.Append(JoinOptions.Join.RightEntity.TableName);
             SqlJoins.Append(" ON ");
 
-            if (JoinOptions.JoinWith.ForeignKeyLocation == ForeignKeyLocation.Left)
+            if (JoinOptions.Join.ForeignKeyLocation == ForeignKeyLocation.Left)
             {
-                SqlJoins.Append(JoinOptions.JoinWith.LeftEntity.TableName);
+                SqlJoins.Append(JoinOptions.Join.LeftEntity.TableName);
                 SqlJoins.Append(".\"");
-                SqlJoins.Append(JoinOptions.JoinWith.ForeignKeyColumn.ColumnName);
+                SqlJoins.Append(JoinOptions.Join.ForeignKeyColumn.ColumnName);
                 SqlJoins.Append("\" = ");
-                SqlJoins.Append(JoinOptions.JoinWith.RightEntity.TableName);
+                SqlJoins.Append(JoinOptions.Join.RightEntity.TableName);
                 SqlJoins.Append(".\"");
-                SqlJoins.Append(JoinOptions.JoinWith.RightEntity.GetPrimaryColumn().ColumnName);
+                SqlJoins.Append(JoinOptions.Join.RightEntity.GetPrimaryColumn().ColumnName);
             }
             else
             {
-                SqlJoins.Append(JoinOptions.JoinWith.RightEntity.TableName);
+                SqlJoins.Append(JoinOptions.Join.RightEntity.TableName);
                 SqlJoins.Append(".\"");
-                SqlJoins.Append(JoinOptions.JoinWith.ForeignKeyColumn.ColumnName);
+                SqlJoins.Append(JoinOptions.Join.ForeignKeyColumn.ColumnName);
                 SqlJoins.Append("\" = ");
-                SqlJoins.Append(JoinOptions.JoinWith.LeftEntity.TableName);
+                SqlJoins.Append(JoinOptions.Join.LeftEntity.TableName);
                 SqlJoins.Append(".\"");
-                SqlJoins.Append(JoinOptions.JoinWith.LeftEntity.GetPrimaryColumn().ColumnName);
+                SqlJoins.Append(JoinOptions.Join.LeftEntity.GetPrimaryColumn().ColumnName);
             }
 
             SqlJoins.Append('"');

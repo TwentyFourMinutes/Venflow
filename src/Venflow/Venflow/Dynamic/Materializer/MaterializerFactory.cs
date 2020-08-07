@@ -3,12 +3,16 @@ using Npgsql.Schema;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Venflow.Commands;
 using Venflow.Dynamic.IL;
+using Venflow.Dynamic.Mat;
 using Venflow.Dynamic.Proxies;
 using Venflow.Enums;
 using Venflow.Modeling;
@@ -29,7 +33,7 @@ namespace Venflow.Dynamic.Materializer
             _materializerLock = new object();
         }
 
-        internal Func<NpgsqlDataReader, Task<TReturn>> GetOrCreateMaterializer<TReturn>(JoinBuilderValues? joinBuilderValues, ReadOnlyCollection<NpgsqlDbColumn> columnSchema, bool changeTracking) where TReturn : class
+        internal Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> GetOrCreateMaterializer<TReturn>(JoinBuilderValues? joinBuilderValues, ReadOnlyCollection<NpgsqlDbColumn> columnSchema, bool changeTracking) where TReturn : class
         {
             var cacheKeyBuilder = new HashCode();
 
@@ -57,7 +61,7 @@ namespace Venflow.Dynamic.Materializer
                         if (joinBuilderValues.Joins.Count == joinIndex)
                             break;
 
-                        nextJoin = joinBuilderValues.Joins[joinIndex].JoinWith.RightEntity;
+                        nextJoin = joinBuilderValues.Joins[joinIndex].Join.RightEntity;
                         nextJoinPKName = nextJoin.GetPrimaryColumn().ColumnName;
 
                         joinIndex++;
@@ -84,17 +88,33 @@ namespace Venflow.Dynamic.Materializer
             {
                 if (_materializerCache.TryGetValue(cacheKey, out var tempMaterializer))
                 {
-                    return (Func<NpgsqlDataReader, Task<TReturn>>)tempMaterializer;
+                    return (Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>)tempMaterializer;
                 }
                 else
                 {
-                    var entities = new List<KeyValuePair<Entity, List<KeyValuePair<string, int>>>>();
-                    List<KeyValuePair<string, int>> columns = default;
+                    QueryEntityHolder[] generatedEntities;
 
-                    var joinIndex = 0;
+                    if (hasJoins)
+                    {
+                        var sourceCompiler = new MaterializerSourceCompiler(joinBuilderValues);
 
-                    Entity nextJoin = _entity;
-                    Entity currentJoin = _entity;
+                        sourceCompiler.Compile();
+
+                        generatedEntities = sourceCompiler.GenerateSortedEntities();
+                    }
+                    else
+                    {
+                        generatedEntities = new[] { new QueryEntityHolder(_entity, 0) };
+                    }
+
+                    var entities = new List<(QueryEntityHolder, List<(EntityColumn, int)>)>();
+                    List<(EntityColumn, int)> columns = default;
+
+                    var joinIndex = 1;
+
+                    QueryEntityHolder nextJoin = generatedEntities[0];
+                    QueryEntityHolder currentJoin = generatedEntities[0];
+
                     var nextJoinPKName = _entity.PrimaryColumn.ColumnName;
 
                     for (columnIndex = 0; columnIndex < columnSchema.Count; columnIndex++)
@@ -106,36 +126,37 @@ namespace Venflow.Dynamic.Materializer
                             if (columnIndex > 0)
                                 currentJoin = nextJoin;
 
-                            columns = new List<KeyValuePair<string, int>>();
+                            columns = new List<(EntityColumn, int)>();
 
-                            entities.Add(new KeyValuePair<Entity, List<KeyValuePair<string, int>>>(nextJoin, columns));
+                            entities.Add((nextJoin, columns));
 
-                            if (hasJoins && joinIndex < joinBuilderValues.Joins.Count)
+                            if (hasJoins && joinIndex < generatedEntities.Length)
                             {
-                                nextJoin = joinBuilderValues.Joins[joinIndex].JoinWith.RightEntity;
-                                nextJoinPKName = nextJoin.GetPrimaryColumn().ColumnName;
+                                nextJoin = generatedEntities[joinIndex];
+                                nextJoinPKName = nextJoin.Entity.GetPrimaryColumn().ColumnName;
 
-                                var currentJoinColumnCount = currentJoin.GetColumnCount();
+                                var currentJoinColumnCount = currentJoin.Entity.GetColumnCount();
 
-                                for (int i = currentJoin.GetRegularColumnOffset(); i < currentJoinColumnCount; i++)
+                                for (int i = currentJoin.Entity.GetRegularColumnOffset(); i < currentJoinColumnCount; i++)
                                 {
-                                    var currentJoinColumn = currentJoin.GetColumn(i);
+                                    var currentJoinColumn = currentJoin.Entity.GetColumn(i);
 
                                     if (currentJoinColumn.ColumnName == nextJoinPKName)
                                     {
-                                        throw new InvalidOperationException($"The entity '{currentJoin.EntityName}' defines the column '{currentJoinColumn.ColumnName}' which can't have the same name, as the joining entity's '{nextJoin.EntityName}' primary key '{nextJoinPKName}'.");
+                                        throw new InvalidOperationException($"The entity '{currentJoin.Entity.EntityName}' defines the column '{currentJoinColumn.ColumnName}' which can't have the same name, as the joining entity's '{nextJoin.Entity.EntityName}' primary key '{nextJoinPKName}'.");
                                     }
                                 }
 
                                 joinIndex++;
                             }
                         }
-                        else if (!currentJoin.TryGetColumn(column.ColumnName, out _))
+
+                        if (!currentJoin.Entity.TryGetColumn(column.ColumnName, out var entityColumn))
                         {
-                            throw new InvalidOperationException($"The column '{column.ColumnName}' on entity '{currentJoin.EntityName}' does not exist.");
+                            throw new InvalidOperationException($"The column '{column.ColumnName}' on entity '{currentJoin.Entity.EntityName}' does not exist.");
                         }
 
-                        columns.Add(new KeyValuePair<string, int>(column.ColumnName, column.ColumnOrdinal.Value));
+                        columns.Add((entityColumn, column.ColumnOrdinal.Value));
                     }
 
                     if (hasJoins)
@@ -154,15 +175,17 @@ namespace Venflow.Dynamic.Materializer
                         throw new InvalidOperationException("The result set contained multiple tables, however the query was configured to only expect one. Try specifying the tables you are joining with JoinWith, while declaring the query.");
                     }
 
-                    var materializer = CreateMaterializer<TReturn>(joinBuilderValues, entities, changeTracking);
+                    return new Mat.MaterializerFactory(_entity).CreateMaterializer<TReturn>(entities, changeTracking);
 
-#if NET48
-                    _materializerCache.Add(cacheKey, materializer);
-#else
-                    _materializerCache.TryAdd(cacheKey, materializer);
-#endif
+                    //                    var materializer = CreateMaterializer<TReturn>(joinBuilderValues, entities, changeTracking);
 
-                    return materializer;
+                    //#if NET48
+                    //                                        _materializerCache.Add(cacheKey, materializer);
+                    //#else
+                    //                    _materializerCache.TryAdd(cacheKey, materializer);
+                    //#endif
+
+                    //                    return materializer;
                 }
             }
         }

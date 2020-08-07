@@ -17,6 +17,8 @@ namespace Venflow.Modeling
         internal RelationType RelationType { get; }
         internal ForeignKeyLocation ForeignKeyLocation { get; }
 
+        internal EntityRelation Sibiling { get; set; }
+
         internal EntityRelation(uint relationId, Entity leftEntity, PropertyInfo? leftNavigationProperty, Entity rightEntity,
             PropertyInfo? rightNavigationProperty, EntityColumn foreignKeyColumn, RelationType relationType, ForeignKeyLocation foreignKeyLocation)
         {

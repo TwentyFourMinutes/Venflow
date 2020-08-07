@@ -76,8 +76,9 @@ namespace Venflow.Modeling.Definitions
                 return;
             }
 
-            var foreignEntities = new EntityRelation[_entityBuilder.Relations.Count];
-            var nameToEntity = new Dictionary<string, EntityRelation>();
+            var foreignEntityRelations = new EntityRelation[_entityBuilder.Relations.Count];
+            var relationIdToColumn = new Dictionary<uint, EntityRelation>();
+            var relationNameToColumn = new Dictionary<string, EntityRelation>();
 
             for (int i = 0; i < _entityBuilder.Relations.Count; i++)
             {
@@ -98,12 +99,21 @@ namespace Venflow.Modeling.Definitions
 
                 var entityRelation = new EntityRelation(relation.RelationId, _entity, relation.LeftNavigationProperty, relationEntity, relation.RightNavigationProperty, keyColumn, relation.RelationType, relation.ForeignKeyLocation);
 
-                foreignEntities[i] = entityRelation;
+                if (entityRelation.RightEntity.Relations is { } && entityRelation.RightEntity.Relations.TryGetValue(relation.RelationId, out var sibilingRelation))
+                {
+                    entityRelation.Sibiling = sibilingRelation;
+                    sibilingRelation.Sibiling = entityRelation;
+                }
 
-                nameToEntity.Add(relation.RightEntityName, entityRelation);
+                foreignEntityRelations[i] = entityRelation;
+
+                relationIdToColumn.Add(relation.RelationId, entityRelation);
+
+                if (entityRelation.LeftNavigationProperty is { })
+                    relationNameToColumn.Add(entityRelation.LeftNavigationProperty.Name, entityRelation);
             }
 
-            _entity.Relations = new DualKeyCollection<string, EntityRelation>(foreignEntities, nameToEntity);
+            _entity.Relations = new TrioKeyCollection<uint, string, EntityRelation>(foreignEntityRelations, relationIdToColumn, relationNameToColumn);
         }
 
         private string GetColumnListString(EntityColumnCollection<TEntity> columns, ColumnListStringOptions options)
