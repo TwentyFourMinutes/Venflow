@@ -6,7 +6,7 @@ using Venflow.Enums;
 
 namespace Venflow.Modeling.Definitions.Builder
 {
-    internal class RightRelationBuilder<TEntity, TRelation> : INotRequiredMultiRightRelationBuilder<TEntity, TRelation>, IRequiredMultiRightRelationBuilder<TEntity, TRelation>, IForeignKeyRelationBuilder<TEntity, TRelation> where TEntity : class where TRelation : class
+    internal class RightRelationBuilder<TEntity, TRelation> : INotRequiredMultiRightRelationBuilder<TEntity, TRelation>, IRequiredMultiRightRelationBuilder<TEntity, TRelation>, IForeignKeyRelationBuilder<TEntity, TRelation> where TEntity : class, new() where TRelation : class
     {
         private PropertyInfo? _rightNavigationProperty;
         private RelationPartType _leftRelationType;

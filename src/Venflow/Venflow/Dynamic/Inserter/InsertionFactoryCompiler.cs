@@ -14,7 +14,7 @@ using Venflow.Modeling;
 
 namespace Venflow.Dynamic.Inserter
 {
-    internal class InsertionFactoryCompiler<TEntity> where TEntity : class
+    internal class InsertionFactoryCompiler<TEntity> where TEntity : class, new()
     {
         #region ILFields
 

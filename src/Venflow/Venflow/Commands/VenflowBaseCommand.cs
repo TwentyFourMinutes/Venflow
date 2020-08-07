@@ -6,7 +6,7 @@ using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
-    internal abstract class VenflowBaseCommand<TEntity> where TEntity : class
+    internal abstract class VenflowBaseCommand<TEntity> where TEntity : class, new()
     {
         internal bool DisposeCommand { get; set; }
 

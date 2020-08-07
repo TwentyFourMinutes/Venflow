@@ -1,4 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -7,6 +9,8 @@ namespace Venflow.Benchmarks.Benchmarks
     [MemoryDiagnoser]
     public class MiscBenchmarks : BenchmarkBase
     {
+        private readonly Type _type = typeof(List<int>);
+
         [GlobalSetup]
         public override Task Setup()
         {
@@ -14,11 +18,20 @@ namespace Venflow.Benchmarks.Benchmarks
         }
 
         [Benchmark]
-        public (string, string, int) GetStackTrace()
+        public List<int> InstantiateWithActivator()
         {
-            var frame = new StackTrace(1, true).GetFrame(0);
+            return (List<int>)Activator.CreateInstance(_type);
+        }
 
-            return (frame.GetFileName(), frame.GetMethod().Name, frame.GetFileLineNumber());
+        [Benchmark]
+        public List<int> InstantiateWithGenericActivator()
+        {
+            return BaseInstantiateWithGenericActivator<List<int>>();
+        }
+
+        public T BaseInstantiateWithGenericActivator<T>() where T : class, new()
+        {
+            return new T();
         }
 
         [GlobalCleanup]

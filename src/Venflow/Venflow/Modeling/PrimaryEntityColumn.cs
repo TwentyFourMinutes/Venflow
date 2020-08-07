@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Venflow.Modeling
 {
-    internal class PrimaryEntityColumn<TEntity> : EntityColumn<TEntity>, IPrimaryEntityColumn where TEntity : class
+    internal class PrimaryEntityColumn<TEntity> : EntityColumn<TEntity>, IPrimaryEntityColumn where TEntity : class, new()
     {
         public bool IsServerSideGenerated { get; }
 

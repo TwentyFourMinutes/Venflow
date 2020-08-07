@@ -14,7 +14,7 @@ namespace Venflow.Modeling
     /// A <see cref="Table{TEntity}"/> is used to perform CRUD operations against the table represented by <typeparamref name="TEntity"/>.
     /// </summary>
     /// <typeparam name="TEntity">The entity which represents a table in the Database.</typeparam>
-    public sealed class Table<TEntity> where TEntity : class
+    public sealed class Table<TEntity> where TEntity : class, new()
     {
         private readonly Database _database;
         private readonly Entity<TEntity> _configuration;
@@ -168,7 +168,7 @@ namespace Venflow.Modeling
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the result of the executed query.</returns>
         /// <remarks>This method could represents the following SQL statement "SELECT * FROM table".</remarks>
-        public Task<TReturn> QueryAsync<TReturn>(IQueryCommand<TEntity, TReturn> queryCommand, CancellationToken cancellationToken = default) where TReturn : class
+        public Task<TReturn> QueryAsync<TReturn>(IQueryCommand<TEntity, TReturn> queryCommand, CancellationToken cancellationToken = default) where TReturn : class, new()
         {
             ((VenflowBaseCommand<TEntity>)queryCommand).UnderlyingCommand.Connection = _database.GetConnection();
 

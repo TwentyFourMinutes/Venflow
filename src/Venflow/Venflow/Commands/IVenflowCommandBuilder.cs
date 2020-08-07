@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Venflow.Commands
 {
-    public interface IVenflowCommandBuilder<TEntity> where TEntity : class
+    public interface IVenflowCommandBuilder<TEntity> where TEntity : class, new()
     {
         IPreCommandBuilder<TEntity, TEntity> QuerySingle();
         IPreCommandBuilder<TEntity, TEntity> QuerySingle(string sql);

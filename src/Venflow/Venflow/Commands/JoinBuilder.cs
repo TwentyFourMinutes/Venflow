@@ -7,7 +7,7 @@ using Venflow.Modeling.Definitions;
 
 namespace Venflow.Commands
 {
-    public class JoinBuilder<TRelationEntity, TEntity, TReturn> where TRelationEntity : class where TEntity : class where TReturn : class
+    public class JoinBuilder<TRelationEntity, TEntity, TReturn> where TRelationEntity : class, new() where TEntity : class, new() where TReturn : class, new()
     {
         private readonly TrioKeyCollection<uint, string, EntityRelation>? _relations;
         private readonly JoinBuilderValues _joinBuilderValues;
@@ -34,7 +34,7 @@ namespace Venflow.Commands
             _commandBuilder = commandBuilder;
         }
 
-        public JoinBuilder<TRelationEntity, TToEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TRelationEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        public JoinBuilder<TRelationEntity, TToEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TRelationEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class, new()
         {
             var foreignProperty = propertySelector.ValidatePropertySelector();
 
@@ -46,7 +46,7 @@ namespace Venflow.Commands
             return new JoinBuilder<TRelationEntity, TToEntity, TReturn>(new JoinOptions(joiningEntity!, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, true);
         }
 
-        public JoinBuilder<TRelationEntity, TToEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        public JoinBuilder<TRelationEntity, TToEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class, new()
         {
             var foreignProperty = propertySelector.ValidatePropertySelector();
 
@@ -58,7 +58,7 @@ namespace Venflow.Commands
             return new JoinBuilder<TRelationEntity, TToEntity, TReturn>(new JoinOptions(joiningEntity!, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, true);
         }
 
-        public JoinBuilder<TRelationEntity, TToEntity, TReturn> ThenWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        public JoinBuilder<TRelationEntity, TToEntity, TReturn> ThenWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class, new()
         {
             propertySelector.ValidatePropertySelector();
 
@@ -72,7 +72,7 @@ namespace Venflow.Commands
             return new JoinBuilder<TRelationEntity, TToEntity, TReturn>(new JoinOptions(joiningEntity!, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, false);
         }
 
-        public JoinBuilder<TRelationEntity, TToEntity, TReturn> ThenWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class
+        public JoinBuilder<TRelationEntity, TToEntity, TReturn> ThenWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class, new()
         {
             var foreignProperty = propertySelector.ValidatePropertySelector();
 

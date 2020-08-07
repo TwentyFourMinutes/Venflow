@@ -10,7 +10,7 @@ namespace Venflow.Modeling.Definitions.Builder
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     /// <typeparam name="TRelation">The entity type that this relationship targets.</typeparam>
-    public interface IMultiRightRelationBuilder<TEntity, TRelation> where TEntity : class where TRelation : class
+    public interface IMultiRightRelationBuilder<TEntity, TRelation> where TEntity : class, new() where TRelation : class
     {
         /// <summary>
         /// <para>

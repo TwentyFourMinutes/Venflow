@@ -1,4 +1,4 @@
-﻿using Npgsql;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -140,7 +140,7 @@ namespace Venflow.Dynamic.Mat
         }
 
 
-        internal Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> CreateMaterializer<TReturn>(List<(QueryEntityHolder, List<(EntityColumn, int)>)> entities, bool changeTracking) where TReturn : class
+        internal Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> CreateMaterializer<TReturn>(List<(QueryEntityHolder, List<(EntityColumn, int)>)> entities, bool changeTracking) where TReturn : class, new()
         {
             _returnType = typeof(TReturn);
 

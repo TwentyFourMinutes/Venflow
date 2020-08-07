@@ -12,7 +12,7 @@ using Venflow.Enums;
 
 namespace Venflow.Modeling.Definitions.Builder
 {
-    internal class EntityBuilder<TEntity> : EntityBuilder, IEntityBuilder<TEntity> where TEntity : class
+    internal class EntityBuilder<TEntity> : EntityBuilder, IEntityBuilder<TEntity> where TEntity : class, new()
     {
         internal override Type Type { get; }
 
@@ -356,7 +356,7 @@ namespace Venflow.Modeling.Definitions.Builder
     /// Instances of this class are returned from methods inside the <see cref="Table{TEntity}"/> class when using the Fluid API and it is not designed to be directly constructed in your application code.
     /// </summary>
     /// <typeparam name="TEntity">The entity type being configured.</typeparam>
-    public interface IEntityBuilder<TEntity> : ILeftRelationBuilder<TEntity> where TEntity : class
+    public interface IEntityBuilder<TEntity> : ILeftRelationBuilder<TEntity> where TEntity : class, new()
     {
         /// <summary>
         /// Configures the table that the entity type maps to, if not configured it will use the name of the <see cref="Table{TEntity}"/> property inside the <see cref="Database"/> class.

@@ -6,7 +6,7 @@ using Venflow.Modeling.Definitions.Builder;
 
 namespace Venflow.Modeling.Definitions
 {
-    internal class EntityFactory<TEntity> : EntityFactory where TEntity : class
+    internal class EntityFactory<TEntity> : EntityFactory where TEntity : class, new()
     {
         internal override EntityBuilder EntityBuilder => _entityBuilder;
 

@@ -7,7 +7,7 @@ namespace Venflow.Modeling.Definitions
     /// </summary>
     /// <typeparam name="TEntity">The entity to be configured.</typeparam>
     /// <remarks>Classes which inherit from this one, have to be in the same assembly as the <see cref="Database"/> in order to be discoverable.</remarks>
-    public abstract class EntityConfiguration<TEntity> : EntityConfiguration where TEntity : class
+    public abstract class EntityConfiguration<TEntity> : EntityConfiguration where TEntity : class, new()
     {
         /// <summary>
         /// Allows for configuration of the entity <typeparamref name="TEntity"/>.

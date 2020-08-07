@@ -19,7 +19,7 @@ using Venflow.Modeling;
 
 namespace Venflow.Dynamic.Materializer
 {
-    internal class MaterializerFactory<TEntity> where TEntity : class
+    internal class MaterializerFactory<TEntity> where TEntity : class, new()
     {
         private readonly Entity<TEntity> _entity;
         private readonly Dictionary<int, Delegate> _materializerCache;
@@ -33,7 +33,7 @@ namespace Venflow.Dynamic.Materializer
             _materializerLock = new object();
         }
 
-        internal Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> GetOrCreateMaterializer<TReturn>(JoinBuilderValues? joinBuilderValues, ReadOnlyCollection<NpgsqlDbColumn> columnSchema, bool changeTracking) where TReturn : class
+        internal Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> GetOrCreateMaterializer<TReturn>(JoinBuilderValues? joinBuilderValues, ReadOnlyCollection<NpgsqlDbColumn> columnSchema, bool changeTracking) where TReturn : class, new()
         {
             var cacheKeyBuilder = new HashCode();
 
@@ -190,7 +190,7 @@ namespace Venflow.Dynamic.Materializer
             }
         }
 
-        private Func<NpgsqlDataReader, Task<TReturn>> CreateMaterializer<TReturn>(JoinBuilderValues? joinBuilderValues, List<KeyValuePair<Entity, List<KeyValuePair<string, int>>>> entities, bool changeTracking) where TReturn : class
+        private Func<NpgsqlDataReader, Task<TReturn>> CreateMaterializer<TReturn>(JoinBuilderValues? joinBuilderValues, List<KeyValuePair<Entity, List<KeyValuePair<string, int>>>> entities, bool changeTracking) where TReturn : class, new()
         {
             var primaryEntity = entities[0];
             var returnType = typeof(TReturn);

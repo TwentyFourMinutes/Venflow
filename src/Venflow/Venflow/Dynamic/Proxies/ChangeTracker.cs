@@ -1,6 +1,6 @@
 ﻿namespace Venflow.Dynamic.Proxies
 {
-    internal class ChangeTracker<TEntity> where TEntity : class
+    internal class ChangeTracker<TEntity> where TEntity : class, new()
     {
         internal bool TrackChanges { get; set; }
         internal bool IsDirty { get; set; }

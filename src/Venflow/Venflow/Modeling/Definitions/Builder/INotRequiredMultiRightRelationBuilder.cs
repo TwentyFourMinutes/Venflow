@@ -3,7 +3,7 @@
     /// <summary>
     /// This interface hosts relation methods for the right side of a relation.
     /// </summary>
-    public interface INotRequiredMultiRightRelationBuilder<TEntity, TRelation> : IMultiRightRelationBuilder<TEntity, TRelation>, INotRequiredSingleRightRelationBuilder<TEntity, TRelation> where TEntity : class where TRelation : class
+    public interface INotRequiredMultiRightRelationBuilder<TEntity, TRelation> : IMultiRightRelationBuilder<TEntity, TRelation>, INotRequiredSingleRightRelationBuilder<TEntity, TRelation> where TEntity : class, new() where TRelation : class
     {
         /// <summary>
         /// <para>

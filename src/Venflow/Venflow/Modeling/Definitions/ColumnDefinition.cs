@@ -3,7 +3,7 @@ using System;
 
 namespace Venflow.Modeling.Definitions
 {
-    internal class ColumnDefinition<TEntity> where TEntity : class
+    internal class ColumnDefinition<TEntity> where TEntity : class, new()
     {
         internal string Name { get; set; }
 

@@ -8,7 +8,7 @@ using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
-    internal class VenflowQueryCommandBuilder<TEntity, TReturn> : IPreCommandBuilder<TEntity, TReturn> where TEntity : class where TReturn : class
+    internal class VenflowQueryCommandBuilder<TEntity, TReturn> : IPreCommandBuilder<TEntity, TReturn> where TEntity : class, new() where TReturn : class, new()
     {
         internal JoinBuilderValues? JoinBuilderValues { get; set; }
 

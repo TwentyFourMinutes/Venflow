@@ -4,7 +4,7 @@ using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
-    internal class VenflowInsertCommandBuilder<TEntity> : IInsertCommandBuilder<TEntity> where TEntity : class
+    internal class VenflowInsertCommandBuilder<TEntity> : IInsertCommandBuilder<TEntity> where TEntity : class, new()
     {
         private InsertOptions _insertOptions = InsertOptions.SetIdentityColumns;
 
