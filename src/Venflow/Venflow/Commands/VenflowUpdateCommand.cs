@@ -94,8 +94,6 @@ namespace Venflow.Commands
                     if (columnIndex == 0)
                         continue;
 
-                    columns[i] = 0;
-
                     var column = entityColumns[columnIndex - 1];
 
                     commandString.Append('"')
