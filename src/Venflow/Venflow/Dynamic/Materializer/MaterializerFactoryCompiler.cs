@@ -406,7 +406,7 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, primaryColumn.PropertyInfo.GetGetMethod());
                 _moveNextMethodIL.Emit(OpCodes.Ldloc_S, primaryKeyLocal);
-                _moveNextMethodIL.Emit(OpCodes.Beq, afterEntityGenerationIfBody);
+                WriteInEqualityComparer(primaryColumn.PropertyInfo.PropertyType, afterEntityGenerationIfBody);
 
                 _moveNextMethodIL.MarkLabel(entityGenerationIfBody);
 
@@ -800,12 +800,11 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, primaryColumn.PropertyInfo.GetGetMethod());
                 _moveNextMethodIL.Emit(OpCodes.Ldloc_S, primaryKeyLocal);
-                _moveNextMethodIL.Emit(OpCodes.Beq, afterEntityGenerationIfBody);
+                WriteInEqualityComparer(primaryColumn.PropertyInfo.PropertyType, afterEntityGenerationIfBody);
 
                 _moveNextMethodIL.MarkLabel(entityGenerationIfBody);
 
                 // Check if the dictionary holds a instance to the current primary key
-
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, entityDictionaryField);
                 _moveNextMethodIL.Emit(OpCodes.Ldloc_S, primaryKeyLocal);
@@ -1089,7 +1088,21 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethodIL.Emit(OpCodes.Call, taskAwaiterLocal.LocalType.GetMethod("GetResult"));
         }
 
-        private void GetColumnMaterializer(ILGenerator iLGenerator, EntityColumn column)
+        private void WriteInEqualityComparer(Type type, Label branchTo)
+        {
+            var customInEqualityMethod = type.GetMethod("op_Inequality");
+
+            if (customInEqualityMethod is { })
+            {
+                _moveNextMethodIL.Emit(OpCodes.Call, customInEqualityMethod);
+                _moveNextMethodIL.Emit(OpCodes.Brfalse, branchTo);
+            }
+            else
+            {
+                _moveNextMethodIL.Emit(OpCodes.Beq, branchTo);
+            }
+        }
+
         private void WriteColumnMaterializer(ILGenerator iLGenerator, EntityColumn column)
         {
             if (column.IsNullableReferenceType)
