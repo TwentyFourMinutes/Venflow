@@ -5,7 +5,7 @@ using Venflow.Dynamic.Proxies;
 
 namespace Venflow.Modeling
 {
-    internal class Entity<TEntity> : Entity where TEntity : class
+    internal class Entity<TEntity> : Entity where TEntity : class, new()
     {
         internal EntityColumnCollection<TEntity> Columns { get; }
         internal PrimaryEntityColumn<TEntity> PrimaryColumn { get; }
@@ -101,7 +101,7 @@ namespace Venflow.Modeling
         internal Type EntityType { get; }
         internal Type? ProxyEntityType { get; }
 
-        internal DualKeyCollection<string, EntityRelation>? Relations { get; set; }
+        internal TrioKeyCollection<uint, string, EntityRelation>? Relations { get; set; }
 
         internal string ColumnListString { get; }
         internal string ExplicitColumnListString { get; }

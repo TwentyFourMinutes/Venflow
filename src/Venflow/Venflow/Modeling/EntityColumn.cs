@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Venflow.Modeling
 {
-    internal class EntityColumn<TEntity> : EntityColumn where TEntity : class
+    internal class EntityColumn<TEntity> : EntityColumn where TEntity : class, new()
     {
         internal Func<TEntity, string, NpgsqlParameter> ValueRetriever { get; }
 

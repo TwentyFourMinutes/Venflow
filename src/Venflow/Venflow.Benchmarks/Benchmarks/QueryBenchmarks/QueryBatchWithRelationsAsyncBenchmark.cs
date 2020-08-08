@@ -50,7 +50,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         [Benchmark]
         public Task<List<Person>> VenflowQueryBatchAsync()
         {
-            return Database.People.QueryBatch(sql).JoinWith(x=> x.Emails).ThenWith(x=> x.Contents).TrackChanges().Build().QueryAsync();
+            return Database.People.QueryBatch(sql).JoinWith(x => x.Emails).ThenWith(x => x.Contents).TrackChanges().Build().QueryAsync();
         }
 
         [Benchmark]

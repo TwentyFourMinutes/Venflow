@@ -6,7 +6,7 @@ namespace Venflow.Modeling.Definitions.Builder
     /// <summary>
     /// This interface hosts relation methods for the foreign key configurations.
     /// </summary>
-    public interface IForeignKeyRelationBuilder<TEntity, TRelation> where TEntity : class where TRelation : class
+    public interface IForeignKeyRelationBuilder<TEntity, TRelation> where TEntity : class, new() where TRelation : class
     {
         /// <summary>
         /// Configures the property to be used as the foreign key for this relationship.

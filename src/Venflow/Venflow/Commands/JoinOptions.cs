@@ -5,14 +5,12 @@ namespace Venflow.Commands
 {
     internal class JoinOptions
     {
-        internal EntityRelation JoinWith { get; }
-        internal Entity JoinFrom { get; }
+        internal EntityRelation Join { get; }
         internal JoinBehaviour JoinBehaviour { get; }
 
-        internal JoinOptions(EntityRelation joinWith, Entity joinFrom, JoinBehaviour joinBehaviour)
+        internal JoinOptions(EntityRelation joinWith, JoinBehaviour joinBehaviour)
         {
-            JoinWith = joinWith;
-            JoinFrom = joinFrom;
+            Join = joinWith;
             JoinBehaviour = joinBehaviour;
         }
     }

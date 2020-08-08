@@ -90,7 +90,7 @@ namespace Venflow.Dynamic.Inserter
 
                 leftNode.Value.Relations.Add(relation);
 
-                rightNode.Value.AssigningRelations.Add(relation.RightEntity.Relations[relation.LeftEntity.EntityName]); // TODO: Use RelationId instead, in order to prevent bugs if one entity has two relations with the same entity.
+                rightNode.Value.AssigningRelations.Add(relation.Sibiling);
 
                 _entities.AddBefore(leftNode, rightNode);
             }

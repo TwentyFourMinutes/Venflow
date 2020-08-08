@@ -7,7 +7,7 @@ using Venflow.Modeling;
 
 namespace Venflow.Dynamic.Inserter
 {
-    internal class InsertionFactory<TEntity> where TEntity : class
+    internal class InsertionFactory<TEntity> where TEntity : class, new()
     {
         private Func<NpgsqlConnection, List<TEntity>, Task<int>>? _defaultInserter;
         private Func<NpgsqlConnection, List<TEntity>, Task<int>>? _relationInserter;

@@ -2,7 +2,7 @@
 
 namespace Venflow.Modeling
 {
-    internal class EntityColumnCollection<TEntity> : DualKeyCollection<string, EntityColumn<TEntity>> where TEntity : class
+    internal class EntityColumnCollection<TEntity> : DualKeyCollection<string, EntityColumn<TEntity>> where TEntity : class, new()
     {
         internal int RegularColumnsOffset { get; }
 

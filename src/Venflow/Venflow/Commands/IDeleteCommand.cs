@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Venflow.Commands
 {
-    public interface IDeleteCommand<TEntity> : IVenflowCommand<TEntity> where TEntity : class
+    public interface IDeleteCommand<TEntity> : IVenflowCommand<TEntity> where TEntity : class, new()
     {
         Task<int> DeleteAsync(TEntity entity, CancellationToken cancellationToken = default);
         Task<int> DeleteAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);

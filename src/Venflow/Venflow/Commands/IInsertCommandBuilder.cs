@@ -1,6 +1,6 @@
 ﻿namespace Venflow.Commands
 {
-    public interface IInsertCommandBuilder<TEntity> : ISpecficVenflowCommandBuilder<IInsertCommand<TEntity>> where TEntity : class
+    public interface IInsertCommandBuilder<TEntity> : ISpecficVenflowCommandBuilder<IInsertCommand<TEntity>> where TEntity : class, new()
     {
         IInsertCommandBuilder<TEntity> SetIdentityColumns();
         IInsertCommandBuilder<TEntity> PopulateRelation();

@@ -14,7 +14,9 @@ namespace Venflow.Tests.QueryTests
         [Fact, Priority(0)]
         public async Task QueryWithRelationAsyncAndNoIncludeAsync()
         {
-            var people = await InsertPeopleAsync();
+            var people = await InsertPeopleWithRelationAsync();
+
+            Database.People.ClearMaterializerCache();
 
             await Assert.ThrowsAsync<InvalidOperationException>(() =>
             {

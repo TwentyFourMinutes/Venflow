@@ -7,7 +7,7 @@ using Venflow.Modeling;
 
 namespace Venflow.Dynamic.Proxies
 {
-    internal class ChangeTrackerFactory<TEntity> where TEntity : class
+    internal class ChangeTrackerFactory<TEntity> where TEntity : class, new()
     {
         internal Type ProxyType { get; private set; }
 

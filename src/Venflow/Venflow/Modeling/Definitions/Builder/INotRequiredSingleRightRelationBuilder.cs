@@ -1,6 +1,6 @@
 ﻿namespace Venflow.Modeling.Definitions.Builder
 {
-    public interface INotRequiredSingleRightRelationBuilder<TEntity, TRelation> : IRequiredSingleRightRelationBuilder<TEntity, TRelation> where TEntity : class where TRelation : class
+    public interface INotRequiredSingleRightRelationBuilder<TEntity, TRelation> : IRequiredSingleRightRelationBuilder<TEntity, TRelation> where TEntity : class, new() where TRelation : class
     {
         /// <summary>
         /// <para>

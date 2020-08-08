@@ -3,7 +3,7 @@ using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
-    internal class VenflowUpdateCommandBuilder<TEntity> : IUpdateCommandBuilder<TEntity> where TEntity : class
+    internal class VenflowUpdateCommandBuilder<TEntity> : IUpdateCommandBuilder<TEntity> where TEntity : class, new()
     {
         private readonly bool _disposeCommand;
         private readonly NpgsqlCommand _command;

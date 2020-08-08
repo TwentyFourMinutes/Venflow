@@ -34,14 +34,14 @@ namespace Venflow.Commands
                 {
                     var path = FullPath[i];
 
-                    if (object.ReferenceEquals(path.JoinOptions.JoinWith, joinOptions.JoinWith))
+                    if (object.ReferenceEquals(path.JoinOptions.Join, joinOptions.Join))
                     {
                         _currentPath = path;
 
                         return;
                     }
 
-                    var match = path.GetPath(joinOptions.JoinWith);
+                    var match = path.GetPath(joinOptions.Join);
 
                     if (match is { })
                     {
@@ -58,11 +58,11 @@ namespace Venflow.Commands
                 _currentPath = newPath;
 
                 Joins.Add(joinOptions);
-                UsedRelations.Add(joinOptions.JoinWith.RelationId);
+                UsedRelations.Add(joinOptions.Join.RelationId);
             }
             else
             {
-                var match = _currentPath.GetPath(joinOptions.JoinWith);
+                var match = _currentPath.GetPath(joinOptions.Join);
 
                 if (match is { })
                 {
@@ -82,7 +82,7 @@ namespace Venflow.Commands
                     _currentPath = joinPath;
 
                     Joins.Add(joinOptions);
-                    UsedRelations.Add(joinOptions.JoinWith.RelationId);
+                    UsedRelations.Add(joinOptions.Join.RelationId);
                 }
                 else
                 {
@@ -93,7 +93,7 @@ namespace Venflow.Commands
                     _currentPath = joinPath;
 
                     Joins.Add(joinOptions);
-                    UsedRelations.Add(joinOptions.JoinWith.RelationId);
+                    UsedRelations.Add(joinOptions.Join.RelationId);
                 }
             }
         }

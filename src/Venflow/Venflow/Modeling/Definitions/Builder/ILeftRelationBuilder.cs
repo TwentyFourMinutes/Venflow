@@ -8,7 +8,7 @@ namespace Venflow.Modeling.Definitions.Builder
     /// This interface hosts relation methods for the left side of a relation.
     /// </summary>
     /// <typeparam name="TEntity">The entity type being configured.</typeparam>
-    public interface ILeftRelationBuilder<TEntity> where TEntity : class
+    public interface ILeftRelationBuilder<TEntity> where TEntity : class, new()
     {
         /// <summary>
         /// <para>

@@ -6,7 +6,7 @@ using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
-    internal class VenflowQueryCommand<TEntity, TReturn> : VenflowBaseCommand<TEntity>, IQueryCommand<TEntity, TReturn> where TEntity : class where TReturn : class
+    internal class VenflowQueryCommand<TEntity, TReturn> : VenflowBaseCommand<TEntity>, IQueryCommand<TEntity, TReturn> where TEntity : class, new() where TReturn : class, new()
     {
         internal Delegate? Materializer { get; set; }
 
@@ -25,18 +25,18 @@ namespace Venflow.Commands
 
             await using var reader = await UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
-            Func<NpgsqlDataReader, Task<TReturn>> materializer;
+            Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> materializer;
 
             if (Materializer is { })
             {
-                materializer = (Func<NpgsqlDataReader, Task<TReturn>>)Materializer;
+                materializer = (Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>)Materializer;
             }
             else
             {
                 Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer<TReturn>(_joinBuilderValues, reader.GetColumnSchema(), _trackingChanges);
             }
 
-            var entities = await materializer(reader);
+            var entities = await materializer(reader, cancellationToken);
 
             if (DisposeCommand)
                 await this.DisposeAsync();

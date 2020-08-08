@@ -8,7 +8,7 @@ using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
-    internal class VenflowQueryCommandBuilder<TEntity, TReturn> : IPreCommandBuilder<TEntity, TReturn> where TEntity : class where TReturn : class
+    internal class VenflowQueryCommandBuilder<TEntity, TReturn> : IPreCommandBuilder<TEntity, TReturn> where TEntity : class, new() where TReturn : class, new()
     {
         internal JoinBuilderValues? JoinBuilderValues { get; set; }
 
@@ -202,7 +202,7 @@ namespace Venflow.Commands
 
             subQuery.Append(") AS ");
 
-            subQuery.Append(_entityConfiguration.RawTableName);
+            subQuery.Append(_entityConfiguration.TableName);
 
             JoinBuilderValues!.AppendColumnNamesAndJoins(_commandString, subQuery);
 
@@ -215,7 +215,7 @@ namespace Venflow.Commands
         {
             sb.Append("SELECT ");
 
-            sb.Append(_entityConfiguration.ColumnListString);
+            sb.Append(_entityConfiguration.ExplicitColumnListString);
 
             sb.Append(" FROM ");
 
