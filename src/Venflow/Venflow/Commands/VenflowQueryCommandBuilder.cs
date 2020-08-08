@@ -202,7 +202,7 @@ namespace Venflow.Commands
 
             subQuery.Append(") AS ");
 
-            subQuery.Append(_entityConfiguration.RawTableName);
+            subQuery.Append(_entityConfiguration.TableName);
 
             JoinBuilderValues!.AppendColumnNamesAndJoins(_commandString, subQuery);
 
@@ -215,7 +215,7 @@ namespace Venflow.Commands
         {
             sb.Append("SELECT ");
 
-            sb.Append(_entityConfiguration.ColumnListString);
+            sb.Append(_entityConfiguration.ExplicitColumnListString);
 
             sb.Append(" FROM ");
 

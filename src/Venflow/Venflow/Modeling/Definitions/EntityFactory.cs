@@ -130,7 +130,9 @@ namespace Venflow.Modeling.Definitions
 
                 if (explictNames)
                 {
-                    sb.Append(_entityBuilder.TableName)
+                    sb.Append('"')
+                      .Append(_entityBuilder.TableName)
+                      .Append('"')
                       .Append('.');
                 }
 
