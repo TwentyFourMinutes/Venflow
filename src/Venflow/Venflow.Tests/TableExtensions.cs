@@ -7,7 +7,7 @@ namespace Venflow.Tests
 {
     internal static class TableExtensions
     {
-        internal static void ClearMaterializerCache<TEntity>(this Table<TEntity> table) where TEntity : class
+        internal static void ClearMaterializerCache<TEntity>(this Table<TEntity> table) where TEntity : class, new()
         {
             var entity = (Entity<TEntity>)typeof(Table<TEntity>).GetField("_configuration", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(table);
 
