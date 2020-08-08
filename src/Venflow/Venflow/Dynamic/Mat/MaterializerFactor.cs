@@ -1,4 +1,4 @@
-using Npgsql;
+﻿using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,13 +24,15 @@ namespace Venflow.Dynamic.Mat
     {
         internal int Id { get; }
         internal Entity Entity { get; }
-        internal List<EntityRelation> AssigningRelations { get; }
-        internal List<EntityRelation> AssignedRelations { get; }
+        internal List<(EntityRelation, QueryEntityHolder)> AssigningRelations { get; }
+        internal List<(EntityRelation, QueryEntityHolder)> AssignedRelations { get; }
+        internal List<EntityRelation> InitializeNavigation { get; }
 
         internal QueryEntityHolder(Entity entity, int id)
         {
-            AssigningRelations = new List<EntityRelation>();
-            AssignedRelations = new List<EntityRelation>();
+            AssigningRelations = new List<(EntityRelation, QueryEntityHolder)>();
+            AssignedRelations = new List<(EntityRelation, QueryEntityHolder)>();
+            InitializeNavigation = new List<EntityRelation>();
 
             Entity = entity;
             Id = id;
@@ -66,30 +68,35 @@ namespace Venflow.Dynamic.Mat
 
         internal void Compile()
         {
-            _entities.AddFirst(new QueryEntityHolder(_joinBuilderValues.Root, _queryEntityHolderIndex++));
+            var queryEntityHolder = new QueryEntityHolder(_joinBuilderValues.Root, _queryEntityHolderIndex++);
+
+            _entities.AddFirst(queryEntityHolder);
 
             for (int i = 0; i < _joinBuilderValues.FullPath.Count; i++)
             {
-                BaseCompile(_joinBuilderValues.FullPath[i]);
+                BaseCompile(_joinBuilderValues.FullPath[i], queryEntityHolder);
             }
         }
 
-        private void BaseCompile(JoinPath joinPath)
+        private void BaseCompile(JoinPath joinPath, QueryEntityHolder rightQueryHolder)
         {
             var leftQueryHolder = new QueryEntityHolder(joinPath.JoinOptions.Join.RightEntity, _queryEntityHolderIndex++);
 
+            if (joinPath.JoinOptions.Join.RelationType == RelationType.OneToMany)
+                rightQueryHolder.InitializeNavigation.Add(joinPath.JoinOptions.Join);
+
             _entities.AddLast(leftQueryHolder);
 
-            leftQueryHolder.AssigningRelations.Add(joinPath.JoinOptions.Join);
+            leftQueryHolder.AssigningRelations.Add((joinPath.JoinOptions.Join, rightQueryHolder));
 
             if (joinPath.JoinOptions.Join.RightNavigationProperty is { })
             {
-                leftQueryHolder.AssignedRelations.Add(joinPath.JoinOptions.Join.Sibiling);
+                leftQueryHolder.AssignedRelations.Add((joinPath.JoinOptions.Join.Sibiling, rightQueryHolder));
             }
 
             for (int i = 0; i < joinPath.TrailingJoinPath.Count; i++)
             {
-                BaseCompile(joinPath.TrailingJoinPath[i]);
+                BaseCompile(joinPath.TrailingJoinPath[i], leftQueryHolder);
             }
         }
     }
@@ -162,14 +169,18 @@ namespace Venflow.Dynamic.Mat
             {
                 if (entities.Count == 1)
                 {
-                    CreateSingleNoRelationMaterializer(entities[0].Item2, changeTracking);
+                    CreateSingleNoRelationMaterializer(entities[0].Item2, changeTracking && _rootEntity.ProxyEntityType is { });
                 }
             }
             else
             {
                 if (entities.Count == 1)
                 {
-                    CreateBatchNoRelationMaterializer(entities[0].Item2, changeTracking);
+                    CreateBatchNoRelationMaterializer(entities[0].Item2, changeTracking && _rootEntity.ProxyEntityType is { });
+                }
+                else
+                {
+                    CreateBatchRelationMaterializer(entities, changeTracking);
                 }
             }
 
@@ -376,6 +387,9 @@ namespace Venflow.Dynamic.Mat
             _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldnull);
+            _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, _defaultExceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
@@ -391,6 +405,9 @@ namespace Venflow.Dynamic.Mat
             _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldnull);
+            _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, resultLocal);
             _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetResult"));
@@ -400,20 +417,296 @@ namespace Venflow.Dynamic.Mat
             _moveNextMethodIL.Emit(OpCodes.Ret);
         }
 
-        private void CreateEntity(Entity entity, List<(EntityColumn, int)> dbColumns, bool changeTracking)
+        private void CreateBatchRelationMaterializer(List<(QueryEntityHolder, List<(EntityColumn, int)>)> entities, bool changeTracking)
+        {
+            var resultField = _stateMachineTypeBuilder.DefineField("_result", _returnType, FieldAttributes.Private);
+            var resultLocal = _moveNextMethodIL.DeclareLocal(_returnType);
+
+            var endOfMethodLabel = _moveNextMethodIL.DefineLabel();
+            var endOfCatchLabel = _moveNextMethodIL.DefineLabel();
+            var loopBodyLabel = _moveNextMethodIL.DefineLabel();
+            var loopConditionLabel = _moveNextMethodIL.DefineLabel();
+
+            // Assign the state field to the state local
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _stateField);
+            _moveNextMethodIL.Emit(OpCodes.Stloc_S, _stateLocal);
+
+            // Start try block
+            _moveNextMethodIL.BeginExceptionBlock();
+
+            // if state zero goto await unsafe
+            var awaitUnsafeEndLabel = _moveNextMethodIL.DefineLabel();
+
+            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, _stateLocal);
+            _moveNextMethodIL.Emit(OpCodes.Brfalse, awaitUnsafeEndLabel);
+
+            // Create result field instance
+
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Newobj, resultLocal.LocalType.GetConstructor(Type.EmptyTypes));
+            _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
+
+            var entityDictionaries = new Dictionary<int, FieldBuilder>();
+            var entityLastTypes = new Dictionary<int, FieldBuilder>();
+
+            var dictionaryType = typeof(Dictionary<,>);
+
+            for (int i = 0; i < entities.Count; i++)
+            {
+                var entityHolder = entities[i];
+                var entity = entityHolder.Item1.Entity;
+
+                // Add dictionary field
+                var entityDictionaryField = _stateMachineTypeBuilder.DefineField("_" + entity.EntityName + entityHolder.Item1.Id, dictionaryType.MakeGenericType(entity.GetPrimaryColumn().PropertyInfo.PropertyType, entity.EntityType), FieldAttributes.Private);
+
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Newobj, entityDictionaryField.FieldType.GetConstructor(Type.EmptyTypes));
+                _moveNextMethodIL.Emit(OpCodes.Stfld, entityDictionaryField);
+
+                entityDictionaries.Add(entityHolder.Item1.Id, entityDictionaryField);
+
+                // Add lastEntity field
+
+                var lastEntityField = _stateMachineTypeBuilder.DefineField("_last" + entity.EntityName + entityHolder.Item1.Id, entity.EntityType, FieldAttributes.Private);
+
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldnull);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, lastEntityField);
+
+                entityLastTypes.Add(entityHolder.Item1.Id, lastEntityField);
+            }
+
+            _moveNextMethodIL.Emit(OpCodes.Br, loopConditionLabel);
+
+            _moveNextMethodIL.MarkLabel(loopBodyLabel);
+            var setNullGhostIL = new ILGhostGenerator();
+
+            // Set result field to null
+            setNullGhostIL.Emit(OpCodes.Ldarg_0);
+            setNullGhostIL.Emit(OpCodes.Ldnull);
+            setNullGhostIL.Emit(OpCodes.Stfld, resultField);
+
+            for (int entityIndex = 0; entityIndex < entities.Count; entityIndex++)
+            {
+                var entityHolder = entities[entityIndex];
+                var entity = entityHolder.Item1.Entity;
+                var lastEntityField = entityLastTypes[entityHolder.Item1.Id];
+                var entityDictionaryField = entityDictionaries[entityHolder.Item1.Id];
+
+                // create new Entity
+                var primaryDbColumn = entityHolder.Item2[0];
+                var primaryColumn = entityHolder.Item2[0].Item1;
+                var primaryKeyLocal = _moveNextMethodIL.DeclareLocal(primaryColumn.PropertyInfo.PropertyType);
+
+                // Assign the primary key to the local variable
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, _dataReaderField);
+
+                if (primaryDbColumn.Item2 <= sbyte.MaxValue)
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)primaryDbColumn.Item2);
+                else
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, primaryDbColumn.Item2);
+
+                GetColumnMaterializer(_moveNextMethodIL, primaryColumn);
+                _moveNextMethodIL.Emit(OpCodes.Stloc_S, primaryKeyLocal);
+
+                // Check if lastEntity is null
+                var entityGenerationIfBody = _moveNextMethodIL.DefineLabel();
+
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
+                _moveNextMethodIL.Emit(OpCodes.Brfalse, entityGenerationIfBody);
+
+                // Check if lastEntity is the same as the current one
+                var afterEntityGenerationIfBody = entityIndex == entities.Count - 1 ? loopConditionLabel : _moveNextMethodIL.DefineLabel();
+
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, primaryColumn.PropertyInfo.GetGetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Ldloc_S, primaryKeyLocal);
+                _moveNextMethodIL.Emit(OpCodes.Beq, afterEntityGenerationIfBody);
+
+                _moveNextMethodIL.MarkLabel(entityGenerationIfBody);
+
+                // Check if the dictionary holds a instance to the current primary key
+
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, entityDictionaryField);
+                _moveNextMethodIL.Emit(OpCodes.Ldloc_S, primaryKeyLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldflda, lastEntityField);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityDictionaryField.FieldType.GetMethod("TryGetValue"));
+                _moveNextMethodIL.Emit(OpCodes.Brtrue, afterEntityGenerationIfBody);
+
+                // Instantiate the entity
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+
+                CreateEntity(entity, entityHolder.Item2, changeTracking && entity.ProxyEntityType is { }, primaryKeyLocal);
+
+                for (int i = 0; i < entityHolder.Item1.InitializeNavigation.Count; i++)
+                {
+                    var initializeNavigation = entityHolder.Item1.InitializeNavigation[i];
+
+                    _moveNextMethodIL.Emit(OpCodes.Dup);
+                    _moveNextMethodIL.Emit(OpCodes.Newobj, initializeNavigation.LeftNavigationProperty.PropertyType.GetConstructor(Type.EmptyTypes));
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, initializeNavigation.LeftNavigationProperty.GetSetMethod());
+                }
+
+                for (int i = 0; i < entityHolder.Item1.AssignedRelations.Count; i++)
+                {
+                    var assignedRelation = entityHolder.Item1.AssignedRelations[i];
+
+                    var lastRightEntity = entityLastTypes[assignedRelation.Item2.Id];
+
+                    var relation = assignedRelation.Item1;
+
+                    if (relation.RelationType == RelationType.OneToOne ||
+                        relation.RelationType == RelationType.ManyToOne)
+                    {
+                        _moveNextMethodIL.Emit(OpCodes.Dup);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
+                    }
+                    else
+                    {
+                        _moveNextMethodIL.Emit(OpCodes.Dup);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetMethod("Add"));
+                    }
+                }
+
+                _moveNextMethodIL.Emit(OpCodes.Stfld, lastEntityField);
+
+                for (int i = 0; i < entityHolder.Item1.AssigningRelations.Count; i++)
+                {
+                    var assigningRelation = entityHolder.Item1.AssigningRelations[i];
+
+                    var lastRightEntity = entityLastTypes[assigningRelation.Item2.Id];
+
+                    var relation = assigningRelation.Item1;
+
+                    if (relation.RelationType == RelationType.OneToOne ||
+                        relation.RelationType == RelationType.ManyToOne)
+                    {
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
+                    }
+                    else
+                    {
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetMethod("Add"));
+                    }
+                }
+
+                // return result
+                if (entityIndex == 0)
+                {
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, resultField.FieldType.GetMethod("Add"));
+                }
+
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, entityDictionaryField);
+                _moveNextMethodIL.Emit(OpCodes.Ldloc_S, primaryKeyLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityDictionaryField.FieldType.GetMethod("Add"));
+
+
+                if (entityIndex < entities.Count - 1)
+                {
+                    _moveNextMethodIL.MarkLabel(afterEntityGenerationIfBody);
+                }
+
+                // Set entity dictionary to null
+                setNullGhostIL.Emit(OpCodes.Ldarg_0);
+                setNullGhostIL.Emit(OpCodes.Ldnull);
+                setNullGhostIL.Emit(OpCodes.Stfld, entityDictionaryField);
+
+                // Set lastEntity to null
+                setNullGhostIL.Emit(OpCodes.Ldarg_0);
+                setNullGhostIL.Emit(OpCodes.Ldnull);
+                setNullGhostIL.Emit(OpCodes.Stfld, lastEntityField);
+            }
+
+            _moveNextMethodIL.MarkLabel(loopConditionLabel);
+
+            // Call ReadAsync(cancellationToken) on dataReader
+            ExecuteAsyncMethod(_dataReaderField, _dataReaderField.FieldType.GetMethod("ReadAsync", new[] { _cancellationTokenField.FieldType
+    }), _boolTaskAwaiterField, _boolTaskAwaiterLocal, awaitUnsafeEndLabel, endOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Brtrue, loopBodyLabel);
+
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
+            _moveNextMethodIL.Emit(OpCodes.Stloc_S, resultLocal);
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfCatchLabel);
+
+            // End of try block
+
+            // Start of catch block
+            _moveNextMethodIL.BeginCatchBlock(_defaultExceptionLocal.LocalType);
+
+            // Set state and return exception
+            _moveNextMethodIL.Emit(OpCodes.Stloc_S, _defaultExceptionLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
+
+            setNullGhostIL.WriteIL(_moveNextMethodIL);
+
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, _defaultExceptionLocal);
+            _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+
+            // End of catch block
+            _moveNextMethodIL.EndExceptionBlock();
+
+            _moveNextMethodIL.MarkLabel(endOfCatchLabel);
+
+            // Set state and return result
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
+            setNullGhostIL.WriteIL(_moveNextMethodIL);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, resultLocal);
+            _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetResult"));
+
+            // End of method
+            _moveNextMethodIL.MarkLabel(endOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Ret);
+        }
+
+        private void CreateEntity(Entity entity, List<(EntityColumn, int)> dbColumns, bool changeTracking, LocalBuilder? primaryKeyLocal = null)
         {
             LocalBuilder? changeTrackerLocal = default;
 
             if (changeTracking)
             {
-                var changeTrackerType = typeof(ChangeTracker<>).MakeGenericType(_rootEntity.EntityType);
+                var changeTrackerType = typeof(ChangeTracker<>).MakeGenericType(entity.EntityType);
 
                 changeTrackerLocal = _moveNextMethodIL.DeclareLocal(changeTrackerType);
 
-                _moveNextMethodIL.Emit(OpCodes.Ldc_I4, _rootEntity.GetColumnCount());
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4, entity.GetColumnCount());
                 _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
                 _moveNextMethodIL.Emit(OpCodes.Newobj, changeTrackerType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(int), typeof(bool) }, null));
-                _moveNextMethodIL.Emit(OpCodes.Stloc, changeTrackerLocal);
+                _moveNextMethodIL.Emit(OpCodes.Stloc_S, changeTrackerLocal);
 
                 _moveNextMethodIL.Emit(OpCodes.Ldloc, changeTrackerLocal);
                 _moveNextMethodIL.Emit(OpCodes.Newobj, entity.ProxyEntityType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { changeTrackerType }, null));
@@ -423,11 +716,24 @@ namespace Venflow.Dynamic.Mat
                 _moveNextMethodIL.Emit(OpCodes.Newobj, entity.EntityType.GetConstructor(Type.EmptyTypes));
             }
 
-            for (int i = 0; i < dbColumns.Count; i++)
+            var columnIteratorIndex = 0;
+
+            if (primaryKeyLocal is { })
+            {
+                columnIteratorIndex = entity.GetRegularColumnOffset();
+
+                (var column, _) = dbColumns[0];
+
+                _moveNextMethodIL.Emit(OpCodes.Dup);
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod());
+            }
+
+            for (; columnIteratorIndex < dbColumns.Count; columnIteratorIndex++)
             {
                 // Assign the property the value from the reader
 
-                (var column, var columnIndex) = dbColumns[i];
+                (var column, var columnIndex) = dbColumns[columnIteratorIndex];
 
                 _moveNextMethodIL.Emit(OpCodes.Dup);
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
