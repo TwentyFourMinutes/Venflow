@@ -181,6 +181,20 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, _stateLocal);
             _moveNextMethodIL.Emit(OpCodes.Brfalse, awaitUnsafeEndLabel);
 
+            // if no rows return    
+            var afterNoRowsIfBody = _moveNextMethodIL.DefineLabel();
+
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _dataReaderField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _dataReaderField.FieldType.GetProperty("HasRows").GetGetMethod());
+            _moveNextMethodIL.Emit(OpCodes.Brtrue, afterNoRowsIfBody);
+
+            _moveNextMethodIL.Emit(OpCodes.Ldnull);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, resultLocal);
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfCatchLabel);
+
+            _moveNextMethodIL.MarkLabel(afterNoRowsIfBody);
+
             // Call ReadAsync(cancellationToken) on dataReader
             ExecuteAsyncMethod(_dataReaderField, _dataReaderField.FieldType.GetMethod("ReadAsync", new[] { _cancellationTokenField.FieldType }), _boolTaskAwaiterField, _boolTaskAwaiterLocal, awaitUnsafeEndLabel, endOfMethodLabel);
             var endOfNoRowIfBody = _moveNextMethodIL.DefineLabel();
@@ -260,6 +274,20 @@ namespace Venflow.Dynamic.Materializer
 
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, _stateLocal);
             _moveNextMethodIL.Emit(OpCodes.Brfalse, awaitUnsafeEndLabel);
+
+            // if no rows return    
+            var afterNoRowsIfBody = _moveNextMethodIL.DefineLabel();
+
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _dataReaderField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _dataReaderField.FieldType.GetProperty("HasRows").GetGetMethod());
+            _moveNextMethodIL.Emit(OpCodes.Brtrue, afterNoRowsIfBody);
+
+            _moveNextMethodIL.Emit(OpCodes.Ldnull);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, resultLocal);
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfCatchLabel);
+
+            _moveNextMethodIL.MarkLabel(afterNoRowsIfBody);
 
             // Create result field instance
 
@@ -566,6 +594,22 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Newobj, resultLocal.LocalType.GetConstructor(Type.EmptyTypes));
             _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
+
+            // if no rows return    
+            var afterNoRowsIfBody = _moveNextMethodIL.DefineLabel();
+
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _dataReaderField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _dataReaderField.FieldType.GetProperty("HasRows").GetGetMethod());
+            _moveNextMethodIL.Emit(OpCodes.Brtrue, afterNoRowsIfBody);
+
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, resultLocal);
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfCatchLabel);
+
+            _moveNextMethodIL.MarkLabel(afterNoRowsIfBody);
+
             _moveNextMethodIL.Emit(OpCodes.Br, loopConditionLabel);
 
             _moveNextMethodIL.MarkLabel(loopBodyLabel);
@@ -662,6 +706,22 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Newobj, resultLocal.LocalType.GetConstructor(Type.EmptyTypes));
             _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
+
+            // if no rows return    
+            var afterNoRowsIfBody = _moveNextMethodIL.DefineLabel();
+
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _dataReaderField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _dataReaderField.FieldType.GetProperty("HasRows").GetGetMethod());
+            _moveNextMethodIL.Emit(OpCodes.Brtrue, afterNoRowsIfBody);
+
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, resultLocal);
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfCatchLabel);
+
+            _moveNextMethodIL.MarkLabel(afterNoRowsIfBody);
+
 
             var entityDictionaries = new Dictionary<int, FieldBuilder>();
             var entityLastTypes = new Dictionary<int, FieldBuilder>();

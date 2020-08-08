@@ -25,9 +25,6 @@ namespace Venflow.Commands
 
             await using var reader = await UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
 
-            if (!reader.HasRows)
-                return new TReturn();
-
             Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> materializer;
 
             if (Materializer is { })
