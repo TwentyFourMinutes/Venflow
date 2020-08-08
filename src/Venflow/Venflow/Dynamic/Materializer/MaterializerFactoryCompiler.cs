@@ -1,4 +1,4 @@
-using Npgsql;
+﻿using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -864,21 +864,22 @@ namespace Venflow.Dynamic.Materializer
                     var relation = assigningRelation.Item1;
 
                     if (relation.RelationType == RelationType.OneToOne ||
-                        relation.RelationType == RelationType.ManyToOne)
+                        relation.RelationType == RelationType.OneToMany)
                     {
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetSetMethod());
                     }
                     else
                     {
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetMethod("Add"));
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
                     }
                 }
 
