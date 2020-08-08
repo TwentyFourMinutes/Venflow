@@ -1,107 +1,19 @@
 ﻿using Npgsql;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
-using Venflow.Commands;
 using Venflow.Dynamic.IL;
 using Venflow.Dynamic.Proxies;
 using Venflow.Enums;
 using Venflow.Modeling;
 
-namespace Venflow.Dynamic.Mat
+namespace Venflow.Dynamic.Materializer
 {
-    internal class QueryEntityHolder
-    {
-        internal int Id { get; }
-        internal Entity Entity { get; }
-        internal List<(EntityRelation, QueryEntityHolder)> AssigningRelations { get; }
-        internal List<(EntityRelation, QueryEntityHolder)> AssignedRelations { get; }
-        internal List<EntityRelation> InitializeNavigation { get; }
-
-        internal QueryEntityHolder(Entity entity, int id)
-        {
-            AssigningRelations = new List<(EntityRelation, QueryEntityHolder)>();
-            AssignedRelations = new List<(EntityRelation, QueryEntityHolder)>();
-            InitializeNavigation = new List<EntityRelation>();
-
-            Entity = entity;
-            Id = id;
-        }
-    }
-
-    internal class MaterializerSourceCompiler
-    {
-        private int _queryEntityHolderIndex;
-        private readonly LinkedList<QueryEntityHolder> _entities;
-        private readonly JoinBuilderValues _joinBuilderValues;
-
-        internal MaterializerSourceCompiler(JoinBuilderValues joinBuilderValues)
-        {
-            _entities = new LinkedList<QueryEntityHolder>();
-
-            _joinBuilderValues = joinBuilderValues;
-        }
-
-        internal QueryEntityHolder[] GenerateSortedEntities()
-        {
-            var entities = new QueryEntityHolder[_entities.Count];
-
-            var index = 0;
-
-            for (var entry = _entities.First; entry is { }; entry = entry.Next)
-            {
-                entities[index++] = entry.Value;
-            }
-
-            return entities;
-        }
-
-        internal void Compile()
-        {
-            var queryEntityHolder = new QueryEntityHolder(_joinBuilderValues.Root, _queryEntityHolderIndex++);
-
-            _entities.AddFirst(queryEntityHolder);
-
-            for (int i = 0; i < _joinBuilderValues.FullPath.Count; i++)
-            {
-                BaseCompile(_joinBuilderValues.FullPath[i], queryEntityHolder);
-            }
-        }
-
-        private void BaseCompile(JoinPath joinPath, QueryEntityHolder rightQueryHolder)
-        {
-            var leftQueryHolder = new QueryEntityHolder(joinPath.JoinOptions.Join.RightEntity, _queryEntityHolderIndex++);
-
-            if (joinPath.JoinOptions.Join.RelationType == RelationType.OneToMany)
-                rightQueryHolder.InitializeNavigation.Add(joinPath.JoinOptions.Join);
-
-            _entities.AddLast(leftQueryHolder);
-
-            leftQueryHolder.AssigningRelations.Add((joinPath.JoinOptions.Join, rightQueryHolder));
-
-            if (joinPath.JoinOptions.Join.RightNavigationProperty is { })
-            {
-                leftQueryHolder.AssignedRelations.Add((joinPath.JoinOptions.Join.Sibiling, rightQueryHolder));
-            }
-
-            for (int i = 0; i < joinPath.TrailingJoinPath.Count; i++)
-            {
-                BaseCompile(joinPath.TrailingJoinPath[i], leftQueryHolder);
-            }
-        }
-    }
-
-    internal class MaterializerFactory
+    internal class MaterializerFactoryCompiler
     {
         private FieldBuilder _dataReaderField;
 
@@ -126,7 +38,7 @@ namespace Venflow.Dynamic.Mat
 
         private readonly Entity _rootEntity;
 
-        internal MaterializerFactory(Entity rootEntity)
+        internal MaterializerFactoryCompiler(Entity rootEntity)
         {
             _materializerTypeBuilder = TypeFactory.GetNewMaterializerBuilder(rootEntity.EntityName,
                 TypeAttributes.Public | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Abstract |

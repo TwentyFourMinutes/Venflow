@@ -3,7 +3,7 @@
 namespace Venflow
 {
 
-    internal class TrioKeyCollection<TKeyTwo, TKeyThree,TValue>
+    internal class TrioKeyCollection<TKeyTwo, TKeyThree, TValue>
         where TKeyTwo : notnull
         where TKeyThree : notnull
         where TValue : class

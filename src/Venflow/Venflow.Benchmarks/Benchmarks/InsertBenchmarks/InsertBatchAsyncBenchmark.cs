@@ -4,7 +4,6 @@ using RepoDb;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Venflow.Benchmarks.Models;
-using Venflow.Commands;
 
 namespace Venflow.Benchmarks.Benchmarks.InsertBenchmarks
 {
