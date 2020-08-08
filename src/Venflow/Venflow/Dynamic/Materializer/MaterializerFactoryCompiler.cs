@@ -1,4 +1,4 @@
-﻿using Npgsql;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -389,7 +389,7 @@ namespace Venflow.Dynamic.Materializer
                 else
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I4, primaryDbColumn.Item2);
 
-                GetColumnMaterializer(_moveNextMethodIL, primaryColumn);
+                WriteColumnMaterializer(_moveNextMethodIL, primaryColumn);
                 _moveNextMethodIL.Emit(OpCodes.Stloc_S, primaryKeyLocal);
 
                 // Check if lastEntity is null
@@ -722,7 +722,6 @@ namespace Venflow.Dynamic.Materializer
 
             _moveNextMethodIL.MarkLabel(afterNoRowsIfBody);
 
-
             var entityDictionaries = new Dictionary<int, FieldBuilder>();
             var entityLastTypes = new Dictionary<int, FieldBuilder>();
 
@@ -784,7 +783,7 @@ namespace Venflow.Dynamic.Materializer
                 else
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I4, primaryDbColumn.Item2);
 
-                GetColumnMaterializer(_moveNextMethodIL, primaryColumn);
+                WriteColumnMaterializer(_moveNextMethodIL, primaryColumn);
                 _moveNextMethodIL.Emit(OpCodes.Stloc_S, primaryKeyLocal);
 
                 // Check if lastEntity is null
@@ -921,8 +920,7 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethodIL.MarkLabel(loopConditionLabel);
 
             // Call ReadAsync(cancellationToken) on dataReader
-            ExecuteAsyncMethod(_dataReaderField, _dataReaderField.FieldType.GetMethod("ReadAsync", new[] { _cancellationTokenField.FieldType
-    }), _boolTaskAwaiterField, _boolTaskAwaiterLocal, awaitUnsafeEndLabel, endOfMethodLabel);
+            ExecuteAsyncMethod(_dataReaderField, _dataReaderField.FieldType.GetMethod("ReadAsync", new[] { _cancellationTokenField.FieldType }), _boolTaskAwaiterField, _boolTaskAwaiterLocal, awaitUnsafeEndLabel, endOfMethodLabel);
             _moveNextMethodIL.Emit(OpCodes.Brtrue, loopBodyLabel);
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -1020,7 +1018,7 @@ namespace Venflow.Dynamic.Materializer
                 else
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I4, columnIndex);
 
-                GetColumnMaterializer(_moveNextMethodIL, column);
+                WriteColumnMaterializer(_moveNextMethodIL, column);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod());
             }
 
@@ -1092,6 +1090,7 @@ namespace Venflow.Dynamic.Materializer
         }
 
         private void GetColumnMaterializer(ILGenerator iLGenerator, EntityColumn column)
+        private void WriteColumnMaterializer(ILGenerator iLGenerator, EntityColumn column)
         {
             if (column.IsNullableReferenceType)
             {
