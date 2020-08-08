@@ -64,7 +64,7 @@ namespace Venflow.Commands
 
             var foreignProperty = propertySelector.ValidatePropertySelector();
 
-            if (!_joinBuilderValues.Root.Relations!.TryGetValue(foreignProperty.Name, out var joiningEntity))
+            if (!_relations!.TryGetValue(foreignProperty.Name, out var joiningEntity))
             {
                 throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}' over the foreign property '{foreignProperty.Name}'. Ensure that you defined the relation in your configuration file.");
             }
@@ -76,7 +76,7 @@ namespace Venflow.Commands
         {
             var foreignProperty = propertySelector.ValidatePropertySelector();
 
-            if (!_joinBuilderValues.Root.Relations!.TryGetValue(foreignProperty.Name, out var joiningEntity))
+            if (!_relations!.TryGetValue(foreignProperty.Name, out var joiningEntity))
             {
                 throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}' over the foreign property '{foreignProperty.Name}'. Ensure that you defined the relation in your configuration file.");
             }
