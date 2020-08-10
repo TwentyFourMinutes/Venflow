@@ -45,18 +45,42 @@ namespace Venflow.Dynamic.Materializer
 
         private void BaseCompile(JoinPath joinPath, QueryEntityHolder rightQueryHolder)
         {
-            var leftQueryHolder = new QueryEntityHolder(joinPath.JoinOptions.Join.RightEntity, _queryEntityHolderIndex++);
+            var relation = joinPath.JoinOptions.Join.Sibiling;
 
-            if (joinPath.JoinOptions.Join.RelationType == RelationType.OneToMany)
-                rightQueryHolder.InitializeNavigation.Add(joinPath.JoinOptions.Join);
+            var leftQueryHolder = new QueryEntityHolder(relation.LeftEntity, _queryEntityHolderIndex++);
 
             _entities.AddLast(leftQueryHolder);
 
-            rightQueryHolder.LateAssignedRelations.Add((joinPath.JoinOptions.Join, leftQueryHolder));
-
-            if (joinPath.JoinOptions.Join.RightNavigationProperty is { })
+            if (relation.RelationType == RelationType.ManyToOne)
             {
-                leftQueryHolder.AssignedRelations.Add((joinPath.JoinOptions.Join.Sibiling, rightQueryHolder));
+                rightQueryHolder.InitializeNavigation.Add(relation.Sibiling);
+                leftQueryHolder.AssigningRelations.Add((relation, rightQueryHolder));
+
+                rightQueryHolder.RequiresChangedLocal = true;
+                leftQueryHolder.RequiresChangedLocal = true;
+            }
+            else
+            {
+                rightQueryHolder.AssignedRelations.Add((relation.Sibiling, leftQueryHolder));
+                rightQueryHolder.RequiresChangedLocal = true;
+            }
+
+            if (relation.LeftNavigationProperty is { })
+            {
+                if (relation.RelationType == RelationType.OneToMany)
+                {
+                    leftQueryHolder.InitializeNavigation.Add(relation);
+                    rightQueryHolder.AssigningRelations.Add((relation.Sibiling, leftQueryHolder));
+
+
+                    rightQueryHolder.RequiresChangedLocal = true;
+                    leftQueryHolder.RequiresChangedLocal = true;
+                }
+                else
+                {
+                    leftQueryHolder.AssignedRelations.Add((relation, rightQueryHolder));
+                    leftQueryHolder.RequiresChangedLocal = true;
+                }
             }
 
             for (int i = 0; i < joinPath.TrailingJoinPath.Count; i++)

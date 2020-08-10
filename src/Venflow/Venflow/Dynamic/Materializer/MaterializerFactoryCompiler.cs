@@ -373,7 +373,7 @@ namespace Venflow.Dynamic.Materializer
 
             _moveNextMethodIL.MarkLabel(afterEntityGenerationIfBody);
 
-            var changedLocals = new Dictionary<int, LocalBuilder>(entities.Count - 2);
+            var changedLocals = new Dictionary<int, LocalBuilder>(entities.Count);
 
             for (int entityIndex = 1; entityIndex < entities.Count; entityIndex++)
             {
@@ -386,15 +386,6 @@ namespace Venflow.Dynamic.Materializer
                 var primaryDbColumn = entityHolder.Item2[0];
                 var primaryColumn = entityHolder.Item2[0].Item1;
                 var primaryKeyLocal = _moveNextMethodIL.DeclareLocal(primaryColumn.PropertyInfo.PropertyType);
-
-                // Add entityChanged bool local
-                LocalBuilder? hasChangedLocal = default;
-
-                if (entityIndex < entities.Count - 1)
-                {
-                    hasChangedLocal = _moveNextMethodIL.DeclareLocal(typeof(bool));
-                    changedLocals.Add(entityHolder.Item1.Id, hasChangedLocal);
-                }
 
                 // Assign the primary key to the local variable
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -416,13 +407,18 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Brfalse, entityGenerationIfBody);
 
                 // Check if lastEntity is the same as the current one
-                afterEntityGenerationIfBody = entityIndex == entities.Count - 1 ? loopConditionLabel : _moveNextMethodIL.DefineLabel();
+                var endOfIfLabel = _moveNextMethodIL.DefineLabel();
+
+                if (entityHolder.Item1.RequiresChangedLocal)
+                {
+                    afterEntityGenerationIfBody = _moveNextMethodIL.DefineLabel();
+                }
 
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, primaryColumn.PropertyInfo.GetGetMethod());
                 _moveNextMethodIL.Emit(OpCodes.Ldloc_S, primaryKeyLocal);
-                WriteInEqualityComparer(primaryColumn.PropertyInfo.PropertyType, afterEntityGenerationIfBody);
+                WriteInEqualityComparer(primaryColumn.PropertyInfo.PropertyType, entityHolder.Item1.RequiresChangedLocal ? afterEntityGenerationIfBody : endOfIfLabel);
 
                 _moveNextMethodIL.MarkLabel(entityGenerationIfBody);
 
@@ -433,7 +429,7 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldflda, lastEntityField);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, entityDictionaryField.FieldType.GetMethod("TryGetValue"));
-                _moveNextMethodIL.Emit(OpCodes.Brtrue, afterEntityGenerationIfBody);
+                _moveNextMethodIL.Emit(OpCodes.Brtrue, entityHolder.Item1.RequiresChangedLocal ? afterEntityGenerationIfBody : endOfIfLabel);
 
                 // Instantiate the entity
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -449,32 +445,6 @@ namespace Venflow.Dynamic.Materializer
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, initializeNavigation.LeftNavigationProperty.GetSetMethod());
                 }
 
-                for (int i = 0; i < entityHolder.Item1.AssignedRelations.Count; i++)
-                {
-                    var assignedRelation = entityHolder.Item1.AssignedRelations[i];
-
-                    var lastRightEntity = entityLastTypes[assignedRelation.Item2.Id];
-
-                    var relation = assignedRelation.Item1;
-
-                    if (relation.RelationType == RelationType.OneToOne ||
-                        relation.RelationType == RelationType.ManyToOne)
-                    {
-                        _moveNextMethodIL.Emit(OpCodes.Dup);
-                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
-                    }
-                    else
-                    {
-                        _moveNextMethodIL.Emit(OpCodes.Dup);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetMethod("Add"));
-                    }
-                }
-
                 _moveNextMethodIL.Emit(OpCodes.Stfld, lastEntityField);
 
                 // return result
@@ -486,19 +456,21 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, entityDictionaryField.FieldType.GetMethod("Add"));
 
-                // set entityChanged to true
-                if (entityIndex < entities.Count - 1)
+                if (entityHolder.Item1.RequiresChangedLocal)
                 {
+                    _moveNextMethodIL.MarkLabel(afterEntityGenerationIfBody);
+
+                    var hasChangedLocal = _moveNextMethodIL.DeclareLocal(typeof(bool));
+                    changedLocals.Add(entityHolder.Item1.Id, hasChangedLocal);
+
+                    // set entityChanged to true
                     var afterChangedLocalToFalseLabel = _moveNextMethodIL.DefineLabel();
 
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
                     _moveNextMethodIL.Emit(OpCodes.Stloc_S, hasChangedLocal);
                     _moveNextMethodIL.Emit(OpCodes.Br, afterChangedLocalToFalseLabel);
 
-                    if (entityIndex < entities.Count - 1)
-                    {
-                        _moveNextMethodIL.MarkLabel(afterEntityGenerationIfBody);
-                    }
+                    _moveNextMethodIL.MarkLabel(endOfIfLabel);
 
                     // set HasChanged to false
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
@@ -508,10 +480,7 @@ namespace Venflow.Dynamic.Materializer
                 }
                 else
                 {
-                    if (entityIndex < entities.Count - 1)
-                    {
-                        _moveNextMethodIL.MarkLabel(afterEntityGenerationIfBody);
-                    }
+                    _moveNextMethodIL.MarkLabel(endOfIfLabel);
                 }
 
                 // Set entity dictionary to null
@@ -525,85 +494,169 @@ namespace Venflow.Dynamic.Materializer
                 setNullGhostIL.Emit(OpCodes.Stfld, lastEntityField);
             }
 
-            // Check if first row
-            var afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
-
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldfld, isFirstRowField);
-            _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
-
-            for (int i = 0; i < primaryEntityHolder.Item1.LateAssignedRelations.Count; i++)
+            if (primaryEntityHolder.Item1.HasRelations)
             {
-                var assigningRelation = primaryEntityHolder.Item1.LateAssignedRelations[i];
+                // Check if first row
+                var afterAllLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
 
-                var lastRightEntity = entityLastTypes[assigningRelation.Item2.Id];
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, isFirstRowField);
+                _moveNextMethodIL.Emit(OpCodes.Brfalse, afterAllLateAssignmentLabel);
 
-                var relation = assigningRelation.Item1;
-
-                if (relation.RelationType == RelationType.OneToOne ||
-                    relation.RelationType == RelationType.ManyToOne)
+                if (primaryEntityHolder.Item1.AssigningRelations.Count > 0)
                 {
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
+                    for (int i = 0; i < primaryEntityHolder.Item1.AssigningRelations.Count; i++)
+                    {
+                        var assigningRelation = primaryEntityHolder.Item1.AssigningRelations[i];
+
+                        var lastRightEntityField = entityLastTypes[assigningRelation.Item2.Id];
+                        var hasRightEntityChangedLocal = changedLocals[assigningRelation.Item2.Id];
+
+                        var relation = assigningRelation.Item1;
+
+                        var afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
+                        var oneToManyAssignmentLabel = _moveNextMethodIL.DefineLabel();
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, isFirstRowField);
+                        _moveNextMethodIL.Emit(OpCodes.Brtrue, oneToManyAssignmentLabel);
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasRightEntityChangedLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
+
+                        _moveNextMethodIL.MarkLabel(oneToManyAssignmentLabel);
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntityField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
+
+                        _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
+                    }
                 }
-                else
+
+                if (primaryEntityHolder.Item1.AssignedRelations.Count > 0)
                 {
+                    var afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
+
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetMethod("Add"));
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, isFirstRowField);
+                    _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
+
+                    for (int i = 0; i < primaryEntityHolder.Item1.AssignedRelations.Count; i++)
+                    {
+                        var assigningRelation = primaryEntityHolder.Item1.AssignedRelations[i];
+
+                        var lastRightEntity = entityLastTypes[assigningRelation.Item2.Id];
+
+                        var relation = assigningRelation.Item1;
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
+                    }
+
+                    _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
                 }
+
+                _moveNextMethodIL.MarkLabel(afterAllLateAssignmentLabel);
             }
 
-            _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
-
-            for (int entityIndex = 1; entityIndex < entities.Count - 1; entityIndex++)
+            for (int entityIndex = 1; entityIndex < entities.Count; entityIndex++)
             {
                 var entityHolder = entities[entityIndex].Item1;
 
-                // Check if entityChanged
-                afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
+                if (!entityHolder.HasRelations)
+                    continue;
 
+                // Check if entityChanged
                 var hasLeftEntityChangedLocal = changedLocals[entityHolder.Id];
                 var lastLeftEntity = entityLastTypes[entityHolder.Id];
 
-                _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasLeftEntityChangedLocal);
-                _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
-
-                for (int i = 0; i < entityHolder.LateAssignedRelations.Count; i++)
+                if (entityHolder.AssigningRelations.Count > 0)
                 {
-                    var assigningRelation = entityHolder.LateAssignedRelations[i];
-
-                    var lastRightEntity = entityLastTypes[assigningRelation.Item2.Id];
-
-                    var relation = assigningRelation.Item1;
-
-                    if (relation.RelationType == RelationType.OneToOne ||
-                        relation.RelationType == RelationType.ManyToOne)
+                    for (int i = 0; i < entityHolder.AssigningRelations.Count; i++)
                     {
+                        var assigningRelation = entityHolder.AssigningRelations[i];
+
+                        if (assigningRelation.Item2.Id == primaryEntityHolder.Item1.Id)
+                        {
+                            var lastRightEntityField = entityLastTypes[assigningRelation.Item2.Id];
+
+                            var relation = assigningRelation.Item1;
+
+                            var afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasLeftEntityChangedLocal);
+                            _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntityField);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
+
+                            _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
+                        }
+                        else
+                        {
+                            var lastRightEntityField = entityLastTypes[assigningRelation.Item2.Id];
+                            var hasRightEntityChangedLocal = changedLocals[assigningRelation.Item2.Id];
+
+                            var relation = assigningRelation.Item1;
+
+                            var afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
+                            var oneToManyAssignmentLabel = _moveNextMethodIL.DefineLabel();
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasLeftEntityChangedLocal);
+                            _moveNextMethodIL.Emit(OpCodes.Brtrue, oneToManyAssignmentLabel);
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasRightEntityChangedLocal);
+                            _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
+
+                            _moveNextMethodIL.MarkLabel(oneToManyAssignmentLabel);
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntityField);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
+
+                            _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
+                        }
+                    }
+                }
+
+                if (entityHolder.AssignedRelations.Count > 0)
+                {
+                    var afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasLeftEntityChangedLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
+
+                    for (int i = 0; i < entityHolder.AssignedRelations.Count; i++)
+                    {
+                        var assigningRelation = entityHolder.AssignedRelations[i];
+
+                        var lastRightEntity = entityLastTypes[assigningRelation.Item2.Id];
+
+                        var relation = assigningRelation.Item1;
+
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
                     }
-                    else
-                    {
-                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetMethod("Add"));
-                    }
-                }
 
-                _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
+                    _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
+                }
             }
 
             _moveNextMethodIL.MarkLabel(loopConditionLabel);
@@ -853,11 +906,12 @@ namespace Venflow.Dynamic.Materializer
             setNullGhostIL.Emit(OpCodes.Ldnull);
             setNullGhostIL.Emit(OpCodes.Stfld, resultField);
 
-            var changedLocals = new Dictionary<int, LocalBuilder>(entities.Count - 1);
+            var changedLocals = new Dictionary<int, LocalBuilder>(entities.Count);
 
             for (int entityIndex = 0; entityIndex < entities.Count; entityIndex++)
             {
                 var entityHolder = entities[entityIndex];
+
                 var entity = entityHolder.Item1.Entity;
                 var lastEntityField = entityLastTypes[entityHolder.Item1.Id];
                 var entityDictionaryField = entityDictionaries[entityHolder.Item1.Id];
@@ -866,15 +920,6 @@ namespace Venflow.Dynamic.Materializer
                 var primaryDbColumn = entityHolder.Item2[0];
                 var primaryColumn = entityHolder.Item2[0].Item1;
                 var primaryKeyLocal = _moveNextMethodIL.DeclareLocal(primaryColumn.PropertyInfo.PropertyType);
-
-                // Add entityChanged bool local
-                LocalBuilder? hasChangedLocal = default;
-
-                if (entityIndex < entities.Count - 1)
-                {
-                    hasChangedLocal = _moveNextMethodIL.DeclareLocal(typeof(bool));
-                    changedLocals.Add(entityHolder.Item1.Id, hasChangedLocal);
-                }
 
                 // Assign the primary key to the local variable
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -896,13 +941,20 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Brfalse, entityGenerationIfBody);
 
                 // Check if lastEntity is the same as the current one
-                var afterEntityGenerationIfBody = entityIndex == entities.Count - 1 ? loopConditionLabel : _moveNextMethodIL.DefineLabel();
+                var endOfIfLabel = _moveNextMethodIL.DefineLabel();
+
+                Label? afterEntityGenerationIfBody = default;
+
+                if (entityHolder.Item1.RequiresChangedLocal)
+                {
+                    afterEntityGenerationIfBody = _moveNextMethodIL.DefineLabel();
+                }
 
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, primaryColumn.PropertyInfo.GetGetMethod());
                 _moveNextMethodIL.Emit(OpCodes.Ldloc_S, primaryKeyLocal);
-                WriteInEqualityComparer(primaryColumn.PropertyInfo.PropertyType, afterEntityGenerationIfBody);
+                WriteInEqualityComparer(primaryColumn.PropertyInfo.PropertyType, entityHolder.Item1.RequiresChangedLocal ? afterEntityGenerationIfBody.Value : endOfIfLabel);
 
                 _moveNextMethodIL.MarkLabel(entityGenerationIfBody);
 
@@ -913,7 +965,7 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldflda, lastEntityField);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, entityDictionaryField.FieldType.GetMethod("TryGetValue"));
-                _moveNextMethodIL.Emit(OpCodes.Brtrue, afterEntityGenerationIfBody);
+                _moveNextMethodIL.Emit(OpCodes.Brtrue, entityHolder.Item1.RequiresChangedLocal ? afterEntityGenerationIfBody.Value : endOfIfLabel);
 
                 // Instantiate the entity
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -927,32 +979,6 @@ namespace Venflow.Dynamic.Materializer
                     _moveNextMethodIL.Emit(OpCodes.Dup);
                     _moveNextMethodIL.Emit(OpCodes.Newobj, initializeNavigation.LeftNavigationProperty.PropertyType.GetConstructor(Type.EmptyTypes));
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, initializeNavigation.LeftNavigationProperty.GetSetMethod());
-                }
-
-                for (int i = 0; i < entityHolder.Item1.AssignedRelations.Count; i++)
-                {
-                    var assignedRelation = entityHolder.Item1.AssignedRelations[i];
-
-                    var lastRightEntity = entityLastTypes[assignedRelation.Item2.Id];
-
-                    var relation = assignedRelation.Item1;
-
-                    if (relation.RelationType == RelationType.OneToOne ||
-                        relation.RelationType == RelationType.ManyToOne)
-                    {
-                        _moveNextMethodIL.Emit(OpCodes.Dup);
-                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
-                    }
-                    else
-                    {
-                        _moveNextMethodIL.Emit(OpCodes.Dup);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetMethod("Add"));
-                    }
                 }
 
                 _moveNextMethodIL.Emit(OpCodes.Stfld, lastEntityField);
@@ -974,19 +1000,21 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, entityDictionaryField.FieldType.GetMethod("Add"));
 
-                // set entityChanged to true
-                if (entityIndex < entities.Count - 1)
+                if (entityHolder.Item1.RequiresChangedLocal)
                 {
+                    _moveNextMethodIL.MarkLabel(afterEntityGenerationIfBody.Value);
+
+                    var hasChangedLocal = _moveNextMethodIL.DeclareLocal(typeof(bool));
+                    changedLocals.Add(entityHolder.Item1.Id, hasChangedLocal);
+
+                    // set entityChanged to true
                     var afterChangedLocalToFalseLabel = _moveNextMethodIL.DefineLabel();
 
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
                     _moveNextMethodIL.Emit(OpCodes.Stloc_S, hasChangedLocal);
                     _moveNextMethodIL.Emit(OpCodes.Br, afterChangedLocalToFalseLabel);
 
-                    if (entityIndex < entities.Count - 1)
-                    {
-                        _moveNextMethodIL.MarkLabel(afterEntityGenerationIfBody);
-                    }
+                    _moveNextMethodIL.MarkLabel(endOfIfLabel);
 
                     // set HasChanged to false
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
@@ -996,10 +1024,7 @@ namespace Venflow.Dynamic.Materializer
                 }
                 else
                 {
-                    if (entityIndex < entities.Count - 1)
-                    {
-                        _moveNextMethodIL.MarkLabel(afterEntityGenerationIfBody);
-                    }
+                    _moveNextMethodIL.MarkLabel(endOfIfLabel);
                 }
 
                 // Set entity dictionary to null
@@ -1013,48 +1038,74 @@ namespace Venflow.Dynamic.Materializer
                 setNullGhostIL.Emit(OpCodes.Stfld, lastEntityField);
             }
 
-            for (int entityIndex = 0; entityIndex < entities.Count - 1; entityIndex++)
+            for (int entityIndex = 0; entityIndex < entities.Count; entityIndex++)
             {
                 var entityHolder = entities[entityIndex].Item1;
 
-                // Check if entityChanged
-                var afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
+                if (!entityHolder.HasRelations)
+                    continue;
 
+                // Check if entityChanged
                 var hasLeftEntityChangedLocal = changedLocals[entityHolder.Id];
                 var lastLeftEntity = entityLastTypes[entityHolder.Id];
 
-                _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasLeftEntityChangedLocal);
-                _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
-
-                for (int i = 0; i < entityHolder.LateAssignedRelations.Count; i++)
+                if (entityHolder.AssigningRelations.Count > 0)
                 {
-                    var assigningRelation = entityHolder.LateAssignedRelations[i];
-
-                    var lastRightEntity = entityLastTypes[assigningRelation.Item2.Id];
-
-                    var relation = assigningRelation.Item1;
-
-                    if (relation.RelationType == RelationType.OneToOne ||
-                        relation.RelationType == RelationType.ManyToOne)
+                    for (int i = 0; i < entityHolder.AssigningRelations.Count; i++)
                     {
+                        var assigningRelation = entityHolder.AssigningRelations[i];
+
+                        var lastRightEntityField = entityLastTypes[assigningRelation.Item2.Id];
+                        var hasRightEntityChangedLocal = changedLocals[assigningRelation.Item2.Id];
+
+                        var relation = assigningRelation.Item1;
+
+                        var afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
+                        var oneToManyAssignmentLabel = _moveNextMethodIL.DefineLabel();
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasLeftEntityChangedLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Brtrue, oneToManyAssignmentLabel);
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasRightEntityChangedLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
+
+                        _moveNextMethodIL.MarkLabel(oneToManyAssignmentLabel);
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntityField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
+
+                        _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
+                    }
+                }
+
+                if (entityHolder.AssignedRelations.Count > 0)
+                {
+                    var afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasLeftEntityChangedLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
+
+                    for (int i = 0; i < entityHolder.AssignedRelations.Count; i++)
+                    {
+                        var assigningRelation = entityHolder.AssignedRelations[i];
+
+                        var lastRightEntity = entityLastTypes[assigningRelation.Item2.Id];
+
+                        var relation = assigningRelation.Item1;
+
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
                     }
-                    else
-                    {
-                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetMethod("Add"));
-                    }
-                }
 
-                _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
+                    _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
+                }
             }
 
             _moveNextMethodIL.MarkLabel(loopConditionLabel);
