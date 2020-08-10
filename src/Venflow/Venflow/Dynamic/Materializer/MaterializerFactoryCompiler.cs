@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Venflow.Dynamic.IL;
 using Venflow.Dynamic.Proxies;
-using Venflow.Enums;
 using Venflow.Modeling;
 
 namespace Venflow.Dynamic.Materializer
