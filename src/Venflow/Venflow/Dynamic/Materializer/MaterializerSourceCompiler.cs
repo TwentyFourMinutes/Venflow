@@ -52,7 +52,7 @@ namespace Venflow.Dynamic.Materializer
 
             _entities.AddLast(leftQueryHolder);
 
-            leftQueryHolder.AssigningRelations.Add((joinPath.JoinOptions.Join.Sibiling, rightQueryHolder));
+            rightQueryHolder.LateAssignedRelations.Add((joinPath.JoinOptions.Join, leftQueryHolder));
 
             if (joinPath.JoinOptions.Join.RightNavigationProperty is { })
             {
