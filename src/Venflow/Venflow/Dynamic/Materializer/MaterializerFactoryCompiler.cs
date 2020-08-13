@@ -354,6 +354,15 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethodIL.Emit(OpCodes.Brfalse, afterEntityGenerationIfBody);
 
             // Instantiate the entity
+
+            if (!primaryEntityHolder.Item1.HasRelations)
+            {
+                // Set is first row to false
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, isFirstRowField);
+            }
+
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
 
             CreateEntity(primaryEntity, primaryEntityHolder.Item2, changeTracking && primaryEntity.ProxyEntityType is { });
@@ -502,6 +511,11 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, isFirstRowField);
                 _moveNextMethodIL.Emit(OpCodes.Brfalse, afterAllLateAssignmentLabel);
 
+                // Set is first row to false
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, isFirstRowField);
+
                 if (primaryEntityHolder.Item1.AssigningRelations.Count > 0)
                 {
                     for (int i = 0; i < primaryEntityHolder.Item1.AssigningRelations.Count; i++)
@@ -514,16 +528,9 @@ namespace Venflow.Dynamic.Materializer
                         var relation = assigningRelation.Item1;
 
                         var afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
-                        var oneToManyAssignmentLabel = _moveNextMethodIL.DefineLabel();
-
-                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                        _moveNextMethodIL.Emit(OpCodes.Ldfld, isFirstRowField);
-                        _moveNextMethodIL.Emit(OpCodes.Brtrue, oneToManyAssignmentLabel);
 
                         _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasRightEntityChangedLocal);
                         _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
-
-                        _moveNextMethodIL.MarkLabel(oneToManyAssignmentLabel);
 
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntityField);
@@ -538,12 +545,6 @@ namespace Venflow.Dynamic.Materializer
 
                 if (primaryEntityHolder.Item1.AssignedRelations.Count > 0)
                 {
-                    var afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
-
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, isFirstRowField);
-                    _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
-
                     for (int i = 0; i < primaryEntityHolder.Item1.AssignedRelations.Count; i++)
                     {
                         var assigningRelation = primaryEntityHolder.Item1.AssignedRelations[i];
@@ -558,8 +559,6 @@ namespace Venflow.Dynamic.Materializer
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
                     }
-
-                    _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
                 }
 
                 _moveNextMethodIL.MarkLabel(afterAllLateAssignmentLabel);
@@ -599,7 +598,6 @@ namespace Venflow.Dynamic.Materializer
                             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                             _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
                             _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
-
                             _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
                         }
                         else
