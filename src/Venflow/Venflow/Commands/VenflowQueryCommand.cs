@@ -23,7 +23,7 @@ namespace Venflow.Commands
         {
             await ValidateConnectionAsync();
 
-            await using var reader = await UnderlyingCommand.ExecuteReaderAsync(cancellationToken);
+            await using var reader = await UnderlyingCommand.ExecuteReaderAsync(cancellationToken); // TODO: Read single row 
 
             Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> materializer;
 

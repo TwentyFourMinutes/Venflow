@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Venflow.Dynamic.Proxies;
+using Venflow.Dynamic.Retriever;
 using Venflow.Enums;
 
 namespace Venflow.Modeling.Definitions.Builder
@@ -24,6 +25,7 @@ namespace Venflow.Modeling.Definitions.Builder
         internal bool DefaultPropNullability { get; }
 
         private readonly HashSet<string> _ignoredColumns;
+        private readonly ValueRetrieverFactory<TEntity> _valueRetrieverFactory;
 
         internal EntityBuilder(string tableName)
         {
@@ -32,6 +34,7 @@ namespace Venflow.Modeling.Definitions.Builder
             Type = typeof(TEntity);
             ColumnDefinitions = new Dictionary<string, ColumnDefinition<TEntity>>();
             _ignoredColumns = new HashSet<string>();
+            _valueRetrieverFactory = new ValueRetrieverFactory<TEntity>(Type);
 
             // Check if the entity has a NullableContextAttribute which means that it is in a null-able environment.
             var nullableContextAttribute = Type.GetCustomAttribute<NullableContextAttribute>();
@@ -163,20 +166,10 @@ namespace Venflow.Modeling.Definitions.Builder
                 }
             }
 
-            // ExpressionVariables
-
             var columns = new List<EntityColumn<TEntity>>();
             var nameToColumn = new Dictionary<string, EntityColumn<TEntity>>();
             var changeTrackingColumns = new Dictionary<int, EntityColumn<TEntity>>();
             PrimaryEntityColumn<TEntity>? primaryColumn = null;
-
-            var constructorTypes = new Type[2];
-            constructorTypes[0] = TypeCache.String;
-
-            var indexParameter = Expression.Parameter(TypeCache.String, "index");
-            var entityParameter = Expression.Parameter(Type, "entity");
-
-            var stringConcatMethod = TypeCache.String.GetMethod("Concat", new[] { TypeCache.String, TypeCache.String });
 
             // Important column specifications
             var regularColumnsOffset = 0;
@@ -186,20 +179,6 @@ namespace Venflow.Modeling.Definitions.Builder
                 var property = filteredProperties[i];
 
                 var hasCustomDefinition = false;
-
-                // ParameterValueRetriever
-
-                constructorTypes[1] = property.PropertyType;
-
-                var valueProperty = Expression.Property(entityParameter, property);
-
-                var genericNpgsqlParameter = TypeCache.GenericNpgsqlParameter.MakeGenericType(property.PropertyType);
-
-                var constructor = genericNpgsqlParameter.GetConstructor(constructorTypes)!;
-
-                var parameterInstance = Expression.New(constructor, Expression.Add(Expression.Constant("@" + property.Name), indexParameter, stringConcatMethod), valueProperty);
-
-                var parameterValueRetriever = Expression.Lambda<Func<TEntity, string, NpgsqlParameter>>(parameterInstance, entityParameter, indexParameter).Compile();
 
                 bool isPropertyTypeNullableReferenceType;
 
@@ -228,6 +207,9 @@ namespace Venflow.Modeling.Definitions.Builder
                 {
                     isPropertyTypeNullableReferenceType = false;
                 }
+
+                // ParameterValueRetriever
+                var parameterValueRetriever = _valueRetrieverFactory.GenerateRetriever(property); 
 
                 // Handle custom columns
 
