@@ -96,6 +96,13 @@
             <returns>A task representing the asynchronous operation, with the value of the scalar command.</returns>
             <remarks>This method represents a <see cref="M:System.Data.Common.DbCommand.ExecuteScalarAsync"/> call.</remarks>
         </member>
+        <member name="M:Venflow.Database.Custom``1">
+            <summary>
+            Allows for queries against an entity which isn't usually defined, this is usually an entity which hasn't got a table in your database.
+            </summary>
+            <returns>A <see cref="T:Venflow.Modeling.TableBase`1"/> instance from which queries can be executed.</returns>
+            <remarks>The <typeparamref name="TEntity"/> should always be used with this <see cref="T:Venflow.Database"/> instance, otherwise the model has to be generated multiple times.</remarks>
+        </member>
         <member name="M:Venflow.Database.GetConnection">
             <summary>
             Gets or creates a new connections, if none got created yet.
@@ -513,15 +520,6 @@
             <returns>A task representing the asynchronous operation, with the number of rows inserted.</returns>
             <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar'), ('foo', 'bar')". This API is using parameterized commands.</remarks>
         </member>
-        <member name="M:Venflow.Modeling.Table`1.QueryAsync``1(Venflow.Commands.IQueryCommand{`0,``0},System.Threading.CancellationToken)">
-            <summary>
-            Asynchronously queries one or more entities with the configured joins.
-            </summary>
-            <param name="queryCommand">A <see cref="T:Venflow.Commands.IQueryCommand`2"/> instance representing the query which will be performed.</param>
-            <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
-            <returns>A task representing the asynchronous operation, with the result of the executed query.</returns>
-            <remarks>This method could represents the following SQL statement "SELECT * FROM table".</remarks>
-        </member>
         <member name="M:Venflow.Modeling.Table`1.DeleteAsync(`0,System.Threading.CancellationToken)">
             <summary>
             Asynchronously deletes the provided entity by its defined primary key.
@@ -606,33 +604,6 @@
             <returns>A Fluent API Builder for a query command.</returns>
             <remarks>This method will automatically generate a SQL SELECT statement.</remarks>
         </member>
-        <member name="M:Venflow.Modeling.Table`1.QuerySingle(System.String,System.Boolean)">
-            <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="M:Venflow.Modeling.Table`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])"/> or <see cref="M:Venflow.Modeling.Table`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
-            </summary>
-            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
-            <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
-            <returns>A Fluent API Builder for a query command.</returns>
-        </member>
-        <member name="M:Venflow.Modeling.Table`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])">
-            <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <see cref="M:Venflow.Modeling.Table`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
-            </summary>
-            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
-            <param name="parameters">A set of <see cref="T:Npgsql.NpgsqlParameter"/> which contain parameters for the <paramref name="sql"/> command.</param>
-            <returns>A Fluent API Builder for a query command.</returns>
-            <remarks>The command will be automatically disposed the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</remarks>
-        </member>
-        <member name="M:Venflow.Modeling.Table`1.QuerySingle(System.String,System.Boolean,Npgsql.NpgsqlParameter[])">
-            <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <see cref="M:Venflow.Modeling.Table`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
-            </summary>
-            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
-            <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
-            <param name="parameters">A set of <see cref="T:Npgsql.NpgsqlParameter"/> which contain parameters for the <paramref name="sql"/> command.</param>
-            <returns>A Fluent API Builder for a query command.</returns>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:Venflow.Modeling.Table`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)" -->
         <member name="M:Venflow.Modeling.Table`1.QueryBatch(System.Boolean)">
             <summary>
             Creates a new query command, which expects a set of primary rows to be returned.
@@ -643,46 +614,12 @@
         </member>
         <member name="M:Venflow.Modeling.Table`1.QueryBatch(System.UInt64,System.Boolean)">
             <summary>
-            Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="M:Venflow.Modeling.Table`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])"/> or <see cref="M:Venflow.Modeling.Table`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
+            Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="!:QuerySingle(string, NpgsqlParameter[])"/> or <see cref="!:QueryInterpolatedSingle(FormattableString, bool)"/>.
             </summary>
             <param name="count">A value specifying the maximum returned primary rows.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
             <returns>A Fluent API Builder for a query command.</returns>
             <remarks>This method will automatically generate a SQL SELECT statement with a LIMIT.</remarks>
-        </member>
-        <member name="M:Venflow.Modeling.Table`1.QueryBatch(System.String,System.Boolean)">
-            <summary>
-            Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="M:Venflow.Modeling.Table`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])"/> or <see cref="M:Venflow.Modeling.Table`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
-            </summary>
-            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
-            <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
-            <returns>A Fluent API Builder for a query command.</returns>
-        </member>
-        <member name="M:Venflow.Modeling.Table`1.QueryBatch(System.String,Npgsql.NpgsqlParameter[])">
-            <summary>
-            Creates a new query command, which expects a set of primary rows to be returned.<strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <see cref="M:Venflow.Modeling.Table`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
-            </summary>
-            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
-            <param name="parameters">A set of <see cref="T:Npgsql.NpgsqlParameter"/> which contain parameters for the <paramref name="sql"/> command.</param>
-            <returns>A Fluent API Builder for a query command.</returns>
-            <remarks>The command will be automatically disposed the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</remarks>
-        </member>
-        <member name="M:Venflow.Modeling.Table`1.QueryBatch(System.String,System.Boolean,Npgsql.NpgsqlParameter[])">
-            <summary>
-            Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <see cref="M:Venflow.Modeling.Table`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
-            </summary>
-            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
-            <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
-            <param name="parameters">A set of <see cref="T:Npgsql.NpgsqlParameter"/> which contain parameters for the <paramref name="sql"/> command.</param>
-            <returns>A Fluent API Builder for a query command.</returns>
-        </member>
-        <member name="M:Venflow.Modeling.Table`1.QueryInterpolatedBatch(System.FormattableString,System.Boolean)">
-            <summary>
-            Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
-            </summary>
-            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. <strong>You should only add parameters trough string interpolation.</strong></param>
-            <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
-            <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Modeling.Table`1.Insert">
             <summary>
@@ -741,6 +678,76 @@
             <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
             <remarks>Any property which should be change tracked on an entity has to be marked virtual.</remarks>
             <exception cref="T:System.InvalidOperationException">Thrown when a provided entity does not contain any virtual properties.</exception>
+        </member>
+        <member name="M:Venflow.Modeling.TableBase`1.QueryAsync``1(Venflow.Commands.IQueryCommand{`0,``0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously queries one or more entities with the configured joins.
+            </summary>
+            <param name="queryCommand">A <see cref="T:Venflow.Commands.IQueryCommand`2"/> instance representing the query which will be performed.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+            <returns>A task representing the asynchronous operation, with the result of the executed query.</returns>
+            <remarks>This method could represents the following SQL statement "SELECT * FROM table".</remarks>
+        </member>
+        <member name="M:Venflow.Modeling.TableBase`1.QuerySingle(System.String,System.Boolean)">
+            <summary>
+            Creates a new query command, which expects a single returned primary row. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="M:Venflow.Modeling.TableBase`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])"/> or <see cref="M:Venflow.Modeling.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
+            </summary>
+            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
+            <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
+            <returns>A Fluent API Builder for a query command.</returns>
+        </member>
+        <member name="M:Venflow.Modeling.TableBase`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])">
+            <summary>
+            Creates a new query command, which expects a single returned primary row. <strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <see cref="M:Venflow.Modeling.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
+            </summary>
+            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
+            <param name="parameters">A set of <see cref="T:Npgsql.NpgsqlParameter"/> which contain parameters for the <paramref name="sql"/> command.</param>
+            <returns>A Fluent API Builder for a query command.</returns>
+            <remarks>The command will be automatically disposed the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</remarks>
+        </member>
+        <member name="M:Venflow.Modeling.TableBase`1.QuerySingle(System.String,System.Boolean,Npgsql.NpgsqlParameter[])">
+            <summary>
+            Creates a new query command, which expects a single returned primary row. <strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <see cref="M:Venflow.Modeling.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
+            </summary>
+            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
+            <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
+            <param name="parameters">A set of <see cref="T:Npgsql.NpgsqlParameter"/> which contain parameters for the <paramref name="sql"/> command.</param>
+            <returns>A Fluent API Builder for a query command.</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Venflow.Modeling.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)" -->
+        <member name="M:Venflow.Modeling.TableBase`1.QueryBatch(System.String,System.Boolean)">
+            <summary>
+            Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="M:Venflow.Modeling.TableBase`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])"/> or <see cref="M:Venflow.Modeling.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
+            </summary>
+            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
+            <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
+            <returns>A Fluent API Builder for a query command.</returns>
+        </member>
+        <member name="M:Venflow.Modeling.TableBase`1.QueryBatch(System.String,Npgsql.NpgsqlParameter[])">
+            <summary>
+            Creates a new query command, which expects a set of primary rows to be returned.<strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <see cref="M:Venflow.Modeling.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
+            </summary>
+            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
+            <param name="parameters">A set of <see cref="T:Npgsql.NpgsqlParameter"/> which contain parameters for the <paramref name="sql"/> command.</param>
+            <returns>A Fluent API Builder for a query command.</returns>
+            <remarks>The command will be automatically disposed the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</remarks>
+        </member>
+        <member name="M:Venflow.Modeling.TableBase`1.QueryBatch(System.String,System.Boolean,Npgsql.NpgsqlParameter[])">
+            <summary>
+            Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <see cref="M:Venflow.Modeling.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
+            </summary>
+            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
+            <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
+            <param name="parameters">A set of <see cref="T:Npgsql.NpgsqlParameter"/> which contain parameters for the <paramref name="sql"/> command.</param>
+            <returns>A Fluent API Builder for a query command.</returns>
+        </member>
+        <member name="M:Venflow.Modeling.TableBase`1.QueryInterpolatedBatch(System.FormattableString,System.Boolean)">
+            <summary>
+            Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+            </summary>
+            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. <strong>You should only add parameters trough string interpolation.</strong></param>
+            <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
+            <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="T:Venflow.NpgsqlCommandExtensions">
             <summary>
