@@ -105,6 +105,16 @@ namespace Venflow.Modeling
         /// <returns>A Fluent API Builder for a query command.</returns>
         public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, bool disposeCommand, params NpgsqlParameter[] parameters)
             => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QueryBatch(sql, parameters);
+
+        /// <summary>
+        /// Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+        /// </summary>
+        /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. <strong>You should only add parameters trough string interpolation.</strong></param>
+        /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
+        /// <returns>A Fluent API Builder for a query command.</returns>
+        public IPreCommandBuilder<TEntity, List<TEntity>> QueryInterpolatedBatch(FormattableString sql, bool disposeCommand = true)
+            => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QueryInterpolatedBatch(sql);
+
         #endregion
 
         private ValueTask ValidateConnectionAsync()
