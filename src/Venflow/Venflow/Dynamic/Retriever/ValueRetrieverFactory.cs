@@ -83,10 +83,10 @@ namespace Venflow.Dynamic.Retriever
             // Default retriever
             il.MarkLabel(defaultRetrieverLabel);
 
-            il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldstr, "@" + property.Name);
             il.Emit(OpCodes.Ldarg_1);
             il.Emit(OpCodes.Call, stringConcatMethod);
+            il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Callvirt, property.GetGetMethod());
             il.Emit(OpCodes.Stloc_S, propertyLocal);
             il.Emit(OpCodes.Ldloca_S, propertyLocal);
