@@ -1,4 +1,3 @@
-using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,6 +14,8 @@ namespace Venflow.Modeling.Definitions.Builder
 {
     internal class EntityBuilder<TEntity> : EntityBuilder, IEntityBuilder<TEntity> where TEntity : class, new()
     {
+        internal bool IsCustomEntity { get; set; }
+
         internal override Type Type { get; }
 
         internal ChangeTrackerFactory<TEntity>? ChangeTrackerFactory { get; private set; }
@@ -35,6 +36,7 @@ namespace Venflow.Modeling.Definitions.Builder
             ColumnDefinitions = new Dictionary<string, ColumnDefinition<TEntity>>();
             _ignoredColumns = new HashSet<string>();
             _valueRetrieverFactory = new ValueRetrieverFactory<TEntity>(Type);
+            IsCustomEntity = true;
 
             // Check if the entity has a NullableContextAttribute which means that it is in a null-able environment.
             var nullableContextAttribute = Type.GetCustomAttribute<NullableContextAttribute>();
@@ -145,7 +147,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
             if (properties is null || properties.Length == 0)
             {
-                throw new TypeArgumentException("The provided generic type argument doesn't contain any public properties with a getter and a setter.");
+                throw new TypeArgumentException($"The entity '{Type.Name}' doesn't contain any columns/properties. A entity needs at least one column/property.");
             }
 
             var filteredProperties = new List<PropertyInfo>();
@@ -157,7 +159,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                 if (property.CanWrite && property.SetMethod!.IsPublic && !_ignoredColumns.Contains(property.Name) && !Attribute.IsDefined(property, TypeCache.NotMappedAttribute))
                 {
-                    if (Attribute.IsDefined(property, TypeCache.KeyAttribute) || property.Name == "Id")
+                    if (IsCustomEntity && (Attribute.IsDefined(property, TypeCache.KeyAttribute) || property.Name == "Id"))
                     {
                         annotedPrimaryKey = property;
                     }
@@ -209,11 +211,13 @@ namespace Venflow.Modeling.Definitions.Builder
                 }
 
                 // ParameterValueRetriever
-                var parameterValueRetriever = _valueRetrieverFactory.GenerateRetriever(property); 
+                var parameterValueRetriever = _valueRetrieverFactory.GenerateRetriever(property);
 
                 // Handle custom columns
 
-                if (ColumnDefinitions.TryGetValue(property.Name, out var definition))
+                ColumnDefinition<TEntity>? definition = default;
+
+                if (IsCustomEntity && ColumnDefinitions.TryGetValue(property.Name, out definition))
                 {
                     switch (definition)
                     {
@@ -243,7 +247,7 @@ namespace Venflow.Modeling.Definitions.Builder
                             break;
                     }
                 }
-                else if (annotedPrimaryKey == property)
+                else if (IsCustomEntity && annotedPrimaryKey == property)
                 {
                     if (EntityInNullableContext && isPropertyTypeNullableReferenceType)
                     {
@@ -272,7 +276,7 @@ namespace Venflow.Modeling.Definitions.Builder
                 {
                     string columnName;
 
-                    if (definition is not null)
+                    if (IsCustomEntity && definition is not null)
                     {
                         columnName = definition.Name;
 
@@ -292,20 +296,28 @@ namespace Venflow.Modeling.Definitions.Builder
 
                     columns.Add(column);
 
-                    var setMethod = property.GetSetMethod();
-
-                    if (setMethod.IsVirtual && !setMethod.IsFinal)
+                    if (IsCustomEntity)
                     {
-                        changeTrackingColumns.Add(i, column);
+                        var setMethod = property.GetSetMethod();
+
+                        if (setMethod.IsVirtual && !setMethod.IsFinal)
+                        {
+                            changeTrackingColumns.Add(i, column);
+                        }
                     }
 
                     nameToColumn.Add(columnName, column);
                 }
             }
 
-            if (primaryColumn is null)
+            if (primaryColumn is null && IsCustomEntity)
             {
-                throw new InvalidOperationException("The EntityBuilder couldn't find the primary key, it isn't named 'Id', the KeyAttribute wasn't set nor was any property in the configuration defined as the primary key.");
+                throw new InvalidOperationException($"The EntityBuilder couldn't find the primary key on the entity '{Type.Name}', it isn't named 'Id', the KeyAttribute wasn't set nor was any property in the configuration defined as the primary key.");
+            }
+
+            if (columns.Count == 0)
+            {
+                throw new InvalidOperationException($"The entity '{Type.Name}' doesn't contain any columns/mapped properties. A entity needs at least one column/mapped property.");
             }
 
             if (changeTrackingColumns.Count != 0)

@@ -25,11 +25,12 @@ namespace Venflow.Modeling.Definitions
 
             _entity = new Entity<TEntity>(_entityBuilder.Type, _entityBuilder.ChangeTrackerFactory?.ProxyType, _entityBuilder.TableName,
                 _entityBuilder.EntityInNullableContext, _entityBuilder.DefaultPropNullability, columns,
-                (PrimaryEntityColumn<TEntity>)columns[0], GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns),
-                GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames),
-                GetColumnListString(columns, ColumnListStringOptions.None),
-                _entityBuilder.ChangeTrackerFactory?.GetProxyFactory(),
-                _entityBuilder.ChangeTrackerFactory?.GetProxyApplyingFactory(columns));
+                _entityBuilder.IsCustomEntity ? (PrimaryEntityColumn<TEntity>)columns[0] : default,
+                _entityBuilder.IsCustomEntity ? GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns) : string.Empty,
+                _entityBuilder.IsCustomEntity ? GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames) : string.Empty,
+                _entityBuilder.IsCustomEntity ? GetColumnListString(columns, ColumnListStringOptions.None) : string.Empty,
+                _entityBuilder.IsCustomEntity ? _entityBuilder.ChangeTrackerFactory?.GetProxyFactory() : default,
+                _entityBuilder.IsCustomEntity ? _entityBuilder.ChangeTrackerFactory?.GetProxyApplyingFactory(columns) : default);
 
             return _entity;
         }

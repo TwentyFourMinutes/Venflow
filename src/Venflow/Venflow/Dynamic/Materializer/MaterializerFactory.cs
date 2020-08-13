@@ -106,7 +106,7 @@ namespace Venflow.Dynamic.Materializer
                     QueryEntityHolder nextJoin = generatedEntities[0];
                     QueryEntityHolder currentJoin = generatedEntities[0];
 
-                    var nextJoinPKName = _entity.PrimaryColumn.ColumnName;
+                    var nextJoinPKName = _entity.PrimaryColumn?.ColumnName ?? _entity.Columns[0].ColumnName;
 
                     for (columnIndex = 0; columnIndex < columnSchema.Count; columnIndex++)
                     {

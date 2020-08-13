@@ -6,6 +6,8 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using Venflow.Modeling;
+using Venflow.Modeling.Definitions;
+using Venflow.Modeling.Definitions.Builder;
 
 namespace Venflow
 {
@@ -25,6 +27,7 @@ namespace Venflow
     public abstract class Database : IAsyncDisposable, IDisposable
     {
         internal IReadOnlyDictionary<string, Entity> Entities { get; private set; }
+        internal Dictionary<Type, Entity> CustomEntities { get; private set; }
 
         internal string ConnectionString { get; }
 
@@ -202,6 +205,41 @@ namespace Venflow
         }
 
         /// <summary>
+        /// Allows for queries against an entity which isn't usually defined, this is usually an entity which hasn't got a table in your database.
+        /// </summary>
+        /// <returns>A <see cref="TableBase{TEntity}"/> instance from which queries can be executed.</returns>
+        /// <remarks>The <typeparamref name="TEntity"/> should always be used with this <see cref="Database"/> instance, otherwise the model has to be generated multiple times.</remarks>
+        public TableBase<TEntity> Custom<TEntity>() where TEntity : class, new()
+        {
+            var entityType = typeof(TEntity);
+
+            if (CustomEntities.TryGetValue(entityType, out var entity))
+            {
+                return new TableBase<TEntity>(this, (Entity<TEntity>)entity);
+            }
+
+            lock (CustomEntities)
+            {
+                if (CustomEntities.TryGetValue(entityType, out entity))
+                {
+                    return new TableBase<TEntity>(this, (Entity<TEntity>)entity);
+                }
+
+                var entityBuilder = new EntityBuilder<TEntity>(string.Empty);
+
+                entityBuilder.IsCustomEntity = false;
+
+                var entityFactory = new EntityFactory<TEntity>(entityBuilder);
+
+                entity = entityFactory.BuildEntity();
+
+                CustomEntities.Add(entityType, entity);
+
+                return new TableBase<TEntity>(this, (Entity<TEntity>)entity);
+            }
+        }
+
+        /// <summary>
         /// Gets or creates a new connections, if none got created yet.
         /// </summary>
         /// <returns>the <see cref="NpgsqlConnection"/>.</returns>
@@ -220,6 +258,7 @@ namespace Venflow
             if (DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(type, out var configuration))
             {
                 Entities = configuration.Entities;
+                CustomEntities = configuration.CustomEntities;
 
                 configuration.InstantiateDatabase(this);
 
@@ -244,6 +283,7 @@ namespace Venflow
                 }
 
                 Entities = configuration.Entities;
+                CustomEntities = configuration.CustomEntities;
 
                 configuration.InstantiateDatabase(this);
             }
