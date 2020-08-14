@@ -103,7 +103,7 @@ namespace Venflow.Modeling.Definitions
                 var entityRelation = new EntityRelation(relation.RelationId, _entity, relation.LeftNavigationProperty, relation.LeftNavigationProperty?.IsNullableReferenceType(_entity.IsInNullableContext, _entity.DefaultPropNullability) ?? false, relationEntity, relation.RightNavigationProperty, relation.RightNavigationProperty?.IsNullableReferenceType(_entity.IsInNullableContext, _entity.DefaultPropNullability) ?? false, keyColumn, relation.RelationType, relation.ForeignKeyLocation);
 
                 if (VenflowConfiguration.ShouldUseDeepValidation &&
-                    relation.RelationType == RelationType.OneToMany && 
+                    relation.RelationType == RelationType.OneToMany &&
                     relation.LeftNavigationProperty is { } &&
                     !relation.LeftNavigationProperty.CanWrite)
                 {
