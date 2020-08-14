@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Venflow
@@ -32,6 +33,18 @@ namespace Venflow
             {
                 return false;
             }
+        }
+
+        internal static FieldInfo? GetBackingField(this PropertyInfo property)
+        {
+            if (!property.CanRead || !property.GetGetMethod(nonPublic: true).IsDefined(typeof(CompilerGeneratedAttribute), inherit: true))
+                return null;
+            var backingField = property.DeclaringType.GetField($"<{property.Name}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (backingField == null)
+                return null;
+            if (!backingField.IsDefined(typeof(CompilerGeneratedAttribute), inherit: true))
+                return null;
+            return backingField;
         }
     }
 }

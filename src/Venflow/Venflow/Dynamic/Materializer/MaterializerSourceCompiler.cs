@@ -74,7 +74,9 @@ namespace Venflow.Dynamic.Materializer
 
             if (relation.RelationType == RelationType.ManyToOne)
             {
-                rightQueryHolder.InitializeNavigation.Add(relation.Sibiling);
+                if (relation.RightNavigationProperty.CanWrite)
+                    rightQueryHolder.InitializeNavigation.Add(relation.Sibiling);
+
                 leftQueryHolder.AssigningRelations.Add((relation, rightQueryHolder));
 
                 rightQueryHolder.RequiresChangedLocal = true;
@@ -92,7 +94,7 @@ namespace Venflow.Dynamic.Materializer
                 {
                     leftQueryHolder.RequiresDBNullCheck = true;
                 }
-                else if(relation.RelationType == RelationType.OneToMany)
+                else if (relation.RelationType == RelationType.OneToMany)
                 {
                     leftQueryHolder.RequiresDBNullCheck = true;
                 }
@@ -102,7 +104,9 @@ namespace Venflow.Dynamic.Materializer
             {
                 if (relation.RelationType == RelationType.OneToMany)
                 {
-                    leftQueryHolder.InitializeNavigation.Add(relation);
+                    if (relation.LeftNavigationProperty.CanWrite)
+                        leftQueryHolder.InitializeNavigation.Add(relation);
+
                     rightQueryHolder.AssigningRelations.Add((relation.Sibiling, leftQueryHolder));
 
                     rightQueryHolder.RequiresChangedLocal = true;

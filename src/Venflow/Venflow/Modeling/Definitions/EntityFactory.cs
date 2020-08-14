@@ -81,6 +81,8 @@ namespace Venflow.Modeling.Definitions
             var relationIdToColumn = new Dictionary<uint, EntityRelation>();
             var relationNameToColumn = new Dictionary<string, EntityRelation>();
 
+            object? entityInstance = default;
+
             for (int i = 0; i < _entityBuilder.Relations.Count; i++)
             {
                 var relation = _entityBuilder.Relations[i];
@@ -99,6 +101,19 @@ namespace Venflow.Modeling.Definitions
                 }
 
                 var entityRelation = new EntityRelation(relation.RelationId, _entity, relation.LeftNavigationProperty, relation.LeftNavigationProperty?.IsNullableReferenceType(_entity.IsInNullableContext, _entity.DefaultPropNullability) ?? false, relationEntity, relation.RightNavigationProperty, relation.RightNavigationProperty?.IsNullableReferenceType(_entity.IsInNullableContext, _entity.DefaultPropNullability) ?? false, keyColumn, relation.RelationType, relation.ForeignKeyLocation);
+
+                if (VenflowConfiguration.ShouldUseDeepValidation &&
+                    relation.RelationType == RelationType.OneToMany && 
+                    relation.LeftNavigationProperty is { } &&
+                    !relation.LeftNavigationProperty.CanWrite)
+                {
+                    entityInstance ??= Activator.CreateInstance(relation.LeftEntity.Type);
+
+                    if (relation.LeftNavigationProperty.GetBackingField().GetValue(entityInstance) == null)
+                    {
+                        throw new InvalidOperationException($"The entity '{relation.LeftEntity}' defines the navigation property '{relation.LeftNavigationProperty}' which doesn't have a public setter and its value isn't assigned in the constructor. Either assign it in the constructor or add a public setter.");
+                    }
+                }
 
                 if (entityRelation.RightEntity.Relations is { } &&
                     entityRelation.RightEntity.Relations.TryGetValue(relation.RelationId, out var sibilingRelation))
