@@ -182,33 +182,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                 var hasCustomDefinition = false;
 
-                bool isPropertyTypeNullableReferenceType;
-
-                if (property.PropertyType.IsClass)
-                {
-                    if (EntityInNullableContext)
-                    {
-                        var nullableAttribute = property.GetCustomAttribute<NullableAttribute>();
-
-                        if (nullableAttribute is { })
-                        {
-                            // Flag == 1 prop is not null-able if not otherwise specified. Flag == 2 reversed.
-                            isPropertyTypeNullableReferenceType = nullableAttribute.NullableFlags[0] == 2;
-                        }
-                        else
-                        {
-                            isPropertyTypeNullableReferenceType = DefaultPropNullability;
-                        }
-                    }
-                    else
-                    {
-                        isPropertyTypeNullableReferenceType = true;
-                    }
-                }
-                else
-                {
-                    isPropertyTypeNullableReferenceType = false;
-                }
+                bool isPropertyTypeNullableReferenceType = property.IsNullableReferenceType(EntityInNullableContext, DefaultPropNullability);
 
                 // ParameterValueRetriever
                 var parameterValueRetriever = _valueRetrieverFactory.GenerateRetriever(property);

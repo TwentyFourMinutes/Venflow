@@ -98,9 +98,10 @@ namespace Venflow.Modeling.Definitions
                     keyColumn = relationEntity.GetColumn(relation.ForeignKeyColumnName);
                 }
 
-                var entityRelation = new EntityRelation(relation.RelationId, _entity, relation.LeftNavigationProperty, relationEntity, relation.RightNavigationProperty, keyColumn, relation.RelationType, relation.ForeignKeyLocation);
+                var entityRelation = new EntityRelation(relation.RelationId, _entity, relation.LeftNavigationProperty, relation.LeftNavigationProperty?.IsNullableReferenceType(_entity.IsInNullableContext, _entity.DefaultPropNullability) ?? false, relationEntity, relation.RightNavigationProperty, relation.RightNavigationProperty?.IsNullableReferenceType(_entity.IsInNullableContext, _entity.DefaultPropNullability) ?? false, keyColumn, relation.RelationType, relation.ForeignKeyLocation);
 
-                if (entityRelation.RightEntity.Relations is { } && entityRelation.RightEntity.Relations.TryGetValue(relation.RelationId, out var sibilingRelation))
+                if (entityRelation.RightEntity.Relations is { } &&
+                    entityRelation.RightEntity.Relations.TryGetValue(relation.RelationId, out var sibilingRelation))
                 {
                     entityRelation.Sibiling = sibilingRelation;
                     sibilingRelation.Sibiling = entityRelation;
