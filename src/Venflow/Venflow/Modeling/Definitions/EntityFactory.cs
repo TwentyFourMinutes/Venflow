@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using Venflow.Enums;
@@ -61,7 +61,7 @@ namespace Venflow.Modeling.Definitions
                     foreignEntity.IgnoreProperty(relation.RightNavigationProperty.Name);
                 }
 
-                foreignEntity.Relations.Add(new EntityRelationDefinition(relation.RelationId, foreignEntity, relation.RightNavigationProperty, relation.LeftEntity.Type.Name, relation.LeftNavigationProperty, relation.ForeignKeyColumnName, ReverseRelationType(relation.RelationType), ReverseKeyLocation(relation.ForeignKeyLocation))
+                foreignEntity.Relations.Add(new EntityRelationDefinition(relation.RelationId, foreignEntity, relation.RightNavigationProperty, relation.LeftEntityBuilder.Type.Name, relation.LeftNavigationProperty, relation.ForeignKeyColumnName, ReverseRelationType(relation.RelationType), ReverseKeyLocation(relation.ForeignKeyLocation))
                 {
                     IsProcessed = true
                 });
@@ -107,7 +107,7 @@ namespace Venflow.Modeling.Definitions
                     relation.LeftNavigationProperty is { } &&
                     !relation.LeftNavigationProperty.CanWrite)
                 {
-                    entityInstance ??= Activator.CreateInstance(relation.LeftEntity.Type);
+                    entityInstance ??= Activator.CreateInstance(relation.LeftEntityBuilder.Type);
 
                     if (relation.LeftNavigationProperty.GetBackingField().GetValue(entityInstance) == null)
                     {

@@ -75,9 +75,9 @@ namespace Venflow.Dynamic.Materializer
             if (relation.RelationType == RelationType.ManyToOne)
             {
                 if (relation.RightNavigationProperty.CanWrite)
-                    rightQueryHolder.InitializeNavigation.Add(relation.Sibiling);
+                    rightQueryHolder.InitializeNavigations.Add(relation.Sibiling);
 
-                leftQueryHolder.AssigningRelations.Add((relation, rightQueryHolder));
+                leftQueryHolder.ForeignAssignedRelations.Add((relation, rightQueryHolder));
 
                 rightQueryHolder.RequiresChangedLocal = true;
                 leftQueryHolder.RequiresChangedLocal = true;
@@ -86,7 +86,7 @@ namespace Venflow.Dynamic.Materializer
             }
             else
             {
-                rightQueryHolder.AssignedRelations.Add((relation.Sibiling, leftQueryHolder));
+                rightQueryHolder.SelfAssignedRelations.Add((relation.Sibiling, leftQueryHolder));
                 rightQueryHolder.RequiresChangedLocal = true;
 
                 if (relation.RelationType == RelationType.OneToOne &&
@@ -105,9 +105,9 @@ namespace Venflow.Dynamic.Materializer
                 if (relation.RelationType == RelationType.OneToMany)
                 {
                     if (relation.LeftNavigationProperty.CanWrite)
-                        leftQueryHolder.InitializeNavigation.Add(relation);
+                        leftQueryHolder.InitializeNavigations.Add(relation);
 
-                    rightQueryHolder.AssigningRelations.Add((relation.Sibiling, leftQueryHolder));
+                    rightQueryHolder.ForeignAssignedRelations.Add((relation.Sibiling, leftQueryHolder));
 
                     rightQueryHolder.RequiresChangedLocal = true;
                     leftQueryHolder.RequiresChangedLocal = true;
@@ -116,7 +116,7 @@ namespace Venflow.Dynamic.Materializer
                 }
                 else
                 {
-                    leftQueryHolder.AssignedRelations.Add((relation, rightQueryHolder));
+                    leftQueryHolder.SelfAssignedRelations.Add((relation, rightQueryHolder));
                     leftQueryHolder.RequiresChangedLocal = true;
 
                     if (relation.RelationType == RelationType.OneToOne &&

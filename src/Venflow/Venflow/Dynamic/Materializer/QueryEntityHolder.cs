@@ -7,19 +7,19 @@ namespace Venflow.Dynamic.Materializer
     {
         internal int Id { get; }
         internal Entity Entity { get; }
-        internal List<(EntityRelation, QueryEntityHolder)> AssignedRelations { get; }
-        internal List<(EntityRelation, QueryEntityHolder)> AssigningRelations { get; }
-        internal List<EntityRelation> InitializeNavigation { get; }
+        internal List<(EntityRelation, QueryEntityHolder)> SelfAssignedRelations { get; }
+        internal List<(EntityRelation, QueryEntityHolder)> ForeignAssignedRelations { get; }
+        internal List<EntityRelation> InitializeNavigations { get; }
 
-        internal bool HasRelations => AssignedRelations.Count > 0 || AssigningRelations.Count > 0;
+        internal bool HasRelations => SelfAssignedRelations.Count > 0 || ForeignAssignedRelations.Count > 0;
         internal bool RequiresChangedLocal { get; set; }
         internal bool RequiresDBNullCheck { get; set; }
 
         internal QueryEntityHolder(Entity entity, int id)
         {
-            AssignedRelations = new List<(EntityRelation, QueryEntityHolder)>();
-            AssigningRelations = new List<(EntityRelation, QueryEntityHolder)>();
-            InitializeNavigation = new List<EntityRelation>();
+            SelfAssignedRelations = new List<(EntityRelation, QueryEntityHolder)>();
+            ForeignAssignedRelations = new List<(EntityRelation, QueryEntityHolder)>();
+            InitializeNavigations = new List<EntityRelation>();
 
             Entity = entity;
             Id = id;

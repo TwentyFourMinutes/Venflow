@@ -1,4 +1,4 @@
-using Npgsql;
+﻿using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -367,9 +367,9 @@ namespace Venflow.Dynamic.Materializer
 
             CreateEntity(primaryEntity, primaryEntityHolder.Item2, changeTracking && primaryEntity.ProxyEntityType is { });
 
-            for (int i = 0; i < primaryEntityHolder.Item1.InitializeNavigation.Count; i++)
+            for (int i = 0; i < primaryEntityHolder.Item1.InitializeNavigations.Count; i++)
             {
-                var initializeNavigation = primaryEntityHolder.Item1.InitializeNavigation[i];
+                var initializeNavigation = primaryEntityHolder.Item1.InitializeNavigations[i];
 
                 _moveNextMethodIL.Emit(OpCodes.Dup);
                 _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(List<>).MakeGenericType(new[] { initializeNavigation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0] }).GetConstructor(Type.EmptyTypes));
@@ -459,9 +459,9 @@ namespace Venflow.Dynamic.Materializer
 
                 CreateEntity(entity, entityHolder.Item2, changeTracking && entity.ProxyEntityType is { }, primaryKeyLocal);
 
-                for (int i = 0; i < entityHolder.Item1.InitializeNavigation.Count; i++)
+                for (int i = 0; i < entityHolder.Item1.InitializeNavigations.Count; i++)
                 {
-                    var initializeNavigation = entityHolder.Item1.InitializeNavigation[i];
+                    var initializeNavigation = entityHolder.Item1.InitializeNavigations[i];
 
                     _moveNextMethodIL.Emit(OpCodes.Dup);
                     _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(List<>).MakeGenericType(new[] { initializeNavigation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0] }).GetConstructor(Type.EmptyTypes));
@@ -531,11 +531,11 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
                 _moveNextMethodIL.Emit(OpCodes.Stfld, isFirstRowField);
 
-                if (primaryEntityHolder.Item1.AssigningRelations.Count > 0)
+                if (primaryEntityHolder.Item1.ForeignAssignedRelations.Count > 0)
                 {
-                    for (int i = 0; i < primaryEntityHolder.Item1.AssigningRelations.Count; i++)
+                    for (int i = 0; i < primaryEntityHolder.Item1.ForeignAssignedRelations.Count; i++)
                     {
-                        var assigningRelation = primaryEntityHolder.Item1.AssigningRelations[i];
+                        var assigningRelation = primaryEntityHolder.Item1.ForeignAssignedRelations[i];
 
                         var lastRightEntityField = entityLastTypes[assigningRelation.Item2.Id];
                         var hasRightEntityChangedLocal = changedLocals[assigningRelation.Item2.Id];
@@ -558,11 +558,11 @@ namespace Venflow.Dynamic.Materializer
                     }
                 }
 
-                if (primaryEntityHolder.Item1.AssignedRelations.Count > 0)
+                if (primaryEntityHolder.Item1.SelfAssignedRelations.Count > 0)
                 {
-                    for (int i = 0; i < primaryEntityHolder.Item1.AssignedRelations.Count; i++)
+                    for (int i = 0; i < primaryEntityHolder.Item1.SelfAssignedRelations.Count; i++)
                     {
-                        var assigningRelation = primaryEntityHolder.Item1.AssignedRelations[i];
+                        var assigningRelation = primaryEntityHolder.Item1.SelfAssignedRelations[i];
 
                         var lastRightEntity = entityLastTypes[assigningRelation.Item2.Id];
 
@@ -591,11 +591,11 @@ namespace Venflow.Dynamic.Materializer
 
                 var lastLeftEntity = entityLastTypes[entityHolder.Id];
 
-                if (entityHolder.AssigningRelations.Count > 0)
+                if (entityHolder.ForeignAssignedRelations.Count > 0)
                 {
-                    for (int i = 0; i < entityHolder.AssigningRelations.Count; i++)
+                    for (int i = 0; i < entityHolder.ForeignAssignedRelations.Count; i++)
                     {
-                        var assigningRelation = entityHolder.AssigningRelations[i];
+                        var assigningRelation = entityHolder.ForeignAssignedRelations[i];
 
                         var relation = assigningRelation.Item1;
                         var lastRightEntityField = entityLastTypes[assigningRelation.Item2.Id];
@@ -642,16 +642,16 @@ namespace Venflow.Dynamic.Materializer
                     }
                 }
 
-                if (entityHolder.AssignedRelations.Count > 0)
+                if (entityHolder.SelfAssignedRelations.Count > 0)
                 {
                     var afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
 
                     _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasLeftEntityChangedLocal);
                     _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
 
-                    for (int i = 0; i < entityHolder.AssignedRelations.Count; i++)
+                    for (int i = 0; i < entityHolder.SelfAssignedRelations.Count; i++)
                     {
-                        var assigningRelation = entityHolder.AssignedRelations[i];
+                        var assigningRelation = entityHolder.SelfAssignedRelations[i];
 
                         var lastRightEntity = entityLastTypes[assigningRelation.Item2.Id];
 
@@ -996,9 +996,9 @@ namespace Venflow.Dynamic.Materializer
 
                 CreateEntity(entity, entityHolder.Item2, changeTracking && entity.ProxyEntityType is { }, primaryKeyLocal);
 
-                for (int i = 0; i < entityHolder.Item1.InitializeNavigation.Count; i++)
+                for (int i = 0; i < entityHolder.Item1.InitializeNavigations.Count; i++)
                 {
-                    var initializeNavigation = entityHolder.Item1.InitializeNavigation[i];
+                    var initializeNavigation = entityHolder.Item1.InitializeNavigations[i];
 
                     _moveNextMethodIL.Emit(OpCodes.Dup);
                     _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(List<>).MakeGenericType(new[] { initializeNavigation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0] }).GetConstructor(Type.EmptyTypes));
@@ -1073,11 +1073,11 @@ namespace Venflow.Dynamic.Materializer
                 var hasLeftEntityChangedLocal = changedLocals[entityHolder.Id];
                 var lastLeftEntity = entityLastTypes[entityHolder.Id];
 
-                if (entityHolder.AssigningRelations.Count > 0)
+                if (entityHolder.ForeignAssignedRelations.Count > 0)
                 {
-                    for (int i = 0; i < entityHolder.AssigningRelations.Count; i++)
+                    for (int i = 0; i < entityHolder.ForeignAssignedRelations.Count; i++)
                     {
-                        var assigningRelation = entityHolder.AssigningRelations[i];
+                        var assigningRelation = entityHolder.ForeignAssignedRelations[i];
 
                         var lastRightEntityField = entityLastTypes[assigningRelation.Item2.Id];
 
@@ -1125,16 +1125,16 @@ namespace Venflow.Dynamic.Materializer
                     }
                 }
 
-                if (entityHolder.AssignedRelations.Count > 0)
+                if (entityHolder.SelfAssignedRelations.Count > 0)
                 {
                     var afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
 
                     _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasLeftEntityChangedLocal);
                     _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
 
-                    for (int i = 0; i < entityHolder.AssignedRelations.Count; i++)
+                    for (int i = 0; i < entityHolder.SelfAssignedRelations.Count; i++)
                     {
-                        var assigningRelation = entityHolder.AssignedRelations[i];
+                        var assigningRelation = entityHolder.SelfAssignedRelations[i];
 
                         var lastRightEntity = entityLastTypes[assigningRelation.Item2.Id];
 
