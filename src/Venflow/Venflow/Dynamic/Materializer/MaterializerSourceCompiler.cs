@@ -1,3 +1,4 @@
+﻿using System;
 using System.Collections.Generic;
 using Venflow.Commands;
 using Venflow.Enums;
@@ -50,6 +51,26 @@ namespace Venflow.Dynamic.Materializer
             var leftQueryHolder = new QueryEntityHolder(relation.LeftEntity, _queryEntityHolderIndex++);
 
             _entities.AddLast(leftQueryHolder);
+
+#if !NET48
+
+            if (VenflowConfiguration.ShouldUseDeepValidation)
+            {
+                if ((joinPath.JoinOptions.JoinBehaviour == JoinBehaviour.FullJoin ||
+                    joinPath.JoinOptions.JoinBehaviour == JoinBehaviour.LeftJoin) &&
+                    !relation.IsRightNavigationPropertyNullable)
+                {
+                    throw new InvalidOperationException($"The join you configured 'Join...(x => x.{relation.RightNavigationProperty.Name})' from the entity '{relation.RightEntity.EntityName}' to the entity '{relation.LeftEntity.EntityName}' is configured as a LeftJoin, however the property '{relation.RightNavigationProperty.Name}' on the entity '{relation.RightEntity.EntityName}' isn't marked as null-able!");
+                }
+                else if ((joinPath.JoinOptions.JoinBehaviour == JoinBehaviour.FullJoin ||
+                        joinPath.JoinOptions.JoinBehaviour == JoinBehaviour.RightJoin) &&
+                        !relation.IsLeftNavigationPropertyNullable &&
+                        relation.LeftNavigationProperty is { })
+                {
+                    throw new InvalidOperationException($"The join you configured 'Join...(x => x.{relation.RightNavigationProperty.Name})' from the entity '{relation.RightEntity.EntityName}' to the entity '{relation.LeftEntity.EntityName}' is configured as a RightJoin, however the property '{relation.LeftNavigationProperty.Name}' on the entity '{relation.LeftEntity.EntityName}' isn't marked as null-able!");
+                }
+            }
+#endif
 
             if (relation.RelationType == RelationType.ManyToOne)
             {
