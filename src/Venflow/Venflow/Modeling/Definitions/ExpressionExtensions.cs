@@ -6,7 +6,7 @@ namespace Venflow.Modeling.Definitions
 {
     internal static class ExpressionExtensions
     {
-        internal static PropertyInfo ValidatePropertySelector<TSource, TTarget>(this Expression<Func<TSource, TTarget>> propertySelector)
+        internal static PropertyInfo ValidatePropertySelector<TSource, TTarget>(this Expression<Func<TSource, TTarget>> propertySelector, bool validateSetter = true)
         {
             var body = propertySelector.Body as MemberExpression;
 
@@ -22,7 +22,7 @@ namespace Venflow.Modeling.Definitions
                 throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property.", nameof(propertySelector));
             }
 
-            if (!property.CanWrite || !property.SetMethod.IsPublic)
+            if (validateSetter && (!property.CanWrite || !property.SetMethod.IsPublic))
             {
                 throw new ArgumentException($"The provided property doesn't contain a setter or it isn't public.", nameof(propertySelector));
             }

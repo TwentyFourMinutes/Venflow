@@ -113,7 +113,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
         INotRequiredSingleRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasMany<TRelation>(Expression<Func<TEntity, IList<TRelation>>> navigationProperty) where TRelation : class
         {
-            var property = navigationProperty.ValidatePropertySelector();
+            var property = navigationProperty.ValidatePropertySelector(false);
 
             IgnoreProperty(property.Name);
 

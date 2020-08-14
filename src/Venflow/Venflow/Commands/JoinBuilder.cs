@@ -46,9 +46,21 @@ namespace Venflow.Commands
             return new JoinBuilder<TRelationEntity, TToEntity, TReturn>(new JoinOptions(joiningEntity!, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, true);
         }
 
+        public JoinBuilder<TRelationEntity, TToEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TRelationEntity, IList<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class, new()
+        {
+            var foreignProperty = propertySelector.ValidatePropertySelector(false);
+
+            if (!_joinBuilderValues.Root.Relations!.TryGetValue(foreignProperty.Name, out var joiningEntity))
+            {
+                throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}' over the foreign property '{foreignProperty.Name}'. Ensure that you defined the relation in your configuration file.");
+            }
+
+            return new JoinBuilder<TRelationEntity, TToEntity, TReturn>(new JoinOptions(joiningEntity!, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, true);
+        }
+
         public JoinBuilder<TRelationEntity, TToEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class, new()
         {
-            var foreignProperty = propertySelector.ValidatePropertySelector();
+            var foreignProperty = propertySelector.ValidatePropertySelector(false);
 
             if (!_joinBuilderValues.Root.Relations!.TryGetValue(foreignProperty.Name, out var joiningEntity))
             {
@@ -72,9 +84,21 @@ namespace Venflow.Commands
             return new JoinBuilder<TRelationEntity, TToEntity, TReturn>(new JoinOptions(joiningEntity!, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, false);
         }
 
+        public JoinBuilder<TRelationEntity, TToEntity, TReturn> ThenWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class, new()
+        {
+            var foreignProperty = propertySelector.ValidatePropertySelector(false);
+
+            if (!_relations!.TryGetValue(foreignProperty.Name, out var joiningEntity))
+            {
+                throw new TypeArgumentException($"The provided entity '{typeof(TToEntity).Name}' isn't in any relation with the entity '{typeof(TEntity).Name}' over the foreign property '{foreignProperty.Name}'. Ensure that you defined the relation in your configuration file.");
+            }
+
+            return new JoinBuilder<TRelationEntity, TToEntity, TReturn>(new JoinOptions(joiningEntity!, joinBehaviour), joiningEntity!.RightEntity, _joinBuilderValues, _commandBuilder, false);
+        }
+
         public JoinBuilder<TRelationEntity, TToEntity, TReturn> ThenWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class, new()
         {
-            var foreignProperty = propertySelector.ValidatePropertySelector();
+            var foreignProperty = propertySelector.ValidatePropertySelector(false);
 
             if (!_relations!.TryGetValue(foreignProperty.Name, out var joiningEntity))
             {

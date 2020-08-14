@@ -111,7 +111,7 @@ namespace Venflow.Modeling.Definitions
 
                     if (relation.LeftNavigationProperty.GetBackingField().GetValue(entityInstance) == null)
                     {
-                        throw new InvalidOperationException($"The entity '{relation.LeftEntity}' defines the navigation property '{relation.LeftNavigationProperty}' which doesn't have a public setter and its value isn't assigned in the constructor. Either assign it in the constructor or add a public setter.");
+                        throw new InvalidOperationException($"The entity '{relation.LeftEntityBuilder.Type.Name}' defines the navigation property '{relation.LeftNavigationProperty.Name}' which doesn't have a public setter and its value isn't assigned in the constructor. Either assign it in the constructor or add a public setter.");
                     }
                 }
 

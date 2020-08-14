@@ -26,7 +26,7 @@ namespace Venflow.Modeling.Definitions.Builder
         {
             _leftRelationType = RelationPartType.Many;
 
-            _rightNavigationProperty = navigationProperty.ValidatePropertySelector();
+            _rightNavigationProperty = navigationProperty.ValidatePropertySelector(false);
 
             return this;
         }

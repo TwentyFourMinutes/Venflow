@@ -64,6 +64,13 @@ namespace Venflow.Commands
             return builder.JoinWith(propertySelector, joinBehaviour);
         }
 
+        JoinBuilder<TEntity, TToEntity, TReturn> IQueryCommandBuilder<TEntity, TReturn>.JoinWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour)
+        {
+            var builder = new JoinBuilder<TEntity, TToEntity, TReturn>(_entityConfiguration, this, (_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0);
+
+            return builder.JoinWith(propertySelector, joinBehaviour);
+        }
+
         JoinBuilder<TEntity, TToEntity, TReturn> IQueryCommandBuilder<TEntity, TReturn>.JoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour)
         {
             var builder = new JoinBuilder<TEntity, TToEntity, TReturn>(_entityConfiguration, this, (_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0);

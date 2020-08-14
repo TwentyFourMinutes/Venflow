@@ -10,6 +10,7 @@ namespace Venflow.Commands
         IQueryCommandBuilder<TEntity, TReturn> TrackChanges(bool trackChanges = true);
 
         JoinBuilder<TEntity, TToEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class, new();
+        JoinBuilder<TEntity, TToEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class, new();
         JoinBuilder<TEntity, TToEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class, new();
     }
 }

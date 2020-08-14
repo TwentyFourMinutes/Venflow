@@ -1,4 +1,4 @@
-﻿using Npgsql;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -372,7 +372,7 @@ namespace Venflow.Dynamic.Materializer
                 var initializeNavigation = primaryEntityHolder.Item1.InitializeNavigation[i];
 
                 _moveNextMethodIL.Emit(OpCodes.Dup);
-                _moveNextMethodIL.Emit(OpCodes.Newobj, initializeNavigation.LeftNavigationProperty.PropertyType.GetConstructor(Type.EmptyTypes));
+                _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(List<>).MakeGenericType(new[] { initializeNavigation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0] }).GetConstructor(Type.EmptyTypes));
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, initializeNavigation.LeftNavigationProperty.GetSetMethod());
             }
 
@@ -464,7 +464,7 @@ namespace Venflow.Dynamic.Materializer
                     var initializeNavigation = entityHolder.Item1.InitializeNavigation[i];
 
                     _moveNextMethodIL.Emit(OpCodes.Dup);
-                    _moveNextMethodIL.Emit(OpCodes.Newobj, initializeNavigation.LeftNavigationProperty.PropertyType.GetConstructor(Type.EmptyTypes));
+                    _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(List<>).MakeGenericType(new[] { initializeNavigation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0] }).GetConstructor(Type.EmptyTypes));
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, initializeNavigation.LeftNavigationProperty.GetSetMethod());
                 }
 
@@ -1001,7 +1001,7 @@ namespace Venflow.Dynamic.Materializer
                     var initializeNavigation = entityHolder.Item1.InitializeNavigation[i];
 
                     _moveNextMethodIL.Emit(OpCodes.Dup);
-                    _moveNextMethodIL.Emit(OpCodes.Newobj, initializeNavigation.LeftNavigationProperty.PropertyType.GetConstructor(Type.EmptyTypes));
+                    _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(List<>).MakeGenericType(new[] { initializeNavigation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0] }).GetConstructor(Type.EmptyTypes));
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, initializeNavigation.LeftNavigationProperty.GetSetMethod());
                 }
 
