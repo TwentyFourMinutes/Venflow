@@ -9,9 +9,11 @@ namespace Venflow.Modeling
 
         internal Entity LeftEntity { get; }
         internal PropertyInfo? LeftNavigationProperty { get; }
+        internal bool IsLeftNavigationPropertyNullable { get; }
 
         internal Entity RightEntity { get; }
         internal PropertyInfo? RightNavigationProperty { get; }
+        internal bool IsRightNavigationPropertyNullable { get; }
 
         internal EntityColumn ForeignKeyColumn { get; }
         internal RelationType RelationType { get; }
@@ -19,14 +21,16 @@ namespace Venflow.Modeling
 
         internal EntityRelation Sibiling { get; set; }
 
-        internal EntityRelation(uint relationId, Entity leftEntity, PropertyInfo? leftNavigationProperty, Entity rightEntity,
-            PropertyInfo? rightNavigationProperty, EntityColumn foreignKeyColumn, RelationType relationType, ForeignKeyLocation foreignKeyLocation)
+        internal EntityRelation(uint relationId, Entity leftEntity, PropertyInfo? leftNavigationProperty, bool isLeftNavigationPropertyNullable, Entity rightEntity,
+            PropertyInfo? rightNavigationProperty, bool isRightNavigationPropertyNullable, EntityColumn foreignKeyColumn, RelationType relationType, ForeignKeyLocation foreignKeyLocation)
         {
             RelationId = relationId;
             LeftEntity = leftEntity;
             LeftNavigationProperty = leftNavigationProperty;
+            IsLeftNavigationPropertyNullable = isLeftNavigationPropertyNullable;
             RightEntity = rightEntity;
             RightNavigationProperty = rightNavigationProperty;
+            IsRightNavigationPropertyNullable = isRightNavigationPropertyNullable;
             ForeignKeyColumn = foreignKeyColumn;
             RelationType = relationType;
             ForeignKeyLocation = foreignKeyLocation;

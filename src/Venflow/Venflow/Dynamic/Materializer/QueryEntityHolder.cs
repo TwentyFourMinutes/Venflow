@@ -13,6 +13,7 @@ namespace Venflow.Dynamic.Materializer
 
         internal bool HasRelations => AssignedRelations.Count > 0 || AssigningRelations.Count > 0;
         internal bool RequiresChangedLocal { get; set; }
+        internal bool RequiresDBNullCheck { get; set; }
 
         internal QueryEntityHolder(Entity entity, int id)
         {

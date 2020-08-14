@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Venflow.Commands;
 using Venflow.Enums;
 
@@ -58,11 +58,23 @@ namespace Venflow.Dynamic.Materializer
 
                 rightQueryHolder.RequiresChangedLocal = true;
                 leftQueryHolder.RequiresChangedLocal = true;
+
+                leftQueryHolder.RequiresDBNullCheck = true;
             }
             else
             {
                 rightQueryHolder.AssignedRelations.Add((relation.Sibiling, leftQueryHolder));
                 rightQueryHolder.RequiresChangedLocal = true;
+
+                if (relation.RelationType == RelationType.OneToOne &&
+                        relation.IsRightNavigationPropertyNullable)
+                {
+                    leftQueryHolder.RequiresDBNullCheck = true;
+                }
+                else if(relation.RelationType == RelationType.OneToMany)
+                {
+                    leftQueryHolder.RequiresDBNullCheck = true;
+                }
             }
 
             if (relation.LeftNavigationProperty is { })
@@ -72,14 +84,25 @@ namespace Venflow.Dynamic.Materializer
                     leftQueryHolder.InitializeNavigation.Add(relation);
                     rightQueryHolder.AssigningRelations.Add((relation.Sibiling, leftQueryHolder));
 
-
                     rightQueryHolder.RequiresChangedLocal = true;
                     leftQueryHolder.RequiresChangedLocal = true;
+
+                    rightQueryHolder.RequiresDBNullCheck = true;
                 }
                 else
                 {
                     leftQueryHolder.AssignedRelations.Add((relation, rightQueryHolder));
                     leftQueryHolder.RequiresChangedLocal = true;
+
+                    if (relation.RelationType == RelationType.OneToOne &&
+                        relation.IsLeftNavigationPropertyNullable)
+                    {
+                        rightQueryHolder.RequiresDBNullCheck = true;
+                    }
+                    else if (relation.RelationType == RelationType.OneToMany)
+                    {
+                        rightQueryHolder.RequiresDBNullCheck = true;
+                    }
                 }
             }
 
