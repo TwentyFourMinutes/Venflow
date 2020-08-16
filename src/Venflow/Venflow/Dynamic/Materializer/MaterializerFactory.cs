@@ -61,10 +61,6 @@ namespace Venflow.Dynamic.Materializer
                     cacheKeyBuilder.Add(columnName);
                 }
             }
-            else
-            {
-                cacheKeyBuilder.Add(_entity.TableName);
-            }
 
             for (; columnIndex < columnSchema.Count; columnIndex++)
             {
