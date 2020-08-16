@@ -1342,7 +1342,7 @@ namespace Venflow.Dynamic.Materializer
         {
             if (column.IsNullableReferenceType)
             {
-                var valueRetriever = typeof(NpgsqlDataReaderExtensions).GetMethod("GetValueOrDefault", BindingFlags.Static | BindingFlags.Public).MakeGenericMethod(column.PropertyInfo.PropertyType);
+                var valueRetriever = typeof(NpgsqlDataReaderExtensions).GetMethod("GetValueOrDefault", BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(column.PropertyInfo.PropertyType);
 
                 iLGenerator.Emit(OpCodes.Call, valueRetriever);
             }
