@@ -1,5 +1,6 @@
 ﻿using Npgsql;
 using System;
+using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using Venflow.Modeling;
@@ -12,18 +13,20 @@ namespace Venflow.Commands
 
         private readonly JoinBuilderValues _joinBuilderValues;
         private readonly bool _trackingChanges;
+        private readonly bool _isSingleResult;
 
-        internal VenflowQueryCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, JoinBuilderValues joinBuilderValues, bool trackingChanges, bool disposeCommand) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
+        internal VenflowQueryCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, JoinBuilderValues joinBuilderValues, bool trackingChanges, bool disposeCommand, bool isSingleResult) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
         {
             _joinBuilderValues = joinBuilderValues;
             _trackingChanges = trackingChanges;
+            _isSingleResult = isSingleResult;
         }
 
         async Task<TReturn> IQueryCommand<TEntity, TReturn>.QueryAsync(CancellationToken cancellationToken)
         {
             await ValidateConnectionAsync();
 
-            await using var reader = await UnderlyingCommand.ExecuteReaderAsync(cancellationToken); // TODO: Read single row 
+            await using var reader = await UnderlyingCommand.ExecuteReaderAsync(_isSingleResult ? CommandBehavior.SingleRow : CommandBehavior.Default, cancellationToken);
 
             Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> materializer;
 
