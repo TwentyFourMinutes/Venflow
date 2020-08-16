@@ -277,7 +277,7 @@ namespace Venflow.Modeling
         /// </summary>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
-        /// <remarks>This method will automatically generate a SQL SELECT statement.</remarks>
+        /// <remarks>This method represents the following SQL statement "SELECT * FROM table LIMIT 1".</remarks>
         public IPreCommandBuilder<TEntity, TEntity> QuerySingle(bool disposeCommand = true)
             => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QuerySingle();
 
@@ -286,7 +286,7 @@ namespace Venflow.Modeling
         /// </summary>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
-        /// <remarks>This method will automatically generate a SQL SELECT statement.</remarks>
+        /// <remarks>This method represents the following SQL statement "SELECT * FROM table"</remarks>
         public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(bool disposeCommand = true)
             => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QueryBatch();
 

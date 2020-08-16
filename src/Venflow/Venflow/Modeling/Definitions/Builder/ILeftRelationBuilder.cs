@@ -22,7 +22,7 @@ namespace Venflow.Modeling.Definitions.Builder
         /// </para>
         /// </summary>
         /// <typeparam name="TRelation">The entity type that this relationship targets.</typeparam>
-        /// <param name="navigationProperty"> A lambda expression representing the reference navigation property on this entity type that represents the relationship (post => post.Blog). If no property is specified, the relationship will be configured without a navigation property on this end.</param>
+        /// <param name="navigationProperty">A lambda expression representing the reference navigation property on this entity type that represents the relationship (post => post.Blog). If no property is specified, the relationship will be configured without a navigation property on this end.</param>
         /// <returns>An object that can be used to configure the relationship.</returns>
         INotRequiredMultiRightRelationBuilder<TEntity, TRelation> HasOne<TRelation>(Expression<Func<TEntity, TRelation>> navigationProperty) where TRelation : class;
 

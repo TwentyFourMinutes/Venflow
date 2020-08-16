@@ -8,6 +8,10 @@ using Venflow.Commands;
 
 namespace Venflow.Modeling
 {
+    /// <summary>
+    /// A <see cref="TableBase{TEntity}"/> is used to perform query operations of all sorts.
+    /// </summary>
+    /// <typeparam name="TEntity">The entity which represents a table in the Database.</typeparam>
     public class TableBase<TEntity> where TEntity : class, new()
     {
         private protected Database Database;
@@ -69,7 +73,7 @@ namespace Venflow.Modeling
            => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QuerySingle(sql, parameters);
 
         /// <summary>
-        /// Creates a new query command, which expects a single returned primary row. <strong>This API does< support string interpolation!</strong>.
+        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
         /// </summary>
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
