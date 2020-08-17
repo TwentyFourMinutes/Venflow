@@ -1,6 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 using Microsoft.EntityFrameworkCore;
+using RepoDb;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
 
         private List<Person> _efCorePeople;
         private List<Person> _venflowPeople;
-        //private List<Person> _repoDbPeople;
+        private List<Person> _repoDbPeople;
 
         private int index = 0;
 
@@ -34,11 +35,11 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
 
             _efCorePeople = await PersonDbContext.People.Take(UpdateCount).ToListAsync();
             _venflowPeople = await Database.People.QueryBatch(@"SELECT * FROM ""People"" LIMIT " + UpdateCount).TrackChanges().Build().QueryAsync();
-            //_repoDbPeople = (await DbConnectionExtension.QueryAsync<Person>(Database.GetConnection(), whereOrPrimaryKey: null, top: UpdateCount)).ToList();
+            _repoDbPeople = (await DbConnectionExtension.QueryAsync<Person>(Database.GetConnection(), whereOrPrimaryKey: null, top: UpdateCount)).ToList();
 
             await EFCoreUpdateBatchAsync();
             await VenflowUpdateBatchAsync();
-            //await RepoDbUpdateBatchAsync();
+            await RepoDbUpdateBatchAsync();
         }
 
         [Benchmark(Baseline = true)]
@@ -63,16 +64,16 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
             return Database.People.UpdateAsync(_venflowPeople);
         }
 
-        //[Benchmark]
-        //public Task RepoDbUpdateBatchAsync()
-        //{
-        //    for (int i = 0; i < _repoDbPeople.Count; i++)
-        //    {
-        //        _repoDbPeople[i].Name = "RepoDbUpdateSingleAsync" + index++.ToString();
-        //    }
+        [Benchmark]
+        public Task RepoDbUpdateBatchAsync()
+        {
+            for (int i = 0; i < _repoDbPeople.Count; i++)
+            {
+                _repoDbPeople[i].Name = "RepoDbUpdateSingleAsync" + index++.ToString();
+            }
 
-        //    return DbConnectionExtension.UpdateAllAsync(Database.GetConnection(), entities: _repoDbPeople, qualifiers: Field.From("Name"));
-        //}
+            return DbConnectionExtension.UpdateAllAsync(Database.GetConnection(), _repoDbPeople);
+        }
 
         [GlobalCleanup]
         public override Task Cleanup()

@@ -59,7 +59,7 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
         {
             _repoDbPerson.Name = "RepoDbUpdateSingleAsync" + index++.ToString();
 
-            return DbConnectionExtension.UpdateAsync(Database.GetConnection(), _repoDbPerson, Field.From("Name"));
+            return DbConnectionExtension.UpdateAsync(Database.GetConnection(), _repoDbPerson);
         }
 
         [GlobalCleanup]
