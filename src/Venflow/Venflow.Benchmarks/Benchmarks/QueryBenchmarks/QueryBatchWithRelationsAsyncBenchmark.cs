@@ -66,7 +66,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
             var emailDict = new Dictionary<int, Email>();
             var emailContentDict = new Dictionary<int, EmailContent>();
 
-            var people = (await Dapper.SqlMapper.QueryAsync<Person, Email, EmailContent, Person>(Database.GetConnection(), "SELECT * FROM (SELECT * FROM \"People\" LIMIT 5000) As People JOIN \"Emails\" As Emails On Emails.\"PersonId\" = People.\"Id\" JOIN \"EmailContents\" As EmailContents On EmailContents.\"EmailId\" = Emails.\"Id\"", (person, email, emailContent) =>
+            var people = (await Dapper.SqlMapper.QueryAsync<Person, Email, EmailContent, Person>(Database.GetConnection(), sql, (person, email, emailContent) =>
             {
                 var isEmailNew = false;
                 var isEmailContentNew = false;
@@ -126,7 +126,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
             var emailDict = new Dictionary<int, Email>();
             var emailContentDict = new Dictionary<int, EmailContent>();
 
-            await Dapper.SqlMapper.QueryAsync<Person, Email, EmailContent, Person>(Database.GetConnection(), "SELECT * FROM (SELECT * FROM \"People\" LIMIT 5000) As People JOIN \"Emails\" As Emails On Emails.\"PersonId\" = People.\"Id\" JOIN \"EmailContents\" As EmailContents On EmailContents.\"EmailId\" = Emails.\"Id\"", (person, email, emailContent) =>
+            await Dapper.SqlMapper.QueryAsync<Person, Email, EmailContent, Person>(Database.GetConnection(), sql, (person, email, emailContent) =>
             {
                 var isEmailNew = false;
                 var isEmailContentNew = false;
