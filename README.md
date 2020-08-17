@@ -29,11 +29,44 @@ How you can help other than that? This can be done in numerous ways, over on the
 
 ## Installation
 
-The alpha versions of Venflow can currently be downloaded on [nuget.org](https://www.nuget.org/packages/Venflow). However please do note that since this package is still in alpha, it may still contain bugs and other issues.
+The alpha versions of Venflow can currently be downloaded on [nuget.org](https://www.nuget.org/packages/Venflow). However please do note that since this package is still in beta, it may still contain bugs and other issues.
+
+Also you can install it via the **P**ackage **M**anager **C**onsole:
+
+```
+Install-Package Venflow
+```
 
 ## Comparison
 
-Once the first beta of Venflow will be released, benchmarks and deeper comparison to other ORMs will be released with it.
+Benchmarking ORM's isn't quite an easy task, since there are a bunch of different factors which can alter the result in one way or another. I do not show any beautiful graphs here for the simple reason, that showing them would be pretty impractical, since there would be just too many. That is also the reason why I tried to come up with a composite number based on the benchmark results. If you still want check all the individual benchmarks, which you defiantly should, the source code can be found [here](./src/Venflow/Venflow.Benchmarks) and the results as `.csv` and `.md` are over [here](./benchmarks).
+
+Lets just directly hop into the composite numbers of each tested ORM.
+
+| ORM Name                                                   | Composite Score* | Mean Score* | Allocation Score* |
+| :--------------------------------------------------------- | :--------------: | :---------: | :---------------: |
+| #1 [Venflow](https://github.com/TwentyFourMinutes/Venflow) |      13.025      |   11.626    |       1.399       |
+| #2 [Dapper](https://github.com/StackExchange/Dapper)**     |      16.389      |   12.656    |       3.733       |
+| #3 [RepoDb](https://github.com/mikependon/RepoDb)**        |      44.797      |   38.626    |       6.170       |
+| #4 [EFCore](https://github.com/dotnet/efcore)              |     249.145      |   192.909   |      56.236       |
+
+\* Lower is considered to be better
+\*\* Do have missing benchmark entries for specific benchmark groups and therefor either might have better/worse scores.
+
+Now how do I calculate this _magic number_? The formula is as following: 
+$$
+compositeScore = Σ((meanTime / lowestMeanTimeOfGroup - 1) + (allocation / lowestAllocationOfGroup - 1) / 10)
+$$
+A group is considered as a list of benchmark entries which are inside the same file and have the same \*count and target framework. Now as some ORM's don't have any benchmarks entries for specific benchmark groups it will take instead take the _lowest_ mean and the _lowest_  allocation from this group. The source code of the calculation can be found [here](./src/Venflow/Venflow.Score).
+
+#### Disclaimer
+
+The benchmarks themselves or even the calculation of the composite numbers may not be right and contain bugs. Therefor consider these results with a grain of salt. If you find any bugs inside the calculations or in the benchmarks please create an issue and I'll try to fix it ASAP.
+
+## Road map
+
+- Enum mapping
+- Direct support for many to many relations
 
 ### Acknowledgements
 

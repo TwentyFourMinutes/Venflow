@@ -26,7 +26,6 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         [GlobalSetup]
         public override async Task Setup()
         {
-            System.Console.WriteLine("ye");
             await base.Setup();
 
             await EfCoreQueryBatchAsync();
