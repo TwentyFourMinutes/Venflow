@@ -4,6 +4,375 @@
         <name>Venflow</name>
     </assembly>
     <members>
+        <member name="T:Venflow.Commands.IDeleteCommand`1">
+            <summary>
+            Represents a command which performs deletions of entities.
+            </summary>
+            <typeparam name="TEntity">The type of the entity which will be deleted.</typeparam>
+        </member>
+        <member name="M:Venflow.Commands.IDeleteCommand`1.DeleteAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously deletes a single entity.
+            </summary>
+            <param name="entity">The entity instance which should be deleted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IDeleteCommand`1.DeleteAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously deletes a set of entity.
+            </summary>
+            <param name="entities">The entity instances which should be deleted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+        </member>
+        <member name="T:Venflow.Commands.IDeleteCommandBuilder`1">
+            <summary>
+            Represents a command builder to configure the deletion.
+            </summary>
+            <typeparam name="TEntity">The type of the entity which will be deleted.</typeparam>
+        </member>
+        <member name="T:Venflow.Commands.IInsertCommand`1">
+            <summary>
+            Represents a command which performs insertions of entities.
+            </summary>
+            <typeparam name="TEntity">The type of the entity which will be inserted.</typeparam>
+        </member>
+        <member name="M:Venflow.Commands.IInsertCommand`1.InsertAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously inserts a single entity.
+            </summary>
+            <param name="entity">The entity instance which should be inserted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; 0 otherwise.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IInsertCommand`1.InsertAsync(System.Collections.Generic.List{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously inserts a set of entities.
+            </summary>
+            <param name="entities">The entity instances which should be inserted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; 0 otherwise.</returns>
+        </member>
+        <member name="T:Venflow.Commands.IInsertCommandBuilder`1">
+            <summary>
+            Represents a command builder to configure the insertion.
+            </summary>
+            <typeparam name="TEntity">The type of the entity which will be inserted.</typeparam>
+        </member>
+        <member name="M:Venflow.Commands.IInsertCommandBuilder`1.SetIdentityColumns">
+            <summary>
+            Defines if the insertion should populate identity columns.
+            </summary>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IInsertCommandBuilder`1.PopulateRelation">
+            <summary>
+            Defines if the insertion should populate all foreign properties.
+            </summary>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IInsertCommandBuilder`1.DoNotSetIdentityColumns">
+            <summary>
+            Defines if the insertion shouldn't populate identity columns.
+            </summary>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IInsertCommandBuilder`1.DoNotDoNotSetPopulateRelation">
+            <summary>
+            Defines if the insertion shouldn't populate all foreign properties.
+            </summary>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="T:Venflow.Commands.IPreCommandBuilder`2">
+            <summary>
+            Represents a command builder to configure the query.
+            </summary>
+            <typeparam name="TEntity">The type of the entity which will be queried.</typeparam>
+            <typeparam name="TReturn">The return type of the query.</typeparam>
+        </member>
+        <member name="M:Venflow.Commands.IPreCommandBuilder`2.AddFormatter">
+            <summary>
+            Defines if <b>&gt;&lt;</b> should be replaced by automatically generated joins in your SQL.
+            </summary>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="T:Venflow.Commands.IQueryCommand`2">
+            <summary>
+            Represents a command which performs queries and materialize the results to entities.
+            </summary>
+            <typeparam name="TEntity">The type of the entity which represents the result of the query.</typeparam>
+        </member>
+        <member name="M:Venflow.Commands.IQueryCommand`2.PrepareAsync(System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously prepares the current SQL command on the database.
+            </summary>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+        </member>
+        <member name="M:Venflow.Commands.IQueryCommand`2.UnprepareAsync(System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously un-prepares the current SQL command on the database.
+            </summary>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+        </member>
+        <member name="M:Venflow.Commands.IQueryCommand`2.QueryAsync(System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously performs queries and materializes the result.
+            </summary>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the materialized result of the query; <see langword="null"/> otherwise.</returns>
+        </member>
+        <member name="T:Venflow.Commands.IQueryCommandBuilder`2">
+            <summary>
+            Represents a command builder to configure the query.
+            </summary>
+            <typeparam name="TEntity">The type of the entity which will be queried.</typeparam>
+            <typeparam name="TReturn">The return type of the query.</typeparam>
+        </member>
+        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.TrackChanges(System.Boolean)">
+            <summary>
+            Determines whether or not to return change tracked entities from the query.
+            </summary>
+            <param name="trackChanges">Determines if change tracking should be applied.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},Venflow.Enums.JoinBehaviour)">
+            <summary>
+            Allows to configure materialized joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <param name="joinBehaviour">Configures the type of this join.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}},Venflow.Enums.JoinBehaviour)">
+            <summary>
+            Allows to configure materialized joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <param name="joinBehaviour">Configures the type of this join.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}},Venflow.Enums.JoinBehaviour)">
+            <summary>
+            Allows to configure materialized joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <param name="joinBehaviour">Configures the type of this join.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="T:Venflow.Commands.ISpecficVenflowCommandBuilder`1">
+            <summary>
+            Represents a generic command builder for all CRUD operations to finalize the configuration.
+            </summary>
+            <typeparam name="TCommand">The type of the command which is being configured.</typeparam>
+        </member>
+        <member name="M:Venflow.Commands.ISpecficVenflowCommandBuilder`1.Build">
+            <summary>
+            Finalizes the ongoing configuration process and builds the command.
+            </summary>
+            <returns>The built command.</returns>
+        </member>
+        <member name="T:Venflow.Commands.IUpdateCommand`1">
+            <summary>
+            Represents a command which performs updates of entities.
+            </summary>
+            <typeparam name="TEntity">The type of the entity which will be updated.</typeparam>
+        </member>
+        <member name="M:Venflow.Commands.IUpdateCommand`1.UpdateAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously updates a single entity.
+            </summary>
+            <param name="entity">The change tracked entity instance which should be updated.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IUpdateCommand`1.UpdateAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously updates a set of entities.
+            </summary>
+            <param name="entity">The change tracked entity instance which should be updated.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation.</returns>
+        </member>
+        <member name="T:Venflow.Commands.IUpdateCommandBuilder`1">
+            <summary>
+            Represents a command builder to configure the update.
+            </summary>
+            <typeparam name="TEntity">The type of the entity which will be updated.</typeparam>
+        </member>
+        <member name="T:Venflow.Commands.IVenflowCommand`1">
+            <summary>
+            The base command for all other CRUD commands.
+            </summary>
+            <typeparam name="TEntity">The type of the entity which is being used in the current operation.</typeparam>
+        </member>
+        <member name="T:Venflow.Commands.IVenflowCommandBuilder`1">
+            <summary>
+            Represents a generic command builder to create any CRUD command.
+            </summary>
+            <typeparam name="TEntity">The type of the entity which will be used for the command.</typeparam>
+        </member>
+        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle">
+            <summary>
+            Creates a new query command builder, which expects a single returned primary row.
+            </summary>
+            <returns>A Fluent API Builder for a query command.</returns>
+            <remarks>This method represents the following SQL statement "SELECT * FROM table LIMIT 1".</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(System.String)">
+            <summary>
+            Creates a query command with a single result. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])"/> or <see cref="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedSingle(System.FormattableString)"/>.
+            </summary>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])">
+            <summary>
+            Creates a new query command builder, which expects a single returned primary row. <strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <see cref="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedSingle(System.FormattableString)"/>.
+            </summary>
+            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
+            <param name="parameters">A set of <see cref="T:Npgsql.NpgsqlParameter"/> which contain parameters for the <paramref name="sql"/> command.</param>
+            <returns>A Fluent API Builder for a query command.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedSingle(System.FormattableString)">
+            <summary>
+            Creates a new query command builder, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            </summary>
+            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
+            <returns>A Fluent API Builder for a query command.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch">
+            <summary>
+            Creates a new query command builder, which expects a set of primary rows to be returned.
+            </summary>
+            <returns>A Fluent API Builder for a query command.</returns>
+            <remarks>This method represents the following SQL statement "SELECT * FROM table"</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.UInt64)">
+            <summary>
+            Creates a new query command builder, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])"/> or <see cref="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedSingle(System.FormattableString)"/>.
+            </summary>
+            <param name="count">A value specifying the maximum returned primary rows.</param>
+            <returns>A Fluent API Builder for a query command.</returns>
+            <remarks>This method will automatically generate a SQL SELECT statement with a LIMIT.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.String)">
+            <summary>
+            Creates a new query command builder, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])"/> or <see cref="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedSingle(System.FormattableString)"/>.
+            </summary>
+            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
+            <returns>A Fluent API Builder for a query command.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.String,Npgsql.NpgsqlParameter[])">
+            <summary>
+            Creates a new query command builder, which expects a set of primary rows to be returned.<strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <see cref="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedSingle(System.FormattableString)"/>.
+            </summary>
+            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
+            <param name="parameters">A set of <see cref="T:Npgsql.NpgsqlParameter"/> which contain parameters for the <paramref name="sql"/> command.</param>
+            <returns>A Fluent API Builder for a query command.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedBatch(System.FormattableString)">
+            <summary>
+            Creates a new query command builder, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+            </summary>
+            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. <strong>You should only add parameters trough string interpolation.</strong></param>
+            <returns>A Fluent API Builder for a query command.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.Insert">
+            <summary>
+            Creates a new insert command builder.
+            </summary>
+            <returns>A Fluent API Builder for a insert command.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.Delete">
+            <summary>
+            Creates a new delete command builder.
+            </summary>
+            <returns>A Fluent API Builder for a delete command.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.Update">
+            <summary>
+            Creates a new update command builder.
+            </summary>
+            <returns>A Fluent API Builder for a update command.</returns>
+        </member>
+        <member name="T:Venflow.Commands.JoinBuilder`3">
+            <summary>
+            Represents a query command builder which helps configuring the materialized joins.
+            </summary>
+            <typeparam name="TRelationEntity">The entity which will be joined with.</typeparam>
+            <typeparam name="TEntity">The root entity of the query.</typeparam>
+            <typeparam name="TReturn">The return type of the query.</typeparam>
+        </member>
+        <member name="M:Venflow.Commands.JoinBuilder`3.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},Venflow.Enums.JoinBehaviour)">
+            <summary>
+            Allows to configure materialized joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <param name="joinBehaviour">Configures the type of this join.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.JoinBuilder`3.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}},Venflow.Enums.JoinBehaviour)">
+            <summary>
+            Allows to configure materialized joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <param name="joinBehaviour">Configures the type of this join.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.JoinBuilder`3.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}},Venflow.Enums.JoinBehaviour)">
+            <summary>
+            Allows to configure materialized joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <param name="joinBehaviour">Configures the type of this join.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.JoinBuilder`3.ThenWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}},Venflow.Enums.JoinBehaviour)">
+            <summary>
+            Allows to configure concatenated materialized joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <param name="joinBehaviour">Configures the type of this join.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.JoinBuilder`3.ThenWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}},Venflow.Enums.JoinBehaviour)">
+            <summary>
+            Allows to configure concatenated materialized joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <param name="joinBehaviour">Configures the type of this join.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.JoinBuilder`3.ThenWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}},Venflow.Enums.JoinBehaviour)">
+            <summary>
+            Allows to configure concatenated materialized joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <param name="joinBehaviour">Configures the type of this join.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.JoinBuilder`3.Build">
+            <summary>
+            Finalizes the ongoing configuration process and builds the command.
+            </summary>
+            <returns>The built command.</returns>
+        </member>
+        <member name="M:Venflow.Commands.JoinBuilder`3.TrackChanges(System.Boolean)">
+            <summary>
+            Determines whether or not to return change tracked entities from the query.
+            </summary>
+            <param name="trackChanges">Determines if change tracking should be applied.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+        </member>
         <member name="T:Venflow.Database">
             <summary>
             A <see cref="T:Venflow.Database"/> instance represents a session with the database and can be used to perform CRUD operations with your tables and entities.
@@ -314,7 +683,7 @@
             </para>
             </summary>
             <typeparam name="TRelation">The entity type that this relationship targets.</typeparam>
-            <param name="navigationProperty"> A lambda expression representing the reference navigation property on this entity type that represents the relationship (post => post.Blog). If no property is specified, the relationship will be configured without a navigation property on this end.</param>
+            <param name="navigationProperty">A lambda expression representing the reference navigation property on this entity type that represents the relationship (post => post.Blog). If no property is specified, the relationship will be configured without a navigation property on this end.</param>
             <returns>An object that can be used to configure the relationship.</returns>
         </member>
         <member name="M:Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasOne``1">
@@ -602,7 +971,7 @@
             </summary>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
             <returns>A Fluent API Builder for a query command.</returns>
-            <remarks>This method will automatically generate a SQL SELECT statement.</remarks>
+            <remarks>This method represents the following SQL statement "SELECT * FROM table LIMIT 1".</remarks>
         </member>
         <member name="M:Venflow.Modeling.Table`1.QueryBatch(System.Boolean)">
             <summary>
@@ -610,7 +979,7 @@
             </summary>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
             <returns>A Fluent API Builder for a query command.</returns>
-            <remarks>This method will automatically generate a SQL SELECT statement.</remarks>
+            <remarks>This method represents the following SQL statement "SELECT * FROM table"</remarks>
         </member>
         <member name="M:Venflow.Modeling.Table`1.QueryBatch(System.UInt64,System.Boolean)">
             <summary>
@@ -679,6 +1048,12 @@
             <remarks>Any property which should be change tracked on an entity has to be marked virtual.</remarks>
             <exception cref="T:System.InvalidOperationException">Thrown when a provided entity does not contain any virtual properties.</exception>
         </member>
+        <member name="T:Venflow.Modeling.TableBase`1">
+            <summary>
+            A <see cref="T:Venflow.Modeling.TableBase`1"/> is used to perform query operations of all sorts.
+            </summary>
+            <typeparam name="TEntity">The entity which represents a table in the Database.</typeparam>
+        </member>
         <member name="M:Venflow.Modeling.TableBase`1.QueryAsync``1(Venflow.Commands.IQueryCommand{`0,``0},System.Threading.CancellationToken)">
             <summary>
             Asynchronously queries one or more entities with the configured joins.
@@ -714,7 +1089,14 @@
             <param name="parameters">A set of <see cref="T:Npgsql.NpgsqlParameter"/> which contain parameters for the <paramref name="sql"/> command.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Venflow.Modeling.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)" -->
+        <member name="M:Venflow.Modeling.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)">
+            <summary>
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            </summary>
+            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
+            <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
+            <returns>A Fluent API Builder for a query command.</returns>
+        </member>
         <member name="M:Venflow.Modeling.TableBase`1.QueryBatch(System.String,System.Boolean)">
             <summary>
             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="M:Venflow.Modeling.TableBase`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])"/> or <see cref="M:Venflow.Modeling.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
@@ -777,6 +1159,22 @@
         </member>
         <member name="M:Venflow.TypeArgumentException.#ctor(System.String,System.Exception)">
             <inheritdoc/>
+        </member>
+        <member name="T:Venflow.VenflowConfiguration">
+            <summary>
+            Contains methods to globally set the configuration of Venflow.
+            </summary>
+        </member>
+        <member name="P:Venflow.VenflowConfiguration.ShouldUseDeepValidation">
+            <summary>
+            Determines whether or not Venflow will perform more extensive validation through out its usage. This setting will be set to <see langword="true"></see> automatically, if you are in DEBUG, otherwise <see langword="false"></see>.
+            </summary>
+        </member>
+        <member name="M:Venflow.VenflowConfiguration.UseDeepValidation(System.Boolean)">
+            <summary>
+            Changes the value of the <see cref="P:Venflow.VenflowConfiguration.ShouldUseDeepValidation"/> property.
+            </summary>
+            <param name="validation">Determines if Venflow should use deep validation or not.</param>
         </member>
     </members>
 </doc>
