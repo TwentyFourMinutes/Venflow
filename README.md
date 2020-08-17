@@ -50,13 +50,13 @@ Lets just directly hop into the composite numbers of each tested ORM.
 | #3 [RepoDb](https://github.com/mikependon/RepoDb)**        |      44.797      |   38.626    |       6.170       |
 | #4 [EFCore](https://github.com/dotnet/efcore)              |     249.145      |   192.909   |      56.236       |
 
-\* Lower is considered to be better
+\* Lower is considered to be better </br>
 \*\* Do have missing benchmark entries for specific benchmark groups and therefor either might have better/worse scores.
 
 Now how do I calculate this _magic number_? The formula is as following: 
-$$
+```
 compositeScore = Σ((meanTime / lowestMeanTimeOfGroup - 1) + (allocation / lowestAllocationOfGroup - 1) / 10)
-$$
+```
 A group is considered as a list of benchmark entries which are inside the same file and have the same \*count and target framework. Now as some ORM's don't have any benchmarks entries for specific benchmark groups it will take instead take the _lowest_ mean and the _lowest_  allocation from this group. The source code of the calculation can be found [here](./src/Venflow/Venflow.Score).
 
 #### Disclaimer
