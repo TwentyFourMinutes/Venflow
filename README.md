@@ -120,7 +120,7 @@ var query = database.Blogs.QueryBatch(sql).JoinWith(x => x.Posts).Build();
 var blogs = await query.QueryAsync(); // You can also inline this with the line above.
 ```
 
-Subsequent joins can be configured with the `ThenWith` method. Do note, that one handy feature of Venflow is string interpolated SQL. This means that most of the methods which accept SQL also have a sibling named `*Interpolated*` which will automatically replace the used variables and use parameterized queries.
+Subsequent joins can be configured with the `ThenWith` method. Do note, that one handy feature of Venflow is string interpolated SQL. This means that most of the methods which accept SQL also have a sibling named `*Interpolated*` which will automatically extract the used variables and use a parameterized query instead.
 
 ## Road map
 
