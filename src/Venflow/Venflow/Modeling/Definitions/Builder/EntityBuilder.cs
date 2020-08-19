@@ -157,7 +157,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
             Type? primaryKeyAttributeType = default;
 
-            if (!IsCustomEntity)
+            if (IsCustomEntity)
             {
                 primaryKeyAttributeType = typeof(KeyAttribute);
             }
@@ -168,7 +168,9 @@ namespace Venflow.Modeling.Definitions.Builder
 
                 if (property.CanWrite && property.SetMethod!.IsPublic && !_ignoredColumns.Contains(property.Name) && !Attribute.IsDefined(property, notMappedAttributeType))
                 {
-                    if (IsCustomEntity && (Attribute.IsDefined(property, primaryKeyAttributeType) || property.Name == "Id"))
+                    if (IsCustomEntity && 
+                        (Attribute.IsDefined(property, primaryKeyAttributeType) || 
+                        property.Name == "Id"))
                     {
                         annotedPrimaryKey = property;
                     }
