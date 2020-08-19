@@ -1348,8 +1348,62 @@ namespace Venflow.Dynamic.Materializer
             }
             else
             {
+                var valueRetriever = _dataReaderType.GetMethod("GetFieldValue", BindingFlags.Instance | BindingFlags.Public);
 
-                var valueRetriever = _dataReaderType.GetMethod("GetFieldValue", BindingFlags.Instance | BindingFlags.Public).MakeGenericMethod(column.PropertyInfo.PropertyType);
+                var underlyingType = Nullable.GetUnderlyingType(column.PropertyInfo.PropertyType);
+
+                if (underlyingType is { })
+                {
+                    if (underlyingType.IsEnum)
+                    {
+                        var underlyingNumericalType = Enum.GetUnderlyingType(underlyingType);
+                        var nullableUnderlyingEnumType = typeof(Nullable<>).MakeGenericType(underlyingNumericalType);
+
+                        var nullableUnderylyingEnumLocal = iLGenerator.DeclareLocal(nullableUnderlyingEnumType);
+                        var enumLocal = iLGenerator.DeclareLocal(column.PropertyInfo.PropertyType);
+
+                        var afterHasNoValueLabel = iLGenerator.DefineLabel();
+                        var assignLabel = iLGenerator.DefineLabel();
+
+                        valueRetriever = valueRetriever.MakeGenericMethod(nullableUnderlyingEnumType);
+
+                        iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
+                        iLGenerator.Emit(OpCodes.Stloc_S, nullableUnderylyingEnumLocal);
+
+                        iLGenerator.Emit(OpCodes.Ldloca_S, nullableUnderylyingEnumLocal);
+                        iLGenerator.Emit(OpCodes.Call, nullableUnderlyingEnumType.GetProperty("HasValue").GetGetMethod());
+                        iLGenerator.Emit(OpCodes.Brtrue, afterHasNoValueLabel);
+
+                        iLGenerator.Emit(OpCodes.Ldloca_S, enumLocal);
+                        iLGenerator.Emit(OpCodes.Initobj, column.PropertyInfo.PropertyType);
+                        iLGenerator.Emit(OpCodes.Ldloc_S, enumLocal);
+                        iLGenerator.Emit(OpCodes.Br, assignLabel);
+
+                        iLGenerator.MarkLabel(afterHasNoValueLabel);
+
+                        iLGenerator.Emit(OpCodes.Ldloca_S, nullableUnderylyingEnumLocal);
+                        iLGenerator.Emit(OpCodes.Call, nullableUnderlyingEnumType.GetProperty("Value").GetGetMethod());
+                        iLGenerator.Emit(OpCodes.Newobj, column.PropertyInfo.PropertyType.GetConstructor(new[] { underlyingType }));
+
+                        iLGenerator.MarkLabel(assignLabel);
+
+                        return;
+                    }
+                }
+                else
+                {
+                    if (column.PropertyInfo.PropertyType.IsEnum)
+                    {
+                        valueRetriever = valueRetriever.MakeGenericMethod(Enum.GetUnderlyingType(column.PropertyInfo.PropertyType));
+
+                        iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
+
+                        return;
+                    }
+                }
+
+
+                valueRetriever = valueRetriever.MakeGenericMethod(column.PropertyInfo.PropertyType);
 
                 iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
             }

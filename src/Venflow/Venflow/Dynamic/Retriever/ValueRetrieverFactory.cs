@@ -22,7 +22,7 @@ namespace Venflow.Dynamic.Retriever
             var retrieverMethod = new DynamicMethod($"Venflow.Dynamic.ValueRetrievers.{_entityType.Name}.{property.Name}ValueRetriever", npgsqlParameterType, new[] { _entityType, stringType }, TypeFactory.DynamicModule);
             var retrieverMethodIL = retrieverMethod.GetILGenerator();
 
-            Type? underlyingType = property.PropertyType.IsValueType ? Nullable.GetUnderlyingType(property.PropertyType) : default;
+            var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
 
             if (underlyingType is { })
             {
@@ -49,7 +49,10 @@ namespace Venflow.Dynamic.Retriever
             il.Emit(OpCodes.Call, stringType.GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new[] { stringType, stringType }, null));
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Callvirt, property.GetGetMethod());
-            il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(property.PropertyType).GetConstructor(new[] { stringType, property.PropertyType }));
+
+            var npgsqlType = property.PropertyType.IsEnum ? Enum.GetUnderlyingType(property.PropertyType) : property.PropertyType;
+
+            il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(npgsqlType).GetConstructor(new[] { stringType, npgsqlType }));
             il.Emit(OpCodes.Ret);
         }
 
@@ -79,6 +82,9 @@ namespace Venflow.Dynamic.Retriever
             il.Emit(OpCodes.Ldsfld, dbNullType.GetField("Value"));
             il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(dbNullType).GetConstructor(new[] { stringType, dbNullType }));
             il.Emit(OpCodes.Ret);
+
+            if (underylingType.IsEnum)
+                underylingType = Enum.GetUnderlyingType(underylingType);
 
             // Default retriever
             il.MarkLabel(defaultRetrieverLabel);
