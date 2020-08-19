@@ -1349,7 +1349,7 @@ namespace Venflow.Dynamic.Materializer
             else
             {
 
-                var valueRetriever = TypeCache.NpgsqlDataReader!.GetMethod("GetFieldValue", BindingFlags.Instance | BindingFlags.Public).MakeGenericMethod(column.PropertyInfo.PropertyType);
+                var valueRetriever = _dataReaderType.GetMethod("GetFieldValue", BindingFlags.Instance | BindingFlags.Public).MakeGenericMethod(column.PropertyInfo.PropertyType);
 
                 iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
             }

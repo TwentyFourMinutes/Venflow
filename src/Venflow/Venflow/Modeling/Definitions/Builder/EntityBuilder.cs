@@ -153,13 +153,22 @@ namespace Venflow.Modeling.Definitions.Builder
             var filteredProperties = new List<PropertyInfo>();
             PropertyInfo? annotedPrimaryKey = default;
 
+            var notMappedAttributeType = typeof(NotMappedAttribute);
+
+            Type? primaryKeyAttributeType = default;
+
+            if (!IsCustomEntity)
+            {
+                primaryKeyAttributeType = typeof(KeyAttribute);
+            }
+
             for (int i = 0; i < properties.Length; i++)
             {
                 var property = properties[i];
 
-                if (property.CanWrite && property.SetMethod!.IsPublic && !_ignoredColumns.Contains(property.Name) && !Attribute.IsDefined(property, TypeCache.NotMappedAttribute))
+                if (property.CanWrite && property.SetMethod!.IsPublic && !_ignoredColumns.Contains(property.Name) && !Attribute.IsDefined(property, notMappedAttributeType))
                 {
-                    if (IsCustomEntity && (Attribute.IsDefined(property, TypeCache.KeyAttribute) || property.Name == "Id"))
+                    if (IsCustomEntity && (Attribute.IsDefined(property, primaryKeyAttributeType) || property.Name == "Id"))
                     {
                         annotedPrimaryKey = property;
                     }
@@ -338,6 +347,7 @@ namespace Venflow.Modeling.Definitions.Builder
         /// </summary>
         /// <typeparam name="TTarget">The type of the property.</typeparam>
         /// <param name="propertySelector">A lambda expression representing the property on this entity type.</param>
+        /// <param name="columnName">The name of the column in the database to which the used property should map to.</param>
         /// <returns>The same builder instance so that multiple calls can be chained.</returns>
         IEntityBuilder<TEntity> MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string columnName);
 

@@ -111,7 +111,7 @@ namespace Venflow.Dynamic.Proxies
 
             var block = Expression.Block(_entityType, new[] { proxyVariable },
                                          Expression.Assign(proxyVariable, Expression.MemberInit(proxyInstance, bindings)),
-                                         Expression.Assign(Expression.Property(Expression.Property(proxyVariable, "ChangeTracker"), _changeTrackerType.GetProperty("TrackChanges", BindingFlags.NonPublic | BindingFlags.Instance)), ExpressionCache.TrueConstant),
+                                         Expression.Assign(Expression.Property(Expression.Property(proxyVariable, "ChangeTracker"), _changeTrackerType.GetProperty("TrackChanges", BindingFlags.NonPublic | BindingFlags.Instance)), Expression.Constant(true)),
                                          Expression.Convert(proxyVariable, _entityType));
 
             return Expression.Lambda<Func<ChangeTracker<TEntity>, TEntity, TEntity>>(block, changeTrackerParameter, entityParameter).Compile();
