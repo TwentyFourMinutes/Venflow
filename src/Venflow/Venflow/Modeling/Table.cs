@@ -101,7 +101,7 @@ namespace Venflow.Modeling
         /// <summary>
         /// Asynchronously inserts the entity and all entities reachable from the current provided instance into the current table.
         /// </summary>
-        /// <param name="entity">A <see cref="TEntity"/> instance representing the row, which will be inserted.</param>
+        /// <param name="entity">A <typeparamref name="TEntity"/> instance representing the row, which will be inserted.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows inserted.</returns>
         /// <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar')". This API is using parameterized commands.</remarks>
@@ -114,7 +114,7 @@ namespace Venflow.Modeling
         /// Asynchronously inserts the entity and all entities reachable from the current provided instance into the current table.
         /// </summary>
         /// <param name="insertCommand">A <see cref="IInsertCommand{TEntity}"/> instance which contains all the settings for this operation.</param>
-        /// <param name="entity">A <see cref="TEntity"/> instance representing the row, which will be inserted.</param>
+        /// <param name="entity">A <typeparamref name="TEntity"/> instance representing the row, which will be inserted.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows inserted.</returns>
         /// <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar')". This API is using parameterized commands.</remarks>
@@ -128,7 +128,7 @@ namespace Venflow.Modeling
         /// <summary>
         /// Asynchronously inserts a list of entities and all entities reachable from the current provided instances into the current table.
         /// </summary>
-        /// <param name="entities">A list of <see cref="TEntity"/> instance representing the rows, which will be inserted.</param>
+        /// <param name="entities">A list of <typeparamref name="TEntity"/> instance representing the rows, which will be inserted.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows inserted.</returns>
         /// <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar'), ('foo', 'bar')". This API is using parameterized commands.</remarks>
@@ -141,7 +141,7 @@ namespace Venflow.Modeling
         /// Asynchronously inserts a list of entities and all entities reachable from the current provided instances into the current table.
         /// </summary>
         /// <param name="insertCommand">A <see cref="IInsertCommand{TEntity}"/> instance which contains all the settings for this operation.</param>
-        /// <param name="entities">A list of <see cref="TEntity"/> instance representing the rows, which will be inserted.</param>
+        /// <param name="entities">A list of <typeparamref name="TEntity"/> instance representing the rows, which will be inserted.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows inserted.</returns>
         /// <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar'), ('foo', 'bar')". This API is using parameterized commands.</remarks>
@@ -159,7 +159,7 @@ namespace Venflow.Modeling
         /// <summary>
         /// Asynchronously deletes the provided entity by its defined primary key.
         /// </summary>
-        /// <param name="entity">A <see cref="TEntity"/> instance representing the row, which will be deleted.</param>
+        /// <param name="entity">A <typeparamref name="TEntity"/> instance representing the row, which will be deleted.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
         /// <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -172,7 +172,7 @@ namespace Venflow.Modeling
         /// Asynchronously deletes the provided entity by its defined primary key.
         /// </summary>
         /// <param name="deleteCommand">A <see cref="IDeleteCommand{TEntity}"/> instance which contains all the settings for this operation.</param>
-        /// <param name="entity">A <see cref="TEntity"/> instance representing the row, which will be deleted.</param>
+        /// <param name="entity">A <typeparamref name="TEntity"/> instance representing the row, which will be deleted.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
         /// <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -186,7 +186,7 @@ namespace Venflow.Modeling
         /// <summary>
         /// Asynchronously deletes the provided entities by their defined primary keys.
         /// </summary>
-        /// <param name="entities">A set of <see cref="TEntity"/> instances representing the rows, which will be deleted.</param>
+        /// <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be deleted.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
         /// <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -199,7 +199,7 @@ namespace Venflow.Modeling
         /// Asynchronously deletes the provided entities by their defined primary keys.
         /// </summary>
         /// <param name="deleteCommand">A <see cref="IDeleteCommand{TEntity}"/> instance which contains all the settings for this operation.</param>
-        /// <param name="entities">A set of <see cref="TEntity"/> instances representing the rows, which will be deleted.</param>
+        /// <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be deleted.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
         /// <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -217,7 +217,7 @@ namespace Venflow.Modeling
         /// <summary>
         /// Asynchronously updates the provided entity by its defined primary keys.
         /// </summary>
-        /// <param name="entity">A <see cref="TEntity"/> instance representing the row, which will be updated.</param>
+        /// <param name="entity">A <typeparamref name="TEntity"/> instance representing the row, which will be updated.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -230,7 +230,7 @@ namespace Venflow.Modeling
         /// Asynchronously updates the provided entity by its defined primary keys.
         /// </summary>
         /// <param name="updateCommand">A <see cref="IUpdateCommand{TEntity}"/> instance which contains all the settings for this operation.</param>
-        /// <param name="entity">A <see cref="TEntity"/> instance representing the row, which will be updated.</param>
+        /// <param name="entity">A <typeparamref name="TEntity"/> instance representing the row, which will be updated.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -244,7 +244,7 @@ namespace Venflow.Modeling
         /// <summary>
         /// Asynchronously updates the provided entity by its defined primary keys.
         /// </summary>
-        /// <param name="entities">A set of <see cref="TEntity"/> instances representing the rows, which will be updated.</param>
+        /// <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be updated.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -257,7 +257,7 @@ namespace Venflow.Modeling
         /// Asynchronously updates the provided entity by its defined primary keys.
         /// </summary>
         /// <param name="updateCommand">A <see cref="IUpdateCommand{TEntity}"/> instance which contains all the settings for this operation.</param>
-        /// <param name="entities">A set of <see cref="TEntity"/> instances representing the rows, which will be updated.</param>
+        /// <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be updated.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -291,7 +291,7 @@ namespace Venflow.Modeling
             => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QueryBatch();
 
         /// <summary>
-        /// Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="QuerySingle(string, NpgsqlParameter[])"/> or <see cref="QueryInterpolatedSingle(FormattableString, bool)"/>.
+        /// Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="TableBase{TEntity}.QuerySingle(string, NpgsqlParameter[])"/> or <see cref="TableBase{TEntity}.QueryInterpolatedSingle(FormattableString, bool)"/>.
         /// </summary>
         /// <param name="count">A value specifying the maximum returned primary rows.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -352,9 +352,9 @@ namespace Venflow.Modeling
         #region ChangeTracking
 
         /// <summary>
-        /// Starts tracking the provided <see cref="TEntity"/>.
+        /// Starts tracking the provided <typeparamref name="TEntity"/>.
         /// </summary>
-        /// <param name="entity">A <see cref="TEntity"/> instance which will be change tracked.</param>
+        /// <param name="entity">A <typeparamref name="TEntity"/> instance which will be change tracked.</param>
         /// <remarks>Any property which should be change tracked on an entity has to be marked virtual.</remarks>
         /// <exception cref="InvalidOperationException">Thrown when the provided entity does not contain any virtual properties.</exception>
         public void TrackChanges(ref TEntity entity)
@@ -363,9 +363,9 @@ namespace Venflow.Modeling
         }
 
         /// <summary>
-        /// Starts tracking the provided <see cref="TEntity"/>'s.
+        /// Starts tracking the provided <typeparamref name="TEntity"/>'s.
         /// </summary>
-        /// <param name="entities">A set of <see cref="TEntity"/> instances which will be change tracked.</param>
+        /// <param name="entities">A set of <typeparamref name="TEntity"/> instances which will be change tracked.</param>
         /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
         /// <remarks>Any property which should be change tracked on an entity has to be marked virtual.</remarks>
         /// <exception cref="InvalidOperationException">Thrown when a provided entity does not contain any virtual properties.</exception>

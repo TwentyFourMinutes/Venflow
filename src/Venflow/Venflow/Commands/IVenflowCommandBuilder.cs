@@ -63,7 +63,7 @@ namespace Venflow.Commands
         /// <summary>
         /// Creates a new query command builder, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
         /// </summary>
-        /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. <strong>You should only add parameters trough string interpolation.</strong></param>
+        /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
         IPreCommandBuilder<TEntity, List<TEntity>> QueryInterpolatedBatch(FormattableString sql);
 

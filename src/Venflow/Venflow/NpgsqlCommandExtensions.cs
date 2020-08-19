@@ -26,6 +26,11 @@ namespace Venflow
             return parameter;
         }
 
+        /// <summary>
+        /// Sets the command text of the used <see cref="NpgsqlCommand"/>. <strong>This API does support string interpolation!</strong>
+        /// </summary>
+        /// <param name="command">The command of which the command text should be set. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
+        /// <param name="sql">A string containing the SQL statement.</param>
         public static void SetInterpolatedCommandText(this NpgsqlCommand command, FormattableString sql)
         {
             var commandBuilder = new StringBuilder(sql.Format);

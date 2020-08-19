@@ -306,6 +306,10 @@ namespace Venflow
             }
         }
 
+        /// <summary>
+        /// Allows for further configuration of the <see cref="Database"/>.
+        /// </summary>
+        /// <param name="optionsBuilder">A builder instance used to further configure the <see cref="Database"/>.</param>
         protected virtual void Configure(DatabaseOptionsBuilder optionsBuilder) { }
 
         /// <summary>

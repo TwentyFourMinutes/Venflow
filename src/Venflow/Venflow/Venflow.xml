@@ -102,6 +102,7 @@
             Represents a command which performs queries and materialize the results to entities.
             </summary>
             <typeparam name="TEntity">The type of the entity which represents the result of the query.</typeparam>
+            <typeparam name="TReturn">The return type of the query.</typeparam>
         </member>
         <member name="M:Venflow.Commands.IQueryCommand`2.PrepareAsync(System.Threading.CancellationToken)">
             <summary>
@@ -193,7 +194,7 @@
             <summary>
             Asynchronously updates a set of entities.
             </summary>
-            <param name="entity">The change tracked entity instance which should be updated.</param>
+            <param name="entities">The change tracked entity instances which should be updated.</param>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
             <returns>A task representing the asynchronous operation.</returns>
         </member>
@@ -277,7 +278,7 @@
             <summary>
             Creates a new query command builder, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
             </summary>
-            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. <strong>You should only add parameters trough string interpolation.</strong></param>
+            <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.Insert">
@@ -478,6 +479,12 @@
             </summary>
             <returns>the <see cref="T:Npgsql.NpgsqlConnection"/>.</returns>
         </member>
+        <member name="M:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)">
+            <summary>
+            Allows for further configuration of the <see cref="T:Venflow.Database"/>.
+            </summary>
+            <param name="optionsBuilder">A builder instance used to further configure the <see cref="T:Venflow.Database"/>.</param>
+        </member>
         <member name="M:Venflow.Database.DisposeAsync">
             <summary>
             Releases the allocated resources for this context. Also closes the underlying connection, if open.
@@ -489,6 +496,29 @@
             Releases the allocated resources for this context. Also closes the underlying connection, if open.
             </summary>
             <remarks>If you are in an asynchronous context you should consider using <see cref="M:Venflow.Database.DisposeAsync"/> instead.</remarks>
+        </member>
+        <member name="T:Venflow.DatabaseOptionsBuilder">
+            <summary>
+            Provides an option builder to further configure a <see cref="T:Venflow.Database"/> instance.
+            </summary>
+        </member>
+        <member name="M:Venflow.DatabaseOptionsBuilder.AddConfigurations``1">
+            <summary>
+            Adds the assembly of the type <typeparamref name="T"/> to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
+            </summary>
+            <typeparam name="T">The type of which the assembly should be added to the lookup list.</typeparam>
+        </member>
+        <member name="M:Venflow.DatabaseOptionsBuilder.AddConfigurations(System.Reflection.Assembly)">
+             <summary>
+             Adds the assembly to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
+             </summary>
+            <param name="assembly">The assembly which should be added to the lookup list.</param>
+        </member>
+        <member name="M:Venflow.DatabaseOptionsBuilder.AddConfigurations(System.Reflection.Assembly[])">
+             <summary>
+             Adds the assemblies to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
+             </summary>
+            <param name="assemblies">The assemblies which should be added to the lookup list.</param>
         </member>
         <member name="T:Venflow.Enums.ForeignTruncateOptions">
             <summary>
@@ -626,6 +656,7 @@
             </summary>
             <typeparam name="TTarget">The type of the property.</typeparam>
             <param name="propertySelector">A lambda expression representing the property on this entity type.</param>
+            <param name="columnName">The name of the column in the database to which the used property should map to.</param>
             <returns>The same builder instance so that multiple calls can be chained.</returns>
         </member>
         <member name="M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.Ignore``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
@@ -767,6 +798,11 @@
             </summary>
             <returns>An object that can be used to configure the relationship.</returns>
         </member>
+        <member name="T:Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder`2">
+            <summary>
+            This interface hosts relation methods for the right side of a relation.
+            </summary>
+        </member>
         <member name="M:Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder`2.WithOne">
             <summary>
             <para>
@@ -802,7 +838,7 @@
         </member>
         <member name="T:Venflow.Modeling.Definitions.EntityConfiguration`1">
             <summary>
-            Allows configuration for an entity type. Inherit from this class and override the <see cref="M:Venflow.Modeling.Definitions.EntityConfiguration`1.Configure(Venflow.Modeling.Definitions.Builder.IEntityBuilder{`0})"/> method to configure the entity <see cref="!:TEntity"></see>.
+            Allows configuration for an entity type. Inherit from this class and override the <see cref="M:Venflow.Modeling.Definitions.EntityConfiguration`1.Configure(Venflow.Modeling.Definitions.Builder.IEntityBuilder{`0})"/> method to configure the entity <typeparamref name="TEntity"/>.
             </summary>
             <typeparam name="TEntity">The entity to be configured.</typeparam>
             <remarks>Classes which inherit from this one, have to be in the same assembly as the <see cref="T:Venflow.Database"/> in order to be discoverable.</remarks>
@@ -855,7 +891,7 @@
             <summary>
             Asynchronously inserts the entity and all entities reachable from the current provided instance into the current table.
             </summary>
-            <param name="entity">A <see cref="!:TEntity"/> instance representing the row, which will be inserted.</param>
+            <param name="entity">A <typeparamref name="TEntity"/> instance representing the row, which will be inserted.</param>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation, with the number of rows inserted.</returns>
             <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar')". This API is using parameterized commands.</remarks>
@@ -865,7 +901,7 @@
             Asynchronously inserts the entity and all entities reachable from the current provided instance into the current table.
             </summary>
             <param name="insertCommand">A <see cref="T:Venflow.Commands.IInsertCommand`1"/> instance which contains all the settings for this operation.</param>
-            <param name="entity">A <see cref="!:TEntity"/> instance representing the row, which will be inserted.</param>
+            <param name="entity">A <typeparamref name="TEntity"/> instance representing the row, which will be inserted.</param>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation, with the number of rows inserted.</returns>
             <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar')". This API is using parameterized commands.</remarks>
@@ -874,7 +910,7 @@
             <summary>
             Asynchronously inserts a list of entities and all entities reachable from the current provided instances into the current table.
             </summary>
-            <param name="entities">A list of <see cref="!:TEntity"/> instance representing the rows, which will be inserted.</param>
+            <param name="entities">A list of <typeparamref name="TEntity"/> instance representing the rows, which will be inserted.</param>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation, with the number of rows inserted.</returns>
             <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar'), ('foo', 'bar')". This API is using parameterized commands.</remarks>
@@ -884,7 +920,7 @@
             Asynchronously inserts a list of entities and all entities reachable from the current provided instances into the current table.
             </summary>
             <param name="insertCommand">A <see cref="T:Venflow.Commands.IInsertCommand`1"/> instance which contains all the settings for this operation.</param>
-            <param name="entities">A list of <see cref="!:TEntity"/> instance representing the rows, which will be inserted.</param>
+            <param name="entities">A list of <typeparamref name="TEntity"/> instance representing the rows, which will be inserted.</param>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation, with the number of rows inserted.</returns>
             <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar'), ('foo', 'bar')". This API is using parameterized commands.</remarks>
@@ -893,7 +929,7 @@
             <summary>
             Asynchronously deletes the provided entity by its defined primary key.
             </summary>
-            <param name="entity">A <see cref="!:TEntity"/> instance representing the row, which will be deleted.</param>
+            <param name="entity">A <typeparamref name="TEntity"/> instance representing the row, which will be deleted.</param>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
             <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -903,7 +939,7 @@
             Asynchronously deletes the provided entity by its defined primary key.
             </summary>
             <param name="deleteCommand">A <see cref="T:Venflow.Commands.IDeleteCommand`1"/> instance which contains all the settings for this operation.</param>
-            <param name="entity">A <see cref="!:TEntity"/> instance representing the row, which will be deleted.</param>
+            <param name="entity">A <typeparamref name="TEntity"/> instance representing the row, which will be deleted.</param>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
             <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -912,7 +948,7 @@
             <summary>
             Asynchronously deletes the provided entities by their defined primary keys.
             </summary>
-            <param name="entities">A set of <see cref="!:TEntity"/> instances representing the rows, which will be deleted.</param>
+            <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be deleted.</param>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
             <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -922,7 +958,7 @@
             Asynchronously deletes the provided entities by their defined primary keys.
             </summary>
             <param name="deleteCommand">A <see cref="T:Venflow.Commands.IDeleteCommand`1"/> instance which contains all the settings for this operation.</param>
-            <param name="entities">A set of <see cref="!:TEntity"/> instances representing the rows, which will be deleted.</param>
+            <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be deleted.</param>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
             <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -931,7 +967,7 @@
             <summary>
             Asynchronously updates the provided entity by its defined primary keys.
             </summary>
-            <param name="entity">A <see cref="!:TEntity"/> instance representing the row, which will be updated.</param>
+            <param name="entity">A <typeparamref name="TEntity"/> instance representing the row, which will be updated.</param>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation.</returns>
             <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -941,7 +977,7 @@
             Asynchronously updates the provided entity by its defined primary keys.
             </summary>
             <param name="updateCommand">A <see cref="T:Venflow.Commands.IUpdateCommand`1"/> instance which contains all the settings for this operation.</param>
-            <param name="entity">A <see cref="!:TEntity"/> instance representing the row, which will be updated.</param>
+            <param name="entity">A <typeparamref name="TEntity"/> instance representing the row, which will be updated.</param>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation.</returns>
             <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -950,7 +986,7 @@
             <summary>
             Asynchronously updates the provided entity by its defined primary keys.
             </summary>
-            <param name="entities">A set of <see cref="!:TEntity"/> instances representing the rows, which will be updated.</param>
+            <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be updated.</param>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation.</returns>
             <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -960,7 +996,7 @@
             Asynchronously updates the provided entity by its defined primary keys.
             </summary>
             <param name="updateCommand">A <see cref="T:Venflow.Commands.IUpdateCommand`1"/> instance which contains all the settings for this operation.</param>
-            <param name="entities">A set of <see cref="!:TEntity"/> instances representing the rows, which will be updated.</param>
+            <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be updated.</param>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation.</returns>
             <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
@@ -983,7 +1019,7 @@
         </member>
         <member name="M:Venflow.Modeling.Table`1.QueryBatch(System.UInt64,System.Boolean)">
             <summary>
-            Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="!:QuerySingle(string, NpgsqlParameter[])"/> or <see cref="!:QueryInterpolatedSingle(FormattableString, bool)"/>.
+            Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="M:Venflow.Modeling.TableBase`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])"/> or <see cref="M:Venflow.Modeling.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
             </summary>
             <param name="count">A value specifying the maximum returned primary rows.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -1033,17 +1069,17 @@
         </member>
         <member name="M:Venflow.Modeling.Table`1.TrackChanges(`0@)">
             <summary>
-            Starts tracking the provided <see cref="!:TEntity"/>.
+            Starts tracking the provided <typeparamref name="TEntity"/>.
             </summary>
-            <param name="entity">A <see cref="!:TEntity"/> instance which will be change tracked.</param>
+            <param name="entity">A <typeparamref name="TEntity"/> instance which will be change tracked.</param>
             <remarks>Any property which should be change tracked on an entity has to be marked virtual.</remarks>
             <exception cref="T:System.InvalidOperationException">Thrown when the provided entity does not contain any virtual properties.</exception>
         </member>
         <member name="M:Venflow.Modeling.Table`1.TrackChanges(System.Collections.Generic.IList{`0})">
             <summary>
-            Starts tracking the provided <see cref="!:TEntity"/>'s.
+            Starts tracking the provided <typeparamref name="TEntity"/>'s.
             </summary>
-            <param name="entities">A set of <see cref="!:TEntity"/> instances which will be change tracked.</param>
+            <param name="entities">A set of <typeparamref name="TEntity"/> instances which will be change tracked.</param>
             <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
             <remarks>Any property which should be change tracked on an entity has to be marked virtual.</remarks>
             <exception cref="T:System.InvalidOperationException">Thrown when a provided entity does not contain any virtual properties.</exception>
@@ -1145,6 +1181,13 @@
             <param name="parameterName">The name of the Parameter.</param>
             <param name="value">The value of the Parameter.</param>
             <returns>the just created <see cref="T:Npgsql.NpgsqlParameter`1"/>.</returns>
+        </member>
+        <member name="M:Venflow.NpgsqlCommandExtensions.SetInterpolatedCommandText(Npgsql.NpgsqlCommand,System.FormattableString)">
+            <summary>
+            Sets the command text of the used <see cref="T:Npgsql.NpgsqlCommand"/>. <strong>This API does support string interpolation!</strong>
+            </summary>
+            <param name="command">The command of which the command text should be set. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
+            <param name="sql">A string containing the SQL statement.</param>
         </member>
         <member name="T:Venflow.TypeArgumentException">
             <summary>

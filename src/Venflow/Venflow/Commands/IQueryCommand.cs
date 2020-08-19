@@ -8,6 +8,7 @@ namespace Venflow.Commands
     /// Represents a command which performs queries and materialize the results to entities.
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity which represents the result of the query.</typeparam>
+    /// <typeparam name="TReturn">The return type of the query.</typeparam>
     public interface IQueryCommand<TEntity, TReturn> : IVenflowCommand<TEntity> where TEntity : class, new() where TReturn : class, new()
     {
         /// <summary>
