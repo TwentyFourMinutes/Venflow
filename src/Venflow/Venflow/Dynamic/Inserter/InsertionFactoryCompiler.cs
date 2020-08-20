@@ -374,13 +374,56 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, commandField);
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
 
-                    _moveNextMethodIL.Emit(OpCodes.Ldloc, placeholderLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetGetMethod());
+                    var underlyingType = Nullable.GetUnderlyingType(column.PropertyInfo.PropertyType);
 
-                    var npgsqlType = column.PropertyInfo.PropertyType.IsEnum ? Enum.GetUnderlyingType(column.PropertyInfo.PropertyType) : column.PropertyInfo.PropertyType;
+                    if (underlyingType is { } &&
+                        underlyingType.IsEnum)
+                    {
+                        var stringType = typeof(string);
+                        var dbNullType = typeof(DBNull);
 
-                    _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(npgsqlType).GetConstructor(new[] { typeof(string), npgsqlType }));
+                        var propertyLocal = _moveNextMethodIL.DeclareLocal(column.PropertyInfo.PropertyType);
+
+                        var defaultRetrieverLabel = _moveNextMethodIL.DefineLabel();
+                        var afterHasValueLabel = _moveNextMethodIL.DefineLabel();
+
+                        // Check if property has value
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Stloc_S, propertyLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Ldloca_S, propertyLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("HasValue").GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Brtrue_S, defaultRetrieverLabel);
+
+                        // Nullable retriever
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, placeholderLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Ldsfld, dbNullType.GetField("Value"));
+                        _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(dbNullType).GetConstructor(new[] { stringType, dbNullType }));
+                        _moveNextMethodIL.Emit(OpCodes.Br, afterHasValueLabel);
+
+                        // Default retriever
+                        _moveNextMethodIL.MarkLabel(defaultRetrieverLabel);
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, placeholderLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Stloc_S, propertyLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Ldloca_S, propertyLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("Value").GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underlyingType).GetConstructor(new[] { stringType, underlyingType }));
+
+                        _moveNextMethodIL.MarkLabel(afterHasValueLabel);
+                    }
+                    else
+                    {
+                        var npgsqlType = column.PropertyInfo.PropertyType.IsEnum ? Enum.GetUnderlyingType(column.PropertyInfo.PropertyType) : column.PropertyInfo.PropertyType;
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, placeholderLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(npgsqlType).GetConstructor(new[] { typeof(string), npgsqlType }));
+                    }
+
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameterCollection).GetMethod("Add", new[] { typeof(NpgsqlParameter) }));
                     _moveNextMethodIL.Emit(OpCodes.Pop);
                 }
