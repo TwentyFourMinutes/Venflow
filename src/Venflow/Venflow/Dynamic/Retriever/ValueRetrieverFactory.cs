@@ -27,7 +27,7 @@ namespace Venflow.Dynamic.Retriever
             if (underlyingType is { } &&
                 underlyingType.IsEnum)
             {
-                WriteNullableRetriever(retrieverMethodIL, property,  Enum.GetUnderlyingType(underlyingType));
+                WriteNullableRetriever(retrieverMethodIL, property, Enum.GetUnderlyingType(underlyingType));
             }
             else
             {

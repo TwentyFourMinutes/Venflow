@@ -1,3 +1,4 @@
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Venflow.Dynamic.Proxies;
 using Venflow.Dynamic.Retriever;
 using Venflow.Enums;
@@ -111,6 +113,63 @@ namespace Venflow.Modeling.Definitions.Builder
             return this;
         }
 
+        IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapPostgresEnum<TTarget>(Expression<Func<TEntity, TTarget?>> propertySelector, string? name, INpgsqlNameTranslator? npgsqlNameTranslator)
+        {
+            var property = propertySelector.ValidatePropertySelector();
+
+            MapPostgresEnum<TTarget>(property, name, npgsqlNameTranslator);
+
+            return this;
+        }
+
+        IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapPostgresEnum<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string? name, INpgsqlNameTranslator? npgsqlNameTranslator)
+        {
+            var property = propertySelector.ValidatePropertySelector();
+
+            MapPostgresEnum<TTarget>(property, name, npgsqlNameTranslator);
+
+            return this;
+        }
+
+        private void MapPostgresEnum<TTarget>(PropertyInfo property, string? name, INpgsqlNameTranslator? npgsqlNameTranslator)
+            where TTarget : struct, Enum
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                var nameBuilder = new StringBuilder(property.Name.Length * 2 - 1);
+
+                nameBuilder.Append(char.ToLowerInvariant(property.Name[0]));
+
+                for (int i = 1; i < property.Name.Length; i++)
+                {
+                    var c = property.Name[i];
+
+                    if (char.IsUpper(c))
+                    {
+                        nameBuilder.Append('_');
+                        nameBuilder.Append(char.ToLowerInvariant(c));
+                    }
+                    else
+                    {
+                        nameBuilder.Append(c);
+                    }
+                }
+
+                name = nameBuilder.ToString();
+            }
+
+            if (!PostgreSQLEnums.Contains(name))
+            {
+                NpgsqlConnection.GlobalTypeMapper.MapEnum<TTarget>(name, npgsqlNameTranslator);
+
+                PostgreSQLEnums.Add(name);
+            }
+
+            var columnDefinition = new PostgreEnumColumnDefenition<TEntity>(property.Name);
+
+            ColumnDefinitions.Add(property.Name, columnDefinition);
+        }
+
         INotRequiredSingleRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasMany<TRelation>(Expression<Func<TEntity, IList<TRelation>>> navigationProperty) where TRelation : class
         {
             var property = navigationProperty.ValidatePropertySelector(false);
@@ -130,6 +189,7 @@ namespace Venflow.Modeling.Definitions.Builder
             var property = navigationProperty.ValidatePropertySelector();
 
             IgnoreProperty(property.Name);
+
             return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.One, property, this);
         }
 
@@ -168,8 +228,8 @@ namespace Venflow.Modeling.Definitions.Builder
 
                 if (property.CanWrite && property.SetMethod!.IsPublic && !_ignoredColumns.Contains(property.Name) && !Attribute.IsDefined(property, notMappedAttributeType))
                 {
-                    if (IsCustomEntity && 
-                        (Attribute.IsDefined(property, primaryKeyAttributeType) || 
+                    if (IsCustomEntity &&
+                        (Attribute.IsDefined(property, primaryKeyAttributeType) ||
                         property.Name == "Id"))
                     {
                         annotedPrimaryKey = property;
@@ -230,11 +290,32 @@ namespace Venflow.Modeling.Definitions.Builder
 
                             hasCustomDefinition = true;
                             break;
+                        case PostgreEnumColumnDefenition<TEntity> enumDefinition:
+
+                            var enumColumn = new PostgreEnumEntityColumn<TEntity>(property, definition.Name, parameterValueRetriever);
+
+                            columns.Add(enumColumn);
+
+                            regularColumnsOffset++;
+
+                            setMethod = property.GetSetMethod();
+
+                            if (setMethod.IsVirtual && !setMethod.IsFinal)
+                            {
+                                changeTrackingColumns.Add(i, enumColumn);
+                            }
+
+                            nameToColumn.Add(definition.Name, enumColumn);
+
+                            hasCustomDefinition = true;
+                            break;
                     }
                 }
-                else if (IsCustomEntity && annotedPrimaryKey == property)
+                else if (IsCustomEntity && 
+                         annotedPrimaryKey == property)
                 {
-                    if (EntityInNullableContext && isPropertyTypeNullableReferenceType)
+                    if (EntityInNullableContext && 
+                        isPropertyTypeNullableReferenceType)
                     {
                         throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
                     }
@@ -247,7 +328,8 @@ namespace Venflow.Modeling.Definitions.Builder
 
                     var setMethod = property.GetSetMethod();
 
-                    if (setMethod.IsVirtual && !setMethod.IsFinal)
+                    if (setMethod.IsVirtual && 
+                        !setMethod.IsFinal)
                     {
                         changeTrackingColumns.Add(i, primaryColumn);
                     }
@@ -261,7 +343,8 @@ namespace Venflow.Modeling.Definitions.Builder
                 {
                     string columnName;
 
-                    if (IsCustomEntity && definition is not null)
+                    if (IsCustomEntity && 
+                        definition is not null)
                     {
                         columnName = definition.Name;
 
@@ -285,7 +368,8 @@ namespace Venflow.Modeling.Definitions.Builder
                     {
                         var setMethod = property.GetSetMethod();
 
-                        if (setMethod.IsVirtual && !setMethod.IsFinal)
+                        if (setMethod.IsVirtual && 
+                            !setMethod.IsFinal)
                         {
                             changeTrackingColumns.Add(i, column);
                         }
@@ -318,10 +402,17 @@ namespace Venflow.Modeling.Definitions.Builder
 
     internal abstract class EntityBuilder
     {
+        internal static uint RelationCounter { get; set; }
+
+        internal static HashSet<string> PostgreSQLEnums { get; }
+
+        static EntityBuilder()
+        {
+            PostgreSQLEnums = new HashSet<string>();
+        }
+
         internal List<EntityRelationDefinition> Relations { get; }
         internal abstract Type Type { get; }
-
-        internal static uint RelationCounter { get; set; }
 
         protected EntityBuilder()
         {
@@ -369,5 +460,27 @@ namespace Venflow.Modeling.Definitions.Builder
         /// <param name="option">The option which define how the primary key is generate.</param>
         /// <returns>The same builder instance so that multiple calls can be chained.</returns>
         IEntityBuilder<TEntity> MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option);
+
+        /// <summary>
+        /// Maps a PostgreSQL enum to a CLR enum.
+        /// </summary>
+        /// <typeparam name="TTarget">The type of the enum.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the enum which should be mapped on this entity type.</param>
+        /// <param name="name">The name of the enum in PostgreSQL, if none used it will try to convert the name of the CLR enum e.g. 'FooBar' to 'foo_bar'</param>
+        /// <param name="npgsqlNameTranslator">A component which will be used to translate CLR names (e.g. SomeClass) into database names (e.g. some_class). Defaults to <see cref="Npgsql.NameTranslation.NpgsqlSnakeCaseNameTranslator"/>.</param>
+        /// <returns>The same builder instance so that multiple calls can be chained.</returns>
+        IEntityBuilder<TEntity> MapPostgresEnum<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string? name = default, INpgsqlNameTranslator? npgsqlNameTranslator = default)
+            where TTarget : struct, Enum;
+
+        /// <summary>
+        /// Maps a PostgreSQL enum to a CLR enum.
+        /// </summary>
+        /// <typeparam name="TTarget">The type of the enum.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the enum which should be mapped on this entity type.</param>
+        /// <param name="name">The name of the enum in PostgreSQL, if none used it will try to convert the name of the CLR enum e.g. 'FooBar' to 'foo_bar'</param>
+        /// <param name="npgsqlNameTranslator">A component which will be used to translate CLR names (e.g. SomeClass) into database names (e.g. some_class). Defaults to <see cref="Npgsql.NameTranslation.NpgsqlSnakeCaseNameTranslator"/>.</param>
+        /// <returns>The same builder instance so that multiple calls can be chained.</returns>
+        IEntityBuilder<TEntity> MapPostgresEnum<TTarget>(Expression<Func<TEntity, TTarget?>> propertySelector, string? name = default, INpgsqlNameTranslator? npgsqlNameTranslator = default)
+            where TTarget : struct, Enum;
     }
 }
