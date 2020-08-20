@@ -1,7 +1,10 @@
 ﻿namespace System.Runtime.CompilerServices
 {
+    /// <summary>
+    /// <strong>Do not use this attribute, it is reserved for the compiler.</strong>
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Event | AttributeTargets.Parameter | AttributeTargets.ReturnValue | AttributeTargets.GenericParameter, AllowMultiple = false, Inherited = false)]
-    internal sealed class NullableAttribute : Attribute
+    public sealed class NullableAttribute : Attribute
     {
         public readonly byte[] NullableFlags;
 

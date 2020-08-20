@@ -1219,5 +1219,15 @@
             </summary>
             <param name="validation">Determines if Venflow should use deep validation or not.</param>
         </member>
+        <member name="T:System.Runtime.CompilerServices.NullableAttribute">
+            <summary>
+            <strong>Do not use this attribute, it is reserved for the compiler.</strong>
+            </summary>
+        </member>
+        <member name="T:System.Runtime.CompilerServices.NullableContextAttribute">
+            <summary>
+            <strong>Do not use this attribute, it is reserved for the compiler.</strong>
+            </summary>
+        </member>
     </members>
 </doc>
