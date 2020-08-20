@@ -11,7 +11,7 @@ namespace Venflow.Benchmarks.Benchmarks
         public BenchmarkDb Database { get; set; }
         public BenchmarkDbContext PersonDbContext { get; set; }
 
-        public virtual async Task Setup()
+        public virtual Task Setup()
         {
             Database = new BenchmarkDb();
 
@@ -31,6 +31,8 @@ namespace Venflow.Benchmarks.Benchmarks
             PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
             PersonDbContext.ChangeTracker.LazyLoadingEnabled = false;
             PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
+            return Database.People.TruncateAsync(Enums.ForeignTruncateOptions.Cascade);
         }
 
         public virtual async Task Cleanup()
