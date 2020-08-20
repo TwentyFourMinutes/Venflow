@@ -374,8 +374,6 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, commandField);
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
 
-                    var underlyingType = Nullable.GetUnderlyingType(column.PropertyInfo.PropertyType);
-
                     _moveNextMethodIL.Emit(OpCodes.Ldloc, placeholderLocal);
                     _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetGetMethod());
