@@ -22,16 +22,7 @@ namespace Venflow.Dynamic.Retriever
             var retrieverMethod = new DynamicMethod($"Venflow.Dynamic.ValueRetrievers.{_entityType.Name}.{property.Name}ValueRetriever", npgsqlParameterType, new[] { _entityType, stringType }, TypeFactory.DynamicModule);
             var retrieverMethodIL = retrieverMethod.GetILGenerator();
 
-            var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
-
-            if (underlyingType is { })
-            {
-                WriteNullableRetriever(retrieverMethodIL, property, underlyingType);
-            }
-            else
-            {
-                WriteDefaultRetriever(retrieverMethodIL, property);
-            }
+            WriteDefaultRetriever(retrieverMethodIL, property);
 
 #if NETCOREAPP5_0
             return retrieverMethod.CreateDelegate<Func<TEntity, string, NpgsqlParameter>>();
@@ -53,51 +44,6 @@ namespace Venflow.Dynamic.Retriever
             var npgsqlType = property.PropertyType.IsEnum ? Enum.GetUnderlyingType(property.PropertyType) : property.PropertyType;
 
             il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(npgsqlType).GetConstructor(new[] { stringType, npgsqlType }));
-            il.Emit(OpCodes.Ret);
-        }
-
-        private void WriteNullableRetriever(ILGenerator il, PropertyInfo property, Type underylingType)
-        {
-            var stringType = typeof(string);
-            var dbNullType = typeof(DBNull);
-
-            var stringConcatMethod = stringType.GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new[] { stringType, stringType }, null);
-
-            var propertyLocal = il.DeclareLocal(property.PropertyType);
-
-            var defaultRetrieverLabel = il.DefineLabel();
-
-            // Check if property has value
-            il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Callvirt, property.GetGetMethod());
-            il.Emit(OpCodes.Stloc_S, propertyLocal);
-            il.Emit(OpCodes.Ldloca_S, propertyLocal);
-            il.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("HasValue").GetGetMethod());
-            il.Emit(OpCodes.Brtrue_S, defaultRetrieverLabel);
-
-            // Nullable retriever
-            il.Emit(OpCodes.Ldstr, "@" + property.Name);
-            il.Emit(OpCodes.Ldarg_1);
-            il.Emit(OpCodes.Call, stringConcatMethod);
-            il.Emit(OpCodes.Ldsfld, dbNullType.GetField("Value"));
-            il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(dbNullType).GetConstructor(new[] { stringType, dbNullType }));
-            il.Emit(OpCodes.Ret);
-
-            if (underylingType.IsEnum)
-                underylingType = Enum.GetUnderlyingType(underylingType);
-
-            // Default retriever
-            il.MarkLabel(defaultRetrieverLabel);
-
-            il.Emit(OpCodes.Ldstr, "@" + property.Name);
-            il.Emit(OpCodes.Ldarg_1);
-            il.Emit(OpCodes.Call, stringConcatMethod);
-            il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Callvirt, property.GetGetMethod());
-            il.Emit(OpCodes.Stloc_S, propertyLocal);
-            il.Emit(OpCodes.Ldloca_S, propertyLocal);
-            il.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("Value").GetGetMethod());
-            il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underylingType).GetConstructor(new[] { stringType, underylingType }));
             il.Emit(OpCodes.Ret);
         }
     }
