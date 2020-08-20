@@ -1,4 +1,4 @@
-﻿using Npgsql;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -373,10 +373,16 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, commandField);
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+
+                    var underlyingType = Nullable.GetUnderlyingType(column.PropertyInfo.PropertyType);
+
                     _moveNextMethodIL.Emit(OpCodes.Ldloc, placeholderLocal);
                     _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetGetMethod());
-                    _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(column.PropertyInfo.PropertyType).GetConstructor(new[] { typeof(string), column.PropertyInfo.PropertyType }));
+
+                    var npgsqlType = column.PropertyInfo.PropertyType.IsEnum ? Enum.GetUnderlyingType(column.PropertyInfo.PropertyType) : column.PropertyInfo.PropertyType;
+
+                    _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(npgsqlType).GetConstructor(new[] { typeof(string), npgsqlType }));
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameterCollection).GetMethod("Add", new[] { typeof(NpgsqlParameter) }));
                     _moveNextMethodIL.Emit(OpCodes.Pop);
                 }
