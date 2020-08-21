@@ -1,0 +1,73 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [ "**/**.csproj" ],
+          "src": "../../src/Venflow/Venflow"
+        }
+      ],
+      "dest": "api",
+      "disableGitFeatures": false,
+      "disableDefaultFilter": false,
+	  "filter": "filterConfig.yml"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "api/**.yml",
+          "api/index.md"
+        ]
+      },
+      {
+        "files": [
+          "toc.yml",
+          "index.md"
+        ]
+      },
+      {
+        "files": [
+          "guides/**.md",
+          "guides/**/toc.yml"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "**/images/**",
+          "**/samples/**"
+        ]
+      }
+    ],
+    "overwrite": [
+      {
+        "exclude": [
+          "obj/**"
+        ]
+      }
+    ],
+    "dest": "../",
+    "globalMetadataFiles": [],
+    "globalMetadata": {
+      "_appTitle": "Venflow Documentation",
+      "_appFooter": "<span>Copyright © 2020 Twenty</span>",
+      "_enableSearch": "true"
+    },
+    "fileMetadataFiles": [],
+    "template": [
+      "default",
+      "templates/light-dark-theme"
+    ],
+    "postProcessors": [
+      "ExtractSearchIndex"
+    ],
+    "markdownEngineName": "markdig",
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false,
+  }
+}

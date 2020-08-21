@@ -1,0 +1,779 @@
+{
+  "homepages": [],
+  "source_base_path": "C:/Users/Twenty/Desktop/GitHub/Venflow/docs/docfx",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Resource",
+      "output": {
+        "resource": {
+          "relative_path": "index.json"
+        }
+      },
+      "is_incremental": false
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Commands.IDeleteCommand-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Commands.IDeleteCommand-1.html",
+          "hash": "w6n32hz3ZwybluA4BQYPyw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Commands.IDeleteCommandBuilder-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Commands.IDeleteCommandBuilder-1.html",
+          "hash": "KGChKk96THOJ8sPk1IFYQg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Commands.IInsertCommand-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Commands.IInsertCommand-1.html",
+          "hash": "QXKVt3xSbI1CKRF+kfKWHg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Commands.IInsertCommandBuilder-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Commands.IInsertCommandBuilder-1.html",
+          "hash": "LpgYvBBQOxA41+ToKWgegw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Commands.IPreCommandBuilder-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Commands.IPreCommandBuilder-2.html",
+          "hash": "5DLan84CqXCbSovIuzv9Kw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Commands.IQueryCommand-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Commands.IQueryCommand-2.html",
+          "hash": "BtOeEGap1ACMHPHG6EXttQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Commands.IQueryCommandBuilder-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Commands.IQueryCommandBuilder-2.html",
+          "hash": "9ftu7P6DpZBVLPYpXXWzbA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Commands.ISpecficVenflowCommandBuilder-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Commands.ISpecficVenflowCommandBuilder-1.html",
+          "hash": "on9ExbX/AXX728/f/wki8Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Commands.IUpdateCommand-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Commands.IUpdateCommand-1.html",
+          "hash": "6AeSx9RIE1pLzUGic0BU9Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Commands.IUpdateCommandBuilder-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Commands.IUpdateCommandBuilder-1.html",
+          "hash": "lrlUBwv/FojHmEeEO5w14w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Commands.IVenflowCommand-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Commands.IVenflowCommand-1.html",
+          "hash": "wkoKwMbbAmN0ErbmepzuYA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Commands.IVenflowCommandBuilder-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Commands.IVenflowCommandBuilder-1.html",
+          "hash": "TeHIgM3swgv8XT5bt69zRA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Commands.JoinBuilder-3.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Commands.JoinBuilder-3.html",
+          "hash": "LhRU4VB+/EQzAXcOqSGTTQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Commands.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Commands.html",
+          "hash": "7J7nWwCh7cbYi4f6k2qLdw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Database.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Database.html",
+          "hash": "EKtkKLrp47pGMjfwDNmJwA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.DatabaseOptionsBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.DatabaseOptionsBuilder.html",
+          "hash": "EfF+/zYbTyJKUx9YQ73rlw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Enums.ForeignTruncateOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Enums.ForeignTruncateOptions.html",
+          "hash": "AdMsbW9VQRepybjDRHJNnA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Enums.IdentityTruncateOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Enums.IdentityTruncateOptions.html",
+          "hash": "BT9cU6HPHgUEnGQHGegW6g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Enums.InsertOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Enums.InsertOptions.html",
+          "hash": "f0KAPLkWiTeGE4pTy1tl5w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Enums.JoinBehaviour.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Enums.JoinBehaviour.html",
+          "hash": "RdUsWokOgh3NPZAFUJKU9A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Enums.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Enums.html",
+          "hash": "I9cwq/kVzVbKZdeN8Uj40g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.InvalidEntityRelationException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.InvalidEntityRelationException.html",
+          "hash": "TLyM6i7PSR0hbAP/Hy2eqQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder-2.html",
+          "hash": "f8oIJVSTdKryQyIUwq3AFA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder-1.html",
+          "hash": "2tr2YFfcDqsqy4LKJzN0+w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder-2.html",
+          "hash": "e/13gvxbrSim3/ewIcuWIw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder-2.html",
+          "hash": "rpmu5WhXx7BGw+Jak+Srjw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder-2.html",
+          "hash": "KcC+x0MlQ482HA8S7bJXjg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.Definitions.Builder.IRequiredMultiRightRelationBuilder-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.Definitions.Builder.IRequiredMultiRightRelationBuilder-2.html",
+          "hash": "XjGwRR+w9cuZIwdG/oVE6g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder-2.html",
+          "hash": "bZ1uMAQrNSbTOUPQ9RLaLw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.Definitions.Builder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.Definitions.Builder.html",
+          "hash": "6raB4CHposxUITiOvuqWOQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.Definitions.EntityConfiguration-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.Definitions.EntityConfiguration-1.html",
+          "hash": "7z3/D48Zs6ypImNe/V2ZtQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.Definitions.EntityConfiguration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.Definitions.EntityConfiguration.html",
+          "hash": "qW/TMGT6QFG4aLHVUfex2A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.Definitions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.Definitions.html",
+          "hash": "//q1np5dTobmBaGcQqvtnA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.Table-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.Table-1.html",
+          "hash": "Z6FFIx1EOLBKrXQ0PWyLLg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.TableBase-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.TableBase-1.html",
+          "hash": "Lbkp1nbM/nLo5u/gfzwQfQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.html",
+          "hash": "aQ7ExjmDz9bRVkXGSLqwLQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.NpgsqlCommandExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.NpgsqlCommandExtensions.html",
+          "hash": "pwh1SJpxXIzpolGwuBN1Eg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.TypeArgumentException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.TypeArgumentException.html",
+          "hash": "hK96VJh9VnheJmf40gdVHA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.VenflowConfiguration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.VenflowConfiguration.html",
+          "hash": "nUa1Axnriw/skEFBtSklWA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.html",
+          "hash": "YZmuFLzE4X8+FIjX+7vU5g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html",
+          "hash": "2Eq9DemlNRRuZIpy0Wmvig=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "nxeg7IdKyLZwNzNoaNrWYw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/advanced/enums.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/advanced/enums.html",
+          "hash": "3l2BFb/LyWRIeEAtlGC5zg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/advanced/nullables.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/advanced/nullables.html",
+          "hash": "P+g/cgDkVLfSfBjcMJeKYw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/advanced/validation.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/advanced/validation.html",
+          "hash": "MQxHiGenghy8aLaVWIATiw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/getting_started/installation.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/getting_started/installation.html",
+          "hash": "hwpCl7UEfqkanwsU/O0KDA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/getting_started/setup.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/getting_started/setup.html",
+          "hash": "ljob0zZIiUkMWuDr6kN1+Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/introduction/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/introduction/intro.html",
+          "hash": "lFK/lnv1KUBlAc34DWUDog=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/operations/count.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/operations/count.html",
+          "hash": "umTUem7RZpf8f1Y5TP3+Cg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/operations/delete.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/operations/delete.html",
+          "hash": "+iw/+N7G4y6H0ROGUoLQMA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/operations/execute.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/operations/execute.html",
+          "hash": "2viSMH2EZCwEyzJt1zvGcQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/operations/insert.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/operations/insert.html",
+          "hash": "0YGRzfrwqJOr2zm1HS9jqQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/operations/query.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/operations/query.html",
+          "hash": "fQrvaaneg1/nkZeiTikK6A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/operations/truncate.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/operations/truncate.html",
+          "hash": "eu9qSxHGPYrEW9XkdMuAcA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/operations/update.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/operations/update.html",
+          "hash": "idRvqvE208D91+JXdfrrzQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "guides/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "guides/toc.html",
+          "hash": "Drn3xR51L1/XqYHtXxjN9A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/jetbrains_logo.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/jetbrains_logo.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "00YPquC/uI0hNER8tGTu2Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "1jOsVPoy2pm1XrNDH+lhWw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Disable incremental build by force rebuild option.",
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0,
+        "full_build_reason_code": "ForceRebuild"
+      },
+      "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 15,
+          "skipped_file_count": 0
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 40,
+          "skipped_file_count": 0
+        },
+        "ResourceDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot support incremental post processing, the reason is: should not trace intermediate info.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

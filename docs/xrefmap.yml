@@ -1,0 +1,1895 @@
+### YamlMime:XRefMap
+sorted: true
+references:
+- uid: API.Docs
+  name: The API Docs of Venflow
+  href: api/index.html
+- uid: Guides.Advanced.Enums
+  name: Enums with Venflow
+  href: guides/advanced/enums.html
+- uid: Guides.Advanced.Nullables
+  name: Nullables with Venflow
+  href: guides/advanced/nullables.html
+- uid: Guides.Advanced.Validation
+  name: Validation with Venflow
+  href: guides/advanced/validation.html
+- uid: Guides.GettingStarted.Installation
+  name: Installing Venflow
+  href: guides/getting_started/installation.html
+- uid: Guides.GettingStarted.Setup
+  name: Setup Venflow
+  href: guides/getting_started/setup.html
+- uid: Guides.Introduction
+  name: Introduction to Venflow
+  href: guides/introduction/intro.html
+- uid: Guides.Operations.Count
+  name: Count with Venflow
+  href: guides/operations/count.html
+- uid: Guides.Operations.Delete
+  name: Delete with Venflow
+  href: guides/operations/delete.html
+- uid: Guides.Operations.Execute
+  name: Execute with Venflow
+  href: guides/operations/execute.html
+- uid: Guides.Operations.Insert
+  name: Insert with Venflow
+  href: guides/operations/insert.html
+- uid: Guides.Operations.Query
+  name: Query with Venflow
+  href: guides/operations/query.html
+- uid: Guides.Operations.Truncate
+  name: Truncate with Venflow
+  href: guides/operations/truncate.html
+- uid: Guides.Operations.Update
+  name: Update with Venflow
+  href: guides/operations/update.html
+- uid: Venflow
+  name: Venflow
+  href: api/Venflow.html
+  commentId: N:Venflow
+  fullName: Venflow
+  nameWithType: Venflow
+- uid: Venflow.Commands
+  name: Venflow.Commands
+  href: api/Venflow.Commands.html
+  commentId: N:Venflow.Commands
+  fullName: Venflow.Commands
+  nameWithType: Venflow.Commands
+- uid: Venflow.Commands.IDeleteCommand`1
+  name: IDeleteCommand<TEntity>
+  href: api/Venflow.Commands.IDeleteCommand-1.html
+  commentId: T:Venflow.Commands.IDeleteCommand`1
+  name.vb: IDeleteCommand(Of TEntity)
+  fullName: Venflow.Commands.IDeleteCommand<TEntity>
+  fullName.vb: Venflow.Commands.IDeleteCommand(Of TEntity)
+  nameWithType: IDeleteCommand<TEntity>
+  nameWithType.vb: IDeleteCommand(Of TEntity)
+- uid: Venflow.Commands.IDeleteCommand`1.DeleteAsync(`0,System.Threading.CancellationToken)
+  name: DeleteAsync(TEntity, CancellationToken)
+  href: api/Venflow.Commands.IDeleteCommand-1.html#Venflow_Commands_IDeleteCommand_1_DeleteAsync__0_System_Threading_CancellationToken_
+  commentId: M:Venflow.Commands.IDeleteCommand`1.DeleteAsync(`0,System.Threading.CancellationToken)
+  fullName: Venflow.Commands.IDeleteCommand<TEntity>.DeleteAsync(TEntity, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Commands.IDeleteCommand(Of TEntity).DeleteAsync(TEntity, System.Threading.CancellationToken)
+  nameWithType: IDeleteCommand<TEntity>.DeleteAsync(TEntity, CancellationToken)
+  nameWithType.vb: IDeleteCommand(Of TEntity).DeleteAsync(TEntity, CancellationToken)
+- uid: Venflow.Commands.IDeleteCommand`1.DeleteAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  name: DeleteAsync(IEnumerable<TEntity>, CancellationToken)
+  href: api/Venflow.Commands.IDeleteCommand-1.html#Venflow_Commands_IDeleteCommand_1_DeleteAsync_System_Collections_Generic_IEnumerable__0__System_Threading_CancellationToken_
+  commentId: M:Venflow.Commands.IDeleteCommand`1.DeleteAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  name.vb: DeleteAsync(IEnumerable(Of TEntity), CancellationToken)
+  fullName: Venflow.Commands.IDeleteCommand<TEntity>.DeleteAsync(System.Collections.Generic.IEnumerable<TEntity>, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Commands.IDeleteCommand(Of TEntity).DeleteAsync(System.Collections.Generic.IEnumerable(Of TEntity), System.Threading.CancellationToken)
+  nameWithType: IDeleteCommand<TEntity>.DeleteAsync(IEnumerable<TEntity>, CancellationToken)
+  nameWithType.vb: IDeleteCommand(Of TEntity).DeleteAsync(IEnumerable(Of TEntity), CancellationToken)
+- uid: Venflow.Commands.IDeleteCommand`1.DeleteAsync*
+  name: DeleteAsync
+  href: api/Venflow.Commands.IDeleteCommand-1.html#Venflow_Commands_IDeleteCommand_1_DeleteAsync_
+  commentId: Overload:Venflow.Commands.IDeleteCommand`1.DeleteAsync
+  isSpec: "True"
+  fullName: Venflow.Commands.IDeleteCommand<TEntity>.DeleteAsync
+  fullName.vb: Venflow.Commands.IDeleteCommand(Of TEntity).DeleteAsync
+  nameWithType: IDeleteCommand<TEntity>.DeleteAsync
+  nameWithType.vb: IDeleteCommand(Of TEntity).DeleteAsync
+- uid: Venflow.Commands.IDeleteCommandBuilder`1
+  name: IDeleteCommandBuilder<TEntity>
+  href: api/Venflow.Commands.IDeleteCommandBuilder-1.html
+  commentId: T:Venflow.Commands.IDeleteCommandBuilder`1
+  name.vb: IDeleteCommandBuilder(Of TEntity)
+  fullName: Venflow.Commands.IDeleteCommandBuilder<TEntity>
+  fullName.vb: Venflow.Commands.IDeleteCommandBuilder(Of TEntity)
+  nameWithType: IDeleteCommandBuilder<TEntity>
+  nameWithType.vb: IDeleteCommandBuilder(Of TEntity)
+- uid: Venflow.Commands.IInsertCommand`1
+  name: IInsertCommand<TEntity>
+  href: api/Venflow.Commands.IInsertCommand-1.html
+  commentId: T:Venflow.Commands.IInsertCommand`1
+  name.vb: IInsertCommand(Of TEntity)
+  fullName: Venflow.Commands.IInsertCommand<TEntity>
+  fullName.vb: Venflow.Commands.IInsertCommand(Of TEntity)
+  nameWithType: IInsertCommand<TEntity>
+  nameWithType.vb: IInsertCommand(Of TEntity)
+- uid: Venflow.Commands.IInsertCommand`1.InsertAsync(`0,System.Threading.CancellationToken)
+  name: InsertAsync(TEntity, CancellationToken)
+  href: api/Venflow.Commands.IInsertCommand-1.html#Venflow_Commands_IInsertCommand_1_InsertAsync__0_System_Threading_CancellationToken_
+  commentId: M:Venflow.Commands.IInsertCommand`1.InsertAsync(`0,System.Threading.CancellationToken)
+  fullName: Venflow.Commands.IInsertCommand<TEntity>.InsertAsync(TEntity, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Commands.IInsertCommand(Of TEntity).InsertAsync(TEntity, System.Threading.CancellationToken)
+  nameWithType: IInsertCommand<TEntity>.InsertAsync(TEntity, CancellationToken)
+  nameWithType.vb: IInsertCommand(Of TEntity).InsertAsync(TEntity, CancellationToken)
+- uid: Venflow.Commands.IInsertCommand`1.InsertAsync(System.Collections.Generic.List{`0},System.Threading.CancellationToken)
+  name: InsertAsync(List<TEntity>, CancellationToken)
+  href: api/Venflow.Commands.IInsertCommand-1.html#Venflow_Commands_IInsertCommand_1_InsertAsync_System_Collections_Generic_List__0__System_Threading_CancellationToken_
+  commentId: M:Venflow.Commands.IInsertCommand`1.InsertAsync(System.Collections.Generic.List{`0},System.Threading.CancellationToken)
+  name.vb: InsertAsync(List(Of TEntity), CancellationToken)
+  fullName: Venflow.Commands.IInsertCommand<TEntity>.InsertAsync(System.Collections.Generic.List<TEntity>, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Commands.IInsertCommand(Of TEntity).InsertAsync(System.Collections.Generic.List(Of TEntity), System.Threading.CancellationToken)
+  nameWithType: IInsertCommand<TEntity>.InsertAsync(List<TEntity>, CancellationToken)
+  nameWithType.vb: IInsertCommand(Of TEntity).InsertAsync(List(Of TEntity), CancellationToken)
+- uid: Venflow.Commands.IInsertCommand`1.InsertAsync*
+  name: InsertAsync
+  href: api/Venflow.Commands.IInsertCommand-1.html#Venflow_Commands_IInsertCommand_1_InsertAsync_
+  commentId: Overload:Venflow.Commands.IInsertCommand`1.InsertAsync
+  isSpec: "True"
+  fullName: Venflow.Commands.IInsertCommand<TEntity>.InsertAsync
+  fullName.vb: Venflow.Commands.IInsertCommand(Of TEntity).InsertAsync
+  nameWithType: IInsertCommand<TEntity>.InsertAsync
+  nameWithType.vb: IInsertCommand(Of TEntity).InsertAsync
+- uid: Venflow.Commands.IInsertCommandBuilder`1
+  name: IInsertCommandBuilder<TEntity>
+  href: api/Venflow.Commands.IInsertCommandBuilder-1.html
+  commentId: T:Venflow.Commands.IInsertCommandBuilder`1
+  name.vb: IInsertCommandBuilder(Of TEntity)
+  fullName: Venflow.Commands.IInsertCommandBuilder<TEntity>
+  fullName.vb: Venflow.Commands.IInsertCommandBuilder(Of TEntity)
+  nameWithType: IInsertCommandBuilder<TEntity>
+  nameWithType.vb: IInsertCommandBuilder(Of TEntity)
+- uid: Venflow.Commands.IInsertCommandBuilder`1.DoNotDoNotSetPopulateRelation
+  name: DoNotDoNotSetPopulateRelation()
+  href: api/Venflow.Commands.IInsertCommandBuilder-1.html#Venflow_Commands_IInsertCommandBuilder_1_DoNotDoNotSetPopulateRelation
+  commentId: M:Venflow.Commands.IInsertCommandBuilder`1.DoNotDoNotSetPopulateRelation
+  fullName: Venflow.Commands.IInsertCommandBuilder<TEntity>.DoNotDoNotSetPopulateRelation()
+  fullName.vb: Venflow.Commands.IInsertCommandBuilder(Of TEntity).DoNotDoNotSetPopulateRelation()
+  nameWithType: IInsertCommandBuilder<TEntity>.DoNotDoNotSetPopulateRelation()
+  nameWithType.vb: IInsertCommandBuilder(Of TEntity).DoNotDoNotSetPopulateRelation()
+- uid: Venflow.Commands.IInsertCommandBuilder`1.DoNotDoNotSetPopulateRelation*
+  name: DoNotDoNotSetPopulateRelation
+  href: api/Venflow.Commands.IInsertCommandBuilder-1.html#Venflow_Commands_IInsertCommandBuilder_1_DoNotDoNotSetPopulateRelation_
+  commentId: Overload:Venflow.Commands.IInsertCommandBuilder`1.DoNotDoNotSetPopulateRelation
+  isSpec: "True"
+  fullName: Venflow.Commands.IInsertCommandBuilder<TEntity>.DoNotDoNotSetPopulateRelation
+  fullName.vb: Venflow.Commands.IInsertCommandBuilder(Of TEntity).DoNotDoNotSetPopulateRelation
+  nameWithType: IInsertCommandBuilder<TEntity>.DoNotDoNotSetPopulateRelation
+  nameWithType.vb: IInsertCommandBuilder(Of TEntity).DoNotDoNotSetPopulateRelation
+- uid: Venflow.Commands.IInsertCommandBuilder`1.DoNotSetIdentityColumns
+  name: DoNotSetIdentityColumns()
+  href: api/Venflow.Commands.IInsertCommandBuilder-1.html#Venflow_Commands_IInsertCommandBuilder_1_DoNotSetIdentityColumns
+  commentId: M:Venflow.Commands.IInsertCommandBuilder`1.DoNotSetIdentityColumns
+  fullName: Venflow.Commands.IInsertCommandBuilder<TEntity>.DoNotSetIdentityColumns()
+  fullName.vb: Venflow.Commands.IInsertCommandBuilder(Of TEntity).DoNotSetIdentityColumns()
+  nameWithType: IInsertCommandBuilder<TEntity>.DoNotSetIdentityColumns()
+  nameWithType.vb: IInsertCommandBuilder(Of TEntity).DoNotSetIdentityColumns()
+- uid: Venflow.Commands.IInsertCommandBuilder`1.DoNotSetIdentityColumns*
+  name: DoNotSetIdentityColumns
+  href: api/Venflow.Commands.IInsertCommandBuilder-1.html#Venflow_Commands_IInsertCommandBuilder_1_DoNotSetIdentityColumns_
+  commentId: Overload:Venflow.Commands.IInsertCommandBuilder`1.DoNotSetIdentityColumns
+  isSpec: "True"
+  fullName: Venflow.Commands.IInsertCommandBuilder<TEntity>.DoNotSetIdentityColumns
+  fullName.vb: Venflow.Commands.IInsertCommandBuilder(Of TEntity).DoNotSetIdentityColumns
+  nameWithType: IInsertCommandBuilder<TEntity>.DoNotSetIdentityColumns
+  nameWithType.vb: IInsertCommandBuilder(Of TEntity).DoNotSetIdentityColumns
+- uid: Venflow.Commands.IInsertCommandBuilder`1.PopulateRelation
+  name: PopulateRelation()
+  href: api/Venflow.Commands.IInsertCommandBuilder-1.html#Venflow_Commands_IInsertCommandBuilder_1_PopulateRelation
+  commentId: M:Venflow.Commands.IInsertCommandBuilder`1.PopulateRelation
+  fullName: Venflow.Commands.IInsertCommandBuilder<TEntity>.PopulateRelation()
+  fullName.vb: Venflow.Commands.IInsertCommandBuilder(Of TEntity).PopulateRelation()
+  nameWithType: IInsertCommandBuilder<TEntity>.PopulateRelation()
+  nameWithType.vb: IInsertCommandBuilder(Of TEntity).PopulateRelation()
+- uid: Venflow.Commands.IInsertCommandBuilder`1.PopulateRelation*
+  name: PopulateRelation
+  href: api/Venflow.Commands.IInsertCommandBuilder-1.html#Venflow_Commands_IInsertCommandBuilder_1_PopulateRelation_
+  commentId: Overload:Venflow.Commands.IInsertCommandBuilder`1.PopulateRelation
+  isSpec: "True"
+  fullName: Venflow.Commands.IInsertCommandBuilder<TEntity>.PopulateRelation
+  fullName.vb: Venflow.Commands.IInsertCommandBuilder(Of TEntity).PopulateRelation
+  nameWithType: IInsertCommandBuilder<TEntity>.PopulateRelation
+  nameWithType.vb: IInsertCommandBuilder(Of TEntity).PopulateRelation
+- uid: Venflow.Commands.IInsertCommandBuilder`1.SetIdentityColumns
+  name: SetIdentityColumns()
+  href: api/Venflow.Commands.IInsertCommandBuilder-1.html#Venflow_Commands_IInsertCommandBuilder_1_SetIdentityColumns
+  commentId: M:Venflow.Commands.IInsertCommandBuilder`1.SetIdentityColumns
+  fullName: Venflow.Commands.IInsertCommandBuilder<TEntity>.SetIdentityColumns()
+  fullName.vb: Venflow.Commands.IInsertCommandBuilder(Of TEntity).SetIdentityColumns()
+  nameWithType: IInsertCommandBuilder<TEntity>.SetIdentityColumns()
+  nameWithType.vb: IInsertCommandBuilder(Of TEntity).SetIdentityColumns()
+- uid: Venflow.Commands.IInsertCommandBuilder`1.SetIdentityColumns*
+  name: SetIdentityColumns
+  href: api/Venflow.Commands.IInsertCommandBuilder-1.html#Venflow_Commands_IInsertCommandBuilder_1_SetIdentityColumns_
+  commentId: Overload:Venflow.Commands.IInsertCommandBuilder`1.SetIdentityColumns
+  isSpec: "True"
+  fullName: Venflow.Commands.IInsertCommandBuilder<TEntity>.SetIdentityColumns
+  fullName.vb: Venflow.Commands.IInsertCommandBuilder(Of TEntity).SetIdentityColumns
+  nameWithType: IInsertCommandBuilder<TEntity>.SetIdentityColumns
+  nameWithType.vb: IInsertCommandBuilder(Of TEntity).SetIdentityColumns
+- uid: Venflow.Commands.IPreCommandBuilder`2
+  name: IPreCommandBuilder<TEntity, TReturn>
+  href: api/Venflow.Commands.IPreCommandBuilder-2.html
+  commentId: T:Venflow.Commands.IPreCommandBuilder`2
+  name.vb: IPreCommandBuilder(Of TEntity, TReturn)
+  fullName: Venflow.Commands.IPreCommandBuilder<TEntity, TReturn>
+  fullName.vb: Venflow.Commands.IPreCommandBuilder(Of TEntity, TReturn)
+  nameWithType: IPreCommandBuilder<TEntity, TReturn>
+  nameWithType.vb: IPreCommandBuilder(Of TEntity, TReturn)
+- uid: Venflow.Commands.IPreCommandBuilder`2.AddFormatter
+  name: AddFormatter()
+  href: api/Venflow.Commands.IPreCommandBuilder-2.html#Venflow_Commands_IPreCommandBuilder_2_AddFormatter
+  commentId: M:Venflow.Commands.IPreCommandBuilder`2.AddFormatter
+  fullName: Venflow.Commands.IPreCommandBuilder<TEntity, TReturn>.AddFormatter()
+  fullName.vb: Venflow.Commands.IPreCommandBuilder(Of TEntity, TReturn).AddFormatter()
+  nameWithType: IPreCommandBuilder<TEntity, TReturn>.AddFormatter()
+  nameWithType.vb: IPreCommandBuilder(Of TEntity, TReturn).AddFormatter()
+- uid: Venflow.Commands.IPreCommandBuilder`2.AddFormatter*
+  name: AddFormatter
+  href: api/Venflow.Commands.IPreCommandBuilder-2.html#Venflow_Commands_IPreCommandBuilder_2_AddFormatter_
+  commentId: Overload:Venflow.Commands.IPreCommandBuilder`2.AddFormatter
+  isSpec: "True"
+  fullName: Venflow.Commands.IPreCommandBuilder<TEntity, TReturn>.AddFormatter
+  fullName.vb: Venflow.Commands.IPreCommandBuilder(Of TEntity, TReturn).AddFormatter
+  nameWithType: IPreCommandBuilder<TEntity, TReturn>.AddFormatter
+  nameWithType.vb: IPreCommandBuilder(Of TEntity, TReturn).AddFormatter
+- uid: Venflow.Commands.IQueryCommand`2
+  name: IQueryCommand<TEntity, TReturn>
+  href: api/Venflow.Commands.IQueryCommand-2.html
+  commentId: T:Venflow.Commands.IQueryCommand`2
+  name.vb: IQueryCommand(Of TEntity, TReturn)
+  fullName: Venflow.Commands.IQueryCommand<TEntity, TReturn>
+  fullName.vb: Venflow.Commands.IQueryCommand(Of TEntity, TReturn)
+  nameWithType: IQueryCommand<TEntity, TReturn>
+  nameWithType.vb: IQueryCommand(Of TEntity, TReturn)
+- uid: Venflow.Commands.IQueryCommand`2.PrepareAsync(System.Threading.CancellationToken)
+  name: PrepareAsync(CancellationToken)
+  href: api/Venflow.Commands.IQueryCommand-2.html#Venflow_Commands_IQueryCommand_2_PrepareAsync_System_Threading_CancellationToken_
+  commentId: M:Venflow.Commands.IQueryCommand`2.PrepareAsync(System.Threading.CancellationToken)
+  fullName: Venflow.Commands.IQueryCommand<TEntity, TReturn>.PrepareAsync(System.Threading.CancellationToken)
+  fullName.vb: Venflow.Commands.IQueryCommand(Of TEntity, TReturn).PrepareAsync(System.Threading.CancellationToken)
+  nameWithType: IQueryCommand<TEntity, TReturn>.PrepareAsync(CancellationToken)
+  nameWithType.vb: IQueryCommand(Of TEntity, TReturn).PrepareAsync(CancellationToken)
+- uid: Venflow.Commands.IQueryCommand`2.PrepareAsync*
+  name: PrepareAsync
+  href: api/Venflow.Commands.IQueryCommand-2.html#Venflow_Commands_IQueryCommand_2_PrepareAsync_
+  commentId: Overload:Venflow.Commands.IQueryCommand`2.PrepareAsync
+  isSpec: "True"
+  fullName: Venflow.Commands.IQueryCommand<TEntity, TReturn>.PrepareAsync
+  fullName.vb: Venflow.Commands.IQueryCommand(Of TEntity, TReturn).PrepareAsync
+  nameWithType: IQueryCommand<TEntity, TReturn>.PrepareAsync
+  nameWithType.vb: IQueryCommand(Of TEntity, TReturn).PrepareAsync
+- uid: Venflow.Commands.IQueryCommand`2.QueryAsync(System.Threading.CancellationToken)
+  name: QueryAsync(CancellationToken)
+  href: api/Venflow.Commands.IQueryCommand-2.html#Venflow_Commands_IQueryCommand_2_QueryAsync_System_Threading_CancellationToken_
+  commentId: M:Venflow.Commands.IQueryCommand`2.QueryAsync(System.Threading.CancellationToken)
+  fullName: Venflow.Commands.IQueryCommand<TEntity, TReturn>.QueryAsync(System.Threading.CancellationToken)
+  fullName.vb: Venflow.Commands.IQueryCommand(Of TEntity, TReturn).QueryAsync(System.Threading.CancellationToken)
+  nameWithType: IQueryCommand<TEntity, TReturn>.QueryAsync(CancellationToken)
+  nameWithType.vb: IQueryCommand(Of TEntity, TReturn).QueryAsync(CancellationToken)
+- uid: Venflow.Commands.IQueryCommand`2.QueryAsync*
+  name: QueryAsync
+  href: api/Venflow.Commands.IQueryCommand-2.html#Venflow_Commands_IQueryCommand_2_QueryAsync_
+  commentId: Overload:Venflow.Commands.IQueryCommand`2.QueryAsync
+  isSpec: "True"
+  fullName: Venflow.Commands.IQueryCommand<TEntity, TReturn>.QueryAsync
+  fullName.vb: Venflow.Commands.IQueryCommand(Of TEntity, TReturn).QueryAsync
+  nameWithType: IQueryCommand<TEntity, TReturn>.QueryAsync
+  nameWithType.vb: IQueryCommand(Of TEntity, TReturn).QueryAsync
+- uid: Venflow.Commands.IQueryCommand`2.UnprepareAsync(System.Threading.CancellationToken)
+  name: UnprepareAsync(CancellationToken)
+  href: api/Venflow.Commands.IQueryCommand-2.html#Venflow_Commands_IQueryCommand_2_UnprepareAsync_System_Threading_CancellationToken_
+  commentId: M:Venflow.Commands.IQueryCommand`2.UnprepareAsync(System.Threading.CancellationToken)
+  fullName: Venflow.Commands.IQueryCommand<TEntity, TReturn>.UnprepareAsync(System.Threading.CancellationToken)
+  fullName.vb: Venflow.Commands.IQueryCommand(Of TEntity, TReturn).UnprepareAsync(System.Threading.CancellationToken)
+  nameWithType: IQueryCommand<TEntity, TReturn>.UnprepareAsync(CancellationToken)
+  nameWithType.vb: IQueryCommand(Of TEntity, TReturn).UnprepareAsync(CancellationToken)
+- uid: Venflow.Commands.IQueryCommand`2.UnprepareAsync*
+  name: UnprepareAsync
+  href: api/Venflow.Commands.IQueryCommand-2.html#Venflow_Commands_IQueryCommand_2_UnprepareAsync_
+  commentId: Overload:Venflow.Commands.IQueryCommand`2.UnprepareAsync
+  isSpec: "True"
+  fullName: Venflow.Commands.IQueryCommand<TEntity, TReturn>.UnprepareAsync
+  fullName.vb: Venflow.Commands.IQueryCommand(Of TEntity, TReturn).UnprepareAsync
+  nameWithType: IQueryCommand<TEntity, TReturn>.UnprepareAsync
+  nameWithType.vb: IQueryCommand(Of TEntity, TReturn).UnprepareAsync
+- uid: Venflow.Commands.IQueryCommandBuilder`2
+  name: IQueryCommandBuilder<TEntity, TReturn>
+  href: api/Venflow.Commands.IQueryCommandBuilder-2.html
+  commentId: T:Venflow.Commands.IQueryCommandBuilder`2
+  name.vb: IQueryCommandBuilder(Of TEntity, TReturn)
+  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>
+  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn)
+  nameWithType: IQueryCommandBuilder<TEntity, TReturn>
+  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn)
+- uid: Venflow.Commands.IQueryCommandBuilder`2.JoinWith*
+  name: JoinWith
+  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_JoinWith_
+  commentId: Overload:Venflow.Commands.IQueryCommandBuilder`2.JoinWith
+  isSpec: "True"
+  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.JoinWith
+  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).JoinWith
+  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.JoinWith
+  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).JoinWith
+- uid: Venflow.Commands.IQueryCommandBuilder`2.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},Venflow.Enums.JoinBehaviour)
+  name: JoinWith<TToEntity>(Expression<Func<TEntity, TToEntity>>, JoinBehaviour)
+  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_JoinWith__1_System_Linq_Expressions_Expression_System_Func__0___0___Venflow_Enums_JoinBehaviour_
+  commentId: M:Venflow.Commands.IQueryCommandBuilder`2.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},Venflow.Enums.JoinBehaviour)
+  name.vb: JoinWith(Of TToEntity)(Expression(Of Func(Of TEntity, TToEntity)), JoinBehaviour)
+  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.JoinWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TEntity, TToEntity>>, Venflow.Enums.JoinBehaviour)
+  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).JoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TEntity, TToEntity)), Venflow.Enums.JoinBehaviour)
+  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.JoinWith<TToEntity>(Expression<Func<TEntity, TToEntity>>, JoinBehaviour)
+  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).JoinWith(Of TToEntity)(Expression(Of Func(Of TEntity, TToEntity)), JoinBehaviour)
+- uid: Venflow.Commands.IQueryCommandBuilder`2.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}},Venflow.Enums.JoinBehaviour)
+  name: JoinWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>>, JoinBehaviour)
+  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_JoinWith__1_System_Linq_Expressions_Expression_System_Func__0_System_Collections_Generic_IList___0____Venflow_Enums_JoinBehaviour_
+  commentId: M:Venflow.Commands.IQueryCommandBuilder`2.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}},Venflow.Enums.JoinBehaviour)
+  name.vb: JoinWith(Of TToEntity)(Expression(Of Func(Of TEntity, IList(Of TToEntity))), JoinBehaviour)
+  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.JoinWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TEntity, System.Collections.Generic.IList<TToEntity>>>, Venflow.Enums.JoinBehaviour)
+  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).JoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TEntity, System.Collections.Generic.IList(Of TToEntity))), Venflow.Enums.JoinBehaviour)
+  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.JoinWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>>, JoinBehaviour)
+  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).JoinWith(Of TToEntity)(Expression(Of Func(Of TEntity, IList(Of TToEntity))), JoinBehaviour)
+- uid: Venflow.Commands.IQueryCommandBuilder`2.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}},Venflow.Enums.JoinBehaviour)
+  name: JoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>>, JoinBehaviour)
+  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_JoinWith__1_System_Linq_Expressions_Expression_System_Func__0_System_Collections_Generic_List___0____Venflow_Enums_JoinBehaviour_
+  commentId: M:Venflow.Commands.IQueryCommandBuilder`2.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}},Venflow.Enums.JoinBehaviour)
+  name.vb: JoinWith(Of TToEntity)(Expression(Of Func(Of TEntity, List(Of TToEntity))), JoinBehaviour)
+  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.JoinWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TEntity, System.Collections.Generic.List<TToEntity>>>, Venflow.Enums.JoinBehaviour)
+  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).JoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TEntity, System.Collections.Generic.List(Of TToEntity))), Venflow.Enums.JoinBehaviour)
+  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.JoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>>, JoinBehaviour)
+  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).JoinWith(Of TToEntity)(Expression(Of Func(Of TEntity, List(Of TToEntity))), JoinBehaviour)
+- uid: Venflow.Commands.IQueryCommandBuilder`2.TrackChanges(System.Boolean)
+  name: TrackChanges(Boolean)
+  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_TrackChanges_System_Boolean_
+  commentId: M:Venflow.Commands.IQueryCommandBuilder`2.TrackChanges(System.Boolean)
+  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.TrackChanges(System.Boolean)
+  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).TrackChanges(System.Boolean)
+  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.TrackChanges(Boolean)
+  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).TrackChanges(Boolean)
+- uid: Venflow.Commands.IQueryCommandBuilder`2.TrackChanges*
+  name: TrackChanges
+  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_TrackChanges_
+  commentId: Overload:Venflow.Commands.IQueryCommandBuilder`2.TrackChanges
+  isSpec: "True"
+  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.TrackChanges
+  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).TrackChanges
+  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.TrackChanges
+  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).TrackChanges
+- uid: Venflow.Commands.ISpecficVenflowCommandBuilder`1
+  name: ISpecficVenflowCommandBuilder<TCommand>
+  href: api/Venflow.Commands.ISpecficVenflowCommandBuilder-1.html
+  commentId: T:Venflow.Commands.ISpecficVenflowCommandBuilder`1
+  name.vb: ISpecficVenflowCommandBuilder(Of TCommand)
+  fullName: Venflow.Commands.ISpecficVenflowCommandBuilder<TCommand>
+  fullName.vb: Venflow.Commands.ISpecficVenflowCommandBuilder(Of TCommand)
+  nameWithType: ISpecficVenflowCommandBuilder<TCommand>
+  nameWithType.vb: ISpecficVenflowCommandBuilder(Of TCommand)
+- uid: Venflow.Commands.ISpecficVenflowCommandBuilder`1.Build
+  name: Build()
+  href: api/Venflow.Commands.ISpecficVenflowCommandBuilder-1.html#Venflow_Commands_ISpecficVenflowCommandBuilder_1_Build
+  commentId: M:Venflow.Commands.ISpecficVenflowCommandBuilder`1.Build
+  fullName: Venflow.Commands.ISpecficVenflowCommandBuilder<TCommand>.Build()
+  fullName.vb: Venflow.Commands.ISpecficVenflowCommandBuilder(Of TCommand).Build()
+  nameWithType: ISpecficVenflowCommandBuilder<TCommand>.Build()
+  nameWithType.vb: ISpecficVenflowCommandBuilder(Of TCommand).Build()
+- uid: Venflow.Commands.ISpecficVenflowCommandBuilder`1.Build*
+  name: Build
+  href: api/Venflow.Commands.ISpecficVenflowCommandBuilder-1.html#Venflow_Commands_ISpecficVenflowCommandBuilder_1_Build_
+  commentId: Overload:Venflow.Commands.ISpecficVenflowCommandBuilder`1.Build
+  isSpec: "True"
+  fullName: Venflow.Commands.ISpecficVenflowCommandBuilder<TCommand>.Build
+  fullName.vb: Venflow.Commands.ISpecficVenflowCommandBuilder(Of TCommand).Build
+  nameWithType: ISpecficVenflowCommandBuilder<TCommand>.Build
+  nameWithType.vb: ISpecficVenflowCommandBuilder(Of TCommand).Build
+- uid: Venflow.Commands.IUpdateCommand`1
+  name: IUpdateCommand<TEntity>
+  href: api/Venflow.Commands.IUpdateCommand-1.html
+  commentId: T:Venflow.Commands.IUpdateCommand`1
+  name.vb: IUpdateCommand(Of TEntity)
+  fullName: Venflow.Commands.IUpdateCommand<TEntity>
+  fullName.vb: Venflow.Commands.IUpdateCommand(Of TEntity)
+  nameWithType: IUpdateCommand<TEntity>
+  nameWithType.vb: IUpdateCommand(Of TEntity)
+- uid: Venflow.Commands.IUpdateCommand`1.UpdateAsync(`0,System.Threading.CancellationToken)
+  name: UpdateAsync(TEntity, CancellationToken)
+  href: api/Venflow.Commands.IUpdateCommand-1.html#Venflow_Commands_IUpdateCommand_1_UpdateAsync__0_System_Threading_CancellationToken_
+  commentId: M:Venflow.Commands.IUpdateCommand`1.UpdateAsync(`0,System.Threading.CancellationToken)
+  fullName: Venflow.Commands.IUpdateCommand<TEntity>.UpdateAsync(TEntity, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Commands.IUpdateCommand(Of TEntity).UpdateAsync(TEntity, System.Threading.CancellationToken)
+  nameWithType: IUpdateCommand<TEntity>.UpdateAsync(TEntity, CancellationToken)
+  nameWithType.vb: IUpdateCommand(Of TEntity).UpdateAsync(TEntity, CancellationToken)
+- uid: Venflow.Commands.IUpdateCommand`1.UpdateAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  name: UpdateAsync(IEnumerable<TEntity>, CancellationToken)
+  href: api/Venflow.Commands.IUpdateCommand-1.html#Venflow_Commands_IUpdateCommand_1_UpdateAsync_System_Collections_Generic_IEnumerable__0__System_Threading_CancellationToken_
+  commentId: M:Venflow.Commands.IUpdateCommand`1.UpdateAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  name.vb: UpdateAsync(IEnumerable(Of TEntity), CancellationToken)
+  fullName: Venflow.Commands.IUpdateCommand<TEntity>.UpdateAsync(System.Collections.Generic.IEnumerable<TEntity>, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Commands.IUpdateCommand(Of TEntity).UpdateAsync(System.Collections.Generic.IEnumerable(Of TEntity), System.Threading.CancellationToken)
+  nameWithType: IUpdateCommand<TEntity>.UpdateAsync(IEnumerable<TEntity>, CancellationToken)
+  nameWithType.vb: IUpdateCommand(Of TEntity).UpdateAsync(IEnumerable(Of TEntity), CancellationToken)
+- uid: Venflow.Commands.IUpdateCommand`1.UpdateAsync*
+  name: UpdateAsync
+  href: api/Venflow.Commands.IUpdateCommand-1.html#Venflow_Commands_IUpdateCommand_1_UpdateAsync_
+  commentId: Overload:Venflow.Commands.IUpdateCommand`1.UpdateAsync
+  isSpec: "True"
+  fullName: Venflow.Commands.IUpdateCommand<TEntity>.UpdateAsync
+  fullName.vb: Venflow.Commands.IUpdateCommand(Of TEntity).UpdateAsync
+  nameWithType: IUpdateCommand<TEntity>.UpdateAsync
+  nameWithType.vb: IUpdateCommand(Of TEntity).UpdateAsync
+- uid: Venflow.Commands.IUpdateCommandBuilder`1
+  name: IUpdateCommandBuilder<TEntity>
+  href: api/Venflow.Commands.IUpdateCommandBuilder-1.html
+  commentId: T:Venflow.Commands.IUpdateCommandBuilder`1
+  name.vb: IUpdateCommandBuilder(Of TEntity)
+  fullName: Venflow.Commands.IUpdateCommandBuilder<TEntity>
+  fullName.vb: Venflow.Commands.IUpdateCommandBuilder(Of TEntity)
+  nameWithType: IUpdateCommandBuilder<TEntity>
+  nameWithType.vb: IUpdateCommandBuilder(Of TEntity)
+- uid: Venflow.Commands.IVenflowCommand`1
+  name: IVenflowCommand<TEntity>
+  href: api/Venflow.Commands.IVenflowCommand-1.html
+  commentId: T:Venflow.Commands.IVenflowCommand`1
+  name.vb: IVenflowCommand(Of TEntity)
+  fullName: Venflow.Commands.IVenflowCommand<TEntity>
+  fullName.vb: Venflow.Commands.IVenflowCommand(Of TEntity)
+  nameWithType: IVenflowCommand<TEntity>
+  nameWithType.vb: IVenflowCommand(Of TEntity)
+- uid: Venflow.Commands.IVenflowCommandBuilder`1
+  name: IVenflowCommandBuilder<TEntity>
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html
+  commentId: T:Venflow.Commands.IVenflowCommandBuilder`1
+  name.vb: IVenflowCommandBuilder(Of TEntity)
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity)
+  nameWithType: IVenflowCommandBuilder<TEntity>
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity)
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.Delete
+  name: Delete()
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_Delete
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.Delete
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.Delete()
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).Delete()
+  nameWithType: IVenflowCommandBuilder<TEntity>.Delete()
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).Delete()
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.Delete*
+  name: Delete
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_Delete_
+  commentId: Overload:Venflow.Commands.IVenflowCommandBuilder`1.Delete
+  isSpec: "True"
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.Delete
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).Delete
+  nameWithType: IVenflowCommandBuilder<TEntity>.Delete
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).Delete
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.Insert
+  name: Insert()
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_Insert
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.Insert
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.Insert()
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).Insert()
+  nameWithType: IVenflowCommandBuilder<TEntity>.Insert()
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).Insert()
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.Insert*
+  name: Insert
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_Insert_
+  commentId: Overload:Venflow.Commands.IVenflowCommandBuilder`1.Insert
+  isSpec: "True"
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.Insert
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).Insert
+  nameWithType: IVenflowCommandBuilder<TEntity>.Insert
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).Insert
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch
+  name: QueryBatch()
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryBatch()
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryBatch()
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryBatch()
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryBatch()
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.String)
+  name: QueryBatch(String)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_System_String_
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.String)
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryBatch(System.String)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryBatch(System.String)
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryBatch(String)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryBatch(String)
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.String,Npgsql.NpgsqlParameter[])
+  name: QueryBatch(String, NpgsqlParameter[])
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_System_String_Npgsql_NpgsqlParameter___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.String,Npgsql.NpgsqlParameter[])
+  name.vb: QueryBatch(String, NpgsqlParameter())
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryBatch(System.String, Npgsql.NpgsqlParameter[])
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryBatch(System.String, Npgsql.NpgsqlParameter())
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryBatch(String, NpgsqlParameter[])
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryBatch(String, NpgsqlParameter())
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.UInt64)
+  name: QueryBatch(UInt64)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_System_UInt64_
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.UInt64)
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryBatch(System.UInt64)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryBatch(System.UInt64)
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryBatch(UInt64)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryBatch(UInt64)
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch*
+  name: QueryBatch
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_
+  commentId: Overload:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch
+  isSpec: "True"
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryBatch
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryBatch
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryBatch
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryBatch
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedBatch(System.FormattableString)
+  name: QueryInterpolatedBatch(FormattableString)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryInterpolatedBatch_System_FormattableString_
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedBatch(System.FormattableString)
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryInterpolatedBatch(System.FormattableString)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryInterpolatedBatch(System.FormattableString)
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryInterpolatedBatch(FormattableString)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryInterpolatedBatch(FormattableString)
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedBatch*
+  name: QueryInterpolatedBatch
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryInterpolatedBatch_
+  commentId: Overload:Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedBatch
+  isSpec: "True"
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryInterpolatedBatch
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryInterpolatedBatch
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryInterpolatedBatch
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryInterpolatedBatch
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedSingle(System.FormattableString)
+  name: QueryInterpolatedSingle(FormattableString)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryInterpolatedSingle_System_FormattableString_
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedSingle(System.FormattableString)
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryInterpolatedSingle(System.FormattableString)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryInterpolatedSingle(System.FormattableString)
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryInterpolatedSingle(FormattableString)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryInterpolatedSingle(FormattableString)
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedSingle*
+  name: QueryInterpolatedSingle
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryInterpolatedSingle_
+  commentId: Overload:Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedSingle
+  isSpec: "True"
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryInterpolatedSingle
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryInterpolatedSingle
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryInterpolatedSingle
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryInterpolatedSingle
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle
+  name: QuerySingle()
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QuerySingle()
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QuerySingle()
+  nameWithType: IVenflowCommandBuilder<TEntity>.QuerySingle()
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QuerySingle()
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(System.String)
+  name: QuerySingle(String)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle_System_String_
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(System.String)
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QuerySingle(System.String)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QuerySingle(System.String)
+  nameWithType: IVenflowCommandBuilder<TEntity>.QuerySingle(String)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QuerySingle(String)
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])
+  name: QuerySingle(String, NpgsqlParameter[])
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle_System_String_Npgsql_NpgsqlParameter___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])
+  name.vb: QuerySingle(String, NpgsqlParameter())
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QuerySingle(System.String, Npgsql.NpgsqlParameter[])
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QuerySingle(System.String, Npgsql.NpgsqlParameter())
+  nameWithType: IVenflowCommandBuilder<TEntity>.QuerySingle(String, NpgsqlParameter[])
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QuerySingle(String, NpgsqlParameter())
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle*
+  name: QuerySingle
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle_
+  commentId: Overload:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle
+  isSpec: "True"
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QuerySingle
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QuerySingle
+  nameWithType: IVenflowCommandBuilder<TEntity>.QuerySingle
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QuerySingle
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.Update
+  name: Update()
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_Update
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.Update
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.Update()
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).Update()
+  nameWithType: IVenflowCommandBuilder<TEntity>.Update()
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).Update()
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.Update*
+  name: Update
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_Update_
+  commentId: Overload:Venflow.Commands.IVenflowCommandBuilder`1.Update
+  isSpec: "True"
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.Update
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).Update
+  nameWithType: IVenflowCommandBuilder<TEntity>.Update
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).Update
+- uid: Venflow.Commands.JoinBuilder`3
+  name: JoinBuilder<TRelationEntity, TEntity, TReturn>
+  href: api/Venflow.Commands.JoinBuilder-3.html
+  commentId: T:Venflow.Commands.JoinBuilder`3
+  name.vb: JoinBuilder(Of TRelationEntity, TEntity, TReturn)
+  fullName: Venflow.Commands.JoinBuilder<TRelationEntity, TEntity, TReturn>
+  fullName.vb: Venflow.Commands.JoinBuilder(Of TRelationEntity, TEntity, TReturn)
+  nameWithType: JoinBuilder<TRelationEntity, TEntity, TReturn>
+  nameWithType.vb: JoinBuilder(Of TRelationEntity, TEntity, TReturn)
+- uid: Venflow.Commands.JoinBuilder`3.Build
+  name: Build()
+  href: api/Venflow.Commands.JoinBuilder-3.html#Venflow_Commands_JoinBuilder_3_Build
+  commentId: M:Venflow.Commands.JoinBuilder`3.Build
+  fullName: Venflow.Commands.JoinBuilder<TRelationEntity, TEntity, TReturn>.Build()
+  fullName.vb: Venflow.Commands.JoinBuilder(Of TRelationEntity, TEntity, TReturn).Build()
+  nameWithType: JoinBuilder<TRelationEntity, TEntity, TReturn>.Build()
+  nameWithType.vb: JoinBuilder(Of TRelationEntity, TEntity, TReturn).Build()
+- uid: Venflow.Commands.JoinBuilder`3.Build*
+  name: Build
+  href: api/Venflow.Commands.JoinBuilder-3.html#Venflow_Commands_JoinBuilder_3_Build_
+  commentId: Overload:Venflow.Commands.JoinBuilder`3.Build
+  isSpec: "True"
+  fullName: Venflow.Commands.JoinBuilder<TRelationEntity, TEntity, TReturn>.Build
+  fullName.vb: Venflow.Commands.JoinBuilder(Of TRelationEntity, TEntity, TReturn).Build
+  nameWithType: JoinBuilder<TRelationEntity, TEntity, TReturn>.Build
+  nameWithType.vb: JoinBuilder(Of TRelationEntity, TEntity, TReturn).Build
+- uid: Venflow.Commands.JoinBuilder`3.JoinWith*
+  name: JoinWith
+  href: api/Venflow.Commands.JoinBuilder-3.html#Venflow_Commands_JoinBuilder_3_JoinWith_
+  commentId: Overload:Venflow.Commands.JoinBuilder`3.JoinWith
+  isSpec: "True"
+  fullName: Venflow.Commands.JoinBuilder<TRelationEntity, TEntity, TReturn>.JoinWith
+  fullName.vb: Venflow.Commands.JoinBuilder(Of TRelationEntity, TEntity, TReturn).JoinWith
+  nameWithType: JoinBuilder<TRelationEntity, TEntity, TReturn>.JoinWith
+  nameWithType.vb: JoinBuilder(Of TRelationEntity, TEntity, TReturn).JoinWith
+- uid: Venflow.Commands.JoinBuilder`3.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},Venflow.Enums.JoinBehaviour)
+  name: JoinWith<TToEntity>(Expression<Func<TRelationEntity, TToEntity>>, JoinBehaviour)
+  href: api/Venflow.Commands.JoinBuilder-3.html#Venflow_Commands_JoinBuilder_3_JoinWith__1_System_Linq_Expressions_Expression_System_Func__0___0___Venflow_Enums_JoinBehaviour_
+  commentId: M:Venflow.Commands.JoinBuilder`3.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},Venflow.Enums.JoinBehaviour)
+  name.vb: JoinWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, TToEntity)), JoinBehaviour)
+  fullName: Venflow.Commands.JoinBuilder<TRelationEntity, TEntity, TReturn>.JoinWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRelationEntity, TToEntity>>, Venflow.Enums.JoinBehaviour)
+  fullName.vb: Venflow.Commands.JoinBuilder(Of TRelationEntity, TEntity, TReturn).JoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRelationEntity, TToEntity)), Venflow.Enums.JoinBehaviour)
+  nameWithType: JoinBuilder<TRelationEntity, TEntity, TReturn>.JoinWith<TToEntity>(Expression<Func<TRelationEntity, TToEntity>>, JoinBehaviour)
+  nameWithType.vb: JoinBuilder(Of TRelationEntity, TEntity, TReturn).JoinWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, TToEntity)), JoinBehaviour)
+- uid: Venflow.Commands.JoinBuilder`3.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}},Venflow.Enums.JoinBehaviour)
+  name: JoinWith<TToEntity>(Expression<Func<TRelationEntity, IList<TToEntity>>>, JoinBehaviour)
+  href: api/Venflow.Commands.JoinBuilder-3.html#Venflow_Commands_JoinBuilder_3_JoinWith__1_System_Linq_Expressions_Expression_System_Func__0_System_Collections_Generic_IList___0____Venflow_Enums_JoinBehaviour_
+  commentId: M:Venflow.Commands.JoinBuilder`3.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}},Venflow.Enums.JoinBehaviour)
+  name.vb: JoinWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, IList(Of TToEntity))), JoinBehaviour)
+  fullName: Venflow.Commands.JoinBuilder<TRelationEntity, TEntity, TReturn>.JoinWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRelationEntity, System.Collections.Generic.IList<TToEntity>>>, Venflow.Enums.JoinBehaviour)
+  fullName.vb: Venflow.Commands.JoinBuilder(Of TRelationEntity, TEntity, TReturn).JoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRelationEntity, System.Collections.Generic.IList(Of TToEntity))), Venflow.Enums.JoinBehaviour)
+  nameWithType: JoinBuilder<TRelationEntity, TEntity, TReturn>.JoinWith<TToEntity>(Expression<Func<TRelationEntity, IList<TToEntity>>>, JoinBehaviour)
+  nameWithType.vb: JoinBuilder(Of TRelationEntity, TEntity, TReturn).JoinWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, IList(Of TToEntity))), JoinBehaviour)
+- uid: Venflow.Commands.JoinBuilder`3.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}},Venflow.Enums.JoinBehaviour)
+  name: JoinWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>>, JoinBehaviour)
+  href: api/Venflow.Commands.JoinBuilder-3.html#Venflow_Commands_JoinBuilder_3_JoinWith__1_System_Linq_Expressions_Expression_System_Func__0_System_Collections_Generic_List___0____Venflow_Enums_JoinBehaviour_
+  commentId: M:Venflow.Commands.JoinBuilder`3.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}},Venflow.Enums.JoinBehaviour)
+  name.vb: JoinWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, List(Of TToEntity))), JoinBehaviour)
+  fullName: Venflow.Commands.JoinBuilder<TRelationEntity, TEntity, TReturn>.JoinWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRelationEntity, System.Collections.Generic.List<TToEntity>>>, Venflow.Enums.JoinBehaviour)
+  fullName.vb: Venflow.Commands.JoinBuilder(Of TRelationEntity, TEntity, TReturn).JoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRelationEntity, System.Collections.Generic.List(Of TToEntity))), Venflow.Enums.JoinBehaviour)
+  nameWithType: JoinBuilder<TRelationEntity, TEntity, TReturn>.JoinWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>>, JoinBehaviour)
+  nameWithType.vb: JoinBuilder(Of TRelationEntity, TEntity, TReturn).JoinWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, List(Of TToEntity))), JoinBehaviour)
+- uid: Venflow.Commands.JoinBuilder`3.ThenWith*
+  name: ThenWith
+  href: api/Venflow.Commands.JoinBuilder-3.html#Venflow_Commands_JoinBuilder_3_ThenWith_
+  commentId: Overload:Venflow.Commands.JoinBuilder`3.ThenWith
+  isSpec: "True"
+  fullName: Venflow.Commands.JoinBuilder<TRelationEntity, TEntity, TReturn>.ThenWith
+  fullName.vb: Venflow.Commands.JoinBuilder(Of TRelationEntity, TEntity, TReturn).ThenWith
+  nameWithType: JoinBuilder<TRelationEntity, TEntity, TReturn>.ThenWith
+  nameWithType.vb: JoinBuilder(Of TRelationEntity, TEntity, TReturn).ThenWith
+- uid: Venflow.Commands.JoinBuilder`3.ThenWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}},Venflow.Enums.JoinBehaviour)
+  name: ThenWith<TToEntity>(Expression<Func<TEntity, TToEntity>>, JoinBehaviour)
+  href: api/Venflow.Commands.JoinBuilder-3.html#Venflow_Commands_JoinBuilder_3_ThenWith__1_System_Linq_Expressions_Expression_System_Func__1___0___Venflow_Enums_JoinBehaviour_
+  commentId: M:Venflow.Commands.JoinBuilder`3.ThenWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}},Venflow.Enums.JoinBehaviour)
+  name.vb: ThenWith(Of TToEntity)(Expression(Of Func(Of TEntity, TToEntity)), JoinBehaviour)
+  fullName: Venflow.Commands.JoinBuilder<TRelationEntity, TEntity, TReturn>.ThenWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TEntity, TToEntity>>, Venflow.Enums.JoinBehaviour)
+  fullName.vb: Venflow.Commands.JoinBuilder(Of TRelationEntity, TEntity, TReturn).ThenWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TEntity, TToEntity)), Venflow.Enums.JoinBehaviour)
+  nameWithType: JoinBuilder<TRelationEntity, TEntity, TReturn>.ThenWith<TToEntity>(Expression<Func<TEntity, TToEntity>>, JoinBehaviour)
+  nameWithType.vb: JoinBuilder(Of TRelationEntity, TEntity, TReturn).ThenWith(Of TToEntity)(Expression(Of Func(Of TEntity, TToEntity)), JoinBehaviour)
+- uid: Venflow.Commands.JoinBuilder`3.ThenWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}},Venflow.Enums.JoinBehaviour)
+  name: ThenWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>>, JoinBehaviour)
+  href: api/Venflow.Commands.JoinBuilder-3.html#Venflow_Commands_JoinBuilder_3_ThenWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0____Venflow_Enums_JoinBehaviour_
+  commentId: M:Venflow.Commands.JoinBuilder`3.ThenWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}},Venflow.Enums.JoinBehaviour)
+  name.vb: ThenWith(Of TToEntity)(Expression(Of Func(Of TEntity, IList(Of TToEntity))), JoinBehaviour)
+  fullName: Venflow.Commands.JoinBuilder<TRelationEntity, TEntity, TReturn>.ThenWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TEntity, System.Collections.Generic.IList<TToEntity>>>, Venflow.Enums.JoinBehaviour)
+  fullName.vb: Venflow.Commands.JoinBuilder(Of TRelationEntity, TEntity, TReturn).ThenWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TEntity, System.Collections.Generic.IList(Of TToEntity))), Venflow.Enums.JoinBehaviour)
+  nameWithType: JoinBuilder<TRelationEntity, TEntity, TReturn>.ThenWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>>, JoinBehaviour)
+  nameWithType.vb: JoinBuilder(Of TRelationEntity, TEntity, TReturn).ThenWith(Of TToEntity)(Expression(Of Func(Of TEntity, IList(Of TToEntity))), JoinBehaviour)
+- uid: Venflow.Commands.JoinBuilder`3.ThenWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}},Venflow.Enums.JoinBehaviour)
+  name: ThenWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>>, JoinBehaviour)
+  href: api/Venflow.Commands.JoinBuilder-3.html#Venflow_Commands_JoinBuilder_3_ThenWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0____Venflow_Enums_JoinBehaviour_
+  commentId: M:Venflow.Commands.JoinBuilder`3.ThenWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}},Venflow.Enums.JoinBehaviour)
+  name.vb: ThenWith(Of TToEntity)(Expression(Of Func(Of TEntity, List(Of TToEntity))), JoinBehaviour)
+  fullName: Venflow.Commands.JoinBuilder<TRelationEntity, TEntity, TReturn>.ThenWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TEntity, System.Collections.Generic.List<TToEntity>>>, Venflow.Enums.JoinBehaviour)
+  fullName.vb: Venflow.Commands.JoinBuilder(Of TRelationEntity, TEntity, TReturn).ThenWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TEntity, System.Collections.Generic.List(Of TToEntity))), Venflow.Enums.JoinBehaviour)
+  nameWithType: JoinBuilder<TRelationEntity, TEntity, TReturn>.ThenWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>>, JoinBehaviour)
+  nameWithType.vb: JoinBuilder(Of TRelationEntity, TEntity, TReturn).ThenWith(Of TToEntity)(Expression(Of Func(Of TEntity, List(Of TToEntity))), JoinBehaviour)
+- uid: Venflow.Commands.JoinBuilder`3.TrackChanges(System.Boolean)
+  name: TrackChanges(Boolean)
+  href: api/Venflow.Commands.JoinBuilder-3.html#Venflow_Commands_JoinBuilder_3_TrackChanges_System_Boolean_
+  commentId: M:Venflow.Commands.JoinBuilder`3.TrackChanges(System.Boolean)
+  fullName: Venflow.Commands.JoinBuilder<TRelationEntity, TEntity, TReturn>.TrackChanges(System.Boolean)
+  fullName.vb: Venflow.Commands.JoinBuilder(Of TRelationEntity, TEntity, TReturn).TrackChanges(System.Boolean)
+  nameWithType: JoinBuilder<TRelationEntity, TEntity, TReturn>.TrackChanges(Boolean)
+  nameWithType.vb: JoinBuilder(Of TRelationEntity, TEntity, TReturn).TrackChanges(Boolean)
+- uid: Venflow.Commands.JoinBuilder`3.TrackChanges*
+  name: TrackChanges
+  href: api/Venflow.Commands.JoinBuilder-3.html#Venflow_Commands_JoinBuilder_3_TrackChanges_
+  commentId: Overload:Venflow.Commands.JoinBuilder`3.TrackChanges
+  isSpec: "True"
+  fullName: Venflow.Commands.JoinBuilder<TRelationEntity, TEntity, TReturn>.TrackChanges
+  fullName.vb: Venflow.Commands.JoinBuilder(Of TRelationEntity, TEntity, TReturn).TrackChanges
+  nameWithType: JoinBuilder<TRelationEntity, TEntity, TReturn>.TrackChanges
+  nameWithType.vb: JoinBuilder(Of TRelationEntity, TEntity, TReturn).TrackChanges
+- uid: Venflow.Database
+  name: Database
+  href: api/Venflow.Database.html
+  commentId: T:Venflow.Database
+  fullName: Venflow.Database
+  nameWithType: Database
+- uid: Venflow.Database.#ctor(System.String)
+  name: Database(String)
+  href: api/Venflow.Database.html#Venflow_Database__ctor_System_String_
+  commentId: M:Venflow.Database.#ctor(System.String)
+  fullName: Venflow.Database.Database(System.String)
+  nameWithType: Database.Database(String)
+- uid: Venflow.Database.#ctor*
+  name: Database
+  href: api/Venflow.Database.html#Venflow_Database__ctor_
+  commentId: Overload:Venflow.Database.#ctor
+  isSpec: "True"
+  fullName: Venflow.Database.Database
+  nameWithType: Database.Database
+- uid: Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)
+  name: Configure(DatabaseOptionsBuilder)
+  href: api/Venflow.Database.html#Venflow_Database_Configure_Venflow_DatabaseOptionsBuilder_
+  commentId: M:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)
+  fullName: Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)
+  nameWithType: Database.Configure(DatabaseOptionsBuilder)
+- uid: Venflow.Database.Configure*
+  name: Configure
+  href: api/Venflow.Database.html#Venflow_Database_Configure_
+  commentId: Overload:Venflow.Database.Configure
+  isSpec: "True"
+  fullName: Venflow.Database.Configure
+  nameWithType: Database.Configure
+- uid: Venflow.Database.Custom*
+  name: Custom
+  href: api/Venflow.Database.html#Venflow_Database_Custom_
+  commentId: Overload:Venflow.Database.Custom
+  isSpec: "True"
+  fullName: Venflow.Database.Custom
+  nameWithType: Database.Custom
+- uid: Venflow.Database.Custom``1
+  name: Custom<TEntity>()
+  href: api/Venflow.Database.html#Venflow_Database_Custom__1
+  commentId: M:Venflow.Database.Custom``1
+  name.vb: Custom(Of TEntity)()
+  fullName: Venflow.Database.Custom<TEntity>()
+  fullName.vb: Venflow.Database.Custom(Of TEntity)()
+  nameWithType: Database.Custom<TEntity>()
+  nameWithType.vb: Database.Custom(Of TEntity)()
+- uid: Venflow.Database.Dispose
+  name: Dispose()
+  href: api/Venflow.Database.html#Venflow_Database_Dispose
+  commentId: M:Venflow.Database.Dispose
+  fullName: Venflow.Database.Dispose()
+  nameWithType: Database.Dispose()
+- uid: Venflow.Database.Dispose*
+  name: Dispose
+  href: api/Venflow.Database.html#Venflow_Database_Dispose_
+  commentId: Overload:Venflow.Database.Dispose
+  isSpec: "True"
+  fullName: Venflow.Database.Dispose
+  nameWithType: Database.Dispose
+- uid: Venflow.Database.DisposeAsync
+  name: DisposeAsync()
+  href: api/Venflow.Database.html#Venflow_Database_DisposeAsync
+  commentId: M:Venflow.Database.DisposeAsync
+  fullName: Venflow.Database.DisposeAsync()
+  nameWithType: Database.DisposeAsync()
+- uid: Venflow.Database.DisposeAsync*
+  name: DisposeAsync
+  href: api/Venflow.Database.html#Venflow_Database_DisposeAsync_
+  commentId: Overload:Venflow.Database.DisposeAsync
+  isSpec: "True"
+  fullName: Venflow.Database.DisposeAsync
+  nameWithType: Database.DisposeAsync
+- uid: Venflow.Database.ExecuteAsync(System.String,Npgsql.NpgsqlParameter[])
+  name: ExecuteAsync(String, NpgsqlParameter[])
+  href: api/Venflow.Database.html#Venflow_Database_ExecuteAsync_System_String_Npgsql_NpgsqlParameter___
+  commentId: M:Venflow.Database.ExecuteAsync(System.String,Npgsql.NpgsqlParameter[])
+  name.vb: ExecuteAsync(String, NpgsqlParameter())
+  fullName: Venflow.Database.ExecuteAsync(System.String, Npgsql.NpgsqlParameter[])
+  fullName.vb: Venflow.Database.ExecuteAsync(System.String, Npgsql.NpgsqlParameter())
+  nameWithType: Database.ExecuteAsync(String, NpgsqlParameter[])
+  nameWithType.vb: Database.ExecuteAsync(String, NpgsqlParameter())
+- uid: Venflow.Database.ExecuteAsync(System.String,System.Collections.Generic.IList{Npgsql.NpgsqlParameter},System.Threading.CancellationToken)
+  name: ExecuteAsync(String, IList<NpgsqlParameter>, CancellationToken)
+  href: api/Venflow.Database.html#Venflow_Database_ExecuteAsync_System_String_System_Collections_Generic_IList_Npgsql_NpgsqlParameter__System_Threading_CancellationToken_
+  commentId: M:Venflow.Database.ExecuteAsync(System.String,System.Collections.Generic.IList{Npgsql.NpgsqlParameter},System.Threading.CancellationToken)
+  name.vb: ExecuteAsync(String, IList(Of NpgsqlParameter), CancellationToken)
+  fullName: Venflow.Database.ExecuteAsync(System.String, System.Collections.Generic.IList<Npgsql.NpgsqlParameter>, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Database.ExecuteAsync(System.String, System.Collections.Generic.IList(Of Npgsql.NpgsqlParameter), System.Threading.CancellationToken)
+  nameWithType: Database.ExecuteAsync(String, IList<NpgsqlParameter>, CancellationToken)
+  nameWithType.vb: Database.ExecuteAsync(String, IList(Of NpgsqlParameter), CancellationToken)
+- uid: Venflow.Database.ExecuteAsync(System.String,System.Threading.CancellationToken)
+  name: ExecuteAsync(String, CancellationToken)
+  href: api/Venflow.Database.html#Venflow_Database_ExecuteAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:Venflow.Database.ExecuteAsync(System.String,System.Threading.CancellationToken)
+  fullName: Venflow.Database.ExecuteAsync(System.String, System.Threading.CancellationToken)
+  nameWithType: Database.ExecuteAsync(String, CancellationToken)
+- uid: Venflow.Database.ExecuteAsync*
+  name: ExecuteAsync
+  href: api/Venflow.Database.html#Venflow_Database_ExecuteAsync_
+  commentId: Overload:Venflow.Database.ExecuteAsync
+  isSpec: "True"
+  fullName: Venflow.Database.ExecuteAsync
+  nameWithType: Database.ExecuteAsync
+- uid: Venflow.Database.ExecuteAsync``1(System.String,Npgsql.NpgsqlParameter[])
+  name: ExecuteAsync<T>(String, NpgsqlParameter[])
+  href: api/Venflow.Database.html#Venflow_Database_ExecuteAsync__1_System_String_Npgsql_NpgsqlParameter___
+  commentId: M:Venflow.Database.ExecuteAsync``1(System.String,Npgsql.NpgsqlParameter[])
+  name.vb: ExecuteAsync(Of T)(String, NpgsqlParameter())
+  fullName: Venflow.Database.ExecuteAsync<T>(System.String, Npgsql.NpgsqlParameter[])
+  fullName.vb: Venflow.Database.ExecuteAsync(Of T)(System.String, Npgsql.NpgsqlParameter())
+  nameWithType: Database.ExecuteAsync<T>(String, NpgsqlParameter[])
+  nameWithType.vb: Database.ExecuteAsync(Of T)(String, NpgsqlParameter())
+- uid: Venflow.Database.ExecuteAsync``1(System.String,System.Collections.Generic.IList{Npgsql.NpgsqlParameter},System.Threading.CancellationToken)
+  name: ExecuteAsync<T>(String, IList<NpgsqlParameter>, CancellationToken)
+  href: api/Venflow.Database.html#Venflow_Database_ExecuteAsync__1_System_String_System_Collections_Generic_IList_Npgsql_NpgsqlParameter__System_Threading_CancellationToken_
+  commentId: M:Venflow.Database.ExecuteAsync``1(System.String,System.Collections.Generic.IList{Npgsql.NpgsqlParameter},System.Threading.CancellationToken)
+  name.vb: ExecuteAsync(Of T)(String, IList(Of NpgsqlParameter), CancellationToken)
+  fullName: Venflow.Database.ExecuteAsync<T>(System.String, System.Collections.Generic.IList<Npgsql.NpgsqlParameter>, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Database.ExecuteAsync(Of T)(System.String, System.Collections.Generic.IList(Of Npgsql.NpgsqlParameter), System.Threading.CancellationToken)
+  nameWithType: Database.ExecuteAsync<T>(String, IList<NpgsqlParameter>, CancellationToken)
+  nameWithType.vb: Database.ExecuteAsync(Of T)(String, IList(Of NpgsqlParameter), CancellationToken)
+- uid: Venflow.Database.ExecuteAsync``1(System.String,System.Threading.CancellationToken)
+  name: ExecuteAsync<T>(String, CancellationToken)
+  href: api/Venflow.Database.html#Venflow_Database_ExecuteAsync__1_System_String_System_Threading_CancellationToken_
+  commentId: M:Venflow.Database.ExecuteAsync``1(System.String,System.Threading.CancellationToken)
+  name.vb: ExecuteAsync(Of T)(String, CancellationToken)
+  fullName: Venflow.Database.ExecuteAsync<T>(System.String, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Database.ExecuteAsync(Of T)(System.String, System.Threading.CancellationToken)
+  nameWithType: Database.ExecuteAsync<T>(String, CancellationToken)
+  nameWithType.vb: Database.ExecuteAsync(Of T)(String, CancellationToken)
+- uid: Venflow.Database.ExecuteInterpolatedAsync(System.FormattableString,System.Threading.CancellationToken)
+  name: ExecuteInterpolatedAsync(FormattableString, CancellationToken)
+  href: api/Venflow.Database.html#Venflow_Database_ExecuteInterpolatedAsync_System_FormattableString_System_Threading_CancellationToken_
+  commentId: M:Venflow.Database.ExecuteInterpolatedAsync(System.FormattableString,System.Threading.CancellationToken)
+  fullName: Venflow.Database.ExecuteInterpolatedAsync(System.FormattableString, System.Threading.CancellationToken)
+  nameWithType: Database.ExecuteInterpolatedAsync(FormattableString, CancellationToken)
+- uid: Venflow.Database.ExecuteInterpolatedAsync*
+  name: ExecuteInterpolatedAsync
+  href: api/Venflow.Database.html#Venflow_Database_ExecuteInterpolatedAsync_
+  commentId: Overload:Venflow.Database.ExecuteInterpolatedAsync
+  isSpec: "True"
+  fullName: Venflow.Database.ExecuteInterpolatedAsync
+  nameWithType: Database.ExecuteInterpolatedAsync
+- uid: Venflow.Database.ExecuteInterpolatedAsync``1(System.FormattableString,System.Threading.CancellationToken)
+  name: ExecuteInterpolatedAsync<T>(FormattableString, CancellationToken)
+  href: api/Venflow.Database.html#Venflow_Database_ExecuteInterpolatedAsync__1_System_FormattableString_System_Threading_CancellationToken_
+  commentId: M:Venflow.Database.ExecuteInterpolatedAsync``1(System.FormattableString,System.Threading.CancellationToken)
+  name.vb: ExecuteInterpolatedAsync(Of T)(FormattableString, CancellationToken)
+  fullName: Venflow.Database.ExecuteInterpolatedAsync<T>(System.FormattableString, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Database.ExecuteInterpolatedAsync(Of T)(System.FormattableString, System.Threading.CancellationToken)
+  nameWithType: Database.ExecuteInterpolatedAsync<T>(FormattableString, CancellationToken)
+  nameWithType.vb: Database.ExecuteInterpolatedAsync(Of T)(FormattableString, CancellationToken)
+- uid: Venflow.Database.GetConnection
+  name: GetConnection()
+  href: api/Venflow.Database.html#Venflow_Database_GetConnection
+  commentId: M:Venflow.Database.GetConnection
+  fullName: Venflow.Database.GetConnection()
+  nameWithType: Database.GetConnection()
+- uid: Venflow.Database.GetConnection*
+  name: GetConnection
+  href: api/Venflow.Database.html#Venflow_Database_GetConnection_
+  commentId: Overload:Venflow.Database.GetConnection
+  isSpec: "True"
+  fullName: Venflow.Database.GetConnection
+  nameWithType: Database.GetConnection
+- uid: Venflow.DatabaseOptionsBuilder
+  name: DatabaseOptionsBuilder
+  href: api/Venflow.DatabaseOptionsBuilder.html
+  commentId: T:Venflow.DatabaseOptionsBuilder
+  fullName: Venflow.DatabaseOptionsBuilder
+  nameWithType: DatabaseOptionsBuilder
+- uid: Venflow.DatabaseOptionsBuilder.AddConfigurations(System.Reflection.Assembly)
+  name: AddConfigurations(Assembly)
+  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_AddConfigurations_System_Reflection_Assembly_
+  commentId: M:Venflow.DatabaseOptionsBuilder.AddConfigurations(System.Reflection.Assembly)
+  fullName: Venflow.DatabaseOptionsBuilder.AddConfigurations(System.Reflection.Assembly)
+  nameWithType: DatabaseOptionsBuilder.AddConfigurations(Assembly)
+- uid: Venflow.DatabaseOptionsBuilder.AddConfigurations(System.Reflection.Assembly[])
+  name: AddConfigurations(Assembly[])
+  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_AddConfigurations_System_Reflection_Assembly___
+  commentId: M:Venflow.DatabaseOptionsBuilder.AddConfigurations(System.Reflection.Assembly[])
+  name.vb: AddConfigurations(Assembly())
+  fullName: Venflow.DatabaseOptionsBuilder.AddConfigurations(System.Reflection.Assembly[])
+  fullName.vb: Venflow.DatabaseOptionsBuilder.AddConfigurations(System.Reflection.Assembly())
+  nameWithType: DatabaseOptionsBuilder.AddConfigurations(Assembly[])
+  nameWithType.vb: DatabaseOptionsBuilder.AddConfigurations(Assembly())
+- uid: Venflow.DatabaseOptionsBuilder.AddConfigurations*
+  name: AddConfigurations
+  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_AddConfigurations_
+  commentId: Overload:Venflow.DatabaseOptionsBuilder.AddConfigurations
+  isSpec: "True"
+  fullName: Venflow.DatabaseOptionsBuilder.AddConfigurations
+  nameWithType: DatabaseOptionsBuilder.AddConfigurations
+- uid: Venflow.DatabaseOptionsBuilder.AddConfigurations``1
+  name: AddConfigurations<T>()
+  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_AddConfigurations__1
+  commentId: M:Venflow.DatabaseOptionsBuilder.AddConfigurations``1
+  name.vb: AddConfigurations(Of T)()
+  fullName: Venflow.DatabaseOptionsBuilder.AddConfigurations<T>()
+  fullName.vb: Venflow.DatabaseOptionsBuilder.AddConfigurations(Of T)()
+  nameWithType: DatabaseOptionsBuilder.AddConfigurations<T>()
+  nameWithType.vb: DatabaseOptionsBuilder.AddConfigurations(Of T)()
+- uid: Venflow.Enums
+  name: Venflow.Enums
+  href: api/Venflow.Enums.html
+  commentId: N:Venflow.Enums
+  fullName: Venflow.Enums
+  nameWithType: Venflow.Enums
+- uid: Venflow.Enums.ForeignTruncateOptions
+  name: ForeignTruncateOptions
+  href: api/Venflow.Enums.ForeignTruncateOptions.html
+  commentId: T:Venflow.Enums.ForeignTruncateOptions
+  fullName: Venflow.Enums.ForeignTruncateOptions
+  nameWithType: ForeignTruncateOptions
+- uid: Venflow.Enums.ForeignTruncateOptions.Cascade
+  name: Cascade
+  href: api/Venflow.Enums.ForeignTruncateOptions.html#Venflow_Enums_ForeignTruncateOptions_Cascade
+  commentId: F:Venflow.Enums.ForeignTruncateOptions.Cascade
+  fullName: Venflow.Enums.ForeignTruncateOptions.Cascade
+  nameWithType: ForeignTruncateOptions.Cascade
+- uid: Venflow.Enums.ForeignTruncateOptions.None
+  name: None
+  href: api/Venflow.Enums.ForeignTruncateOptions.html#Venflow_Enums_ForeignTruncateOptions_None
+  commentId: F:Venflow.Enums.ForeignTruncateOptions.None
+  fullName: Venflow.Enums.ForeignTruncateOptions.None
+  nameWithType: ForeignTruncateOptions.None
+- uid: Venflow.Enums.ForeignTruncateOptions.Restrict
+  name: Restrict
+  href: api/Venflow.Enums.ForeignTruncateOptions.html#Venflow_Enums_ForeignTruncateOptions_Restrict
+  commentId: F:Venflow.Enums.ForeignTruncateOptions.Restrict
+  fullName: Venflow.Enums.ForeignTruncateOptions.Restrict
+  nameWithType: ForeignTruncateOptions.Restrict
+- uid: Venflow.Enums.IdentityTruncateOptions
+  name: IdentityTruncateOptions
+  href: api/Venflow.Enums.IdentityTruncateOptions.html
+  commentId: T:Venflow.Enums.IdentityTruncateOptions
+  fullName: Venflow.Enums.IdentityTruncateOptions
+  nameWithType: IdentityTruncateOptions
+- uid: Venflow.Enums.IdentityTruncateOptions.Continue
+  name: Continue
+  href: api/Venflow.Enums.IdentityTruncateOptions.html#Venflow_Enums_IdentityTruncateOptions_Continue
+  commentId: F:Venflow.Enums.IdentityTruncateOptions.Continue
+  fullName: Venflow.Enums.IdentityTruncateOptions.Continue
+  nameWithType: IdentityTruncateOptions.Continue
+- uid: Venflow.Enums.IdentityTruncateOptions.None
+  name: None
+  href: api/Venflow.Enums.IdentityTruncateOptions.html#Venflow_Enums_IdentityTruncateOptions_None
+  commentId: F:Venflow.Enums.IdentityTruncateOptions.None
+  fullName: Venflow.Enums.IdentityTruncateOptions.None
+  nameWithType: IdentityTruncateOptions.None
+- uid: Venflow.Enums.IdentityTruncateOptions.Restart
+  name: Restart
+  href: api/Venflow.Enums.IdentityTruncateOptions.html#Venflow_Enums_IdentityTruncateOptions_Restart
+  commentId: F:Venflow.Enums.IdentityTruncateOptions.Restart
+  fullName: Venflow.Enums.IdentityTruncateOptions.Restart
+  nameWithType: IdentityTruncateOptions.Restart
+- uid: Venflow.Enums.InsertOptions
+  name: InsertOptions
+  href: api/Venflow.Enums.InsertOptions.html
+  commentId: T:Venflow.Enums.InsertOptions
+  fullName: Venflow.Enums.InsertOptions
+  nameWithType: InsertOptions
+- uid: Venflow.Enums.InsertOptions.None
+  name: None
+  href: api/Venflow.Enums.InsertOptions.html#Venflow_Enums_InsertOptions_None
+  commentId: F:Venflow.Enums.InsertOptions.None
+  fullName: Venflow.Enums.InsertOptions.None
+  nameWithType: InsertOptions.None
+- uid: Venflow.Enums.InsertOptions.PopulateRelations
+  name: PopulateRelations
+  href: api/Venflow.Enums.InsertOptions.html#Venflow_Enums_InsertOptions_PopulateRelations
+  commentId: F:Venflow.Enums.InsertOptions.PopulateRelations
+  fullName: Venflow.Enums.InsertOptions.PopulateRelations
+  nameWithType: InsertOptions.PopulateRelations
+- uid: Venflow.Enums.InsertOptions.SetIdentityColumns
+  name: SetIdentityColumns
+  href: api/Venflow.Enums.InsertOptions.html#Venflow_Enums_InsertOptions_SetIdentityColumns
+  commentId: F:Venflow.Enums.InsertOptions.SetIdentityColumns
+  fullName: Venflow.Enums.InsertOptions.SetIdentityColumns
+  nameWithType: InsertOptions.SetIdentityColumns
+- uid: Venflow.Enums.JoinBehaviour
+  name: JoinBehaviour
+  href: api/Venflow.Enums.JoinBehaviour.html
+  commentId: T:Venflow.Enums.JoinBehaviour
+  fullName: Venflow.Enums.JoinBehaviour
+  nameWithType: JoinBehaviour
+- uid: Venflow.Enums.JoinBehaviour.FullJoin
+  name: FullJoin
+  href: api/Venflow.Enums.JoinBehaviour.html#Venflow_Enums_JoinBehaviour_FullJoin
+  commentId: F:Venflow.Enums.JoinBehaviour.FullJoin
+  fullName: Venflow.Enums.JoinBehaviour.FullJoin
+  nameWithType: JoinBehaviour.FullJoin
+- uid: Venflow.Enums.JoinBehaviour.InnerJoin
+  name: InnerJoin
+  href: api/Venflow.Enums.JoinBehaviour.html#Venflow_Enums_JoinBehaviour_InnerJoin
+  commentId: F:Venflow.Enums.JoinBehaviour.InnerJoin
+  fullName: Venflow.Enums.JoinBehaviour.InnerJoin
+  nameWithType: JoinBehaviour.InnerJoin
+- uid: Venflow.Enums.JoinBehaviour.LeftJoin
+  name: LeftJoin
+  href: api/Venflow.Enums.JoinBehaviour.html#Venflow_Enums_JoinBehaviour_LeftJoin
+  commentId: F:Venflow.Enums.JoinBehaviour.LeftJoin
+  fullName: Venflow.Enums.JoinBehaviour.LeftJoin
+  nameWithType: JoinBehaviour.LeftJoin
+- uid: Venflow.Enums.JoinBehaviour.RightJoin
+  name: RightJoin
+  href: api/Venflow.Enums.JoinBehaviour.html#Venflow_Enums_JoinBehaviour_RightJoin
+  commentId: F:Venflow.Enums.JoinBehaviour.RightJoin
+  fullName: Venflow.Enums.JoinBehaviour.RightJoin
+  nameWithType: JoinBehaviour.RightJoin
+- uid: Venflow.InvalidEntityRelationException
+  name: InvalidEntityRelationException
+  href: api/Venflow.InvalidEntityRelationException.html
+  commentId: T:Venflow.InvalidEntityRelationException
+  fullName: Venflow.InvalidEntityRelationException
+  nameWithType: InvalidEntityRelationException
+- uid: Venflow.InvalidEntityRelationException.#ctor
+  name: InvalidEntityRelationException()
+  href: api/Venflow.InvalidEntityRelationException.html#Venflow_InvalidEntityRelationException__ctor
+  commentId: M:Venflow.InvalidEntityRelationException.#ctor
+  fullName: Venflow.InvalidEntityRelationException.InvalidEntityRelationException()
+  nameWithType: InvalidEntityRelationException.InvalidEntityRelationException()
+- uid: Venflow.InvalidEntityRelationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)
+  name: InvalidEntityRelationException(SerializationInfo, StreamingContext)
+  href: api/Venflow.InvalidEntityRelationException.html#Venflow_InvalidEntityRelationException__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_
+  commentId: M:Venflow.InvalidEntityRelationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)
+  fullName: Venflow.InvalidEntityRelationException.InvalidEntityRelationException(System.Runtime.Serialization.SerializationInfo, System.Runtime.Serialization.StreamingContext)
+  nameWithType: InvalidEntityRelationException.InvalidEntityRelationException(SerializationInfo, StreamingContext)
+- uid: Venflow.InvalidEntityRelationException.#ctor(System.String)
+  name: InvalidEntityRelationException(String)
+  href: api/Venflow.InvalidEntityRelationException.html#Venflow_InvalidEntityRelationException__ctor_System_String_
+  commentId: M:Venflow.InvalidEntityRelationException.#ctor(System.String)
+  fullName: Venflow.InvalidEntityRelationException.InvalidEntityRelationException(System.String)
+  nameWithType: InvalidEntityRelationException.InvalidEntityRelationException(String)
+- uid: Venflow.InvalidEntityRelationException.#ctor(System.String,System.Exception)
+  name: InvalidEntityRelationException(String, Exception)
+  href: api/Venflow.InvalidEntityRelationException.html#Venflow_InvalidEntityRelationException__ctor_System_String_System_Exception_
+  commentId: M:Venflow.InvalidEntityRelationException.#ctor(System.String,System.Exception)
+  fullName: Venflow.InvalidEntityRelationException.InvalidEntityRelationException(System.String, System.Exception)
+  nameWithType: InvalidEntityRelationException.InvalidEntityRelationException(String, Exception)
+- uid: Venflow.InvalidEntityRelationException.#ctor*
+  name: InvalidEntityRelationException
+  href: api/Venflow.InvalidEntityRelationException.html#Venflow_InvalidEntityRelationException__ctor_
+  commentId: Overload:Venflow.InvalidEntityRelationException.#ctor
+  isSpec: "True"
+  fullName: Venflow.InvalidEntityRelationException.InvalidEntityRelationException
+  nameWithType: InvalidEntityRelationException.InvalidEntityRelationException
+- uid: Venflow.Modeling
+  name: Venflow.Modeling
+  href: api/Venflow.Modeling.html
+  commentId: N:Venflow.Modeling
+  fullName: Venflow.Modeling
+  nameWithType: Venflow.Modeling
+- uid: Venflow.Modeling.Definitions
+  name: Venflow.Modeling.Definitions
+  href: api/Venflow.Modeling.Definitions.html
+  commentId: N:Venflow.Modeling.Definitions
+  fullName: Venflow.Modeling.Definitions
+  nameWithType: Venflow.Modeling.Definitions
+- uid: Venflow.Modeling.Definitions.Builder
+  name: Venflow.Modeling.Definitions.Builder
+  href: api/Venflow.Modeling.Definitions.Builder.html
+  commentId: N:Venflow.Modeling.Definitions.Builder
+  fullName: Venflow.Modeling.Definitions.Builder
+  nameWithType: Venflow.Modeling.Definitions.Builder
+- uid: Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder`2
+  name: IForeignKeyRelationBuilder<TEntity, TRelation>
+  href: api/Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder-2.html
+  commentId: T:Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder`2
+  name.vb: IForeignKeyRelationBuilder(Of TEntity, TRelation)
+  fullName: Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder<TEntity, TRelation>
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder(Of TEntity, TRelation)
+  nameWithType: IForeignKeyRelationBuilder<TEntity, TRelation>
+  nameWithType.vb: IForeignKeyRelationBuilder(Of TEntity, TRelation)
+- uid: Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder`2.UsingForeignKey*
+  name: UsingForeignKey
+  href: api/Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_IForeignKeyRelationBuilder_2_UsingForeignKey_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder`2.UsingForeignKey
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder<TEntity, TRelation>.UsingForeignKey
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder(Of TEntity, TRelation).UsingForeignKey
+  nameWithType: IForeignKeyRelationBuilder<TEntity, TRelation>.UsingForeignKey
+  nameWithType.vb: IForeignKeyRelationBuilder(Of TEntity, TRelation).UsingForeignKey
+- uid: Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder`2.UsingForeignKey``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})
+  name: UsingForeignKey<TKey>(Expression<Func<TEntity, TKey>>)
+  href: api/Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_IForeignKeyRelationBuilder_2_UsingForeignKey__1_System_Linq_Expressions_Expression_System_Func__0___0___
+  commentId: M:Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder`2.UsingForeignKey``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})
+  name.vb: UsingForeignKey(Of TKey)(Expression(Of Func(Of TEntity, TKey)))
+  fullName: Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder<TEntity, TRelation>.UsingForeignKey<TKey>(System.Linq.Expressions.Expression<System.Func<TEntity, TKey>>)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder(Of TEntity, TRelation).UsingForeignKey(Of TKey)(System.Linq.Expressions.Expression(Of System.Func(Of TEntity, TKey)))
+  nameWithType: IForeignKeyRelationBuilder<TEntity, TRelation>.UsingForeignKey<TKey>(Expression<Func<TEntity, TKey>>)
+  nameWithType.vb: IForeignKeyRelationBuilder(Of TEntity, TRelation).UsingForeignKey(Of TKey)(Expression(Of Func(Of TEntity, TKey)))
+- uid: Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder`2.UsingForeignKey``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})
+  name: UsingForeignKey<TKey>(Expression<Func<TRelation, TKey>>)
+  href: api/Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_IForeignKeyRelationBuilder_2_UsingForeignKey__1_System_Linq_Expressions_Expression_System_Func__1___0___
+  commentId: M:Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder`2.UsingForeignKey``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})
+  name.vb: UsingForeignKey(Of TKey)(Expression(Of Func(Of TRelation, TKey)))
+  fullName: Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder<TEntity, TRelation>.UsingForeignKey<TKey>(System.Linq.Expressions.Expression<System.Func<TRelation, TKey>>)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder(Of TEntity, TRelation).UsingForeignKey(Of TKey)(System.Linq.Expressions.Expression(Of System.Func(Of TRelation, TKey)))
+  nameWithType: IForeignKeyRelationBuilder<TEntity, TRelation>.UsingForeignKey<TKey>(Expression<Func<TRelation, TKey>>)
+  nameWithType.vb: IForeignKeyRelationBuilder(Of TEntity, TRelation).UsingForeignKey(Of TKey)(Expression(Of Func(Of TRelation, TKey)))
+- uid: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1
+  name: ILeftRelationBuilder<TEntity>
+  href: api/Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder-1.html
+  commentId: T:Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1
+  name.vb: ILeftRelationBuilder(Of TEntity)
+  fullName: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder<TEntity>
+  fullName.vb: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder(Of TEntity)
+  nameWithType: ILeftRelationBuilder<TEntity>
+  nameWithType.vb: ILeftRelationBuilder(Of TEntity)
+- uid: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasMany*
+  name: HasMany
+  href: api/Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder-1.html#Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasMany_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasMany
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder<TEntity>.HasMany
+  fullName.vb: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder(Of TEntity).HasMany
+  nameWithType: ILeftRelationBuilder<TEntity>.HasMany
+  nameWithType.vb: ILeftRelationBuilder(Of TEntity).HasMany
+- uid: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasMany``1
+  name: HasMany<TRelation>()
+  href: api/Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder-1.html#Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasMany__1
+  commentId: M:Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasMany``1
+  name.vb: HasMany(Of TRelation)()
+  fullName: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder<TEntity>.HasMany<TRelation>()
+  fullName.vb: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder(Of TEntity).HasMany(Of TRelation)()
+  nameWithType: ILeftRelationBuilder<TEntity>.HasMany<TRelation>()
+  nameWithType.vb: ILeftRelationBuilder(Of TEntity).HasMany(Of TRelation)()
+- uid: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasMany``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}})
+  name: HasMany<TRelation>(Expression<Func<TEntity, IList<TRelation>>>)
+  href: api/Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder-1.html#Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasMany__1_System_Linq_Expressions_Expression_System_Func__0_System_Collections_Generic_IList___0____
+  commentId: M:Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasMany``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}})
+  name.vb: HasMany(Of TRelation)(Expression(Of Func(Of TEntity, IList(Of TRelation))))
+  fullName: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder<TEntity>.HasMany<TRelation>(System.Linq.Expressions.Expression<System.Func<TEntity, System.Collections.Generic.IList<TRelation>>>)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder(Of TEntity).HasMany(Of TRelation)(System.Linq.Expressions.Expression(Of System.Func(Of TEntity, System.Collections.Generic.IList(Of TRelation))))
+  nameWithType: ILeftRelationBuilder<TEntity>.HasMany<TRelation>(Expression<Func<TEntity, IList<TRelation>>>)
+  nameWithType.vb: ILeftRelationBuilder(Of TEntity).HasMany(Of TRelation)(Expression(Of Func(Of TEntity, IList(Of TRelation))))
+- uid: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasOne*
+  name: HasOne
+  href: api/Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder-1.html#Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasOne_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasOne
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder<TEntity>.HasOne
+  fullName.vb: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder(Of TEntity).HasOne
+  nameWithType: ILeftRelationBuilder<TEntity>.HasOne
+  nameWithType.vb: ILeftRelationBuilder(Of TEntity).HasOne
+- uid: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasOne``1
+  name: HasOne<TRelation>()
+  href: api/Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder-1.html#Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasOne__1
+  commentId: M:Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasOne``1
+  name.vb: HasOne(Of TRelation)()
+  fullName: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder<TEntity>.HasOne<TRelation>()
+  fullName.vb: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder(Of TEntity).HasOne(Of TRelation)()
+  nameWithType: ILeftRelationBuilder<TEntity>.HasOne<TRelation>()
+  nameWithType.vb: ILeftRelationBuilder(Of TEntity).HasOne(Of TRelation)()
+- uid: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasOne``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})
+  name: HasOne<TRelation>(Expression<Func<TEntity, TRelation>>)
+  href: api/Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder-1.html#Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasOne__1_System_Linq_Expressions_Expression_System_Func__0___0___
+  commentId: M:Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasOne``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})
+  name.vb: HasOne(Of TRelation)(Expression(Of Func(Of TEntity, TRelation)))
+  fullName: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder<TEntity>.HasOne<TRelation>(System.Linq.Expressions.Expression<System.Func<TEntity, TRelation>>)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder(Of TEntity).HasOne(Of TRelation)(System.Linq.Expressions.Expression(Of System.Func(Of TEntity, TRelation)))
+  nameWithType: ILeftRelationBuilder<TEntity>.HasOne<TRelation>(Expression<Func<TEntity, TRelation>>)
+  nameWithType.vb: ILeftRelationBuilder(Of TEntity).HasOne(Of TRelation)(Expression(Of Func(Of TEntity, TRelation)))
+- uid: Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder`2
+  name: IMultiRightRelationBuilder<TEntity, TRelation>
+  href: api/Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder-2.html
+  commentId: T:Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder`2
+  name.vb: IMultiRightRelationBuilder(Of TEntity, TRelation)
+  fullName: Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder<TEntity, TRelation>
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder(Of TEntity, TRelation)
+  nameWithType: IMultiRightRelationBuilder<TEntity, TRelation>
+  nameWithType.vb: IMultiRightRelationBuilder(Of TEntity, TRelation)
+- uid: Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder`2.WithMany(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{`0}}})
+  name: WithMany(Expression<Func<TRelation, IList<TEntity>>>)
+  href: api/Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_IMultiRightRelationBuilder_2_WithMany_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList__0____
+  commentId: M:Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder`2.WithMany(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{`0}}})
+  name.vb: WithMany(Expression(Of Func(Of TRelation, IList(Of TEntity))))
+  fullName: Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder<TEntity, TRelation>.WithMany(System.Linq.Expressions.Expression<System.Func<TRelation, System.Collections.Generic.IList<TEntity>>>)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder(Of TEntity, TRelation).WithMany(System.Linq.Expressions.Expression(Of System.Func(Of TRelation, System.Collections.Generic.IList(Of TEntity))))
+  nameWithType: IMultiRightRelationBuilder<TEntity, TRelation>.WithMany(Expression<Func<TRelation, IList<TEntity>>>)
+  nameWithType.vb: IMultiRightRelationBuilder(Of TEntity, TRelation).WithMany(Expression(Of Func(Of TRelation, IList(Of TEntity))))
+- uid: Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder`2.WithMany*
+  name: WithMany
+  href: api/Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_IMultiRightRelationBuilder_2_WithMany_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder`2.WithMany
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder<TEntity, TRelation>.WithMany
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder(Of TEntity, TRelation).WithMany
+  nameWithType: IMultiRightRelationBuilder<TEntity, TRelation>.WithMany
+  nameWithType.vb: IMultiRightRelationBuilder(Of TEntity, TRelation).WithMany
+- uid: Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder`2
+  name: INotRequiredMultiRightRelationBuilder<TEntity, TRelation>
+  href: api/Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder-2.html
+  commentId: T:Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder`2
+  name.vb: INotRequiredMultiRightRelationBuilder(Of TEntity, TRelation)
+  fullName: Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder<TEntity, TRelation>
+  fullName.vb: Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder(Of TEntity, TRelation)
+  nameWithType: INotRequiredMultiRightRelationBuilder<TEntity, TRelation>
+  nameWithType.vb: INotRequiredMultiRightRelationBuilder(Of TEntity, TRelation)
+- uid: Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder`2.WithMany
+  name: WithMany()
+  href: api/Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_INotRequiredMultiRightRelationBuilder_2_WithMany
+  commentId: M:Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder`2.WithMany
+  fullName: Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder<TEntity, TRelation>.WithMany()
+  fullName.vb: Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder(Of TEntity, TRelation).WithMany()
+  nameWithType: INotRequiredMultiRightRelationBuilder<TEntity, TRelation>.WithMany()
+  nameWithType.vb: INotRequiredMultiRightRelationBuilder(Of TEntity, TRelation).WithMany()
+- uid: Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder`2.WithMany*
+  name: WithMany
+  href: api/Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_INotRequiredMultiRightRelationBuilder_2_WithMany_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder`2.WithMany
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder<TEntity, TRelation>.WithMany
+  fullName.vb: Venflow.Modeling.Definitions.Builder.INotRequiredMultiRightRelationBuilder(Of TEntity, TRelation).WithMany
+  nameWithType: INotRequiredMultiRightRelationBuilder<TEntity, TRelation>.WithMany
+  nameWithType.vb: INotRequiredMultiRightRelationBuilder(Of TEntity, TRelation).WithMany
+- uid: Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder`2
+  name: INotRequiredSingleRightRelationBuilder<TEntity, TRelation>
+  href: api/Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder-2.html
+  commentId: T:Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder`2
+  name.vb: INotRequiredSingleRightRelationBuilder(Of TEntity, TRelation)
+  fullName: Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder<TEntity, TRelation>
+  fullName.vb: Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder(Of TEntity, TRelation)
+  nameWithType: INotRequiredSingleRightRelationBuilder<TEntity, TRelation>
+  nameWithType.vb: INotRequiredSingleRightRelationBuilder(Of TEntity, TRelation)
+- uid: Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder`2.WithOne
+  name: WithOne()
+  href: api/Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_INotRequiredSingleRightRelationBuilder_2_WithOne
+  commentId: M:Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder`2.WithOne
+  fullName: Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder<TEntity, TRelation>.WithOne()
+  fullName.vb: Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder(Of TEntity, TRelation).WithOne()
+  nameWithType: INotRequiredSingleRightRelationBuilder<TEntity, TRelation>.WithOne()
+  nameWithType.vb: INotRequiredSingleRightRelationBuilder(Of TEntity, TRelation).WithOne()
+- uid: Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder`2.WithOne*
+  name: WithOne
+  href: api/Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_INotRequiredSingleRightRelationBuilder_2_WithOne_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder`2.WithOne
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder<TEntity, TRelation>.WithOne
+  fullName.vb: Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder(Of TEntity, TRelation).WithOne
+  nameWithType: INotRequiredSingleRightRelationBuilder<TEntity, TRelation>.WithOne
+  nameWithType.vb: INotRequiredSingleRightRelationBuilder(Of TEntity, TRelation).WithOne
+- uid: Venflow.Modeling.Definitions.Builder.IRequiredMultiRightRelationBuilder`2
+  name: IRequiredMultiRightRelationBuilder<TEntity, TRelation>
+  href: api/Venflow.Modeling.Definitions.Builder.IRequiredMultiRightRelationBuilder-2.html
+  commentId: T:Venflow.Modeling.Definitions.Builder.IRequiredMultiRightRelationBuilder`2
+  name.vb: IRequiredMultiRightRelationBuilder(Of TEntity, TRelation)
+  fullName: Venflow.Modeling.Definitions.Builder.IRequiredMultiRightRelationBuilder<TEntity, TRelation>
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IRequiredMultiRightRelationBuilder(Of TEntity, TRelation)
+  nameWithType: IRequiredMultiRightRelationBuilder<TEntity, TRelation>
+  nameWithType.vb: IRequiredMultiRightRelationBuilder(Of TEntity, TRelation)
+- uid: Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder`2
+  name: IRequiredSingleRightRelationBuilder<TEntity, TRelation>
+  href: api/Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder-2.html
+  commentId: T:Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder`2
+  name.vb: IRequiredSingleRightRelationBuilder(Of TEntity, TRelation)
+  fullName: Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder<TEntity, TRelation>
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder(Of TEntity, TRelation)
+  nameWithType: IRequiredSingleRightRelationBuilder<TEntity, TRelation>
+  nameWithType.vb: IRequiredSingleRightRelationBuilder(Of TEntity, TRelation)
+- uid: Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder`2.WithOne(System.Linq.Expressions.Expression{System.Func{`1,`0}})
+  name: WithOne(Expression<Func<TRelation, TEntity>>)
+  href: api/Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_IRequiredSingleRightRelationBuilder_2_WithOne_System_Linq_Expressions_Expression_System_Func__1__0___
+  commentId: M:Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder`2.WithOne(System.Linq.Expressions.Expression{System.Func{`1,`0}})
+  name.vb: WithOne(Expression(Of Func(Of TRelation, TEntity)))
+  fullName: Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder<TEntity, TRelation>.WithOne(System.Linq.Expressions.Expression<System.Func<TRelation, TEntity>>)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder(Of TEntity, TRelation).WithOne(System.Linq.Expressions.Expression(Of System.Func(Of TRelation, TEntity)))
+  nameWithType: IRequiredSingleRightRelationBuilder<TEntity, TRelation>.WithOne(Expression<Func<TRelation, TEntity>>)
+  nameWithType.vb: IRequiredSingleRightRelationBuilder(Of TEntity, TRelation).WithOne(Expression(Of Func(Of TRelation, TEntity)))
+- uid: Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder`2.WithOne*
+  name: WithOne
+  href: api/Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_IRequiredSingleRightRelationBuilder_2_WithOne_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder`2.WithOne
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder<TEntity, TRelation>.WithOne
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder(Of TEntity, TRelation).WithOne
+  nameWithType: IRequiredSingleRightRelationBuilder<TEntity, TRelation>.WithOne
+  nameWithType.vb: IRequiredSingleRightRelationBuilder(Of TEntity, TRelation).WithOne
+- uid: Venflow.Modeling.Definitions.EntityConfiguration
+  name: EntityConfiguration
+  href: api/Venflow.Modeling.Definitions.EntityConfiguration.html
+  commentId: T:Venflow.Modeling.Definitions.EntityConfiguration
+  fullName: Venflow.Modeling.Definitions.EntityConfiguration
+  nameWithType: EntityConfiguration
+- uid: Venflow.Modeling.Definitions.EntityConfiguration`1
+  name: EntityConfiguration<TEntity>
+  href: api/Venflow.Modeling.Definitions.EntityConfiguration-1.html
+  commentId: T:Venflow.Modeling.Definitions.EntityConfiguration`1
+  name.vb: EntityConfiguration(Of TEntity)
+  fullName: Venflow.Modeling.Definitions.EntityConfiguration<TEntity>
+  fullName.vb: Venflow.Modeling.Definitions.EntityConfiguration(Of TEntity)
+  nameWithType: EntityConfiguration<TEntity>
+  nameWithType.vb: EntityConfiguration(Of TEntity)
+- uid: Venflow.Modeling.Definitions.EntityConfiguration`1.Configure(IEntityBuilder{`0})
+  name: Configure(IEntityBuilder<TEntity>)
+  href: api/Venflow.Modeling.Definitions.EntityConfiguration-1.html#Venflow_Modeling_Definitions_EntityConfiguration_1_Configure_IEntityBuilder__0__
+  commentId: M:Venflow.Modeling.Definitions.EntityConfiguration`1.Configure(IEntityBuilder{`0})
+  name.vb: Configure(IEntityBuilder(Of TEntity))
+  fullName: Venflow.Modeling.Definitions.EntityConfiguration<TEntity>.Configure(IEntityBuilder<TEntity>)
+  fullName.vb: Venflow.Modeling.Definitions.EntityConfiguration(Of TEntity).Configure(IEntityBuilder(Of TEntity))
+  nameWithType: EntityConfiguration<TEntity>.Configure(IEntityBuilder<TEntity>)
+  nameWithType.vb: EntityConfiguration(Of TEntity).Configure(IEntityBuilder(Of TEntity))
+- uid: Venflow.Modeling.Definitions.EntityConfiguration`1.Configure*
+  name: Configure
+  href: api/Venflow.Modeling.Definitions.EntityConfiguration-1.html#Venflow_Modeling_Definitions_EntityConfiguration_1_Configure_
+  commentId: Overload:Venflow.Modeling.Definitions.EntityConfiguration`1.Configure
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.EntityConfiguration<TEntity>.Configure
+  fullName.vb: Venflow.Modeling.Definitions.EntityConfiguration(Of TEntity).Configure
+  nameWithType: EntityConfiguration<TEntity>.Configure
+  nameWithType.vb: EntityConfiguration(Of TEntity).Configure
+- uid: Venflow.Modeling.Table`1
+  name: Table<TEntity>
+  href: api/Venflow.Modeling.Table-1.html
+  commentId: T:Venflow.Modeling.Table`1
+  name.vb: Table(Of TEntity)
+  fullName: Venflow.Modeling.Table<TEntity>
+  fullName.vb: Venflow.Modeling.Table(Of TEntity)
+  nameWithType: Table<TEntity>
+  nameWithType.vb: Table(Of TEntity)
+- uid: Venflow.Modeling.Table`1.CountAsync(System.Threading.CancellationToken)
+  name: CountAsync(CancellationToken)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_CountAsync_System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.Table`1.CountAsync(System.Threading.CancellationToken)
+  fullName: Venflow.Modeling.Table<TEntity>.CountAsync(System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).CountAsync(System.Threading.CancellationToken)
+  nameWithType: Table<TEntity>.CountAsync(CancellationToken)
+  nameWithType.vb: Table(Of TEntity).CountAsync(CancellationToken)
+- uid: Venflow.Modeling.Table`1.CountAsync*
+  name: CountAsync
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_CountAsync_
+  commentId: Overload:Venflow.Modeling.Table`1.CountAsync
+  isSpec: "True"
+  fullName: Venflow.Modeling.Table<TEntity>.CountAsync
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).CountAsync
+  nameWithType: Table<TEntity>.CountAsync
+  nameWithType.vb: Table(Of TEntity).CountAsync
+- uid: Venflow.Modeling.Table`1.Delete
+  name: Delete()
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_Delete
+  commentId: M:Venflow.Modeling.Table`1.Delete
+  fullName: Venflow.Modeling.Table<TEntity>.Delete()
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).Delete()
+  nameWithType: Table<TEntity>.Delete()
+  nameWithType.vb: Table(Of TEntity).Delete()
+- uid: Venflow.Modeling.Table`1.Delete(System.Boolean)
+  name: Delete(Boolean)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_Delete_System_Boolean_
+  commentId: M:Venflow.Modeling.Table`1.Delete(System.Boolean)
+  fullName: Venflow.Modeling.Table<TEntity>.Delete(System.Boolean)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).Delete(System.Boolean)
+  nameWithType: Table<TEntity>.Delete(Boolean)
+  nameWithType.vb: Table(Of TEntity).Delete(Boolean)
+- uid: Venflow.Modeling.Table`1.Delete*
+  name: Delete
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_Delete_
+  commentId: Overload:Venflow.Modeling.Table`1.Delete
+  isSpec: "True"
+  fullName: Venflow.Modeling.Table<TEntity>.Delete
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).Delete
+  nameWithType: Table<TEntity>.Delete
+  nameWithType.vb: Table(Of TEntity).Delete
+- uid: Venflow.Modeling.Table`1.DeleteAsync(`0,System.Threading.CancellationToken)
+  name: DeleteAsync(TEntity, CancellationToken)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_DeleteAsync__0_System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.Table`1.DeleteAsync(`0,System.Threading.CancellationToken)
+  fullName: Venflow.Modeling.Table<TEntity>.DeleteAsync(TEntity, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).DeleteAsync(TEntity, System.Threading.CancellationToken)
+  nameWithType: Table<TEntity>.DeleteAsync(TEntity, CancellationToken)
+  nameWithType.vb: Table(Of TEntity).DeleteAsync(TEntity, CancellationToken)
+- uid: Venflow.Modeling.Table`1.DeleteAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  name: DeleteAsync(IEnumerable<TEntity>, CancellationToken)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_DeleteAsync_System_Collections_Generic_IEnumerable__0__System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.Table`1.DeleteAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  name.vb: DeleteAsync(IEnumerable(Of TEntity), CancellationToken)
+  fullName: Venflow.Modeling.Table<TEntity>.DeleteAsync(System.Collections.Generic.IEnumerable<TEntity>, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).DeleteAsync(System.Collections.Generic.IEnumerable(Of TEntity), System.Threading.CancellationToken)
+  nameWithType: Table<TEntity>.DeleteAsync(IEnumerable<TEntity>, CancellationToken)
+  nameWithType.vb: Table(Of TEntity).DeleteAsync(IEnumerable(Of TEntity), CancellationToken)
+- uid: Venflow.Modeling.Table`1.DeleteAsync(Venflow.Commands.IDeleteCommand{`0},`0,System.Threading.CancellationToken)
+  name: DeleteAsync(IDeleteCommand<TEntity>, TEntity, CancellationToken)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_DeleteAsync_Venflow_Commands_IDeleteCommand__0___0_System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.Table`1.DeleteAsync(Venflow.Commands.IDeleteCommand{`0},`0,System.Threading.CancellationToken)
+  name.vb: DeleteAsync(IDeleteCommand(Of TEntity), TEntity, CancellationToken)
+  fullName: Venflow.Modeling.Table<TEntity>.DeleteAsync(Venflow.Commands.IDeleteCommand<TEntity>, TEntity, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).DeleteAsync(Venflow.Commands.IDeleteCommand(Of TEntity), TEntity, System.Threading.CancellationToken)
+  nameWithType: Table<TEntity>.DeleteAsync(IDeleteCommand<TEntity>, TEntity, CancellationToken)
+  nameWithType.vb: Table(Of TEntity).DeleteAsync(IDeleteCommand(Of TEntity), TEntity, CancellationToken)
+- uid: Venflow.Modeling.Table`1.DeleteAsync(Venflow.Commands.IDeleteCommand{`0},System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  name: DeleteAsync(IDeleteCommand<TEntity>, IEnumerable<TEntity>, CancellationToken)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_DeleteAsync_Venflow_Commands_IDeleteCommand__0__System_Collections_Generic_IEnumerable__0__System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.Table`1.DeleteAsync(Venflow.Commands.IDeleteCommand{`0},System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  name.vb: DeleteAsync(IDeleteCommand(Of TEntity), IEnumerable(Of TEntity), CancellationToken)
+  fullName: Venflow.Modeling.Table<TEntity>.DeleteAsync(Venflow.Commands.IDeleteCommand<TEntity>, System.Collections.Generic.IEnumerable<TEntity>, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).DeleteAsync(Venflow.Commands.IDeleteCommand(Of TEntity), System.Collections.Generic.IEnumerable(Of TEntity), System.Threading.CancellationToken)
+  nameWithType: Table<TEntity>.DeleteAsync(IDeleteCommand<TEntity>, IEnumerable<TEntity>, CancellationToken)
+  nameWithType.vb: Table(Of TEntity).DeleteAsync(IDeleteCommand(Of TEntity), IEnumerable(Of TEntity), CancellationToken)
+- uid: Venflow.Modeling.Table`1.DeleteAsync*
+  name: DeleteAsync
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_DeleteAsync_
+  commentId: Overload:Venflow.Modeling.Table`1.DeleteAsync
+  isSpec: "True"
+  fullName: Venflow.Modeling.Table<TEntity>.DeleteAsync
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).DeleteAsync
+  nameWithType: Table<TEntity>.DeleteAsync
+  nameWithType.vb: Table(Of TEntity).DeleteAsync
+- uid: Venflow.Modeling.Table`1.Insert
+  name: Insert()
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_Insert
+  commentId: M:Venflow.Modeling.Table`1.Insert
+  fullName: Venflow.Modeling.Table<TEntity>.Insert()
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).Insert()
+  nameWithType: Table<TEntity>.Insert()
+  nameWithType.vb: Table(Of TEntity).Insert()
+- uid: Venflow.Modeling.Table`1.Insert(System.Boolean)
+  name: Insert(Boolean)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_Insert_System_Boolean_
+  commentId: M:Venflow.Modeling.Table`1.Insert(System.Boolean)
+  fullName: Venflow.Modeling.Table<TEntity>.Insert(System.Boolean)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).Insert(System.Boolean)
+  nameWithType: Table<TEntity>.Insert(Boolean)
+  nameWithType.vb: Table(Of TEntity).Insert(Boolean)
+- uid: Venflow.Modeling.Table`1.Insert*
+  name: Insert
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_Insert_
+  commentId: Overload:Venflow.Modeling.Table`1.Insert
+  isSpec: "True"
+  fullName: Venflow.Modeling.Table<TEntity>.Insert
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).Insert
+  nameWithType: Table<TEntity>.Insert
+  nameWithType.vb: Table(Of TEntity).Insert
+- uid: Venflow.Modeling.Table`1.InsertAsync(`0,System.Threading.CancellationToken)
+  name: InsertAsync(TEntity, CancellationToken)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_InsertAsync__0_System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.Table`1.InsertAsync(`0,System.Threading.CancellationToken)
+  fullName: Venflow.Modeling.Table<TEntity>.InsertAsync(TEntity, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).InsertAsync(TEntity, System.Threading.CancellationToken)
+  nameWithType: Table<TEntity>.InsertAsync(TEntity, CancellationToken)
+  nameWithType.vb: Table(Of TEntity).InsertAsync(TEntity, CancellationToken)
+- uid: Venflow.Modeling.Table`1.InsertAsync(System.Collections.Generic.List{`0},System.Threading.CancellationToken)
+  name: InsertAsync(List<TEntity>, CancellationToken)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_InsertAsync_System_Collections_Generic_List__0__System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.Table`1.InsertAsync(System.Collections.Generic.List{`0},System.Threading.CancellationToken)
+  name.vb: InsertAsync(List(Of TEntity), CancellationToken)
+  fullName: Venflow.Modeling.Table<TEntity>.InsertAsync(System.Collections.Generic.List<TEntity>, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).InsertAsync(System.Collections.Generic.List(Of TEntity), System.Threading.CancellationToken)
+  nameWithType: Table<TEntity>.InsertAsync(List<TEntity>, CancellationToken)
+  nameWithType.vb: Table(Of TEntity).InsertAsync(List(Of TEntity), CancellationToken)
+- uid: Venflow.Modeling.Table`1.InsertAsync(Venflow.Commands.IInsertCommand{`0},`0,System.Threading.CancellationToken)
+  name: InsertAsync(IInsertCommand<TEntity>, TEntity, CancellationToken)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_InsertAsync_Venflow_Commands_IInsertCommand__0___0_System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.Table`1.InsertAsync(Venflow.Commands.IInsertCommand{`0},`0,System.Threading.CancellationToken)
+  name.vb: InsertAsync(IInsertCommand(Of TEntity), TEntity, CancellationToken)
+  fullName: Venflow.Modeling.Table<TEntity>.InsertAsync(Venflow.Commands.IInsertCommand<TEntity>, TEntity, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).InsertAsync(Venflow.Commands.IInsertCommand(Of TEntity), TEntity, System.Threading.CancellationToken)
+  nameWithType: Table<TEntity>.InsertAsync(IInsertCommand<TEntity>, TEntity, CancellationToken)
+  nameWithType.vb: Table(Of TEntity).InsertAsync(IInsertCommand(Of TEntity), TEntity, CancellationToken)
+- uid: Venflow.Modeling.Table`1.InsertAsync(Venflow.Commands.IInsertCommand{`0},System.Collections.Generic.List{`0},System.Threading.CancellationToken)
+  name: InsertAsync(IInsertCommand<TEntity>, List<TEntity>, CancellationToken)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_InsertAsync_Venflow_Commands_IInsertCommand__0__System_Collections_Generic_List__0__System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.Table`1.InsertAsync(Venflow.Commands.IInsertCommand{`0},System.Collections.Generic.List{`0},System.Threading.CancellationToken)
+  name.vb: InsertAsync(IInsertCommand(Of TEntity), List(Of TEntity), CancellationToken)
+  fullName: Venflow.Modeling.Table<TEntity>.InsertAsync(Venflow.Commands.IInsertCommand<TEntity>, System.Collections.Generic.List<TEntity>, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).InsertAsync(Venflow.Commands.IInsertCommand(Of TEntity), System.Collections.Generic.List(Of TEntity), System.Threading.CancellationToken)
+  nameWithType: Table<TEntity>.InsertAsync(IInsertCommand<TEntity>, List<TEntity>, CancellationToken)
+  nameWithType.vb: Table(Of TEntity).InsertAsync(IInsertCommand(Of TEntity), List(Of TEntity), CancellationToken)
+- uid: Venflow.Modeling.Table`1.InsertAsync*
+  name: InsertAsync
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_InsertAsync_
+  commentId: Overload:Venflow.Modeling.Table`1.InsertAsync
+  isSpec: "True"
+  fullName: Venflow.Modeling.Table<TEntity>.InsertAsync
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).InsertAsync
+  nameWithType: Table<TEntity>.InsertAsync
+  nameWithType.vb: Table(Of TEntity).InsertAsync
+- uid: Venflow.Modeling.Table`1.QueryBatch(System.Boolean)
+  name: QueryBatch(Boolean)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_QueryBatch_System_Boolean_
+  commentId: M:Venflow.Modeling.Table`1.QueryBatch(System.Boolean)
+  fullName: Venflow.Modeling.Table<TEntity>.QueryBatch(System.Boolean)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).QueryBatch(System.Boolean)
+  nameWithType: Table<TEntity>.QueryBatch(Boolean)
+  nameWithType.vb: Table(Of TEntity).QueryBatch(Boolean)
+- uid: Venflow.Modeling.Table`1.QueryBatch(System.UInt64,System.Boolean)
+  name: QueryBatch(UInt64, Boolean)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_QueryBatch_System_UInt64_System_Boolean_
+  commentId: M:Venflow.Modeling.Table`1.QueryBatch(System.UInt64,System.Boolean)
+  fullName: Venflow.Modeling.Table<TEntity>.QueryBatch(System.UInt64, System.Boolean)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).QueryBatch(System.UInt64, System.Boolean)
+  nameWithType: Table<TEntity>.QueryBatch(UInt64, Boolean)
+  nameWithType.vb: Table(Of TEntity).QueryBatch(UInt64, Boolean)
+- uid: Venflow.Modeling.Table`1.QueryBatch*
+  name: QueryBatch
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_QueryBatch_
+  commentId: Overload:Venflow.Modeling.Table`1.QueryBatch
+  isSpec: "True"
+  fullName: Venflow.Modeling.Table<TEntity>.QueryBatch
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).QueryBatch
+  nameWithType: Table<TEntity>.QueryBatch
+  nameWithType.vb: Table(Of TEntity).QueryBatch
+- uid: Venflow.Modeling.Table`1.QuerySingle(System.Boolean)
+  name: QuerySingle(Boolean)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_QuerySingle_System_Boolean_
+  commentId: M:Venflow.Modeling.Table`1.QuerySingle(System.Boolean)
+  fullName: Venflow.Modeling.Table<TEntity>.QuerySingle(System.Boolean)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).QuerySingle(System.Boolean)
+  nameWithType: Table<TEntity>.QuerySingle(Boolean)
+  nameWithType.vb: Table(Of TEntity).QuerySingle(Boolean)
+- uid: Venflow.Modeling.Table`1.QuerySingle*
+  name: QuerySingle
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_QuerySingle_
+  commentId: Overload:Venflow.Modeling.Table`1.QuerySingle
+  isSpec: "True"
+  fullName: Venflow.Modeling.Table<TEntity>.QuerySingle
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).QuerySingle
+  nameWithType: Table<TEntity>.QuerySingle
+  nameWithType.vb: Table(Of TEntity).QuerySingle
+- uid: Venflow.Modeling.Table`1.TrackChanges(`0@)
+  name: TrackChanges(ref TEntity)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_TrackChanges__0__
+  commentId: M:Venflow.Modeling.Table`1.TrackChanges(`0@)
+  name.vb: TrackChanges(ByRef TEntity)
+  fullName: Venflow.Modeling.Table<TEntity>.TrackChanges(ref TEntity)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).TrackChanges(ByRef TEntity)
+  nameWithType: Table<TEntity>.TrackChanges(ref TEntity)
+  nameWithType.vb: Table(Of TEntity).TrackChanges(ByRef TEntity)
+- uid: Venflow.Modeling.Table`1.TrackChanges(System.Collections.Generic.IList{`0})
+  name: TrackChanges(IList<TEntity>)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_TrackChanges_System_Collections_Generic_IList__0__
+  commentId: M:Venflow.Modeling.Table`1.TrackChanges(System.Collections.Generic.IList{`0})
+  name.vb: TrackChanges(IList(Of TEntity))
+  fullName: Venflow.Modeling.Table<TEntity>.TrackChanges(System.Collections.Generic.IList<TEntity>)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).TrackChanges(System.Collections.Generic.IList(Of TEntity))
+  nameWithType: Table<TEntity>.TrackChanges(IList<TEntity>)
+  nameWithType.vb: Table(Of TEntity).TrackChanges(IList(Of TEntity))
+- uid: Venflow.Modeling.Table`1.TrackChanges*
+  name: TrackChanges
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_TrackChanges_
+  commentId: Overload:Venflow.Modeling.Table`1.TrackChanges
+  isSpec: "True"
+  fullName: Venflow.Modeling.Table<TEntity>.TrackChanges
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).TrackChanges
+  nameWithType: Table<TEntity>.TrackChanges
+  nameWithType.vb: Table(Of TEntity).TrackChanges
+- uid: Venflow.Modeling.Table`1.TruncateAsync(Venflow.Enums.ForeignTruncateOptions,System.Threading.CancellationToken)
+  name: TruncateAsync(ForeignTruncateOptions, CancellationToken)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_TruncateAsync_Venflow_Enums_ForeignTruncateOptions_System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.Table`1.TruncateAsync(Venflow.Enums.ForeignTruncateOptions,System.Threading.CancellationToken)
+  fullName: Venflow.Modeling.Table<TEntity>.TruncateAsync(Venflow.Enums.ForeignTruncateOptions, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).TruncateAsync(Venflow.Enums.ForeignTruncateOptions, System.Threading.CancellationToken)
+  nameWithType: Table<TEntity>.TruncateAsync(ForeignTruncateOptions, CancellationToken)
+  nameWithType.vb: Table(Of TEntity).TruncateAsync(ForeignTruncateOptions, CancellationToken)
+- uid: Venflow.Modeling.Table`1.TruncateAsync(Venflow.Enums.IdentityTruncateOptions,Venflow.Enums.ForeignTruncateOptions,System.Threading.CancellationToken)
+  name: TruncateAsync(IdentityTruncateOptions, ForeignTruncateOptions, CancellationToken)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_TruncateAsync_Venflow_Enums_IdentityTruncateOptions_Venflow_Enums_ForeignTruncateOptions_System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.Table`1.TruncateAsync(Venflow.Enums.IdentityTruncateOptions,Venflow.Enums.ForeignTruncateOptions,System.Threading.CancellationToken)
+  fullName: Venflow.Modeling.Table<TEntity>.TruncateAsync(Venflow.Enums.IdentityTruncateOptions, Venflow.Enums.ForeignTruncateOptions, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).TruncateAsync(Venflow.Enums.IdentityTruncateOptions, Venflow.Enums.ForeignTruncateOptions, System.Threading.CancellationToken)
+  nameWithType: Table<TEntity>.TruncateAsync(IdentityTruncateOptions, ForeignTruncateOptions, CancellationToken)
+  nameWithType.vb: Table(Of TEntity).TruncateAsync(IdentityTruncateOptions, ForeignTruncateOptions, CancellationToken)
+- uid: Venflow.Modeling.Table`1.TruncateAsync*
+  name: TruncateAsync
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_TruncateAsync_
+  commentId: Overload:Venflow.Modeling.Table`1.TruncateAsync
+  isSpec: "True"
+  fullName: Venflow.Modeling.Table<TEntity>.TruncateAsync
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).TruncateAsync
+  nameWithType: Table<TEntity>.TruncateAsync
+  nameWithType.vb: Table(Of TEntity).TruncateAsync
+- uid: Venflow.Modeling.Table`1.Update
+  name: Update()
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_Update
+  commentId: M:Venflow.Modeling.Table`1.Update
+  fullName: Venflow.Modeling.Table<TEntity>.Update()
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).Update()
+  nameWithType: Table<TEntity>.Update()
+  nameWithType.vb: Table(Of TEntity).Update()
+- uid: Venflow.Modeling.Table`1.Update(System.Boolean)
+  name: Update(Boolean)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_Update_System_Boolean_
+  commentId: M:Venflow.Modeling.Table`1.Update(System.Boolean)
+  fullName: Venflow.Modeling.Table<TEntity>.Update(System.Boolean)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).Update(System.Boolean)
+  nameWithType: Table<TEntity>.Update(Boolean)
+  nameWithType.vb: Table(Of TEntity).Update(Boolean)
+- uid: Venflow.Modeling.Table`1.Update*
+  name: Update
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_Update_
+  commentId: Overload:Venflow.Modeling.Table`1.Update
+  isSpec: "True"
+  fullName: Venflow.Modeling.Table<TEntity>.Update
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).Update
+  nameWithType: Table<TEntity>.Update
+  nameWithType.vb: Table(Of TEntity).Update
+- uid: Venflow.Modeling.Table`1.UpdateAsync(`0,System.Threading.CancellationToken)
+  name: UpdateAsync(TEntity, CancellationToken)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_UpdateAsync__0_System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.Table`1.UpdateAsync(`0,System.Threading.CancellationToken)
+  fullName: Venflow.Modeling.Table<TEntity>.UpdateAsync(TEntity, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).UpdateAsync(TEntity, System.Threading.CancellationToken)
+  nameWithType: Table<TEntity>.UpdateAsync(TEntity, CancellationToken)
+  nameWithType.vb: Table(Of TEntity).UpdateAsync(TEntity, CancellationToken)
+- uid: Venflow.Modeling.Table`1.UpdateAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  name: UpdateAsync(IEnumerable<TEntity>, CancellationToken)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_UpdateAsync_System_Collections_Generic_IEnumerable__0__System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.Table`1.UpdateAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  name.vb: UpdateAsync(IEnumerable(Of TEntity), CancellationToken)
+  fullName: Venflow.Modeling.Table<TEntity>.UpdateAsync(System.Collections.Generic.IEnumerable<TEntity>, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).UpdateAsync(System.Collections.Generic.IEnumerable(Of TEntity), System.Threading.CancellationToken)
+  nameWithType: Table<TEntity>.UpdateAsync(IEnumerable<TEntity>, CancellationToken)
+  nameWithType.vb: Table(Of TEntity).UpdateAsync(IEnumerable(Of TEntity), CancellationToken)
+- uid: Venflow.Modeling.Table`1.UpdateAsync(Venflow.Commands.IUpdateCommand{`0},`0,System.Threading.CancellationToken)
+  name: UpdateAsync(IUpdateCommand<TEntity>, TEntity, CancellationToken)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_UpdateAsync_Venflow_Commands_IUpdateCommand__0___0_System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.Table`1.UpdateAsync(Venflow.Commands.IUpdateCommand{`0},`0,System.Threading.CancellationToken)
+  name.vb: UpdateAsync(IUpdateCommand(Of TEntity), TEntity, CancellationToken)
+  fullName: Venflow.Modeling.Table<TEntity>.UpdateAsync(Venflow.Commands.IUpdateCommand<TEntity>, TEntity, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).UpdateAsync(Venflow.Commands.IUpdateCommand(Of TEntity), TEntity, System.Threading.CancellationToken)
+  nameWithType: Table<TEntity>.UpdateAsync(IUpdateCommand<TEntity>, TEntity, CancellationToken)
+  nameWithType.vb: Table(Of TEntity).UpdateAsync(IUpdateCommand(Of TEntity), TEntity, CancellationToken)
+- uid: Venflow.Modeling.Table`1.UpdateAsync(Venflow.Commands.IUpdateCommand{`0},System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  name: UpdateAsync(IUpdateCommand<TEntity>, IEnumerable<TEntity>, CancellationToken)
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_UpdateAsync_Venflow_Commands_IUpdateCommand__0__System_Collections_Generic_IEnumerable__0__System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.Table`1.UpdateAsync(Venflow.Commands.IUpdateCommand{`0},System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)
+  name.vb: UpdateAsync(IUpdateCommand(Of TEntity), IEnumerable(Of TEntity), CancellationToken)
+  fullName: Venflow.Modeling.Table<TEntity>.UpdateAsync(Venflow.Commands.IUpdateCommand<TEntity>, System.Collections.Generic.IEnumerable<TEntity>, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).UpdateAsync(Venflow.Commands.IUpdateCommand(Of TEntity), System.Collections.Generic.IEnumerable(Of TEntity), System.Threading.CancellationToken)
+  nameWithType: Table<TEntity>.UpdateAsync(IUpdateCommand<TEntity>, IEnumerable<TEntity>, CancellationToken)
+  nameWithType.vb: Table(Of TEntity).UpdateAsync(IUpdateCommand(Of TEntity), IEnumerable(Of TEntity), CancellationToken)
+- uid: Venflow.Modeling.Table`1.UpdateAsync*
+  name: UpdateAsync
+  href: api/Venflow.Modeling.Table-1.html#Venflow_Modeling_Table_1_UpdateAsync_
+  commentId: Overload:Venflow.Modeling.Table`1.UpdateAsync
+  isSpec: "True"
+  fullName: Venflow.Modeling.Table<TEntity>.UpdateAsync
+  fullName.vb: Venflow.Modeling.Table(Of TEntity).UpdateAsync
+  nameWithType: Table<TEntity>.UpdateAsync
+  nameWithType.vb: Table(Of TEntity).UpdateAsync
+- uid: Venflow.Modeling.TableBase`1
+  name: TableBase<TEntity>
+  href: api/Venflow.Modeling.TableBase-1.html
+  commentId: T:Venflow.Modeling.TableBase`1
+  name.vb: TableBase(Of TEntity)
+  fullName: Venflow.Modeling.TableBase<TEntity>
+  fullName.vb: Venflow.Modeling.TableBase(Of TEntity)
+  nameWithType: TableBase<TEntity>
+  nameWithType.vb: TableBase(Of TEntity)
+- uid: Venflow.Modeling.TableBase`1.QueryAsync*
+  name: QueryAsync
+  href: api/Venflow.Modeling.TableBase-1.html#Venflow_Modeling_TableBase_1_QueryAsync_
+  commentId: Overload:Venflow.Modeling.TableBase`1.QueryAsync
+  isSpec: "True"
+  fullName: Venflow.Modeling.TableBase<TEntity>.QueryAsync
+  fullName.vb: Venflow.Modeling.TableBase(Of TEntity).QueryAsync
+  nameWithType: TableBase<TEntity>.QueryAsync
+  nameWithType.vb: TableBase(Of TEntity).QueryAsync
+- uid: Venflow.Modeling.TableBase`1.QueryAsync``1(Venflow.Commands.IQueryCommand{`0,``0},System.Threading.CancellationToken)
+  name: QueryAsync<TReturn>(IQueryCommand<TEntity, TReturn>, CancellationToken)
+  href: api/Venflow.Modeling.TableBase-1.html#Venflow_Modeling_TableBase_1_QueryAsync__1_Venflow_Commands_IQueryCommand__0___0__System_Threading_CancellationToken_
+  commentId: M:Venflow.Modeling.TableBase`1.QueryAsync``1(Venflow.Commands.IQueryCommand{`0,``0},System.Threading.CancellationToken)
+  name.vb: QueryAsync(Of TReturn)(IQueryCommand(Of TEntity, TReturn), CancellationToken)
+  fullName: Venflow.Modeling.TableBase<TEntity>.QueryAsync<TReturn>(Venflow.Commands.IQueryCommand<TEntity, TReturn>, System.Threading.CancellationToken)
+  fullName.vb: Venflow.Modeling.TableBase(Of TEntity).QueryAsync(Of TReturn)(Venflow.Commands.IQueryCommand(Of TEntity, TReturn), System.Threading.CancellationToken)
+  nameWithType: TableBase<TEntity>.QueryAsync<TReturn>(IQueryCommand<TEntity, TReturn>, CancellationToken)
+  nameWithType.vb: TableBase(Of TEntity).QueryAsync(Of TReturn)(IQueryCommand(Of TEntity, TReturn), CancellationToken)
+- uid: Venflow.Modeling.TableBase`1.QueryBatch(System.String,Npgsql.NpgsqlParameter[])
+  name: QueryBatch(String, NpgsqlParameter[])
+  href: api/Venflow.Modeling.TableBase-1.html#Venflow_Modeling_TableBase_1_QueryBatch_System_String_Npgsql_NpgsqlParameter___
+  commentId: M:Venflow.Modeling.TableBase`1.QueryBatch(System.String,Npgsql.NpgsqlParameter[])
+  name.vb: QueryBatch(String, NpgsqlParameter())
+  fullName: Venflow.Modeling.TableBase<TEntity>.QueryBatch(System.String, Npgsql.NpgsqlParameter[])
+  fullName.vb: Venflow.Modeling.TableBase(Of TEntity).QueryBatch(System.String, Npgsql.NpgsqlParameter())
+  nameWithType: TableBase<TEntity>.QueryBatch(String, NpgsqlParameter[])
+  nameWithType.vb: TableBase(Of TEntity).QueryBatch(String, NpgsqlParameter())
+- uid: Venflow.Modeling.TableBase`1.QueryBatch(System.String,System.Boolean)
+  name: QueryBatch(String, Boolean)
+  href: api/Venflow.Modeling.TableBase-1.html#Venflow_Modeling_TableBase_1_QueryBatch_System_String_System_Boolean_
+  commentId: M:Venflow.Modeling.TableBase`1.QueryBatch(System.String,System.Boolean)
+  fullName: Venflow.Modeling.TableBase<TEntity>.QueryBatch(System.String, System.Boolean)
+  fullName.vb: Venflow.Modeling.TableBase(Of TEntity).QueryBatch(System.String, System.Boolean)
+  nameWithType: TableBase<TEntity>.QueryBatch(String, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QueryBatch(String, Boolean)
+- uid: Venflow.Modeling.TableBase`1.QueryBatch(System.String,System.Boolean,Npgsql.NpgsqlParameter[])
+  name: QueryBatch(String, Boolean, NpgsqlParameter[])
+  href: api/Venflow.Modeling.TableBase-1.html#Venflow_Modeling_TableBase_1_QueryBatch_System_String_System_Boolean_Npgsql_NpgsqlParameter___
+  commentId: M:Venflow.Modeling.TableBase`1.QueryBatch(System.String,System.Boolean,Npgsql.NpgsqlParameter[])
+  name.vb: QueryBatch(String, Boolean, NpgsqlParameter())
+  fullName: Venflow.Modeling.TableBase<TEntity>.QueryBatch(System.String, System.Boolean, Npgsql.NpgsqlParameter[])
+  fullName.vb: Venflow.Modeling.TableBase(Of TEntity).QueryBatch(System.String, System.Boolean, Npgsql.NpgsqlParameter())
+  nameWithType: TableBase<TEntity>.QueryBatch(String, Boolean, NpgsqlParameter[])
+  nameWithType.vb: TableBase(Of TEntity).QueryBatch(String, Boolean, NpgsqlParameter())
+- uid: Venflow.Modeling.TableBase`1.QueryBatch*
+  name: QueryBatch
+  href: api/Venflow.Modeling.TableBase-1.html#Venflow_Modeling_TableBase_1_QueryBatch_
+  commentId: Overload:Venflow.Modeling.TableBase`1.QueryBatch
+  isSpec: "True"
+  fullName: Venflow.Modeling.TableBase<TEntity>.QueryBatch
+  fullName.vb: Venflow.Modeling.TableBase(Of TEntity).QueryBatch
+  nameWithType: TableBase<TEntity>.QueryBatch
+  nameWithType.vb: TableBase(Of TEntity).QueryBatch
+- uid: Venflow.Modeling.TableBase`1.QueryInterpolatedBatch(System.FormattableString,System.Boolean)
+  name: QueryInterpolatedBatch(FormattableString, Boolean)
+  href: api/Venflow.Modeling.TableBase-1.html#Venflow_Modeling_TableBase_1_QueryInterpolatedBatch_System_FormattableString_System_Boolean_
+  commentId: M:Venflow.Modeling.TableBase`1.QueryInterpolatedBatch(System.FormattableString,System.Boolean)
+  fullName: Venflow.Modeling.TableBase<TEntity>.QueryInterpolatedBatch(System.FormattableString, System.Boolean)
+  fullName.vb: Venflow.Modeling.TableBase(Of TEntity).QueryInterpolatedBatch(System.FormattableString, System.Boolean)
+  nameWithType: TableBase<TEntity>.QueryInterpolatedBatch(FormattableString, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QueryInterpolatedBatch(FormattableString, Boolean)
+- uid: Venflow.Modeling.TableBase`1.QueryInterpolatedBatch*
+  name: QueryInterpolatedBatch
+  href: api/Venflow.Modeling.TableBase-1.html#Venflow_Modeling_TableBase_1_QueryInterpolatedBatch_
+  commentId: Overload:Venflow.Modeling.TableBase`1.QueryInterpolatedBatch
+  isSpec: "True"
+  fullName: Venflow.Modeling.TableBase<TEntity>.QueryInterpolatedBatch
+  fullName.vb: Venflow.Modeling.TableBase(Of TEntity).QueryInterpolatedBatch
+  nameWithType: TableBase<TEntity>.QueryInterpolatedBatch
+  nameWithType.vb: TableBase(Of TEntity).QueryInterpolatedBatch
+- uid: Venflow.Modeling.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)
+  name: QueryInterpolatedSingle(FormattableString, Boolean)
+  href: api/Venflow.Modeling.TableBase-1.html#Venflow_Modeling_TableBase_1_QueryInterpolatedSingle_System_FormattableString_System_Boolean_
+  commentId: M:Venflow.Modeling.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)
+  fullName: Venflow.Modeling.TableBase<TEntity>.QueryInterpolatedSingle(System.FormattableString, System.Boolean)
+  fullName.vb: Venflow.Modeling.TableBase(Of TEntity).QueryInterpolatedSingle(System.FormattableString, System.Boolean)
+  nameWithType: TableBase<TEntity>.QueryInterpolatedSingle(FormattableString, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QueryInterpolatedSingle(FormattableString, Boolean)
+- uid: Venflow.Modeling.TableBase`1.QueryInterpolatedSingle*
+  name: QueryInterpolatedSingle
+  href: api/Venflow.Modeling.TableBase-1.html#Venflow_Modeling_TableBase_1_QueryInterpolatedSingle_
+  commentId: Overload:Venflow.Modeling.TableBase`1.QueryInterpolatedSingle
+  isSpec: "True"
+  fullName: Venflow.Modeling.TableBase<TEntity>.QueryInterpolatedSingle
+  fullName.vb: Venflow.Modeling.TableBase(Of TEntity).QueryInterpolatedSingle
+  nameWithType: TableBase<TEntity>.QueryInterpolatedSingle
+  nameWithType.vb: TableBase(Of TEntity).QueryInterpolatedSingle
+- uid: Venflow.Modeling.TableBase`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])
+  name: QuerySingle(String, NpgsqlParameter[])
+  href: api/Venflow.Modeling.TableBase-1.html#Venflow_Modeling_TableBase_1_QuerySingle_System_String_Npgsql_NpgsqlParameter___
+  commentId: M:Venflow.Modeling.TableBase`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])
+  name.vb: QuerySingle(String, NpgsqlParameter())
+  fullName: Venflow.Modeling.TableBase<TEntity>.QuerySingle(System.String, Npgsql.NpgsqlParameter[])
+  fullName.vb: Venflow.Modeling.TableBase(Of TEntity).QuerySingle(System.String, Npgsql.NpgsqlParameter())
+  nameWithType: TableBase<TEntity>.QuerySingle(String, NpgsqlParameter[])
+  nameWithType.vb: TableBase(Of TEntity).QuerySingle(String, NpgsqlParameter())
+- uid: Venflow.Modeling.TableBase`1.QuerySingle(System.String,System.Boolean)
+  name: QuerySingle(String, Boolean)
+  href: api/Venflow.Modeling.TableBase-1.html#Venflow_Modeling_TableBase_1_QuerySingle_System_String_System_Boolean_
+  commentId: M:Venflow.Modeling.TableBase`1.QuerySingle(System.String,System.Boolean)
+  fullName: Venflow.Modeling.TableBase<TEntity>.QuerySingle(System.String, System.Boolean)
+  fullName.vb: Venflow.Modeling.TableBase(Of TEntity).QuerySingle(System.String, System.Boolean)
+  nameWithType: TableBase<TEntity>.QuerySingle(String, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QuerySingle(String, Boolean)
+- uid: Venflow.Modeling.TableBase`1.QuerySingle(System.String,System.Boolean,Npgsql.NpgsqlParameter[])
+  name: QuerySingle(String, Boolean, NpgsqlParameter[])
+  href: api/Venflow.Modeling.TableBase-1.html#Venflow_Modeling_TableBase_1_QuerySingle_System_String_System_Boolean_Npgsql_NpgsqlParameter___
+  commentId: M:Venflow.Modeling.TableBase`1.QuerySingle(System.String,System.Boolean,Npgsql.NpgsqlParameter[])
+  name.vb: QuerySingle(String, Boolean, NpgsqlParameter())
+  fullName: Venflow.Modeling.TableBase<TEntity>.QuerySingle(System.String, System.Boolean, Npgsql.NpgsqlParameter[])
+  fullName.vb: Venflow.Modeling.TableBase(Of TEntity).QuerySingle(System.String, System.Boolean, Npgsql.NpgsqlParameter())
+  nameWithType: TableBase<TEntity>.QuerySingle(String, Boolean, NpgsqlParameter[])
+  nameWithType.vb: TableBase(Of TEntity).QuerySingle(String, Boolean, NpgsqlParameter())
+- uid: Venflow.Modeling.TableBase`1.QuerySingle*
+  name: QuerySingle
+  href: api/Venflow.Modeling.TableBase-1.html#Venflow_Modeling_TableBase_1_QuerySingle_
+  commentId: Overload:Venflow.Modeling.TableBase`1.QuerySingle
+  isSpec: "True"
+  fullName: Venflow.Modeling.TableBase<TEntity>.QuerySingle
+  fullName.vb: Venflow.Modeling.TableBase(Of TEntity).QuerySingle
+  nameWithType: TableBase<TEntity>.QuerySingle
+  nameWithType.vb: TableBase(Of TEntity).QuerySingle
+- uid: Venflow.NpgsqlCommandExtensions
+  name: NpgsqlCommandExtensions
+  href: api/Venflow.NpgsqlCommandExtensions.html
+  commentId: T:Venflow.NpgsqlCommandExtensions
+  fullName: Venflow.NpgsqlCommandExtensions
+  nameWithType: NpgsqlCommandExtensions
+- uid: Venflow.NpgsqlCommandExtensions.AddParamter*
+  name: AddParamter
+  href: api/Venflow.NpgsqlCommandExtensions.html#Venflow_NpgsqlCommandExtensions_AddParamter_
+  commentId: Overload:Venflow.NpgsqlCommandExtensions.AddParamter
+  isSpec: "True"
+  fullName: Venflow.NpgsqlCommandExtensions.AddParamter
+  nameWithType: NpgsqlCommandExtensions.AddParamter
+- uid: Venflow.NpgsqlCommandExtensions.AddParamter``1(Npgsql.NpgsqlCommand,System.String,``0)
+  name: AddParamter<TType>(NpgsqlCommand, String, TType)
+  href: api/Venflow.NpgsqlCommandExtensions.html#Venflow_NpgsqlCommandExtensions_AddParamter__1_Npgsql_NpgsqlCommand_System_String___0_
+  commentId: M:Venflow.NpgsqlCommandExtensions.AddParamter``1(Npgsql.NpgsqlCommand,System.String,``0)
+  name.vb: AddParamter(Of TType)(NpgsqlCommand, String, TType)
+  fullName: Venflow.NpgsqlCommandExtensions.AddParamter<TType>(Npgsql.NpgsqlCommand, System.String, TType)
+  fullName.vb: Venflow.NpgsqlCommandExtensions.AddParamter(Of TType)(Npgsql.NpgsqlCommand, System.String, TType)
+  nameWithType: NpgsqlCommandExtensions.AddParamter<TType>(NpgsqlCommand, String, TType)
+  nameWithType.vb: NpgsqlCommandExtensions.AddParamter(Of TType)(NpgsqlCommand, String, TType)
+- uid: Venflow.NpgsqlCommandExtensions.SetInterpolatedCommandText(Npgsql.NpgsqlCommand,System.FormattableString)
+  name: SetInterpolatedCommandText(NpgsqlCommand, FormattableString)
+  href: api/Venflow.NpgsqlCommandExtensions.html#Venflow_NpgsqlCommandExtensions_SetInterpolatedCommandText_Npgsql_NpgsqlCommand_System_FormattableString_
+  commentId: M:Venflow.NpgsqlCommandExtensions.SetInterpolatedCommandText(Npgsql.NpgsqlCommand,System.FormattableString)
+  fullName: Venflow.NpgsqlCommandExtensions.SetInterpolatedCommandText(Npgsql.NpgsqlCommand, System.FormattableString)
+  nameWithType: NpgsqlCommandExtensions.SetInterpolatedCommandText(NpgsqlCommand, FormattableString)
+- uid: Venflow.NpgsqlCommandExtensions.SetInterpolatedCommandText*
+  name: SetInterpolatedCommandText
+  href: api/Venflow.NpgsqlCommandExtensions.html#Venflow_NpgsqlCommandExtensions_SetInterpolatedCommandText_
+  commentId: Overload:Venflow.NpgsqlCommandExtensions.SetInterpolatedCommandText
+  isSpec: "True"
+  fullName: Venflow.NpgsqlCommandExtensions.SetInterpolatedCommandText
+  nameWithType: NpgsqlCommandExtensions.SetInterpolatedCommandText
+- uid: Venflow.TypeArgumentException
+  name: TypeArgumentException
+  href: api/Venflow.TypeArgumentException.html
+  commentId: T:Venflow.TypeArgumentException
+  fullName: Venflow.TypeArgumentException
+  nameWithType: TypeArgumentException
+- uid: Venflow.TypeArgumentException.#ctor(System.String)
+  name: TypeArgumentException(String)
+  href: api/Venflow.TypeArgumentException.html#Venflow_TypeArgumentException__ctor_System_String_
+  commentId: M:Venflow.TypeArgumentException.#ctor(System.String)
+  fullName: Venflow.TypeArgumentException.TypeArgumentException(System.String)
+  nameWithType: TypeArgumentException.TypeArgumentException(String)
+- uid: Venflow.TypeArgumentException.#ctor(System.String,System.Exception)
+  name: TypeArgumentException(String, Exception)
+  href: api/Venflow.TypeArgumentException.html#Venflow_TypeArgumentException__ctor_System_String_System_Exception_
+  commentId: M:Venflow.TypeArgumentException.#ctor(System.String,System.Exception)
+  fullName: Venflow.TypeArgumentException.TypeArgumentException(System.String, System.Exception)
+  nameWithType: TypeArgumentException.TypeArgumentException(String, Exception)
+- uid: Venflow.TypeArgumentException.#ctor(System.String,System.String)
+  name: TypeArgumentException(String, String)
+  href: api/Venflow.TypeArgumentException.html#Venflow_TypeArgumentException__ctor_System_String_System_String_
+  commentId: M:Venflow.TypeArgumentException.#ctor(System.String,System.String)
+  fullName: Venflow.TypeArgumentException.TypeArgumentException(System.String, System.String)
+  nameWithType: TypeArgumentException.TypeArgumentException(String, String)
+- uid: Venflow.TypeArgumentException.#ctor*
+  name: TypeArgumentException
+  href: api/Venflow.TypeArgumentException.html#Venflow_TypeArgumentException__ctor_
+  commentId: Overload:Venflow.TypeArgumentException.#ctor
+  isSpec: "True"
+  fullName: Venflow.TypeArgumentException.TypeArgumentException
+  nameWithType: TypeArgumentException.TypeArgumentException
+- uid: Venflow.VenflowConfiguration
+  name: VenflowConfiguration
+  href: api/Venflow.VenflowConfiguration.html
+  commentId: T:Venflow.VenflowConfiguration
+  fullName: Venflow.VenflowConfiguration
+  nameWithType: VenflowConfiguration
+- uid: Venflow.VenflowConfiguration.ShouldUseDeepValidation
+  name: ShouldUseDeepValidation
+  href: api/Venflow.VenflowConfiguration.html#Venflow_VenflowConfiguration_ShouldUseDeepValidation
+  commentId: P:Venflow.VenflowConfiguration.ShouldUseDeepValidation
+  fullName: Venflow.VenflowConfiguration.ShouldUseDeepValidation
+  nameWithType: VenflowConfiguration.ShouldUseDeepValidation
+- uid: Venflow.VenflowConfiguration.ShouldUseDeepValidation*
+  name: ShouldUseDeepValidation
+  href: api/Venflow.VenflowConfiguration.html#Venflow_VenflowConfiguration_ShouldUseDeepValidation_
+  commentId: Overload:Venflow.VenflowConfiguration.ShouldUseDeepValidation
+  isSpec: "True"
+  fullName: Venflow.VenflowConfiguration.ShouldUseDeepValidation
+  nameWithType: VenflowConfiguration.ShouldUseDeepValidation
+- uid: Venflow.VenflowConfiguration.UseDeepValidation(System.Boolean)
+  name: UseDeepValidation(Boolean)
+  href: api/Venflow.VenflowConfiguration.html#Venflow_VenflowConfiguration_UseDeepValidation_System_Boolean_
+  commentId: M:Venflow.VenflowConfiguration.UseDeepValidation(System.Boolean)
+  fullName: Venflow.VenflowConfiguration.UseDeepValidation(System.Boolean)
+  nameWithType: VenflowConfiguration.UseDeepValidation(Boolean)
+- uid: Venflow.VenflowConfiguration.UseDeepValidation*
+  name: UseDeepValidation
+  href: api/Venflow.VenflowConfiguration.html#Venflow_VenflowConfiguration_UseDeepValidation_
+  commentId: Overload:Venflow.VenflowConfiguration.UseDeepValidation
+  isSpec: "True"
+  fullName: Venflow.VenflowConfiguration.UseDeepValidation
+  nameWithType: VenflowConfiguration.UseDeepValidation

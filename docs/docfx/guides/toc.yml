@@ -1,0 +1,32 @@
+- name: Introduction
+  topicUid: Guides.Introduction
+- name: Getting Started
+  items:
+    - name: Installation
+      topicUid: Guides.GettingStarted.Installation
+    - name: Setup
+      topicUid: Guides.GettingStarted.Setup
+- name: Operations
+  items:
+    - name: Query
+      topicUid: Guides.Operations.Query
+    - name: Update
+      topicUid: Guides.Operations.Update
+    - name: Insert
+      topicUid: Guides.Operations.Insert
+    - name: Delete
+      topicUid: Guides.Operations.Delete
+    - name: Count
+      topicUid: Guides.Operations.Count
+    - name: Truncate
+      topicUid: Guides.Operations.Truncate
+    - name: Execute
+      topicUid: Guides.Operations.Execute
+- name: Advanced
+  items:
+    - name: Enums
+      topicUid: Guides.Advanced.Enums
+    - name: Nullables
+      topicUid: Guides.Advanced.Nullables
+    - name: Validation
+      topicUid: Guides.Advanced.Validation
