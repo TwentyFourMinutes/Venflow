@@ -124,7 +124,7 @@ Subsequent joins can be configured with the `ThenWith` method. Do note, that one
 
 ## Road map
 
-- Enum mapping
+- Composed PK support
 - Direct support for many to many relations
 
 ### Acknowledgements
