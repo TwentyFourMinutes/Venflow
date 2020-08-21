@@ -11,7 +11,7 @@ Venflow supports `.Net Framework 4.8`, `.Net Standard 2.1`, `.Net Core 3.1` and 
 
 ## Installation from NuGet
 
-DulcisX is distributed through the official NuGet feed as a lot of the other packages, which makes its install as easy as its get.
+Venflow is distributed through the official NuGet feed as a lot of the other packages, which makes its install as easy as its get.
 
 > [!WARNING] 
 > For now Venflow is published under the _pre-release_ tag and might still contain bugs or other issues, if you encounter something please create an [issue](https://github.com/TwentyFourMinutes/Venflow/issues) over on GitHub.

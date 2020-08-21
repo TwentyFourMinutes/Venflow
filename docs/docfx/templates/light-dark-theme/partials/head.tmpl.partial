@@ -9,9 +9,9 @@
   {{#_description}}<meta property="og:description" content="{{_description}}">{{/_description}}
   <meta property="og:locale" content="en-us">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="DulcisX Docs">
+  <meta property="og:site_name" content="Venflow Docs">
   <meta property="og:image" content="">
-  <meta property="og:image:alt" content="DulcisX Logo">
+  <meta property="og:image:alt" content="Venflow Logo">
   <meta name="theme-color" content="#995EA7"/>
   <meta name="generator" content="docfx {{_docfxVersion}}">
   <meta property="docfx:navrel" content="{{_navRel}}">
