@@ -311,10 +311,10 @@ namespace Venflow.Modeling.Definitions.Builder
                             break;
                     }
                 }
-                else if (IsCustomEntity && 
+                else if (IsCustomEntity &&
                          annotedPrimaryKey == property)
                 {
-                    if (EntityInNullableContext && 
+                    if (EntityInNullableContext &&
                         isPropertyTypeNullableReferenceType)
                     {
                         throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
@@ -328,7 +328,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                     var setMethod = property.GetSetMethod();
 
-                    if (setMethod.IsVirtual && 
+                    if (setMethod.IsVirtual &&
                         !setMethod.IsFinal)
                     {
                         changeTrackingColumns.Add(i, primaryColumn);
@@ -343,7 +343,7 @@ namespace Venflow.Modeling.Definitions.Builder
                 {
                     string columnName;
 
-                    if (IsCustomEntity && 
+                    if (IsCustomEntity &&
                         definition is not null)
                     {
                         columnName = definition.Name;
@@ -368,7 +368,7 @@ namespace Venflow.Modeling.Definitions.Builder
                     {
                         var setMethod = property.GetSetMethod();
 
-                        if (setMethod.IsVirtual && 
+                        if (setMethod.IsVirtual &&
                             !setMethod.IsFinal)
                         {
                             changeTrackingColumns.Add(i, column);

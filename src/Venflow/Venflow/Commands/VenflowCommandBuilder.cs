@@ -28,47 +28,47 @@ namespace Venflow.Commands
 
         public IPreCommandBuilder<TEntity, TEntity> QuerySingle()
         {
-            return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, QueryGenerationOptions.GenerateFullSQL, _disposeCommand,true);
+            return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, QueryGenerationOptions.GenerateFullSQL, _disposeCommand, true);
         }
 
         public IPreCommandBuilder<TEntity, TEntity> QuerySingle(string sql)
         {
-            return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, _disposeCommand,true);
+            return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, _disposeCommand, true);
         }
 
         public IPreCommandBuilder<TEntity, TEntity> QuerySingle(string sql, params NpgsqlParameter[] parameters)
         {
-            return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, parameters, _disposeCommand,true);
+            return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, parameters, _disposeCommand, true);
         }
 
         public IPreCommandBuilder<TEntity, TEntity> QueryInterpolatedSingle(FormattableString sql)
         {
-            return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, _disposeCommand,true);
+            return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, _disposeCommand, true);
         }
 
         public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch()
         {
-            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, QueryGenerationOptions.GenerateFullSQL, _disposeCommand,false);
+            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, QueryGenerationOptions.GenerateFullSQL, _disposeCommand, false);
         }
 
         public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(ulong count)
         {
-            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, count, _disposeCommand,false);
+            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, count, _disposeCommand, false);
         }
 
         public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql)
         {
-            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, sql, _disposeCommand,false);
+            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, sql, _disposeCommand, false);
         }
 
         public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, params NpgsqlParameter[] parameters)
         {
-            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, sql, parameters, _disposeCommand,false);
+            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, sql, parameters, _disposeCommand, false);
         }
 
         public IPreCommandBuilder<TEntity, List<TEntity>> QueryInterpolatedBatch(FormattableString sql)
         {
-            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, sql, _disposeCommand,false);
+            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, sql, _disposeCommand, false);
         }
 
         #endregion

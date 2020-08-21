@@ -194,7 +194,7 @@ namespace Venflow.Commands
 
             _command.CommandText = _commandString.ToString();
 
-            return new VenflowQueryCommand<TEntity, TReturn>(_database, _entityConfiguration, _command, JoinBuilderValues, _trackChanges, _disposeCommand,_singleResult && JoinBuilderValues is null);
+            return new VenflowQueryCommand<TEntity, TReturn>(_database, _entityConfiguration, _command, JoinBuilderValues, _trackChanges, _disposeCommand, _singleResult && JoinBuilderValues is null);
         }
 
         private void BuildRelationQuery(ulong count)
