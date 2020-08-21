@@ -77,6 +77,8 @@ As already mentioned, Venflow tries to keep the learning curve from other ORM's 
 
 ### Basic configuration
 
+_The official documentation and guides can be found [here](https://twentyfourminutes.github.io/Venflow/)_
+
 In Venflow you are reflecting your PostgreSQL database with the `Database` class, which will host all of your tables. This class represents a connection to your database and therefor doesn't support multi threaded use. In the following example we will configure a database containing two tables, `Blogs` and `Posts`. One Blog contains many posts and a post contains a single Blog.
 
 ```cs
