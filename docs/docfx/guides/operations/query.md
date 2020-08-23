@@ -88,7 +88,7 @@ A simple example of that would be something like the following, where we just qu
 ```cs
 const string sql = @"SELECT ""Id"", ""Name"" FROM ""Blogs""";
 
-var blogs = await database.Blogs.QuerySingle(sql).Build().QueryAsync();
+var blogs = await database.Blogs.QueryBatch(sql).Build().QueryAsync();
 ```
 
 ## Queries which don't return entities

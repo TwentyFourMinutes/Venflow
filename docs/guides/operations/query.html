@@ -156,7 +156,7 @@ var blogs = await database.Blogs.QueryInterpolatedSingle(sql).JoinWith(x =&gt; x
 <p>A simple example of that would be something like the following, where we just query the name and the primary key of all blogs.</p>
 <pre><code class="lang-cs">const string sql = @&quot;SELECT &quot;&quot;Id&quot;&quot;, &quot;&quot;Name&quot;&quot; FROM &quot;&quot;Blogs&quot;&quot;&quot;;
 
-var blogs = await database.Blogs.QuerySingle(sql).Build().QueryAsync();
+var blogs = await database.Blogs.QueryBatch(sql).Build().QueryAsync();
 </code></pre>
 <h2 id="queries-which-dont-return-entities">Queries which don't return entities</h2>
 <p>In Venflow you have the option to construct queries which don't necessarily return a row of a table, in this case you can use the <code>Custom&lt;T&gt;</code> method on your <code>Database</code> class.</p>
