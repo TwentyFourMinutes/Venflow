@@ -8,6 +8,9 @@ title: Query with Venflow
 > [!WARNING] 
 > Be carful while dealing with raw SQL and ensure that you never pass user modified SQL to any of the methods. Instead use parameterized  overloads or the `Interpolated` siblings.
 
+> [!WARNING] 
+> The primary key always has to be the first column of a given table returned by an SQL Query.
+
 ## Query data without relations
 
 Your `Database` class exposes `Table<T>` properties which expose query operations. In Venflow queries are based on hand-written SQL, however for very simple scenarios there are generators which do the job for you. In this case we query the first 10 blogs in the database.
@@ -26,7 +29,7 @@ var blogs = await query.QueryAsync(); // You can also inline this with the line 
 If you instead only wanted to query the first result, you can use the `QuerySingle` API.
 
 ```cs
-var blogs = await query.Blogs.QuerySingle().Build().QueryAsync();
+var blogs = await database.Blogs.QuerySingle().Build().QueryAsync();
 ```
 
 ## Query data with relations
@@ -48,7 +51,7 @@ var query = await database.Blogs.QueryBatch(sql).JoinWith(x => x.Posts).Build().
 If you instead only wanted to query the first blog with all of its posts, you can again use the `QuerySingle` API.
 
 ```cs
-var blogs = await query.Blogs.QuerySingle().JoinWith(x => x.Posts).Build().QueryAsync();
+var blogs = await database.Blogs.QuerySingle().JoinWith(x => x.Posts).Build().QueryAsync();
 ```
 
 ## Queries with parameters
@@ -67,11 +70,26 @@ $@"SELECT * FROM
 ) AS ""Blogs"" 
 JOIN ""Posts"" ON ""Posts"".""BlogId"" = ""Blogs"".""Id""";
 
-var blogs = await query.Blogs.QueryInterpolatedSingle(sql).JoinWith(x => x.Posts).Build().QueryAsync();
+var blogs = await database.Blogs.QueryInterpolatedSingle(sql).JoinWith(x => x.Posts).Build().QueryAsync();
 ```
 
 > [!NOTE] 
 > Most of the methods in Venflow which accept raw SQL do have a sibling method called `*Interpolated*`.
+
+## Query partial data
+
+The beautiful thing about Venflow is that you can only query for partial data, which means that a query doesn't necessarily  has to return all column. There are only two thing you need to be aware of:
+
+- The primary key always needs to be returned
+- Assuming you have two tables, table A and table B, which you are joining together. Table A isn't allowed to contain a column (other than the primary key) to have the same name as the primary key of table B. Otherwise Venflow won't be able to know when to spilt the SQL result.
+
+A simple example of that would be something like the following, where we just query the name and the primary key of all blogs.
+
+```cs
+const string sql = @"SELECT ""Id"", ""Name"" FROM ""Blogs""";
+
+var blogs = await database.Blogs.QuerySingle(sql).Build().QueryAsync();
+```
 
 ## Queries which don't return entities
 
