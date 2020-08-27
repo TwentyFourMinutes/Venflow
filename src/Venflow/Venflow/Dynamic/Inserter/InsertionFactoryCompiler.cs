@@ -377,7 +377,8 @@ namespace Venflow.Dynamic.Inserter
                     var underlyingType = Nullable.GetUnderlyingType(column.PropertyInfo.PropertyType);
 
                     if (underlyingType is { } &&
-                        underlyingType.IsEnum)
+                        (underlyingType.IsEnum ||
+                         underlyingType == typeof(Guid)))
                     {
                         var stringType = typeof(string);
                         var dbNullType = typeof(DBNull);

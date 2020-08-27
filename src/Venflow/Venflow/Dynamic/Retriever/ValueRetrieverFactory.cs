@@ -29,6 +29,11 @@ namespace Venflow.Dynamic.Retriever
             {
                 WriteNullableRetriever(retrieverMethodIL, property, Enum.GetUnderlyingType(underlyingType));
             }
+            else if (underlyingType is { } &&
+                     underlyingType == typeof(Guid))
+            {
+                WriteNullableRetriever(retrieverMethodIL, property, underlyingType);
+            }
             else
             {
                 WriteDefaultRetriever(retrieverMethodIL, property);
