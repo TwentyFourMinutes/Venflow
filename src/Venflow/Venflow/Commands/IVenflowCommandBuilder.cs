@@ -1,6 +1,6 @@
-﻿using Npgsql;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Npgsql;
 
 namespace Venflow.Commands
 {

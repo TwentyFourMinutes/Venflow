@@ -1,6 +1,6 @@
-using Npgsql;
 using System;
 using System.Collections.Generic;
+using Npgsql;
 using Venflow.Enums;
 using Venflow.Modeling;
 

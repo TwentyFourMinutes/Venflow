@@ -1,11 +1,11 @@
-﻿using Npgsql;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Npgsql;
 using Venflow.Dynamic.IL;
 using Venflow.Dynamic.Proxies;
 using Venflow.Modeling;

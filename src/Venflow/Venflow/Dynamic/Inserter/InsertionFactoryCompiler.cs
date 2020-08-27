@@ -1,4 +1,3 @@
-using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Npgsql;
 using Venflow.Dynamic.IL;
 using Venflow.Enums;
 using Venflow.Modeling;

@@ -1,8 +1,8 @@
-﻿using Npgsql;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Npgsql;
 using Venflow.Modeling;
 
 namespace Venflow.Commands

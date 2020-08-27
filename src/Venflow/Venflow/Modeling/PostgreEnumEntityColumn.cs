@@ -1,6 +1,6 @@
-﻿using Npgsql;
-using System;
+﻿using System;
 using System.Reflection;
+using Npgsql;
 
 namespace Venflow.Modeling
 {

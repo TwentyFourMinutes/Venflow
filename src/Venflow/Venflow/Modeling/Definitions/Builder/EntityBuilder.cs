@@ -1,4 +1,3 @@
-using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,6 +7,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Npgsql;
 using Venflow.Dynamic.Proxies;
 using Venflow.Dynamic.Retriever;
 using Venflow.Enums;
