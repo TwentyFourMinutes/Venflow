@@ -12,12 +12,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Shared", "Venflow.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Score", "Venflow.Score\Venflow.Score.csproj", "{F33684D5-806D-4040-9F19-32EDE6648F3C}"
 EndProject
-#no-commit-start
+//no-commit-start
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Compatible", "Venflow.Compatible\Venflow.Compatible.csproj", "{1196DACB-E72A-4AC7-89DD-6E4CCD60A595}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.ExecutionTests", "Venflow.ExecutionTests\Venflow.ExecutionTests.csproj", "{E40D47E3-008B-4BC2-A471-9744DA574F93}"
 EndProject
-#no-commit-end
+//no-commit-end
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,7 +44,7 @@ Global
 		{F33684D5-806D-4040-9F19-32EDE6648F3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F33684D5-806D-4040-9F19-32EDE6648F3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F33684D5-806D-4040-9F19-32EDE6648F3C}.Release|Any CPU.Build.0 = Release|Any CPU
-#no-commit-start
+//no-commit-start
 		{E40D47E3-008B-4BC2-A471-9744DA574F93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E40D47E3-008B-4BC2-A471-9744DA574F93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E40D47E3-008B-4BC2-A471-9744DA574F93}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -53,7 +53,7 @@ Global
 		{1196DACB-E72A-4AC7-89DD-6E4CCD60A595}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1196DACB-E72A-4AC7-89DD-6E4CCD60A595}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1196DACB-E72A-4AC7-89DD-6E4CCD60A595}.Release|Any CPU.Build.0 = Release|Any CPU
-#no-commit-end		
+//no-commit-end		
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
