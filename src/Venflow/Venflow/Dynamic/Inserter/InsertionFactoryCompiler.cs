@@ -391,8 +391,8 @@ namespace Venflow.Dynamic.Inserter
                         // Check if property has value
                         _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetGetMethod());
-                        _moveNextMethodIL.Emit(OpCodes.Stloc_S, propertyLocal);
-                        _moveNextMethodIL.Emit(OpCodes.Ldloca_S, propertyLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Stloc, propertyLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Ldloca, propertyLocal);
                         _moveNextMethodIL.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("HasValue").GetGetMethod());
                         _moveNextMethodIL.Emit(OpCodes.Brtrue_S, defaultRetrieverLabel);
 
@@ -408,8 +408,8 @@ namespace Venflow.Dynamic.Inserter
                         _moveNextMethodIL.Emit(OpCodes.Ldloc, placeholderLocal);
                         _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetGetMethod());
-                        _moveNextMethodIL.Emit(OpCodes.Stloc_S, propertyLocal);
-                        _moveNextMethodIL.Emit(OpCodes.Ldloca_S, propertyLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Stloc, propertyLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Ldloca, propertyLocal);
                         _moveNextMethodIL.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("Value").GetGetMethod());
                         _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underlyingType).GetConstructor(new[] { stringType, underlyingType }));
 

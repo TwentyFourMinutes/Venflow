@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Npgsql;
 using Venflow.Enums;
@@ -30,7 +31,7 @@ namespace Venflow.Dynamic.Inserter
                     {
                         var sourceCompiler = new InsertionSourceCompiler();
 
-                        sourceCompiler.Compile(_entity);
+                        sourceCompiler.RootCompile(_entity);
 
                         return _relationInserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(sourceCompiler.GenerateSortedEntities(), insertOptions);
                     }
@@ -45,7 +46,7 @@ namespace Venflow.Dynamic.Inserter
                     {
                         var sourceCompiler = new InsertionSourceCompiler();
 
-                        sourceCompiler.Compile(_entity);
+                        sourceCompiler.RootCompile(_entity);
 
                         return _identityInserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(sourceCompiler.GenerateSortedEntities(), insertOptions);
                     }
@@ -87,7 +88,7 @@ namespace Venflow.Dynamic.Inserter
                     {
                         var sourceCompiler = new InsertionSourceCompiler();
 
-                        sourceCompiler.Compile(_entity);
+                        sourceCompiler.RootCompile(_entity);
 
                         return _identityInserter = new InsertionFactoryCompiler<TEntity>(_entity).CreateInserter(sourceCompiler.GenerateSortedEntities(), insertOptions);
                     }

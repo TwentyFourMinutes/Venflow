@@ -7,18 +7,17 @@ namespace Venflow.Dynamic.Inserter
 {
     internal class InsertionSourceCompiler
     {
-        private int _visitedEntitiesCount;
         private readonly LinkedList<EntityRelationHolder> _entities;
-        private readonly Dictionary<long, LinkedListNode<EntityRelationHolder>> _entityRelationLookup;
         private readonly ObjectIDGenerator _visitedEntityIds;
-        private readonly ObjectIDGenerator _visitedEntityHolderIds;
+        private readonly ObjectIDGenerator _processedEntities;
+        private readonly List<Entity> _reachableEntities;
 
         internal InsertionSourceCompiler()
         {
             _entities = new LinkedList<EntityRelationHolder>();
-            _entityRelationLookup = new Dictionary<long, LinkedListNode<EntityRelationHolder>>();
             _visitedEntityIds = new ObjectIDGenerator();
-            _visitedEntityHolderIds = new ObjectIDGenerator();
+            _processedEntities = new ObjectIDGenerator();
+            _reachableEntities = new List<Entity>();
         }
 
         internal EntityRelationHolder[] GenerateSortedEntities()
@@ -35,88 +34,97 @@ namespace Venflow.Dynamic.Inserter
             return entities;
         }
 
-        internal void Compile(Entity entity)
+        internal void RootCompile(Entity entity)
         {
-            _visitedEntitiesCount++;
-
             if (entity.Relations is null)
             {
-                if (_visitedEntitiesCount == 1)
-                {
-                    _entities.AddFirst(new EntityRelationHolder(entity));
-                }
+                _entities.AddFirst(new EntityRelationHolder(entity));
 
                 return;
             }
 
-            if (_visitedEntitiesCount == 1)
+            _visitedEntityIds.GetId(entity, out _);
+            CollectAllReachableEntities(entity);
+
+            BaseCompile();
+        }
+
+        private void CollectAllReachableEntities(Entity entity)
+        {
+            _reachableEntities.Add(entity);
+
+            for (int relationIndex = 0; relationIndex < entity.Relations.Count; relationIndex++)
             {
-                _ = _visitedEntityIds.GetId(entity, out _);
-            }
-
-            var leftId = _visitedEntityHolderIds.GetId(entity, out _);
-
-            if (!_entityRelationLookup.TryGetValue(leftId, out var leftNode))
-            {
-                leftNode = new LinkedListNode<EntityRelationHolder>(new EntityRelationHolder(entity));
-
-                _entityRelationLookup.Add(leftId, leftNode);
-
-                _entities.AddLast(leftNode);
-            }
-
-            for (int i = 0; i < entity.Relations.Count; i++)
-            {
-                var relation = entity.Relations[i];
-
-                if (relation.LeftNavigationProperty is null ||
-                    relation.ForeignKeyLocation != ForeignKeyLocation.Left)
-                {
-                    continue;
-                }
-
-                var rightId = _visitedEntityHolderIds.GetId(relation.RightEntity, out _);
-
-                if (_entityRelationLookup.TryGetValue(rightId, out var rightNode))
-                {
-                    _entities.Remove(rightNode);
-                }
-                else
-                {
-                    rightNode = new LinkedListNode<EntityRelationHolder>(new EntityRelationHolder(relation.RightEntity));
-
-                    _entityRelationLookup.Add(rightId, rightNode);
-                }
-
-                leftNode.Value.Relations.Add(relation);
-
-                rightNode.Value.AssigningRelations.Add(relation.Sibiling);
-
-                _entities.AddBefore(leftNode, rightNode);
-            }
-
-            for (int i = 0; i < entity.Relations.Count; i++)
-            {
-                var relation = entity.Relations[i];
+                var relation = entity.Relations[relationIndex];
 
                 if (relation.LeftNavigationProperty is null)
-                {
                     continue;
-                }
 
-                _ = _visitedEntityIds.GetId(relation.RightEntity, out var isNew);
+                _visitedEntityIds.GetId(relation.RightEntity, out var newEntity);
 
-                if (!isNew)
-                {
-                    continue;
-                }
-
-                Compile(relation.RightEntity);
+                if (newEntity)
+                    CollectAllReachableEntities(relation.RightEntity);
             }
+        }
 
-            if (_visitedEntitiesCount == 1 && _entities.Count == 0)
+        private void BaseCompile()
+        {
+            while (_reachableEntities.Count > 0)
             {
-                _entities.AddFirst(new EntityRelationHolder(entity));
+                for (int entityIndex = 0; entityIndex < _reachableEntities.Count; entityIndex++)
+                {
+                    var entity = _reachableEntities[entityIndex];
+
+                    var noDirectDependencies = true;
+
+                    for (int relationIndex = 0; relationIndex < entity.Relations.Count; relationIndex++)
+                    {
+                        var relation = entity.Relations[relationIndex];
+
+                        _processedEntities.HasId(relation.RightEntity, out var newEntity);
+                        _visitedEntityIds.HasId(relation.RightEntity, out var notReachable);
+
+                        if (newEntity &&
+                            !notReachable &&
+                            relation.ForeignKeyLocation == ForeignKeyLocation.Left)
+                        {
+                            noDirectDependencies = false;
+
+                            break;
+                        }
+                    }
+
+                    if (noDirectDependencies)
+                    {
+                        var leftNode = _entities.AddLast(new EntityRelationHolder(entity));
+
+                        for (int relationIndex = 0; relationIndex < entity.Relations.Count; relationIndex++)
+                        {
+                            var relation = entity.Relations[relationIndex];
+
+                            _visitedEntityIds.HasId(relation.RightEntity, out var notReachable);
+
+                            if (notReachable)
+                                continue;
+
+                            if (relation.ForeignKeyLocation == ForeignKeyLocation.Left &&
+                                relation.LeftNavigationProperty is { })
+                            {
+                                leftNode.Value.Relations.Add(relation);
+                            }
+                            else if (relation.LeftNavigationProperty is { })
+                            {
+                                leftNode.Value.AssigningRelations.Add(relation);
+                            }
+                        }
+
+                        _processedEntities.GetId(entity, out _);
+
+                        _reachableEntities.RemoveAt(entityIndex);
+
+                        entityIndex--;
+                    }
+                }
             }
         }
     }
