@@ -1,6 +1,6 @@
-﻿using Npgsql;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Npgsql;
 using Venflow.Tests.Models;
 using Xunit;
 

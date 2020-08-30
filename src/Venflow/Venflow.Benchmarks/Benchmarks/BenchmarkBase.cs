@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using RepoDb;
-using System.Threading.Tasks;
 using Venflow.Benchmarks.Models;
 using Venflow.Benchmarks.Models.Configurations;
 

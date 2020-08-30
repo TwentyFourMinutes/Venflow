@@ -1,7 +1,7 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System.Threading.Tasks;
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 using RepoDb;
-using System.Threading.Tasks;
 using Venflow.Benchmarks.Models;
 
 namespace Venflow.Benchmarks.Benchmarks.InsertBenchmarks

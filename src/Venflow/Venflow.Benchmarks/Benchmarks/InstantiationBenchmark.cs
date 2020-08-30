@@ -1,5 +1,5 @@
-﻿using BenchmarkDotNet.Attributes;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using BenchmarkDotNet.Attributes;
 using Venflow.Benchmarks.Models.Configurations;
 
 namespace Venflow.Benchmarks.Benchmarks

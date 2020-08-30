@@ -1,5 +1,5 @@
-﻿using BenchmarkDotNet.Running;
-using System;
+﻿using System;
+using BenchmarkDotNet.Running;
 
 namespace Venflow.Benchmarks
 {

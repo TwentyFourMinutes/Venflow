@@ -1,8 +1,8 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 using RepoDb;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Venflow.Benchmarks.Models;
 
 namespace Venflow.Benchmarks.Benchmarks.DeleteBenchmarks
