@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using Venflow.Enums;
 using Venflow.Modeling;
@@ -71,6 +73,8 @@ namespace Venflow.Dynamic.Inserter
         {
             while (_reachableEntities.Count > 0)
             {
+                var startReachableCount = _reachableEntities.Count;
+
                 for (int entityIndex = 0; entityIndex < _reachableEntities.Count; entityIndex++)
                 {
                     var entity = _reachableEntities[entityIndex];
@@ -124,6 +128,11 @@ namespace Venflow.Dynamic.Inserter
 
                         entityIndex--;
                     }
+                }
+
+                if (startReachableCount == _reachableEntities.Count)
+                {
+                    throw new InvalidOperationException($"The entities {string.Join(", ", _reachableEntities.Select(x => "'" + x.EntityName + "'"))} create a relation loop which can't be resolved. You can fix this by splitting up your insert into multiple ones. However if you do get this error, please create an issue on GitHub with a reproduceable example.");
                 }
             }
         }
