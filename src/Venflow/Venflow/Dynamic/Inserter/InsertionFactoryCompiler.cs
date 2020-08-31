@@ -378,7 +378,8 @@ namespace Venflow.Dynamic.Inserter
 
                     if (underlyingType is { } &&
                         (underlyingType.IsEnum ||
-                         underlyingType == typeof(Guid)))
+                         underlyingType == typeof(Guid) ||
+                         underlyingType == typeof(ulong)))
                     {
                         var stringType = typeof(string);
                         var dbNullType = typeof(DBNull);
@@ -411,6 +412,15 @@ namespace Venflow.Dynamic.Inserter
                         _moveNextMethodIL.Emit(OpCodes.Stloc, propertyLocal);
                         _moveNextMethodIL.Emit(OpCodes.Ldloca, propertyLocal);
                         _moveNextMethodIL.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("Value").GetGetMethod());
+
+                        if (underlyingType == typeof(ulong))
+                        {
+                            underlyingType = typeof(long);
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
+                            _moveNextMethodIL.Emit(OpCodes.Add);
+                        }
+
                         _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underlyingType).GetConstructor(new[] { stringType, underlyingType }));
 
                         _moveNextMethodIL.MarkLabel(afterHasValueLabel);
@@ -422,6 +432,15 @@ namespace Venflow.Dynamic.Inserter
                         _moveNextMethodIL.Emit(OpCodes.Ldloc, placeholderLocal);
                         _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetGetMethod());
+
+                        if (npgsqlType == typeof(ulong))
+                        {
+                            npgsqlType = typeof(long);
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
+                            _moveNextMethodIL.Emit(OpCodes.Add);
+                        }
+
                         _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(npgsqlType).GetConstructor(new[] { typeof(string), npgsqlType }));
                     }
 
