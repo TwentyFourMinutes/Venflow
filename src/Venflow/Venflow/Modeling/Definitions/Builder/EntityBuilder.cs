@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -136,13 +137,17 @@ namespace Venflow.Modeling.Definitions.Builder
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                var nameBuilder = new StringBuilder(property.Name.Length * 2 - 1);
+                var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
 
-                nameBuilder.Append(char.ToLowerInvariant(property.Name[0]));
+                name = underlyingType is { } ? underlyingType.Name : property.PropertyType.Name;
 
-                for (int i = 1; i < property.Name.Length; i++)
+                var nameBuilder = new StringBuilder(name.Length * 2 - 1);
+
+                nameBuilder.Append(char.ToLowerInvariant(name[0]));
+
+                for (int i = 1; i < name.Length; i++)
                 {
-                    var c = property.Name[i];
+                    var c = name[i];
 
                     if (char.IsUpper(c))
                     {
@@ -296,8 +301,6 @@ namespace Venflow.Modeling.Definitions.Builder
 
                             columns.Add(enumColumn);
 
-                            regularColumnsOffset++;
-
                             setMethod = property.GetSetMethod();
 
                             if (setMethod.IsVirtual && !setMethod.IsFinal)
@@ -404,11 +407,11 @@ namespace Venflow.Modeling.Definitions.Builder
     {
         internal static uint RelationCounter { get; set; }
 
-        internal static HashSet<string> PostgreSQLEnums { get; }
+        internal static ConcurrentBag<string> PostgreSQLEnums { get; }
 
         static EntityBuilder()
         {
-            PostgreSQLEnums = new HashSet<string>();
+            PostgreSQLEnums = new ConcurrentBag<string>();
         }
 
         internal List<EntityRelationDefinition> Relations { get; }
