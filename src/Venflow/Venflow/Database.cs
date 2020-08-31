@@ -15,6 +15,8 @@ namespace Venflow
     {
         internal static ConcurrentDictionary<Type, DatabaseConfiguration> DatabaseConfigurations { get; } = new ConcurrentDictionary<Type, DatabaseConfiguration>();
 
+        internal static Dictionary<Type, Entity> CustomEntities { get; } = new Dictionary<Type, Entity>();
+
         internal static object BuildLocker { get; } = new object();
     }
 
@@ -27,7 +29,6 @@ namespace Venflow
     public abstract class Database : IAsyncDisposable, IDisposable
     {
         internal IReadOnlyDictionary<string, Entity> Entities { get; private set; }
-        internal Dictionary<Type, Entity> CustomEntities { get; private set; }
 
         internal string ConnectionString { get; }
 
@@ -213,14 +214,14 @@ namespace Venflow
         {
             var entityType = typeof(TEntity);
 
-            if (CustomEntities.TryGetValue(entityType, out var entity))
+            if (DatabaseConfigurationCache.CustomEntities.TryGetValue(entityType, out var entity))
             {
                 return new TableBase<TEntity>(this, (Entity<TEntity>)entity);
             }
 
-            lock (CustomEntities)
+            lock (DatabaseConfigurationCache.CustomEntities)
             {
-                if (CustomEntities.TryGetValue(entityType, out entity))
+                if (DatabaseConfigurationCache.CustomEntities.TryGetValue(entityType, out entity))
                 {
                     return new TableBase<TEntity>(this, (Entity<TEntity>)entity);
                 }
@@ -233,7 +234,7 @@ namespace Venflow
 
                 entity = entityFactory.BuildEntity();
 
-                CustomEntities.Add(entityType, entity);
+                DatabaseConfigurationCache.CustomEntities.Add(entityType, entity);
 
                 return new TableBase<TEntity>(this, (Entity<TEntity>)entity);
             }
@@ -258,7 +259,6 @@ namespace Venflow
             if (DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(type, out var configuration))
             {
                 Entities = configuration.Entities;
-                CustomEntities = configuration.CustomEntities;
 
                 configuration.InstantiateDatabase(this);
 
@@ -283,7 +283,6 @@ namespace Venflow
                 }
 
                 Entities = configuration.Entities;
-                CustomEntities = configuration.CustomEntities;
 
                 configuration.InstantiateDatabase(this);
             }
