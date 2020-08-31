@@ -25,6 +25,11 @@ namespace Venflow.Commands
 
             BaseUpdate(entity, 0, commandString);
 
+            if (commandString.Length == 0)
+            {
+                return;
+            }
+
             UnderlyingCommand.CommandText = commandString.ToString();
 
             await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
@@ -54,6 +59,11 @@ namespace Venflow.Commands
                 {
                     BaseUpdate(entity, index++, commandString);
                 }
+            }
+
+            if (commandString.Length == 0)
+            {
+                return;
             }
 
             UnderlyingCommand.CommandText = commandString.ToString();

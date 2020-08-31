@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Venflow.Modeling;
 
-namespace Venflow.Dynamic
+namespace Venflow.Dynamic.Inserter
 {
     internal class EntityRelationHolder
     {
