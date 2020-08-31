@@ -420,6 +420,10 @@ namespace Venflow.Dynamic.Inserter
                             _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
                             _moveNextMethodIL.Emit(OpCodes.Add);
                         }
+                        else if (underlyingType.IsEnum)
+                        {
+                            underlyingType = Enum.GetUnderlyingType(underlyingType);
+                        }
 
                         _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underlyingType).GetConstructor(new[] { stringType, underlyingType }));
 
@@ -427,7 +431,7 @@ namespace Venflow.Dynamic.Inserter
                     }
                     else
                     {
-                        var npgsqlType = column.PropertyInfo.PropertyType.IsEnum ? Enum.GetUnderlyingType(column.PropertyInfo.PropertyType) : column.PropertyInfo.PropertyType;
+                         var npgsqlType = column.PropertyInfo.PropertyType.IsEnum && column is not IPostgreEnumEntityColumn ? Enum.GetUnderlyingType(column.PropertyInfo.PropertyType) : column.PropertyInfo.PropertyType;
 
                         _moveNextMethodIL.Emit(OpCodes.Ldloc, placeholderLocal);
                         _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
