@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -443,8 +443,6 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldloc_S, primaryKeyLocal);
                 WriteInEqualityComparer(primaryColumn.PropertyInfo.PropertyType, endOfIfLabel);
 
-                _moveNextMethodIL.MarkLabel(entityGenerationIfBody);
-
                 // Check if the dictionary holds a instance to the current primary key
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, entityDictionaryField);
@@ -453,6 +451,8 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldflda, lastEntityField);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, entityDictionaryField.FieldType.GetMethod("TryGetValue"));
                 _moveNextMethodIL.Emit(OpCodes.Brtrue, entityHolder.Item1.RequiresChangedLocal ? afterEntityGenerationIfBody : endOfIfLabel);
+
+                _moveNextMethodIL.MarkLabel(entityGenerationIfBody);
 
                 // Instantiate the entity
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -980,8 +980,6 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldloc_S, primaryKeyLocal);
                 WriteInEqualityComparer(primaryColumn.PropertyInfo.PropertyType, endOfIfLabel);
 
-                _moveNextMethodIL.MarkLabel(entityGenerationIfBody);
-
                 // Check if the dictionary holds a instance to the current primary key
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, entityDictionaryField);
@@ -990,6 +988,8 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldflda, lastEntityField);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, entityDictionaryField.FieldType.GetMethod("TryGetValue"));
                 _moveNextMethodIL.Emit(OpCodes.Brtrue, entityHolder.Item1.RequiresChangedLocal ? afterEntityGenerationIfBody.Value : endOfIfLabel);
+
+                _moveNextMethodIL.MarkLabel(entityGenerationIfBody);
 
                 // Instantiate the entity
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
