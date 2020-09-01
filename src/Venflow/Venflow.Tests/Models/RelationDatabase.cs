@@ -9,6 +9,8 @@ namespace Venflow.Tests.Models
         public Table<Email> Emails { get; set; }
         public Table<EmailContent> EmailContents { get; set; }
 
+        public Table<UncommonType> UncommonTypes { get; set; }
+
         public RelationDatabase() : base(SecretsHandler.GetConnectionString<RelationDatabase>())
         {
         }
