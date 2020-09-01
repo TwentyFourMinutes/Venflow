@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -441,7 +441,7 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, primaryColumn.PropertyInfo.GetGetMethod());
                 _moveNextMethodIL.Emit(OpCodes.Ldloc_S, primaryKeyLocal);
-                WriteInEqualityComparer(primaryColumn.PropertyInfo.PropertyType, entityHolder.Item1.RequiresChangedLocal ? afterEntityGenerationIfBody : endOfIfLabel);
+                WriteInEqualityComparer(primaryColumn.PropertyInfo.PropertyType, endOfIfLabel);
 
                 _moveNextMethodIL.MarkLabel(entityGenerationIfBody);
 
@@ -978,7 +978,7 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, lastEntityField);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, primaryColumn.PropertyInfo.GetGetMethod());
                 _moveNextMethodIL.Emit(OpCodes.Ldloc_S, primaryKeyLocal);
-                WriteInEqualityComparer(primaryColumn.PropertyInfo.PropertyType, entityHolder.Item1.RequiresChangedLocal ? afterEntityGenerationIfBody.Value : endOfIfLabel);
+                WriteInEqualityComparer(primaryColumn.PropertyInfo.PropertyType, endOfIfLabel);
 
                 _moveNextMethodIL.MarkLabel(entityGenerationIfBody);
 
