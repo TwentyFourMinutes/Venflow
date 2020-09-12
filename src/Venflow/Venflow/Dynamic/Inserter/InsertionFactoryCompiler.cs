@@ -1,11 +1,12 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.IO.Compression;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
 using Venflow.Dynamic.IL;
@@ -14,197 +15,658 @@ using Venflow.Modeling;
 
 namespace Venflow.Dynamic.Inserter
 {
-    internal class InsertionFactoryCompiler<TEntity> where TEntity : class, new()
+    // TODO: Add CommandBehaviour.SingleRow to batch inserts
+    internal class InsertionFactoryCompiler
     {
-        #region ILFields
+        private FieldBuilder _connectionField;
+        private FieldBuilder _rootEntityInsertField;
+        private FieldBuilder _cancellationTokenField;
 
-        private FieldBuilder? _npgsqlReaderTaskAwaiterField;
-        private FieldBuilder NpgsqlReaderTaskAwaiterField => _npgsqlReaderTaskAwaiterField ??= _stateMachineTypeBuilder.DefineField("_npgsqlAwaiter", _npgsqlReaderTaskAwaiterType, FieldAttributes.Private);
+        private FieldBuilder _stateField;
+        private LocalBuilder _stateLocal;
+        private Type _insertType;
 
-        private FieldBuilder? _boolTaskAwaiterField;
-        private FieldBuilder BoolTaskAwaiterField => _boolTaskAwaiterField ??= _stateMachineTypeBuilder.DefineField("_boolAwaiter", _boolTaskAwaiterType, FieldAttributes.Private);
+        private FieldBuilder _methodBuilderField;
 
-        private FieldBuilder? _intTaskAwaiterField;
-        private FieldBuilder IntTaskAwaiterField => _intTaskAwaiterField ??= _stateMachineTypeBuilder.DefineField("_intAwaiter", _intTaskAwaiterType, FieldAttributes.Private);
+        private TypeBuilder _inserterTypeBuilder;
+        private TypeBuilder _stateMachineTypeBuilder;
 
-        private FieldBuilder? _valueTaskAwaiterField;
-        private FieldBuilder ValueTaskAwaiterField => _valueTaskAwaiterField ??= _stateMachineTypeBuilder.DefineField("_valueTaskAwaiter", _valueTaskAwaiterType, FieldAttributes.Private);
+        private MethodBuilder _moveNextMethod;
+        private ILGenerator _moveNextMethodIL;
 
-        private FieldBuilder? _dataReaderField;
-        private FieldBuilder DataReaderField => _dataReaderField ??= _stateMachineTypeBuilder.DefineField("_dataReader", _npgsqlDataReaderType, FieldAttributes.Private);
-
-        #endregion
-
-        #region ILLocals
-
-        private LocalBuilder? _dataReaderLocal;
-        private LocalBuilder DataReaderLocal => _dataReaderLocal ??= _moveNextMethodIL.DeclareLocal(_npgsqlDataReaderType);
-
-        private LocalBuilder? _npgsqlReaderTaskAwaiterLocal;
-        private LocalBuilder NpgsqlReaderTaskAwaiterLocal => _npgsqlReaderTaskAwaiterLocal ??= _moveNextMethodIL.DeclareLocal(_npgsqlReaderTaskAwaiterType);
-
-        private LocalBuilder? _boolTaskAwaiterLocal;
-        private LocalBuilder BoolTaskAwaiterLocal => _boolTaskAwaiterLocal ??= _moveNextMethodIL.DeclareLocal(_boolTaskAwaiterType);
-
-        private LocalBuilder? _intTaskAwaiterLocal;
-        private LocalBuilder IntTaskAwaiterLocal => _intTaskAwaiterLocal ??= _moveNextMethodIL.DeclareLocal(_intTaskAwaiterType);
-
-        private LocalBuilder? _valueTaskAwaiterLocal;
-        private LocalBuilder ValueTaskAwaiterLocal => _valueTaskAwaiterLocal ??= _moveNextMethodIL.DeclareLocal(_valueTaskAwaiterType);
-
-        private LocalBuilder? _valueTaskLocal;
-        private LocalBuilder ValueTaskLocal => _valueTaskLocal ??= _moveNextMethodIL.DeclareLocal(_valueTaskType);
-
-        private LocalBuilder? _resultTempLocal;
-        private LocalBuilder ResultTempLocal => _resultTempLocal ??= _moveNextMethodIL.DeclareLocal(_intType);
-
-        #endregion
-
-        private InsertOptions _insertOptions;
-
-        private readonly Entity _rootEntity;
-        private readonly TypeBuilder _inserterTypeBuilder;
-        private readonly TypeBuilder _stateMachineTypeBuilder;
-        private readonly MethodBuilder _moveNextMethod;
-        private readonly ILGenerator _moveNextMethodIL;
+        private ObjectIDGenerator _reachableEntities;
+        private HashSet<uint> _reachableRelations;
 
         private readonly Type _intType = typeof(int);
-        private readonly Type _npgsqlDataReaderType = typeof(NpgsqlDataReader);
 
-        private readonly Type _genericListType = typeof(List<>);
-
-        private readonly Type _asyncStateMachineType = typeof(IAsyncStateMachine);
-        private readonly Type _valueTaskType = typeof(ValueTask);
-        private readonly Type _valueTaskAwaiterType = typeof(ValueTaskAwaiter);
-
-        private readonly Type _asyncMethodBuilderIntType = typeof(AsyncTaskMethodBuilder<int>);
-
-        private readonly Type _npgsqlReaderTaskAwaiterType = typeof(TaskAwaiter<NpgsqlDataReader>);
-        private readonly Type _boolTaskAwaiterType = typeof(TaskAwaiter<bool>);
-        private readonly Type _intTaskAwaiterType = typeof(TaskAwaiter<int>);
-
-        private readonly ILGhostGenerator _defaultEntitySeperationGhostIL = new ILGhostGenerator();
-        private readonly ILGhostGenerator _entityListAssignmentsGhostIL = new ILGhostGenerator();
-        private readonly ILGhostGenerator _setListsToNullGhostIL = new ILGhostGenerator();
-
-        private readonly Dictionary<long, FieldBuilder> _entityListDict = new Dictionary<long, FieldBuilder>();
-        private readonly ObjectIDGenerator _knownEntities = new ObjectIDGenerator();
-        private readonly ObjectIDGenerator _visitedSeperaterEntities = new ObjectIDGenerator();
-        private readonly HashSet<uint> _visitedSeperaterRelations = new HashSet<uint>();
+        private readonly Entity _rootEntity;
 
         internal InsertionFactoryCompiler(Entity rootEntity)
         {
             _rootEntity = rootEntity;
-
-            _inserterTypeBuilder = TypeFactory.GetNewInserterBuilder(rootEntity.EntityName, TypeAttributes.Public | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit);
-            _stateMachineTypeBuilder = _inserterTypeBuilder.DefineNestedType("StateMachine", TypeAttributes.NestedPrivate | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, typeof(ValueType), new[] { _asyncStateMachineType });
-
-            _moveNextMethod = _stateMachineTypeBuilder.DefineMethod("MoveNext", MethodAttributes.Private | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual);
-            _moveNextMethodIL = _moveNextMethod.GetILGenerator();
         }
 
-        internal Func<NpgsqlConnection, List<TEntity>, Task<int>> CreateInserter(EntityRelationHolder[] entities, InsertOptions insertOptions)
+        internal Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>> CreateInserter<TInsert>(EntityRelationHolder[] entities, ObjectIDGenerator reachableEntities, HashSet<uint> reachableRelations) where TInsert : class, new()
         {
-            _insertOptions = insertOptions;
+            _reachableEntities = reachableEntities;
+            _reachableRelations = reachableRelations;
 
-            var rootEntityListType = _genericListType.MakeGenericType(_rootEntity.EntityType);
+            _insertType = typeof(TInsert);
 
-            var taskAwaiterType = typeof(TaskAwaiter<>);
-            var boolTaskAwaiterType = taskAwaiterType.MakeGenericType(typeof(bool));
-            var taskBoolType = typeof(Task<bool>);
-            var taskIntType = typeof(Task<int>);
-            var taskReaderType = typeof(Task<NpgsqlDataReader>);
-            var exceptionType = typeof(Exception);
+            bool isSingleInsert = _insertType == _rootEntity.EntityType;
 
-            int asyncStateIndex = 0;
+            var primaryColumn = (IPrimaryEntityColumn)_rootEntity.GetPrimaryColumn();
 
-            // Required StateMachine Fields
-            var stateField = _stateMachineTypeBuilder.DefineField("_state", _intType, FieldAttributes.Public);
-            var methodBuilderField = _stateMachineTypeBuilder.DefineField("_builder", _asyncMethodBuilderIntType, FieldAttributes.Public);
-
-            // Custom Fields
-            var rootEntityListField = _stateMachineTypeBuilder.DefineField("_" + _rootEntity.EntityName + "List", rootEntityListType, FieldAttributes.Public);
-
-            var connectionField = _stateMachineTypeBuilder.DefineField("_connection", typeof(NpgsqlConnection), FieldAttributes.Public);
-            var commandBuilderField = _stateMachineTypeBuilder.DefineField("_commandBuilder", typeof(StringBuilder), FieldAttributes.Private);
-            var commandField = _stateMachineTypeBuilder.DefineField("_command", typeof(NpgsqlCommand), FieldAttributes.Private);
-
-            var resultField = _stateMachineTypeBuilder.DefineField("insertedRows", _intType, FieldAttributes.Private);
-
-            var stateLocal = _moveNextMethodIL.DeclareLocal(_intType);
-            var exceptionLocal = _moveNextMethodIL.DeclareLocal(exceptionType);
-
-            var endOfMethodLabel = _moveNextMethodIL.DefineLabel();
-            var retOfMethodLabel = _moveNextMethodIL.DefineLabel();
-
-            // Assign the local state from the local field => state = _state;
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldfld, stateField);
-            _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
-
-            _entityListDict.Add(_knownEntities.GetId(rootEntityListField, out _), rootEntityListField);
-
-            if (HasOptionsFlag(InsertOptions.PopulateRelations))
-                SeperateRootEntity(_rootEntity, rootEntityListField);
-
-            _moveNextMethodIL.BeginExceptionBlock();
-
-            // Switch around all the different states
-
-            int labelCount = 0;
-
-            for (int i = 0; i < entities.Length; i++)
+            if (primaryColumn.IsServerSideGenerated ||
+                entities is { })
             {
-                var entity = entities[i].Entity;
+                _inserterTypeBuilder = TypeFactory.GetNewInserterBuilder(_rootEntity.EntityName, TypeAttributes.Public | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit);
+                _stateMachineTypeBuilder = _inserterTypeBuilder.DefineNestedType("StateMachine", TypeAttributes.NestedPrivate | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, typeof(ValueType), new[] { typeof(IAsyncStateMachine) });
 
-                if (((IPrimaryEntityColumn)entity.GetPrimaryColumn()).IsServerSideGenerated && HasOptionsFlag(InsertOptions.SetIdentityColumns))
+                _moveNextMethod = _stateMachineTypeBuilder.DefineMethod("MoveNext", MethodAttributes.Private | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual);
+                _moveNextMethodIL = _moveNextMethod.GetILGenerator();
+
+                _methodBuilderField = _stateMachineTypeBuilder.DefineField("_builder", typeof(AsyncTaskMethodBuilder<int>), FieldAttributes.Public);
+
+                _stateField = _stateMachineTypeBuilder.DefineField("_state", _intType, FieldAttributes.Public);
+                _stateLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
+                _cancellationTokenField = _stateMachineTypeBuilder.DefineField("_canellationToken", typeof(CancellationToken), FieldAttributes.Public);
+                _connectionField = _stateMachineTypeBuilder.DefineField("_connection", typeof(NpgsqlConnection), FieldAttributes.Public);
+                _rootEntityInsertField = _stateMachineTypeBuilder.DefineField("_root" + _rootEntity.EntityName + "Entity", _insertType, FieldAttributes.Public);
+
+                if (isSingleInsert)
                 {
-                    labelCount += 4;
+                    if (entities is null)
+                    {
+                        CreateSingleNoRelationInserter();
+                    }
+                    else
+                    {
+                        CreateSingleRelationInserter(entities);
+                    }
                 }
                 else
                 {
-                    labelCount++;
+                    if (entities is null)
+                    {
+                        CreateBatchNoRelationInserter();
+                    }
+                    else
+                    {
+                        CreateBatchRelationInserter(entities);
+                    }
                 }
+
+                #region StateMachine
+
+                _stateMachineTypeBuilder.DefineMethodOverride(_moveNextMethod, typeof(IAsyncStateMachine).GetMethod("MoveNext"));
+
+                var setStateMachineMethod = _stateMachineTypeBuilder.DefineMethod("SetStateMachine", MethodAttributes.Private | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual, null, new[] { typeof(IAsyncStateMachine) });
+                var setStateMachineMethodIL = setStateMachineMethod.GetILGenerator();
+
+                setStateMachineMethodIL.Emit(OpCodes.Ldarg_0);
+                setStateMachineMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
+                setStateMachineMethodIL.Emit(OpCodes.Ldarg_1);
+                setStateMachineMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetStateMachine"));
+                setStateMachineMethodIL.Emit(OpCodes.Ret);
+
+                _stateMachineTypeBuilder.DefineMethodOverride(setStateMachineMethod, typeof(IAsyncStateMachine).GetMethod("SetStateMachine"));
+
+                var materializeMethod = _inserterTypeBuilder.DefineMethod("InsertAsync", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Static, typeof(Task<int>), new[] { typeof(NpgsqlConnection), _insertType, _cancellationTokenField.FieldType });
+
+                materializeMethod.SetCustomAttribute(new CustomAttributeBuilder(typeof(AsyncStateMachineAttribute).GetConstructor(new[] { typeof(Type) }), new[] { _stateMachineTypeBuilder }));
+
+                var materializeMethodIL = materializeMethod.GetILGenerator();
+
+                materializeMethodIL.DeclareLocal(_stateMachineTypeBuilder);
+
+                // Create and execute the StateMachine
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+                materializeMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static));
+                materializeMethodIL.Emit(OpCodes.Stfld, _methodBuilderField);
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+                materializeMethodIL.Emit(OpCodes.Ldarg_0);
+                materializeMethodIL.Emit(OpCodes.Stfld, _connectionField);
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+                materializeMethodIL.Emit(OpCodes.Ldarg_1);
+                materializeMethodIL.Emit(OpCodes.Stfld, _rootEntityInsertField);
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+                materializeMethodIL.Emit(OpCodes.Ldarg_2);
+                materializeMethodIL.Emit(OpCodes.Stfld, _cancellationTokenField);
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+                materializeMethodIL.Emit(OpCodes.Ldc_I4_M1);
+                materializeMethodIL.Emit(OpCodes.Stfld, _stateField);
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+                materializeMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+                materializeMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("Start", BindingFlags.Public | BindingFlags.Instance).MakeGenericMethod(_stateMachineTypeBuilder));
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+                materializeMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
+                materializeMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetProperty("Task").GetGetMethod());
+
+                materializeMethodIL.Emit(OpCodes.Ret);
+
+                #endregion
+
+                _stateMachineTypeBuilder.CreateType();
+                var inserterType = _inserterTypeBuilder.CreateType();
+
+                return (Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>)inserterType.GetMethod("InsertAsync").CreateDelegate(typeof(Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>));
             }
+            else
+            {
+                var insertMethod = new DynamicMethod("InsertAsync", typeof(ValueTask<int>), new[] { typeof(NpgsqlConnection), typeof(TInsert), typeof(CancellationToken) }, TypeFactory.DynamicModule);
 
-            _moveNextMethodIL.Emit(OpCodes.Ldloc, stateLocal);
-            var switchBuilder = _moveNextMethodIL.EmitSwitch(labelCount);
+                CreateSingleNoRelationNoDbKeysInserter(insertMethod.GetILGenerator());
 
-            // Default case, checking if the root entities are null or empty
+                return (Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>)insertMethod.CreateDelegate(typeof(Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>));
+            }
+        }
 
-            var beforeDefaultRootListCheckBodyLabel = _moveNextMethodIL.DefineLabel();
-            var afterDefaultRootListCheckBodyLabel = _moveNextMethodIL.DefineLabel();
+        private void CreateBatchNoRelationInserter()
+        {
+            var commandType = typeof(NpgsqlCommand);
 
-            // Assign the result 0
+            var insertedCountLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
+            var retOfMethodLabel = _moveNextMethodIL.DefineLabel();
+            var endOfMethodLabel = _moveNextMethodIL.DefineLabel();
+
+            // Assign the local state from the local field => state = _state;
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
-            _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _stateField);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, _stateLocal);
 
-            // Check if list is null
+            // Start try block
+            _moveNextMethodIL.BeginExceptionBlock();
+
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, _stateLocal);
+            var switchBuilder = _moveNextMethodIL.EmitSwitch(4);
+
+            var asyncGenerator = new ILAsyncGenerator(_moveNextMethodIL, switchBuilder, _methodBuilderField, _stateField, _stateLocal, retOfMethodLabel, _stateMachineTypeBuilder);
+
+            // Check if insert is null
+            var beforeInvalidRootReturnLabel = _moveNextMethodIL.DefineLabel();
+
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldfld, rootEntityListField);
-            _moveNextMethodIL.Emit(OpCodes.Brfalse, beforeDefaultRootListCheckBodyLabel);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+            _moveNextMethodIL.Emit(OpCodes.Brfalse, beforeInvalidRootReturnLabel);
 
-            // Check if list is empty
+            // Check if insert is empty
+            var afterInvalidRootReturnLabel = _moveNextMethodIL.DefineLabel();
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldfld, rootEntityListField);
-            _moveNextMethodIL.Emit(OpCodes.Callvirt, rootEntityListType.GetProperty("Count").GetGetMethod());
-            _moveNextMethodIL.Emit(OpCodes.Brtrue, afterDefaultRootListCheckBodyLabel);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.GetProperty("Count").GetGetMethod());
+            _moveNextMethodIL.Emit(OpCodes.Brtrue, afterInvalidRootReturnLabel);
 
-            _moveNextMethodIL.MarkLabel(beforeDefaultRootListCheckBodyLabel);
+            _moveNextMethodIL.MarkLabel(beforeInvalidRootReturnLabel);
 
-            // DefaultRootListCheckBody
-
+            // Return from method and assign -1 to the insert count
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_M1);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, insertedCountLocal);
             _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
 
-            _moveNextMethodIL.MarkLabel(afterDefaultRootListCheckBodyLabel);
+            _moveNextMethodIL.MarkLabel(afterInvalidRootReturnLabel);
 
-            // Write the List and ObjectIdGenreator Instantiations
-            _entityListAssignmentsGhostIL.WriteIL(_moveNextMethodIL);
+            var commandBuilderLocal = _moveNextMethodIL.DeclareLocal(typeof(StringBuilder));
+            var npgsqlCommandLocal = _moveNextMethodIL.DeclareLocal(commandType);
 
-            // Write the default entity separation
-            _defaultEntitySeperationGhostIL.WriteIL(_moveNextMethodIL);
+            // Instantiate CommandBuilder
+            _moveNextMethodIL.Emit(OpCodes.Newobj, commandBuilderLocal.LocalType.GetConstructor(Type.EmptyTypes));
+            _moveNextMethodIL.Emit(OpCodes.Stloc, commandBuilderLocal);
+
+            // Instantiate Command
+            _moveNextMethodIL.Emit(OpCodes.Newobj, npgsqlCommandLocal.LocalType.GetConstructor(Type.EmptyTypes));
+            _moveNextMethodIL.Emit(OpCodes.Stloc, npgsqlCommandLocal);
+
+            // Assign the connection parameter to the command
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, npgsqlCommandLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _connectionField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandLocal.LocalType.GetProperty("Connection", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetSetMethod());
+
+            var stringBuilder = new StringBuilder();
+
+            var skipPrimaryKey = ((IPrimaryEntityColumn)_rootEntity.GetPrimaryColumn()).IsServerSideGenerated;
+
+            var columnCount = _rootEntity.GetColumnCount();
+            var columnOffset = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0;
+
+            stringBuilder.Append("INSERT INTO ")
+                         .Append(_rootEntity.TableName)
+                         .Append(" (")
+                         .Append(skipPrimaryKey ? _rootEntity.NonPrimaryColumnListString : _rootEntity.ColumnListString)
+                         .Append(") VALUES ");
+
+            // Outer loop to keep one single command under ushort.MaxValue parameters
+
+            var totalLocal = _moveNextMethodIL.DeclareLocal(_intType);
+            var currentLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
+            // Assign the total amount of parameters to the total local
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.GetProperty("Count", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+            _moveNextMethodIL.Emit(OpCodes.Stloc, totalLocal);
+
+            // Assign 0 to the current local
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, currentLocal);
+
+            var outerIteratorLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
+            var outerLoopConditionLabel = _moveNextMethodIL.DefineLabel();
+            var outerStartLoopBodyLabel = _moveNextMethodIL.DefineLabel();
+
+            // Assign 0 to the iterator
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, outerIteratorLocal);
+            _moveNextMethodIL.Emit(OpCodes.Br, outerLoopConditionLabel);
+
+            // loop body
+            _moveNextMethodIL.MarkLabel(outerStartLoopBodyLabel);
+
+            // Append base Insert Command to command builder
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, commandBuilderLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldstr, stringBuilder.ToString());
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
+            _moveNextMethodIL.Emit(OpCodes.Pop);
+
+            var leftLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
+            var totalColumns = columnCount - columnOffset;
+
+            // Assign the amount of left items to the left local
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, totalLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4, totalColumns);
+            _moveNextMethodIL.Emit(OpCodes.Mul);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4, totalColumns);
+            _moveNextMethodIL.Emit(OpCodes.Mul);
+            _moveNextMethodIL.Emit(OpCodes.Sub);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4, ushort.MaxValue);
+            _moveNextMethodIL.Emit(OpCodes.Call, typeof(Math).GetMethod("Min", new[] { _intType, _intType }));
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4, totalColumns);
+            _moveNextMethodIL.Emit(OpCodes.Div);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+            _moveNextMethodIL.Emit(OpCodes.Add);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, leftLocal);
+
+            var iteratorElementLocal = _moveNextMethodIL.DeclareLocal(_rootEntity.EntityType);
+
+            var loopConditionLabel = _moveNextMethodIL.DefineLabel();
+            var startLoopBodyLabel = _moveNextMethodIL.DefineLabel();
+
+            // loop body
+            _moveNextMethodIL.MarkLabel(startLoopBodyLabel);
+
+            // get element at iterator from list
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.GetMethod("get_Item"));
+            _moveNextMethodIL.Emit(OpCodes.Stloc, iteratorElementLocal);
+
+            // append placeholders to command builder
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, commandBuilderLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4, (int)'(');
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(char) }));
+            _moveNextMethodIL.Emit(OpCodes.Pop);
+
+            for (int k = columnOffset; k < columnCount; k++)
+            {
+                var column = _rootEntity.GetColumn(k);
+
+                // Write placeholder to the command builder => (@Name(n)),
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, commandBuilderLocal);
+
+                // Create new parameter with placeholder and add it to the parameter list
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, npgsqlCommandLocal);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandLocal.LocalType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+
+                WriteNpgsqlParameterFromColumn(iteratorElementLocal, column, currentLocal);
+
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameterCollection).GetMethod("Add", new[] { typeof(NpgsqlParameter) }));
+
+                // Write placeholder to the command builder => (@Name(n)),
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameter).GetProperty("ParameterName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
+                _moveNextMethodIL.Emit(OpCodes.Ldstr, columnCount == k + 1 ? "), " : ", ");
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
+                _moveNextMethodIL.Emit(OpCodes.Pop);
+            }
+
+            // loop iterator increment
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
+            _moveNextMethodIL.Emit(OpCodes.Add);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, currentLocal);
+
+            // loop condition
+            _moveNextMethodIL.MarkLabel(loopConditionLabel);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, leftLocal);
+            _moveNextMethodIL.Emit(OpCodes.Blt, startLoopBodyLabel);
+
+            // Remove the last the values form the command string e.g. ", "
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, commandBuilderLocal);
+            _moveNextMethodIL.Emit(OpCodes.Dup);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetProperty("Length").GetGetMethod());
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_2);
+            _moveNextMethodIL.Emit(OpCodes.Sub);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetProperty("Length").GetSetMethod());
+
+            if (skipPrimaryKey)
+            {
+                // Append " RETURNING \"PrimaryKey\""
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, commandBuilderLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING \"");
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
+                _moveNextMethodIL.Emit(OpCodes.Ldstr, _rootEntity.GetPrimaryColumn().ColumnName);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
+                _moveNextMethodIL.Emit(OpCodes.Ldstr, "\";");
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
+                _moveNextMethodIL.Emit(OpCodes.Pop);
+            }
+
+            // outer loop iterator increment
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, outerIteratorLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
+            _moveNextMethodIL.Emit(OpCodes.Add);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, outerIteratorLocal);
+
+            // outer loop condition
+            _moveNextMethodIL.MarkLabel(outerLoopConditionLabel);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, totalLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+            _moveNextMethodIL.Emit(OpCodes.Bne_Un, outerStartLoopBodyLabel);
+
+            // Assign the commandBuilder text to the command
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, npgsqlCommandLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, commandBuilderLocal);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("ToString", Type.EmptyTypes));
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandLocal.LocalType.GetProperty("CommandText").GetSetMethod());
+
+            FieldBuilder? dataReaderField = default;
+
+            if (skipPrimaryKey)
+            {
+                var dataReaderTaskAwaiterField = _stateMachineTypeBuilder.DefineField("_objectTaskAwaiter", typeof(TaskAwaiter<NpgsqlDataReader>), FieldAttributes.Private);
+                var dataReaderTaskAwaiterLocal = _moveNextMethodIL.DeclareLocal(dataReaderTaskAwaiterField.FieldType);
+
+                var boolTaskAwaiterField = _stateMachineTypeBuilder.DefineField("_boolTaskAwaiter", typeof(TaskAwaiter<bool>), FieldAttributes.Private);
+                var boolTaskAwaiterLocal = _moveNextMethodIL.DeclareLocal(boolTaskAwaiterField.FieldType);
+
+                dataReaderField = _stateMachineTypeBuilder.DefineField("_dataReader", typeof(NpgsqlDataReader), FieldAttributes.Private);
+
+                // Get the result of the command
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, npgsqlCommandLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, commandType.GetMethod("ExecuteReaderAsync", new[] { _cancellationTokenField.FieldType }));
+
+                asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<NpgsqlDataReader>), dataReaderTaskAwaiterLocal, dataReaderTaskAwaiterField);
+
+                var dataReaderLocal = _moveNextMethodIL.DeclareLocal(dataReaderField.FieldType);
+
+                _moveNextMethodIL.Emit(OpCodes.Stloc, dataReaderLocal);
+
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, dataReaderLocal);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, dataReaderField);
+
+                var iteratorField = _stateMachineTypeBuilder.DefineField("_iterator", _intType, FieldAttributes.Private);
+                var counterField = _stateMachineTypeBuilder.DefineField("_counter", typeof(ushort), FieldAttributes.Private);
+
+                loopConditionLabel = _moveNextMethodIL.DefineLabel();
+                startLoopBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                // Assign 0 to the counter
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, counterField);
+
+                // Assign 0 to the iterator
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, iteratorField);
+                _moveNextMethodIL.Emit(OpCodes.Br, loopConditionLabel);
+
+                // loop body
+                _moveNextMethodIL.MarkLabel(startLoopBodyLabel);
+
+                // check if counter is equal to ushort.MaxValue
+
+                var afterIfBody = _moveNextMethodIL.DefineLabel();
+
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, counterField);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4, ushort.MaxValue / totalColumns);
+                _moveNextMethodIL.Emit(OpCodes.Bne_Un, afterIfBody);
+
+                // Assign 0 to the counter
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, counterField);
+
+                // Call the next result
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("NextResultAsync", new[] { _cancellationTokenField.FieldType }));
+
+                asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<bool>), boolTaskAwaiterLocal, boolTaskAwaiterField);
+
+                _moveNextMethodIL.Emit(OpCodes.Pop);
+
+                _moveNextMethodIL.MarkLabel(afterIfBody);
+
+                // read data reader
+
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("ReadAsync", new[] { _cancellationTokenField.FieldType }));
+
+                asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<bool>), boolTaskAwaiterLocal, boolTaskAwaiterField);
+
+                _moveNextMethodIL.Emit(OpCodes.Pop);
+
+                // assign the returned id to the current element
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, iteratorField);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.GetMethod("get_Item"));
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("GetFieldValue").MakeGenericMethod(_rootEntity.GetPrimaryColumn().PropertyInfo.PropertyType));
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
+
+                // loop iterator increment
+                var tempIteratorLocal = _moveNextMethodIL.DeclareLocal(_intType);
+                var tempCounterLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, iteratorField);
+                _moveNextMethodIL.Emit(OpCodes.Stloc, tempIteratorLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, tempIteratorLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
+                _moveNextMethodIL.Emit(OpCodes.Add);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, iteratorField);
+
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, counterField);
+                _moveNextMethodIL.Emit(OpCodes.Stloc, tempCounterLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, tempCounterLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
+                _moveNextMethodIL.Emit(OpCodes.Add);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, counterField);
+
+                // loop condition
+                _moveNextMethodIL.MarkLabel(loopConditionLabel);
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, iteratorField);
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.GetProperty("Count").GetGetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Blt, startLoopBodyLabel);
+
+                // dispose data reader
+                var valueTaskAwaiterField = _stateMachineTypeBuilder.DefineField("_valueTaskAwaiter", typeof(ValueTaskAwaiter), FieldAttributes.Private);
+
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("DisposeAsync"));
+
+                asyncGenerator.WriteAsyncValueTaskMethodAwaiter(_moveNextMethodIL.DeclareLocal(typeof(ValueTask)), _moveNextMethodIL.DeclareLocal(valueTaskAwaiterField.FieldType), valueTaskAwaiterField);
+
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldnull);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, dataReaderField);
+            }
+            else
+            {
+                // Get the result of the command
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, npgsqlCommandLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+
+                asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<int>), _moveNextMethodIL.DeclareLocal(typeof(TaskAwaiter<int>)), _stateMachineTypeBuilder.DefineField("_intTaskAwaiter", typeof(TaskAwaiter<int>), FieldAttributes.Private));
+
+                _moveNextMethodIL.Emit(OpCodes.Pop);
+            }
+
+            // return the amount of inserted rows
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.GetProperty("Count").GetGetMethod());
+            _moveNextMethodIL.Emit(OpCodes.Stloc, insertedCountLocal);
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+
+            var exceptionLocal = _moveNextMethodIL.DeclareLocal(typeof(Exception));
+
+            _moveNextMethodIL.BeginCatchBlock(exceptionLocal.LocalType);
+
+            // Set state and return exception
+            _moveNextMethodIL.Emit(OpCodes.Stloc_S, exceptionLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
+
+            if (dataReaderField is { })
+            {
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldnull);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, dataReaderField);
+            }
+
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, exceptionLocal);
+            _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+
+            // End of catch block
+            _moveNextMethodIL.EndExceptionBlock();
+
+            _moveNextMethodIL.MarkLabel(endOfMethodLabel);
+
+            // Set state and return result
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
+
+            if (dataReaderField is { })
+            {
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldnull);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, dataReaderField);
+            }
+
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, insertedCountLocal);
+            _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetResult"));
+
+            // End of method
+            _moveNextMethodIL.MarkLabel(retOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Ret);
+        }
+
+        private void CreateBatchRelationInserter(EntityRelationHolder[] entities)
+        {
+            var commandType = typeof(NpgsqlCommand);
+
+            FieldBuilder? dataReaderTaskAwaiterField = default;
+            FieldBuilder? boolTaskAwaiterField = default;
+            FieldBuilder? intTaskAwaiterField = default;
+            FieldBuilder? dataReaderField = default;
+
+            LocalBuilder? dataReaderTaskAwaiterLocal = default;
+            LocalBuilder? boolTaskAwaiterLocal = default;
+            LocalBuilder? intTaskAwaiterLocal = default;
+            var insertedCountLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
+            var retOfMethodLabel = _moveNextMethodIL.DefineLabel();
+            var endOfMethodLabel = _moveNextMethodIL.DefineLabel();
+
+            // Assign the local state from the local field => state = _state;
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _stateField);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, _stateLocal);
+
+            // Start try block
+            _moveNextMethodIL.BeginExceptionBlock();
+
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, _stateLocal);
+
+            var awaiterCount = 0;
+
+            for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
+            {
+                awaiterCount += ((IPrimaryEntityColumn)entities[entityIndex].Entity.GetPrimaryColumn()).IsServerSideGenerated ? 4 : 1;
+            }
+
+            var switchBuilder = _moveNextMethodIL.EmitSwitch(awaiterCount);
+
+            var asyncGenerator = new ILAsyncGenerator(_moveNextMethodIL, switchBuilder, _methodBuilderField, _stateField, _stateLocal, retOfMethodLabel, _stateMachineTypeBuilder);
+
+            // Check if insert is null
+            var beforeInvalidRootReturnLabel = _moveNextMethodIL.DefineLabel();
+
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+            _moveNextMethodIL.Emit(OpCodes.Brfalse, beforeInvalidRootReturnLabel);
+
+            // Check if insert is empty
+            var afterInvalidRootReturnLabel = _moveNextMethodIL.DefineLabel();
+
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.GetProperty("Count").GetGetMethod());
+            _moveNextMethodIL.Emit(OpCodes.Brtrue, afterInvalidRootReturnLabel);
+
+            _moveNextMethodIL.MarkLabel(beforeInvalidRootReturnLabel);
+
+            // Return from method and assign -1 to the insert count
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_M1);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, insertedCountLocal);
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+
+            _moveNextMethodIL.MarkLabel(afterInvalidRootReturnLabel);
+
+            var entityCollections = new EntitySeprator(_moveNextMethodIL, _stateMachineTypeBuilder, _rootEntity, entities, _reachableEntities, _reachableRelations).WriteEntitySeperater(_rootEntityInsertField);
+
+            var commandBuilderField = _stateMachineTypeBuilder.DefineField("commandBuilder", typeof(StringBuilder), FieldAttributes.Private);
+            var npgsqlCommandField = _stateMachineTypeBuilder.DefineField("command", commandType, FieldAttributes.Private);
 
             // Instantiate CommandBuilder
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -213,62 +675,69 @@ namespace Venflow.Dynamic.Inserter
 
             // Instantiate Command
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Newobj, commandField.FieldType.GetConstructor(Type.EmptyTypes));
-            _moveNextMethodIL.Emit(OpCodes.Stfld, commandField);
+            _moveNextMethodIL.Emit(OpCodes.Newobj, npgsqlCommandField.FieldType.GetConstructor(Type.EmptyTypes));
+            _moveNextMethodIL.Emit(OpCodes.Stfld, npgsqlCommandField);
 
             // Assign the connection parameter to the command
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldfld, commandField);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldfld, connectionField);
-            _moveNextMethodIL.Emit(OpCodes.Callvirt, commandField.FieldType.GetProperty("Connection", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetSetMethod());
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _connectionField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("Connection", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetSetMethod());
 
-            for (int i = 0; i < entities.Length; i++)
+            for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
             {
-                var entityHolder = entities[i];
+                var entityHolder = entities[entityIndex];
+                var entity = entityHolder.Entity;
 
-                var isRoot = object.ReferenceEquals(entityHolder.Entity, _rootEntity);
+                FieldBuilder entityCollection;
+                Label? endOfEntityInsertLabel;
 
-                var entityListField = isRoot ? rootEntityListField : _entityListDict[_knownEntities.HasId(entityHolder.Entity, out _)];
-
-                var afterEntityInsertionLabel = _moveNextMethodIL.DefineLabel();
-
-                // Check if the entityList is empty
-                if (!isRoot)
+                if (entity == _rootEntity)
                 {
+                    entityCollection = _rootEntityInsertField;
+                    endOfEntityInsertLabel = default;
+                }
+                else
+                {
+                    var entityId = _reachableEntities.HasId(entity, out _);
+
+                    entityCollection = entityCollections[entityId];
+
+                    // Check if entityCollection is larger than 0
+                    endOfEntityInsertLabel = _moveNextMethodIL.DefineLabel();
+
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, entityListField);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetProperty("Count").GetGetMethod());
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ble, afterEntityInsertionLabel);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count").GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Brfalse, endOfEntityInsertLabel.Value);
                 }
 
-                if (i > 0)
+                // Clear commandBuilder and command parameters
+                if (entityIndex > 0)
                 {
-                    // clear the command builder
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Clear"));
                     _moveNextMethodIL.Emit(OpCodes.Pop);
 
-                    // clear parameters in command
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, commandField);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).PropertyType.GetMethod("Clear"));
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).PropertyType.GetMethod("Clear"));
                 }
 
                 var stringBuilder = new StringBuilder();
 
-                var skipPrimaryKey = ((IPrimaryEntityColumn)entityHolder.Entity.GetPrimaryColumn()).IsServerSideGenerated && HasOptionsFlag(InsertOptions.SetIdentityColumns);
+                var skipPrimaryKey = ((IPrimaryEntityColumn)entity.GetPrimaryColumn()).IsServerSideGenerated;
 
-                var columnCount = entityHolder.Entity.GetColumnCount();
-                var columnOffset = skipPrimaryKey ? entityHolder.Entity.GetRegularColumnOffset() : 0;
+                var columnCount = entity.GetColumnCount();
+                var columnOffset = skipPrimaryKey ? entity.GetRegularColumnOffset() : 0;
 
                 stringBuilder.Append("INSERT INTO ")
-                             .Append(entityHolder.Entity.TableName)
+                             .Append(entity.TableName)
                              .Append(" (")
-                             .Append(skipPrimaryKey ? entityHolder.Entity.NonPrimaryColumnListString : entityHolder.Entity.ColumnListString)
+                             .Append(skipPrimaryKey ? entity.NonPrimaryColumnListString : entity.ColumnListString)
                              .Append(") VALUES ");
 
                 // Outer loop to keep one single command under ushort.MaxValue parameters
@@ -278,8 +747,8 @@ namespace Venflow.Dynamic.Inserter
 
                 // Assign the total amount of parameters to the total local
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                _moveNextMethodIL.Emit(OpCodes.Ldfld, entityListField);
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetProperty("Count", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
                 _moveNextMethodIL.Emit(OpCodes.Stloc, totalLocal);
 
                 // Assign 0 to the current local
@@ -326,8 +795,7 @@ namespace Venflow.Dynamic.Inserter
                 _moveNextMethodIL.Emit(OpCodes.Add);
                 _moveNextMethodIL.Emit(OpCodes.Stloc, leftLocal);
 
-                var iteratorElementLocal = _moveNextMethodIL.DeclareLocal(entityListField.FieldType);
-                var placeholderLocal = _moveNextMethodIL.DeclareLocal(typeof(string));
+                var iteratorElementLocal = _moveNextMethodIL.DeclareLocal(entity.EntityType);
 
                 var loopConditionLabel = _moveNextMethodIL.DefineLabel();
                 var startLoopBodyLabel = _moveNextMethodIL.DefineLabel();
@@ -337,10 +805,22 @@ namespace Venflow.Dynamic.Inserter
 
                 // get element at iterator from list
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                _moveNextMethodIL.Emit(OpCodes.Ldfld, entityListField);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
                 _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetMethod("get_Item"));
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetMethod("get_Item"));
                 _moveNextMethodIL.Emit(OpCodes.Stloc, iteratorElementLocal);
+
+                // assign foreign key to itself from navigation property primary key
+                for (int relationIndex = 0; relationIndex < entityHolder.SelfAssignedRelations.Count; relationIndex++)
+                {
+                    var relation = entityHolder.SelfAssignedRelations[relationIndex];
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                }
 
                 // append placeholders to command builder
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -351,104 +831,26 @@ namespace Venflow.Dynamic.Inserter
 
                 for (int k = columnOffset; k < columnCount; k++)
                 {
-                    var column = entityHolder.Entity.GetColumn(k);
-
-                    // Create the placeholder
-                    _moveNextMethodIL.Emit(OpCodes.Ldstr, "@" + column.ColumnName);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, currentLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Call, _intType.GetMethod("ToString", Type.EmptyTypes));
-                    _moveNextMethodIL.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new[] { typeof(string), typeof(string) }));
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, placeholderLocal);
+                    var column = entity.GetColumn(k);
 
                     // Write placeholder to the command builder => (@Name(n)),
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloc, placeholderLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
-                    _moveNextMethodIL.Emit(OpCodes.Ldstr, columnCount == k + 1 ? "), " : ", ");
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
-                    _moveNextMethodIL.Emit(OpCodes.Pop);
 
                     // Create new parameter with placeholder and add it to the parameter list
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, commandField);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
 
-                    var underlyingType = Nullable.GetUnderlyingType(column.PropertyInfo.PropertyType);
-
-                    if (underlyingType is { } &&
-                        (underlyingType.IsEnum ||
-                         underlyingType == typeof(Guid) ||
-                         underlyingType == typeof(ulong)))
-                    {
-                        var stringType = typeof(string);
-                        var dbNullType = typeof(DBNull);
-
-                        var propertyLocal = _moveNextMethodIL.DeclareLocal(column.PropertyInfo.PropertyType);
-
-                        var defaultRetrieverLabel = _moveNextMethodIL.DefineLabel();
-                        var afterHasValueLabel = _moveNextMethodIL.DefineLabel();
-
-                        // Check if property has value
-                        _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetGetMethod());
-                        _moveNextMethodIL.Emit(OpCodes.Stloc, propertyLocal);
-                        _moveNextMethodIL.Emit(OpCodes.Ldloca, propertyLocal);
-                        _moveNextMethodIL.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("HasValue").GetGetMethod());
-                        _moveNextMethodIL.Emit(OpCodes.Brtrue_S, defaultRetrieverLabel);
-
-                        // Nullable retriever
-                        _moveNextMethodIL.Emit(OpCodes.Ldloc, placeholderLocal);
-                        _moveNextMethodIL.Emit(OpCodes.Ldsfld, dbNullType.GetField("Value"));
-                        _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(dbNullType).GetConstructor(new[] { stringType, dbNullType }));
-                        _moveNextMethodIL.Emit(OpCodes.Br, afterHasValueLabel);
-
-                        // Default retriever
-                        _moveNextMethodIL.MarkLabel(defaultRetrieverLabel);
-
-                        _moveNextMethodIL.Emit(OpCodes.Ldloc, placeholderLocal);
-                        _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetGetMethod());
-                        _moveNextMethodIL.Emit(OpCodes.Stloc, propertyLocal);
-                        _moveNextMethodIL.Emit(OpCodes.Ldloca, propertyLocal);
-                        _moveNextMethodIL.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("Value").GetGetMethod());
-
-                        if (underlyingType == typeof(ulong))
-                        {
-                            underlyingType = typeof(long);
-
-                            _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
-                            _moveNextMethodIL.Emit(OpCodes.Add);
-                        }
-                        else if (underlyingType.IsEnum)
-                        {
-                            underlyingType = Enum.GetUnderlyingType(underlyingType);
-                        }
-
-                        _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underlyingType).GetConstructor(new[] { stringType, underlyingType }));
-
-                        _moveNextMethodIL.MarkLabel(afterHasValueLabel);
-                    }
-                    else
-                    {
-                         var npgsqlType = column.PropertyInfo.PropertyType.IsEnum && column is not IPostgreEnumEntityColumn ? Enum.GetUnderlyingType(column.PropertyInfo.PropertyType) : column.PropertyInfo.PropertyType;
-
-                        _moveNextMethodIL.Emit(OpCodes.Ldloc, placeholderLocal);
-                        _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetGetMethod());
-
-                        if (npgsqlType == typeof(ulong))
-                        {
-                            npgsqlType = typeof(long);
-
-                            _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
-                            _moveNextMethodIL.Emit(OpCodes.Add);
-                        }
-
-                        _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(npgsqlType).GetConstructor(new[] { typeof(string), npgsqlType }));
-                    }
+                    WriteNpgsqlParameterFromColumn(iteratorElementLocal, column, currentLocal);
 
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameterCollection).GetMethod("Add", new[] { typeof(NpgsqlParameter) }));
+
+                    // Write placeholder to the command builder => (@Name(n)),
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameter).GetProperty("ParameterName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
+                    _moveNextMethodIL.Emit(OpCodes.Ldstr, columnCount == k + 1 ? "), " : ", ");
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
                     _moveNextMethodIL.Emit(OpCodes.Pop);
                 }
 
@@ -480,7 +882,7 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
                     _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING \"");
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
-                    _moveNextMethodIL.Emit(OpCodes.Ldstr, entityHolder.Entity.GetPrimaryColumn().ColumnName);
+                    _moveNextMethodIL.Emit(OpCodes.Ldstr, entity.GetPrimaryColumn().ColumnName);
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
                     _moveNextMethodIL.Emit(OpCodes.Ldstr, "\";");
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
@@ -501,99 +903,38 @@ namespace Venflow.Dynamic.Inserter
 
                 // Assign the commandBuilder text to the command
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                _moveNextMethodIL.Emit(OpCodes.Ldfld, commandField);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("ToString", Type.EmptyTypes));
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, commandField.FieldType.GetProperty("CommandText").GetSetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("CommandText").GetSetMethod());
 
                 if (skipPrimaryKey)
                 {
-                    // Execute Reader and use SingleRow if only one entity
-                    var beforeElseLabel = _moveNextMethodIL.DefineLabel();
-                    var afterElseLabel = _moveNextMethodIL.DefineLabel();
+                    dataReaderField ??= _stateMachineTypeBuilder.DefineField("_dataReader", typeof(NpgsqlDataReader), FieldAttributes.Private);
 
-                    //TODO: Use ExecuteScalar instead of single-row
+                    // Get the result of the command
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, commandField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, entityListField);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetProperty("Count").GetGetMethod());
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
-                    _moveNextMethodIL.Emit(OpCodes.Beq, beforeElseLabel);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
-                    _moveNextMethodIL.Emit(OpCodes.Br, afterElseLabel);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandType.GetMethod("ExecuteReaderAsync", new[] { _cancellationTokenField.FieldType }));
 
-                    _moveNextMethodIL.MarkLabel(beforeElseLabel);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, 8);
-                    _moveNextMethodIL.MarkLabel(afterElseLabel);
+                    dataReaderTaskAwaiterField ??= _stateMachineTypeBuilder.DefineField("_dataReaderTaskAwaiter", typeof(TaskAwaiter<NpgsqlDataReader>), FieldAttributes.Private);
+                    dataReaderTaskAwaiterLocal ??= _moveNextMethodIL.DeclareLocal(dataReaderTaskAwaiterField.FieldType);
 
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandField.FieldType.GetMethod("ExecuteReaderAsync", new[] { typeof(CommandBehavior) })); // TODO: add Cancellation Token
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, taskReaderType.GetMethod("GetAwaiter"));
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, NpgsqlReaderTaskAwaiterLocal);
+                    asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<NpgsqlDataReader>), dataReaderTaskAwaiterLocal, dataReaderTaskAwaiterField);
 
-                    var afterAwaitLabel = _moveNextMethodIL.DefineLabel();
+                    var dataReaderLocal = _moveNextMethodIL.DeclareLocal(dataReaderField.FieldType);
 
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, NpgsqlReaderTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Call, _npgsqlReaderTaskAwaiterType.GetProperty("IsCompleted").GetGetMethod());
-                    _moveNextMethodIL.Emit(OpCodes.Brtrue, afterAwaitLabel);
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, dataReaderLocal);
 
-                    // Await Handler
-
-                    // stateField = stateLocal
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, asyncStateIndex++);
-                    _moveNextMethodIL.Emit(OpCodes.Dup);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, dataReaderLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, dataReaderField);
 
-                    // taskAwaiterField = taskAwaiterLocal
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloc, NpgsqlReaderTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, NpgsqlReaderTaskAwaiterField);
-
-                    // Call AwaitUnsafeOnCompleted
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, NpgsqlReaderTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Call, _asyncMethodBuilderIntType.GetMethod("AwaitUnsafeOnCompleted").MakeGenericMethod(_npgsqlReaderTaskAwaiterType, _stateMachineTypeBuilder));
-                    _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
-
-                    switchBuilder.MarkCase();
-
-                    // taskAwaiterLocal = taskAwaiterField
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, NpgsqlReaderTaskAwaiterField);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, NpgsqlReaderTaskAwaiterLocal);
-
-                    // taskAwaiterField = default
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldflda, NpgsqlReaderTaskAwaiterField);
-                    _moveNextMethodIL.Emit(OpCodes.Initobj, _npgsqlReaderTaskAwaiterType);
-
-                    // stateField = stateLocal = -1
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_M1);
-                    _moveNextMethodIL.Emit(OpCodes.Dup);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
-
-                    // wait of the result from the TaskAwaiter
-                    _moveNextMethodIL.MarkLabel(afterAwaitLabel);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, NpgsqlReaderTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Call, _npgsqlReaderTaskAwaiterType.GetMethod("GetResult"));
-
-                    // store result in npgsqlDataReaderLocal
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, DataReaderLocal);
-
-                    //dataReaderField = dataReaderLocal
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloc, DataReaderLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, DataReaderField);
-
-                    var iteratorField = _stateMachineTypeBuilder.DefineField("_i" + entityHolder.Entity.EntityName, _intType, FieldAttributes.Private);
-                    var counterField = _stateMachineTypeBuilder.DefineField("_counter" + entityHolder.Entity.EntityName, _intType, FieldAttributes.Private);
+                    var iteratorField = _stateMachineTypeBuilder.DefineField("_iterator", _intType, FieldAttributes.Private);
+                    var counterField = _stateMachineTypeBuilder.DefineField("_counter", typeof(ushort), FieldAttributes.Private);
 
                     loopConditionLabel = _moveNextMethodIL.DefineLabel();
                     startLoopBodyLabel = _moveNextMethodIL.DefineLabel();
@@ -622,214 +963,162 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Bne_Un, afterIfBody);
 
                     // Assign 0 to the counter
-
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
                     _moveNextMethodIL.Emit(OpCodes.Stfld, counterField);
 
                     // Call the next result
-                    afterAwaitLabel = _moveNextMethodIL.DefineLabel();
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, DataReaderField);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, _npgsqlDataReaderType.GetMethod("NextResultAsync", Type.EmptyTypes));// TODO: use CancellationToken
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, taskBoolType.GetMethod("GetAwaiter"));
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, BoolTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, BoolTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Call, boolTaskAwaiterType.GetProperty("IsCompleted").GetGetMethod());
-                    _moveNextMethodIL.Emit(OpCodes.Brtrue, afterAwaitLabel);
-
-                    // Await Handler
-
-                    // stateField = stateLocal
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, asyncStateIndex++);
-                    _moveNextMethodIL.Emit(OpCodes.Dup);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("NextResultAsync", new[] { _cancellationTokenField.FieldType }));
 
-                    // taskAwaiterField = taskAwaiterLocal
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloc, BoolTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, BoolTaskAwaiterField);
+                    boolTaskAwaiterField ??= _stateMachineTypeBuilder.DefineField("_boolTaskAwaiter", typeof(TaskAwaiter<bool>), FieldAttributes.Private);
+                    boolTaskAwaiterLocal ??= _moveNextMethodIL.DeclareLocal(boolTaskAwaiterField.FieldType);
 
-                    // Call AwaitUnsafeOnCompleted
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, BoolTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Call, _asyncMethodBuilderIntType.GetMethod("AwaitUnsafeOnCompleted").MakeGenericMethod(boolTaskAwaiterType, _stateMachineTypeBuilder));
-                    _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
+                    asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<bool>), boolTaskAwaiterLocal, boolTaskAwaiterField);
 
-                    switchBuilder.MarkCase();
-
-                    // taskAwaiterLocal = taskAwaiterField
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, BoolTaskAwaiterField);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, BoolTaskAwaiterLocal);
-
-                    // taskAwaiterField = default
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldflda, BoolTaskAwaiterField);
-                    _moveNextMethodIL.Emit(OpCodes.Initobj, boolTaskAwaiterType);
-
-                    // stateField = stateLocal = -1
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_M1);
-                    _moveNextMethodIL.Emit(OpCodes.Dup);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
-
-                    // wait of the result from the TaskAwaiter
-                    _moveNextMethodIL.MarkLabel(afterAwaitLabel);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, BoolTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Call, boolTaskAwaiterType.GetMethod("GetResult"));
                     _moveNextMethodIL.Emit(OpCodes.Pop);
 
                     _moveNextMethodIL.MarkLabel(afterIfBody);
 
                     // read data reader
-                    afterAwaitLabel = _moveNextMethodIL.DefineLabel();
 
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, DataReaderField);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, DataReaderField.FieldType.GetMethod("ReadAsync", Type.EmptyTypes)); // TODO: use CancellationToken
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, taskBoolType.GetMethod("GetAwaiter"));
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, BoolTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, BoolTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Call, boolTaskAwaiterType.GetProperty("IsCompleted").GetGetMethod());
-                    _moveNextMethodIL.Emit(OpCodes.Brtrue, afterAwaitLabel);
-
-                    // Await Handler
-
-                    // stateField = stateLocal
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, asyncStateIndex++);
-                    _moveNextMethodIL.Emit(OpCodes.Dup);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("ReadAsync", new[] { _cancellationTokenField.FieldType }));
 
-                    // taskAwaiterField = taskAwaiterLocal
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloc, BoolTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, BoolTaskAwaiterField);
+                    asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<bool>), boolTaskAwaiterLocal, boolTaskAwaiterField);
 
-                    // Call AwaitUnsafeOnCompleted
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, BoolTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Call, _asyncMethodBuilderIntType.GetMethod("AwaitUnsafeOnCompleted").MakeGenericMethod(boolTaskAwaiterType, _stateMachineTypeBuilder));
-                    _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
-
-                    switchBuilder.MarkCase();
-
-                    // taskAwaiterLocal = taskAwaiterField
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, BoolTaskAwaiterField);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, BoolTaskAwaiterLocal);
-
-                    // taskAwaiterField = default
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldflda, BoolTaskAwaiterField);
-                    _moveNextMethodIL.Emit(OpCodes.Initobj, boolTaskAwaiterType);
-
-                    // stateField = stateLocal = -1
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_M1);
-                    _moveNextMethodIL.Emit(OpCodes.Dup);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
-
-                    // wait of the result from the TaskAwaiter
-                    _moveNextMethodIL.MarkLabel(afterAwaitLabel);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, BoolTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Call, boolTaskAwaiterType.GetMethod("GetResult"));
                     _moveNextMethodIL.Emit(OpCodes.Pop);
 
-                    // get element at iterator from list
-                    iteratorElementLocal = _moveNextMethodIL.DeclareLocal(entityHolder.Entity.EntityType);
-
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, entityListField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, iteratorField);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetMethod("get_Item"));
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, iteratorElementLocal);
-
-                    // get computed key from dataReader
-                    var primaryKeyLocal = _moveNextMethodIL.DeclareLocal(entityHolder.Entity.GetPrimaryColumn().PropertyInfo.PropertyType);
-
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, DataReaderField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, _npgsqlDataReaderType.GetMethod("GetFieldValue").MakeGenericMethod(entityHolder.Entity.GetPrimaryColumn().PropertyInfo.PropertyType));
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, primaryKeyLocal);
-
-                    // Assign computed key to current element
-                    _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityHolder.Entity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
-
-                    var iteratorLocal = _moveNextMethodIL.DeclareLocal(_intType);
-
-                    for (int k = 0; k < entityHolder.AssigningRelations.Count; k++)
+                    // assign foreign key to itself from navigation property primary key
+                    if (entityHolder.ForeignAssignedRelations.Count > 0)
                     {
-                        var relation = entityHolder.AssigningRelations[k];
+                        var primaryKeyLocal = _moveNextMethodIL.DeclareLocal(entity.GetPrimaryColumn().PropertyInfo.PropertyType);
 
-                        if (relation.LeftNavigationProperty is null)
-                            continue;
+                        // assign the returned id to the local
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("GetFieldValue").MakeGenericMethod(entity.GetPrimaryColumn().PropertyInfo.PropertyType));
+                        _moveNextMethodIL.Emit(OpCodes.Stloc, primaryKeyLocal);
 
-                        // Check if navigation property is not null
-                        var afterNavigationPropertyAssignmentLabel = _moveNextMethodIL.DefineLabel();
-                        _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                        _moveNextMethodIL.Emit(OpCodes.Brfalse, afterNavigationPropertyAssignmentLabel);
+                        var entityLocal = _moveNextMethodIL.DeclareLocal(entity.EntityType);
 
-                        if (relation.RelationType == RelationType.OneToMany)
+                        // assign the current entity to the local
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, iteratorField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetMethod("get_Item"));
+                        _moveNextMethodIL.Emit(OpCodes.Stloc, entityLocal);
+
+                        // assign the returned id to the current entity
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, entity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
+
+                        LocalBuilder? innerIteratorLocal = default;
+
+                        for (int relationIndex = 0; relationIndex < entityHolder.ForeignAssignedRelations.Count; relationIndex++)
                         {
-                            var nestedLoopConditionLabel = _moveNextMethodIL.DefineLabel();
-                            var startNestedLoopLabel = _moveNextMethodIL.DefineLabel();
+                            var relation = entityHolder.ForeignAssignedRelations[relationIndex];
 
-                            // Assign 0 to the nested iterator
-                            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
-                            _moveNextMethodIL.Emit(OpCodes.Stloc, iteratorLocal);
-                            _moveNextMethodIL.Emit(OpCodes.Br, nestedLoopConditionLabel);
+                            if (relation.RelationType == RelationType.OneToMany)
+                            {
+                                innerIteratorLocal ??= _moveNextMethodIL.DeclareLocal(_intType);
 
-                            // nested loop body
+                                var innerLoopConditionLabel = _moveNextMethodIL.DefineLabel();
+                                var innertStartLoopBodyLabel = _moveNextMethodIL.DefineLabel();
 
-                            _moveNextMethodIL.MarkLabel(startNestedLoopLabel);
+                                var foreignEntityLocal = _moveNextMethodIL.DeclareLocal(relation.RightEntity.EntityType);
 
-                            // Assign the primary key to the foreign entity
-                            _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
-                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                            _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorLocal);
-                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetMethod("get_Item"));
-                            _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                                var afterOuterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
 
-                            // nested loop iterator increment
-                            _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorLocal);
-                            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
-                            _moveNextMethodIL.Emit(OpCodes.Add);
-                            _moveNextMethodIL.Emit(OpCodes.Stloc, iteratorLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Brfalse, afterOuterNullCheckBodyLabel);
 
-                            // nested loop condition
-                            _moveNextMethodIL.MarkLabel(nestedLoopConditionLabel);
-                            _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorLocal);
-                            _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
-                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetProperty("Count").GetGetMethod());
-                            _moveNextMethodIL.Emit(OpCodes.Blt, startNestedLoopLabel);
+                                // Assign 0 to the iterator
+                                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                                _moveNextMethodIL.Emit(OpCodes.Stloc, innerIteratorLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Br, innerLoopConditionLabel);
+
+                                // loop body
+                                _moveNextMethodIL.MarkLabel(innertStartLoopBodyLabel);
+
+                                // assign iterator element to foreignEntityLocal
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, innerIteratorLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetMethod("get_Item"));
+                                _moveNextMethodIL.Emit(OpCodes.Stloc, foreignEntityLocal);
+
+                                // check if element is not null
+                                var afterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, foreignEntityLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Brfalse, afterNullCheckBodyLabel);
+
+                                // assign entity primary key to foreign key on navigation entity
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, foreignEntityLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+
+                                _moveNextMethodIL.MarkLabel(afterNullCheckBodyLabel);
+
+                                // loop iterator increment
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, innerIteratorLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
+                                _moveNextMethodIL.Emit(OpCodes.Add);
+                                _moveNextMethodIL.Emit(OpCodes.Stloc, innerIteratorLocal);
+
+                                // loop condition
+                                _moveNextMethodIL.MarkLabel(innerLoopConditionLabel);
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, innerIteratorLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetProperty("Count").GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Blt, innertStartLoopBodyLabel);
+
+                                _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
+                            }
+                            else
+                            {
+                                // check if element is not null
+                                var afterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Brfalse, afterNullCheckBodyLabel);
+
+                                // assign entity primary key to foreign key on navigation entity
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+
+                                _moveNextMethodIL.MarkLabel(afterNullCheckBodyLabel);
+                            }
                         }
-                        else if (relation.RelationType == RelationType.OneToOne)
-                        {
-                            _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
-                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
-                            _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
-                        }
-
-                        _moveNextMethodIL.MarkLabel(afterNavigationPropertyAssignmentLabel);
+                    }
+                    else
+                    {
+                        // assign the returned id to the current element
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, iteratorField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetMethod("get_Item"));
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("GetFieldValue").MakeGenericMethod(entity.GetPrimaryColumn().PropertyInfo.PropertyType));
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, entity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
                     }
 
                     // loop iterator increment
@@ -859,610 +1148,1567 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, iteratorField);
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, entityListField);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetProperty("Count").GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count").GetGetMethod());
                     _moveNextMethodIL.Emit(OpCodes.Blt, startLoopBodyLabel);
 
-                    // Add returned rows to total inserted rows
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, entityListField);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetProperty("Count").GetGetMethod());
-                    _moveNextMethodIL.Emit(OpCodes.Add);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
-
                     // dispose data reader
-                    afterAwaitLabel = _moveNextMethodIL.DefineLabel();
+                    var valueTaskAwaiterField = _stateMachineTypeBuilder.DefineField("_valueTaskAwaiter", typeof(ValueTaskAwaiter), FieldAttributes.Private);
+
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, DataReaderField);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, _npgsqlDataReaderType.GetMethod("DisposeAsync"));
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, ValueTaskLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, ValueTaskLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Call, _valueTaskType.GetMethod("GetAwaiter"));
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, ValueTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, ValueTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Call, _valueTaskAwaiterType.GetProperty("IsCompleted").GetGetMethod());
-                    _moveNextMethodIL.Emit(OpCodes.Brtrue, afterAwaitLabel);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("DisposeAsync"));
 
-                    // Await Handler
+                    asyncGenerator.WriteAsyncValueTaskMethodAwaiter(_moveNextMethodIL.DeclareLocal(typeof(ValueTask)), _moveNextMethodIL.DeclareLocal(valueTaskAwaiterField.FieldType), valueTaskAwaiterField);
 
-                    // stateField = stateLocal
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, asyncStateIndex++);
-                    _moveNextMethodIL.Emit(OpCodes.Dup);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
-
-                    // taskAwaiterField = taskAwaiterLocal
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloc, ValueTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, ValueTaskAwaiterField);
-
-                    // Call AwaitUnsafeOnCompleted
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, ValueTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Call, _asyncMethodBuilderIntType.GetMethod("AwaitUnsafeOnCompleted").MakeGenericMethod(_valueTaskAwaiterType, _stateMachineTypeBuilder));
-                    _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
-
-                    switchBuilder.MarkCase();
-
-                    // taskAwaiterLocal = taskAwaiterField
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, ValueTaskAwaiterField);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, ValueTaskAwaiterLocal);
-
-                    // taskAwaiterField = default
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldflda, ValueTaskAwaiterField);
-                    _moveNextMethodIL.Emit(OpCodes.Initobj, _valueTaskAwaiterType);
-
-                    // stateField = stateLocal = -1
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_M1);
-                    _moveNextMethodIL.Emit(OpCodes.Dup);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
-
-                    // wait of the result from the TaskAwaiter
-                    _moveNextMethodIL.MarkLabel(afterAwaitLabel);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, ValueTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Call, _valueTaskAwaiterType.GetMethod("GetResult"));
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldnull);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, DataReaderField);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, dataReaderField);
                 }
                 else
                 {
-                    var afterAwaitLabel = _moveNextMethodIL.DefineLabel();
-
+                    // Get the result of the command
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, commandField);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandField.FieldType.GetMethod("ExecuteNonQueryAsync", Type.EmptyTypes)); // TODO: add Cancellation Token
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, taskIntType.GetMethod("GetAwaiter"));
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, IntTaskAwaiterLocal);
-
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, IntTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Call, _intTaskAwaiterType.GetProperty("IsCompleted").GetGetMethod());
-                    _moveNextMethodIL.Emit(OpCodes.Brtrue, afterAwaitLabel);
-
-                    // Await Handler
-
-                    // stateField = stateLocal
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, asyncStateIndex++);
-                    _moveNextMethodIL.Emit(OpCodes.Dup);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandType.GetMethod("ExecuteNonQueryAsync", new[] { _cancellationTokenField.FieldType }));
 
-                    // taskAwaiterField = taskAwaiterLocal
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloc, IntTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, IntTaskAwaiterField);
+                    intTaskAwaiterField ??= _stateMachineTypeBuilder.DefineField("_intTaskAwaiter", typeof(TaskAwaiter<int>), FieldAttributes.Private);
+                    intTaskAwaiterLocal ??= _moveNextMethodIL.DeclareLocal(intTaskAwaiterField.FieldType);
 
-                    // Call AwaitUnsafeOnCompleted
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, IntTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Call, _asyncMethodBuilderIntType.GetMethod("AwaitUnsafeOnCompleted").MakeGenericMethod(_npgsqlReaderTaskAwaiterType, _stateMachineTypeBuilder));
-                    _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
+                    asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<int>), intTaskAwaiterLocal, intTaskAwaiterField);
 
-                    switchBuilder.MarkCase();
 
-                    // taskAwaiterLocal = taskAwaiterField
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, IntTaskAwaiterField);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, IntTaskAwaiterLocal);
-
-                    // taskAwaterField = default
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldflda, IntTaskAwaiterField);
-                    _moveNextMethodIL.Emit(OpCodes.Initobj, _intTaskAwaiterType);
-
-                    // stateField = stateLocal = -1
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_M1);
-                    _moveNextMethodIL.Emit(OpCodes.Dup);
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, stateLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
-
-                    // wait of the result from the TaskAwaiter
-                    _moveNextMethodIL.MarkLabel(afterAwaitLabel);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloca, IntTaskAwaiterLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Call, _intTaskAwaiterType.GetMethod("GetResult"));
-                    _moveNextMethodIL.Emit(OpCodes.Stloc, ResultTempLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldloc, ResultTempLocal);
-                    _moveNextMethodIL.Emit(OpCodes.Add);
-                    _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
+                    _moveNextMethodIL.Emit(OpCodes.Pop);
                 }
 
-                _moveNextMethodIL.MarkLabel(afterEntityInsertionLabel);
+
+                if (endOfEntityInsertLabel.HasValue)
+                {
+                    _moveNextMethodIL.MarkLabel(endOfEntityInsertLabel.Value);
+                }
             }
 
+            // return the amount of inserted rows
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.GetProperty("Count").GetGetMethod());
+
+            foreach (var entityCollection in entityCollections.Values)
+            {
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count").GetGetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Add);
+            }
+
+            _moveNextMethodIL.Emit(OpCodes.Stloc, insertedCountLocal);
             _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
 
-            _moveNextMethodIL.BeginCatchBlock(exceptionType);
+            var exceptionLocal = _moveNextMethodIL.DeclareLocal(typeof(Exception));
 
-            // Store the exception in the exceptionLocal
-            _moveNextMethodIL.Emit(OpCodes.Stloc, exceptionLocal);
+            _moveNextMethodIL.BeginCatchBlock(exceptionLocal.LocalType);
 
-            // Assign -2 to the state field
+            // Set state and return exception
+            _moveNextMethodIL.Emit(OpCodes.Stloc_S, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4, -2);
-            _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
 
-            // Set command builder to null
+            if (dataReaderField is { })
+            {
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldnull);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, dataReaderField);
+            }
+
+            foreach (var entityCollection in entityCollections.Values)
+            {
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldnull);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, entityCollection);
+            }
+
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldnull);
-            _moveNextMethodIL.Emit(OpCodes.Stfld, commandBuilderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, exceptionLocal);
+            _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
 
-            // Set command to null
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldnull);
-            _moveNextMethodIL.Emit(OpCodes.Stfld, commandField);
-
-            _setListsToNullGhostIL.WriteIL(_moveNextMethodIL);
-
-            // Set the exception to the method builder
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
-            _moveNextMethodIL.Emit(OpCodes.Ldloc, exceptionLocal);
-            _moveNextMethodIL.Emit(OpCodes.Call, _asyncMethodBuilderIntType.GetMethod("SetException"));
-            _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
-
+            // End of catch block
             _moveNextMethodIL.EndExceptionBlock();
 
             _moveNextMethodIL.MarkLabel(endOfMethodLabel);
 
-            // Assign -2 to the state field
+            // Set state and return result
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4, -2);
-            _moveNextMethodIL.Emit(OpCodes.Stfld, stateField);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
 
-            //// Set command builder to null
+            if (dataReaderField is { })
+            {
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldnull);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, dataReaderField);
+            }
+
+            foreach (var entityCollection in entityCollections.Values)
+            {
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldnull);
+                _moveNextMethodIL.Emit(OpCodes.Stfld, entityCollection);
+            }
+
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldnull);
-            _moveNextMethodIL.Emit(OpCodes.Stfld, commandBuilderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, insertedCountLocal);
+            _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetResult"));
 
-            // Set command to null
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldnull);
-            _moveNextMethodIL.Emit(OpCodes.Stfld, commandField);
-
-            _setListsToNullGhostIL.WriteIL(_moveNextMethodIL);
-
-            // Set the result to the method builder
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
-            _moveNextMethodIL.Emit(OpCodes.Call, _asyncMethodBuilderIntType.GetMethod("SetResult"));
-
+            // End of method
             _moveNextMethodIL.MarkLabel(retOfMethodLabel);
             _moveNextMethodIL.Emit(OpCodes.Ret);
-
-            #region StateMachine
-
-            _stateMachineTypeBuilder.DefineMethodOverride(_moveNextMethod, _asyncStateMachineType.GetMethod("MoveNext"));
-
-            var setStateMachineMethod = _stateMachineTypeBuilder.DefineMethod("SetStateMachine", MethodAttributes.Private | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual, null, new[] { _asyncStateMachineType });
-            var setStateMachineMethodIL = setStateMachineMethod.GetILGenerator();
-
-            setStateMachineMethodIL.Emit(OpCodes.Ldarg_0);
-            setStateMachineMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
-            setStateMachineMethodIL.Emit(OpCodes.Ldarg_1);
-            setStateMachineMethodIL.Emit(OpCodes.Call, _asyncMethodBuilderIntType.GetMethod("SetStateMachine"));
-            setStateMachineMethodIL.Emit(OpCodes.Ret);
-
-            _stateMachineTypeBuilder.DefineMethodOverride(setStateMachineMethod, _asyncStateMachineType.GetMethod("SetStateMachine"));
-
-            var materializeMethod = _inserterTypeBuilder.DefineMethod("InsertAsync", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Static, taskIntType, new[] { typeof(NpgsqlConnection), typeof(List<TEntity>) });
-
-            materializeMethod.SetCustomAttribute(new CustomAttributeBuilder(typeof(AsyncStateMachineAttribute).GetConstructor(new[] { typeof(Type) }), new[] { _stateMachineTypeBuilder }));
-
-            var materializeMethodIL = materializeMethod.GetILGenerator();
-
-            materializeMethodIL.DeclareLocal(_stateMachineTypeBuilder);
-
-            // Create and execute the StateMachine
-            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
-            materializeMethodIL.Emit(OpCodes.Call, _asyncMethodBuilderIntType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static));
-            materializeMethodIL.Emit(OpCodes.Stfld, methodBuilderField);
-            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
-            materializeMethodIL.Emit(OpCodes.Ldarg_0);
-            materializeMethodIL.Emit(OpCodes.Stfld, connectionField);
-            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
-            materializeMethodIL.Emit(OpCodes.Ldarg_1);
-            materializeMethodIL.Emit(OpCodes.Stfld, rootEntityListField);
-            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
-            materializeMethodIL.Emit(OpCodes.Ldc_I4_M1);
-            materializeMethodIL.Emit(OpCodes.Stfld, stateField);
-            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
-            materializeMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
-            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
-            materializeMethodIL.Emit(OpCodes.Call, _asyncMethodBuilderIntType.GetMethod("Start", BindingFlags.Public | BindingFlags.Instance).MakeGenericMethod(_stateMachineTypeBuilder));
-            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
-            materializeMethodIL.Emit(OpCodes.Ldflda, methodBuilderField);
-            materializeMethodIL.Emit(OpCodes.Call, _asyncMethodBuilderIntType.GetProperty("Task").GetGetMethod());
-
-            materializeMethodIL.Emit(OpCodes.Ret);
-
-            #endregion
-
-            _stateMachineTypeBuilder.CreateType();
-            var inserterType = _inserterTypeBuilder.CreateType();
-
-            return (Func<NpgsqlConnection, List<TEntity>, Task<int>>)inserterType.GetMethod("InsertAsync").CreateDelegate(typeof(Func<NpgsqlConnection, List<TEntity>, Task<int>>));
         }
 
-        private void SeperateRootEntity(Entity entity, FieldBuilder? entityListField = null, LocalBuilder? entityListLocal = null)
+        private void CreateSingleNoRelationInserter()
         {
-            if (entity.Relations is null)
-                return;
+            var commandType = typeof(NpgsqlCommand);
 
-            _ = _visitedSeperaterEntities.GetId(entity, out var firstTime);
+            var objectTaskAwaiterField = _stateMachineTypeBuilder.DefineField("_objectTaskAwaiter", typeof(TaskAwaiter<object>), FieldAttributes.Private);
 
-            if (!firstTime)
-                return;
+            var objectTaskAwaiterLocal = _moveNextMethodIL.DeclareLocal(objectTaskAwaiterField.FieldType);
+            var insertedCountLocal = _moveNextMethodIL.DeclareLocal(_intType);
 
+            var retOfMethodLabel = _moveNextMethodIL.DefineLabel();
+            var endOfMethodLabel = _moveNextMethodIL.DefineLabel();
 
-            var hasValidRelation = false;
+            // Assign the local state from the local field => state = _state;
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _stateField);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, _stateLocal);
 
-            for (int i = 0; i < entity.Relations.Count; i++)
+            // Start try block
+            _moveNextMethodIL.BeginExceptionBlock();
+
+            // if state zero goto await unsafe
+
+            var switchBuilder = new ILSwitchBuilder(_moveNextMethodIL, 1);
+
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, _stateLocal);
+            _moveNextMethodIL.Emit(OpCodes.Brfalse, switchBuilder.GetLabels()[0]);
+
+            // Check if insert is null
+            var afterRootInsertNullCheck = _moveNextMethodIL.DefineLabel();
+
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+            _moveNextMethodIL.Emit(OpCodes.Brtrue, afterRootInsertNullCheck);
+
+            // Return from method and assign -1 to the insert count
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_M1);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, insertedCountLocal);
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+
+            _moveNextMethodIL.MarkLabel(afterRootInsertNullCheck);
+
+            // Create command and assign sql command and connection
+            var sqlBuilder = new StringBuilder();
+
+            var skipPrimaryKey = ((IPrimaryEntityColumn)_rootEntity.GetPrimaryColumn()).IsServerSideGenerated;
+
+            sqlBuilder.Append("INSERT INTO ")
+                      .Append(_rootEntity.TableName)
+                      .Append(" (")
+                      .Append(skipPrimaryKey ? _rootEntity.NonPrimaryColumnListString : _rootEntity.ColumnListString)
+                      .Append(") VALUES (");
+
+            var colCount = _rootEntity.GetColumnCount();
+
+            for (int columnIndex = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0; columnIndex < colCount; columnIndex++)
             {
-                var relation = entity.Relations[i];
+                var column = _rootEntity.GetColumn(columnIndex);
 
-                if (relation.LeftNavigationProperty is null)
-                    continue;
-
-                if (!_visitedSeperaterRelations.Contains(relation.RelationId))
-                {
-                    hasValidRelation = true;
-
-                    _visitedSeperaterRelations.Add(relation.RelationId);
-                }
+                sqlBuilder.Append('@')
+                          .Append(column.ColumnName)
+                          .Append(", ");
             }
 
-            if (!HasOptionsFlag(InsertOptions.PopulateRelations) && !hasValidRelation)
+            sqlBuilder.Length -= 2;
+
+            if (skipPrimaryKey)
             {
-                return;
+                sqlBuilder.Append(") RETURNING \"")
+                          .Append(_rootEntity.GetPrimaryColumn().ColumnName)
+                          .Append("\";");
+            }
+            else
+            {
+                sqlBuilder.Append(");");
             }
 
-            var iteratorLocal = _moveNextMethodIL.DeclareLocal(_intType);
-            var iteratorElementLocal = _moveNextMethodIL.DeclareLocal(entity.EntityType);
+            _moveNextMethodIL.Emit(OpCodes.Ldstr, sqlBuilder.ToString());
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _connectionField);
+            _moveNextMethodIL.Emit(OpCodes.Newobj, commandType.GetConstructor(new[] { typeof(string), _connectionField.FieldType }));
 
-            var loopConditionLabel = _moveNextMethodIL.DefineLabel();
-            var startLoopBodyLabel = _moveNextMethodIL.DefineLabel();
-
-            // Assign 0 to the iterator
-            _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldc_I4_0);
-            _defaultEntitySeperationGhostIL.Emit(OpCodes.Stloc, iteratorLocal);
-            _defaultEntitySeperationGhostIL.Emit(OpCodes.Br, loopConditionLabel);
-
-            // loop body
-            _defaultEntitySeperationGhostIL.MarkLabel(startLoopBodyLabel);
-
-            if (entityListField is { })
+            // Assign parameters to command
+            for (int columnIndex = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0; columnIndex < colCount; columnIndex++)
             {
-                // get element at iterator from list
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldarg_0);
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldfld, entityListField);
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, iteratorLocal);
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetMethod("get_Item"));
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Stloc, iteratorElementLocal);
-            }
-            else if (entityListLocal is { })
-            {
-                // get element at iterator from list
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityListLocal);
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, iteratorLocal);
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, entityListLocal.LocalType.GetMethod("get_Item"));
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Stloc, iteratorElementLocal);
+                var column = _rootEntity.GetColumn(columnIndex);
+
+                _moveNextMethodIL.Emit(OpCodes.Dup);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, commandType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                WriteNpgsqlParameterFromColumn(_rootEntityInsertField, column);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameterCollection).GetMethod("Add", new[] { typeof(NpgsqlParameter) }));
+                _moveNextMethodIL.Emit(OpCodes.Pop);
             }
 
-            SeperateEntities(entity, iteratorElementLocal);
+            // Get the result of the command
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, commandType.GetMethod("ExecuteScalarAsync", new[] { _cancellationTokenField.FieldType }));
 
-            // loop iterator increment
-            _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, iteratorLocal);
-            _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldc_I4_1);
-            _defaultEntitySeperationGhostIL.Emit(OpCodes.Add);
-            _defaultEntitySeperationGhostIL.Emit(OpCodes.Stloc, iteratorLocal);
+            new ILAsyncGenerator(_moveNextMethodIL, switchBuilder, _methodBuilderField, _stateField, _stateLocal, retOfMethodLabel, _stateMachineTypeBuilder).WriteAsyncMethodAwaiter(typeof(Task<object>), objectTaskAwaiterLocal, objectTaskAwaiterField);
 
-            // loop condition
-            _defaultEntitySeperationGhostIL.MarkLabel(loopConditionLabel);
-            _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, iteratorLocal);
+            var objectResultLocal = _moveNextMethodIL.DeclareLocal(typeof(object));
 
-            if (entityListField is { })
-            {
-                // get element at iterator from list
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldarg_0);
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldfld, entityListField);
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, entityListField.FieldType.GetProperty("Count").GetGetMethod());
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Blt, startLoopBodyLabel);
-            }
-            else if (entityListLocal is { })
-            {
-                // get element at iterator from list
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityListLocal);
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, entityListLocal.LocalType.GetProperty("Count").GetGetMethod());
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Blt, startLoopBodyLabel);
-            }
+            _moveNextMethodIL.Emit(OpCodes.Stloc, objectResultLocal);
+
+            // cast and store primary key
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, objectResultLocal);
+            _moveNextMethodIL.Emit(OpCodes.Unbox_Any, _rootEntity.GetPrimaryColumn().PropertyInfo.PropertyType);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
+
+            // return 1
+
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, insertedCountLocal);
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+
+            var exceptionLocal = _moveNextMethodIL.DeclareLocal(typeof(Exception));
+
+            _moveNextMethodIL.BeginCatchBlock(exceptionLocal.LocalType);
+            // Set state and return exception
+            _moveNextMethodIL.Emit(OpCodes.Stloc_S, exceptionLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, exceptionLocal);
+            _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+
+            // End of catch block
+            _moveNextMethodIL.EndExceptionBlock();
+
+            _moveNextMethodIL.MarkLabel(endOfMethodLabel);
+
+            // Set state and return result
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, insertedCountLocal);
+            _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetResult"));
+
+            // End of method
+            _moveNextMethodIL.MarkLabel(retOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Ret);
         }
 
-        private void SeperateEntities(Entity entity, LocalBuilder rootLocal)
+        private void CreateSingleRelationInserter(EntityRelationHolder[] entities)
         {
-            if (entity.Relations is null)
-                return;
+            var commandType = typeof(NpgsqlCommand);
 
-            for (int i = 0; i < entity.Relations.Count; i++)
+            FieldBuilder? dataReaderTaskAwaiterField = default;
+            FieldBuilder? boolTaskAwaiterField = default;
+            FieldBuilder? intTaskAwaiterField = default;
+            FieldBuilder? dataReaderField = default;
+
+            LocalBuilder? dataReaderTaskAwaiterLocal = default;
+            LocalBuilder? boolTaskAwaiterLocal = default;
+            LocalBuilder? intTaskAwaiterLocal = default;
+
+            var insertedCountLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
+            var retOfMethodLabel = _moveNextMethodIL.DefineLabel();
+            var endOfMethodLabel = _moveNextMethodIL.DefineLabel();
+
+            // Assign the local state from the local field => state = _state;
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _stateField);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, _stateLocal);
+
+            // Start try block
+            _moveNextMethodIL.BeginExceptionBlock();
+
+            // if state zero goto await unsafe         
+
+            var awaiterCount = 0;
+
+            for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
             {
-                var relation = entity.Relations[i];
+                var entity = entities[entityIndex].Entity;
 
-                FieldBuilder? newEntityListField;
-
-                if (relation.LeftNavigationProperty is null)
+                if (entity == _rootEntity)
                 {
+                    awaiterCount++;
+
                     continue;
                 }
 
-                var id = _knownEntities.GetId(relation.RightEntity, out var isNew);
+                awaiterCount += ((IPrimaryEntityColumn)entity.GetPrimaryColumn()).IsServerSideGenerated ? 4 : 1;
+            }
 
-                var entityLocal = _moveNextMethodIL.DeclareLocal(relation.LeftNavigationProperty.PropertyType);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, _stateLocal);
 
-                // Store navigation property in local
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, rootLocal);
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                _defaultEntitySeperationGhostIL.Emit(OpCodes.Stloc, entityLocal);
+            var switchBuilder = _moveNextMethodIL.EmitSwitch(awaiterCount);
 
-                if (relation.RelationType == RelationType.OneToMany)
+            var asyncGenerator = new ILAsyncGenerator(_moveNextMethodIL, switchBuilder, _methodBuilderField, _stateField, _stateLocal, retOfMethodLabel, _stateMachineTypeBuilder);
+
+            // Check if insert is null
+            var afterRootInsertNullCheck = _moveNextMethodIL.DefineLabel();
+
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+            _moveNextMethodIL.Emit(OpCodes.Brtrue, afterRootInsertNullCheck);
+
+            // Return from method and assign -1 to the insert count
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_M1);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, insertedCountLocal);
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+
+            _moveNextMethodIL.MarkLabel(afterRootInsertNullCheck);
+
+            var entityCollections = new EntitySeprator(_moveNextMethodIL, _stateMachineTypeBuilder, _rootEntity, entities, _reachableEntities, _reachableRelations).WriteFlatEntitySeperater(_rootEntityInsertField);
+
+            var commandBuilderField = _stateMachineTypeBuilder.DefineField("commandBuilder", typeof(StringBuilder), FieldAttributes.Private);
+            var npgsqlCommandField = _stateMachineTypeBuilder.DefineField("command", commandType, FieldAttributes.Private);
+
+            // Instantiate CommandBuilder
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Newobj, commandBuilderField.FieldType.GetConstructor(Type.EmptyTypes));
+            _moveNextMethodIL.Emit(OpCodes.Stfld, commandBuilderField);
+
+            // Instantiate Command
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Newobj, npgsqlCommandField.FieldType.GetConstructor(Type.EmptyTypes));
+            _moveNextMethodIL.Emit(OpCodes.Stfld, npgsqlCommandField);
+
+            // Assign the connection parameter to the command
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _connectionField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("Connection", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetSetMethod());
+
+            for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
+            {
+                var entityHolder = entities[entityIndex];
+                var entity = entityHolder.Entity;
+
+                var stringBuilder = new StringBuilder();
+
+                var skipPrimaryKey = ((IPrimaryEntityColumn)entity.GetPrimaryColumn()).IsServerSideGenerated;
+
+                var columnCount = entity.GetColumnCount();
+                var columnOffset = skipPrimaryKey ? entity.GetRegularColumnOffset() : 0;
+
+                stringBuilder.Append("INSERT INTO ")
+                             .Append(entity.TableName)
+                             .Append(" (")
+                             .Append(skipPrimaryKey ? entity.NonPrimaryColumnListString : entity.ColumnListString)
+                             .Append(") VALUES ");
+
+                if (entity == _rootEntity)
                 {
-                    if (isNew)
+                    var colCount = _rootEntity.GetColumnCount();
+
+                    stringBuilder.Append('(');
+
+                    for (int columnIndex = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0; columnIndex < colCount; columnIndex++)
                     {
-                        newEntityListField = _stateMachineTypeBuilder.DefineField("_" + entity.EntityName + relation.RightEntity.EntityName + "List", relation.LeftNavigationProperty.PropertyType, FieldAttributes.Private);
+                        var column = _rootEntity.GetColumn(columnIndex);
 
-                        _entityListDict.Add(id, newEntityListField);
+                        stringBuilder.Append('@')
+                                     .Append(column.ColumnName)
+                                     .Append(", ");
+                    }
+
+                    stringBuilder.Length -= 2;
+
+                    if (skipPrimaryKey)
+                    {
+                        stringBuilder.Append(") RETURNING \"")
+                                     .Append(_rootEntity.GetPrimaryColumn().ColumnName)
+                                     .Append("\";");
                     }
                     else
                     {
-                        newEntityListField = _entityListDict[id];
+                        stringBuilder.Append(");");
                     }
 
-                    var afterListBodyLabel = _moveNextMethodIL.DefineLabel();
-
-                    // Check if list is null
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Brfalse, afterListBodyLabel);
-
-                    // Check if list is empty
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetProperty("Count").GetGetMethod());
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldc_I4_0);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ble, afterListBodyLabel);
-
-                    // Assign the entities to the local list
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldarg_0);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldfld, newEntityListField);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, newEntityListField.FieldType.GetMethod("AddRange"));
-
-                    SeperateRootEntity(relation.RightEntity, null, entityLocal);
-
-                    _defaultEntitySeperationGhostIL.MarkLabel(afterListBodyLabel);
-                }
-                else if (relation.RelationType == RelationType.ManyToOne)
-                {
-                    if (isNew)
+                    // Clear commandBuilder and command parameters
+                    if (entityIndex > 0)
                     {
-                        newEntityListField = _stateMachineTypeBuilder.DefineField("_" + entity.EntityName + relation.RightEntity.EntityName + "List", _genericListType.MakeGenericType(relation.LeftNavigationProperty.PropertyType), FieldAttributes.Private);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Clear"));
+                        _moveNextMethodIL.Emit(OpCodes.Pop);
 
-                        _entityListDict.Add(id, newEntityListField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).PropertyType.GetMethod("Clear"));
+                    }
+
+                    // Assign the commandBuilder text to the command
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldstr, stringBuilder.ToString());
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("CommandText").GetSetMethod());
+
+                    // assign foreign key to itself from navigation property primary key
+                    for (int relationIndex = 0; relationIndex < entityHolder.SelfAssignedRelations.Count; relationIndex++)
+                    {
+                        var relation = entityHolder.SelfAssignedRelations[relationIndex];
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                    }
+
+                    // Assign parameters to command
+                    for (int columnIndex = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0; columnIndex < colCount; columnIndex++)
+                    {
+                        var column = _rootEntity.GetColumn(columnIndex);
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                        WriteNpgsqlParameterFromColumn(_rootEntityInsertField, column);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameterCollection).GetMethod("Add", new[] { typeof(NpgsqlParameter) }));
+                        _moveNextMethodIL.Emit(OpCodes.Pop);
+                    }
+
+                    // Get the result of the command
+                    if (skipPrimaryKey)
+                    {
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandType.GetMethod("ExecuteScalarAsync", new[] { _cancellationTokenField.FieldType }));
+
+                        asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<object>), _moveNextMethodIL.DeclareLocal(typeof(TaskAwaiter<object>)), _stateMachineTypeBuilder.DefineField("_objectTaskAwaiter", typeof(TaskAwaiter<object>), FieldAttributes.Private));
+
+                        var objectResultLocal = _moveNextMethodIL.DeclareLocal(typeof(object));
+                        _moveNextMethodIL.Emit(OpCodes.Stloc, objectResultLocal);
+
+                        // cast and store primary key
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, objectResultLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Unbox_Any, _rootEntity.GetPrimaryColumn().PropertyInfo.PropertyType);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
                     }
                     else
                     {
-                        newEntityListField = _entityListDict[id];
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandType.GetMethod("ExecuteNonQueryAsync", new[] { _cancellationTokenField.FieldType }));
+
+                        intTaskAwaiterField ??= _stateMachineTypeBuilder.DefineField("_intTaskAwaiter", typeof(TaskAwaiter<int>), FieldAttributes.Private);
+                        intTaskAwaiterLocal ??= _moveNextMethodIL.DeclareLocal(intTaskAwaiterField.FieldType);
+
+                        asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<int>), intTaskAwaiterLocal, intTaskAwaiterField);
+
+
+                        _moveNextMethodIL.Emit(OpCodes.Pop);
                     }
 
-                    var visitedEntitiesLocal = _moveNextMethodIL.DeclareLocal(typeof(ObjectIDGenerator));
-
-                    // Instantiate visitedEntitiesLocal
-                    _entityListAssignmentsGhostIL.Emit(OpCodes.Newobj, typeof(ObjectIDGenerator).GetConstructor(Type.EmptyTypes));
-                    _entityListAssignmentsGhostIL.Emit(OpCodes.Stloc, visitedEntitiesLocal);
-
-                    var isVisitedEntityLocal = _moveNextMethodIL.DeclareLocal(typeof(bool));
-
-                    var afterCheckBodyLabel = _moveNextMethodIL.DefineLabel();
-
-                    // Check if navigation property is set
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Brfalse, afterCheckBodyLabel);
-
-                    // Check if instance was already visited
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, visitedEntitiesLocal);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloca, isVisitedEntityLocal);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, typeof(ObjectIDGenerator).GetMethod("GetId"));
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Pop);
-
-                    var afterNotVisistedLabel = _moveNextMethodIL.DefineLabel();
-
-                    // Check if instance hasn't been visited yet
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, isVisitedEntityLocal);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Brfalse, afterNotVisistedLabel);
-
-                    if (HasOptionsFlag(InsertOptions.PopulateRelations) && relation.RightNavigationProperty is { })
+                    if (entityHolder.ForeignAssignedRelations.Count > 0)
                     {
-                        // Assign root to entity navigation
-                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
-                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Newobj, relation.RightNavigationProperty.PropertyType.GetConstructor(Type.EmptyTypes));
-                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetSetMethod());
-                    }
+                        LocalBuilder? innerIteratorLocal = default;
 
-                    // Assign entity to the list
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldarg_0);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldfld, newEntityListField);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, newEntityListField.FieldType.GetMethod("Add"));
-
-                    if (relation.RightEntity.Relations is { })
-                    {
-                        _ = _visitedSeperaterEntities.GetId(relation.RightEntity, out var firstTime);
-
-                        if (firstTime)
+                        for (int relationIndex = 0; relationIndex < entityHolder.ForeignAssignedRelations.Count; relationIndex++)
                         {
-                            var hasValidRelation = false;
+                            var relation = entityHolder.ForeignAssignedRelations[relationIndex];
 
-                            for (int k = 0; k < relation.RightEntity.Relations.Count; k++)
+                            if (relation.RelationType == RelationType.OneToMany)
                             {
-                                var foreignRelation = relation.RightEntity.Relations[k];
+                                innerIteratorLocal ??= _moveNextMethodIL.DeclareLocal(_intType);
 
-                                if (foreignRelation.LeftNavigationProperty is null)
-                                    continue;
+                                var innerLoopConditionLabel = _moveNextMethodIL.DefineLabel();
+                                var innertStartLoopBodyLabel = _moveNextMethodIL.DefineLabel();
 
-                                if (!_visitedSeperaterRelations.Contains(foreignRelation.RelationId))
-                                {
-                                    hasValidRelation = true;
-                                }
+                                var foreignEntityLocal = _moveNextMethodIL.DeclareLocal(relation.RightEntity.EntityType);
 
-                                _visitedSeperaterRelations.Add(foreignRelation.RelationId);
+                                var afterOuterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                                _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Brfalse, afterOuterNullCheckBodyLabel);
+
+                                // Assign 0 to the iterator
+                                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                                _moveNextMethodIL.Emit(OpCodes.Stloc, innerIteratorLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Br, innerLoopConditionLabel);
+
+                                // loop body
+                                _moveNextMethodIL.MarkLabel(innertStartLoopBodyLabel);
+
+                                // assign iterator element to foreignEntityLocal
+                                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                                _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, innerIteratorLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetMethod("get_Item"));
+                                _moveNextMethodIL.Emit(OpCodes.Stloc, foreignEntityLocal);
+
+                                // check if element is not null
+                                var afterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, foreignEntityLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Brfalse, afterNullCheckBodyLabel);
+
+                                // assign entity primary key to foreign key on navigation entity
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, foreignEntityLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                                _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+
+                                _moveNextMethodIL.MarkLabel(afterNullCheckBodyLabel);
+
+                                // loop iterator increment
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, innerIteratorLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
+                                _moveNextMethodIL.Emit(OpCodes.Add);
+                                _moveNextMethodIL.Emit(OpCodes.Stloc, innerIteratorLocal);
+
+                                // loop condition
+                                _moveNextMethodIL.MarkLabel(innerLoopConditionLabel);
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, innerIteratorLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                                _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetProperty("Count").GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Blt, innertStartLoopBodyLabel);
+
+                                _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
                             }
-
-                            if (hasValidRelation)
+                            else
                             {
-                                SeperateEntities(relation.RightEntity, entityLocal);
+                                // check if element is not null
+                                var afterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                                _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Brfalse, afterNullCheckBodyLabel);
+
+                                // assign entity primary key to foreign key on navigation entity
+                                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                                _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                                _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+
+                                _moveNextMethodIL.MarkLabel(afterNullCheckBodyLabel);
                             }
                         }
                     }
-
-                    _defaultEntitySeperationGhostIL.MarkLabel(afterNotVisistedLabel);
-
-                    if (HasOptionsFlag(InsertOptions.PopulateRelations) && relation.RightNavigationProperty is { })
-                    {
-                        // Assign root to entity navigation
-                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
-                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
-                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, rootLocal);
-                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
-                    }
-
-                    _defaultEntitySeperationGhostIL.MarkLabel(afterCheckBodyLabel);
                 }
                 else
                 {
-                    if (isNew)
-                    {
-                        newEntityListField = _stateMachineTypeBuilder.DefineField("_" + entity.EntityName + relation.RightEntity.EntityName + "List", _genericListType.MakeGenericType(relation.LeftNavigationProperty.PropertyType), FieldAttributes.Private);
+                    var entityId = _reachableEntities.HasId(entity, out _);
 
-                        _entityListDict.Add(id, newEntityListField);
+                    var entityCollection = entityCollections[entityId];
+
+                    // Check if entityCollection is larger than 0
+                    var endOfEntityInsertLabel = _moveNextMethodIL.DefineLabel();
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count").GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Brfalse, endOfEntityInsertLabel);
+
+                    // Clear commandBuilder and command parameters
+                    if (entityIndex > 0)
+                    {
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Clear"));
+                        _moveNextMethodIL.Emit(OpCodes.Pop);
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).PropertyType.GetMethod("Clear"));
+                    }
+
+                    // Outer loop to keep one single command under ushort.MaxValue parameters
+
+                    var totalLocal = _moveNextMethodIL.DeclareLocal(_intType);
+                    var currentLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
+                    // Assign the total amount of parameters to the total local
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, totalLocal);
+
+                    // Assign 0 to the current local
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, currentLocal);
+
+                    var outerIteratorLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
+                    var outerLoopConditionLabel = _moveNextMethodIL.DefineLabel();
+                    var outerStartLoopBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                    // Assign 0 to the iterator
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, outerIteratorLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Br, outerLoopConditionLabel);
+
+                    // loop body
+                    _moveNextMethodIL.MarkLabel(outerStartLoopBodyLabel);
+
+                    // Append base Insert Command to command builder
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldstr, stringBuilder.ToString());
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
+                    _moveNextMethodIL.Emit(OpCodes.Pop);
+
+                    var leftLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
+                    var totalColumns = columnCount - columnOffset;
+
+                    // Assign the amount of left items to the left local
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, totalLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, totalColumns);
+                    _moveNextMethodIL.Emit(OpCodes.Mul);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, totalColumns);
+                    _moveNextMethodIL.Emit(OpCodes.Mul);
+                    _moveNextMethodIL.Emit(OpCodes.Sub);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, ushort.MaxValue);
+                    _moveNextMethodIL.Emit(OpCodes.Call, typeof(Math).GetMethod("Min", new[] { _intType, _intType }));
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, totalColumns);
+                    _moveNextMethodIL.Emit(OpCodes.Div);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Add);
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, leftLocal);
+
+                    var iteratorElementLocal = _moveNextMethodIL.DeclareLocal(entity.EntityType);
+
+                    var loopConditionLabel = _moveNextMethodIL.DefineLabel();
+                    var startLoopBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                    // loop body
+                    _moveNextMethodIL.MarkLabel(startLoopBodyLabel);
+
+                    // get element at iterator from list
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetMethod("get_Item"));
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, iteratorElementLocal);
+
+                    // assign foreign key to itself from navigation property primary key
+                    for (int relationIndex = 0; relationIndex < entityHolder.SelfAssignedRelations.Count; relationIndex++)
+                    {
+                        var relation = entityHolder.SelfAssignedRelations[relationIndex];
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                    }
+
+                    // append placeholders to command builder
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, (int)'(');
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(char) }));
+                    _moveNextMethodIL.Emit(OpCodes.Pop);
+
+                    for (int k = columnOffset; k < columnCount; k++)
+                    {
+                        var column = entity.GetColumn(k);
+
+                        // Write placeholder to the command builder => (@Name(n)),
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
+
+                        // Create new parameter with placeholder and add it to the parameter list
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+
+                        WriteNpgsqlParameterFromColumn(iteratorElementLocal, column, currentLocal);
+
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameterCollection).GetMethod("Add", new[] { typeof(NpgsqlParameter) }));
+
+                        // Write placeholder to the command builder => (@Name(n)),
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameter).GetProperty("ParameterName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
+                        _moveNextMethodIL.Emit(OpCodes.Ldstr, columnCount == k + 1 ? "), " : ", ");
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
+                        _moveNextMethodIL.Emit(OpCodes.Pop);
+                    }
+
+                    // loop iterator increment
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
+                    _moveNextMethodIL.Emit(OpCodes.Add);
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, currentLocal);
+
+                    // loop condition
+                    _moveNextMethodIL.MarkLabel(loopConditionLabel);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, leftLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Blt, startLoopBodyLabel);
+
+                    // Remove the last the values form the command string e.g. ", "
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
+                    _moveNextMethodIL.Emit(OpCodes.Dup);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetProperty("Length").GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_2);
+                    _moveNextMethodIL.Emit(OpCodes.Sub);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetProperty("Length").GetSetMethod());
+
+                    if (skipPrimaryKey)
+                    {
+                        // Append " RETURNING \"PrimaryKey\""
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING \"");
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
+                        _moveNextMethodIL.Emit(OpCodes.Ldstr, entity.GetPrimaryColumn().ColumnName);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
+                        _moveNextMethodIL.Emit(OpCodes.Ldstr, "\";");
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
+                        _moveNextMethodIL.Emit(OpCodes.Pop);
+                    }
+
+                    // outer loop iterator increment
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, outerIteratorLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
+                    _moveNextMethodIL.Emit(OpCodes.Add);
+                    _moveNextMethodIL.Emit(OpCodes.Stloc, outerIteratorLocal);
+
+                    // outer loop condition
+                    _moveNextMethodIL.MarkLabel(outerLoopConditionLabel);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, totalLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, currentLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Bne_Un, outerStartLoopBodyLabel);
+
+                    // Assign the commandBuilder text to the command
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("ToString", Type.EmptyTypes));
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("CommandText").GetSetMethod());
+
+                    if (skipPrimaryKey)
+                    {
+                        dataReaderField ??= _stateMachineTypeBuilder.DefineField("_dataReader", typeof(NpgsqlDataReader), FieldAttributes.Private);
+
+                        // Get the result of the command
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandType.GetMethod("ExecuteReaderAsync", new[] { _cancellationTokenField.FieldType }));
+
+                        dataReaderTaskAwaiterField ??= _stateMachineTypeBuilder.DefineField("_dataReaderTaskAwaiter", typeof(TaskAwaiter<NpgsqlDataReader>), FieldAttributes.Private);
+                        dataReaderTaskAwaiterLocal ??= _moveNextMethodIL.DeclareLocal(dataReaderTaskAwaiterField.FieldType);
+
+                        asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<NpgsqlDataReader>), dataReaderTaskAwaiterLocal, dataReaderTaskAwaiterField);
+
+                        var dataReaderLocal = _moveNextMethodIL.DeclareLocal(dataReaderField.FieldType);
+
+                        _moveNextMethodIL.Emit(OpCodes.Stloc, dataReaderLocal);
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, dataReaderLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Stfld, dataReaderField);
+
+                        var iteratorField = _stateMachineTypeBuilder.DefineField("_iterator", _intType, FieldAttributes.Private);
+                        var counterField = _stateMachineTypeBuilder.DefineField("_counter", typeof(ushort), FieldAttributes.Private);
+
+                        loopConditionLabel = _moveNextMethodIL.DefineLabel();
+                        startLoopBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                        // Assign 0 to the counter
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                        _moveNextMethodIL.Emit(OpCodes.Stfld, counterField);
+
+                        // Assign 0 to the iterator
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                        _moveNextMethodIL.Emit(OpCodes.Stfld, iteratorField);
+                        _moveNextMethodIL.Emit(OpCodes.Br, loopConditionLabel);
+
+                        // loop body
+                        _moveNextMethodIL.MarkLabel(startLoopBodyLabel);
+
+                        // check if counter is equal to ushort.MaxValue
+
+                        var afterIfBody = _moveNextMethodIL.DefineLabel();
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, counterField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldc_I4, ushort.MaxValue / totalColumns);
+                        _moveNextMethodIL.Emit(OpCodes.Bne_Un, afterIfBody);
+
+                        // Assign 0 to the counter
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                        _moveNextMethodIL.Emit(OpCodes.Stfld, counterField);
+
+                        // Call the next result
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("NextResultAsync", new[] { _cancellationTokenField.FieldType }));
+
+                        boolTaskAwaiterField ??= _stateMachineTypeBuilder.DefineField("_boolTaskAwaiter", typeof(TaskAwaiter<bool>), FieldAttributes.Private);
+                        boolTaskAwaiterLocal ??= _moveNextMethodIL.DeclareLocal(boolTaskAwaiterField.FieldType);
+
+                        asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<bool>), boolTaskAwaiterLocal, boolTaskAwaiterField);
+
+                        _moveNextMethodIL.Emit(OpCodes.Pop);
+
+                        _moveNextMethodIL.MarkLabel(afterIfBody);
+
+                        // read data reader
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("ReadAsync", new[] { _cancellationTokenField.FieldType }));
+
+                        asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<bool>), boolTaskAwaiterLocal, boolTaskAwaiterField);
+
+                        _moveNextMethodIL.Emit(OpCodes.Pop);
+
+                        // assign foreign key to itself from navigation property primary key
+                        if (entityHolder.ForeignAssignedRelations.Count > 0)
+                        {
+                            var primaryKeyLocal = _moveNextMethodIL.DeclareLocal(entity.GetPrimaryColumn().PropertyInfo.PropertyType);
+
+                            // assign the returned id to the local
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
+                            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("GetFieldValue").MakeGenericMethod(entity.GetPrimaryColumn().PropertyInfo.PropertyType));
+                            _moveNextMethodIL.Emit(OpCodes.Stloc, primaryKeyLocal);
+
+                            var entityLocal = _moveNextMethodIL.DeclareLocal(entity.EntityType);
+
+                            // assign the current entity to the local
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, iteratorField);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetMethod("get_Item"));
+                            _moveNextMethodIL.Emit(OpCodes.Stloc, entityLocal);
+
+                            // assign the returned id to the current entity
+                            _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
+                            _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, entity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
+
+                            LocalBuilder? innerIteratorLocal = default;
+
+                            for (int relationIndex = 0; relationIndex < entityHolder.ForeignAssignedRelations.Count; relationIndex++)
+                            {
+                                var relation = entityHolder.ForeignAssignedRelations[relationIndex];
+
+                                if (relation.RelationType == RelationType.OneToMany)
+                                {
+                                    innerIteratorLocal ??= _moveNextMethodIL.DeclareLocal(_intType);
+
+                                    var innerLoopConditionLabel = _moveNextMethodIL.DefineLabel();
+                                    var innertStartLoopBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                                    var foreignEntityLocal = _moveNextMethodIL.DeclareLocal(relation.RightEntity.EntityType);
+
+                                    var afterOuterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                                    _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
+                                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                    _moveNextMethodIL.Emit(OpCodes.Brfalse, afterOuterNullCheckBodyLabel);
+
+                                    // Assign 0 to the iterator
+                                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                                    _moveNextMethodIL.Emit(OpCodes.Stloc, innerIteratorLocal);
+                                    _moveNextMethodIL.Emit(OpCodes.Br, innerLoopConditionLabel);
+
+                                    // loop body
+                                    _moveNextMethodIL.MarkLabel(innertStartLoopBodyLabel);
+
+                                    // assign iterator element to foreignEntityLocal
+                                    _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
+                                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                    _moveNextMethodIL.Emit(OpCodes.Ldloc, innerIteratorLocal);
+                                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetMethod("get_Item"));
+                                    _moveNextMethodIL.Emit(OpCodes.Stloc, foreignEntityLocal);
+
+                                    // check if element is not null
+                                    var afterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                                    _moveNextMethodIL.Emit(OpCodes.Ldloc, foreignEntityLocal);
+                                    _moveNextMethodIL.Emit(OpCodes.Brfalse, afterNullCheckBodyLabel);
+
+                                    // assign entity primary key to foreign key on navigation entity
+                                    _moveNextMethodIL.Emit(OpCodes.Ldloc, foreignEntityLocal);
+                                    _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
+                                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+
+                                    _moveNextMethodIL.MarkLabel(afterNullCheckBodyLabel);
+
+                                    // loop iterator increment
+                                    _moveNextMethodIL.Emit(OpCodes.Ldloc, innerIteratorLocal);
+                                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
+                                    _moveNextMethodIL.Emit(OpCodes.Add);
+                                    _moveNextMethodIL.Emit(OpCodes.Stloc, innerIteratorLocal);
+
+                                    // loop condition
+                                    _moveNextMethodIL.MarkLabel(innerLoopConditionLabel);
+                                    _moveNextMethodIL.Emit(OpCodes.Ldloc, innerIteratorLocal);
+                                    _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
+                                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetProperty("Count").GetGetMethod());
+                                    _moveNextMethodIL.Emit(OpCodes.Blt, innertStartLoopBodyLabel);
+
+                                    _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
+                                }
+                                else
+                                {
+                                    // check if element is not null
+                                    var afterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                                    _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
+                                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                    _moveNextMethodIL.Emit(OpCodes.Brfalse, afterNullCheckBodyLabel);
+
+                                    // assign entity primary key to foreign key on navigation entity
+                                    _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
+                                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                    _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
+                                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+
+                                    _moveNextMethodIL.MarkLabel(afterNullCheckBodyLabel);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // assign the returned id to the current element
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, iteratorField);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetMethod("get_Item"));
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
+                            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("GetFieldValue").MakeGenericMethod(entity.GetPrimaryColumn().PropertyInfo.PropertyType));
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, entity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
+                        }
+
+                        // loop iterator increment
+                        var tempIteratorLocal = _moveNextMethodIL.DeclareLocal(_intType);
+                        var tempCounterLocal = _moveNextMethodIL.DeclareLocal(_intType);
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, iteratorField);
+                        _moveNextMethodIL.Emit(OpCodes.Stloc, tempIteratorLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, tempIteratorLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
+                        _moveNextMethodIL.Emit(OpCodes.Add);
+                        _moveNextMethodIL.Emit(OpCodes.Stfld, iteratorField);
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, counterField);
+                        _moveNextMethodIL.Emit(OpCodes.Stloc, tempCounterLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, tempCounterLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
+                        _moveNextMethodIL.Emit(OpCodes.Add);
+                        _moveNextMethodIL.Emit(OpCodes.Stfld, counterField);
+
+                        // loop condition
+                        _moveNextMethodIL.MarkLabel(loopConditionLabel);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, iteratorField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count").GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Blt, startLoopBodyLabel);
+
+                        // dispose data reader
+                        var valueTaskAwaiterField = _stateMachineTypeBuilder.DefineField("_valueTaskAwaiter", typeof(ValueTaskAwaiter), FieldAttributes.Private);
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("DisposeAsync"));
+
+                        asyncGenerator.WriteAsyncValueTaskMethodAwaiter(_moveNextMethodIL.DeclareLocal(typeof(ValueTask)), _moveNextMethodIL.DeclareLocal(valueTaskAwaiterField.FieldType), valueTaskAwaiterField);
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldnull);
+                        _moveNextMethodIL.Emit(OpCodes.Stfld, dataReaderField);
                     }
                     else
                     {
-                        newEntityListField = _entityListDict[id];
+                        // Get the result of the command
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandType.GetMethod("ExecuteNonQueryAsync", new[] { _cancellationTokenField.FieldType }));
+
+                        intTaskAwaiterField ??= _stateMachineTypeBuilder.DefineField("_intTaskAwaiter", typeof(TaskAwaiter<int>), FieldAttributes.Private);
+                        intTaskAwaiterLocal ??= _moveNextMethodIL.DeclareLocal(intTaskAwaiterField.FieldType);
+
+                        asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<int>), intTaskAwaiterLocal, intTaskAwaiterField);
+
+
+                        _moveNextMethodIL.Emit(OpCodes.Pop);
                     }
 
-                    var afterCheckBodyLabel = _moveNextMethodIL.DefineLabel();
+                    _moveNextMethodIL.MarkLabel(endOfEntityInsertLabel);
+                }
+            }
+            // return the amount of inserted rows
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
 
-                    // Check if navigation property is set
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Brfalse, afterCheckBodyLabel);
+            foreach (var entityCollection in entityCollections.Values)
+            {
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count").GetGetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Add);
+            }
 
-                    // Assign entity to the list
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldarg_0);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldfld, newEntityListField);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
-                    _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, newEntityListField.FieldType.GetMethod("Add"));
+            _moveNextMethodIL.Emit(OpCodes.Stloc, insertedCountLocal);
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
 
-                    if (relation.RightEntity.Relations is { })
-                    {
-                        _ = _visitedSeperaterEntities.GetId(relation.RightEntity, out var firstTime);
+            var exceptionLocal = _moveNextMethodIL.DeclareLocal(typeof(Exception));
 
-                        if (firstTime)
-                        {
-                            var hasValidRelation = false;
+            _moveNextMethodIL.BeginCatchBlock(exceptionLocal.LocalType);
+            // Set state and return exception
+            _moveNextMethodIL.Emit(OpCodes.Stloc_S, exceptionLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, exceptionLocal);
+            _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
+            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
 
-                            for (int k = 0; k < relation.RightEntity.Relations.Count; k++)
-                            {
-                                var foreignRelation = relation.RightEntity.Relations[k];
+            // End of catch block
+            _moveNextMethodIL.EndExceptionBlock();
 
-                                if (foreignRelation.LeftNavigationProperty is null)
-                                    continue;
+            _moveNextMethodIL.MarkLabel(endOfMethodLabel);
 
-                                if (!_visitedSeperaterRelations.Contains(foreignRelation.RelationId))
-                                {
-                                    hasValidRelation = true;
-                                }
+            // Set state and return result
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, insertedCountLocal);
+            _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetResult"));
 
-                                _visitedSeperaterRelations.Add(foreignRelation.RelationId);
-                            }
+            // End of method
+            _moveNextMethodIL.MarkLabel(retOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Ret);
+        }
 
-                            if (hasValidRelation)
-                            {
-                                SeperateEntities(relation.RightEntity, entityLocal);
-                            }
-                        }
-                    }
+        private void CreateSingleNoRelationNoDbKeysInserter(ILGenerator iLGenerator)
+        {
+            var commandType = typeof(NpgsqlCommand);
 
-                    if (HasOptionsFlag(InsertOptions.PopulateRelations) && relation.RightNavigationProperty is { })
-                    {
-                        // Assign root to entity navigation
-                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
-                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
-                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, rootLocal);
-                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
-                    }
+            // Check if insert is null
+            var afterRootInsertNullCheck = iLGenerator.DefineLabel();
 
-                    if (HasOptionsFlag(InsertOptions.PopulateRelations) && relation.RightNavigationProperty is { })
-                    {
-                        // Assign root to entity navigation
-                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Ldloc, entityLocal);
-                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Newobj, relation.RightNavigationProperty.PropertyType.GetConstructor(Type.EmptyTypes));
-                        _defaultEntitySeperationGhostIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetSetMethod());
-                    }
+            iLGenerator.Emit(OpCodes.Ldarg_0);
+            iLGenerator.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+            iLGenerator.Emit(OpCodes.Brtrue, afterRootInsertNullCheck);
 
-                    _defaultEntitySeperationGhostIL.MarkLabel(afterCheckBodyLabel);
+            // Return from method and assign -1 to the insert count
+            iLGenerator.Emit(OpCodes.Ldc_I4_M1);
+            iLGenerator.Emit(OpCodes.Call, typeof(Task<int>).GetMethod("FromResult", BindingFlags.Public | BindingFlags.Static));
+            iLGenerator.Emit(OpCodes.Ret);
+
+            iLGenerator.MarkLabel(afterRootInsertNullCheck);
+
+            // Create command and assign sql command and connection
+            var sqlBuilder = new StringBuilder();
+
+            var skipPrimaryKey = ((IPrimaryEntityColumn)_rootEntity.GetPrimaryColumn()).IsServerSideGenerated;
+
+            sqlBuilder.Append("INSERT INTO ")
+                      .Append(_rootEntity.TableName)
+                      .Append(" (")
+                      .Append(skipPrimaryKey ? _rootEntity.NonPrimaryColumnListString : _rootEntity.ColumnListString)
+                      .Append(") VALUES (");
+
+            var colCount = _rootEntity.GetColumnCount();
+
+            for (int columnIndex = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0; columnIndex < colCount; columnIndex++)
+            {
+                var column = _rootEntity.GetColumn(columnIndex);
+
+                sqlBuilder.Append('@')
+                          .Append(column.ColumnName)
+                          .Append(", ");
+            }
+
+            sqlBuilder.Length -= 2;
+
+            sqlBuilder.Append(");");
+
+            iLGenerator.Emit(OpCodes.Ldstr, sqlBuilder.ToString());
+            iLGenerator.Emit(OpCodes.Ldarg_0);
+            iLGenerator.Emit(OpCodes.Newobj, commandType.GetConstructor(new[] { typeof(string), _connectionField.FieldType }));
+
+            // Assign parameters to command
+            for (int columnIndex = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0; columnIndex < colCount; columnIndex++)
+            {
+                var column = _rootEntity.GetColumn(columnIndex);
+
+                iLGenerator.Emit(OpCodes.Dup);
+                iLGenerator.Emit(OpCodes.Callvirt, commandType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                WriteNpgsqlParameterFromColumn(_rootEntityInsertField, column);
+                iLGenerator.Emit(OpCodes.Callvirt, typeof(NpgsqlParameterCollection).GetMethod("Add", new[] { typeof(NpgsqlParameter) }));
+                iLGenerator.Emit(OpCodes.Pop);
+            }
+
+            // Get the result of the command
+            iLGenerator.Emit(OpCodes.Ldarg_2);
+            iLGenerator.Emit(OpCodes.Callvirt, commandType.GetMethod("ExecuteNonQueryAsync", new[] { _cancellationTokenField.FieldType }));
+
+            // End of method    
+            iLGenerator.Emit(OpCodes.Ret);
+        }
+
+        private void WriteNpgsqlParameterFromColumn(object entityVariable, EntityColumn column, LocalBuilder? iteratorLocal = default)
+        {
+            var underlyingType = Nullable.GetUnderlyingType(column.PropertyInfo.PropertyType);
+
+            var lb = entityVariable as LocalBuilder;
+            var fb = lb is null ? entityVariable as FieldBuilder : default;
+
+            if (lb is null &&
+                fb is null)
+            {
+                throw new ArgumentException("The parameter has to be either of type 'FieldBuilder' or 'LocalBuilder'.", nameof(entityVariable));
+            }
+
+            var stringType = typeof(string);
+
+            if (underlyingType is { } &&
+                (underlyingType.IsEnum ||
+                 underlyingType == typeof(Guid) ||
+                 underlyingType == typeof(ulong)))
+            {
+                var dbNullType = typeof(DBNull);
+
+                var propertyLocal = _moveNextMethodIL.DeclareLocal(column.PropertyInfo.PropertyType);
+
+                var defaultRetrieverLabel = _moveNextMethodIL.DefineLabel();
+                var afterHasValueLabel = _moveNextMethodIL.DefineLabel();
+
+                // Check if property has value
+                if (fb is { })
+                {
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, fb);
+                }
+                else
+                {
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, lb);
                 }
 
-                // Instantiate entityListField
-                _entityListAssignmentsGhostIL.Emit(OpCodes.Ldarg_0);
-                _entityListAssignmentsGhostIL.Emit(OpCodes.Newobj, newEntityListField.FieldType.GetConstructor(Type.EmptyTypes));
-                _entityListAssignmentsGhostIL.Emit(OpCodes.Stfld, newEntityListField);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetGetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Stloc, propertyLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldloca, propertyLocal);
+                _moveNextMethodIL.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("HasValue").GetGetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Brtrue_S, defaultRetrieverLabel);
 
-                // Set the entity list to null
-                _setListsToNullGhostIL.Emit(OpCodes.Ldarg_0);
-                _setListsToNullGhostIL.Emit(OpCodes.Ldnull);
-                _setListsToNullGhostIL.Emit(OpCodes.Stfld, newEntityListField);
+                // Nullable retriever
+                _moveNextMethodIL.Emit(OpCodes.Ldstr, "@" + column.ColumnName);
+
+                if (iteratorLocal is { })
+                {
+                    _moveNextMethodIL.Emit(OpCodes.Ldloca, iteratorLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Call, iteratorLocal.LocalType.GetMethod("ToString", Type.EmptyTypes));
+                    _moveNextMethodIL.Emit(OpCodes.Call, stringType.GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new[] { stringType, stringType }, null));
+                }
+
+                _moveNextMethodIL.Emit(OpCodes.Ldsfld, dbNullType.GetField("Value"));
+                _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(dbNullType).GetConstructor(new[] { stringType, dbNullType }));
+                _moveNextMethodIL.Emit(OpCodes.Br, afterHasValueLabel);
+
+                // Default retriever
+                _moveNextMethodIL.MarkLabel(defaultRetrieverLabel);
+
+                _moveNextMethodIL.Emit(OpCodes.Ldstr, "@" + column.ColumnName);
+
+                if (iteratorLocal is { })
+                {
+                    _moveNextMethodIL.Emit(OpCodes.Ldloca, iteratorLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Call, iteratorLocal.LocalType.GetMethod("ToString", Type.EmptyTypes));
+                    _moveNextMethodIL.Emit(OpCodes.Call, stringType.GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new[] { stringType, stringType }, null));
+                }
+
+                if (fb is { })
+                {
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, fb);
+                }
+                else
+                {
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, lb);
+                }
+
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetGetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Stloc, propertyLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldloca, propertyLocal);
+                _moveNextMethodIL.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("Value").GetGetMethod());
+
+                if (underlyingType == typeof(ulong))
+                {
+                    underlyingType = typeof(long);
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
+                    _moveNextMethodIL.Emit(OpCodes.Add);
+                }
+                else if (underlyingType.IsEnum)
+                {
+                    underlyingType = Enum.GetUnderlyingType(underlyingType);
+                }
+
+                _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underlyingType).GetConstructor(new[] { stringType, underlyingType }));
+
+                _moveNextMethodIL.MarkLabel(afterHasValueLabel);
+            }
+            else
+            {
+                _moveNextMethodIL.Emit(OpCodes.Ldstr, "@" + column.ColumnName);
+
+                if (iteratorLocal is { })
+                {
+                    _moveNextMethodIL.Emit(OpCodes.Ldloca, iteratorLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Call, iteratorLocal.LocalType.GetMethod("ToString", Type.EmptyTypes));
+                    _moveNextMethodIL.Emit(OpCodes.Call, stringType.GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new[] { stringType, stringType }, null));
+                }
+
+                if (fb is { })
+                {
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldfld, fb);
+                }
+                else
+                {
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, lb);
+                }
+
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetGetMethod());
+
+                Type npgsqlType;
+
+                if (column.PropertyInfo.PropertyType.IsEnum &&
+                    column is not IPostgreEnumEntityColumn)
+                {
+                    npgsqlType = Enum.GetUnderlyingType(column.PropertyInfo.PropertyType);
+                }
+                else if (column.PropertyInfo.PropertyType == typeof(ulong))
+                {
+                    npgsqlType = typeof(long);
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
+                    _moveNextMethodIL.Emit(OpCodes.Add);
+                }
+                else
+                {
+                    npgsqlType = column.PropertyInfo.PropertyType;
+                }
+
+                _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(npgsqlType).GetConstructor(new[] { stringType, npgsqlType }));
             }
         }
 
-        private bool HasOptionsFlag(InsertOptions flag)
+        private class EntitySeprator
         {
-            return (_insertOptions & flag) == flag;
+            private LocalBuilder _entityIdCheckerLocal;
+            private LocalBuilder _firstTimeLocal;
+
+            private readonly ILGenerator _ilGenerator;
+            private readonly TypeBuilder _typeBuilder;
+            private readonly Entity _rootEntity;
+            private readonly EntityRelationHolder[] _entities;
+            private readonly ObjectIDGenerator _reachableEntities;
+            private readonly HashSet<uint> _reachableRelations;
+
+            private readonly HashSet<long> _vistiedEntities;
+            private readonly HashSet<uint> _visitedRelations;
+            private readonly Dictionary<long, FieldBuilder> _entityCollections;
+
+            internal EntitySeprator(ILGenerator ilGenerator, TypeBuilder typeBuilder, Entity rootEntity, EntityRelationHolder[] entities, ObjectIDGenerator reachableEntities, HashSet<uint> reachableRelations)
+            {
+                _ilGenerator = ilGenerator;
+                _typeBuilder = typeBuilder;
+                _rootEntity = rootEntity;
+                _entities = entities;
+                _reachableEntities = reachableEntities;
+                _reachableRelations = reachableRelations;
+
+                _vistiedEntities = new HashSet<long>();
+                _visitedRelations = new HashSet<uint>();
+                _entityCollections = new Dictionary<long, FieldBuilder>();
+            }
+
+            internal Dictionary<long, FieldBuilder> WriteEntitySeperater(FieldBuilder entityInsertField)
+            {
+                if (_rootEntity.Relations is null)
+                    return _entityCollections;
+
+                WriteEntitySetup();
+
+                var startLoopBodyLabel = _ilGenerator.DefineLabel();
+                var loopConditionLabel = _ilGenerator.DefineLabel();
+
+                var iteratorLocal = _ilGenerator.DeclareLocal(typeof(int));
+                var iteratorElementLocal = _ilGenerator.DeclareLocal(_rootEntity.EntityType);
+
+                // Assign 0 to the iterator
+                _ilGenerator.Emit(OpCodes.Ldc_I4_0);
+                _ilGenerator.Emit(OpCodes.Stloc, iteratorLocal);
+                _ilGenerator.Emit(OpCodes.Br, loopConditionLabel);
+
+                // loop body
+                _ilGenerator.MarkLabel(startLoopBodyLabel);
+
+                // iterator 
+                _ilGenerator.Emit(OpCodes.Ldarg_0);
+                _ilGenerator.Emit(OpCodes.Ldfld, entityInsertField);
+                _ilGenerator.Emit(OpCodes.Ldloc, iteratorLocal);
+                _ilGenerator.Emit(OpCodes.Callvirt, entityInsertField.FieldType.GetMethod("get_Item"));
+                _ilGenerator.Emit(OpCodes.Stloc, iteratorElementLocal);
+
+                WriteEntitySeperaterBase(_rootEntity, iteratorElementLocal);
+
+                // loop iterator increment
+                _ilGenerator.Emit(OpCodes.Ldloc, iteratorLocal);
+                _ilGenerator.Emit(OpCodes.Ldc_I4_1);
+                _ilGenerator.Emit(OpCodes.Add);
+                _ilGenerator.Emit(OpCodes.Stloc, iteratorLocal);
+
+                // loop condition
+                _ilGenerator.MarkLabel(loopConditionLabel);
+                _ilGenerator.Emit(OpCodes.Ldloc, iteratorLocal);
+                _ilGenerator.Emit(OpCodes.Ldarg_0);
+                _ilGenerator.Emit(OpCodes.Ldfld, entityInsertField);
+                _ilGenerator.Emit(OpCodes.Callvirt, entityInsertField.FieldType.GetProperty("Count").GetGetMethod());
+                _ilGenerator.Emit(OpCodes.Blt, startLoopBodyLabel);
+
+                return _entityCollections;
+            }
+
+            internal Dictionary<long, FieldBuilder> WriteFlatEntitySeperater(FieldBuilder entityInsertField)
+            {
+                if (_rootEntity.Relations is null)
+                    return _entityCollections;
+
+                WriteEntitySetup();
+
+                var entityInsertLocal = _ilGenerator.DeclareLocal(entityInsertField.FieldType);
+
+                _ilGenerator.Emit(OpCodes.Ldarg_0);
+                _ilGenerator.Emit(OpCodes.Ldfld, entityInsertField);
+                _ilGenerator.Emit(OpCodes.Stloc, entityInsertLocal);
+
+                WriteEntitySeperaterBase(_rootEntity, entityInsertLocal);
+
+                return _entityCollections;
+            }
+
+            private void WriteEntitySetup()
+            {
+                // instantiate entityCheckerLocal
+                _entityIdCheckerLocal = _ilGenerator.DeclareLocal(typeof(ObjectIDGenerator));
+
+                _ilGenerator.Emit(OpCodes.Newobj, _entityIdCheckerLocal.LocalType.GetConstructor(Type.EmptyTypes));
+                _ilGenerator.Emit(OpCodes.Stloc, _entityIdCheckerLocal);
+
+                // instantiate entityCollections
+                for (int entityIndex = 0; entityIndex < _entities.Length; entityIndex++)
+                {
+                    var entity = _entities[entityIndex].Entity;
+
+                    if (entity == _rootEntity)
+                        continue;
+
+                    var entityId = _reachableEntities.HasId(entity, out _);
+
+                    var entityCollectionField = _typeBuilder.DefineField("_" + entity.EntityName + "Collection", typeof(List<>).MakeGenericType(entity.EntityType), FieldAttributes.Private);
+
+                    _entityCollections.Add(entityId, entityCollectionField);
+
+                    _ilGenerator.Emit(OpCodes.Ldarg_0);
+                    _ilGenerator.Emit(OpCodes.Newobj, entityCollectionField.FieldType.GetConstructor(Type.EmptyTypes));
+                    _ilGenerator.Emit(OpCodes.Stfld, entityCollectionField);
+                }
+
+                _firstTimeLocal = _ilGenerator.DeclareLocal(typeof(bool));
+            }
+
+            private void WriteEntitySeperaterBase(Entity entity, LocalBuilder leftEntityLocal)
+            {
+                var entityId = _reachableEntities.HasId(entity, out _);
+
+                _vistiedEntities.Add(entityId);
+
+                // Check if element is not null
+                var afterSplitLabel = _ilGenerator.DefineLabel();
+
+                _ilGenerator.Emit(OpCodes.Ldloc, leftEntityLocal);
+                _ilGenerator.Emit(OpCodes.Brfalse, afterSplitLabel);
+
+                // Check if element has been visited before
+                _ilGenerator.Emit(OpCodes.Ldloc, _entityIdCheckerLocal);
+                _ilGenerator.Emit(OpCodes.Ldloc, leftEntityLocal);
+                _ilGenerator.Emit(OpCodes.Ldloca, _firstTimeLocal);
+                _ilGenerator.Emit(OpCodes.Callvirt, _entityIdCheckerLocal.LocalType.GetMethod("GetId"));
+                _ilGenerator.Emit(OpCodes.Pop);
+
+                _ilGenerator.Emit(OpCodes.Ldloc, _firstTimeLocal);
+                _ilGenerator.Emit(OpCodes.Brfalse, afterSplitLabel);
+
+                // Add self to collection
+                if (entity != _rootEntity)
+                {
+                    var entityCollectionField = _entityCollections[entityId];
+
+                    _ilGenerator.Emit(OpCodes.Ldarg_0);
+                    _ilGenerator.Emit(OpCodes.Ldfld, entityCollectionField);
+                    _ilGenerator.Emit(OpCodes.Ldloc, leftEntityLocal);
+                    _ilGenerator.Emit(OpCodes.Callvirt, entityCollectionField.FieldType.GetMethod("Add"));
+                }
+
+                for (int relationIndex = 0; relationIndex < entity.Relations.Count; relationIndex++)
+                {
+                    var relation = entity.Relations[relationIndex];
+
+                    if (relation.LeftNavigationProperty is null)
+                        continue;
+
+                    entityId = _reachableEntities.HasId(relation.RightEntity, out var isNotReachable);
+
+                    if (isNotReachable ||
+                        _visitedRelations.Contains(relation.RelationId) ||
+                        _vistiedEntities.Contains(entityId) ||
+                        !_reachableRelations.Contains(relation.RelationId))
+                        continue;
+
+                    _visitedRelations.Add(relation.RelationId);
+
+                    // add foreign key to collection
+
+                    if (relation.RelationType == RelationType.ManyToOne ||
+                        relation.RelationType == RelationType.OneToOne)
+                    {
+                        var rightEntityLocal = _ilGenerator.DeclareLocal(relation.RightEntity.EntityType);
+
+                        _ilGenerator.Emit(OpCodes.Ldloc, leftEntityLocal);
+                        _ilGenerator.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                        _ilGenerator.Emit(OpCodes.Stloc, rightEntityLocal);
+
+                        WriteEntitySeperaterBase(relation.RightEntity, rightEntityLocal);
+                    }
+                    else
+                    {
+                        var startLoopBodyLabel = _ilGenerator.DefineLabel();
+                        var loopConditionLabel = _ilGenerator.DefineLabel();
+                        var afterNullCheckLabel = _ilGenerator.DefineLabel();
+
+                        var iteratorLocal = _ilGenerator.DeclareLocal(typeof(int));
+                        var rightEntityLocal = _ilGenerator.DeclareLocal(relation.RightEntity.EntityType);
+
+                        // Check for entity null
+                        _ilGenerator.Emit(OpCodes.Ldloc, leftEntityLocal);
+                        _ilGenerator.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                        _ilGenerator.Emit(OpCodes.Brfalse, afterNullCheckLabel);
+
+                        // Assign 0 to the iterator
+                        _ilGenerator.Emit(OpCodes.Ldc_I4_0);
+                        _ilGenerator.Emit(OpCodes.Stloc, iteratorLocal);
+                        _ilGenerator.Emit(OpCodes.Br, loopConditionLabel);
+
+                        // loop body
+                        _ilGenerator.MarkLabel(startLoopBodyLabel);
+
+                        // iterator 
+                        _ilGenerator.Emit(OpCodes.Ldloc, leftEntityLocal);
+                        _ilGenerator.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                        _ilGenerator.Emit(OpCodes.Ldloc, iteratorLocal);
+                        _ilGenerator.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetMethod("get_Item"));
+                        _ilGenerator.Emit(OpCodes.Stloc, rightEntityLocal);
+
+                        WriteEntitySeperaterBase(relation.RightEntity, rightEntityLocal);
+
+                        // loop iterator increment
+                        _ilGenerator.Emit(OpCodes.Ldloc, iteratorLocal);
+                        _ilGenerator.Emit(OpCodes.Ldc_I4_1);
+                        _ilGenerator.Emit(OpCodes.Add);
+                        _ilGenerator.Emit(OpCodes.Stloc, iteratorLocal);
+
+                        // loop condition
+                        _ilGenerator.MarkLabel(loopConditionLabel);
+                        _ilGenerator.Emit(OpCodes.Ldloc, iteratorLocal);
+                        _ilGenerator.Emit(OpCodes.Ldloc, leftEntityLocal);
+                        _ilGenerator.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                        _ilGenerator.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetProperty("Count").GetGetMethod());
+                        _ilGenerator.Emit(OpCodes.Blt, startLoopBodyLabel);
+
+                        _ilGenerator.MarkLabel(afterNullCheckLabel);
+                    }
+                }
+
+                _ilGenerator.MarkLabel(afterSplitLabel);
+
+            }
         }
     }
 }

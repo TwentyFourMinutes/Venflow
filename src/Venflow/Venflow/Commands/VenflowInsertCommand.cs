@@ -24,18 +24,18 @@ namespace Venflow.Commands
         {
             await ValidateConnectionAsync();
 
-            Func<NpgsqlConnection, List<TEntity>, Task<int>> inserter;
+            Func<NpgsqlConnection, TEntity, CancellationToken, Task<int>> inserter;
 
             if (SingleInserter is { })
             {
-                inserter = (Func<NpgsqlConnection, List<TEntity>, Task<int>>)SingleInserter;
+                inserter = (Func<NpgsqlConnection, TEntity, CancellationToken, Task<int>>)SingleInserter;
             }
             else
             {
-                SingleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter(_insertOptions);
+                SingleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<TEntity>(_insertOptions);
             }
 
-            var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, new List<TEntity> { entity });
+            var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entity, cancellationToken);
 
             if (DisposeCommand)
                 await this.DisposeAsync();
@@ -47,18 +47,18 @@ namespace Venflow.Commands
         {
             await ValidateConnectionAsync();
 
-            Func<NpgsqlConnection, List<TEntity>, Task<int>> inserter;
+            Func<NpgsqlConnection, List<TEntity>, CancellationToken, Task<int>> inserter;
 
             if (BatchInserter is { })
             {
-                inserter = (Func<NpgsqlConnection, List<TEntity>, Task<int>>)BatchInserter;
+                inserter = (Func<NpgsqlConnection, List<TEntity>, CancellationToken, Task<int>>)BatchInserter;
             }
             else
             {
-                BatchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter(_insertOptions);
+                BatchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<List<TEntity>>(_insertOptions);
             }
 
-            var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entities);
+            var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entities, cancellationToken);
 
             if (DisposeCommand)
                 await this.DisposeAsync();
