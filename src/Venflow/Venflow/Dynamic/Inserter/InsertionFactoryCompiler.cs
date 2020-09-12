@@ -2341,8 +2341,8 @@ namespace Venflow.Dynamic.Inserter
 
             if (underlyingType is { } &&
                 (underlyingType.IsEnum ||
-                 underlyingType == typeof(Guid) ||
-                 underlyingType == typeof(ulong)))
+                underlyingType == typeof(Guid) ||
+                underlyingType == typeof(ulong)))
             {
                 var dbNullType = typeof(DBNull);
 
@@ -2416,7 +2416,8 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
                     _moveNextMethodIL.Emit(OpCodes.Add);
                 }
-                else if (underlyingType.IsEnum)
+                else if (underlyingType.IsEnum &&
+                    column is not IPostgreEnumEntityColumn)
                 {
                     underlyingType = Enum.GetUnderlyingType(underlyingType);
                 }

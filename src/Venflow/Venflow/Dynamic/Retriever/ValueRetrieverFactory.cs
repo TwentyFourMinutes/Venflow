@@ -14,7 +14,7 @@ namespace Venflow.Dynamic.Retriever
             _entityType = entityType;
         }
 
-        internal Func<TEntity, string, NpgsqlParameter> GenerateRetriever(PropertyInfo property)
+        internal Func<TEntity, string, NpgsqlParameter> GenerateRetriever(PropertyInfo property, bool isPostgreEnum)
         {
             var npgsqlParameterType = typeof(NpgsqlParameter);
             var stringType = typeof(string);
@@ -25,19 +25,21 @@ namespace Venflow.Dynamic.Retriever
             var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
 
             if (underlyingType is { } &&
-                underlyingType.IsEnum)
+                underlyingType.IsEnum &&
+                !isPostgreEnum)
             {
                 WriteNullableRetriever(retrieverMethodIL, property, Enum.GetUnderlyingType(underlyingType));
             }
             else if (underlyingType is { } &&
-                     (underlyingType == typeof(Guid) ||
+                     (isPostgreEnum ||
+                     underlyingType == typeof(Guid) ||
                      underlyingType == typeof(ulong)))
             {
                 WriteNullableRetriever(retrieverMethodIL, property, underlyingType);
             }
             else
             {
-                WriteDefaultRetriever(retrieverMethodIL, property);
+                WriteDefaultRetriever(retrieverMethodIL, property, property.PropertyType.IsEnum && !isPostgreEnum ? Enum.GetUnderlyingType(property.PropertyType) : property.PropertyType);
             }
 
 #if NETCOREAPP5_0
@@ -47,7 +49,7 @@ namespace Venflow.Dynamic.Retriever
 #endif
         }
 
-        private void WriteDefaultRetriever(ILGenerator il, PropertyInfo property)
+        private void WriteDefaultRetriever(ILGenerator il, PropertyInfo property, Type underylingType)
         {
             var stringType = typeof(string);
 
@@ -59,15 +61,15 @@ namespace Venflow.Dynamic.Retriever
 
             var npgsqlType = property.PropertyType.IsEnum ? Enum.GetUnderlyingType(property.PropertyType) : property.PropertyType;
 
-            if (npgsqlType == typeof(ulong))
+            if (underylingType == typeof(ulong))
             {
-                npgsqlType = typeof(long);
+                underylingType = typeof(long);
 
                 il.Emit(OpCodes.Ldc_I8, long.MinValue);
                 il.Emit(OpCodes.Add);
             }
 
-            il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(npgsqlType).GetConstructor(new[] { stringType, npgsqlType }));
+            il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underylingType).GetConstructor(new[] { stringType, underylingType }));
             il.Emit(OpCodes.Ret);
         }
 

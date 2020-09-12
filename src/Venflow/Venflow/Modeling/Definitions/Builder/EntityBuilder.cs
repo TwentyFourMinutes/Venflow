@@ -260,9 +260,6 @@ namespace Venflow.Modeling.Definitions.Builder
 
                 bool isPropertyTypeNullableReferenceType = property.IsNullableReferenceType(EntityInNullableContext, DefaultPropNullability);
 
-                // ParameterValueRetriever
-                var parameterValueRetriever = _valueRetrieverFactory.GenerateRetriever(property);
-
                 // Handle custom columns
 
                 ColumnDefinition<TEntity>? definition = default;
@@ -278,7 +275,7 @@ namespace Venflow.Modeling.Definitions.Builder
                                 throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
                             }
 
-                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, parameterValueRetriever, primaryDefintion.IsServerSideGenerated);
+                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, false), primaryDefintion.IsServerSideGenerated);
 
                             columns.Insert(0, primaryColumn);
 
@@ -297,7 +294,7 @@ namespace Venflow.Modeling.Definitions.Builder
                             break;
                         case PostgreEnumColumnDefenition<TEntity> enumDefinition:
 
-                            var enumColumn = new PostgreEnumEntityColumn<TEntity>(property, definition.Name, parameterValueRetriever);
+                            var enumColumn = new PostgreEnumEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, true));
 
                             columns.Add(enumColumn);
 
@@ -323,7 +320,7 @@ namespace Venflow.Modeling.Definitions.Builder
                         throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
                     }
 
-                    primaryColumn = new PrimaryEntityColumn<TEntity>(property, annotedPrimaryKey.Name, parameterValueRetriever, true);
+                    primaryColumn = new PrimaryEntityColumn<TEntity>(property, annotedPrimaryKey.Name, _valueRetrieverFactory.GenerateRetriever(property, false), true);
 
                     columns.Insert(0, primaryColumn);
 
@@ -363,7 +360,7 @@ namespace Venflow.Modeling.Definitions.Builder
                         columnName = property.Name;
                     }
 
-                    var column = new EntityColumn<TEntity>(property, columnName, parameterValueRetriever, isPropertyTypeNullableReferenceType);
+                    var column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(property, false), isPropertyTypeNullableReferenceType);
 
                     columns.Add(column);
 
