@@ -175,10 +175,13 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethodIL.BeginExceptionBlock();
 
             // if state zero goto await unsafe
-            var awaitUnsafeEndLabel = _moveNextMethodIL.DefineLabel();
-
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, _stateLocal);
-            _moveNextMethodIL.Emit(OpCodes.Brfalse, awaitUnsafeEndLabel);
+
+            var switchBuilder = new ILSwitchBuilder(_moveNextMethodIL, 1);
+
+            var asyncGenerator = new ILAsyncGenerator(_moveNextMethodIL, switchBuilder, _methodBuilderField, _stateField, _stateLocal, endOfMethodLabel, _stateMachineTypeBuilder);
+
+            _moveNextMethodIL.Emit(OpCodes.Brfalse, switchBuilder.GetLabels()[0]);
 
             // if no rows return    
             var afterNoRowsIfBody = _moveNextMethodIL.DefineLabel();
@@ -195,7 +198,14 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethodIL.MarkLabel(afterNoRowsIfBody);
 
             // Call ReadAsync(cancellationToken) on dataReader
-            ExecuteAsyncMethod(_dataReaderField, _dataReaderField.FieldType.GetMethod("ReadAsync", new[] { _cancellationTokenField.FieldType }), _boolTaskAwaiterField, _boolTaskAwaiterLocal, awaitUnsafeEndLabel, endOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _dataReaderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _dataReaderField.FieldType.GetMethod("ReadAsync", new[] { _cancellationTokenField.FieldType }));
+
+            asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<bool>), _boolTaskAwaiterLocal, _boolTaskAwaiterField);
+
             var endOfNoRowIfBody = _moveNextMethodIL.DefineLabel();
             _moveNextMethodIL.Emit(OpCodes.Brtrue, endOfNoRowIfBody);
 
@@ -269,10 +279,14 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethodIL.BeginExceptionBlock();
 
             // if state zero goto await unsafe
-            var awaitUnsafeEndLabel = _moveNextMethodIL.DefineLabel();
 
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, _stateLocal);
-            _moveNextMethodIL.Emit(OpCodes.Brfalse, awaitUnsafeEndLabel);
+
+            var switchBuilder = new ILSwitchBuilder(_moveNextMethodIL, 1);
+
+            var asyncGenerator = new ILAsyncGenerator(_moveNextMethodIL, switchBuilder, _methodBuilderField, _stateField, _stateLocal, endOfMethodLabel, _stateMachineTypeBuilder);
+
+            _moveNextMethodIL.Emit(OpCodes.Brfalse, switchBuilder.GetLabels()[0]);
 
             // if no rows return    
             var afterNoRowsIfBody = _moveNextMethodIL.DefineLabel();
@@ -671,7 +685,14 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethodIL.MarkLabel(loopConditionLabel);
 
             // Call ReadAsync(cancellationToken) on dataReader
-            ExecuteAsyncMethod(_dataReaderField, _dataReaderField.FieldType.GetMethod("ReadAsync", new[] { _cancellationTokenField.FieldType }), _boolTaskAwaiterField, _boolTaskAwaiterLocal, awaitUnsafeEndLabel, endOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _dataReaderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _dataReaderField.FieldType.GetMethod("ReadAsync", new[] { _cancellationTokenField.FieldType }));
+
+            asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<bool>), _boolTaskAwaiterLocal, _boolTaskAwaiterField);
+
             _moveNextMethodIL.Emit(OpCodes.Brtrue, loopBodyLabel);
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -740,7 +761,12 @@ namespace Venflow.Dynamic.Materializer
             var awaitUnsafeEndLabel = _moveNextMethodIL.DefineLabel();
 
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, _stateLocal);
-            _moveNextMethodIL.Emit(OpCodes.Brfalse, awaitUnsafeEndLabel);
+
+            var switchBuilder = new ILSwitchBuilder(_moveNextMethodIL, 1);
+
+            var asyncGenerator = new ILAsyncGenerator(_moveNextMethodIL, switchBuilder, _methodBuilderField, _stateField, _stateLocal, endOfMethodLabel, _stateMachineTypeBuilder);
+
+            _moveNextMethodIL.Emit(OpCodes.Brfalse, switchBuilder.GetLabels()[0]);
 
             // Create result field instance
 
@@ -781,7 +807,14 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethodIL.MarkLabel(loopConditionLabel);
 
             // Call ReadAsync(cancellationToken) on dataReader
-            ExecuteAsyncMethod(_dataReaderField, _dataReaderField.FieldType.GetMethod("ReadAsync", new[] { _cancellationTokenField.FieldType }), _boolTaskAwaiterField, _boolTaskAwaiterLocal, awaitUnsafeEndLabel, endOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _dataReaderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _dataReaderField.FieldType.GetMethod("ReadAsync", new[] { _cancellationTokenField.FieldType }));
+
+            asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<bool>), _boolTaskAwaiterLocal, _boolTaskAwaiterField);
+
             _moveNextMethodIL.Emit(OpCodes.Brtrue, loopBodyLabel);
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -852,7 +885,12 @@ namespace Venflow.Dynamic.Materializer
             var awaitUnsafeEndLabel = _moveNextMethodIL.DefineLabel();
 
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, _stateLocal);
-            _moveNextMethodIL.Emit(OpCodes.Brfalse, awaitUnsafeEndLabel);
+
+            var switchBuilder = new ILSwitchBuilder(_moveNextMethodIL, 1);
+
+            var asyncGenerator = new ILAsyncGenerator(_moveNextMethodIL, switchBuilder, _methodBuilderField, _stateField, _stateLocal, endOfMethodLabel, _stateMachineTypeBuilder);
+
+            _moveNextMethodIL.Emit(OpCodes.Brfalse, switchBuilder.GetLabels()[0]);
 
             // Create result field instance
 
@@ -1154,7 +1192,14 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethodIL.MarkLabel(loopConditionLabel);
 
             // Call ReadAsync(cancellationToken) on dataReader
-            ExecuteAsyncMethod(_dataReaderField, _dataReaderField.FieldType.GetMethod("ReadAsync", new[] { _cancellationTokenField.FieldType }), _boolTaskAwaiterField, _boolTaskAwaiterLocal, awaitUnsafeEndLabel, endOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _dataReaderField);
+            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+            _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _dataReaderField.FieldType.GetMethod("ReadAsync", new[] { _cancellationTokenField.FieldType }));
+
+            asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<bool>), _boolTaskAwaiterLocal, _boolTaskAwaiterField);
+
             _moveNextMethodIL.Emit(OpCodes.Brtrue, loopBodyLabel);
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -1262,65 +1307,6 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldc_I4_1);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, changeTrackerLocal.LocalType.GetProperty("TrackChanges", BindingFlags.NonPublic | BindingFlags.Instance).GetSetMethod(true));
             }
-        }
-
-        private void ExecuteAsyncMethod(FieldBuilder instanceField, MethodInfo asyncMethod, FieldBuilder taskAwaiterField, LocalBuilder taskAwaiterLocal, Label awaitUnsafeEndLabel, Label endOfMethodLabel)
-        {
-            var resultLabel = _moveNextMethodIL.DefineLabel();
-
-            // Execute async method and get awaiter
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldfld, instanceField);
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
-            _moveNextMethodIL.Emit(OpCodes.Callvirt, asyncMethod);
-            _moveNextMethodIL.Emit(OpCodes.Callvirt, asyncMethod.ReturnType.GetMethod("GetAwaiter"));
-            _moveNextMethodIL.Emit(OpCodes.Stloc_S, taskAwaiterLocal);
-
-            // Check if the method completed sync
-            _moveNextMethodIL.Emit(OpCodes.Ldloca_S, taskAwaiterLocal);
-            _moveNextMethodIL.Emit(OpCodes.Callvirt, taskAwaiterLocal.LocalType.GetProperty("IsCompleted").GetGetMethod());
-            _moveNextMethodIL.Emit(OpCodes.Brtrue, resultLabel);
-
-            // Assign 0 to the state local and field
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
-            _moveNextMethodIL.Emit(OpCodes.Dup);
-            _moveNextMethodIL.Emit(OpCodes.Stloc_S, _stateLocal);
-            _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
-
-            // Assign the task awaiter local to the field
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, taskAwaiterLocal);
-            _moveNextMethodIL.Emit(OpCodes.Stfld, taskAwaiterField);
-
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
-            _moveNextMethodIL.Emit(OpCodes.Ldloca_S, taskAwaiterLocal);
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("AwaitUnsafeOnCompleted").MakeGenericMethod(taskAwaiterLocal.LocalType, _stateMachineTypeBuilder));
-
-            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
-
-            // If TaskAwaiter is complete create task awaiter and change state
-            _moveNextMethodIL.MarkLabel(awaitUnsafeEndLabel);
-
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldfld, taskAwaiterField);
-            _moveNextMethodIL.Emit(OpCodes.Stloc_S, taskAwaiterLocal);
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldflda, taskAwaiterField);
-            _moveNextMethodIL.Emit(OpCodes.Initobj, taskAwaiterField.FieldType);
-            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_M1);
-            _moveNextMethodIL.Emit(OpCodes.Dup);
-            _moveNextMethodIL.Emit(OpCodes.Stloc_S, _stateLocal);
-            _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
-
-            // Call GetResult
-            _moveNextMethodIL.MarkLabel(resultLabel);
-            _moveNextMethodIL.Emit(OpCodes.Ldloca_S, taskAwaiterLocal);
-            _moveNextMethodIL.Emit(OpCodes.Call, taskAwaiterLocal.LocalType.GetMethod("GetResult"));
         }
 
         private void WriteInEqualityComparer(Type type, Label branchTo)
