@@ -3,6 +3,7 @@ using System.Reflection.Emit;
 
 namespace Venflow.Dynamic.IL
 {
+    // TODO: Add ConfigureAwait(false) to all calls
     internal class ILAsyncGenerator
     {
         private int _awaiterIndex = -1;

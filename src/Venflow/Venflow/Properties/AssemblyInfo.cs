@@ -1,4 +1,5 @@
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
+using Fody;
 
 [assembly: InternalsVisibleTo("Venflow.Dynamic, PublicKey=" +
 "002400000480000094000000060200000024000052534131000400000100010099f3f8321d5f56" +
@@ -18,3 +19,5 @@ using System.Runtime.CompilerServices;
 "e15d8fb26de92c2eddf9f38d1d2749ee9a7ab31006caae731ff601d950b7cf87750fea04ddf857" +
 "d6187ea2060944d04cfd37e3bf82ec1bd94e7b912733bbb403cdc348a15b4ab9f29bf999f13f9d" +
 "08a576b3")]
+
+[assembly: ConfigureAwait(false)]
