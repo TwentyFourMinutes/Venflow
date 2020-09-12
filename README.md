@@ -117,9 +117,7 @@ const string sql = @"SELECT * FROM ""Blogs"" JOIN ""Posts"" ON ""Posts"".""BlogI
 // You can re-use this in different BlogDatabase instances through the database.Blogs.QueryAsync() method
 // If you intend to reuse the query below you need to pass the QueryBatch method false for the disposeCommand,
 // otherwise the underyling command will be disposed after the first use.
-var query = database.Blogs.QueryBatch(sql).JoinWith(x => x.Posts).Build(); 
-
-var blogs = await query.QueryAsync(); // You can also inline this with the line above.
+var blogs = database.Blogs.QueryBatch(sql).JoinWith(x => x.Posts).QueryAsync();
 ```
 
 Subsequent joins can be configured with the `ThenWith` method. Do note, that one handy feature of Venflow is string interpolated SQL. This means that most of the methods which accept SQL also have a sibling named `*Interpolated*` which will automatically extract the used variables and use a parameterized query instead.
