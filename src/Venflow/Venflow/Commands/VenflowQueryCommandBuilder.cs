@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Npgsql;
 using Venflow.Enums;
 using Venflow.Modeling;
@@ -14,8 +17,8 @@ namespace Venflow.Commands
 
         private bool _trackChanges;
         private QueryGenerationOptions _queryGenerationOptions;
+        private bool _disposeCommand;
 
-        private readonly bool _disposeCommand;
         private readonly bool _singleResult;
         private readonly ulong _count;
         private readonly StringBuilder _commandString;
@@ -235,6 +238,26 @@ namespace Venflow.Commands
                 sb.Append(" LIMIT ");
                 sb.Append(count);
             }
+        }
+
+#if !NET48
+        [return: MaybeNull]
+#endif
+        Task<TReturn> IQueryCommandBuilder<TEntity, TReturn>.QueryAsync(CancellationToken cancellationToken)
+        {
+            _disposeCommand = true;
+
+            return Build().QueryAsync(cancellationToken);
+        }
+
+#if !NET48
+        [return: MaybeNull]
+#endif
+        Task<TReturn> IPreCommandBuilder<TEntity, TReturn>.QueryAsync(CancellationToken cancellationToken)
+        {
+            _disposeCommand = true;
+
+            return Build().QueryAsync(cancellationToken);
         }
     }
 }

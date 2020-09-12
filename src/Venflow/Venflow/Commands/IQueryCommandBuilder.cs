@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using Venflow.Enums;
 
 namespace Venflow.Commands
@@ -43,5 +46,15 @@ namespace Venflow.Commands
         /// <param name="joinBehaviour">Configures the type of this join.</param>
         /// <returns>An object that can be used to further configure the operation.</returns>
         JoinBuilder<TEntity, TToEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class, new();
+
+        /// <summary>
+        /// Asynchronously performs queries and materializes the result.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+        /// <returns>A task representing the asynchronous operation, with the materialized result of the query; <see langword="null"/> otherwise.</returns>
+#if !NET48
+        [return: MaybeNull]
+#endif
+        Task<TReturn> QueryAsync(CancellationToken cancellationToken = default);
     }
 }
