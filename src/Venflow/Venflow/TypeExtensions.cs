@@ -5,7 +5,7 @@ namespace Venflow
 {
     internal static class TypeExtensions
     {
-        internal static PropertyInfo FindProperty(this Type type, string propertyName, Type genericInterfaceType)
+        internal static PropertyInfo? FindProperty(this Type type, string propertyName, Type genericInterfaceType)
         {
             if (type.IsInterface)
             {
