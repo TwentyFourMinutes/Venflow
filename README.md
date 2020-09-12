@@ -131,10 +131,16 @@ Subsequent joins can be configured with the `ThenWith` method. Do note, that one
 
 ### Acknowledgements
 
-I also want to mention all the other great ORM's out there, build by awesome people, which helped with building Venflow in one way or another.
+I also want to mention all the other great packages out there, build by awesome people, which helped with building Venflow in one way or another such as being open-source.
 
-- [EF-Core](https://github.com/dotnet/efcore) by [Microsoft and the .Net team](https://github.com/dotnet)
-- [RepoDb](https://github.com/mikependon/RepoDb) by [mikependon](https://github.com/mikependon)
+- [Npgsql](https://github.com/npgsql/npgsql) by [the Npgsql core contributers](https://github.com/npgsql/) for providing an awesome and fast PostgreSQL data provider.
+- [EF-Core](https://github.com/dotnet/efcore) by [Microsoft and the .Net team](https://github.com/dotnet) for providing the inspiration for such an awesome surface API.
+- [RepoDb](https://github.com/mikependon/RepoDb) by [mikependon](https://github.com/mikependon) for providing the idea of generating runtime IL/Expressions to boost performance.
+- [Fody](https://github.com/Fody/Fody) by [the Fody core contributers](https://github.com/Fody) for providing an easy way to IL weave Venflow.
+- [GitHub](https://github.com/) for hosting the documentation with [GitHub Pages](https://pages.github.com/) and the repository itself.
+- [DocFX](https://github.com/dotnet/docfx) by [Microsoft and the .Net team](https://github.com/dotnet) for providing a great any easy static markdown and documentation html generator.
+- [Typora](https://typora.io/) for being a fully extensive and great markdown editor.
+- [GitKraken](https://www.gitkraken.com/) for providing a full fledged git UI with a bunch of great features.
 
 ## Notes
 
