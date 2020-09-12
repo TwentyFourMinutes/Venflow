@@ -38,6 +38,7 @@ namespace Venflow.Dynamic.Inserter
         private HashSet<uint> _reachableRelations;
 
         private readonly Type _intType = typeof(int);
+        private readonly Type _genericICollectionType = typeof(ICollection<>);
 
         private readonly Entity _rootEntity;
 
@@ -46,7 +47,7 @@ namespace Venflow.Dynamic.Inserter
             _rootEntity = rootEntity;
         }
 
-        internal Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>> CreateInserter<TInsert>(EntityRelationHolder[] entities, ObjectIDGenerator reachableEntities, HashSet<uint> reachableRelations) where TInsert : class, new()
+        internal Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>> CreateInserter<TInsert>(EntityRelationHolder[] entities, ObjectIDGenerator reachableEntities, HashSet<uint> reachableRelations) where TInsert : class
         {
             _reachableEntities = reachableEntities;
             _reachableRelations = reachableRelations;
@@ -198,7 +199,7 @@ namespace Venflow.Dynamic.Inserter
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
-            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.GetProperty("Count").GetGetMethod());
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.FindProperty("Count", _genericICollectionType).GetGetMethod());
             _moveNextMethodIL.Emit(OpCodes.Brtrue, afterInvalidRootReturnLabel);
 
             _moveNextMethodIL.MarkLabel(beforeInvalidRootReturnLabel);
@@ -248,7 +249,7 @@ namespace Venflow.Dynamic.Inserter
             // Assign the total amount of parameters to the total local
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
-            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.GetProperty("Count", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.FindProperty("Count", _genericICollectionType).GetGetMethod());
             _moveNextMethodIL.Emit(OpCodes.Stloc, totalLocal);
 
             // Assign 0 to the current local
@@ -516,7 +517,7 @@ namespace Venflow.Dynamic.Inserter
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, iteratorField);
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.GetProperty("Count").GetGetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.FindProperty("Count", _genericICollectionType).GetGetMethod());
                 _moveNextMethodIL.Emit(OpCodes.Blt, startLoopBodyLabel);
 
                 // dispose data reader
@@ -547,7 +548,7 @@ namespace Venflow.Dynamic.Inserter
             // return the amount of inserted rows
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
-            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.GetProperty("Count").GetGetMethod());
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.FindProperty("Count", _genericICollectionType).GetGetMethod());
             _moveNextMethodIL.Emit(OpCodes.Stloc, insertedCountLocal);
             _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
 
@@ -651,7 +652,8 @@ namespace Venflow.Dynamic.Inserter
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
-            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.GetProperty("Count").GetGetMethod());
+
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.FindProperty("Count", _genericICollectionType).GetGetMethod());
             _moveNextMethodIL.Emit(OpCodes.Brtrue, afterInvalidRootReturnLabel);
 
             _moveNextMethodIL.MarkLabel(beforeInvalidRootReturnLabel);
@@ -709,7 +711,7 @@ namespace Venflow.Dynamic.Inserter
 
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count").GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.FindProperty("Count", _genericICollectionType).GetGetMethod());
                     _moveNextMethodIL.Emit(OpCodes.Brfalse, endOfEntityInsertLabel.Value);
                 }
 
@@ -748,7 +750,7 @@ namespace Venflow.Dynamic.Inserter
                 // Assign the total amount of parameters to the total local
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.FindProperty("Count", _genericICollectionType).GetGetMethod());
                 _moveNextMethodIL.Emit(OpCodes.Stloc, totalLocal);
 
                 // Assign 0 to the current local
@@ -1082,7 +1084,7 @@ namespace Venflow.Dynamic.Inserter
                                 _moveNextMethodIL.Emit(OpCodes.Ldloc, innerIteratorLocal);
                                 _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
                                 _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetProperty("Count").GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.FindProperty("Count", _genericICollectionType).GetGetMethod());
                                 _moveNextMethodIL.Emit(OpCodes.Blt, innertStartLoopBodyLabel);
 
                                 _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
@@ -1149,7 +1151,7 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, iteratorField);
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count").GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.FindProperty("Count", _genericICollectionType).GetGetMethod());
                     _moveNextMethodIL.Emit(OpCodes.Blt, startLoopBodyLabel);
 
                     // dispose data reader
@@ -1193,13 +1195,13 @@ namespace Venflow.Dynamic.Inserter
             // return the amount of inserted rows
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
-            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.GetProperty("Count").GetGetMethod());
+            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntityInsertField.FieldType.FindProperty("Count", _genericICollectionType).GetGetMethod());
 
             foreach (var entityCollection in entityCollections.Values)
             {
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count").GetGetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.FindProperty("Count", _genericICollectionType).GetGetMethod());
                 _moveNextMethodIL.Emit(OpCodes.Add);
             }
 
@@ -1704,7 +1706,7 @@ namespace Venflow.Dynamic.Inserter
                                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                                 _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
                                 _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetProperty("Count").GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.FindProperty("Count", _genericICollectionType).GetGetMethod());
                                 _moveNextMethodIL.Emit(OpCodes.Blt, innertStartLoopBodyLabel);
 
                                 _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
@@ -1744,7 +1746,7 @@ namespace Venflow.Dynamic.Inserter
 
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count").GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.FindProperty("Count", _genericICollectionType).GetGetMethod());
                     _moveNextMethodIL.Emit(OpCodes.Brfalse, endOfEntityInsertLabel);
 
                     // Clear commandBuilder and command parameters
@@ -1769,7 +1771,7 @@ namespace Venflow.Dynamic.Inserter
                     // Assign the total amount of parameters to the total local
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.FindProperty("Count", _genericICollectionType).GetGetMethod());
                     _moveNextMethodIL.Emit(OpCodes.Stloc, totalLocal);
 
                     // Assign 0 to the current local
@@ -2103,7 +2105,7 @@ namespace Venflow.Dynamic.Inserter
                                     _moveNextMethodIL.Emit(OpCodes.Ldloc, innerIteratorLocal);
                                     _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
                                     _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetProperty("Count").GetGetMethod());
+                                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.FindProperty("Count", _genericICollectionType).GetGetMethod());
                                     _moveNextMethodIL.Emit(OpCodes.Blt, innertStartLoopBodyLabel);
 
                                     _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
@@ -2170,7 +2172,7 @@ namespace Venflow.Dynamic.Inserter
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, iteratorField);
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count").GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.FindProperty("Count", _genericICollectionType).GetGetMethod());
                         _moveNextMethodIL.Emit(OpCodes.Blt, startLoopBodyLabel);
 
                         // dispose data reader
@@ -2214,7 +2216,7 @@ namespace Venflow.Dynamic.Inserter
             {
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, entityCollection);
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.GetProperty("Count").GetGetMethod());
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, entityCollection.FieldType.FindProperty("Count", _genericICollectionType).GetGetMethod());
                 _moveNextMethodIL.Emit(OpCodes.Add);
             }
 
@@ -2540,7 +2542,7 @@ namespace Venflow.Dynamic.Inserter
                 _ilGenerator.Emit(OpCodes.Ldloc, iteratorLocal);
                 _ilGenerator.Emit(OpCodes.Ldarg_0);
                 _ilGenerator.Emit(OpCodes.Ldfld, entityInsertField);
-                _ilGenerator.Emit(OpCodes.Callvirt, entityInsertField.FieldType.GetProperty("Count").GetGetMethod());
+                _ilGenerator.Emit(OpCodes.Callvirt, entityInsertField.FieldType.FindProperty("Count", typeof(ICollection<>)).GetGetMethod());
                 _ilGenerator.Emit(OpCodes.Blt, startLoopBodyLabel);
 
                 return _entityCollections;
@@ -2699,7 +2701,7 @@ namespace Venflow.Dynamic.Inserter
                         _ilGenerator.Emit(OpCodes.Ldloc, iteratorLocal);
                         _ilGenerator.Emit(OpCodes.Ldloc, leftEntityLocal);
                         _ilGenerator.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                        _ilGenerator.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetProperty("Count").GetGetMethod());
+                        _ilGenerator.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.FindProperty("Count", typeof(ICollection<>)).GetGetMethod());
                         _ilGenerator.Emit(OpCodes.Blt, startLoopBodyLabel);
 
                         _ilGenerator.MarkLabel(afterNullCheckLabel);

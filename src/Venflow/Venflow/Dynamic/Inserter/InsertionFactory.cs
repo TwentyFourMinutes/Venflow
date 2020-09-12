@@ -23,7 +23,7 @@ namespace Venflow.Dynamic.Inserter
             _inserstionLock = new();
         }
 
-        internal Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>> GetOrCreateInserter<TInsert>(InsertOptions insertOptions) where TInsert : class, new()
+        internal Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>> GetOrCreateInserter<TInsert>(InsertOptions insertOptions) where TInsert : class
         {
             lock (_inserstionLock)
             {

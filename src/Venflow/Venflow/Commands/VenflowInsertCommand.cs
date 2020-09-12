@@ -43,19 +43,19 @@ namespace Venflow.Commands
             return affectedRows;
         }
 
-        async Task<int> IInsertCommand<TEntity>.InsertAsync(List<TEntity> entities, CancellationToken cancellationToken)
+        async Task<int> IInsertCommand<TEntity>.InsertAsync(IList<TEntity> entities, CancellationToken cancellationToken)
         {
             await ValidateConnectionAsync();
 
-            Func<NpgsqlConnection, List<TEntity>, CancellationToken, Task<int>> inserter;
+            Func<NpgsqlConnection, IList<TEntity>, CancellationToken, Task<int>> inserter;
 
             if (BatchInserter is { })
             {
-                inserter = (Func<NpgsqlConnection, List<TEntity>, CancellationToken, Task<int>>)BatchInserter;
+                inserter = (Func<NpgsqlConnection, IList<TEntity>, CancellationToken, Task<int>>)BatchInserter;
             }
             else
             {
-                BatchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<List<TEntity>>(_insertOptions);
+                BatchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<IList<TEntity>>(_insertOptions);
             }
 
             var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entities, cancellationToken);

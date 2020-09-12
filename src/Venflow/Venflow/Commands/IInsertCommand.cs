@@ -23,6 +23,6 @@ namespace Venflow.Commands
         /// <param name="entities">The entity instances which should be inserted.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows affected if known; 0 otherwise.</returns>
-        Task<int> InsertAsync(List<TEntity> entities, CancellationToken cancellationToken = default);
+        Task<int> InsertAsync(IList<TEntity> entities, CancellationToken cancellationToken = default);
     }
 }
