@@ -26,10 +26,12 @@ var query = database.Blogs.QueryBatch(10).Build();
 var blogs = await query.QueryAsync(); // You can also inline this with the line above.
 ```
 
-If you instead only wanted to query the first result, you can use the `QuerySingle` API.
+Additionally if you do not intend to reuse the the command instance you can omit the `Build` method call and directly call `QueryAsync`.
+
+Also, if you instead only wanted to query the first result, you can use the `QuerySingle` API.
 
 ```cs
-var blogs = await database.Blogs.QuerySingle().Build().QueryAsync();
+var blogs = await database.Blogs.QuerySingle().QueryAsync();
 ```
 
 ## Query data with relations
