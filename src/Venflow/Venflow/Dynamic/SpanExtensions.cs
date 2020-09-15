@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Npgsql.Schema;
 
-namespace Venflow
+namespace Venflow.Dynamic
 {
     internal static class SpanExtensions
     {

@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
+using Venflow.Dynamic;
 using Venflow.Modeling;
 
 namespace Venflow.Commands

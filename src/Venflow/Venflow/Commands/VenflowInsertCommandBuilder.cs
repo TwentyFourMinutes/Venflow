@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
+using Venflow.Dynamic;
 using Venflow.Enums;
 using Venflow.Modeling;
 

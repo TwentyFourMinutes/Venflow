@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using Npgsql;
+using Venflow.Dynamic;
 using Venflow.Dynamic.Proxies;
 using Venflow.Dynamic.Retriever;
 using Venflow.Enums;
