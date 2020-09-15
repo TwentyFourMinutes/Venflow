@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Venflow.Dynamic.Instantiater;
 using Venflow.Modeling.Definitions;
 using Venflow.Modeling.Definitions.Builder;
@@ -27,22 +28,24 @@ namespace Venflow.Modeling
             var entities = new Dictionary<string, Entity>();
             var entitiesArray = new Entity[_entityFactories.Count];
 
-            for (int i = 0; i < _entityFactories.Count; i++)
+            var entityFactoriesSpan = _entityFactories.AsSpan();
+
+            for (int i = 0; i < entityFactoriesSpan.Length; i++)
             {
-                _entityFactories[i].ConfigureForeignRelations(_entityBuilders);
+                entityFactoriesSpan[i].ConfigureForeignRelations(_entityBuilders);
             }
 
-            for (int i = 0; i < _entityFactories.Count; i++)
+            for (int i = 0; i < entityFactoriesSpan.Length; i++)
             {
-                var entity = _entityFactories[i].BuildEntity();
+                var entity = entityFactoriesSpan[i].BuildEntity();
 
                 entities.Add(entity.EntityName, entity);
                 entitiesArray[i] = entity;
             }
 
-            for (int i = 0; i < _entityFactories.Count; i++)
+            for (int i = 0; i < entityFactoriesSpan.Length; i++)
             {
-                var entityFactory = _entityFactories[i];
+                var entityFactory = entityFactoriesSpan[i];
 
                 entityFactory.ApplyForeignRelations(entities);
             }
@@ -52,7 +55,9 @@ namespace Venflow.Modeling
 
         private List<PropertyInfo> FindEntityConfigurations(Type databaseType, IReadOnlyList<Assembly> configurationAssemblies)
         {
-            var properties = databaseType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var configurationAssembliesSpan = ((List<Assembly>)configurationAssemblies).AsSpan();
+
+            var propertiesSpan = databaseType.GetProperties(BindingFlags.Public | BindingFlags.Instance).AsSpan();
 
             if (!VenflowConfiguration.ValidationSettingSet)
             {
@@ -64,13 +69,13 @@ namespace Venflow.Modeling
 
             var configurations = new Dictionary<Type, Type>();
 
-            for (int assemblyIndex = 0; assemblyIndex < configurationAssemblies.Count; assemblyIndex++)
+            for (int assemblyIndex = 0; assemblyIndex < configurationAssembliesSpan.Length; assemblyIndex++)
             {
-                var assemblyTypes = configurationAssemblies[assemblyIndex].GetTypes();
+                var assemblyTypesSpan = configurationAssembliesSpan[assemblyIndex].GetTypes().AsSpan();
 
-                for (int typeIndex = 0; typeIndex < assemblyTypes.Length; typeIndex++)
+                for (int typeIndex = 0; typeIndex < assemblyTypesSpan.Length; typeIndex++)
                 {
-                    var assemblyType = assemblyTypes[typeIndex];
+                    var assemblyType = assemblyTypesSpan[typeIndex];
 
                     if (assemblyType.IsNotPublic || assemblyType.BaseType is null || !assemblyType.BaseType.IsGenericType || assemblyType.BaseType.GetGenericTypeDefinition() != configurationType)
                         continue;
@@ -100,9 +105,9 @@ namespace Venflow.Modeling
             var genericEntityBuilderType = typeof(EntityBuilder<>);
             var genericEntityFactoryType = typeof(EntityFactory<>);
 
-            for (int i = 0; i < properties.Length; i++)
+            for (int i = 0; i < propertiesSpan.Length; i++)
             {
-                var property = properties[i];
+                var property = propertiesSpan[i];
 
                 if (property.PropertyType.GetGenericTypeDefinition() != tableType)
                 {

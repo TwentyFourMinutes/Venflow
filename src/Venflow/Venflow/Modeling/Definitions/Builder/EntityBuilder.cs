@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using Npgsql;
 using Venflow.Dynamic.Proxies;
@@ -145,9 +146,11 @@ namespace Venflow.Modeling.Definitions.Builder
 
                 nameBuilder.Append(char.ToLowerInvariant(name[0]));
 
-                for (int i = 1; i < name.Length; i++)
+                var nameSpan = name.AsSpan();
+
+                for (int i = 1; i < nameSpan.Length; i++)
                 {
-                    var c = name[i];
+                    var c = nameSpan[i];
 
                     if (char.IsUpper(c))
                     {
@@ -215,6 +218,8 @@ namespace Venflow.Modeling.Definitions.Builder
                 throw new TypeArgumentException($"The entity '{Type.Name}' doesn't contain any columns/properties. A entity needs at least one column/property.");
             }
 
+            var propertiesSpan = properties.AsSpan();
+
             var filteredProperties = new List<PropertyInfo>();
             PropertyInfo? annotedPrimaryKey = default;
 
@@ -227,9 +232,9 @@ namespace Venflow.Modeling.Definitions.Builder
                 primaryKeyAttributeType = typeof(KeyAttribute);
             }
 
-            for (int i = 0; i < properties.Length; i++)
+            for (int i = 0; i < propertiesSpan.Length; i++)
             {
-                var property = properties[i];
+                var property = propertiesSpan[i];
 
                 if (property.CanWrite && property.SetMethod!.IsPublic && !_ignoredColumns.Contains(property.Name) && !Attribute.IsDefined(property, notMappedAttributeType))
                 {
@@ -244,6 +249,8 @@ namespace Venflow.Modeling.Definitions.Builder
                 }
             }
 
+            var filteredPropertiesSpan = filteredProperties.AsSpan();
+
             var columns = new List<EntityColumn<TEntity>>();
             var nameToColumn = new Dictionary<string, EntityColumn<TEntity>>();
             var changeTrackingColumns = new Dictionary<int, EntityColumn<TEntity>>();
@@ -252,9 +259,9 @@ namespace Venflow.Modeling.Definitions.Builder
             // Important column specifications
             var regularColumnsOffset = 0;
 
-            for (int i = 0; i < filteredProperties.Count; i++)
+            for (int i = 0; i < filteredPropertiesSpan.Length; i++)
             {
-                var property = filteredProperties[i];
+                var property = filteredPropertiesSpan[i];
 
                 var hasCustomDefinition = false;
 
@@ -386,7 +393,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
             if (columns.Count == 0)
             {
-                throw new InvalidOperationException($"The entity '{Type.Name}' doesn't contain any columns/mapped properties. A entity needs at least one column/mapped property.");
+                throw new InvalidOperationException($"The entity '{Type.Name}' doesn't contain any columns/mapped propertiesSpan. A entity needs at least one column/mapped property.");
             }
 
             if (changeTrackingColumns.Count != 0)

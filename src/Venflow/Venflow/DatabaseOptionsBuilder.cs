@@ -62,7 +62,7 @@ namespace Venflow
 
         internal DatabaseOptions(List<Assembly> configurationAssemblies)
         {
-            ConfigurationAssemblies = configurationAssemblies.AsReadOnly();
+            ConfigurationAssemblies = configurationAssemblies;
         }
     }
 }

@@ -34,6 +34,8 @@ namespace Venflow.Dynamic.Materializer
 
             var columnIndex = 0;
 
+            var columnSchemaSpan = columnSchema.AsSpan();
+
             if (hasJoins)
             {
                 var joinIndex = 0;
@@ -41,9 +43,9 @@ namespace Venflow.Dynamic.Materializer
                 Entity nextJoin = _entity;
                 string? nextJoinPKName = _entity.PrimaryColumn.ColumnName;
 
-                for (; columnIndex < columnSchema.Count; columnIndex++)
+                for (; columnIndex < columnSchemaSpan.Length; columnIndex++)
                 {
-                    var columnName = columnSchema[columnIndex].ColumnName;
+                    var columnName = columnSchemaSpan[columnIndex].ColumnName;
 
                     if (columnName == nextJoinPKName)
                     {
@@ -62,9 +64,9 @@ namespace Venflow.Dynamic.Materializer
                 }
             }
 
-            for (; columnIndex < columnSchema.Count; columnIndex++)
+            for (; columnIndex < columnSchemaSpan.Length; columnIndex++)
             {
-                cacheKeyBuilder.Add(columnSchema[columnIndex].ColumnName);
+                cacheKeyBuilder.Add(columnSchemaSpan[columnIndex].ColumnName);
             }
 
             cacheKeyBuilder.Add(changeTracking);
@@ -104,9 +106,9 @@ namespace Venflow.Dynamic.Materializer
 
                     var nextJoinPKName = _entity.PrimaryColumn?.ColumnName ?? _entity.Columns[0].ColumnName;
 
-                    for (columnIndex = 0; columnIndex < columnSchema.Count; columnIndex++)
+                    for (columnIndex = 0; columnIndex < columnSchemaSpan.Length; columnIndex++)
                     {
-                        var column = columnSchema[columnIndex];
+                        var column = columnSchemaSpan[columnIndex];
 
                         if (column.ColumnName == nextJoinPKName)
                         {
