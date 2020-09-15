@@ -33,20 +33,23 @@ namespace Venflow
         /// <param name="sql">A string containing the SQL statement.</param>
         public static void SetInterpolatedCommandText(this NpgsqlCommand command, FormattableString sql)
         {
+            var sqlSpan = sql.Format.AsSpan();
+            var spanLength = sqlSpan.Length;
+            var totalParameterCount = sql.ArgumentCount;
             var commandBuilder = new StringBuilder(sql.Format);
 
             var parameterCount = 0;
 
-            for (int i = 0; i < commandBuilder.Length - 2; i++)
+            for (int sqlIndex = 0, commandBuilderIndex = 0; sqlIndex < spanLength - 2; sqlIndex++, commandBuilderIndex++)
             {
-                if (commandBuilder[i] != '{')
+                if (sqlSpan[sqlIndex] != '{')
                     continue;
 
                 int digitCount = 0;
 
-                for (int k = i + 1; k < commandBuilder.Length; k++)
+                for (int innerSqlIndex = sqlIndex + 1; innerSqlIndex < spanLength; innerSqlIndex++)
                 {
-                    var character = commandBuilder[k];
+                    var character = sqlSpan[innerSqlIndex];
 
                     if (!char.IsDigit(character))
                     {
@@ -63,12 +66,15 @@ namespace Venflow
 
                 var parameterName = "@p" + parameterCount;
 
-                commandBuilder.Remove(i, digitCount + 2);
-                commandBuilder.Insert(i, parameterName);
+                commandBuilder.Remove(commandBuilderIndex, digitCount + 2);
+                commandBuilder.Insert(commandBuilderIndex, parameterName);
 
                 command.Parameters.Add(new NpgsqlParameter(parameterName, sql.GetArgument(parameterCount++)));
 
-                i += parameterName.Length - 1;
+                if (totalParameterCount == parameterCount)
+                    return;
+
+                commandBuilderIndex += parameterName.Length - 1;
             }
 
             command.CommandText = commandBuilder.ToString();

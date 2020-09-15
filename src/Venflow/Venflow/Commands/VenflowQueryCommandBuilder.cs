@@ -22,6 +22,7 @@ namespace Venflow.Commands
         private readonly bool _singleResult;
         private readonly ulong _count;
         private readonly StringBuilder _commandString;
+        private readonly string _rawSql;
         private readonly NpgsqlCommand _command;
         private readonly Database _database;
         private readonly Entity<TEntity> _entityConfiguration;
@@ -45,13 +46,15 @@ namespace Venflow.Commands
 
         internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, string sql, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, command, QueryGenerationOptions.None, disposeCommand, singleResult)
         {
-            _commandString.Append(sql);
+            _rawSql = sql;
+            _commandString.Append(_rawSql);
         }
 
         internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, FormattableString interpolatedSql, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, command, QueryGenerationOptions.None, disposeCommand, singleResult)
         {
             _interploatedSqlParameters = interpolatedSql.GetArguments();
-            _commandString.Append(interpolatedSql.Format);
+            _rawSql = interpolatedSql.Format;
+            _commandString.Append(_rawSql);
         }
 
         internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, string sql, IList<NpgsqlParameter> parameters, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, command, sql, disposeCommand, singleResult)
@@ -116,11 +119,16 @@ namespace Venflow.Commands
                 else if ((_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0 &&
                           JoinBuilderValues is { })
                 {
-                    for (int i = 0; i < _commandString.Length;)
+                    var rawSqlSpan = _rawSql.AsSpan();
+                    var spanLength = rawSqlSpan.Length;
+
+                    for (int sqlIndex = 0; sqlIndex < spanLength - 1;)
                     {
-                        if (_commandString[i] != '>' || i + 1 >= _commandString.Length || _commandString[i + 1] != '<')
+                        if (rawSqlSpan[sqlIndex] != '>' || 
+                            sqlIndex + 1 >= spanLength || 
+                            rawSqlSpan[sqlIndex + 1] != '<')
                         {
-                            i++;
+                            sqlIndex++;
                             continue;
                         }
 
@@ -128,8 +136,8 @@ namespace Venflow.Commands
 
                         JoinBuilderValues.AppendColumnNamesAndJoins(null, joinBuilder);
 
-                        _commandString.Remove(i, 2);
-                        _commandString.Insert(i, joinBuilder.ToString());
+                        _commandString.Remove(sqlIndex, 2);
+                        _commandString.Insert(sqlIndex, joinBuilder.ToString());
 
                         break;
                     }
@@ -141,19 +149,23 @@ namespace Venflow.Commands
 
                 var parameterCount = 0;
 
-                var gap = generateJoins ? 0 : 2;
+                var gap = generateJoins ? 1 : 2;
 
-                for (int i = 0; i < _commandString.Length - gap; i++)
+                var rawSqlSpan = _rawSql.AsSpan();
+                var spanLength = rawSqlSpan.Length;
+                var totalParameterCount = _interploatedSqlParameters.Length;
+
+                for (int sqlIndex = 0, commandBuilderIndex = 0; sqlIndex < spanLength - gap; sqlIndex++, commandBuilderIndex++)
                 {
-                    var commandCharacter = _commandString[i];
+                    var commandCharacter = rawSqlSpan[sqlIndex];
 
                     if (commandCharacter == '{')
                     {
                         int digitCount = 0;
 
-                        for (int k = i + 1; k < _commandString.Length; k++)
+                        for (int innerSqlIndex = sqlIndex + 1; innerSqlIndex < spanLength; innerSqlIndex++)
                         {
-                            var character = _commandString[k];
+                            var character = _commandString[innerSqlIndex];
 
                             if (!char.IsDigit(character))
                             {
@@ -170,14 +182,21 @@ namespace Venflow.Commands
 
                         var parameterName = "@p" + parameterCount;
 
-                        _commandString.Remove(i, digitCount + 2);
-                        _commandString.Insert(i, parameterName);
+                        _commandString.Remove(commandBuilderIndex, digitCount + 2);
+                        _commandString.Insert(commandBuilderIndex, parameterName);
 
                         _command.Parameters.Add(new NpgsqlParameter(parameterName, _interploatedSqlParameters[parameterCount++]));
 
-                        i += parameterName.Length - 1;
+                        if (!generateJoins &&
+                            parameterCount == totalParameterCount)
+                            break;
+
+                        commandBuilderIndex += parameterName.Length - 1;
                     }
-                    else if (generateJoins && commandCharacter == '>' && i + 1 < _commandString.Length && _commandString[i + 1] == '<')
+                    else if (generateJoins &&
+                        commandCharacter == '>' &&
+                        sqlIndex + 1 < spanLength &&
+                        rawSqlSpan[sqlIndex + 1] == '<')
                     {
                         generateJoins = false;
 
@@ -187,10 +206,14 @@ namespace Venflow.Commands
 
                         var joins = joinBuilder.ToString();
 
-                        _commandString.Remove(i, 2);
-                        _commandString.Insert(i, joins);
+                        _commandString.Remove(sqlIndex, 2);
+                        _commandString.Insert(sqlIndex, joins);
 
-                        i += joins.Length - 1;
+
+                        if (parameterCount == totalParameterCount)
+                            break;
+
+                        commandBuilderIndex += joins.Length - 1;
                     }
                 }
             }
