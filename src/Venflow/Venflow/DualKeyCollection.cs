@@ -11,8 +11,6 @@ namespace Venflow
 
         internal int Count => _oneToValue.Length;
 
-        internal ICollection<TKeyTwo> KeysTwo => _twoToOne.Keys;
-
         internal TValue[] Values => _oneToValue;
 
         internal DualKeyCollection(TValue[] firstCollction, Dictionary<TKeyTwo, TValue> twoToOne)

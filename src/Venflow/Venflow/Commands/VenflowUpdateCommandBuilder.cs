@@ -27,16 +27,36 @@ namespace Venflow.Commands
             return new VenflowUpdateCommand<TEntity>(_database, _entityConfiguration, _command, _disposeCommand);
         }
 
-        Task IUpdateCommandBuilder<TEntity>.UpdateAsync(TEntity entity, CancellationToken cancellationToken)
+        ValueTask IUpdateCommandBuilder<TEntity>.UpdateAsync(TEntity entity, CancellationToken cancellationToken)
         {
             _disposeCommand = true;
 
             return Build().UpdateAsync(entity, cancellationToken);
         }
 
-        Task IUpdateCommandBuilder<TEntity>.UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
+        ValueTask IUpdateCommandBuilder<TEntity>.UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
         {
+            _disposeCommand = true;
 
+            return Build().UpdateAsync(entities, cancellationToken);
+        }
+
+        ValueTask IUpdateCommandBuilder<TEntity>.UpdateAsync(List<TEntity> entities, CancellationToken cancellationToken)
+        {
+            _disposeCommand = true;
+
+            return Build().UpdateAsync(entities, cancellationToken);
+        }
+
+        ValueTask IUpdateCommandBuilder<TEntity>.UpdateAsync(TEntity[] entities, CancellationToken cancellationToken)
+        {
+            _disposeCommand = true;
+
+            return Build().UpdateAsync(entities, cancellationToken);
+        }
+
+        ValueTask IUpdateCommandBuilder<TEntity>.UpdateAsync(IList<TEntity> entities, CancellationToken cancellationToken)
+        {
             _disposeCommand = true;
 
             return Build().UpdateAsync(entities, cancellationToken);

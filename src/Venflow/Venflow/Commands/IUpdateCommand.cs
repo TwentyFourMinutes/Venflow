@@ -16,13 +16,34 @@ namespace Venflow.Commands
         /// <param name="entity">The change tracked entity instance which should be updated.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
+        ValueTask UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
         /// <summary>
         /// Asynchronously updates a set of entities.
         /// </summary>
         /// <param name="entities">The change tracked entity instances which should be updated.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+        ValueTask UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// Asynchronously updates a set of entities.
+        /// </summary>
+        /// <param name="entities">The change tracked entity instances which should be updated.</param>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        ValueTask UpdateAsync(List<TEntity> entities, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// Asynchronously updates a set of entities.
+        /// </summary>
+        /// <param name="entities">The change tracked entity instances which should be updated.</param>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        ValueTask UpdateAsync(TEntity[] entities, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// Asynchronously updates a set of entities.
+        /// </summary>
+        /// <param name="entities">The change tracked entity instances which should be updated.</param>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        ValueTask UpdateAsync(IList<TEntity> entities, CancellationToken cancellationToken = default);
     }
 }

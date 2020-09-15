@@ -28,14 +28,35 @@ namespace Venflow.Commands
             return new VenflowDeleteCommand<TEntity>(_database, _entityConfiguration, _command, _disposeCommand);
         }
 
-        Task<int> IDeleteCommandBuilder<TEntity>.DeleteAsync(TEntity entity, CancellationToken cancellationToken)
+        ValueTask<int> IDeleteCommandBuilder<TEntity>.DeleteAsync(TEntity entity, CancellationToken cancellationToken)
         {
             _disposeCommand = true;
 
             return Build().DeleteAsync(entity, cancellationToken);
         }
 
-        Task<int> IDeleteCommandBuilder<TEntity>.DeleteAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
+        ValueTask<int> IDeleteCommandBuilder<TEntity>.DeleteAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
+        {
+            _disposeCommand = true;
+
+            return Build().DeleteAsync(entities, cancellationToken);
+        }
+
+        ValueTask<int> IDeleteCommandBuilder<TEntity>.DeleteAsync(IList<TEntity> entities, CancellationToken cancellationToken)
+        {
+            _disposeCommand = true;
+
+            return Build().DeleteAsync(entities, cancellationToken);
+        }
+
+        ValueTask<int> IDeleteCommandBuilder<TEntity>.DeleteAsync(List<TEntity> entities, CancellationToken cancellationToken)
+        {
+            _disposeCommand = true;
+
+            return Build().DeleteAsync(entities, cancellationToken);
+        }
+
+        ValueTask<int> IDeleteCommandBuilder<TEntity>.DeleteAsync(TEntity[] entities, CancellationToken cancellationToken)
         {
             _disposeCommand = true;
 

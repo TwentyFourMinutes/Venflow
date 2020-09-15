@@ -13,13 +13,13 @@ namespace Venflow.Commands
     {
         internal VenflowUpdateCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
         {
-
         }
 
 
-        async Task IUpdateCommand<TEntity>.UpdateAsync(TEntity entity, CancellationToken cancellationToken)
+        async ValueTask IUpdateCommand<TEntity>.UpdateAsync(TEntity entity, CancellationToken cancellationToken)
         {
-            await ValidateConnectionAsync();
+            if (entity is null)
+                return;
 
             var commandString = new StringBuilder();
 
@@ -32,33 +32,101 @@ namespace Venflow.Commands
 
             UnderlyingCommand.CommandText = commandString.ToString();
 
+            await ValidateConnectionAsync();
+
             await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
 
             if (DisposeCommand)
                 await this.DisposeAsync();
         }
 
-        async Task IUpdateCommand<TEntity>.UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
+        async ValueTask IUpdateCommand<TEntity>.UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
         {
-            await ValidateConnectionAsync();
+            if (entities is null)
+                return;
 
             var commandString = new StringBuilder();
 
-            if (entities is IList<TEntity> entitiesList)
-            {
-                for (int i = 0; i < entitiesList.Count; i++)
-                {
-                    BaseUpdate(entitiesList[i], i, commandString);
-                }
-            }
-            else
-            {
-                var index = 0;
+            var index = 0;
 
-                foreach (var entity in entities)
-                {
-                    BaseUpdate(entity, index++, commandString);
-                }
+            foreach (var entity in entities)
+            {
+                BaseUpdate(entity, index++, commandString);
+            }
+            if (index == 0 ||
+                commandString.Length == 0)
+            {
+                return;
+            }
+
+            UnderlyingCommand.CommandText = commandString.ToString();
+
+            await ValidateConnectionAsync();
+
+            await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+            if (DisposeCommand)
+                await this.DisposeAsync();
+        }
+
+        async ValueTask IUpdateCommand<TEntity>.UpdateAsync(List<TEntity> entities, CancellationToken cancellationToken)
+        {
+            if (entities is null ||
+                entities.Count == 0)
+                return;
+
+            var commandString = BaseUpdate(entities.AsSpan());
+
+            if (commandString.Length == 0)
+            {
+                return;
+            }
+
+            UnderlyingCommand.CommandText = commandString;
+
+            await ValidateConnectionAsync();
+
+            await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+            if (DisposeCommand)
+                await this.DisposeAsync();
+        }
+
+        async ValueTask IUpdateCommand<TEntity>.UpdateAsync(TEntity[] entities, CancellationToken cancellationToken)
+        {
+            if (entities is null ||
+                entities.Length == 0)
+                return;
+
+            var commandString = BaseUpdate(entities);
+
+            if (commandString.Length == 0)
+            {
+                return;
+            }
+
+            UnderlyingCommand.CommandText = commandString;
+
+            await ValidateConnectionAsync();
+
+            await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+            if (DisposeCommand)
+                await this.DisposeAsync();
+        }
+
+        async ValueTask IUpdateCommand<TEntity>.UpdateAsync(IList<TEntity> entities, CancellationToken cancellationToken)
+        {
+            if (entities is null ||
+                entities.Count == 0)
+                return;
+
+            var commandString = new StringBuilder();
+
+
+            for (int i = 0; i < entities.Count; i++)
+            {
+                BaseUpdate(entities[i], i, commandString);
             }
 
             if (commandString.Length == 0)
@@ -68,10 +136,24 @@ namespace Venflow.Commands
 
             UnderlyingCommand.CommandText = commandString.ToString();
 
+            await ValidateConnectionAsync();
+
             await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
 
             if (DisposeCommand)
                 await this.DisposeAsync();
+        }
+
+        private string BaseUpdate(Span<TEntity> entities)
+        {
+            var stringBuilder = new StringBuilder();
+
+            for (int i = 0; i < entities.Length; i++)
+            {
+                BaseUpdate(entities[i], i++, stringBuilder);
+            }
+
+            return stringBuilder.ToString();
         }
 
         private void BaseUpdate(TEntity entity, int index, StringBuilder commandString)
@@ -95,7 +177,7 @@ namespace Venflow.Commands
 
                 var columns = proxy.ChangeTracker.GetColumns()!;
 
-                var entityColumns = EntityConfiguration.Columns;
+                var entityColumns = EntityConfiguration.Columns.Values.AsSpan();
 
                 for (int i = 0; i < columns.Length; i++)
                 {

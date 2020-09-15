@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
@@ -55,6 +55,33 @@ namespace Venflow.Commands
             _insertOptions &= ~InsertOptions.SetIdentityColumns;
 
             return this;
+        }
+
+        IInsertRelationBuilder<TToEntity, TEntity> IInsertCommandBuilder<TEntity>.InsertWith<TToEntity>(Expression<System.Func<TEntity, TToEntity>> propertySelector)
+        {
+            var relationBuilder = new RelationBuilder<TToEntity, TEntity>(_entityConfiguration);
+
+            _relationBuilderValues = relationBuilder.RelationBuilderValues;
+
+            return relationBuilder.InsertWith(propertySelector);
+        }
+
+        IInsertRelationBuilder<TToEntity, TEntity> IInsertCommandBuilder<TEntity>.InsertWith<TToEntity>(Expression<System.Func<TEntity, IList<TToEntity>>> propertySelector)
+        {
+            var relationBuilder = new RelationBuilder<TToEntity, TEntity>(_entityConfiguration);
+
+            _relationBuilderValues = relationBuilder.RelationBuilderValues;
+
+            return relationBuilder.InsertWith(propertySelector);
+        }
+
+        IInsertRelationBuilder<TToEntity, TEntity> IInsertCommandBuilder<TEntity>.InsertWith<TToEntity>(Expression<System.Func<TEntity, List<TToEntity>>> propertySelector)
+        {
+            var relationBuilder = new RelationBuilder<TToEntity, TEntity>(_entityConfiguration);
+
+            _relationBuilderValues = relationBuilder.RelationBuilderValues;
+
+            return relationBuilder.InsertWith(propertySelector);
         }
 
         Task<int> IInsertCommandBuilder<TEntity>.InsertAsync(TEntity entity, CancellationToken cancellationToken)

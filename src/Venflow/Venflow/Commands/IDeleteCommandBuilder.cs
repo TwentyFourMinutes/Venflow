@@ -16,13 +16,34 @@ namespace Venflow.Commands
         /// <param name="entity">The entity instance which should be deleted.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
-        Task<int> DeleteAsync(TEntity entity, CancellationToken cancellationToken = default);
+        ValueTask<int> DeleteAsync(TEntity entity, CancellationToken cancellationToken = default);
         /// <summary>
         /// Asynchronously deletes a set of entity.
         /// </summary>
         /// <param name="entities">The entity instances which should be deleted.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
-        Task<int> DeleteAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+        ValueTask<int> DeleteAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// Asynchronously deletes a set of entity.
+        /// </summary>
+        /// <param name="entities">The entity instances which should be deleted.</param>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+        /// <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+        ValueTask<int> DeleteAsync(IList<TEntity> entities, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// Asynchronously deletes a set of entity.
+        /// </summary>
+        /// <param name="entities">The entity instances which should be deleted.</param>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+        /// <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+        ValueTask<int> DeleteAsync(List<TEntity> entities, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// Asynchronously deletes a set of entity.
+        /// </summary>
+        /// <param name="entities">The entity instances which should be deleted.</param>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+        /// <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+        ValueTask<int> DeleteAsync(TEntity[] entities, CancellationToken cancellationToken = default);
     }
 }

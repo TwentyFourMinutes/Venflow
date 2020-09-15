@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,6 +32,16 @@ namespace Venflow.Commands
         /// </summary>
         /// <returns>An object that can be used to further configure the operation.</returns>
         IInsertCommandBuilder<TEntity> DoNotSetPopulateRelation();
+
+
+        IInsertRelationBuilder<TToEntity, TEntity> InsertWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector) 
+            where TToEntity : class, new();
+                                                   
+        IInsertRelationBuilder<TToEntity, TEntity> InsertWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>> propertySelector) 
+            where TToEntity : class, new();
+                                                   
+        IInsertRelationBuilder<TToEntity, TEntity> InsertWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector) 
+            where TToEntity : class, new();
 
         /// <summary>
         /// Asynchronously inserts a single entity.
