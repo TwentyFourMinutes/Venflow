@@ -165,7 +165,7 @@ namespace Venflow.Commands
 
                         for (int innerSqlIndex = sqlIndex + 1; innerSqlIndex < spanLength; innerSqlIndex++)
                         {
-                            var character = _commandString[innerSqlIndex];
+                            var character = rawSqlSpan[innerSqlIndex];
 
                             if (!char.IsDigit(character))
                             {
@@ -192,6 +192,7 @@ namespace Venflow.Commands
                             break;
 
                         commandBuilderIndex += parameterName.Length - 1;
+                        sqlIndex += digitCount + 1;
                     }
                     else if (generateJoins &&
                         commandCharacter == '>' &&
@@ -214,6 +215,7 @@ namespace Venflow.Commands
                             break;
 
                         commandBuilderIndex += joins.Length - 1;
+                        sqlIndex++;
                     }
                 }
             }

@@ -75,6 +75,7 @@ namespace Venflow
                     return;
 
                 commandBuilderIndex += parameterName.Length - 1;
+                sqlIndex += parameterCount + 1;
             }
 
             command.CommandText = commandBuilder.ToString();
