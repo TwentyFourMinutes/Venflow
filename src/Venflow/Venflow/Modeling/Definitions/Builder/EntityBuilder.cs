@@ -260,7 +260,7 @@ namespace Venflow.Modeling.Definitions.Builder
             // Important column specifications
             var regularColumnsOffset = 0;
 
-            for (int i = filteredPropertiesSpan.Length - 1; i >= 0; i--)
+            for (int i = filteredPropertiesSpan.Length - 1, columnIndex = 0; i >= 0; i--, columnIndex++)
             {
                 var property = filteredPropertiesSpan[i];
 
@@ -293,7 +293,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                             if (setMethod.IsVirtual && !setMethod.IsFinal)
                             {
-                                changeTrackingColumns.Add(i, primaryColumn);
+                                changeTrackingColumns.Add(columnIndex, primaryColumn);
                             }
 
                             nameToColumn.Add(definition.Name, primaryColumn);
@@ -310,7 +310,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                             if (setMethod.IsVirtual && !setMethod.IsFinal)
                             {
-                                changeTrackingColumns.Add(i, enumColumn);
+                                changeTrackingColumns.Add(columnIndex, enumColumn);
                             }
 
                             nameToColumn.Add(definition.Name, enumColumn);
@@ -339,7 +339,7 @@ namespace Venflow.Modeling.Definitions.Builder
                     if (setMethod.IsVirtual &&
                         !setMethod.IsFinal)
                     {
-                        changeTrackingColumns.Add(i, primaryColumn);
+                        changeTrackingColumns.Add(columnIndex, primaryColumn);
                     }
 
                     nameToColumn.Add(annotedPrimaryKey.Name, primaryColumn);
@@ -379,7 +379,7 @@ namespace Venflow.Modeling.Definitions.Builder
                         if (setMethod.IsVirtual &&
                             !setMethod.IsFinal)
                         {
-                            changeTrackingColumns.Add(i, column);
+                            changeTrackingColumns.Add(columnIndex, column);
                         }
                     }
 

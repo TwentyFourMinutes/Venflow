@@ -149,9 +149,9 @@ namespace Venflow.Commands
         {
             var stringBuilder = new StringBuilder();
 
-            for (int i = entities.Length - 1; i >= 0; i--)
+            for (int i = entities.Length - 1; i >= 0;)
             {
-                BaseUpdate(entities[i], i++, stringBuilder);
+                BaseUpdate(entities[i], i--, stringBuilder);
             }
 
             return stringBuilder.ToString();
@@ -202,6 +202,7 @@ namespace Venflow.Commands
                     commandString.Append(", ");
                 }
             }
+
             commandString.Length -= 2;
 
             commandString.Append(" WHERE \"")
