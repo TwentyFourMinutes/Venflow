@@ -16,7 +16,32 @@ namespace Venflow.Dynamic
     internal static class SpanExtensions
     {
 #if !NET5_0
-        private static readonly Dictionary<Type, Delegate> _underylingElementGetter = new();
+
+        private static class SpanMethodCache<TType>
+        {
+            internal static Func<List<TType>, TType[]> UnderlyingElementGetter;
+
+            static SpanMethodCache()
+            {
+                var genericType = typeof(TType[]);
+
+                var method = new DynamicMethod("GetUnderlyingArray", genericType, new[] { typeof(List<TType>) }, typeof(List<TType>));
+
+                var ilGenerator = method.GetILGenerator();
+
+                ilGenerator.Emit(OpCodes.Ldarg_0);
+                ilGenerator.Emit(OpCodes.Ldfld, typeof(List<TType>).GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance));
+                ilGenerator.Emit(OpCodes.Ret);
+
+                UnderlyingElementGetter = (Func<List<TType>, TType[]>)method.CreateDelegate(typeof(Func<List<TType>, TType[]>));
+            }
+
+            internal static Span<TType> AsSpan(List<TType> list)
+            {
+                return UnderlyingElementGetter.Invoke(list).AsSpan();
+            }
+        }
+
 #endif
 
         private static readonly Func<ReadOnlyCollection<NpgsqlDbColumn>, List<NpgsqlDbColumn>> _underlyingReadOnlyCollectionListGetter;
@@ -34,33 +59,7 @@ namespace Venflow.Dynamic
 
 #else
 
-            Func<List<T>, T[]> underlyingArrayGetter;
-
-            lock (_underylingElementGetter)
-            {
-                var genericType = typeof(T[]);
-
-                if (_underylingElementGetter.TryGetValue(genericType, out var tempArrayGetter))
-                {
-                    underlyingArrayGetter = (Func<List<T>, T[]>)tempArrayGetter;
-                }
-                else
-                {
-                    var method = new DynamicMethod("GetUnderlyingArray", genericType, new[] { typeof(List<T>) }, typeof(List<T>));
-
-                    var ilGenerator = method.GetILGenerator();
-
-                    ilGenerator.Emit(OpCodes.Ldarg_0);
-                    ilGenerator.Emit(OpCodes.Ldfld, typeof(List<T>).GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance));
-                    ilGenerator.Emit(OpCodes.Ret);
-
-                    underlyingArrayGetter = (Func<List<T>, T[]>)method.CreateDelegate(typeof(Func<List<T>, T[]>));
-
-                    _underylingElementGetter.Add(genericType, underlyingArrayGetter);
-                }
-            }
-
-            return underlyingArrayGetter.Invoke(list).AsSpan(0, list.Count);
+            return SpanMethodCache<T>.AsSpan(list);
 
 #endif
         }
