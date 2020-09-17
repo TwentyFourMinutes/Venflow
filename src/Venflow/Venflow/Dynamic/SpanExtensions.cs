@@ -25,7 +25,7 @@ namespace Venflow.Dynamic
             {
                 var genericType = typeof(TType[]);
 
-                var method = new DynamicMethod("GetUnderlyingArray", genericType, new[] { typeof(List<TType>) }, typeof(List<TType>));
+                var method = new DynamicMethod("GetUnderlyingArray", genericType, new[] { typeof(List<TType>) }, typeof(List<TType>), true);
 
                 var ilGenerator = method.GetILGenerator();
 
@@ -38,7 +38,7 @@ namespace Venflow.Dynamic
 
             internal static Span<TType> AsSpan(List<TType> list)
             {
-                return UnderlyingElementGetter.Invoke(list).AsSpan();
+                return UnderlyingElementGetter.Invoke(list).AsSpan(0, list.Count);
             }
         }
 
