@@ -33,12 +33,20 @@ namespace Venflow
 
         internal TValue this[TKeyThree key] => _threeToOne[key];
 
-        internal bool TryGetValue(TKeyTwo key, [NotNullWhen(true)]out TValue? value)
+        internal bool TryGetValue(TKeyTwo key,
+#if !NET48
+            [NotNullWhen(true)]
+            #endif 
+            out TValue? value)
         {
             return _twoToOne.TryGetValue(key, out value);
         }
 
-        internal bool TryGetValue(TKeyThree key, [NotNullWhen(true)]out TValue? value)
+        internal bool TryGetValue(TKeyThree key,
+#if !NET48
+            [NotNullWhen(true)]
+            #endif
+            out TValue? value)
         {
             return _threeToOne.TryGetValue(key, out value);
         }
