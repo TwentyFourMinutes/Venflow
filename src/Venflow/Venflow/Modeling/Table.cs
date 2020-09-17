@@ -132,10 +132,11 @@ namespace Venflow.Modeling
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows inserted.</returns>
         /// <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar'), ('foo', 'bar')". This API is using parameterized commands.</remarks>
-        public Task<int> InsertAsync(List<TEntity> entities, CancellationToken cancellationToken = default)
+        public Task<int> InsertAsync(IList<TEntity> entities, CancellationToken cancellationToken = default)
         {
             return Insert(true).Build().InsertAsync(entities, cancellationToken);
         }
+
 
         /// <summary>
         /// Asynchronously inserts a list of entities and all entities reachable from the current provided instances into the current table.
@@ -163,7 +164,7 @@ namespace Venflow.Modeling
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
         /// <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
-        public Task<int> DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
+        public ValueTask<int> DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
             return Delete(true).Build().DeleteAsync(entity, cancellationToken);
         }
@@ -176,7 +177,7 @@ namespace Venflow.Modeling
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
         /// <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
-        public Task<int> DeleteAsync(IDeleteCommand<TEntity> deleteCommand, TEntity entity, CancellationToken cancellationToken = default)
+        public ValueTask<int> DeleteAsync(IDeleteCommand<TEntity> deleteCommand, TEntity entity, CancellationToken cancellationToken = default)
         {
             ((VenflowBaseCommand<TEntity>)deleteCommand).UnderlyingCommand.Connection = Database.GetConnection();
 
@@ -190,7 +191,43 @@ namespace Venflow.Modeling
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
         /// <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
-        public Task<int> DeleteAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+        public ValueTask<int> DeleteAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+        {
+            return Delete(true).Build().DeleteAsync(entities, cancellationToken);
+        }
+
+        /// <summary>
+        /// Asynchronously deletes the provided entities by their defined primary keys.
+        /// </summary>
+        /// <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be deleted.</param>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+        /// <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
+        /// <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
+        public ValueTask<int> DeleteAsync(IList<TEntity> entities, CancellationToken cancellationToken = default)
+        {
+            return Delete(true).Build().DeleteAsync(entities, cancellationToken);
+        }
+
+        /// <summary>
+        /// Asynchronously deletes the provided entities by their defined primary keys.
+        /// </summary>
+        /// <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be deleted.</param>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+        /// <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
+        /// <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
+        public ValueTask<int> DeleteAsync(List<TEntity> entities, CancellationToken cancellationToken = default)
+        {
+            return Delete(true).Build().DeleteAsync(entities, cancellationToken);
+        }
+
+        /// <summary>
+        /// Asynchronously deletes the provided entities by their defined primary keys.
+        /// </summary>
+        /// <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be deleted.</param>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+        /// <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
+        /// <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
+        public ValueTask<int> DeleteAsync(TEntity[] entities, CancellationToken cancellationToken = default)
         {
             return Delete(true).Build().DeleteAsync(entities, cancellationToken);
         }
@@ -203,7 +240,7 @@ namespace Venflow.Modeling
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
         /// <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
-        public Task<int> DeleteAsync(IDeleteCommand<TEntity> deleteCommand, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+        public ValueTask<int> DeleteAsync(IDeleteCommand<TEntity> deleteCommand, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
             ((VenflowBaseCommand<TEntity>)deleteCommand).UnderlyingCommand.Connection = Database.GetConnection();
 
@@ -221,7 +258,7 @@ namespace Venflow.Modeling
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
-        public Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+        public ValueTask UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
             return Update(true).Build().UpdateAsync(entity, cancellationToken);
         }
@@ -234,7 +271,7 @@ namespace Venflow.Modeling
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
-        public Task UpdateAsync(IUpdateCommand<TEntity> updateCommand, TEntity entity, CancellationToken cancellationToken = default)
+        public ValueTask UpdateAsync(IUpdateCommand<TEntity> updateCommand, TEntity entity, CancellationToken cancellationToken = default)
         {
             ((VenflowBaseCommand<TEntity>)updateCommand).UnderlyingCommand.Connection = Database.GetConnection();
 
@@ -248,7 +285,43 @@ namespace Venflow.Modeling
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
-        public Task UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+        public ValueTask UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+        {
+            return Update(true).Build().UpdateAsync(entities, cancellationToken);
+        }
+
+        /// <summary>
+        /// Asynchronously updates the provided entity by its defined primary keys.
+        /// </summary>
+        /// <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be updated.</param>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
+        public ValueTask UpdateAsync(List<TEntity> entities, CancellationToken cancellationToken = default)
+        {
+            return Update(true).Build().UpdateAsync(entities, cancellationToken);
+        }
+
+        /// <summary>
+        /// Asynchronously updates the provided entity by its defined primary keys.
+        /// </summary>
+        /// <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be updated.</param>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
+        public ValueTask UpdateAsync(IList<TEntity> entities, CancellationToken cancellationToken = default)
+        {
+            return Update(true).Build().UpdateAsync(entities, cancellationToken);
+        }
+
+        /// <summary>
+        /// Asynchronously updates the provided entity by its defined primary keys.
+        /// </summary>
+        /// <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be updated.</param>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
+        public ValueTask UpdateAsync(TEntity[] entities, CancellationToken cancellationToken = default)
         {
             return Update(true).Build().UpdateAsync(entities, cancellationToken);
         }
@@ -261,7 +334,7 @@ namespace Venflow.Modeling
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
-        public Task UpdateAsync(IUpdateCommand<TEntity> updateCommand, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+        public ValueTask UpdateAsync(IUpdateCommand<TEntity> updateCommand, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
             ((VenflowBaseCommand<TEntity>)updateCommand).UnderlyingCommand.Connection = Database.GetConnection();
 
@@ -371,7 +444,7 @@ namespace Venflow.Modeling
         /// <exception cref="InvalidOperationException">Thrown when a provided entity does not contain any virtual properties.</exception>
         public void TrackChanges(IList<TEntity> entities)
         {
-            for (int i = 0; i < entities.Count; i++)
+            for (int i = entities.Count - 1; i >= 0; i--)
             {
                 entities[i] = Configuration.ApplyChangeTracking(entities[i]);
             }

@@ -108,7 +108,7 @@ namespace Venflow.Commands
 
             var valueRetriever = EntityConfiguration.PrimaryColumn.ValueRetriever;
 
-            for (int i = 0; i < entities.Count; i++)
+            for (int i = entities.Count - 1; i >= 0; i--)
             {
                 var parameter = valueRetriever.Invoke(entities[i], i.ToString());
 
@@ -179,7 +179,7 @@ namespace Venflow.Commands
 
             var valueRetriever = EntityConfiguration.PrimaryColumn.ValueRetriever;
 
-            for (int i = 0; i < entities.Length; i++)
+            for (int i = entities.Length - 1; i >= 0; i--)
             {
                 var parameter = valueRetriever.Invoke(entities[i], i.ToString());
 

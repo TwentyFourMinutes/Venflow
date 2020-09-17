@@ -381,7 +381,7 @@ namespace Venflow.Dynamic.Materializer
 
             CreateEntity(primaryEntity, primaryEntityHolder.Item2, changeTracking && primaryEntity.ProxyEntityType is { });
 
-            for (int i = 0; i < primaryEntityHolder.Item1.InitializeNavigations.Count; i++)
+            for (int i = primaryEntityHolder.Item1.InitializeNavigations.Count - 1; i >= 0; i--)
             {
                 var initializeNavigation = primaryEntityHolder.Item1.InitializeNavigations[i];
 
@@ -473,7 +473,7 @@ namespace Venflow.Dynamic.Materializer
 
                 CreateEntity(entity, entityHolder.Item2, changeTracking && entity.ProxyEntityType is { }, primaryKeyLocal);
 
-                for (int i = 0; i < entityHolder.Item1.InitializeNavigations.Count; i++)
+                for (int i = entityHolder.Item1.InitializeNavigations.Count - 1; i >= 0; i--)
                 {
                     var initializeNavigation = entityHolder.Item1.InitializeNavigations[i];
 
@@ -547,7 +547,7 @@ namespace Venflow.Dynamic.Materializer
 
                 if (primaryEntityHolder.Item1.ForeignAssignedRelations.Count > 0)
                 {
-                    for (int i = 0; i < primaryEntityHolder.Item1.ForeignAssignedRelations.Count; i++)
+                    for (int i = primaryEntityHolder.Item1.ForeignAssignedRelations.Count - 1; i >= 0; i--)
                     {
                         var assigningRelation = primaryEntityHolder.Item1.ForeignAssignedRelations[i];
 
@@ -574,7 +574,7 @@ namespace Venflow.Dynamic.Materializer
 
                 if (primaryEntityHolder.Item1.SelfAssignedRelations.Count > 0)
                 {
-                    for (int i = 0; i < primaryEntityHolder.Item1.SelfAssignedRelations.Count; i++)
+                    for (int i = primaryEntityHolder.Item1.SelfAssignedRelations.Count - 1; i >= 0; i--)
                     {
                         var assigningRelation = primaryEntityHolder.Item1.SelfAssignedRelations[i];
 
@@ -607,7 +607,7 @@ namespace Venflow.Dynamic.Materializer
 
                 if (entityHolder.ForeignAssignedRelations.Count > 0)
                 {
-                    for (int i = 0; i < entityHolder.ForeignAssignedRelations.Count; i++)
+                    for (int i = entityHolder.ForeignAssignedRelations.Count - 1; i >= 0; i--)
                     {
                         var assigningRelation = entityHolder.ForeignAssignedRelations[i];
 
@@ -663,7 +663,7 @@ namespace Venflow.Dynamic.Materializer
                     _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasLeftEntityChangedLocal);
                     _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
 
-                    for (int i = 0; i < entityHolder.SelfAssignedRelations.Count; i++)
+                    for (int i = entityHolder.SelfAssignedRelations.Count - 1; i >= 0; i--)
                     {
                         var assigningRelation = entityHolder.SelfAssignedRelations[i];
 
@@ -918,7 +918,7 @@ namespace Venflow.Dynamic.Materializer
 
             var dictionaryType = typeof(Dictionary<,>);
 
-            for (int i = 0; i < entities.Count; i++)
+            for (int i = entities.Count - 1; i >= 0; i--)
             {
                 var entityHolder = entities[i];
                 var entity = entityHolder.Item1.Entity;
@@ -1034,7 +1034,7 @@ namespace Venflow.Dynamic.Materializer
 
                 CreateEntity(entity, entityHolder.Item2, changeTracking && entity.ProxyEntityType is { }, primaryKeyLocal);
 
-                for (int i = 0; i < entityHolder.Item1.InitializeNavigations.Count; i++)
+                for (int i = entityHolder.Item1.InitializeNavigations.Count - 1; i >= 0; i--)
                 {
                     var initializeNavigation = entityHolder.Item1.InitializeNavigations[i];
 
@@ -1100,7 +1100,7 @@ namespace Venflow.Dynamic.Materializer
                 setNullGhostIL.Emit(OpCodes.Stfld, lastEntityField);
             }
 
-            for (int entityIndex = 0; entityIndex < entities.Count; entityIndex++)
+            for (int entityIndex = entities.Count - 1; entityIndex >= 0; entityIndex--)
             {
                 var entityHolder = entities[entityIndex].Item1;
 
@@ -1113,7 +1113,7 @@ namespace Venflow.Dynamic.Materializer
 
                 if (entityHolder.ForeignAssignedRelations.Count > 0)
                 {
-                    for (int i = 0; i < entityHolder.ForeignAssignedRelations.Count; i++)
+                    for (int i = entityHolder.ForeignAssignedRelations.Count - 1; i >= 0; i--)
                     {
                         var assigningRelation = entityHolder.ForeignAssignedRelations[i];
 
@@ -1170,7 +1170,7 @@ namespace Venflow.Dynamic.Materializer
                     _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasLeftEntityChangedLocal);
                     _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
 
-                    for (int i = 0; i < entityHolder.SelfAssignedRelations.Count; i++)
+                    for (int i = entityHolder.SelfAssignedRelations.Count - 1; i >= 0; i--)
                     {
                         var assigningRelation = entityHolder.SelfAssignedRelations[i];
 

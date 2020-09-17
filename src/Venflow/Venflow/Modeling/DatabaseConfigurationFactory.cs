@@ -31,12 +31,12 @@ namespace Venflow.Modeling
 
             var entityFactoriesSpan = _entityFactories.AsSpan();
 
-            for (int i = 0; i < entityFactoriesSpan.Length; i++)
+            for (int i = entityFactoriesSpan.Length - 1; i >= 0; i--)
             {
                 entityFactoriesSpan[i].ConfigureForeignRelations(_entityBuilders);
             }
 
-            for (int i = 0; i < entityFactoriesSpan.Length; i++)
+            for (int i = entityFactoriesSpan.Length - 1; i >= 0; i--)
             {
                 var entity = entityFactoriesSpan[i].BuildEntity();
 
@@ -44,7 +44,7 @@ namespace Venflow.Modeling
                 entitiesArray[i] = entity;
             }
 
-            for (int i = 0; i < entityFactoriesSpan.Length; i++)
+            for (int i = entityFactoriesSpan.Length - 1; i >= 0; i--)
             {
                 var entityFactory = entityFactoriesSpan[i];
 
@@ -70,11 +70,11 @@ namespace Venflow.Modeling
 
             var configurations = new Dictionary<Type, Type>();
 
-            for (int assemblyIndex = 0; assemblyIndex < configurationAssembliesSpan.Length; assemblyIndex++)
+            for (int assemblyIndex = configurationAssembliesSpan.Length - 1; assemblyIndex >= 0; assemblyIndex--)
             {
                 var assemblyTypesSpan = configurationAssembliesSpan[assemblyIndex].GetTypes().AsSpan();
 
-                for (int typeIndex = 0; typeIndex < assemblyTypesSpan.Length; typeIndex++)
+                for (int typeIndex = assemblyTypesSpan.Length - 1; typeIndex >= 0; typeIndex--)
                 {
                     var assemblyType = assemblyTypesSpan[typeIndex];
 
@@ -106,7 +106,7 @@ namespace Venflow.Modeling
             var genericEntityBuilderType = typeof(EntityBuilder<>);
             var genericEntityFactoryType = typeof(EntityFactory<>);
 
-            for (int i = 0; i < propertiesSpan.Length; i++)
+            for (int i = propertiesSpan.Length - 1; i >= 0; i--)
             {
                 var property = propertiesSpan[i];
 

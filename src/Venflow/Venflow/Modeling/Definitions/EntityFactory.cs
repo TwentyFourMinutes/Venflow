@@ -42,7 +42,7 @@ namespace Venflow.Modeling.Definitions
 
             var relationCount = _entityBuilder.Relations.Count;
 
-            for (int i = 0; i < relationCount; i++)
+            for (int i = relationCount - 1; i >= 0; i--)
             {
                 var relation = _entityBuilder.Relations[i];
 
@@ -83,7 +83,7 @@ namespace Venflow.Modeling.Definitions
 
             object? entityInstance = default;
 
-            for (int i = 0; i < _entityBuilder.Relations.Count; i++)
+            for (int i = _entityBuilder.Relations.Count - 1; i >= 0; i--)
             {
                 var relation = _entityBuilder.Relations[i];
 

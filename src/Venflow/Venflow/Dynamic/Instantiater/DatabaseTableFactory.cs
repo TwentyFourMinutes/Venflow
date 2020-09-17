@@ -21,7 +21,7 @@ namespace Venflow.Dynamic.Instantiater
 
             var instantiaterMethodIL = instantiaterMethod.GetILGenerator();
 
-            for (int i = 0; i < tableProperties.Count; i++)
+            for (int i = tableProperties.Count - 1; i >= 0; i--)
             {
                 var tableProperty = tableProperties[i];
 

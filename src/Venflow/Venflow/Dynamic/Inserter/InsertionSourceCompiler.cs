@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -61,11 +61,11 @@ namespace Venflow.Dynamic.Inserter
 
             _reachableEntities.Add(entityHolder);
 
-            for (int relationIndex = 0; relationIndex < entity.Relations.Count; relationIndex++)
+            for (int relationIndex = entity.Relations.Count - 1; relationIndex >= 0; relationIndex--)
             {
                 var relation = entity.Relations[relationIndex];
 
-                if (relation.LeftNavigationProperty is null || 
+                if (relation.LeftNavigationProperty is null ||
                     !ReachableRelations.Add(relation.RelationId))
                     continue;
 
@@ -73,13 +73,13 @@ namespace Venflow.Dynamic.Inserter
                 {
                     entityHolder.SelfAssignedRelations.Add(relation);
                 }
-                else if(relation.ForeignKeyLocation == ForeignKeyLocation.Right)
+                else if (relation.ForeignKeyLocation == ForeignKeyLocation.Right)
                 {
                     entityHolder.ForeignAssignedRelations.Add(relation);
                 }
             }
 
-            for (int relationIndex = 0; relationIndex < entity.Relations.Count; relationIndex++)
+            for (int relationIndex = entity.Relations.Count - 1; relationIndex >= 0; relationIndex--)
             {
                 var relation = entity.Relations[relationIndex];
 
@@ -99,14 +99,14 @@ namespace Venflow.Dynamic.Inserter
             {
                 var startReachableCount = _reachableEntities.Count;
 
-                for (int entityIndex = 0; entityIndex < _reachableEntities.Count; entityIndex++)
+                for (int entityIndex = _reachableEntities.Count - 1; entityIndex >= 0; entityIndex--)
                 {
                     var entityHolder = _reachableEntities[entityIndex];
                     var entity = entityHolder.Entity;
 
                     var noDirectDependencies = true;
 
-                    for (int relationIndex = 0; relationIndex < entity.Relations.Count; relationIndex++)
+                    for (int relationIndex = entity.Relations.Count - 1; relationIndex >= 0; relationIndex--)
                     {
                         var relation = entity.Relations[relationIndex];
 
@@ -131,7 +131,7 @@ namespace Venflow.Dynamic.Inserter
 
                     _entities.AddLast(entityHolder);
 
-                    for (int relationIndex = 0; relationIndex < entity.Relations.Count; relationIndex++)
+                    for (int relationIndex = entity.Relations.Count - 1; relationIndex >= 0; relationIndex--)
                     {
                         var relation = entity.Relations[relationIndex];
 
@@ -148,7 +148,7 @@ namespace Venflow.Dynamic.Inserter
 
                     _reachableEntities.RemoveAt(entityIndex);
 
-                    entityIndex--;
+                    entityIndex++;
 
                     if (startReachableCount == _reachableEntities.Count)
                     {

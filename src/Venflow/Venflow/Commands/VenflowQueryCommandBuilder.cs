@@ -59,7 +59,7 @@ namespace Venflow.Commands
 
         internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, string sql, IList<NpgsqlParameter> parameters, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, command, sql, disposeCommand, singleResult)
         {
-            for (int i = 0; i < parameters.Count; i++)
+            for (int i = parameters.Count - 1; i >= 0; i--)
             {
                 _command.Parameters.Add(parameters[i]);
             }

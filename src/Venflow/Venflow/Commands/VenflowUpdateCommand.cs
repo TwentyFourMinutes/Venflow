@@ -125,7 +125,7 @@ namespace Venflow.Commands
             var commandString = new StringBuilder();
 
 
-            for (int i = 0; i < entities.Count; i++)
+            for (int i = entities.Count - 1; i >= 0; i--)
             {
                 BaseUpdate(entities[i], i, commandString);
             }
@@ -149,7 +149,7 @@ namespace Venflow.Commands
         {
             var stringBuilder = new StringBuilder();
 
-            for (int i = 0; i < entities.Length; i++)
+            for (int i = entities.Length - 1; i >= 0; i--)
             {
                 BaseUpdate(entities[i], i++, stringBuilder);
             }
@@ -180,7 +180,7 @@ namespace Venflow.Commands
 
                 var entityColumns = EntityConfiguration.Columns.Values.AsSpan();
 
-                for (int i = 0; i < columns.Length; i++)
+                for (int i = columns.Length - 1; i >= 0; i--)
                 {
                     var columnIndex = columns[i];
 

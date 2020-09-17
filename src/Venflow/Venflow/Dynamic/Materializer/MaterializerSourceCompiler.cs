@@ -38,7 +38,7 @@ namespace Venflow.Dynamic.Materializer
 
             _entities.AddFirst(queryEntityHolder);
 
-            for (int i = 0; i < _joinBuilderValues.FullPath.Count; i++)
+            for (int i = _joinBuilderValues.FullPath.Count - 1; i >= 0; i--)
             {
                 BaseCompile(_joinBuilderValues.FullPath[i], queryEntityHolder);
             }
@@ -131,7 +131,7 @@ namespace Venflow.Dynamic.Materializer
                 }
             }
 
-            for (int i = 0; i < joinPath.TrailingJoinPath.Count; i++)
+            for (int i = joinPath.TrailingJoinPath.Count - 1; i >= 0; i--)
             {
                 BaseCompile(joinPath.TrailingJoinPath[i], leftQueryHolder);
             }

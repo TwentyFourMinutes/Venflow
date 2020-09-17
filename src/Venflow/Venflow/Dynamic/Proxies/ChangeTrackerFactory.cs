@@ -98,7 +98,7 @@ namespace Venflow.Dynamic.Proxies
 
             int index = 0;
 
-            for (int i = 0; i < columns.Count; i++)
+            for (int i = columns.Count - 1; i >= 0; i--)
             {
                 var column = columns[i];
 

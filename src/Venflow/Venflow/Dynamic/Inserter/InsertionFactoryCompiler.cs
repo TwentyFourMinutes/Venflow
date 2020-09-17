@@ -16,6 +16,8 @@ using Venflow.Modeling;
 namespace Venflow.Dynamic.Inserter
 {
     // TODO: Add CommandBehaviour.SingleRow to batch inserts
+    // TODO: Consider adding reversed loops
+    // TODO: Consider adding Spans
     internal class InsertionFactoryCompiler
     {
         private FieldBuilder _connectionField;
@@ -631,7 +633,7 @@ namespace Venflow.Dynamic.Inserter
 
             var awaiterCount = 0;
 
-            for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
+            for (int entityIndex = entities.Length - 1; entityIndex >= 0; entityIndex--)
             {
                 awaiterCount += ((IPrimaryEntityColumn)entities[entityIndex].Entity.GetPrimaryColumn()).IsServerSideGenerated ? 4 : 1;
             }
@@ -687,7 +689,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Ldfld, _connectionField);
             _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("Connection", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetSetMethod());
 
-            for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
+            for (int entityIndex = 0; entityIndex < entities.Length ; entityIndex++)
             {
                 var entityHolder = entities[entityIndex];
                 var entity = entityHolder.Entity;
@@ -813,7 +815,7 @@ namespace Venflow.Dynamic.Inserter
                 _moveNextMethodIL.Emit(OpCodes.Stloc, iteratorElementLocal);
 
                 // assign foreign key to itself from navigation property primary key
-                for (int relationIndex = 0; relationIndex < entityHolder.SelfAssignedRelations.Count; relationIndex++)
+                for (int relationIndex = entityHolder.SelfAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
                 {
                     var relation = entityHolder.SelfAssignedRelations[relationIndex];
 
@@ -1026,7 +1028,7 @@ namespace Venflow.Dynamic.Inserter
 
                         LocalBuilder? innerIteratorLocal = default;
 
-                        for (int relationIndex = 0; relationIndex < entityHolder.ForeignAssignedRelations.Count; relationIndex++)
+                        for (int relationIndex = entityHolder.ForeignAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
                         {
                             var relation = entityHolder.ForeignAssignedRelations[relationIndex];
 
@@ -1452,7 +1454,7 @@ namespace Venflow.Dynamic.Inserter
 
             var awaiterCount = 0;
 
-            for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
+            for (int entityIndex = entities.Length - 1; entityIndex >= 0; entityIndex--)
             {
                 var entity = entities[entityIndex].Entity;
 
@@ -1575,7 +1577,7 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("CommandText").GetSetMethod());
 
                     // assign foreign key to itself from navigation property primary key
-                    for (int relationIndex = 0; relationIndex < entityHolder.SelfAssignedRelations.Count; relationIndex++)
+                    for (int relationIndex = entityHolder.SelfAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
                     {
                         var relation = entityHolder.SelfAssignedRelations[relationIndex];
 
@@ -1643,7 +1645,7 @@ namespace Venflow.Dynamic.Inserter
                     {
                         LocalBuilder? innerIteratorLocal = default;
 
-                        for (int relationIndex = 0; relationIndex < entityHolder.ForeignAssignedRelations.Count; relationIndex++)
+                        for (int relationIndex = entityHolder.ForeignAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
                         {
                             var relation = entityHolder.ForeignAssignedRelations[relationIndex];
 
@@ -1834,7 +1836,7 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Stloc, iteratorElementLocal);
 
                     // assign foreign key to itself from navigation property primary key
-                    for (int relationIndex = 0; relationIndex < entityHolder.SelfAssignedRelations.Count; relationIndex++)
+                    for (int relationIndex = entityHolder.SelfAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
                     {
                         var relation = entityHolder.SelfAssignedRelations[relationIndex];
 
@@ -2047,7 +2049,7 @@ namespace Venflow.Dynamic.Inserter
 
                             LocalBuilder? innerIteratorLocal = default;
 
-                            for (int relationIndex = 0; relationIndex < entityHolder.ForeignAssignedRelations.Count; relationIndex++)
+                            for (int relationIndex = entityHolder.ForeignAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
                             {
                                 var relation = entityHolder.ForeignAssignedRelations[relationIndex];
 
@@ -2576,7 +2578,7 @@ namespace Venflow.Dynamic.Inserter
                 _ilGenerator.Emit(OpCodes.Stloc, _entityIdCheckerLocal);
 
                 // instantiate entityCollections
-                for (int entityIndex = 0; entityIndex < _entities.Length; entityIndex++)
+                for (int entityIndex = _entities.Length - 1; entityIndex >= 0; entityIndex--)
                 {
                     var entity = _entities[entityIndex].Entity;
 
@@ -2630,7 +2632,7 @@ namespace Venflow.Dynamic.Inserter
                     _ilGenerator.Emit(OpCodes.Callvirt, entityCollectionField.FieldType.GetMethod("Add"));
                 }
 
-                for (int relationIndex = 0; relationIndex < entity.Relations.Count; relationIndex++)
+                for (int relationIndex = entity.Relations.Count - 1; relationIndex >= 0; relationIndex--)
                 {
                     var relation = entity.Relations[relationIndex];
 

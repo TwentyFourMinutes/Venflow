@@ -233,7 +233,7 @@ namespace Venflow.Modeling.Definitions.Builder
                 primaryKeyAttributeType = typeof(KeyAttribute);
             }
 
-            for (int i = 0; i < propertiesSpan.Length; i++)
+            for (int i = propertiesSpan.Length - 1; i >= 0; i--)
             {
                 var property = propertiesSpan[i];
 
@@ -260,7 +260,7 @@ namespace Venflow.Modeling.Definitions.Builder
             // Important column specifications
             var regularColumnsOffset = 0;
 
-            for (int i = 0; i < filteredPropertiesSpan.Length; i++)
+            for (int i = filteredPropertiesSpan.Length - 1; i >= 0; i--)
             {
                 var property = filteredPropertiesSpan[i];
 

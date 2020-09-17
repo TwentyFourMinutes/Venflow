@@ -32,7 +32,7 @@ namespace Venflow.Commands
 
         internal JoinPath? GetPath(EntityRelation foreignEntity)
         {
-            for (int i = 0; i < TrailingJoinPath.Count; i++)
+            for (int i = TrailingJoinPath.Count - 1; i >= 0; i--)
             {
                 var joingingEntity = TrailingJoinPath[i];
 
@@ -69,7 +69,7 @@ namespace Venflow.Commands
                 sqlJoins.Append(SqlJoins);
             }
 
-            for (int i = 0; i < TrailingJoinPath.Count; i++)
+            for (int i = TrailingJoinPath.Count - 1; i >= 0; i--)
             {
                 TrailingJoinPath[i].AppendColumnNamesAndJoins(sqlColumns, sqlJoins);
             }

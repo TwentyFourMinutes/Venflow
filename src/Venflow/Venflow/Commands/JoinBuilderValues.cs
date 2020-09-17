@@ -30,7 +30,7 @@ namespace Venflow.Commands
         {
             if (newFullPath)
             {
-                for (int i = 0; i < FullPath.Count; i++)
+                for (int i = FullPath.Count - 1; i >= 0; i--)
                 {
                     var path = FullPath[i];
 
@@ -100,7 +100,7 @@ namespace Venflow.Commands
 
         internal void AppendColumnNamesAndJoins(StringBuilder? sqlColumns, StringBuilder sqlJoins)
         {
-            for (int i = 0; i < FullPath.Count; i++)
+            for (int i = FullPath.Count - 1; i >= 0; i--)
             {
                 FullPath[i].AppendColumnNamesAndJoins(sqlColumns, sqlJoins);
             }
