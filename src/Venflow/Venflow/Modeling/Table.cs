@@ -107,7 +107,7 @@ namespace Venflow.Modeling
         /// <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar')". This API is using parameterized commands.</remarks>
         public Task<int> InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
-            return Insert(true).Build().InsertAsync(entity, cancellationToken);
+            return Insert(true).InsertWithAll().Build().InsertAsync(entity, cancellationToken);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Venflow.Modeling
         /// <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar'), ('foo', 'bar')". This API is using parameterized commands.</remarks>
         public Task<int> InsertAsync(IList<TEntity> entities, CancellationToken cancellationToken = default)
         {
-            return Insert(true).Build().InsertAsync(entities, cancellationToken);
+            return Insert(true).InsertWithAll().Build().InsertAsync(entities, cancellationToken);
         }
 
 
@@ -378,7 +378,7 @@ namespace Venflow.Modeling
         /// </summary>
         /// <returns>A Fluent API Builder for a insert command.</returns>
         /// <remarks>The command will be automatically disposed the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</remarks>
-        public IInsertCommandBuilder<TEntity> Insert()
+        public IBaseInsertRelationBuilder<TEntity, TEntity> Insert()
             => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, false).Insert();
 
         /// <summary>
@@ -386,7 +386,7 @@ namespace Venflow.Modeling
         /// </summary>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a insert command.</returns>
-        public IInsertCommandBuilder<TEntity> Insert(bool disposeCommand)
+        public IBaseInsertRelationBuilder<TEntity, TEntity> Insert(bool disposeCommand)
             => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).Insert();
 
         /// <summary>

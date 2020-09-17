@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
-using Venflow.Enums;
 using Venflow.Modeling;
 
 namespace Venflow.Commands
@@ -13,11 +12,19 @@ namespace Venflow.Commands
         internal Delegate? SingleInserter { get; set; }
         internal Delegate? BatchInserter { get; set; }
 
-        private readonly InsertOptions _insertOptions;
+        private readonly InsertCacheKey _cacheKey;
+        private readonly bool _isFullInsert;
 
-        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, InsertOptions insertOptions, bool disposeCommand) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
+        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, bool isFullInsert) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
         {
-            _insertOptions = insertOptions;
+            _cacheKey = new InsertCacheKey(new EntityRelation[0]);
+            _isFullInsert = isFullInsert;
+        }
+
+        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, in InsertCacheKey cacheKey, bool isFullInsert) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
+        {
+            _cacheKey = cacheKey;
+            _isFullInsert = isFullInsert;
         }
 
         async Task<int> IInsertCommand<TEntity>.InsertAsync(TEntity entity, CancellationToken cancellationToken)
@@ -32,7 +39,7 @@ namespace Venflow.Commands
             }
             else
             {
-                SingleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<TEntity>(_insertOptions);
+                SingleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<TEntity>(_cacheKey, _isFullInsert);
             }
 
             var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entity, cancellationToken);
@@ -55,7 +62,7 @@ namespace Venflow.Commands
             }
             else
             {
-                BatchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<IList<TEntity>>(_insertOptions);
+                BatchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<IList<TEntity>>(_cacheKey, _isFullInsert);
             }
 
             var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entities, cancellationToken);

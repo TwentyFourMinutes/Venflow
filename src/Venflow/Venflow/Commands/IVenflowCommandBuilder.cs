@@ -71,7 +71,7 @@ namespace Venflow.Commands
         /// Creates a new insert command builder.
         /// </summary>
         /// <returns>A Fluent API Builder for a insert command.</returns>
-        IInsertCommandBuilder<TEntity> Insert();
+        IBaseInsertRelationBuilder<TEntity,TEntity> Insert();
         /// <summary>
         /// Creates a new delete command builder.
         /// </summary>

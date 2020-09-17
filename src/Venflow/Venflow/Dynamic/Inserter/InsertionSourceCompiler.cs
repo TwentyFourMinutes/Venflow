@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -40,7 +40,7 @@ namespace Venflow.Dynamic.Inserter
             return entities;
         }
 
-        internal void RootCompile(Entity entity)
+        internal void CompileFromRoot(Entity entity)
         {
             if (entity.Relations is null)
             {
@@ -51,6 +51,47 @@ namespace Venflow.Dynamic.Inserter
 
             VisitedEntityIds.GetId(entity, out _);
             CollectAllReachableEntities(entity);
+
+            BaseCompile();
+        }
+
+        internal void CompileFromRelations(Entity entity, IReadOnlyList<EntityRelation> relations)
+        {
+            VisitedEntityIds.GetId(entity, out _);
+
+            var lastEntityHolder = new EntityRelationHolder(entity);
+
+            _reachableEntities.Add(lastEntityHolder);
+
+            var lastEntity = entity;
+
+            for (int i = relations.Count - 1; i >= 0; i--)
+            {
+                var relation = relations[i];
+
+                if (!ReachableRelations.Add(relation.RelationId))
+                    continue;
+
+                if (lastEntity != relation.LeftEntity)
+                {
+                    lastEntity = relation.LeftEntity;
+                    lastEntityHolder = new EntityRelationHolder(lastEntity);
+
+                    _reachableEntities.Add(lastEntityHolder);
+
+
+                    VisitedEntityIds.GetId(relation.LeftEntity, out _);
+                }
+
+                if (relation.ForeignKeyLocation == ForeignKeyLocation.Left)
+                {
+                    lastEntityHolder.SelfAssignedRelations.Add(relation);
+                }
+                else if (relation.ForeignKeyLocation == ForeignKeyLocation.Right)
+                {
+                    lastEntityHolder.ForeignAssignedRelations.Add(relation);
+                }
+            }
 
             BaseCompile();
         }
@@ -146,14 +187,12 @@ namespace Venflow.Dynamic.Inserter
                         _processedEntities.GetId(entity, out _);
                     }
 
-                    _reachableEntities.RemoveAt(entityIndex);
+                    _reachableEntities.RemoveAt(entityIndex); 
+                }
 
-                    entityIndex++;
-
-                    if (startReachableCount == _reachableEntities.Count)
-                    {
-                        throw new InvalidOperationException($"The entities {string.Join(", ", _reachableEntities.Select(x => "'" + x.Entity.EntityName + "'"))} create a relation loop which can't be resolved. You can fix this by splitting up your insert into multiple ones. However if you do get this error, please create an issue on GitHub with a reproduceable example.");
-                    }
+                if (startReachableCount == _reachableEntities.Count)
+                {
+                    throw new InvalidOperationException($"The entities {string.Join(", ", _reachableEntities.Select(x => "'" + x.Entity.EntityName + "'"))} create a relation loop which can't be resolved. You can fix this by splitting up your insert into multiple ones. However if you do get this error, please create an issue on GitHub with a reproduceable example.");
                 }
             }
         }
