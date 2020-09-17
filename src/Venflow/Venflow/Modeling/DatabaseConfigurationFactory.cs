@@ -72,7 +72,8 @@ namespace Venflow.Modeling
 
             for (int assemblyIndex = configurationAssembliesSpan.Length - 1; assemblyIndex >= 0; assemblyIndex--)
             {
-                var assemblyTypesSpan = configurationAssembliesSpan[assemblyIndex].GetTypes().AsSpan();
+                // See https://stackoverflow.com/q/63942274/10070647
+                var assemblyTypesSpan = new ReadOnlySpan<Type>(configurationAssembliesSpan[assemblyIndex].GetTypes());
 
                 for (int typeIndex = assemblyTypesSpan.Length - 1; typeIndex >= 0; typeIndex--)
                 {
