@@ -1,10 +1,10 @@
 <p align="center">
  <img width="100px" src="images/venflow.png" align="center" alt="GitHub Readme Stats" />
  <h1 align="center">Venflow</h1>
- <p align="center">A brand new, lightweight and fast ORM.</p>
+ <p align="center">A brand new, fast and lightweight ORM. | <a href="twentyfourminutes.github.io/venflow/">Documentation</a></p>
 </p>
 <p align="center">
-<a href="https://www.nuget.org/packages/Venflow"><img alt="Nuget" src="https://img.shields.io/nuget/v/Venflow"></a> <a href="https://www.nuget.org/packages/Venflow"><img alt="Nuget" src="https://img.shields.io/nuget/dt/Venflow"></a> <a href="https://github.com/TwentyFourMinutes/Venflow/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/TwentyFourMinutes/DulcisX"></a> <a href="https://github.com/TwentyFourMinutes/Venflow/blob/master/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/TwentyFourMinutes/DulcisX"></a> <a href="https://discordapp.com/invite/EYKxkce"><img alt="Discord" src="https://discordapp.com/api/guilds/275377268728135680/widget.png"></a>
+<a href="https://www.nuget.org/packages/Venflow"><img alt="Nuget" src="https://img.shields.io/nuget/v/Venflow"></a> <a href="https://www.nuget.org/packages/Venflow"><img alt="Nuget" src="https://img.shields.io/nuget/dt/Venflow"></a> <a href="https://github.com/TwentyFourMinutes/Venflow/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/TwentyFourMinutes/Venflow"></a> <a href="https://github.com/TwentyFourMinutes/Venflow/blob/master/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/TwentyFourMinutes/DulcisX"></a> <a href="https://discordapp.com/invite/EYKxkce"><img alt="Discord" src="https://discordapp.com/api/guilds/275377268728135680/widget.png"></a>
 </p>
 
 ## About
