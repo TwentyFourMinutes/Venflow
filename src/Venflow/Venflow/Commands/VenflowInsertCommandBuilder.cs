@@ -10,8 +10,10 @@ using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
-    internal readonly struct InsertCacheKey
+    internal struct InsertCacheKey
     {
+        internal bool IsSingleInsert { get; set; }
+
         internal IReadOnlyList<EntityRelation> Relations => _relations;
 
         private readonly IReadOnlyList<EntityRelation> _relations;
@@ -19,6 +21,8 @@ namespace Venflow.Commands
         internal InsertCacheKey(IReadOnlyList<EntityRelation> relations)
         {
             _relations = relations;
+
+            IsSingleInsert = false;
         }
 
         public bool Equals(
@@ -27,7 +31,8 @@ namespace Venflow.Commands
             #endif 
             InsertCacheKey y)
         {
-            if (y._relations.Count != _relations.Count)
+            if (y._relations.Count != _relations.Count ||
+                y.IsSingleInsert != IsSingleInsert)
                 return false;
 
             var relaionsSpan = ((List<EntityRelation>)_relations).AsSpan();
@@ -45,6 +50,8 @@ namespace Venflow.Commands
         public new int GetHashCode()
         {
             var hashCode = new HashCode();
+
+            hashCode.Add(IsSingleInsert);
 
             var relaionsSpan = ((List<EntityRelation>)_relations).AsSpan();
 
@@ -112,39 +119,10 @@ namespace Venflow.Commands
         {
             if (_relationBuilderValues is { })
             {
-                var relations = new List<EntityRelation>();
-
-                var relationBuilderValuesSpan = _relationBuilderValues.TrailingPath.AsSpan();
-
-                for (int relationIndex = relationBuilderValuesSpan.Length - 1; relationIndex >= 0; relationIndex--)
-                {
-                    var relation = relationBuilderValuesSpan[relationIndex];
-
-                    relations.Add(relation.CurrentRelation);
-
-                    if (relation.TrailingPath.Count > 0)
-                        FlattenRelations(relation, relations);
-                }
-
-                return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _command, _disposeCommand, new InsertCacheKey(relations), _isFullInsert);
+                return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _command, _disposeCommand, new InsertCacheKey(_relationBuilderValues.FlattenedRelations), _isFullInsert);
             }
 
             return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _command, _disposeCommand, _isFullInsert);
-        }
-
-        private void FlattenRelations(RelationPath relationPath, List<EntityRelation> relations)
-        {
-            var relationPathSpan = relationPath.TrailingPath.AsSpan();
-
-            for (int relationIndex = relationPathSpan.Length - 1; relationIndex >= 0; relationIndex--)
-            {
-                var relation = relationPathSpan[relationIndex];
-
-                relations.Add(relation.CurrentRelation);
-
-                if (relation.TrailingPath.Count > 0)
-                    FlattenRelations(relation, relations);
-            }
         }
 
         public Task<int> InsertAsync(TEntity entity, CancellationToken cancellationToken = default)

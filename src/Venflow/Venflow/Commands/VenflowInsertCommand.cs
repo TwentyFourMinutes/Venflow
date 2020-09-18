@@ -12,7 +12,7 @@ namespace Venflow.Commands
         internal Delegate? SingleInserter { get; set; }
         internal Delegate? BatchInserter { get; set; }
 
-        private readonly InsertCacheKey _cacheKey;
+        private InsertCacheKey _cacheKey;
         private readonly bool _isFullInsert;
 
         internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, bool isFullInsert) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
@@ -39,6 +39,8 @@ namespace Venflow.Commands
             }
             else
             {
+                _cacheKey.IsSingleInsert = true;
+
                 SingleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<TEntity>(_cacheKey, _isFullInsert);
             }
 
