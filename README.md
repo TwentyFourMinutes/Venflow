@@ -1,10 +1,15 @@
-# Venflow
-
+<p align="center">
+ <img width="100px" src="images/venflow.png" align="center" alt="GitHub Readme Stats" />
+ <h1 align="center">Venflow</h1>
+ <p align="center">A brand new, lightweight and fast ORM.</p>
+</p>
+<p align="center">
 <a href="https://www.nuget.org/packages/Venflow"><img alt="Nuget" src="https://img.shields.io/nuget/v/Venflow"></a> <a href="https://www.nuget.org/packages/Venflow"><img alt="Nuget" src="https://img.shields.io/nuget/dt/Venflow"></a> <a href="https://github.com/TwentyFourMinutes/Venflow/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/TwentyFourMinutes/DulcisX"></a> <a href="https://github.com/TwentyFourMinutes/Venflow/blob/master/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/TwentyFourMinutes/DulcisX"></a> <a href="https://discordapp.com/invite/EYKxkce"><img alt="Discord" src="https://discordapp.com/api/guilds/275377268728135680/widget.png"></a>
-
-Venflow is a brand new and from the ground up written ORM which tries to provide an alternative to EF-Core and many other ORMs. It allows you to define Models and their relations with each other. Additionally it maps all queries on its own while still maintaining great performance, with options for custom SQL.
+</p>
 
 ## About
+
+Venflow is a brand new and from the ground up written ORM which tries to provide an alternative to EF-Core and many other ORMs. It allows you to define Models and their relations with each other. Additionally it maps all queries on its own while still maintaining great performance, with options for custom SQL.
 
 Lets face it, EF-Core is awesome, but it can be slow, really slow. However this library tries to overcome that by providing similar features while maintaining great performance. Venflow comes with a very similar UX to Dapper and EF-Core, in order to keep the learning curve as low as possible. 
 
@@ -126,19 +131,22 @@ Subsequent joins can be configured with the `ThenWith` method. Do note, that one
 
 - Composed PK support
 - Direct support for many to many relations
+- Support for materialized Views
 
 ### Acknowledgements
 
 I also want to mention all the other great packages out there, build by awesome people, which helped with building Venflow in one way or another such as being open-source.
 
 - [Npgsql](https://github.com/npgsql/npgsql) by [the Npgsql core contributers](https://github.com/npgsql/) for providing an awesome and fast PostgreSQL data provider.
+- [Sharplab](https://github.com/ashmind/SharpLab) by [ashmind](https://github.com/ashmind) and the [sharplab.io](https://sharplab.io) website for immensely simplify the generation for IL.
 - [EF-Core](https://github.com/dotnet/efcore) by [Microsoft and the .Net team](https://github.com/dotnet) for providing the inspiration for such an awesome surface API.
 - [RepoDb](https://github.com/mikependon/RepoDb) by [mikependon](https://github.com/mikependon) for providing the idea of generating runtime IL/Expressions to boost performance.
 - [Fody](https://github.com/Fody/Fody) by [the Fody core contributers](https://github.com/Fody) for providing an easy way to IL weave Venflow.
 - [GitHub](https://github.com/) for hosting the documentation with [GitHub Pages](https://pages.github.com/) and the repository itself.
-- [DocFX](https://github.com/dotnet/docfx) by [Microsoft and the .Net team](https://github.com/dotnet) for providing a great any easy static markdown and documentation html generator.
+- [DocFX](https://github.com/dotnet/docfx) by [Microsoft and the .Net team](https://github.com/dotnet) for providing a great any easy static markdown/documentation html generator.
 - [Typora](https://typora.io/) for being a fully extensive and great markdown editor.
 - [GitKraken](https://www.gitkraken.com/) for providing a full fledged git UI with a bunch of great features.
+- [Shields](https://shields.io/) for providing awesome badges for the README.
 
 ## Notes
 
