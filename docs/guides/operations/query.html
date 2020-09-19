@@ -48,7 +48,7 @@
               </button>
               
               <a class="navbar-brand" href="../../index.html">
-                <img id="logo" class="svg" src="../../logo.svg" alt="">
+                <img id="logo" class="svg" src="../../venflow.svg" alt="">
               </a>
             </div>
             <div class="collapse navbar-collapse" id="navbar">
@@ -111,8 +111,9 @@ var query = database.Blogs.QueryBatch(10).Build();
 
 var blogs = await query.QueryAsync(); // You can also inline this with the line above.
 </code></pre>
-<p>If you instead only wanted to query the first result, you can use the <code>QuerySingle</code> API.</p>
-<pre><code class="lang-cs">var blogs = await database.Blogs.QuerySingle().Build().QueryAsync();
+<p>Additionally if you do not intend to reuse the the command instance you can omit the <code>Build</code> method call and directly call <code>QueryAsync</code>.</p>
+<p>Also, if you instead only wanted to query the first result, you can use the <code>QuerySingle</code> API.</p>
+<pre><code class="lang-cs">var blogs = await database.Blogs.QuerySingle().QueryAsync();
 </code></pre>
 <h2 id="query-data-with-relations">Query data with relations</h2>
 <p>In this case we want to get the first 5 blogs with all of their posts. If you want to perform a join, the builder exposes the <code>JoinWith</code> and the <code>ThenWith</code> method to perform nested joins.</p>

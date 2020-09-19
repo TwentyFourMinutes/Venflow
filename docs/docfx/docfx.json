@@ -38,7 +38,9 @@
       {
         "files": [
           "**/images/**",
-          "**/samples/**"
+          "**/samples/**",
+		  "favicon.ico",
+		  "venflow.svg"
         ]
       }
     ],
@@ -54,7 +56,9 @@
     "globalMetadata": {
       "_appTitle": "Venflow Documentation",
       "_appFooter": "<span>Copyright © 2020 Twenty</span>",
-      "_enableSearch": "true"
+      "_enableSearch": "true",
+	  "_appFaviconPath": "favicon.ico",
+	  "_appLogoPath": "venflow.svg"
     },
     "fileMetadataFiles": [],
     "template": [
