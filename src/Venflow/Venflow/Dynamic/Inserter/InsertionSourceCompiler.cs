@@ -187,7 +187,7 @@ namespace Venflow.Dynamic.Inserter
                         _processedEntities.GetId(entity, out _);
                     }
 
-                    _reachableEntities.RemoveAt(entityIndex); 
+                    _reachableEntities.RemoveAt(entityIndex);
                 }
 
                 if (startReachableCount == _reachableEntities.Count)

@@ -14,7 +14,7 @@ namespace Venflow.Commands
         /// Creates a query command with a single result. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="QuerySingle(string, NpgsqlParameter[])"/> or <see cref="QueryInterpolatedSingle(FormattableString)"/>.
         /// </summary>
         /// <returns>An object that can be used to further configure the operation.</returns>
-         IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> QuerySingle(string sql);
+        IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> QuerySingle(string sql);
         /// <summary>
         /// Creates a new query command builder, which expects a single returned primary row. <strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <see cref="QueryInterpolatedSingle(FormattableString)"/>.
         /// </summary>
@@ -52,7 +52,7 @@ namespace Venflow.Commands
         /// Creates a new insert command builder.
         /// </summary>
         /// <returns>A Fluent API Builder for a insert command.</returns>
-        IBaseInsertRelationBuilder<TEntity,TEntity> Insert();
+        IBaseInsertRelationBuilder<TEntity, TEntity> Insert();
         /// <summary>
         /// Creates a new delete command builder.
         /// </summary>

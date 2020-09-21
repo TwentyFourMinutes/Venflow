@@ -24,9 +24,9 @@ namespace Venflow.Commands
         }
 
         public bool Equals(
-#if !NET48 
+#if !NET48
             [AllowNull] 
-            #endif 
+#endif
             QueryCacheKey y)
         {
             if (y.ReturnType != ReturnType ||

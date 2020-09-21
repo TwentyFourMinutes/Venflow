@@ -10,7 +10,7 @@ namespace Venflow.Commands
     /// <typeparam name="TEntity">The type of the entity which will be inserted.</typeparam>
     public interface IInsertCommandBuilder<TEntity> : ISpecficVenflowCommandBuilder<IInsertCommand<TEntity>>
         where TEntity : class, new()
-    {      
+    {
         /// <summary>
         /// Asynchronously inserts a single entity.
         /// </summary>

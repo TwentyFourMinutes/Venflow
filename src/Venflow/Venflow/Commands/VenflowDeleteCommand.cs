@@ -92,7 +92,7 @@ namespace Venflow.Commands
 
         async ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(IList<TEntity> entities, CancellationToken cancellationToken)
         {
-            if (entities is null || 
+            if (entities is null ||
                 entities.Count == 0)
                 return 0;
 

@@ -276,7 +276,7 @@ namespace Venflow
                     Configure(optionsBuilder);
 
                     var options = optionsBuilder.Build();
-                    
+
                     configuration = dbConfigurator.BuildConfiguration(type, options.ConfigurationAssemblies);
 
                     DatabaseConfigurationCache.DatabaseConfigurations.TryAdd(type, configuration);

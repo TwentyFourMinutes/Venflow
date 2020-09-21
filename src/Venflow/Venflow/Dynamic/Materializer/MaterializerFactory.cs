@@ -63,7 +63,7 @@ namespace Venflow.Dynamic.Materializer
 
                     var nextJoinPKName = _entity.PrimaryColumn?.ColumnName ?? _entity.Columns[0].ColumnName;
 
-                    for (int columnIndex = 0; columnIndex < columnSchemaSpan.Length ; columnIndex++)
+                    for (int columnIndex = 0; columnIndex < columnSchemaSpan.Length; columnIndex++)
                     {
                         var column = columnSchemaSpan[columnIndex];
 

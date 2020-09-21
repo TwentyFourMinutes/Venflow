@@ -20,12 +20,12 @@ namespace Venflow.Commands
         }
 
         public bool Equals(
-#if !NET48 
+#if !NET48
             [AllowNull] 
-            #endif 
+#endif
             InsertCacheKey y)
         {
-            if (y._relations.Length != _relations.Length||
+            if (y._relations.Length != _relations.Length ||
                 y.IsSingleInsert != IsSingleInsert)
                 return false;
 

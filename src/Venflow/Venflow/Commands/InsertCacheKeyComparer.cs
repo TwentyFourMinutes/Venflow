@@ -15,11 +15,11 @@ namespace Venflow.Commands
         public bool Equals(
 #if !NET48
             [AllowNull]
-            #endif  
+#endif
             InsertCacheKey x,
 #if !NET48
             [AllowNull]
-            #endif
+#endif
             InsertCacheKey y)
         {
             return x.Equals(y);
@@ -28,7 +28,7 @@ namespace Venflow.Commands
         public int GetHashCode(
 #if !NET48
             [DisallowNull]
-            #endif  
+#endif
             InsertCacheKey obj)
         {
             return obj.GetHashCode();

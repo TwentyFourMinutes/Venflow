@@ -36,7 +36,7 @@ namespace Venflow
         internal bool TryGetValue(TKeyTwo key,
 #if !NET48
             [NotNullWhen(true)]
-            #endif 
+#endif
             out TValue? value)
         {
             return _twoToOne.TryGetValue(key, out value);
@@ -45,7 +45,7 @@ namespace Venflow
         internal bool TryGetValue(TKeyThree key,
 #if !NET48
             [NotNullWhen(true)]
-            #endif
+#endif
             out TValue? value)
         {
             return _threeToOne.TryGetValue(key, out value);

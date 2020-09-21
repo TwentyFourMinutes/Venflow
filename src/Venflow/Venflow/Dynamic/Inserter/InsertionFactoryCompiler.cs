@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO.Compression;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
@@ -689,7 +688,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Ldfld, _connectionField);
             _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandField.FieldType.GetProperty("Connection", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetSetMethod());
 
-            for (int entityIndex = 0; entityIndex < entities.Length ; entityIndex++)
+            for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
             {
                 var entityHolder = entities[entityIndex];
                 var entity = entityHolder.Entity;
