@@ -148,6 +148,12 @@ I also want to mention all the other great packages out there, build by awesome 
 - [GitKraken](https://www.gitkraken.com/) for providing a full fledged git UI with a bunch of great features.
 - [Shields](https://shields.io/) for providing awesome badges for the README.
 
+#### Awesome people which helped in the development
+
+- [LunarLite](https://github.com/LunarLite) for helping me with highly complex logically issues.
+- [AnotherZane](https://github.com/AnotherZane) for being one of the early alpha testers. 
+- [Jas](https://github.com/jas777) and [Fatal](https://github.com/fatalcenturion) for providing general surface API ideas
+
 ## Notes
 
 ### Contact information
