@@ -19,11 +19,16 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../../../Venflow.snk</AssemblyOriginatorKeyFile>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net5.0|AnyCPU'">
     <DocumentationFile>Venflow.xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../../images/icon.png" Pack="true" PackagePath=""/>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="ConfigureAwait.Fody" Version="3.3.1">
