@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
@@ -32,6 +33,9 @@ namespace Venflow.Modeling
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the result of the executed query.</returns>
         /// <remarks>This method could represents the following SQL statement "SELECT * FROM table".</remarks>
+#if !NET48
+        [return: MaybeNull]
+#endif
         public Task<TReturn> QueryAsync<TReturn>(IQueryCommand<TEntity, TReturn> queryCommand, CancellationToken cancellationToken = default) where TReturn : class, new()
         {
             ((VenflowBaseCommand<TEntity>)queryCommand).UnderlyingCommand.Connection = Database.GetConnection();
@@ -49,7 +53,7 @@ namespace Venflow.Modeling
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
-        public IPreCommandBuilder<TEntity, TEntity> QuerySingle(string sql, bool disposeCommand = true)
+        public IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> QuerySingle(string sql, bool disposeCommand = true)
             => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QuerySingle(sql);
 
         /// <summary>
@@ -59,7 +63,7 @@ namespace Venflow.Modeling
         /// <param name="parameters">A set of <see cref="NpgsqlParameter"/> which contain parameters for the <paramref name="sql"/> command.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
         /// <remarks>The command will be automatically disposed the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</remarks>
-        public IPreCommandBuilder<TEntity, TEntity> QuerySingle(string sql, params NpgsqlParameter[] parameters)
+        public IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> QuerySingle(string sql, params NpgsqlParameter[] parameters)
             => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, true).QuerySingle(sql, parameters);
 
         /// <summary>
@@ -69,7 +73,7 @@ namespace Venflow.Modeling
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <param name="parameters">A set of <see cref="NpgsqlParameter"/> which contain parameters for the <paramref name="sql"/> command.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
-        public IPreCommandBuilder<TEntity, TEntity> QuerySingle(string sql, bool disposeCommand, params NpgsqlParameter[] parameters)
+        public IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> QuerySingle(string sql, bool disposeCommand, params NpgsqlParameter[] parameters)
            => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QuerySingle(sql, parameters);
 
         /// <summary>
@@ -78,7 +82,7 @@ namespace Venflow.Modeling
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
-        public IPreCommandBuilder<TEntity, TEntity> QueryInterpolatedSingle(FormattableString sql, bool disposeCommand = true)
+        public IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> QueryInterpolatedSingle(FormattableString sql, bool disposeCommand = true)
             => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QueryInterpolatedSingle(sql);
 
         /// <summary>
@@ -87,7 +91,7 @@ namespace Venflow.Modeling
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
-        public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, bool disposeCommand = true)
+        public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch(string sql, bool disposeCommand = true)
             => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QueryBatch(sql);
 
         /// <summary>
@@ -97,7 +101,7 @@ namespace Venflow.Modeling
         /// <param name="parameters">A set of <see cref="NpgsqlParameter"/> which contain parameters for the <paramref name="sql"/> command.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
         /// <remarks>The command will be automatically disposed the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</remarks>
-        public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, params NpgsqlParameter[] parameters)
+        public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch(string sql, params NpgsqlParameter[] parameters)
             => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, false).QueryBatch(sql, parameters);
 
         /// <summary>
@@ -107,7 +111,7 @@ namespace Venflow.Modeling
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <param name="parameters">A set of <see cref="NpgsqlParameter"/> which contain parameters for the <paramref name="sql"/> command.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
-        public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(string sql, bool disposeCommand, params NpgsqlParameter[] parameters)
+        public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch(string sql, bool disposeCommand, params NpgsqlParameter[] parameters)
             => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QueryBatch(sql, parameters);
 
         /// <summary>
@@ -116,12 +120,12 @@ namespace Venflow.Modeling
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. <strong>You should only add parameters trough string interpolation.</strong></param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
-        public IPreCommandBuilder<TEntity, List<TEntity>> QueryInterpolatedBatch(FormattableString sql, bool disposeCommand = true)
+        public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryInterpolatedBatch(FormattableString sql, bool disposeCommand = true)
             => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QueryInterpolatedBatch(sql);
 
         #endregion
 
-        private ValueTask ValidateConnectionAsync()
+        private protected ValueTask ValidateConnectionAsync()
         {
             var connection = Database.GetConnection();
 

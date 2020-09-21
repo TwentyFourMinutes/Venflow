@@ -13,65 +13,20 @@ namespace Venflow.Dynamic.Materializer
     internal class MaterializerFactory<TEntity> where TEntity : class, new()
     {
         private readonly Entity<TEntity> _entity;
-        private readonly Dictionary<int, Delegate> _materializerCache;
+        private readonly Dictionary<QueryCacheKey, Delegate> _materializerCache;
         private readonly object _materializerLock;
 
         internal MaterializerFactory(Entity<TEntity> entity)
         {
             _entity = entity;
 
-            _materializerCache = new Dictionary<int, Delegate>();
-            _materializerLock = new object();
+            _materializerCache = new(QueryCacheKeyComparer.Default);
+            _materializerLock = new();
         }
 
-        internal Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> GetOrCreateMaterializer<TReturn>(JoinBuilderValues? joinBuilderValues, ReadOnlyCollection<NpgsqlDbColumn> columnSchema, bool changeTracking) where TReturn : class, new()
+        internal Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> GetOrCreateMaterializer<TReturn>(RelationBuilderValues? relationBuilderValues, ReadOnlyCollection<NpgsqlDbColumn> columnSchema, bool changeTracking) where TReturn : class, new()
         {
-            var cacheKeyBuilder = new HashCode();
-
-            cacheKeyBuilder.Add(typeof(TReturn));
-
-            var hasJoins = joinBuilderValues is { };
-
-            var columnIndex = 0;
-
-            var columnSchemaSpan = columnSchema.AsSpan();
-
-            if (hasJoins)
-            {
-                var joinIndex = 0;
-
-                Entity nextJoin = _entity;
-                string? nextJoinPKName = _entity.PrimaryColumn.ColumnName;
-
-                for (; columnIndex < columnSchemaSpan.Length; columnIndex++)
-                {
-                    var columnName = columnSchemaSpan[columnIndex].ColumnName;
-
-                    if (columnName == nextJoinPKName)
-                    {
-                        cacheKeyBuilder.Add(nextJoin.EntityName);
-
-                        if (joinBuilderValues.Joins.Count == joinIndex)
-                            break;
-
-                        nextJoin = joinBuilderValues.Joins[joinIndex].Join.RightEntity;
-                        nextJoinPKName = nextJoin.GetPrimaryColumn().ColumnName;
-
-                        joinIndex++;
-                    }
-
-                    cacheKeyBuilder.Add(columnName);
-                }
-            }
-
-            for (; columnIndex < columnSchemaSpan.Length; columnIndex++)
-            {
-                cacheKeyBuilder.Add(columnSchemaSpan[columnIndex].ColumnName);
-            }
-
-            cacheKeyBuilder.Add(changeTracking);
-
-            var cacheKey = cacheKeyBuilder.ToHashCode();
+            var cacheKey = new QueryCacheKey(_entity, typeof(TReturn), relationBuilderValues?.GetFlattenedRelations(), columnSchema.AsList(), changeTracking);
 
             lock (_materializerLock)
             {
@@ -83,11 +38,11 @@ namespace Venflow.Dynamic.Materializer
                 {
                     QueryEntityHolder[] generatedEntities;
 
-                    if (hasJoins)
+                    if (relationBuilderValues is { })
                     {
-                        var sourceCompiler = new MaterializerSourceCompiler(joinBuilderValues);
+                        var sourceCompiler = new MaterializerSourceCompiler(relationBuilderValues);
 
-                        sourceCompiler.Compile();
+                        sourceCompiler.Compile(_entity);
 
                         generatedEntities = sourceCompiler.GenerateSortedEntities();
                     }
@@ -95,6 +50,8 @@ namespace Venflow.Dynamic.Materializer
                     {
                         generatedEntities = new[] { new QueryEntityHolder(_entity, 0) };
                     }
+
+                    var columnSchemaSpan = columnSchema.AsSpan();
 
                     var entities = new List<(QueryEntityHolder, List<(EntityColumn, int)>)>();
                     List<(EntityColumn, int)> columns = default;
@@ -106,7 +63,7 @@ namespace Venflow.Dynamic.Materializer
 
                     var nextJoinPKName = _entity.PrimaryColumn?.ColumnName ?? _entity.Columns[0].ColumnName;
 
-                    for (columnIndex = 0; columnIndex < columnSchemaSpan.Length; columnIndex++)
+                    for (int columnIndex = 0; columnIndex < columnSchemaSpan.Length ; columnIndex++)
                     {
                         var column = columnSchemaSpan[columnIndex];
 
@@ -119,7 +76,8 @@ namespace Venflow.Dynamic.Materializer
 
                             entities.Add((nextJoin, columns));
 
-                            if (hasJoins && joinIndex < generatedEntities.Length)
+                            if (relationBuilderValues is { }
+                                && joinIndex < generatedEntities.Length)
                             {
                                 nextJoin = generatedEntities[joinIndex];
                                 nextJoinPKName = nextJoin.Entity.GetPrimaryColumn().ColumnName;
@@ -148,13 +106,13 @@ namespace Venflow.Dynamic.Materializer
                         columns.Add((entityColumn, column.ColumnOrdinal.Value));
                     }
 
-                    if (hasJoins)
+                    if (relationBuilderValues is { })
                     {
-                        if (joinBuilderValues.Joins.Count + 1 > entities.Count)
+                        if (relationBuilderValues.FlattenedPath.Count + 1 > entities.Count)
                         {
                             throw new InvalidOperationException("You configured more joins than entities returned by the query.");
                         }
-                        else if (joinBuilderValues.Joins.Count + 1 < entities.Count)
+                        else if (relationBuilderValues.FlattenedPath.Count + 1 < entities.Count)
                         {
                             throw new InvalidOperationException("You configured fewer joins than entities returned by the query.");
                         }

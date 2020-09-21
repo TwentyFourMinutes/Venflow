@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
+using Npgsql.Schema;
+using Venflow.Dynamic;
 using Venflow.Enums;
 using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
-    internal class VenflowQueryCommandBuilder<TEntity, TReturn> : IPreCommandBuilder<TEntity, TReturn> where TEntity : class, new() where TReturn : class, new()
+    internal class VenflowQueryCommandBuilder<TEntity, TReturn> : IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> where TEntity : class, new() where TReturn : class, new()
     {
-        internal JoinBuilderValues? JoinBuilderValues { get; set; }
-
         private bool _trackChanges;
         private QueryGenerationOptions _queryGenerationOptions;
         private bool _disposeCommand;
 
+        private RelationBuilderValues? _relationBuilderValues;
         private readonly bool _singleResult;
-        private readonly ulong _count;
         private readonly StringBuilder _commandString;
         private readonly string _rawSql;
         private readonly NpgsqlCommand _command;
@@ -28,7 +29,7 @@ namespace Venflow.Commands
         private readonly Entity<TEntity> _entityConfiguration;
         private readonly object?[]? _interploatedSqlParameters;
 
-        internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, QueryGenerationOptions queryGenerationOptions, bool disposeCommand, bool singleResult)
+        private VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, QueryGenerationOptions queryGenerationOptions, bool disposeCommand, bool singleResult)
         {
             _database = database;
             _entityConfiguration = entityConfiguration;
@@ -37,11 +38,6 @@ namespace Venflow.Commands
             _disposeCommand = disposeCommand;
             _singleResult = singleResult;
             _commandString = new StringBuilder();
-        }
-
-        internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, ulong count, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, command, QueryGenerationOptions.GenerateFullSQL, disposeCommand, singleResult)
-        {
-            _count = count;
         }
 
         internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, string sql, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, command, QueryGenerationOptions.None, disposeCommand, singleResult)
@@ -65,27 +61,6 @@ namespace Venflow.Commands
             }
         }
 
-        JoinBuilder<TEntity, TToEntity, TReturn> IQueryCommandBuilder<TEntity, TReturn>.JoinWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour)
-        {
-            var builder = new JoinBuilder<TEntity, TToEntity, TReturn>(_entityConfiguration, this, (_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0);
-
-            return builder.JoinWith(propertySelector, joinBehaviour);
-        }
-
-        JoinBuilder<TEntity, TToEntity, TReturn> IQueryCommandBuilder<TEntity, TReturn>.JoinWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour)
-        {
-            var builder = new JoinBuilder<TEntity, TToEntity, TReturn>(_entityConfiguration, this, (_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0);
-
-            return builder.JoinWith(propertySelector, joinBehaviour);
-        }
-
-        JoinBuilder<TEntity, TToEntity, TReturn> IQueryCommandBuilder<TEntity, TReturn>.JoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour)
-        {
-            var builder = new JoinBuilder<TEntity, TToEntity, TReturn>(_entityConfiguration, this, (_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0);
-
-            return builder.JoinWith(propertySelector, joinBehaviour);
-        }
-
         public IQueryCommandBuilder<TEntity, TReturn> TrackChanges(bool trackChanges = true)
         {
             _trackChanges = trackChanges;
@@ -93,7 +68,7 @@ namespace Venflow.Commands
             return this;
         }
 
-        IQueryCommandBuilder<TEntity, TReturn> IPreCommandBuilder<TEntity, TReturn>.AddFormatter()
+        public IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> AddFormatter()
         {
             _queryGenerationOptions |= QueryGenerationOptions.GenerateJoins;
 
@@ -104,28 +79,16 @@ namespace Venflow.Commands
         {
             if (_interploatedSqlParameters is null)
             {
-                if ((_queryGenerationOptions & QueryGenerationOptions.GenerateFullSQL) == QueryGenerationOptions.GenerateFullSQL)
-                {
-                    if (JoinBuilderValues is null)
-                    {
-                        AppendBaseQuery(_commandString, _count);
-                        _commandString.Append(';');
-                    }
-                    else
-                    {
-                        BuildRelationQuery(_count);
-                    }
-                }
-                else if ((_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0 &&
-                          JoinBuilderValues is { })
+                if ((_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0 &&
+                    _relationBuilderValues is { })
                 {
                     var rawSqlSpan = _rawSql.AsSpan();
                     var spanLength = rawSqlSpan.Length;
 
                     for (int sqlIndex = 0; sqlIndex < spanLength - 1;)
                     {
-                        if (rawSqlSpan[sqlIndex] != '>' || 
-                            sqlIndex + 1 >= spanLength || 
+                        if (rawSqlSpan[sqlIndex] != '>' ||
+                            sqlIndex + 1 >= spanLength ||
                             rawSqlSpan[sqlIndex + 1] != '<')
                         {
                             sqlIndex++;
@@ -134,7 +97,7 @@ namespace Venflow.Commands
 
                         var joinBuilder = new StringBuilder();
 
-                        JoinBuilderValues.AppendColumnNamesAndJoins(null, joinBuilder);
+                        AppendJoins(joinBuilder);
 
                         _commandString.Remove(sqlIndex, 2);
                         _commandString.Insert(sqlIndex, joinBuilder.ToString());
@@ -145,7 +108,7 @@ namespace Venflow.Commands
             }
             else
             {
-                var generateJoins = (_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0 && JoinBuilderValues is { };
+                var generateJoins = (_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0 && _relationBuilderValues is { };
 
                 var parameterCount = 0;
 
@@ -203,7 +166,7 @@ namespace Venflow.Commands
 
                         var joinBuilder = new StringBuilder();
 
-                        JoinBuilderValues.AppendColumnNamesAndJoins(null, joinBuilder);
+                        AppendJoins(joinBuilder);
 
                         var joins = joinBuilder.ToString();
 
@@ -222,67 +185,94 @@ namespace Venflow.Commands
 
             _command.CommandText = _commandString.ToString();
 
-            return new VenflowQueryCommand<TEntity, TReturn>(_database, _entityConfiguration, _command, JoinBuilderValues, _trackChanges, _disposeCommand, _singleResult && JoinBuilderValues is null);
+            return new VenflowQueryCommand<TEntity, TReturn>(_database, _entityConfiguration, _command, _relationBuilderValues, _trackChanges, _disposeCommand, _singleResult && _relationBuilderValues is null);
         }
 
-        private void BuildRelationQuery(ulong count)
+        private void AppendJoins(StringBuilder sb)
         {
-            _commandString.Append("SELECT ");
+            var relationsSpan = _relationBuilderValues.FlattenedPath.AsSpan();
 
-            _commandString.Append(_entityConfiguration.ExplicitColumnListString);
-
-            var subQuery = new StringBuilder();
-
-            subQuery.Append(" FROM (");
-
-            AppendBaseQuery(subQuery, count);
-
-            subQuery.Append(") AS ");
-
-            subQuery.Append(_entityConfiguration.TableName);
-
-            JoinBuilderValues!.AppendColumnNamesAndJoins(_commandString, subQuery);
-
-            _commandString.Append(subQuery);
-
-            _commandString.Append(';');
-        }
-
-        private void AppendBaseQuery(StringBuilder sb, ulong count)
-        {
-            sb.Append("SELECT ");
-
-            sb.Append(_entityConfiguration.ExplicitColumnListString);
-
-            sb.Append(" FROM ");
-
-            sb.Append(_entityConfiguration.TableName);
-
-            if (count > 0)
+            for (int max = relationsSpan.Length, current = 0; current < max; current++)
             {
-                sb.Append(" LIMIT ");
-                sb.Append(count);
+                var relationPath = (RelationPath<JoinBehaviour>)relationsSpan[current];
+                var relation = relationPath.CurrentRelation;
+
+                switch (relationPath.Value)
+                {
+                    case JoinBehaviour.InnerJoin:
+                        sb.Append("INNER JOIN ");
+                        break;
+                    case JoinBehaviour.LeftJoin:
+                        sb.Append("LEFT JOIN ");
+                        break;
+                    case JoinBehaviour.RightJoin:
+                        sb.Append("RIGHT JOIN ");
+                        break;
+                    case JoinBehaviour.FullJoin:
+                        sb.Append("FULL JOIN ");
+                        break;
+                    default:
+                        throw new InvalidOperationException($"Invalid state '{relationPath.Value}' for the JoinBehaviour on entity {relation.RightEntity.EntityName}");
+                }
+
+                sb.Append(relation.RightEntity.TableName);
+                sb.Append(" ON ");
+
+                if (relation.ForeignKeyLocation == ForeignKeyLocation.Left)
+                {
+                    sb.Append(relation.LeftEntity.TableName);
+                    sb.Append(".\"");
+                    sb.Append(relation.ForeignKeyColumn.ColumnName);
+                    sb.Append("\" = ");
+                    sb.Append(relation.RightEntity.TableName);
+                    sb.Append(".\"");
+                    sb.Append(relation.RightEntity.GetPrimaryColumn().ColumnName);
+                }
+                else
+                {
+                    sb.Append(relation.RightEntity.TableName);
+                    sb.Append(".\"");
+                    sb.Append(relation.ForeignKeyColumn.ColumnName);
+                    sb.Append("\" = ");
+                    sb.Append(relation.LeftEntity.TableName);
+                    sb.Append(".\"");
+                    sb.Append(relation.LeftEntity.GetPrimaryColumn().ColumnName);
+                }
+
+                sb.Append('"');
             }
+
         }
 
 #if !NET48
         [return: MaybeNull]
 #endif
-        Task<TReturn> IQueryCommandBuilder<TEntity, TReturn>.QueryAsync(CancellationToken cancellationToken)
+        public Task<TReturn> QueryAsync(CancellationToken cancellationToken = default)
         {
             _disposeCommand = true;
 
             return Build().QueryAsync(cancellationToken);
         }
 
-#if !NET48
-        [return: MaybeNull]
-#endif
-        Task<TReturn> IPreCommandBuilder<TEntity, TReturn>.QueryAsync(CancellationToken cancellationToken)
+        public IQueryRelationBuilder<TToEntity, TEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class, new()
         {
-            _disposeCommand = true;
+            _relationBuilderValues = new RelationBuilderValues();
 
-            return Build().QueryAsync(cancellationToken);
+            return new QueryRelationBuilder<TEntity, TEntity, TReturn>(_entityConfiguration, this, _relationBuilderValues).JoinWith(propertySelector, joinBehaviour);
+        }
+
+        public IQueryRelationBuilder<TToEntity, TEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class, new()
+        {
+            _relationBuilderValues = new RelationBuilderValues();
+
+            return new QueryRelationBuilder<TEntity, TEntity, TReturn>(_entityConfiguration, this, _relationBuilderValues).JoinWith(propertySelector, joinBehaviour);
+        }
+
+        public IQueryRelationBuilder<TToEntity, TEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin) where TToEntity : class, new()
+        {
+            _relationBuilderValues = new RelationBuilderValues();
+
+            return new QueryRelationBuilder<TEntity, TEntity, TReturn>(_entityConfiguration, this, _relationBuilderValues).JoinWith(propertySelector, joinBehaviour);
         }
     }
 }

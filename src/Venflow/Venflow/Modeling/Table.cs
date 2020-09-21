@@ -346,34 +346,6 @@ namespace Venflow.Modeling
         #region Builder
 
         /// <summary>
-        /// Creates a new query command, which expects a single returned primary row.
-        /// </summary>
-        /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
-        /// <returns>A Fluent API Builder for a query command.</returns>
-        /// <remarks>This method represents the following SQL statement "SELECT * FROM table LIMIT 1".</remarks>
-        public IPreCommandBuilder<TEntity, TEntity> QuerySingle(bool disposeCommand = true)
-            => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QuerySingle();
-
-        /// <summary>
-        /// Creates a new query command, which expects a set of primary rows to be returned.
-        /// </summary>
-        /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
-        /// <returns>A Fluent API Builder for a query command.</returns>
-        /// <remarks>This method represents the following SQL statement "SELECT * FROM table"</remarks>
-        public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(bool disposeCommand = true)
-            => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QueryBatch();
-
-        /// <summary>
-        /// Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="TableBase{TEntity}.QuerySingle(string, NpgsqlParameter[])"/> or <see cref="TableBase{TEntity}.QueryInterpolatedSingle(FormattableString, bool)"/>.
-        /// </summary>
-        /// <param name="count">A value specifying the maximum returned primary rows.</param>
-        /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
-        /// <returns>A Fluent API Builder for a query command.</returns>
-        /// <remarks>This method will automatically generate a SQL SELECT statement with a LIMIT.</remarks>
-        public IPreCommandBuilder<TEntity, List<TEntity>> QueryBatch(ulong count, bool disposeCommand = true)
-            => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QueryBatch(count);
-
-        /// <summary>
         /// Creates a new insert command.
         /// </summary>
         /// <returns>A Fluent API Builder for a insert command.</returns>
@@ -451,22 +423,5 @@ namespace Venflow.Modeling
         }
 
         #endregion
-
-        private ValueTask ValidateConnectionAsync()
-        {
-            var connection = Database.GetConnection();
-
-            if (connection.State == ConnectionState.Open)
-                return default;
-
-            if (connection.State == ConnectionState.Closed)
-            {
-                return new ValueTask(connection.OpenAsync());
-            }
-            else
-            {
-                throw new InvalidOperationException($"The current connection state is invalid. Expected: '{ConnectionState.Open}' or '{ConnectionState.Closed}'. Actual: '{connection.State}'.");
-            }
-        }
     }
 }

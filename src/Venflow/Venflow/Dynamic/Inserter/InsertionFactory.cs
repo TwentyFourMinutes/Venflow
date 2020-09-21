@@ -19,7 +19,7 @@ namespace Venflow.Dynamic.Inserter
         {
             _entity = entity;
 
-            _inserterCache = new();
+            _inserterCache = new(InsertCacheKeyComparer.Default);
             _inserstionLock = new();
         }
 

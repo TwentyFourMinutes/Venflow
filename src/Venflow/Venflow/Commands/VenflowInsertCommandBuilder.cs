@@ -10,92 +10,6 @@ using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
-    internal struct InsertCacheKey
-    {
-        internal bool IsSingleInsert { get; set; }
-
-        internal IReadOnlyList<EntityRelation> Relations => _relations;
-
-        private readonly IReadOnlyList<EntityRelation> _relations;
-
-        internal InsertCacheKey(IReadOnlyList<EntityRelation> relations)
-        {
-            _relations = relations;
-
-            IsSingleInsert = false;
-        }
-
-        public bool Equals(
-#if !NET48 
-            [AllowNull] 
-            #endif 
-            InsertCacheKey y)
-        {
-            if (y._relations.Count != _relations.Count ||
-                y.IsSingleInsert != IsSingleInsert)
-                return false;
-
-            var relaionsSpan = ((List<EntityRelation>)_relations).AsSpan();
-            var foreignRelaionsSpan = ((List<EntityRelation>)y._relations).AsSpan();
-
-            for (int relationIndex = relaionsSpan.Length - 1; relationIndex >= 0; relationIndex--)
-            {
-                if (relaionsSpan[relationIndex].RelationId != foreignRelaionsSpan[relationIndex].RelationId)
-                    return false;
-            }
-
-            return true;
-        }
-
-        public new int GetHashCode()
-        {
-            var hashCode = new HashCode();
-
-            hashCode.Add(IsSingleInsert);
-
-            var relaionsSpan = ((List<EntityRelation>)_relations).AsSpan();
-
-            for (int relationIndex = relaionsSpan.Length - 1; relationIndex >= 0; relationIndex--)
-            {
-                hashCode.Add(relaionsSpan[relationIndex].RelationId);
-            }
-
-            return hashCode.ToHashCode();
-        }
-    }
-
-    internal class InsertCacheKeyComparer : IEqualityComparer<InsertCacheKey>
-    {
-        internal static InsertCacheKeyComparer Default { get; } = new InsertCacheKeyComparer();
-
-        private InsertCacheKeyComparer()
-        {
-
-        }
-
-        public bool Equals(
-#if !NET48
-            [AllowNull]
-            #endif  
-            InsertCacheKey x,
-#if !NET48
-            [AllowNull]
-            #endif
-            InsertCacheKey y)
-        {
-            return x.Equals(y);
-        }
-
-        public int GetHashCode(
-#if !NET48
-            [DisallowNull]
-            #endif  
-            InsertCacheKey obj)
-        {
-            return obj.GetHashCode();
-        }
-    }
-
     internal class VenflowInsertCommandBuilder<TEntity> : IBaseInsertRelationBuilder<TEntity, TEntity>
         where TEntity : class, new()
     {
@@ -119,7 +33,7 @@ namespace Venflow.Commands
         {
             if (_relationBuilderValues is { })
             {
-                return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _command, _disposeCommand, new InsertCacheKey(_relationBuilderValues.FlattenedRelations), _isFullInsert);
+                return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _command, _disposeCommand, new InsertCacheKey(_relationBuilderValues.GetFlattenedRelations()), _isFullInsert);
             }
 
             return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _command, _disposeCommand, _isFullInsert);

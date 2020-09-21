@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Venflow.Commands;
 using Venflow.Enums;
+using Venflow.Modeling;
 
 namespace Venflow.Dynamic.Materializer
 {
@@ -9,13 +10,13 @@ namespace Venflow.Dynamic.Materializer
     {
         private int _queryEntityHolderIndex;
         private readonly LinkedList<QueryEntityHolder> _entities;
-        private readonly JoinBuilderValues _joinBuilderValues;
+        private readonly RelationBuilderValues? _relationBuilderValues;
 
-        internal MaterializerSourceCompiler(JoinBuilderValues joinBuilderValues)
+        internal MaterializerSourceCompiler(RelationBuilderValues? relationBuilderValues)
         {
             _entities = new LinkedList<QueryEntityHolder>();
 
-            _joinBuilderValues = joinBuilderValues;
+            _relationBuilderValues = relationBuilderValues;
         }
 
         internal QueryEntityHolder[] GenerateSortedEntities()
@@ -32,21 +33,24 @@ namespace Venflow.Dynamic.Materializer
             return entities;
         }
 
-        internal void Compile()
+        internal void Compile(Entity rootEntity)
         {
-            var queryEntityHolder = new QueryEntityHolder(_joinBuilderValues.Root, _queryEntityHolderIndex++);
+            var queryEntityHolder = new QueryEntityHolder(rootEntity, _queryEntityHolderIndex++);
 
             _entities.AddFirst(queryEntityHolder);
 
-            for (int i = _joinBuilderValues.FullPath.Count - 1; i >= 0; i--)
+            if (_relationBuilderValues is null)
+                return;
+
+            for (int i = _relationBuilderValues.FlattenedPath.Count - 1; i >= 0; i--)
             {
-                BaseCompile(_joinBuilderValues.FullPath[i], queryEntityHolder);
+                BaseCompile((RelationPath<JoinBehaviour>)_relationBuilderValues.FlattenedPath[i], queryEntityHolder);
             }
         }
 
-        private void BaseCompile(JoinPath joinPath, QueryEntityHolder rightQueryHolder)
+        private void BaseCompile(RelationPath<JoinBehaviour> relationPath, QueryEntityHolder rightQueryHolder)
         {
-            var relation = joinPath.JoinOptions.Join.Sibiling;
+            var relation = relationPath.CurrentRelation.Sibiling;
 
             var leftQueryHolder = new QueryEntityHolder(relation.LeftEntity, _queryEntityHolderIndex++);
 
@@ -56,14 +60,14 @@ namespace Venflow.Dynamic.Materializer
 
             if (VenflowConfiguration.ShouldUseDeepValidation)
             {
-                if ((joinPath.JoinOptions.JoinBehaviour == JoinBehaviour.FullJoin ||
-                    joinPath.JoinOptions.JoinBehaviour == JoinBehaviour.LeftJoin) &&
+                if ((relationPath.Value == JoinBehaviour.FullJoin ||
+                    relationPath.Value == JoinBehaviour.LeftJoin) &&
                     !relation.IsRightNavigationPropertyNullable)
                 {
                     throw new InvalidOperationException($"The join you configured 'Join...(x => x.{relation.RightNavigationProperty.Name})' from the entity '{relation.RightEntity.EntityName}' to the entity '{relation.LeftEntity.EntityName}' is configured as a LeftJoin, however the property '{relation.RightNavigationProperty.Name}' on the entity '{relation.RightEntity.EntityName}' isn't marked as null-able!");
                 }
-                else if ((joinPath.JoinOptions.JoinBehaviour == JoinBehaviour.FullJoin ||
-                        joinPath.JoinOptions.JoinBehaviour == JoinBehaviour.RightJoin) &&
+                else if ((relationPath.Value == JoinBehaviour.FullJoin ||
+                        relationPath.Value == JoinBehaviour.RightJoin) &&
                         !relation.IsLeftNavigationPropertyNullable &&
                         relation.LeftNavigationProperty is { })
                 {
@@ -129,11 +133,6 @@ namespace Venflow.Dynamic.Materializer
                         rightQueryHolder.RequiresDBNullCheck = true;
                     }
                 }
-            }
-
-            for (int i = joinPath.TrailingJoinPath.Count - 1; i >= 0; i--)
-            {
-                BaseCompile(joinPath.TrailingJoinPath[i], leftQueryHolder);
             }
         }
     }

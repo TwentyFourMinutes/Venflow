@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Venflow.Commands;
 using Venflow.Dynamic.Materializer;
 using Venflow.Modeling;
 
@@ -13,7 +14,7 @@ namespace Venflow.Tests
 
             var factory = entity.MaterializerFactory;
 
-            var cache = (Dictionary<int, Delegate>)typeof(MaterializerFactory<TEntity>).GetField("_materializerCache", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(factory);
+            var cache = (Dictionary<QueryCacheKey, Delegate>)typeof(MaterializerFactory<TEntity>).GetField("_materializerCache", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(factory);
 
             cache.Clear();
         }

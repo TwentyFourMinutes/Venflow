@@ -6,7 +6,6 @@ namespace Venflow.Enums
     internal enum QueryGenerationOptions
     {
         None = 0,
-        GenerateJoins = 1,
-        GenerateFullSQL = 2 | GenerateJoins
+        GenerateJoins = 1
     }
 }

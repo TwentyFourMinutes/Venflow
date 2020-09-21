@@ -11,13 +11,13 @@ namespace Venflow.Commands
     {
         internal Delegate? Materializer { get; set; }
 
-        private readonly JoinBuilderValues _joinBuilderValues;
+        private readonly RelationBuilderValues? _relationBuilderValues;
         private readonly bool _trackingChanges;
         private readonly bool _isSingleResult;
 
-        internal VenflowQueryCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, JoinBuilderValues joinBuilderValues, bool trackingChanges, bool disposeCommand, bool isSingleResult) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
+        internal VenflowQueryCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, RelationBuilderValues? relationBuilderValues, bool trackingChanges, bool disposeCommand, bool isSingleResult) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
         {
-            _joinBuilderValues = joinBuilderValues;
+            _relationBuilderValues = relationBuilderValues;
             _trackingChanges = trackingChanges;
             _isSingleResult = isSingleResult;
         }
@@ -36,7 +36,7 @@ namespace Venflow.Commands
             }
             else
             {
-                Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer<TReturn>(_joinBuilderValues, reader.GetColumnSchema(), _trackingChanges);
+                Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer<TReturn>(_relationBuilderValues, reader.GetColumnSchema(), _trackingChanges);
             }
 
             var entities = await materializer(reader, cancellationToken);

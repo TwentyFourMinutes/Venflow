@@ -69,6 +69,11 @@ namespace Venflow.Dynamic
             return _underlyingReadOnlyCollectionListGetter.Invoke(collection).AsSpan();
         }
 
+        internal static List<NpgsqlDbColumn> AsList(this ReadOnlyCollection<NpgsqlDbColumn> collection)
+        {
+            return _underlyingReadOnlyCollectionListGetter.Invoke(collection);
+        }
+
         private static Func<ReadOnlyCollection<NpgsqlDbColumn>, List<NpgsqlDbColumn>> GetUnderlyingReadOnlyCollectionListGetter()
         {
             var method = new DynamicMethod("GetUnderlyingList", typeof(List<NpgsqlDbColumn>), new[] { typeof(ReadOnlyCollection<NpgsqlDbColumn>) }, typeof(ReadOnlyCollection<NpgsqlDbColumn>));

@@ -26,11 +26,75 @@
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
             <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
         </member>
+        <member name="M:Venflow.Commands.IDeleteCommand`1.DeleteAsync(System.Collections.Generic.IList{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously deletes a set of entity.
+            </summary>
+            <param name="entities">The entity instances which should be deleted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IDeleteCommand`1.DeleteAsync(System.Collections.Generic.List{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously deletes a set of entity.
+            </summary>
+            <param name="entities">The entity instances which should be deleted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IDeleteCommand`1.DeleteAsync(`0[],System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously deletes a set of entity.
+            </summary>
+            <param name="entities">The entity instances which should be deleted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+        </member>
         <member name="T:Venflow.Commands.IDeleteCommandBuilder`1">
             <summary>
             Represents a command builder to configure the deletion.
             </summary>
             <typeparam name="TEntity">The type of the entity which will be deleted.</typeparam>
+        </member>
+        <member name="M:Venflow.Commands.IDeleteCommandBuilder`1.DeleteAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously deletes a single entity.
+            </summary>
+            <param name="entity">The entity instance which should be deleted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IDeleteCommandBuilder`1.DeleteAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously deletes a set of entity.
+            </summary>
+            <param name="entities">The entity instances which should be deleted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IDeleteCommandBuilder`1.DeleteAsync(System.Collections.Generic.IList{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously deletes a set of entity.
+            </summary>
+            <param name="entities">The entity instances which should be deleted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IDeleteCommandBuilder`1.DeleteAsync(System.Collections.Generic.List{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously deletes a set of entity.
+            </summary>
+            <param name="entities">The entity instances which should be deleted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IDeleteCommandBuilder`1.DeleteAsync(`0[],System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously deletes a set of entity.
+            </summary>
+            <param name="entities">The entity instances which should be deleted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
         </member>
         <member name="T:Venflow.Commands.IInsertCommand`1">
             <summary>
@@ -46,7 +110,7 @@
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
             <returns>A task representing the asynchronous operation, with the number of rows affected if known; 0 otherwise.</returns>
         </member>
-        <member name="M:Venflow.Commands.IInsertCommand`1.InsertAsync(System.Collections.Generic.List{`0},System.Threading.CancellationToken)">
+        <member name="M:Venflow.Commands.IInsertCommand`1.InsertAsync(System.Collections.Generic.IList{`0},System.Threading.CancellationToken)">
             <summary>
             Asynchronously inserts a set of entities.
             </summary>
@@ -60,29 +124,21 @@
             </summary>
             <typeparam name="TEntity">The type of the entity which will be inserted.</typeparam>
         </member>
-        <member name="M:Venflow.Commands.IInsertCommandBuilder`1.SetIdentityColumns">
+        <member name="M:Venflow.Commands.IInsertCommandBuilder`1.InsertAsync(`0,System.Threading.CancellationToken)">
             <summary>
-            Defines if the insertion should populate identity columns.
+            Asynchronously inserts a single entity.
             </summary>
-            <returns>An object that can be used to further configure the operation.</returns>
+            <param name="entity">The entity instance which should be inserted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; 0 otherwise.</returns>
         </member>
-        <member name="M:Venflow.Commands.IInsertCommandBuilder`1.PopulateRelation">
+        <member name="M:Venflow.Commands.IInsertCommandBuilder`1.InsertAsync(System.Collections.Generic.IList{`0},System.Threading.CancellationToken)">
             <summary>
-            Defines if the insertion should populate all foreign properties.
+            Asynchronously inserts a set of entities.
             </summary>
-            <returns>An object that can be used to further configure the operation.</returns>
-        </member>
-        <member name="M:Venflow.Commands.IInsertCommandBuilder`1.DoNotSetIdentityColumns">
-            <summary>
-            Defines if the insertion shouldn't populate identity columns.
-            </summary>
-            <returns>An object that can be used to further configure the operation.</returns>
-        </member>
-        <member name="M:Venflow.Commands.IInsertCommandBuilder`1.DoNotDoNotSetPopulateRelation">
-            <summary>
-            Defines if the insertion shouldn't populate all foreign properties.
-            </summary>
-            <returns>An object that can be used to further configure the operation.</returns>
+            <param name="entities">The entity instances which should be inserted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the number of rows affected if known; 0 otherwise.</returns>
         </member>
         <member name="T:Venflow.Commands.IPreCommandBuilder`2">
             <summary>
@@ -137,32 +193,12 @@
             <param name="trackChanges">Determines if change tracking should be applied.</param>
             <returns>An object that can be used to further configure the operation.</returns>
         </member>
-        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},Venflow.Enums.JoinBehaviour)">
+        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.QueryAsync(System.Threading.CancellationToken)">
             <summary>
-            Allows to configure materialized joins for the current query.
+            Asynchronously performs queries and materializes the result.
             </summary>
-            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
-            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-            <param name="joinBehaviour">Configures the type of this join.</param>
-            <returns>An object that can be used to further configure the operation.</returns>
-        </member>
-        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}},Venflow.Enums.JoinBehaviour)">
-            <summary>
-            Allows to configure materialized joins for the current query.
-            </summary>
-            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
-            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-            <param name="joinBehaviour">Configures the type of this join.</param>
-            <returns>An object that can be used to further configure the operation.</returns>
-        </member>
-        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}},Venflow.Enums.JoinBehaviour)">
-            <summary>
-            Allows to configure materialized joins for the current query.
-            </summary>
-            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
-            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-            <param name="joinBehaviour">Configures the type of this join.</param>
-            <returns>An object that can be used to further configure the operation.</returns>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation, with the materialized result of the query; <see langword="null"/> otherwise.</returns>
         </member>
         <member name="T:Venflow.Commands.ISpecficVenflowCommandBuilder`1">
             <summary>
@@ -198,11 +234,75 @@
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
             <returns>A task representing the asynchronous operation.</returns>
         </member>
+        <member name="M:Venflow.Commands.IUpdateCommand`1.UpdateAsync(System.Collections.Generic.List{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously updates a set of entities.
+            </summary>
+            <param name="entities">The change tracked entity instances which should be updated.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IUpdateCommand`1.UpdateAsync(`0[],System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously updates a set of entities.
+            </summary>
+            <param name="entities">The change tracked entity instances which should be updated.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IUpdateCommand`1.UpdateAsync(System.Collections.Generic.IList{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously updates a set of entities.
+            </summary>
+            <param name="entities">The change tracked entity instances which should be updated.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation.</returns>
+        </member>
         <member name="T:Venflow.Commands.IUpdateCommandBuilder`1">
             <summary>
             Represents a command builder to configure the update.
             </summary>
             <typeparam name="TEntity">The type of the entity which will be updated.</typeparam>
+        </member>
+        <member name="M:Venflow.Commands.IUpdateCommandBuilder`1.UpdateAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously updates a single entity.
+            </summary>
+            <param name="entity">The change tracked entity instance which should be updated.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IUpdateCommandBuilder`1.UpdateAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously updates a set of entities.
+            </summary>
+            <param name="entities">The change tracked entity instances which should be updated.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IUpdateCommandBuilder`1.UpdateAsync(System.Collections.Generic.List{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously updates a set of entities.
+            </summary>
+            <param name="entities">The change tracked entity instances which should be updated.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IUpdateCommandBuilder`1.UpdateAsync(`0[],System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously updates a set of entities.
+            </summary>
+            <param name="entities">The change tracked entity instances which should be updated.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IUpdateCommandBuilder`1.UpdateAsync(System.Collections.Generic.IList{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously updates a set of entities.
+            </summary>
+            <param name="entities">The change tracked entity instances which should be updated.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task representing the asynchronous operation.</returns>
         </member>
         <member name="T:Venflow.Commands.IVenflowCommand`1">
             <summary>
@@ -215,13 +315,6 @@
             Represents a generic command builder to create any CRUD command.
             </summary>
             <typeparam name="TEntity">The type of the entity which will be used for the command.</typeparam>
-        </member>
-        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle">
-            <summary>
-            Creates a new query command builder, which expects a single returned primary row.
-            </summary>
-            <returns>A Fluent API Builder for a query command.</returns>
-            <remarks>This method represents the following SQL statement "SELECT * FROM table LIMIT 1".</remarks>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(System.String)">
             <summary>
@@ -243,21 +336,6 @@
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
             <returns>A Fluent API Builder for a query command.</returns>
-        </member>
-        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch">
-            <summary>
-            Creates a new query command builder, which expects a set of primary rows to be returned.
-            </summary>
-            <returns>A Fluent API Builder for a query command.</returns>
-            <remarks>This method represents the following SQL statement "SELECT * FROM table"</remarks>
-        </member>
-        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.UInt64)">
-            <summary>
-            Creates a new query command builder, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])"/> or <see cref="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedSingle(System.FormattableString)"/>.
-            </summary>
-            <param name="count">A value specifying the maximum returned primary rows.</param>
-            <returns>A Fluent API Builder for a query command.</returns>
-            <remarks>This method will automatically generate a SQL SELECT statement with a LIMIT.</remarks>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.String)">
             <summary>
@@ -298,81 +376,6 @@
             Creates a new update command builder.
             </summary>
             <returns>A Fluent API Builder for a update command.</returns>
-        </member>
-        <member name="T:Venflow.Commands.JoinBuilder`3">
-            <summary>
-            Represents a query command builder which helps configuring the materialized joins.
-            </summary>
-            <typeparam name="TRelationEntity">The entity which will be joined with.</typeparam>
-            <typeparam name="TEntity">The root entity of the query.</typeparam>
-            <typeparam name="TReturn">The return type of the query.</typeparam>
-        </member>
-        <member name="M:Venflow.Commands.JoinBuilder`3.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},Venflow.Enums.JoinBehaviour)">
-            <summary>
-            Allows to configure materialized joins for the current query.
-            </summary>
-            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
-            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-            <param name="joinBehaviour">Configures the type of this join.</param>
-            <returns>An object that can be used to further configure the operation.</returns>
-        </member>
-        <member name="M:Venflow.Commands.JoinBuilder`3.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}},Venflow.Enums.JoinBehaviour)">
-            <summary>
-            Allows to configure materialized joins for the current query.
-            </summary>
-            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
-            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-            <param name="joinBehaviour">Configures the type of this join.</param>
-            <returns>An object that can be used to further configure the operation.</returns>
-        </member>
-        <member name="M:Venflow.Commands.JoinBuilder`3.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}},Venflow.Enums.JoinBehaviour)">
-            <summary>
-            Allows to configure materialized joins for the current query.
-            </summary>
-            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
-            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-            <param name="joinBehaviour">Configures the type of this join.</param>
-            <returns>An object that can be used to further configure the operation.</returns>
-        </member>
-        <member name="M:Venflow.Commands.JoinBuilder`3.ThenWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}},Venflow.Enums.JoinBehaviour)">
-            <summary>
-            Allows to configure concatenated materialized joins for the current query.
-            </summary>
-            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
-            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-            <param name="joinBehaviour">Configures the type of this join.</param>
-            <returns>An object that can be used to further configure the operation.</returns>
-        </member>
-        <member name="M:Venflow.Commands.JoinBuilder`3.ThenWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}},Venflow.Enums.JoinBehaviour)">
-            <summary>
-            Allows to configure concatenated materialized joins for the current query.
-            </summary>
-            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
-            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-            <param name="joinBehaviour">Configures the type of this join.</param>
-            <returns>An object that can be used to further configure the operation.</returns>
-        </member>
-        <member name="M:Venflow.Commands.JoinBuilder`3.ThenWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}},Venflow.Enums.JoinBehaviour)">
-            <summary>
-            Allows to configure concatenated materialized joins for the current query.
-            </summary>
-            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
-            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-            <param name="joinBehaviour">Configures the type of this join.</param>
-            <returns>An object that can be used to further configure the operation.</returns>
-        </member>
-        <member name="M:Venflow.Commands.JoinBuilder`3.Build">
-            <summary>
-            Finalizes the ongoing configuration process and builds the command.
-            </summary>
-            <returns>The built command.</returns>
-        </member>
-        <member name="M:Venflow.Commands.JoinBuilder`3.TrackChanges(System.Boolean)">
-            <summary>
-            Determines whether or not to return change tracked entities from the query.
-            </summary>
-            <param name="trackChanges">Determines if change tracking should be applied.</param>
-            <returns>An object that can be used to further configure the operation.</returns>
         </member>
         <member name="T:Venflow.Database">
             <summary>
@@ -558,26 +561,6 @@
         <member name="F:Venflow.Enums.IdentityTruncateOptions.Continue">
             <summary>
             Do not change the values of sequences. This is the default.
-            </summary>
-        </member>
-        <member name="T:Venflow.Enums.InsertOptions">
-            <summary>
-            Represents the truncate options for a insert operation.
-            </summary>
-        </member>
-        <member name="F:Venflow.Enums.InsertOptions.None">
-            <summary>
-            Does nothing.
-            </summary>
-        </member>
-        <member name="F:Venflow.Enums.InsertOptions.PopulateRelations">
-            <summary>
-            Populates all navigation properties.
-            </summary>
-        </member>
-        <member name="F:Venflow.Enums.InsertOptions.SetIdentityColumns">
-            <summary>
-            Get the database generated columns after inserting and populates all navigation properties.
             </summary>
         </member>
         <member name="T:Venflow.Enums.JoinBehaviour">
@@ -926,7 +909,7 @@
             <returns>A task representing the asynchronous operation, with the number of rows inserted.</returns>
             <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar')". This API is using parameterized commands.</remarks>
         </member>
-        <member name="M:Venflow.Modeling.Table`1.InsertAsync(System.Collections.Generic.List{`0},System.Threading.CancellationToken)">
+        <member name="M:Venflow.Modeling.Table`1.InsertAsync(System.Collections.Generic.IList{`0},System.Threading.CancellationToken)">
             <summary>
             Asynchronously inserts a list of entities and all entities reachable from the current provided instances into the current table.
             </summary>
@@ -973,6 +956,33 @@
             <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
             <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
         </member>
+        <member name="M:Venflow.Modeling.Table`1.DeleteAsync(System.Collections.Generic.IList{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously deletes the provided entities by their defined primary keys.
+            </summary>
+            <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be deleted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+            <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
+            <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
+        </member>
+        <member name="M:Venflow.Modeling.Table`1.DeleteAsync(System.Collections.Generic.List{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously deletes the provided entities by their defined primary keys.
+            </summary>
+            <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be deleted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+            <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
+            <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
+        </member>
+        <member name="M:Venflow.Modeling.Table`1.DeleteAsync(`0[],System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously deletes the provided entities by their defined primary keys.
+            </summary>
+            <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be deleted.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+            <returns>A task representing the asynchronous operation, with the number of rows deleted.</returns>
+            <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
+        </member>
         <member name="M:Venflow.Modeling.Table`1.DeleteAsync(Venflow.Commands.IDeleteCommand{`0},System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)">
             <summary>
             Asynchronously deletes the provided entities by their defined primary keys.
@@ -1011,6 +1021,33 @@
             <returns>A task representing the asynchronous operation.</returns>
             <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
         </member>
+        <member name="M:Venflow.Modeling.Table`1.UpdateAsync(System.Collections.Generic.List{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously updates the provided entity by its defined primary keys.
+            </summary>
+            <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be updated.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+            <returns>A task representing the asynchronous operation.</returns>
+            <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
+        </member>
+        <member name="M:Venflow.Modeling.Table`1.UpdateAsync(System.Collections.Generic.IList{`0},System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously updates the provided entity by its defined primary keys.
+            </summary>
+            <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be updated.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+            <returns>A task representing the asynchronous operation.</returns>
+            <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
+        </member>
+        <member name="M:Venflow.Modeling.Table`1.UpdateAsync(`0[],System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously updates the provided entity by its defined primary keys.
+            </summary>
+            <param name="entities">A set of <typeparamref name="TEntity"/> instances representing the rows, which will be updated.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
+            <returns>A task representing the asynchronous operation.</returns>
+            <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
+        </member>
         <member name="M:Venflow.Modeling.Table`1.UpdateAsync(Venflow.Commands.IUpdateCommand{`0},System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)">
             <summary>
             Asynchronously updates the provided entity by its defined primary keys.
@@ -1020,31 +1057,6 @@
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation.</returns>
             <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
-        </member>
-        <member name="M:Venflow.Modeling.Table`1.QuerySingle(System.Boolean)">
-            <summary>
-            Creates a new query command, which expects a single returned primary row.
-            </summary>
-            <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
-            <returns>A Fluent API Builder for a query command.</returns>
-            <remarks>This method represents the following SQL statement "SELECT * FROM table LIMIT 1".</remarks>
-        </member>
-        <member name="M:Venflow.Modeling.Table`1.QueryBatch(System.Boolean)">
-            <summary>
-            Creates a new query command, which expects a set of primary rows to be returned.
-            </summary>
-            <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
-            <returns>A Fluent API Builder for a query command.</returns>
-            <remarks>This method represents the following SQL statement "SELECT * FROM table"</remarks>
-        </member>
-        <member name="M:Venflow.Modeling.Table`1.QueryBatch(System.UInt64,System.Boolean)">
-            <summary>
-            Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="M:Venflow.Modeling.TableBase`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])"/> or <see cref="M:Venflow.Modeling.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)"/>.
-            </summary>
-            <param name="count">A value specifying the maximum returned primary rows.</param>
-            <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
-            <returns>A Fluent API Builder for a query command.</returns>
-            <remarks>This method will automatically generate a SQL SELECT statement with a LIMIT.</remarks>
         </member>
         <member name="M:Venflow.Modeling.Table`1.Insert">
             <summary>
