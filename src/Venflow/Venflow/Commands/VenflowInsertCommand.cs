@@ -35,7 +35,7 @@ namespace Venflow.Commands
 
             if (SingleInserter is { })
             {
-                inserter = (Func<NpgsqlConnection, TEntity, CancellationToken, Task<int>>)SingleInserter;
+                inserter = (Func<NpgsqlConnection, TEntity, CancellationToken, Task<int>>) SingleInserter;
             }
             else
             {
@@ -60,7 +60,7 @@ namespace Venflow.Commands
 
             if (BatchInserter is { })
             {
-                inserter = (Func<NpgsqlConnection, IList<TEntity>, CancellationToken, Task<int>>)BatchInserter;
+                inserter = (Func<NpgsqlConnection, IList<TEntity>, CancellationToken, Task<int>>) BatchInserter;
             }
             else
             {

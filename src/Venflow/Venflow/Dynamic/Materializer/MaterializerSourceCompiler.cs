@@ -44,7 +44,7 @@ namespace Venflow.Dynamic.Materializer
 
             for (int i = _relationBuilderValues.FlattenedPath.Count - 1; i >= 0; i--)
             {
-                BaseCompile((RelationPath<JoinBehaviour>)_relationBuilderValues.FlattenedPath[i], queryEntityHolder);
+                BaseCompile((RelationPath<JoinBehaviour>) _relationBuilderValues.FlattenedPath[i], queryEntityHolder);
             }
         }
 

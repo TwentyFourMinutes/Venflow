@@ -55,7 +55,7 @@ namespace Venflow.Modeling
 
         private List<PropertyInfo> FindEntityConfigurations(Type databaseType, IReadOnlyList<Assembly> configurationAssemblies)
         {
-            var configurationAssembliesSpan = ((List<Assembly>)configurationAssemblies).AsSpan();
+            var configurationAssembliesSpan = ((List<Assembly>) configurationAssemblies).AsSpan();
 
             var propertiesSpan = databaseType.GetProperties(BindingFlags.Public | BindingFlags.Instance).AsSpan();
 
@@ -119,7 +119,7 @@ namespace Venflow.Modeling
 
                 if (configurations.TryGetValue(entityType, out var configuration))
                 {
-                    var entityConfiguration = (EntityConfiguration)Activator.CreateInstance(configuration)!;
+                    var entityConfiguration = (EntityConfiguration) Activator.CreateInstance(configuration)!;
 
                     AddToConfigurations(entityConfiguration.BuildConfiguration(property.Name));
                 }
@@ -131,7 +131,7 @@ namespace Venflow.Modeling
                     var entityBuilderInstance = Activator.CreateInstance(entityBuilderType, BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { property.Name }, null);
                     var entityFactoryInstance = Activator.CreateInstance(entityFactoryType, BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { entityBuilderInstance }, null);
 
-                    AddToConfigurations((EntityFactory)entityFactoryInstance);
+                    AddToConfigurations((EntityFactory) entityFactoryInstance);
                 }
 
                 tables.Add(property);

@@ -32,7 +32,7 @@ namespace Venflow.Dynamic.Proxies
                     IsDirty = true;
                 }
 
-                _changedColumns[propertyIndex] = (byte)(propertyIndex + 1);
+                _changedColumns[propertyIndex] = (byte) (propertyIndex + 1);
             }
         }
 

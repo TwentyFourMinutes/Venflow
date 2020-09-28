@@ -25,7 +25,7 @@ namespace Venflow.Modeling.Definitions
 
             _entity = new Entity<TEntity>(_entityBuilder.Type, _entityBuilder.ChangeTrackerFactory?.ProxyType, _entityBuilder.TableName,
                 _entityBuilder.EntityInNullableContext, _entityBuilder.DefaultPropNullability, columns,
-                _entityBuilder.IsCustomEntity ? (PrimaryEntityColumn<TEntity>)columns[0] : default,
+                _entityBuilder.IsCustomEntity ? (PrimaryEntityColumn<TEntity>) columns[0] : default,
                 _entityBuilder.IsCustomEntity ? GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns) : string.Empty,
                 _entityBuilder.IsCustomEntity ? GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames) : string.Empty,
                 _entityBuilder.IsCustomEntity ? GetColumnListString(columns, ColumnListStringOptions.None) : string.Empty,

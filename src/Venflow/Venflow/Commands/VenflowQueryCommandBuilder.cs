@@ -192,7 +192,7 @@ namespace Venflow.Commands
 
             for (int max = relationsSpan.Length, current = 0; current < max; current++)
             {
-                var relationPath = (RelationPath<JoinBehaviour>)relationsSpan[current];
+                var relationPath = (RelationPath<JoinBehaviour>) relationsSpan[current];
                 var relation = relationPath.CurrentRelation;
 
                 switch (relationPath.Value)

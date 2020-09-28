@@ -27,14 +27,14 @@ namespace Venflow.Dynamic.Inserter
         {
             if (_inserterCache.TryGetValue(cacheKey, out var tempInserter))
             {
-                return (Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>)tempInserter;
+                return (Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>) tempInserter;
             }
 
             lock (_inserstionLock)
             {
                 if (_inserterCache.TryGetValue(cacheKey, out tempInserter))
                 {
-                    return (Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>)tempInserter;
+                    return (Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>) tempInserter;
                 }
                 else
                 {

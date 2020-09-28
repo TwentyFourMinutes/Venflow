@@ -90,7 +90,7 @@ namespace Venflow.Modeling
 
             using var command = new NpgsqlCommand("SELECT COUNT(*) FROM " + Configuration.TableName, Database.GetConnection());
 
-            return (long)await command.ExecuteScalarAsync(cancellationToken);
+            return (long) await command.ExecuteScalarAsync(cancellationToken);
         }
 
         #endregion
@@ -119,7 +119,7 @@ namespace Venflow.Modeling
         /// <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar')". This API is using parameterized commands.</remarks>
         public Task<int> InsertAsync(IInsertCommand<TEntity> insertCommand, TEntity entity, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)insertCommand).UnderlyingCommand.Connection = Database.GetConnection();
+            ((VenflowBaseCommand<TEntity>) insertCommand).UnderlyingCommand.Connection = Database.GetConnection();
 
             return insertCommand.InsertAsync(entity, cancellationToken);
         }
@@ -147,7 +147,7 @@ namespace Venflow.Modeling
         /// <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar'), ('foo', 'bar')". This API is using parameterized commands.</remarks>
         public Task<int> InsertAsync(IInsertCommand<TEntity> insertCommand, List<TEntity> entities, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)insertCommand).UnderlyingCommand.Connection = Database.GetConnection();
+            ((VenflowBaseCommand<TEntity>) insertCommand).UnderlyingCommand.Connection = Database.GetConnection();
 
             return insertCommand.InsertAsync(entities, cancellationToken);
         }
@@ -178,7 +178,7 @@ namespace Venflow.Modeling
         /// <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
         public ValueTask<int> DeleteAsync(IDeleteCommand<TEntity> deleteCommand, TEntity entity, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)deleteCommand).UnderlyingCommand.Connection = Database.GetConnection();
+            ((VenflowBaseCommand<TEntity>) deleteCommand).UnderlyingCommand.Connection = Database.GetConnection();
 
             return deleteCommand.DeleteAsync(entity, cancellationToken);
         }
@@ -241,7 +241,7 @@ namespace Venflow.Modeling
         /// <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
         public ValueTask<int> DeleteAsync(IDeleteCommand<TEntity> deleteCommand, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)deleteCommand).UnderlyingCommand.Connection = Database.GetConnection();
+            ((VenflowBaseCommand<TEntity>) deleteCommand).UnderlyingCommand.Connection = Database.GetConnection();
 
             return deleteCommand.DeleteAsync(entities, cancellationToken);
         }
@@ -272,7 +272,7 @@ namespace Venflow.Modeling
         /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
         public ValueTask UpdateAsync(IUpdateCommand<TEntity> updateCommand, TEntity entity, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)updateCommand).UnderlyingCommand.Connection = Database.GetConnection();
+            ((VenflowBaseCommand<TEntity>) updateCommand).UnderlyingCommand.Connection = Database.GetConnection();
 
             return updateCommand.UpdateAsync(entity, cancellationToken);
         }
@@ -335,7 +335,7 @@ namespace Venflow.Modeling
         /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
         public ValueTask UpdateAsync(IUpdateCommand<TEntity> updateCommand, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)updateCommand).UnderlyingCommand.Connection = Database.GetConnection();
+            ((VenflowBaseCommand<TEntity>) updateCommand).UnderlyingCommand.Connection = Database.GetConnection();
 
             return updateCommand.UpdateAsync(entities, cancellationToken);
         }

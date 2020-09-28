@@ -19,7 +19,7 @@ namespace Venflow.Benchmarks.Benchmarks
         [Benchmark]
         public List<int> InstantiateWithActivator()
         {
-            return (List<int>)Activator.CreateInstance(_type);
+            return (List<int>) Activator.CreateInstance(_type);
         }
 
         [Benchmark]

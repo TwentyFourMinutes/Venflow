@@ -128,25 +128,25 @@ namespace Venflow.Dynamic.Materializer
 
             // Create and execute the StateMachine
 
-            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte) 0);
             materializeMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static));
             materializeMethodIL.Emit(OpCodes.Stfld, _methodBuilderField);
-            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte) 0);
             materializeMethodIL.Emit(OpCodes.Ldarg_0);
             materializeMethodIL.Emit(OpCodes.Stfld, _dataReaderField);
-            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte) 0);
             materializeMethodIL.Emit(OpCodes.Ldarg_1);
             materializeMethodIL.Emit(OpCodes.Stfld, _cancellationTokenField);
-            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte) 0);
             materializeMethodIL.Emit(OpCodes.Ldc_I4_M1);
             materializeMethodIL.Emit(OpCodes.Stfld, _stateField);
-            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte) 0);
             materializeMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
-            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte) 0);
             materializeMethodIL.Emit(OpCodes.Call,
                _methodBuilderField.FieldType.GetMethod("Start", BindingFlags.Public | BindingFlags.Instance)
                     .MakeGenericMethod(_stateMachineTypeBuilder));
-            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
+            materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte) 0);
             materializeMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
             materializeMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetProperty("Task").GetGetMethod());
 
@@ -155,7 +155,7 @@ namespace Venflow.Dynamic.Materializer
             _stateMachineTypeBuilder.CreateType();
             var materializerType = _materializerTypeBuilder.CreateType();
 
-            return (Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>)materializerType.GetMethod("MaterializeAsync").CreateDelegate(typeof(Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>));
+            return (Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>) materializerType.GetMethod("MaterializeAsync").CreateDelegate(typeof(Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>));
 
         }
 
@@ -233,7 +233,7 @@ namespace Venflow.Dynamic.Materializer
             // Set state and return exception
             _moveNextMethodIL.Emit(OpCodes.Stloc_S, _defaultExceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
@@ -248,7 +248,7 @@ namespace Venflow.Dynamic.Materializer
 
             // Set state and return result
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
@@ -424,7 +424,7 @@ namespace Venflow.Dynamic.Materializer
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, _dataReaderField);
 
                     if (primaryDbColumn.Item2 <= sbyte.MaxValue)
-                        _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)primaryDbColumn.Item2);
+                        _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) primaryDbColumn.Item2);
                     else
                         _moveNextMethodIL.Emit(OpCodes.Ldc_I4, primaryDbColumn.Item2);
 
@@ -437,7 +437,7 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, _dataReaderField);
 
                 if (primaryDbColumn.Item2 <= sbyte.MaxValue)
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)primaryDbColumn.Item2);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) primaryDbColumn.Item2);
                 else
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I4, primaryDbColumn.Item2);
 
@@ -708,7 +708,7 @@ namespace Venflow.Dynamic.Materializer
             // Set state and return exception
             _moveNextMethodIL.Emit(OpCodes.Stloc_S, _defaultExceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
 
             setNullGhostIL.WriteIL(_moveNextMethodIL);
@@ -726,7 +726,7 @@ namespace Venflow.Dynamic.Materializer
 
             // Set state and return result
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
             setNullGhostIL.WriteIL(_moveNextMethodIL);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -830,7 +830,7 @@ namespace Venflow.Dynamic.Materializer
             // Set state and return exception
             _moveNextMethodIL.Emit(OpCodes.Stloc_S, _defaultExceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldnull);
@@ -848,7 +848,7 @@ namespace Venflow.Dynamic.Materializer
 
             // Set state and return result
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldnull);
@@ -985,7 +985,7 @@ namespace Venflow.Dynamic.Materializer
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, _dataReaderField);
 
                     if (primaryDbColumn.Item2 <= sbyte.MaxValue)
-                        _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)primaryDbColumn.Item2);
+                        _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) primaryDbColumn.Item2);
                     else
                         _moveNextMethodIL.Emit(OpCodes.Ldc_I4, primaryDbColumn.Item2);
 
@@ -998,7 +998,7 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, _dataReaderField);
 
                 if (primaryDbColumn.Item2 <= sbyte.MaxValue)
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)primaryDbColumn.Item2);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) primaryDbColumn.Item2);
                 else
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I4, primaryDbColumn.Item2);
 
@@ -1215,7 +1215,7 @@ namespace Venflow.Dynamic.Materializer
             // Set state and return exception
             _moveNextMethodIL.Emit(OpCodes.Stloc_S, _defaultExceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
 
             setNullGhostIL.WriteIL(_moveNextMethodIL);
@@ -1233,7 +1233,7 @@ namespace Venflow.Dynamic.Materializer
 
             // Set state and return result
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
             setNullGhostIL.WriteIL(_moveNextMethodIL);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -1293,7 +1293,7 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, _dataReaderField);
 
                 if (columnIndex <= sbyte.MaxValue)
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)columnIndex);
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) columnIndex);
                 else
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I4, columnIndex);
 

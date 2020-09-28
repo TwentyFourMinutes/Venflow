@@ -137,7 +137,7 @@ namespace Venflow
 
             using var command = new NpgsqlCommand(sql, GetConnection());
 
-            return (T)await command.ExecuteScalarAsync(cancellationToken);
+            return (T) await command.ExecuteScalarAsync(cancellationToken);
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace Venflow
                 command.Parameters.Add(parameters[i]);
             }
 
-            return (T)await command.ExecuteScalarAsync(cancellationToken);
+            return (T) await command.ExecuteScalarAsync(cancellationToken);
         }
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace Venflow
                 command.Parameters.Add(parameters[i]);
             }
 
-            return (T)await command.ExecuteScalarAsync();
+            return (T) await command.ExecuteScalarAsync();
         }
 
         /// <summary>
@@ -202,7 +202,7 @@ namespace Venflow
             command.Connection = GetConnection();
             command.SetInterpolatedCommandText(sql);
 
-            return (T)await command.ExecuteScalarAsync(cancellationToken);
+            return (T) await command.ExecuteScalarAsync(cancellationToken);
         }
 
         /// <summary>
@@ -216,14 +216,14 @@ namespace Venflow
 
             if (DatabaseConfigurationCache.CustomEntities.TryGetValue(entityType, out var entity))
             {
-                return new TableBase<TEntity>(this, (Entity<TEntity>)entity);
+                return new TableBase<TEntity>(this, (Entity<TEntity>) entity);
             }
 
             lock (DatabaseConfigurationCache.CustomEntities)
             {
                 if (DatabaseConfigurationCache.CustomEntities.TryGetValue(entityType, out entity))
                 {
-                    return new TableBase<TEntity>(this, (Entity<TEntity>)entity);
+                    return new TableBase<TEntity>(this, (Entity<TEntity>) entity);
                 }
 
                 var entityBuilder = new EntityBuilder<TEntity>(string.Empty);
@@ -236,7 +236,7 @@ namespace Venflow
 
                 DatabaseConfigurationCache.CustomEntities.Add(entityType, entity);
 
-                return new TableBase<TEntity>(this, (Entity<TEntity>)entity);
+                return new TableBase<TEntity>(this, (Entity<TEntity>) entity);
             }
         }
 

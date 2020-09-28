@@ -44,7 +44,7 @@ namespace Venflow.Dynamic
 
         private static string GetTypeName(NamespaceType namespaceType, string typeName)
         {
-            return _namespaceNames[(int)namespaceType] + typeName;
+            return _namespaceNames[(int) namespaceType] + typeName;
         }
 
         private enum NamespaceType
