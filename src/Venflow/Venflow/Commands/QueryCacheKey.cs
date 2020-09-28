@@ -2,25 +2,26 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Npgsql.Schema;
+using Venflow.Dynamic;
 using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
     internal readonly struct QueryCacheKey
     {
-        internal readonly Entity Entity;
-        internal readonly Type ReturnType;
-        internal readonly EntityRelation[]? Relations;
-        internal readonly List<NpgsqlDbColumn> ColumnSchema;
-        internal readonly bool IsChangeTracking;
+        private readonly Entity _entity;
+        private readonly Type _returnType;
+        private readonly EntityRelation[]? _relations;
+        private readonly List<NpgsqlDbColumn> _columnSchema;
+        private readonly bool _isChangeTracking;
 
         public QueryCacheKey(Entity entity, Type returnType, EntityRelation[]? relations, List<NpgsqlDbColumn> columnSchema, bool isChangeTracking)
         {
-            Entity = entity;
-            ReturnType = returnType;
-            Relations = relations;
-            ColumnSchema = columnSchema;
-            IsChangeTracking = isChangeTracking;
+            _entity = entity;
+            _returnType = returnType;
+            _relations = relations;
+            _columnSchema = columnSchema;
+            _isChangeTracking = isChangeTracking;
         }
 
         public bool Equals(
@@ -29,13 +30,13 @@ namespace Venflow.Commands
 #endif
             QueryCacheKey y)
         {
-            if (y.ReturnType != ReturnType ||
-                y.IsChangeTracking != IsChangeTracking ||
-                y.ColumnSchema.Count != ColumnSchema.Count)
+            if (y._returnType != _returnType ||
+                y._isChangeTracking != _isChangeTracking ||
+                y._columnSchema.Count != _columnSchema.Count)
                 return false;
 
-            var columnSchemaSpan = ColumnSchema.AsSpan();
-            var foreignColumnSchemaSpan = y.ColumnSchema.AsSpan();
+            var columnSchemaSpan = _columnSchema.AsSpan();
+            var foreignColumnSchemaSpan = y._columnSchema.AsSpan();
 
             for (int columnIndex = columnSchemaSpan.Length - 1; columnIndex >= 0; columnIndex--)
             {
@@ -50,18 +51,18 @@ namespace Venflow.Commands
         {
             var hashCode = new HashCode();
 
-            hashCode.Add(ReturnType);
+            hashCode.Add(_returnType);
 
-            var columnSchemaSpan = ColumnSchema.AsSpan();
+            var columnSchemaSpan = _columnSchema.AsSpan();
 
-            if (Relations is { })
+            if (_relations is { })
             {
                 var joinIndex = 0;
 
-                var flattenedPathSpan = Relations.AsSpan();
+                var flattenedPathSpan = _relations.AsSpan();
 
-                Entity nextJoin = Entity;
-                string? nextJoinPKName = Entity.GetPrimaryColumn().ColumnName;
+                Entity nextJoin = _entity;
+                string? nextJoinPKName = _entity.GetPrimaryColumn().ColumnName;
 
                 for (int columnIndex = 0, max = columnSchemaSpan.Length; columnIndex < max; columnIndex++)
                 {
@@ -84,7 +85,7 @@ namespace Venflow.Commands
                 }
             }
 
-            hashCode.Add(IsChangeTracking);
+            hashCode.Add(_isChangeTracking);
 
             return hashCode.ToHashCode();
         }
