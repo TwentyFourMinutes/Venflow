@@ -132,6 +132,7 @@ Subsequent joins can be configured with the `ThenWith` method. Do note, that one
 - Composed PK support
 - Direct support for many to many relations
 - Support for materialized Views
+- Bulk operation support
 
 ### Acknowledgements
 
@@ -152,7 +153,7 @@ I also want to mention all the other great packages out there, build by awesome 
 
 - [LunarLite](https://github.com/LunarLite) for helping me with highly complex logically issues.
 - [AnotherZane](https://github.com/AnotherZane) for being one of the early alpha testers. 
-- [Jas](https://github.com/jas777) and [Fatal](https://github.com/fatalcenturion) for providing general surface API ideas
+- [Jas](https://github.com/jas777) and [Fatal](https://github.com/fatalcenturion) for providing general surface API ideas.
 
 ## Notes
 
