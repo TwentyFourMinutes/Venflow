@@ -34,7 +34,7 @@ How you can help other than that? This can be done in numerous ways, over on the
 
 ## Installation
 
-The alpha versions of Venflow can currently be downloaded on [nuget.org](https://www.nuget.org/packages/Venflow). However please do note that since this package is still in beta, it may still contain bugs and other issues.
+The beta versions of Venflow can currently be downloaded on [nuget.org](https://www.nuget.org/packages/Venflow). However please do note that since this package is still in beta, it may still contain bugs and other issues.
 
 Also you can install it via the **P**ackage **M**anager **C**onsole:
 
@@ -152,7 +152,7 @@ I also want to mention all the other great packages out there, build by awesome 
 #### Awesome people which helped in the development
 
 - [LunarLite](https://github.com/LunarLite) for helping me with highly complex logically issues.
-- [AnotherZane](https://github.com/AnotherZane) for being one of the early alpha testers. 
+- [AnotherZane](https://github.com/AnotherZane) for being one of the early preview testers. 
 - [Jas](https://github.com/jas777) and [Fatal](https://github.com/fatalcenturion) for providing general surface API ideas.
 
 ## Notes
