@@ -32,6 +32,18 @@ namespace Venflow.Tests.InsertTests
         }
 
         [Fact]
+        public async Task InsertWithPartialRelationReversedAsync()
+        {
+            var email = GetEmailWithFullRelation();
+
+            var insertCount = await Database.Emails.Insert().InsertWith(x => x.Person).InsertAsync(email);
+
+            Assert.Equal(2, insertCount);
+
+            Assert.Equal(1, await Database.People.DeleteAsync(email.Person));
+        }
+
+        [Fact]
         public async Task InsertWithRelationAsync()
         {
             var person = GetPersonWithRelation();
@@ -73,6 +85,11 @@ namespace Venflow.Tests.InsertTests
         private Email GetEmailWithRelation()
         {
             return new Email { Address = "None", Person = new Person { Name = "None" } };
+        }
+
+        private Email GetEmailWithFullRelation()
+        {
+            return new Email { Address = "None", Person = new Person { Name = "None" }, Contents = new List<EmailContent> { new EmailContent { Content = "None" } } };
         }
     }
 }
