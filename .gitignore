@@ -7,6 +7,7 @@
 
 .idea/
 Venflow.Compatible/
+Venflow.Execution/
 
 # User-specific files
 *.rsuser
