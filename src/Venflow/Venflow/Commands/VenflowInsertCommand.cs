@@ -12,18 +12,17 @@ namespace Venflow.Commands
         internal Delegate? SingleInserter { get; set; }
         internal Delegate? BatchInserter { get; set; }
 
-        private InsertCacheKey _cacheKey;
+        private readonly RelationBuilderValues? _relationBuilderValues;
         private readonly bool _isFullInsert;
 
         internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, bool isFullInsert) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
         {
-            _cacheKey = new InsertCacheKey(new EntityRelation[0]);
             _isFullInsert = isFullInsert;
         }
 
-        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, in InsertCacheKey cacheKey, bool isFullInsert) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
+        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, RelationBuilderValues? relationBuilderValues, bool isFullInsert) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
         {
-            _cacheKey = cacheKey;
+            _relationBuilderValues = relationBuilderValues;
             _isFullInsert = isFullInsert;
         }
 
@@ -35,13 +34,11 @@ namespace Venflow.Commands
 
             if (SingleInserter is { })
             {
-                inserter = (Func<NpgsqlConnection, TEntity, CancellationToken, Task<int>>) SingleInserter;
+                inserter = (Func<NpgsqlConnection, TEntity, CancellationToken, Task<int>>)SingleInserter;
             }
             else
             {
-                _cacheKey.IsSingleInsert = true;
-
-                SingleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<TEntity>(_cacheKey, _isFullInsert);
+                SingleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<TEntity>(_relationBuilderValues, true, _isFullInsert);
             }
 
             var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entity, cancellationToken);
@@ -60,11 +57,11 @@ namespace Venflow.Commands
 
             if (BatchInserter is { })
             {
-                inserter = (Func<NpgsqlConnection, IList<TEntity>, CancellationToken, Task<int>>) BatchInserter;
+                inserter = (Func<NpgsqlConnection, IList<TEntity>, CancellationToken, Task<int>>)BatchInserter;
             }
             else
             {
-                BatchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<IList<TEntity>>(_cacheKey, _isFullInsert);
+                BatchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<IList<TEntity>>(_relationBuilderValues, false, _isFullInsert);
             }
 
             var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entities, cancellationToken);

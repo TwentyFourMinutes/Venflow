@@ -23,18 +23,20 @@ namespace Venflow.Dynamic.Inserter
             _inserstionLock = new();
         }
 
-        internal Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>> GetOrCreateInserter<TInsert>(InsertCacheKey cacheKey, bool isFullInsert) where TInsert : class
+        internal Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>> GetOrCreateInserter<TInsert>(RelationBuilderValues relationBuilderValues, bool isSingleInsert, bool isFullInsert) where TInsert : class
         {
+            var cacheKey = new InsertCacheKey(relationBuilderValues?.GetFlattenedRelations() ?? new EntityRelation[0], isSingleInsert);
+
             if (_inserterCache.TryGetValue(cacheKey, out var tempInserter))
             {
-                return (Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>) tempInserter;
+                return (Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>)tempInserter;
             }
 
             lock (_inserstionLock)
             {
                 if (_inserterCache.TryGetValue(cacheKey, out tempInserter))
                 {
-                    return (Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>) tempInserter;
+                    return (Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>)tempInserter;
                 }
                 else
                 {
@@ -46,7 +48,7 @@ namespace Venflow.Dynamic.Inserter
                     }
                     else
                     {
-                        sourceCompiler.CompileFromRelations(_entity, cacheKey.Relations);
+                        sourceCompiler.CompileFromRelations(_entity, relationBuilderValues);
                     }
 
                     var inserter = new InsertionFactoryCompiler(_entity).CreateInserter<TInsert>(sourceCompiler.GetEntities(), sourceCompiler.VisitedEntityIds, sourceCompiler.ReachableRelations);

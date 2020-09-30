@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Venflow.Commands;
 using Venflow.Enums;
 using Venflow.Modeling;
 
@@ -55,45 +56,68 @@ namespace Venflow.Dynamic.Inserter
             BaseCompile();
         }
 
-        internal void CompileFromRelations(Entity entity, IReadOnlyList<EntityRelation> relations)
+        internal void CompileFromRelations(Entity entity, RelationBuilderValues relationBuilderValues)
         {
             VisitedEntityIds.GetId(entity, out _);
 
-            var lastEntityHolder = new EntityRelationHolder(entity);
+            var entityHolder = new EntityRelationHolder(entity);
 
-            _reachableEntities.Add(lastEntityHolder);
+            _reachableEntities.Add(entityHolder);
 
-            var lastEntity = entity;
 
-            for (int i = relations.Count - 1; i >= 0; i--)
+            if (relationBuilderValues is { })
             {
-                var relation = relations[i];
-
-                if (!ReachableRelations.Add(relation.RelationId))
-                    continue;
-
-                if (lastEntity != relation.LeftEntity)
+                for (int i = relationBuilderValues.TrailingPath.Count - 1; i >= 0; i--)
                 {
-                    lastEntity = relation.LeftEntity;
-                    lastEntityHolder = new EntityRelationHolder(lastEntity);
+                    var path = relationBuilderValues.TrailingPath[i];
 
-                    _reachableEntities.Add(lastEntityHolder);
+                    var relation = path.CurrentRelation;
 
+                    if (relation.ForeignKeyLocation == ForeignKeyLocation.Left)
+                    {
+                        entityHolder.SelfAssignedRelations.Add(relation);
+                    }
+                    else if (relation.ForeignKeyLocation == ForeignKeyLocation.Right)
+                    {
+                        entityHolder.ForeignAssignedRelations.Add(relation);
+                    }
 
-                    VisitedEntityIds.GetId(relation.LeftEntity, out _);
-                }
+                    ReachableRelations.Add(relation.RelationId);
 
-                if (relation.ForeignKeyLocation == ForeignKeyLocation.Left)
-                {
-                    lastEntityHolder.SelfAssignedRelations.Add(relation);
-                }
-                else if (relation.ForeignKeyLocation == ForeignKeyLocation.Right)
-                {
-                    lastEntityHolder.ForeignAssignedRelations.Add(relation);
+                    BaseCompileFromRelations(path);
                 }
             }
 
             BaseCompile();
+        }
+
+        private void BaseCompileFromRelations(RelationPath relationPath)
+        {
+            var entity = relationPath.CurrentRelation.RightEntity;
+            var entityHolder = new EntityRelationHolder(entity);
+
+            VisitedEntityIds.GetId(entity, out _);
+            _reachableEntities.Add(entityHolder);
+
+            for (int pathIndex = relationPath.TrailingPath.Count - 1; pathIndex >= 0; pathIndex--)
+            {
+                var path = relationPath.TrailingPath[pathIndex];
+
+                var relation = path.CurrentRelation;
+
+                if (relation.ForeignKeyLocation == ForeignKeyLocation.Left)
+                {
+                    entityHolder.SelfAssignedRelations.Add(relation);
+                }
+                else if (relation.ForeignKeyLocation == ForeignKeyLocation.Right)
+                {
+                    entityHolder.ForeignAssignedRelations.Add(relation);
+                }
+
+                ReachableRelations.Add(relation.RelationId);
+
+                BaseCompileFromRelations(path);
+            }
         }
 
         private void CollectAllReachableEntities(Entity entity)
@@ -140,7 +164,7 @@ namespace Venflow.Dynamic.Inserter
             {
                 var startReachableCount = _reachableEntities.Count;
 
-                for (int entityIndex = _reachableEntities.Count - 1; entityIndex >= 0; entityIndex--)
+                for (int entityIndex = 0; entityIndex < _reachableEntities.Count; entityIndex++)
                 {
                     var entityHolder = _reachableEntities[entityIndex];
                     var entity = entityHolder.Entity;
@@ -188,6 +212,7 @@ namespace Venflow.Dynamic.Inserter
                     }
 
                     _reachableEntities.RemoveAt(entityIndex);
+                    entityIndex--;
                 }
 
                 if (startReachableCount == _reachableEntities.Count)

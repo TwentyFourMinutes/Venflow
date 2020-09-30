@@ -57,7 +57,7 @@ namespace Venflow.Dynamic.Inserter
 
             bool isSingleInsert = _insertType == _rootEntity.EntityType;
 
-            var primaryColumn = (IPrimaryEntityColumn) _rootEntity.GetPrimaryColumn();
+            var primaryColumn = (IPrimaryEntityColumn)_rootEntity.GetPrimaryColumn();
 
             if (primaryColumn.IsServerSideGenerated ||
                 entities is { })
@@ -124,26 +124,26 @@ namespace Venflow.Dynamic.Inserter
                 materializeMethodIL.DeclareLocal(_stateMachineTypeBuilder);
 
                 // Create and execute the StateMachine
-                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte) 0);
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
                 materializeMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static));
                 materializeMethodIL.Emit(OpCodes.Stfld, _methodBuilderField);
-                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte) 0);
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
                 materializeMethodIL.Emit(OpCodes.Ldarg_0);
                 materializeMethodIL.Emit(OpCodes.Stfld, _connectionField);
-                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte) 0);
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
                 materializeMethodIL.Emit(OpCodes.Ldarg_1);
                 materializeMethodIL.Emit(OpCodes.Stfld, _rootEntityInsertField);
-                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte) 0);
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
                 materializeMethodIL.Emit(OpCodes.Ldarg_2);
                 materializeMethodIL.Emit(OpCodes.Stfld, _cancellationTokenField);
-                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte) 0);
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
                 materializeMethodIL.Emit(OpCodes.Ldc_I4_M1);
                 materializeMethodIL.Emit(OpCodes.Stfld, _stateField);
-                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte) 0);
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
                 materializeMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
-                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte) 0);
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
                 materializeMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("Start", BindingFlags.Public | BindingFlags.Instance).MakeGenericMethod(_stateMachineTypeBuilder));
-                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte) 0);
+                materializeMethodIL.Emit(OpCodes.Ldloca_S, (byte)0);
                 materializeMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
                 materializeMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetProperty("Task").GetGetMethod());
 
@@ -154,7 +154,7 @@ namespace Venflow.Dynamic.Inserter
                 _stateMachineTypeBuilder.CreateType();
                 var inserterType = _inserterTypeBuilder.CreateType();
 
-                return (Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>) inserterType.GetMethod("InsertAsync").CreateDelegate(typeof(Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>));
+                return (Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>)inserterType.GetMethod("InsertAsync").CreateDelegate(typeof(Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>));
             }
             else
             {
@@ -162,7 +162,7 @@ namespace Venflow.Dynamic.Inserter
 
                 CreateSingleNoRelationNoDbKeysInserter(insertMethod.GetILGenerator());
 
-                return (Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>) insertMethod.CreateDelegate(typeof(Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>));
+                return (Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>)insertMethod.CreateDelegate(typeof(Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>));
             }
         }
 
@@ -231,7 +231,7 @@ namespace Venflow.Dynamic.Inserter
 
             var stringBuilder = new StringBuilder();
 
-            var skipPrimaryKey = ((IPrimaryEntityColumn) _rootEntity.GetPrimaryColumn()).IsServerSideGenerated;
+            var skipPrimaryKey = ((IPrimaryEntityColumn)_rootEntity.GetPrimaryColumn()).IsServerSideGenerated;
 
             var columnCount = _rootEntity.GetColumnCount();
             var columnOffset = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0;
@@ -313,7 +313,7 @@ namespace Venflow.Dynamic.Inserter
 
             // append placeholders to command builder
             _moveNextMethodIL.Emit(OpCodes.Ldloc, commandBuilderLocal);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4, (int) '(');
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4, (int)'(');
             _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(char) }));
             _moveNextMethodIL.Emit(OpCodes.Pop);
 
@@ -560,7 +560,7 @@ namespace Venflow.Dynamic.Inserter
             // Set state and return exception
             _moveNextMethodIL.Emit(OpCodes.Stloc_S, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
 
             if (dataReaderField is { })
@@ -583,7 +583,7 @@ namespace Venflow.Dynamic.Inserter
 
             // Set state and return result
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
 
             if (dataReaderField is { })
@@ -634,7 +634,7 @@ namespace Venflow.Dynamic.Inserter
 
             for (int entityIndex = entities.Length - 1; entityIndex >= 0; entityIndex--)
             {
-                awaiterCount += ((IPrimaryEntityColumn) entities[entityIndex].Entity.GetPrimaryColumn()).IsServerSideGenerated ? 4 : 1;
+                awaiterCount += ((IPrimaryEntityColumn)entities[entityIndex].Entity.GetPrimaryColumn()).IsServerSideGenerated ? 4 : 1;
             }
 
             var switchBuilder = _moveNextMethodIL.EmitSwitch(awaiterCount);
@@ -732,7 +732,7 @@ namespace Venflow.Dynamic.Inserter
 
                 var stringBuilder = new StringBuilder();
 
-                var skipPrimaryKey = ((IPrimaryEntityColumn) entity.GetPrimaryColumn()).IsServerSideGenerated;
+                var skipPrimaryKey = ((IPrimaryEntityColumn)entity.GetPrimaryColumn()).IsServerSideGenerated;
 
                 var columnCount = entity.GetColumnCount();
                 var columnOffset = skipPrimaryKey ? entity.GetRegularColumnOffset() : 0;
@@ -828,7 +828,7 @@ namespace Venflow.Dynamic.Inserter
                 // append placeholders to command builder
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
-                _moveNextMethodIL.Emit(OpCodes.Ldc_I4, (int) '(');
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4, (int)'(');
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(char) }));
                 _moveNextMethodIL.Emit(OpCodes.Pop);
 
@@ -1216,7 +1216,7 @@ namespace Venflow.Dynamic.Inserter
             // Set state and return exception
             _moveNextMethodIL.Emit(OpCodes.Stloc_S, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
 
             if (dataReaderField is { })
@@ -1246,7 +1246,7 @@ namespace Venflow.Dynamic.Inserter
 
             // Set state and return result
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
 
             if (dataReaderField is { })
@@ -1317,7 +1317,7 @@ namespace Venflow.Dynamic.Inserter
             // Create command and assign sql command and connection
             var sqlBuilder = new StringBuilder();
 
-            var skipPrimaryKey = ((IPrimaryEntityColumn) _rootEntity.GetPrimaryColumn()).IsServerSideGenerated;
+            var skipPrimaryKey = ((IPrimaryEntityColumn)_rootEntity.GetPrimaryColumn()).IsServerSideGenerated;
 
             sqlBuilder.Append("INSERT INTO ")
                       .Append(_rootEntity.TableName)
@@ -1396,7 +1396,7 @@ namespace Venflow.Dynamic.Inserter
             // Set state and return exception
             _moveNextMethodIL.Emit(OpCodes.Stloc_S, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
@@ -1411,7 +1411,7 @@ namespace Venflow.Dynamic.Inserter
 
             // Set state and return result
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
@@ -1449,7 +1449,7 @@ namespace Venflow.Dynamic.Inserter
             // Start try block
             _moveNextMethodIL.BeginExceptionBlock();
 
-            // if state zero goto await unsafe         
+            // if state zero goto await unsafe
 
             var awaiterCount = 0;
 
@@ -1464,7 +1464,7 @@ namespace Venflow.Dynamic.Inserter
                     continue;
                 }
 
-                awaiterCount += ((IPrimaryEntityColumn) entity.GetPrimaryColumn()).IsServerSideGenerated ? 4 : 1;
+                awaiterCount += ((IPrimaryEntityColumn)entity.GetPrimaryColumn()).IsServerSideGenerated ? 4 : 1;
             }
 
             _moveNextMethodIL.Emit(OpCodes.Ldloc, _stateLocal);
@@ -1516,7 +1516,7 @@ namespace Venflow.Dynamic.Inserter
 
                 var stringBuilder = new StringBuilder();
 
-                var skipPrimaryKey = ((IPrimaryEntityColumn) entity.GetPrimaryColumn()).IsServerSideGenerated;
+                var skipPrimaryKey = ((IPrimaryEntityColumn)entity.GetPrimaryColumn()).IsServerSideGenerated;
 
                 var columnCount = entity.GetColumnCount();
                 var columnOffset = skipPrimaryKey ? entity.GetRegularColumnOffset() : 0;
@@ -1849,7 +1849,7 @@ namespace Venflow.Dynamic.Inserter
                     // append placeholders to command builder
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, (int) '(');
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I4, (int)'(');
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(char) }));
                     _moveNextMethodIL.Emit(OpCodes.Pop);
 
@@ -2230,7 +2230,7 @@ namespace Venflow.Dynamic.Inserter
             // Set state and return exception
             _moveNextMethodIL.Emit(OpCodes.Stloc_S, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
@@ -2245,7 +2245,7 @@ namespace Venflow.Dynamic.Inserter
 
             // Set state and return result
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte) -2);
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
@@ -2278,7 +2278,7 @@ namespace Venflow.Dynamic.Inserter
             // Create command and assign sql command and connection
             var sqlBuilder = new StringBuilder();
 
-            var skipPrimaryKey = ((IPrimaryEntityColumn) _rootEntity.GetPrimaryColumn()).IsServerSideGenerated;
+            var skipPrimaryKey = ((IPrimaryEntityColumn)_rootEntity.GetPrimaryColumn()).IsServerSideGenerated;
 
             sqlBuilder.Append("INSERT INTO ")
                       .Append(_rootEntity.TableName)
@@ -2321,7 +2321,7 @@ namespace Venflow.Dynamic.Inserter
             iLGenerator.Emit(OpCodes.Ldarg_2);
             iLGenerator.Emit(OpCodes.Callvirt, commandType.GetMethod("ExecuteNonQueryAsync", new[] { _cancellationTokenField.FieldType }));
 
-            // End of method    
+            // End of method
             iLGenerator.Emit(OpCodes.Ret);
         }
 
@@ -2524,7 +2524,7 @@ namespace Venflow.Dynamic.Inserter
                 // loop body
                 _ilGenerator.MarkLabel(startLoopBodyLabel);
 
-                // iterator 
+                // iterator
                 _ilGenerator.Emit(OpCodes.Ldarg_0);
                 _ilGenerator.Emit(OpCodes.Ldfld, entityInsertField);
                 _ilGenerator.Emit(OpCodes.Ldloc, iteratorLocal);
@@ -2683,7 +2683,7 @@ namespace Venflow.Dynamic.Inserter
                         // loop body
                         _ilGenerator.MarkLabel(startLoopBodyLabel);
 
-                        // iterator 
+                        // iterator
                         _ilGenerator.Emit(OpCodes.Ldloc, leftEntityLocal);
                         _ilGenerator.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
                         _ilGenerator.Emit(OpCodes.Ldloc, iteratorLocal);

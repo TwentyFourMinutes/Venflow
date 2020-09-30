@@ -4,29 +4,28 @@ using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
-    internal struct InsertCacheKey
+    internal readonly struct InsertCacheKey
     {
-        internal bool IsSingleInsert { get; set; }
 
         internal EntityRelation[] Relations => _relations;
 
+        private readonly bool _isSingleInsert;
         private readonly EntityRelation[] _relations;
 
-        internal InsertCacheKey(EntityRelation[] relations)
+        internal InsertCacheKey(EntityRelation[] relations, bool isSingleInsert)
         {
             _relations = relations;
-
-            IsSingleInsert = false;
+            _isSingleInsert = isSingleInsert;
         }
 
         public bool Equals(
 #if !NET48
-            [AllowNull] 
+            [AllowNull]
 #endif
             InsertCacheKey y)
         {
             if (y._relations.Length != _relations.Length ||
-                y.IsSingleInsert != IsSingleInsert)
+                y._isSingleInsert != _isSingleInsert)
                 return false;
 
             var relaionsSpan = _relations.AsSpan();
@@ -45,7 +44,7 @@ namespace Venflow.Commands
         {
             var hashCode = new HashCode();
 
-            hashCode.Add(IsSingleInsert);
+            hashCode.Add(_isSingleInsert);
 
             var relaionsSpan = _relations.AsSpan();
 

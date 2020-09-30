@@ -31,7 +31,7 @@ namespace Venflow.Commands
         {
             if (_relationBuilderValues is { })
             {
-                return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _command, _disposeCommand, new InsertCacheKey(_relationBuilderValues.GetFlattenedRelations()), _isFullInsert);
+                return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _command, _disposeCommand, _relationBuilderValues, _isFullInsert);
             }
 
             return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _command, _disposeCommand, _isFullInsert);
