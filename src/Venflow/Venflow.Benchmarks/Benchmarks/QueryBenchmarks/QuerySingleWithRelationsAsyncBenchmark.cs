@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 using Microsoft.EntityFrameworkCore;
+using Venflow.Benchmarks.Benchmarks.InsertBenchmarks;
 using Venflow.Benchmarks.Models;
 
 namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
@@ -21,6 +22,18 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         public override async Task Setup()
         {
             await base.Setup();
+
+            var insertBenchmark = new InsertBatchWithRelationsAsyncBenchmark();
+
+            await insertBenchmark.Setup();
+
+            insertBenchmark.InsertCount = 10000;
+
+            await insertBenchmark.VenflowInsertBatchAsync();
+
+            await insertBenchmark.Database.DisposeAsync();
+
+            await insertBenchmark.PersonDbContext.DisposeAsync();
 
             await EfCoreQuerySingleAsync();
             await EfCoreQuerySingleNoChangeTrackingAsync();
@@ -177,9 +190,11 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         }
 
         [GlobalCleanup]
-        public override Task Cleanup()
+        public override async Task Cleanup()
         {
-            return base.Cleanup();
+            await Database.People.TruncateAsync();
+
+            await base.Cleanup();
         }
     }
 }

@@ -24,7 +24,6 @@ namespace Venflow.Benchmarks.Benchmarks.InsertBenchmarks
 
             await EfCoreInsertBatchAsync();
             await VenflowInsertBatchAsync();
-            await VenflowInsertBatchWithPKReturnAsync();
             await RepoDbInsertBatchAsync();
         }
 
@@ -55,21 +54,17 @@ namespace Venflow.Benchmarks.Benchmarks.InsertBenchmarks
         }
 
         [Benchmark]
-        public Task<int> VenflowInsertBatchWithPKReturnAsync()
-        {
-            return Database.People.Insert().SetIdentityColumns().Build().InsertAsync(GetDummyPeople());
-        }
-
-        [Benchmark]
         public Task<int> RepoDbInsertBatchAsync()
         {
             return DbConnectionExtension.InsertAllAsync(Database.GetConnection(), GetDummyPeople());
         }
 
         [GlobalCleanup]
-        public override Task Cleanup()
+        public override async Task Cleanup()
         {
-            return base.Cleanup();
+            await Database.People.TruncateAsync();
+
+            await base.Cleanup();
         }
     }
 }

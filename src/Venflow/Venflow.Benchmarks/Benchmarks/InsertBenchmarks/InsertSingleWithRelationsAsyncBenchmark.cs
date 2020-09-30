@@ -62,9 +62,11 @@ namespace Venflow.Benchmarks.Benchmarks.InsertBenchmarks
         }
 
         [GlobalCleanup]
-        public override Task Cleanup()
+        public override async Task Cleanup()
         {
-            return base.Cleanup();
+            await Database.People.TruncateAsync();
+
+            await base.Cleanup();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Venflow.Shared;
+﻿using Venflow.Modeling;
+using Venflow.Shared;
 
 namespace Venflow.Benchmarks.Models.Configurations
 {

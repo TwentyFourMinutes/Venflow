@@ -5,6 +5,7 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 using Microsoft.EntityFrameworkCore;
 using RepoDb;
+using Venflow.Benchmarks.Benchmarks.InsertBenchmarks;
 using Venflow.Benchmarks.Models;
 
 namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
@@ -33,9 +34,21 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
             PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
 
+            var insertBenchmark = new InsertBatchWithRelationsAsyncBenchmark();
+
+            await insertBenchmark.Setup();
+
+            insertBenchmark.InsertCount = 10000;
+
+            await insertBenchmark.VenflowInsertBatchAsync();
+
+            await insertBenchmark.Database.DisposeAsync();
+
+            await insertBenchmark.PersonDbContext.DisposeAsync();
+
             _efCorePeople = await PersonDbContext.People.Take(UpdateCount).ToListAsync();
             _venflowPeople = await Database.People.QueryBatch(@"SELECT * FROM ""People"" LIMIT " + UpdateCount).TrackChanges().Build().QueryAsync();
-            _repoDbPeople = (await DbConnectionExtension.QueryAsync<Person>(Database.GetConnection(), whereOrPrimaryKey: null, top: UpdateCount)).ToList();
+            _repoDbPeople = (await DbConnectionExtension.QueryAsync<Person>(Database.GetConnection(), what: null, top: UpdateCount)).ToList();
 
             await EFCoreUpdateBatchAsync();
             await VenflowUpdateBatchAsync();
@@ -54,7 +67,7 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
         }
 
         [Benchmark]
-        public Task VenflowUpdateBatchAsync()
+        public ValueTask VenflowUpdateBatchAsync()
         {
             for (int i = 0; i < _venflowPeople.Count; i++)
             {
@@ -76,9 +89,11 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
         }
 
         [GlobalCleanup]
-        public override Task Cleanup()
+        public override async Task Cleanup()
         {
-            return base.Cleanup();
+            await Database.People.TruncateAsync();
+
+            await base.Cleanup();
         }
     }
 }

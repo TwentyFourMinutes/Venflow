@@ -6,7 +6,9 @@ using BenchmarkDotNet.Jobs;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using RepoDb;
+using RepoDb.Contexts.Cachers;
 using RepoDb.Extensions;
+using Venflow.Benchmarks.Benchmarks.InsertBenchmarks;
 using Venflow.Benchmarks.Models;
 
 namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
@@ -27,6 +29,18 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         public override async Task Setup()
         {
             await base.Setup();
+
+            var insertBenchmark = new InsertBatchWithRelationsAsyncBenchmark();
+
+            await insertBenchmark.Setup();
+
+            insertBenchmark.InsertCount = 10000;
+
+            await insertBenchmark.VenflowInsertBatchAsync();
+
+            await insertBenchmark.Database.DisposeAsync();
+
+            await insertBenchmark.PersonDbContext.DisposeAsync();
 
             await EfCoreQueryBatchAsync();
             await EfCoreQueryBatchNoChangeTrackingAsync();
@@ -72,7 +86,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         [Benchmark]
         public async Task<List<Person>> RepoDbQueryBatchAsync()
         {
-            return EnumerableExtension.AsList(await DbConnectionExtension.QueryAsync<Person>(Database.GetConnection(), whereOrPrimaryKey: null, top: QueryCount));
+            return EnumerableExtension.AsList(await DbConnectionExtension.QueryAsync<Person>(Database.GetConnection(), what: null, top: QueryCount));
         }
 
         [Benchmark]
@@ -80,10 +94,13 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         {
             return SqlMapper.AsList(await SqlMapper.QueryAsync<Person>(Database.GetConnection(), sql));
         }
+
         [GlobalCleanup]
-        public override Task Cleanup()
+        public override async Task Cleanup()
         {
-            return base.Cleanup();
+            await Database.People.TruncateAsync();
+
+            await base.Cleanup();
         }
     }
 }
