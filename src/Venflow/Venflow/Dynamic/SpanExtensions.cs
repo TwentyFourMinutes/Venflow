@@ -28,7 +28,7 @@ namespace Venflow.Dynamic
                 ilGenerator.Emit(OpCodes.Ldfld, typeof(List<TType>).GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance));
                 ilGenerator.Emit(OpCodes.Ret);
 
-                UnderlyingElementGetter = (Func<List<TType>, TType[]>) method.CreateDelegate(typeof(Func<List<TType>, TType[]>));
+                UnderlyingElementGetter = (Func<List<TType>, TType[]>)method.CreateDelegate(typeof(Func<List<TType>, TType[]>));
             }
 
             internal static Span<TType> AsSpan(List<TType> list)
@@ -79,7 +79,7 @@ namespace Venflow.Dynamic
             ilGenerator.Emit(OpCodes.Ldfld, typeof(ReadOnlyCollection<NpgsqlDbColumn>).GetField("list", BindingFlags.NonPublic | BindingFlags.Instance));
             ilGenerator.Emit(OpCodes.Ret);
 
-            return (Func<ReadOnlyCollection<NpgsqlDbColumn>, List<NpgsqlDbColumn>>) method.CreateDelegate(typeof(Func<ReadOnlyCollection<NpgsqlDbColumn>, List<NpgsqlDbColumn>>));
+            return (Func<ReadOnlyCollection<NpgsqlDbColumn>, List<NpgsqlDbColumn>>)method.CreateDelegate(typeof(Func<ReadOnlyCollection<NpgsqlDbColumn>, List<NpgsqlDbColumn>>));
 
         }
     }

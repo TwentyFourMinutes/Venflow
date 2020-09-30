@@ -40,7 +40,7 @@ namespace Venflow.Dynamic.Instantiater
 #if NETCOREAPP5_0
             return instantiaterMethod.CreateDelegate<Action<Database, IList<Entity>>>();
 #else
-            return (Action<Database, IList<Entity>>) instantiaterMethod.CreateDelegate(typeof(Action<Database, IList<Entity>>));
+            return (Action<Database, IList<Entity>>)instantiaterMethod.CreateDelegate(typeof(Action<Database, IList<Entity>>));
 #endif
         }
     }

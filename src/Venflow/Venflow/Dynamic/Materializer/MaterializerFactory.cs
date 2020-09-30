@@ -32,7 +32,7 @@ namespace Venflow.Dynamic.Materializer
             {
                 if (_materializerCache.TryGetValue(cacheKey, out var tempMaterializer))
                 {
-                    return (Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>) tempMaterializer;
+                    return (Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>)tempMaterializer;
                 }
                 else
                 {

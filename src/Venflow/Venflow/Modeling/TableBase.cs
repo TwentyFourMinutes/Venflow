@@ -38,7 +38,7 @@ namespace Venflow.Modeling
 #endif
         public Task<TReturn> QueryAsync<TReturn>(IQueryCommand<TEntity, TReturn> queryCommand, CancellationToken cancellationToken = default) where TReturn : class, new()
         {
-            ((VenflowBaseCommand<TEntity>) queryCommand).UnderlyingCommand.Connection = Database.GetConnection();
+            ((VenflowBaseCommand<TEntity>)queryCommand).UnderlyingCommand.Connection = Database.GetConnection();
 
             return queryCommand.QueryAsync(cancellationToken);
         }

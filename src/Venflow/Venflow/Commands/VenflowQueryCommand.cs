@@ -32,7 +32,7 @@ namespace Venflow.Commands
 
             if (Materializer is { })
             {
-                materializer = (Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>) Materializer;
+                materializer = (Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>)Materializer;
             }
             else
             {

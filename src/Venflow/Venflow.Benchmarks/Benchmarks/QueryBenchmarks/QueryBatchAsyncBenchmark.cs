@@ -6,7 +6,6 @@ using BenchmarkDotNet.Jobs;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using RepoDb;
-using RepoDb.Contexts.Cachers;
 using RepoDb.Extensions;
 using Venflow.Benchmarks.Benchmarks.InsertBenchmarks;
 using Venflow.Benchmarks.Models;

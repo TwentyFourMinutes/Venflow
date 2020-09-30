@@ -47,7 +47,7 @@ namespace Venflow.Dynamic.IL
             _ilGenerator.Emit(OpCodes.Ldarg_0);
 
             if (++_awaiterIndex < sbyte.MaxValue)
-                _ilGenerator.Emit(OpCodes.Ldc_I4_S, (sbyte) _awaiterIndex);
+                _ilGenerator.Emit(OpCodes.Ldc_I4_S, (sbyte)_awaiterIndex);
             else
                 _ilGenerator.Emit(OpCodes.Ldc_I4, _awaiterIndex);
 

@@ -45,7 +45,7 @@ namespace Venflow.Dynamic.Retriever
 #if NETCOREAPP5_0
             return retrieverMethod.CreateDelegate<Func<TEntity, string, NpgsqlParameter>>();
 #else
-            return (Func<TEntity, string, NpgsqlParameter>) retrieverMethod.CreateDelegate(typeof(Func<TEntity, string, NpgsqlParameter>));
+            return (Func<TEntity, string, NpgsqlParameter>)retrieverMethod.CreateDelegate(typeof(Func<TEntity, string, NpgsqlParameter>));
 #endif
         }
 
