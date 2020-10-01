@@ -79,7 +79,7 @@ namespace Venflow.Dynamic.Inserter
 
                 if (isSingleInsert)
                 {
-                    if (entities is null)
+                    if (entities.Length == 1)
                     {
                         CreateSingleNoRelationInserter();
                     }
@@ -90,7 +90,7 @@ namespace Venflow.Dynamic.Inserter
                 }
                 else
                 {
-                    if (entities is null)
+                    if (entities.Length == 1)
                     {
                         CreateBatchNoRelationInserter();
                     }
