@@ -20,6 +20,7 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../../../Venflow.snk</AssemblyOriginatorKeyFile>
     <PackageIcon>icon.png</PackageIcon>
+    <AnalysisLevel>preview</AnalysisLevel>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net5.0|AnyCPU'">
@@ -27,7 +28,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="../../../images/icon.png" Pack="true" PackagePath=""/>
+    <None Include="../../../images/icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,8 +1,8 @@
 ﻿namespace Venflow.Commands
 {
     /// <summary>
-    /// Represents a command builder to configure the query.
-    /// </summary>
+    /// Represents a pre-command builder to configure the query.
+    /// </summary>s
     /// <typeparam name="TEntity">The type of the entity which will be queried.</typeparam>
     /// <typeparam name="TReturn">The return type of the query.</typeparam>
     public interface IPreCommandBuilder<TEntity, TReturn> : IQueryCommandBuilder<TEntity, TReturn> where TEntity : class, new() where TReturn : class, new()
