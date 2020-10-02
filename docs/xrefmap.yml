@@ -10,6 +10,9 @@ references:
 - uid: Guides.Advanced.Nullables
   name: Nullables with Venflow
   href: guides/advanced/nullables.html
+- uid: Guides.Advanced.Preparation
+  name: Statement Preparation with Venflow
+  href: guides/advanced/prepared_statements.html
 - uid: Guides.Advanced.Validation
   name: Validation with Venflow
   href: guides/advanced/validation.html

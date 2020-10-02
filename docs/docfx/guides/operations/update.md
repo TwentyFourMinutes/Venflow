@@ -13,7 +13,7 @@ Your `Database` class exposes `Table<T>` properties which expose update operatio
 In order to get a change-tracked entity you can choose either of two ways. You can use the `TrackChanges` method on the query builder to immediately get change tracked entities.
 
 ```cs
-var post = await database.Posts.QuerySingle().TrackChanges().Build().QueryAsync();
+var post = await database.Posts.QuerySingle().TrackChanges().QueryAsync();
 
 post.Title = "This post was updated!";
 

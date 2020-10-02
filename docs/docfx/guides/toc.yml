@@ -28,5 +28,7 @@
       topicUid: Guides.Advanced.Enums
     - name: Nullables
       topicUid: Guides.Advanced.Nullables
+    - name: Statement Preparation
+      topicUid: Guides.Advanced.Preparation
     - name: Validation
       topicUid: Guides.Advanced.Validation

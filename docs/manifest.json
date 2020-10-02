@@ -553,6 +553,18 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "guides/advanced/prepared_statements.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/advanced/prepared_statements.html",
+          "hash": "gn8OzW2tAt7r32p0rxcPKA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "guides/advanced/validation.md",
       "output": {
         ".html": {
@@ -617,7 +629,7 @@
       "output": {
         ".html": {
           "relative_path": "guides/operations/delete.html",
-          "hash": "5IdTNV3s3K5Wx6o8PUaSTQ=="
+          "hash": "PJcMH+kOTGFl6LkLcx503g=="
         }
       },
       "is_incremental": false,
@@ -641,7 +653,7 @@
       "output": {
         ".html": {
           "relative_path": "guides/operations/insert.html",
-          "hash": "dk0U1bjXmEmcztOFTaQ9QA=="
+          "hash": "kXJyNN7nRR1sDINfgRuZeg=="
         }
       },
       "is_incremental": false,
@@ -653,7 +665,7 @@
       "output": {
         ".html": {
           "relative_path": "guides/operations/query.html",
-          "hash": "B3oSvPaOMojrpCc8qOf/2A=="
+          "hash": "/gqN9bVcvY9NWAIAltlPDg=="
         }
       },
       "is_incremental": false,
@@ -677,7 +689,7 @@
       "output": {
         ".html": {
           "relative_path": "guides/operations/update.html",
-          "hash": "R88+r0UDOBLkL6N60zOF9Q=="
+          "hash": "l1hUq4SRZjxJVrEL5mtT6w=="
         }
       },
       "is_incremental": false,
@@ -689,7 +701,7 @@
       "output": {
         ".html": {
           "relative_path": "guides/toc.html",
-          "hash": "Drn3xR51L1/XqYHtXxjN9A=="
+          "hash": "MxEAmpsGk0rWRM3O1Cbqiw=="
         }
       },
       "is_incremental": false,
@@ -756,7 +768,7 @@
         "ConceptualDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 15,
+          "total_file_count": 16,
           "skipped_file_count": 0
         },
         "ManagedReferenceDocumentProcessor": {

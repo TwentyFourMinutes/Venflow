@@ -13,7 +13,7 @@ title: Query with Venflow
 
 ## Query data without relations
 
-Your `Database` class exposes `Table<T>` properties which expose query operations. In Venflow queries are based on hand-written SQL, however for very simple scenarios there are generators which do the job for you. In this case we query the first 10 blogs in the database.
+Your `Database` class exposes `Table<T>` properties which expose query operations. In Venflow queries are based on hand-written SQL. In this case we query the first 10 blogs in the database.
 
 ```cs
 await using var database = new BlogDatabase(); // You should register this in a Transient/Scoped your IOC Container.
@@ -21,7 +21,7 @@ await using var database = new BlogDatabase(); // You should register this in a 
 // You can re-use this in different BlogDatabase instances through the database.Blogs.QueryAsync() method
 // If you intend to reuse the query below you need to pass the QueryBatch method false for the disposeCommand,
 // otherwise the underyling command will be disposed after the first use.
-var query = database.Blogs.QueryBatch(10).Build(); 
+var query = database.Blogs.QueryBatch(@"SELECT * FROM ""Blogs"" LIMIT 10").Build(); 
 
 var blogs = await query.QueryAsync(); // You can also inline this with the line above.
 ```
@@ -31,7 +31,7 @@ Additionally if you do not intend to reuse the the command instance you can omit
 Also, if you instead only wanted to query the first result, you can use the `QuerySingle` API.
 
 ```cs
-var blogs = await database.Blogs.QuerySingle().QueryAsync();
+var blogs = await database.Blogs.QuerySingle(@"SELECT * FROM ""Blogs"" LIMIT 1").QueryAsync();
 ```
 
 ## Query data with relations
@@ -47,13 +47,13 @@ const string sql =
 ) AS ""Blogs"" 
 JOIN ""Posts"" ON ""Posts"".""BlogId"" = ""Blogs"".""Id""";
 
-var query = await database.Blogs.QueryBatch(sql).JoinWith(x => x.Posts).Build().QueryAsync();
+var query = await database.Blogs.QueryBatch(sql).JoinWith(x => x.Posts).QueryAsync();
 ```
 
 If you instead only wanted to query the first blog with all of its posts, you can again use the `QuerySingle` API.
 
 ```cs
-var blogs = await database.Blogs.QuerySingle().JoinWith(x => x.Posts).Build().QueryAsync();
+var blogs = await database.Blogs.QuerySingle().JoinWith(x => x.Posts).QueryAsync();
 ```
 
 ## Queries with parameters
@@ -72,7 +72,7 @@ $@"SELECT * FROM
 ) AS ""Blogs"" 
 JOIN ""Posts"" ON ""Posts"".""BlogId"" = ""Blogs"".""Id""";
 
-var blogs = await database.Blogs.QueryInterpolatedSingle(sql).JoinWith(x => x.Posts).Build().QueryAsync();
+var blogs = await database.Blogs.QueryInterpolatedSingle(sql).JoinWith(x => x.Posts).QueryAsync();
 ```
 
 > [!NOTE] 
@@ -90,7 +90,7 @@ A simple example of that would be something like the following, where we just qu
 ```cs
 const string sql = @"SELECT ""Id"", ""Name"" FROM ""Blogs""";
 
-var blogs = await database.Blogs.QueryBatch(sql).Build().QueryAsync();
+var blogs = await database.Blogs.QueryBatch(sql).QueryAsync();
 ```
 
 ## Queries which don't return entities
@@ -105,7 +105,7 @@ public class CountReturn
     public int Count { get; set; }
 }
 
-await database.Custom<CountReturn>().QuerySingle(@"SELECT COUNT(*) FROM ""Blogs""").Build().QueryAsync();
+await database.Custom<CountReturn>().QuerySingle(@"SELECT COUNT(*) FROM ""Blogs""").QueryAsync();
 ```
 
 > [!WARNING] 

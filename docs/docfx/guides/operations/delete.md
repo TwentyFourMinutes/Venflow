@@ -8,7 +8,7 @@ title: Delete with Venflow
 Your `Database` class exposes `Table<T>` properties which expose delete operations. In Venflow deletes are always automatically generated. For this example, we want to delete a blog with all of its posts at once.
 
 ```cs
-var blog = await database.Blogs.QuerySingle().QueryAsync();
+var blog = await database.Blogs.QuerySingle(@"SELECT * FROM ""Blogs"" LIMIT 1").QueryAsync();
 
 await database.Blogs.DeleteAsync(blog);
 ```

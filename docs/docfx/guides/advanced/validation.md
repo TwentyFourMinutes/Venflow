@@ -12,3 +12,4 @@ In the below example we would tell Venflow, to always use 'Deep Validation', no 
 ```cs
 VenflowConfiguration.UseDeepValidation(true);
 ```
+

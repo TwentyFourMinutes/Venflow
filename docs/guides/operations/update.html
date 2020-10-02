@@ -98,7 +98,7 @@
 <p>All properties which you want to be updateable by change-tracking have to  be marked as virtual!</p>
 </div>
 <p>In order to get a change-tracked entity you can choose either of two ways. You can use the <code>TrackChanges</code> method on the query builder to immediately get change tracked entities.</p>
-<pre><code class="lang-cs">var post = await database.Posts.QuerySingle().TrackChanges().Build().QueryAsync();
+<pre><code class="lang-cs">var post = await database.Posts.QuerySingle().TrackChanges().QueryAsync();
 
 post.Title = &quot;This post was updated!&quot;;
 

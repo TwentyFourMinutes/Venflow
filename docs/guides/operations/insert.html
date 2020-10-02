@@ -113,6 +113,36 @@
 
 await database.Blogs.InsertAsync(blog);
 </code></pre>
+<h2 id="insert-data-without-relations">Insert Data without relations</h2>
+<p>One of the nice things with Venflow is, that you don't need to set all navigation properties to null, if you don't want to insert them. In this example we would have posts with a blog, but we only want to insert the blog.</p>
+<pre><code class="lang-cs">var blog = new Blog
+{
+    Name = &quot;My new Blog&quot;,
+    Posts = new List&lt;Post&gt;
+    {
+        new Post 
+        {
+            Title = &quot;This is my first Post&quot;,
+            Content = &quot;Hey there.&quot;
+        },
+        new Post 
+        {
+            Title = &quot;This is my second Post&quot;,
+            Content = &quot;Hey there again!&quot;
+        }
+    }
+};
+
+await database.Blogs.Insert().InsertAsync(blog);
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>This builder exposes similar methods to the Query builder, you can use <code>InsertWith</code> and <code>AndWith</code> to further configure the insert.</p>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The method <code>InsertWithAll</code> will insert with all populated and reachable relations. This is the equivalent to calling <code>database.Blogs.InsertAsync()</code>.</p>
+</div>
 </article>
           </div>
           

@@ -101,19 +101,19 @@
 <p>The primary key always has to be the first column of a given table returned by an SQL Query.</p>
 </div>
 <h2 id="query-data-without-relations">Query data without relations</h2>
-<p>Your <code>Database</code> class exposes <code>Table&lt;T&gt;</code> properties which expose query operations. In Venflow queries are based on hand-written SQL, however for very simple scenarios there are generators which do the job for you. In this case we query the first 10 blogs in the database.</p>
+<p>Your <code>Database</code> class exposes <code>Table&lt;T&gt;</code> properties which expose query operations. In Venflow queries are based on hand-written SQL. In this case we query the first 10 blogs in the database.</p>
 <pre><code class="lang-cs">await using var database = new BlogDatabase(); // You should register this in a Transient/Scoped your IOC Container.
 
 // You can re-use this in different BlogDatabase instances through the database.Blogs.QueryAsync() method
 // If you intend to reuse the query below you need to pass the QueryBatch method false for the disposeCommand,
 // otherwise the underyling command will be disposed after the first use.
-var query = database.Blogs.QueryBatch(10).Build(); 
+var query = database.Blogs.QueryBatch(@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; LIMIT 10&quot;).Build(); 
 
 var blogs = await query.QueryAsync(); // You can also inline this with the line above.
 </code></pre>
 <p>Additionally if you do not intend to reuse the the command instance you can omit the <code>Build</code> method call and directly call <code>QueryAsync</code>.</p>
 <p>Also, if you instead only wanted to query the first result, you can use the <code>QuerySingle</code> API.</p>
-<pre><code class="lang-cs">var blogs = await database.Blogs.QuerySingle().QueryAsync();
+<pre><code class="lang-cs">var blogs = await database.Blogs.QuerySingle(@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; LIMIT 1&quot;).QueryAsync();
 </code></pre>
 <h2 id="query-data-with-relations">Query data with relations</h2>
 <p>In this case we want to get the first 5 blogs with all of their posts. If you want to perform a join, the builder exposes the <code>JoinWith</code> and the <code>ThenWith</code> method to perform nested joins.</p>
@@ -125,10 +125,10 @@ var blogs = await query.QueryAsync(); // You can also inline this with the line 
 ) AS &quot;&quot;Blogs&quot;&quot; 
 JOIN &quot;&quot;Posts&quot;&quot; ON &quot;&quot;Posts&quot;&quot;.&quot;&quot;BlogId&quot;&quot; = &quot;&quot;Blogs&quot;&quot;.&quot;&quot;Id&quot;&quot;&quot;;
 
-var query = await database.Blogs.QueryBatch(sql).JoinWith(x =&gt; x.Posts).Build().QueryAsync();
+var query = await database.Blogs.QueryBatch(sql).JoinWith(x =&gt; x.Posts).QueryAsync();
 </code></pre>
 <p>If you instead only wanted to query the first blog with all of its posts, you can again use the <code>QuerySingle</code> API.</p>
-<pre><code class="lang-cs">var blogs = await database.Blogs.QuerySingle().JoinWith(x =&gt; x.Posts).Build().QueryAsync();
+<pre><code class="lang-cs">var blogs = await database.Blogs.QuerySingle().JoinWith(x =&gt; x.Posts).QueryAsync();
 </code></pre>
 <h2 id="queries-with-parameters">Queries with parameters</h2>
 <p>Most of the times your query contains some sort of parameters. With Venflow you have two options, either by using the raw <code>NpgsqlParameter</code> class and the matching <code>QuerySingle</code>/<code>QueryBatch</code> overloads or the Interpolated SQL methods.</p>
@@ -142,7 +142,7 @@ $@&quot;SELECT * FROM
 ) AS &quot;&quot;Blogs&quot;&quot; 
 JOIN &quot;&quot;Posts&quot;&quot; ON &quot;&quot;Posts&quot;&quot;.&quot;&quot;BlogId&quot;&quot; = &quot;&quot;Blogs&quot;&quot;.&quot;&quot;Id&quot;&quot;&quot;;
 
-var blogs = await database.Blogs.QueryInterpolatedSingle(sql).JoinWith(x =&gt; x.Posts).Build().QueryAsync();
+var blogs = await database.Blogs.QueryInterpolatedSingle(sql).JoinWith(x =&gt; x.Posts).QueryAsync();
 </code></pre>
 <div class="NOTE">
 <h5>Note</h5>
@@ -157,7 +157,7 @@ var blogs = await database.Blogs.QueryInterpolatedSingle(sql).JoinWith(x =&gt; x
 <p>A simple example of that would be something like the following, where we just query the name and the primary key of all blogs.</p>
 <pre><code class="lang-cs">const string sql = @&quot;SELECT &quot;&quot;Id&quot;&quot;, &quot;&quot;Name&quot;&quot; FROM &quot;&quot;Blogs&quot;&quot;&quot;;
 
-var blogs = await database.Blogs.QueryBatch(sql).Build().QueryAsync();
+var blogs = await database.Blogs.QueryBatch(sql).QueryAsync();
 </code></pre>
 <h2 id="queries-which-dont-return-entities">Queries which don't return entities</h2>
 <p>In Venflow you have the option to construct queries which don't necessarily return a row of a table, in this case you can use the <code>Custom&lt;T&gt;</code> method on your <code>Database</code> class.</p>
@@ -167,7 +167,7 @@ var blogs = await database.Blogs.QueryBatch(sql).Build().QueryAsync();
     public int Count { get; set; }
 }
 
-await database.Custom&lt;CountReturn&gt;().QuerySingle(@&quot;SELECT COUNT(*) FROM &quot;&quot;Blogs&quot;&quot;&quot;).Build().QueryAsync();
+await database.Custom&lt;CountReturn&gt;().QuerySingle(@&quot;SELECT COUNT(*) FROM &quot;&quot;Blogs&quot;&quot;&quot;).QueryAsync();
 </code></pre>
 <div class="WARNING">
 <h5>Warning</h5>
