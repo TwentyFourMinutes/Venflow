@@ -3,10 +3,17 @@ using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
-    internal class RelationPath
+    internal interface IRelationPath
     {
+        Entity Entity { get; }
+        List<RelationPath> TrailingPath { get; }
+    }
+
+    internal class RelationPath : IRelationPath
+    {
+        public Entity Entity => CurrentRelation.RightEntity;
         internal EntityRelation CurrentRelation { get; }
-        internal List<RelationPath> TrailingPath { get; }
+        public List<RelationPath> TrailingPath { get; }
 
         internal RelationPath(EntityRelation currentRelation)
         {

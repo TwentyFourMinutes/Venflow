@@ -60,23 +60,23 @@ namespace Venflow.Commands
 
         IInsertRelationBuilder<TToEntity, TEntity> IBaseInsertRelationBuilder<TEntity, TEntity>.InsertWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector)
         {
-            _relationBuilderValues = new RelationBuilderValues();
+            _relationBuilderValues = new RelationBuilderValues(_entityConfiguration);
 
-            return new InsertRelationBuilder<TEntity, TEntity>(_entityConfiguration, this, _relationBuilderValues).InsertWith(propertySelector);
+            return new InsertRelationBuilder<TEntity, TEntity>(_entityConfiguration, _entityConfiguration, this, _relationBuilderValues).InsertWith(propertySelector);
         }
 
         IInsertRelationBuilder<TToEntity, TEntity> IBaseInsertRelationBuilder<TEntity, TEntity>.InsertWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>> propertySelector)
         {
-            _relationBuilderValues = new RelationBuilderValues();
+            _relationBuilderValues = new RelationBuilderValues(_entityConfiguration);
 
-            return new InsertRelationBuilder<TEntity, TEntity>(_entityConfiguration, this, _relationBuilderValues).InsertWith(propertySelector);
+            return new InsertRelationBuilder<TEntity, TEntity>(_entityConfiguration, _entityConfiguration, this, _relationBuilderValues).InsertWith(propertySelector);
         }
 
         IInsertRelationBuilder<TToEntity, TEntity> IBaseInsertRelationBuilder<TEntity, TEntity>.InsertWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector)
         {
-            _relationBuilderValues = new RelationBuilderValues();
+            _relationBuilderValues = new RelationBuilderValues(_entityConfiguration);
 
-            return new InsertRelationBuilder<TEntity, TEntity>(_entityConfiguration, this, _relationBuilderValues).InsertWith(propertySelector);
+            return new InsertRelationBuilder<TEntity, TEntity>(_entityConfiguration, _entityConfiguration, this, _relationBuilderValues).InsertWith(propertySelector);
         }
     }
 }

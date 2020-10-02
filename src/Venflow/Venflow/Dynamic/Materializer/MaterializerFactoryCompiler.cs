@@ -183,7 +183,7 @@ namespace Venflow.Dynamic.Materializer
 
             _moveNextMethodIL.Emit(OpCodes.Brfalse, switchBuilder.GetLabels()[0]);
 
-            // if no rows return    
+            // if no rows return
             var afterNoRowsIfBody = _moveNextMethodIL.DefineLabel();
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -288,7 +288,7 @@ namespace Venflow.Dynamic.Materializer
 
             _moveNextMethodIL.Emit(OpCodes.Brfalse, switchBuilder.GetLabels()[0]);
 
-            // if no rows return    
+            // if no rows return
             var afterNoRowsIfBody = _moveNextMethodIL.DefineLabel();
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -359,7 +359,7 @@ namespace Venflow.Dynamic.Materializer
 
             entityLastTypes.Add(primaryEntityHolder.Item1.Id, resultField);
 
-            // create new Entity      
+            // create new Entity
             // Check if result if first row null
             var afterEntityGenerationIfBody = _moveNextMethodIL.DefineLabel();
 
@@ -774,7 +774,7 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethodIL.Emit(OpCodes.Newobj, resultLocal.LocalType.GetConstructor(Type.EmptyTypes));
             _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
 
-            // if no rows return    
+            // if no rows return
             var afterNoRowsIfBody = _moveNextMethodIL.DefineLabel();
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -898,7 +898,7 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethodIL.Emit(OpCodes.Newobj, resultLocal.LocalType.GetConstructor(Type.EmptyTypes));
             _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
 
-            // if no rows return    
+            // if no rows return
             var afterNoRowsIfBody = _moveNextMethodIL.DefineLabel();
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);

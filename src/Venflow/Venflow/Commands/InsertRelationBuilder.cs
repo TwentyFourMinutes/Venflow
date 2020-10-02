@@ -12,12 +12,14 @@ namespace Venflow.Commands
         where TRelationEntity : class, new()
         where TRootEntity : class, new()
     {
+        private readonly Entity _root;
         private readonly Entity _parent;
         private readonly VenflowInsertCommandBuilder<TRootEntity> _commandBuilder;
         private readonly RelationBuilderValues _relationBuilder;
 
-        public InsertRelationBuilder(Entity parent, VenflowInsertCommandBuilder<TRootEntity> commandBuilder, RelationBuilderValues relationBuilder)
+        public InsertRelationBuilder(Entity root, Entity parent, VenflowInsertCommandBuilder<TRootEntity> commandBuilder, RelationBuilderValues relationBuilder)
         {
+            _root = root;
             _parent = parent;
             _commandBuilder = commandBuilder;
             _relationBuilder = relationBuilder;
@@ -25,27 +27,27 @@ namespace Venflow.Commands
 
         public IInsertRelationBuilder<TToEntity, TRootEntity> InsertWith<TToEntity>(Expression<Func<TRootEntity, TToEntity>> propertySelector)
             where TToEntity : class, new()
-            => new InsertRelationBuilder<TToEntity, TRootEntity>(_relationBuilder.BaseRelationWith(_parent, propertySelector), _commandBuilder, _relationBuilder);
+            => new InsertRelationBuilder<TToEntity, TRootEntity>(_root, _relationBuilder.BaseRelationWith(_root, propertySelector), _commandBuilder, _relationBuilder);
 
         public IInsertRelationBuilder<TToEntity, TRootEntity> InsertWith<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>> propertySelector)
             where TToEntity : class, new()
-            => new InsertRelationBuilder<TToEntity, TRootEntity>(_relationBuilder.BaseRelationWith(_parent, propertySelector), _commandBuilder, _relationBuilder);
+            => new InsertRelationBuilder<TToEntity, TRootEntity>(_root, _relationBuilder.BaseRelationWith(_root, propertySelector), _commandBuilder, _relationBuilder);
 
         public IInsertRelationBuilder<TToEntity, TRootEntity> InsertWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>> propertySelector)
            where TToEntity : class, new()
-            => new InsertRelationBuilder<TToEntity, TRootEntity>(_relationBuilder.BaseRelationWith(_parent, propertySelector), _commandBuilder, _relationBuilder);
+            => new InsertRelationBuilder<TToEntity, TRootEntity>(_root, _relationBuilder.BaseRelationWith(_root, propertySelector), _commandBuilder, _relationBuilder);
 
         public IInsertRelationBuilder<TToEntity, TRootEntity> AndWith<TToEntity>(Expression<Func<TRelationEntity, TToEntity>> propertySelector)
             where TToEntity : class, new()
-            => new InsertRelationBuilder<TToEntity, TRootEntity>(_relationBuilder.BaseAndWith(_parent, propertySelector), _commandBuilder, _relationBuilder);
+            => new InsertRelationBuilder<TToEntity, TRootEntity>(_root, _relationBuilder.BaseAndWith(_parent, propertySelector), _commandBuilder, _relationBuilder);
 
         public IInsertRelationBuilder<TToEntity, TRootEntity> AndWith<TToEntity>(Expression<Func<TRelationEntity, IList<TToEntity>>> propertySelector)
             where TToEntity : class, new()
-            => new InsertRelationBuilder<TToEntity, TRootEntity>(_relationBuilder.BaseAndWith(_parent, propertySelector), _commandBuilder, _relationBuilder);
+            => new InsertRelationBuilder<TToEntity, TRootEntity>(_root, _relationBuilder.BaseAndWith(_parent, propertySelector), _commandBuilder, _relationBuilder);
 
         public IInsertRelationBuilder<TToEntity, TRootEntity> AndWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>> propertySelector)
             where TToEntity : class, new()
-            => new InsertRelationBuilder<TToEntity, TRootEntity>(_relationBuilder.BaseAndWith(_parent, propertySelector), _commandBuilder, _relationBuilder);
+            => new InsertRelationBuilder<TToEntity, TRootEntity>(_root, _relationBuilder.BaseAndWith(_parent, propertySelector), _commandBuilder, _relationBuilder);
 
         IInsertCommand<TRootEntity> ISpecficVenflowCommandBuilder<IInsertCommand<TRootEntity>>.Build()
             => _commandBuilder.Build();

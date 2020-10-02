@@ -56,7 +56,7 @@ namespace Venflow.Dynamic.Inserter
             BaseCompile();
         }
 
-        internal void CompileFromRelations(Entity entity, RelationBuilderValues relationBuilderValues)
+        internal void CompileFromRelations(Entity entity, IRelationPath rootPath)
         {
             VisitedEntityIds.GetId(entity, out _);
 
@@ -65,11 +65,11 @@ namespace Venflow.Dynamic.Inserter
             _reachableEntities.Add(entityHolder);
 
 
-            if (relationBuilderValues is { })
+            if (rootPath is { })
             {
-                for (int i = relationBuilderValues.TrailingPath.Count - 1; i >= 0; i--)
+                for (int i = rootPath.TrailingPath.Count - 1; i >= 0; i--)
                 {
-                    var path = relationBuilderValues.TrailingPath[i];
+                    var path = rootPath.TrailingPath[i];
 
                     var relation = path.CurrentRelation;
 
@@ -91,12 +91,11 @@ namespace Venflow.Dynamic.Inserter
             BaseCompile();
         }
 
-        private void BaseCompileFromRelations(RelationPath relationPath)
+        private void BaseCompileFromRelations(IRelationPath relationPath)
         {
-            var entity = relationPath.CurrentRelation.RightEntity;
-            var entityHolder = new EntityRelationHolder(entity);
+            var entityHolder = new EntityRelationHolder(relationPath.Entity);
 
-            VisitedEntityIds.GetId(entity, out _);
+            VisitedEntityIds.GetId(relationPath.Entity, out _);
             _reachableEntities.Add(entityHolder);
 
             for (int pathIndex = relationPath.TrailingPath.Count - 1; pathIndex >= 0; pathIndex--)

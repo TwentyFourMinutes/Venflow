@@ -7,17 +7,23 @@ using Venflow.Modeling.Definitions;
 
 namespace Venflow.Commands
 {
-    internal class RelationBuilderValues
+    internal class RelationBuilderValues : IRelationPath
     {
-        internal List<RelationPath> TrailingPath { get; }
         internal List<RelationPath> FlattenedPath { get; }
+
+        List<RelationPath> IRelationPath.TrailingPath => _trailingPath;
+        Entity IRelationPath.Entity => _entity;
 
         private RelationPath _currentPath;
 
-        internal RelationBuilderValues()
+        private readonly List<RelationPath> _trailingPath;
+        private readonly Entity _entity;
+
+        internal RelationBuilderValues(Entity entity)
         {
+            _entity = entity;
             _currentPath = default!;
-            TrailingPath = new();
+            _trailingPath = new();
             FlattenedPath = new();
         }
 
@@ -33,6 +39,20 @@ namespace Venflow.Commands
             }
 
             return entityRelations;
+        }
+
+        internal Entity[] GetFlattenedEntities()
+        {
+            var flattenedPathSpan = FlattenedPath.AsSpan();
+            var entities = new Entity[flattenedPathSpan.Length];
+            var entitiesSpan = entities.AsSpan();
+
+            for (int i = flattenedPathSpan.Length - 1; i >= 0; i--)
+            {
+                entitiesSpan[i] = flattenedPathSpan[i].Entity;
+            }
+
+            return entities;
         }
 
         internal Entity BaseRelationWith<TRootEntity, TTarget>(Entity parent, Expression<Func<TRootEntity, TTarget>> propertySelector)
@@ -103,9 +123,9 @@ namespace Venflow.Commands
         {
             if (newFullPath)
             {
-                for (int pathIndex = TrailingPath.Count - 1; pathIndex >= 0; pathIndex--)
+                for (int pathIndex = _trailingPath.Count - 1; pathIndex >= 0; pathIndex--)
                 {
-                    var path = TrailingPath[pathIndex];
+                    var path = _trailingPath[pathIndex];
 
                     if (path.CurrentRelation == relation)
                     {
@@ -117,7 +137,7 @@ namespace Venflow.Commands
 
                 _currentPath = new RelationPath<T>(relation, value);
 
-                TrailingPath.Add(_currentPath);
+                _trailingPath.Add(_currentPath);
 
                 FlattenedPath.Add(_currentPath);
             }
@@ -136,9 +156,9 @@ namespace Venflow.Commands
         {
             if (newFullPath)
             {
-                for (int pathIndex = TrailingPath.Count - 1; pathIndex >= 0; pathIndex--)
+                for (int pathIndex = _trailingPath.Count - 1; pathIndex >= 0; pathIndex--)
                 {
-                    var path = TrailingPath[pathIndex];
+                    var path = _trailingPath[pathIndex];
 
                     if (path.CurrentRelation == relation)
                     {
@@ -150,7 +170,7 @@ namespace Venflow.Commands
 
                 _currentPath = new RelationPath(relation);
 
-                TrailingPath.Add(_currentPath);
+                _trailingPath.Add(_currentPath);
 
                 FlattenedPath.Add(_currentPath);
             }

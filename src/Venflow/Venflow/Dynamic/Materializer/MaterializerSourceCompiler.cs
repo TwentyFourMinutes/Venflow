@@ -10,13 +10,13 @@ namespace Venflow.Dynamic.Materializer
     {
         private int _queryEntityHolderIndex;
         private readonly LinkedList<QueryEntityHolder> _entities;
-        private readonly RelationBuilderValues? _relationBuilderValues;
+        private readonly IRelationPath? _rootRelationPath;
 
         internal MaterializerSourceCompiler(RelationBuilderValues? relationBuilderValues)
         {
             _entities = new LinkedList<QueryEntityHolder>();
 
-            _relationBuilderValues = relationBuilderValues;
+            _rootRelationPath = relationBuilderValues;
         }
 
         internal QueryEntityHolder[] GenerateSortedEntities()
@@ -39,12 +39,12 @@ namespace Venflow.Dynamic.Materializer
 
             _entities.AddFirst(queryEntityHolder);
 
-            if (_relationBuilderValues is null)
+            if (_rootRelationPath is null)
                 return;
 
-            for (int i = _relationBuilderValues.FlattenedPath.Count - 1; i >= 0; i--)
+            for (int i = 0; i < _rootRelationPath.TrailingPath.Count; i++)
             {
-                BaseCompile((RelationPath<JoinBehaviour>)_relationBuilderValues.FlattenedPath[i], queryEntityHolder);
+                BaseCompile((RelationPath<JoinBehaviour>)_rootRelationPath.TrailingPath[i], queryEntityHolder);
             }
         }
 
@@ -133,6 +133,11 @@ namespace Venflow.Dynamic.Materializer
                         rightQueryHolder.RequiresDBNullCheck = true;
                     }
                 }
+            }
+
+            for (int i = 0; i < relationPath.TrailingPath.Count; i++)
+            {
+                BaseCompile((RelationPath<JoinBehaviour>)relationPath.TrailingPath[i], leftQueryHolder);
             }
         }
     }
