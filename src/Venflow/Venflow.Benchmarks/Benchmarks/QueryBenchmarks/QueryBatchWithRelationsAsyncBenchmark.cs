@@ -195,7 +195,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         [GlobalCleanup]
         public override async Task Cleanup()
         {
-            await Database.People.TruncateAsync();
+            await Database.People.TruncateAsync(Enums.ForeignTruncateOptions.Cascade);
 
             await base.Cleanup();
         }
