@@ -94,7 +94,7 @@
 
 <p>You can also prepare Query statements with Venflow through the Query Builder. This would look something like the following.</p>
 <pre><code class="lang-cs">var someId = 10;
-var query = await database.Blogs.QueryInterpolatedBatch($@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; LIMIT 10 WHERE &quot;&quot;Id&quot;&quot; = {someId}&quot;, false).Build().PrepareAsync(); // You need to store this stamenet in a field or similar and reuse it, every time you want to query through this prepared statment.
+var query = await database.Blogs.QueryInterpolatedBatch($@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; WHERE &quot;&quot;Id&quot;&quot; = {someId}&quot;, false).Build().PrepareAsync(); // You need to store this stamenet in a field or similar and reuse it, every time you want to query through this prepared statment.
 
 var blogs = await _database.Blogs.QueryAsync(query); // You can also inline this with the line above.
 </code></pre>
