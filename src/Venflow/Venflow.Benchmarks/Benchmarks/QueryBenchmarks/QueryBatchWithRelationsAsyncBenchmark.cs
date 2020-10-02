@@ -57,6 +57,8 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         [Benchmark]
         public Task<List<Person>> EfCoreQueryBatchNoChangeTrackingAsync()
         {
+            PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
+            PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             return PersonDbContext.People.AsNoTracking().Include(x => x.Emails).ThenInclude(x => x.Contents).Take(QueryCount).ToListAsync();
         }
 
@@ -193,11 +195,9 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         }
 
         [GlobalCleanup]
-        public override async Task Cleanup()
+        public override Task Cleanup()
         {
-            await Database.People.TruncateAsync(Enums.ForeignTruncateOptions.Cascade);
-
-            await base.Cleanup();
+            return base.Cleanup();
         }
     }
 }

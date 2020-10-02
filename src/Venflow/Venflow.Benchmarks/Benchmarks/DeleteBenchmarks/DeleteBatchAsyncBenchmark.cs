@@ -36,7 +36,7 @@ namespace Venflow.Benchmarks.Benchmarks.DeleteBenchmarks
                 toDelete.Add(new Person { Name = "toDelete" + i.ToString() });
             }
 
-            await Database.People.InsertAsync(toDelete);
+            await Database.People.Insert().InsertAsync(toDelete);
 
             return toDelete;
         }

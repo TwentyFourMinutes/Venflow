@@ -32,11 +32,13 @@ namespace Venflow.Benchmarks.Benchmarks
             PersonDbContext.ChangeTracker.LazyLoadingEnabled = false;
             PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-            return Database.People.TruncateAsync(Enums.ForeignTruncateOptions.Cascade);
+            return Task.CompletedTask;
         }
 
         public virtual async Task Cleanup()
         {
+            await Database.People.TruncateAsync(Enums.ForeignTruncateOptions.Cascade);
+
             await Database.DisposeAsync();
 
             await PersonDbContext.DisposeAsync();
