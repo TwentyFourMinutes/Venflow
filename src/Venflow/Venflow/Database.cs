@@ -34,6 +34,11 @@ namespace Venflow
 
         private NpgsqlConnection? _connection;
 
+        static Database()
+        {
+            GlobalSetup.Apply();
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Database"/> class using the specified <paramref name="connectionString"/>.
         /// </summary>

@@ -2342,8 +2342,7 @@ namespace Venflow.Dynamic.Inserter
 
             if (underlyingType is { } &&
                 (underlyingType.IsEnum ||
-                underlyingType == typeof(Guid) ||
-                underlyingType == typeof(ulong)))
+                underlyingType == typeof(Guid)))
             {
                 var dbNullType = typeof(DBNull);
 
@@ -2410,14 +2409,7 @@ namespace Venflow.Dynamic.Inserter
                 _moveNextMethodIL.Emit(OpCodes.Ldloca, propertyLocal);
                 _moveNextMethodIL.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("Value").GetGetMethod());
 
-                if (underlyingType == typeof(ulong))
-                {
-                    underlyingType = typeof(long);
-
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
-                    _moveNextMethodIL.Emit(OpCodes.Add);
-                }
-                else if (underlyingType.IsEnum &&
+                if (underlyingType.IsEnum &&
                     column is not IPostgreEnumEntityColumn)
                 {
                     underlyingType = Enum.GetUnderlyingType(underlyingType);
@@ -2456,13 +2448,6 @@ namespace Venflow.Dynamic.Inserter
                     column is not IPostgreEnumEntityColumn)
                 {
                     npgsqlType = Enum.GetUnderlyingType(column.PropertyInfo.PropertyType);
-                }
-                else if (column.PropertyInfo.PropertyType == typeof(ulong))
-                {
-                    npgsqlType = typeof(long);
-
-                    _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
-                    _moveNextMethodIL.Emit(OpCodes.Add);
                 }
                 else
                 {

@@ -32,8 +32,7 @@ namespace Venflow.Dynamic.Retriever
             }
             else if (underlyingType is { } &&
                      (isPostgreEnum ||
-                     underlyingType == typeof(Guid) ||
-                     underlyingType == typeof(ulong)))
+                     underlyingType == typeof(Guid)))
             {
                 WriteNullableRetriever(retrieverMethodIL, property, underlyingType);
             }
@@ -58,16 +57,6 @@ namespace Venflow.Dynamic.Retriever
             il.Emit(OpCodes.Call, stringType.GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new[] { stringType, stringType }, null));
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Callvirt, property.GetGetMethod());
-
-            var npgsqlType = property.PropertyType.IsEnum ? Enum.GetUnderlyingType(property.PropertyType) : property.PropertyType;
-
-            if (underylingType == typeof(ulong))
-            {
-                underylingType = typeof(long);
-
-                il.Emit(OpCodes.Ldc_I8, long.MinValue);
-                il.Emit(OpCodes.Add);
-            }
 
             il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underylingType).GetConstructor(new[] { stringType, underylingType }));
             il.Emit(OpCodes.Ret);
@@ -112,13 +101,6 @@ namespace Venflow.Dynamic.Retriever
             il.Emit(OpCodes.Ldloca_S, propertyLocal);
             il.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("Value").GetGetMethod());
 
-            if (underlyingType == typeof(ulong))
-            {
-                underlyingType = typeof(long);
-
-                il.Emit(OpCodes.Ldc_I8, long.MinValue);
-                il.Emit(OpCodes.Add);
-            }
 
             il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underlyingType).GetConstructor(new[] { stringType, underlyingType }));
             il.Emit(OpCodes.Ret);
