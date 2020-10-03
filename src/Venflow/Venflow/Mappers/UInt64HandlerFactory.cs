@@ -14,7 +14,6 @@ namespace Venflow.Mappers
             {
                 DbTypes = new[] { DbType.UInt64 },
                 PgTypeName = "bigint",
-                InferredDbType = DbType.Int64,
                 NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Bigint,
                 ClrTypes = new[] { typeof(ulong) },
                 TypeHandlerFactory = new UInt64HandlerFactory()
