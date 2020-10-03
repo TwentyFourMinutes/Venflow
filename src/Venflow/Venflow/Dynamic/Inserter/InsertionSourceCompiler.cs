@@ -168,49 +168,54 @@ namespace Venflow.Dynamic.Inserter
                     var entityHolder = _reachableEntities[entityIndex];
                     var entity = entityHolder.Entity;
 
-                    var noDirectDependencies = true;
-
-                    for (int relationIndex = entity.Relations.Count - 1; relationIndex >= 0; relationIndex--)
+                    if (entity.Relations is { })
                     {
-                        var relation = entity.Relations[relationIndex];
+                        var noDirectDependencies = true;
 
-                        if (!ReachableRelations.Contains(relation.RelationId))
+                        for (int relationIndex = entity.Relations.Count - 1; relationIndex >= 0; relationIndex--)
+                        {
+                            var relation = entity.Relations[relationIndex];
+
+                            if (!ReachableRelations.Contains(relation.RelationId))
+                                continue;
+
+                            _processedEntities.HasId(relation.RightEntity, out var newEntity);
+                            VisitedEntityIds.HasId(relation.RightEntity, out var notReachable);
+
+                            if (newEntity &&
+                                !notReachable &&
+                                relation.ForeignKeyLocation == ForeignKeyLocation.Left)
+                            {
+                                noDirectDependencies = false;
+
+                                break;
+                            }
+                        }
+
+
+                        if (!noDirectDependencies)
                             continue;
 
-                        _processedEntities.HasId(relation.RightEntity, out var newEntity);
-                        VisitedEntityIds.HasId(relation.RightEntity, out var notReachable);
-
-                        if (newEntity &&
-                            !notReachable &&
-                            relation.ForeignKeyLocation == ForeignKeyLocation.Left)
+                        for (int relationIndex = entity.Relations.Count - 1; relationIndex >= 0; relationIndex--)
                         {
-                            noDirectDependencies = false;
+                            var relation = entity.Relations[relationIndex];
 
-                            break;
+                            if (!ReachableRelations.Contains(relation.RelationId))
+                                continue;
+
+                            VisitedEntityIds.HasId(relation.RightEntity, out var notReachable);
+
+                            if (notReachable)
+                                continue;
+
+                            _processedEntities.GetId(entity, out _);
                         }
                     }
 
-                    if (!noDirectDependencies)
-                        continue;
-
                     _entities.AddLast(entityHolder);
 
-                    for (int relationIndex = entity.Relations.Count - 1; relationIndex >= 0; relationIndex--)
-                    {
-                        var relation = entity.Relations[relationIndex];
-
-                        if (!ReachableRelations.Contains(relation.RelationId))
-                            continue;
-
-                        VisitedEntityIds.HasId(relation.RightEntity, out var notReachable);
-
-                        if (notReachable)
-                            continue;
-
-                        _processedEntities.GetId(entity, out _);
-                    }
-
                     _reachableEntities.RemoveAt(entityIndex);
+
                     entityIndex--;
                 }
 
