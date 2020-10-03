@@ -69,7 +69,7 @@ namespace Venflow
                 commandBuilder.Remove(commandBuilderIndex, digitCount + 2);
                 commandBuilder.Insert(commandBuilderIndex, parameterName);
 
-                command.Parameters.Add(new NpgsqlParameter(parameterName, sql.GetArgument(parameterCount++)));
+                command.Parameters.Add(new NpgsqlParameter(parameterName, sql.GetArgument(parameterCount++) ?? DBNull.Value));
 
                 if (totalParameterCount == parameterCount)
                     return;

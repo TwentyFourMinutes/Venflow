@@ -146,7 +146,7 @@ namespace Venflow.Commands
                         _commandString.Remove(commandBuilderIndex, digitCount + 2);
                         _commandString.Insert(commandBuilderIndex, parameterName);
 
-                        _command.Parameters.Add(new NpgsqlParameter(parameterName, _interploatedSqlParameters[parameterCount++]));
+                        _command.Parameters.Add(new NpgsqlParameter(parameterName, _interploatedSqlParameters[parameterCount++] ?? DBNull.Value));
 
                         if (!generateJoins &&
                             parameterCount == totalParameterCount)
