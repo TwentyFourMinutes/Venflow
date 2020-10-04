@@ -32,7 +32,9 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
 
             await insertBenchmark.VenflowInsertBatchAsync();
 
-            await insertBenchmark.Cleanup();
+            await insertBenchmark.Database.DisposeAsync();
+
+            await insertBenchmark.PersonDbContext.DisposeAsync();
 
             await EfCoreQuerySingleAsync();
             await EfCoreQuerySingleNoChangeTrackingAsync();
