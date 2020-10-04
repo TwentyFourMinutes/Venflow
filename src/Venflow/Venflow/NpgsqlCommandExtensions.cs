@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Text;
+using System.Runtime.CompilerServices;
 using Npgsql;
 
 namespace Venflow
@@ -33,52 +33,21 @@ namespace Venflow
         /// <param name="sql">A string containing the SQL statement.</param>
         public static void SetInterpolatedCommandText(this NpgsqlCommand command, FormattableString sql)
         {
-            var sqlSpan = sql.Format.AsSpan();
-            var spanLength = sqlSpan.Length;
-            var totalParameterCount = sql.ArgumentCount;
-            var commandBuilder = new StringBuilder(sql.Format);
+            var argumentsSpan = sql.GetArguments().AsSpan();
 
-            var parameterCount = 0;
+            var parameterNames = new string[argumentsSpan.Length];
+            var parameterNamesSpan = parameterNames.AsSpan();
 
-            for (int sqlIndex = 0, commandBuilderIndex = 0; sqlIndex < spanLength - 2; sqlIndex++, commandBuilderIndex++)
+            for (int argumentIndex = 0; argumentIndex < argumentsSpan.Length; argumentIndex++)
             {
-                if (sqlSpan[sqlIndex] != '{')
-                    continue;
+                var parameterName = "@p" + argumentIndex;
 
-                int digitCount = 0;
+                parameterNamesSpan[argumentIndex] = parameterName;
 
-                for (int innerSqlIndex = sqlIndex + 1; innerSqlIndex < spanLength; innerSqlIndex++)
-                {
-                    var character = sqlSpan[innerSqlIndex];
-
-                    if (!char.IsDigit(character))
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        digitCount++;
-                    }
-                }
-
-                if (digitCount == 0)
-                    continue;
-
-                var parameterName = "@p" + parameterCount;
-
-                commandBuilder.Remove(commandBuilderIndex, digitCount + 2);
-                commandBuilder.Insert(commandBuilderIndex, parameterName);
-
-                command.Parameters.Add(new NpgsqlParameter(parameterName, sql.GetArgument(parameterCount++) ?? DBNull.Value));
-
-                if (totalParameterCount == parameterCount)
-                    return;
-
-                commandBuilderIndex += parameterName.Length - 1;
-                sqlIndex += parameterCount + 1;
+                command.Parameters.Add(ParameterTypeHandler.HandleParameter(parameterName, argumentsSpan[argumentIndex]));
             }
 
-            command.CommandText = commandBuilder.ToString();
+            command.CommandText = string.Format(sql.Format, parameterNames);
         }
     }
 }

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using Npgsql;
 using Venflow.Commands;
 using Venflow.Enums;
+using Venflow.Modeling;
 
-namespace Venflow.Modeling
+namespace Venflow
 {
     /// <summary>
     /// A <see cref="Table{TEntity}"/> is used to perform CRUD operations against the table represented by <typeparamref name="TEntity"/>.

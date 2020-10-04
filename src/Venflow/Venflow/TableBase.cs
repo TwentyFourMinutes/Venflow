@@ -6,8 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
 using Venflow.Commands;
+using Venflow.Modeling;
 
-namespace Venflow.Modeling
+namespace Venflow
 {
     /// <summary>
     /// A <see cref="TableBase{TEntity}"/> is used to perform query operations of all sorts.
