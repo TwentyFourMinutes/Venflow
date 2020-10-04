@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -60,7 +60,8 @@ namespace Venflow.Dynamic.Inserter
             var primaryColumn = (IPrimaryEntityColumn)_rootEntity.GetPrimaryColumn();
 
             if (primaryColumn.IsServerSideGenerated ||
-                entities is { })
+                !isSingleInsert ||
+                entities.Length > 1)
             {
                 _inserterTypeBuilder = TypeFactory.GetNewInserterBuilder(_rootEntity.EntityName, TypeAttributes.Public | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit);
                 _stateMachineTypeBuilder = _inserterTypeBuilder.DefineNestedType("StateMachine", TypeAttributes.NestedPrivate | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, typeof(ValueType), new[] { typeof(IAsyncStateMachine) });
@@ -574,7 +575,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
-            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
 
             // End of catch block
             _moveNextMethodIL.EndExceptionBlock();
@@ -1237,7 +1238,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
-            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
 
             // End of catch block
             _moveNextMethodIL.EndExceptionBlock();
@@ -1402,7 +1403,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
-            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
 
             // End of catch block
             _moveNextMethodIL.EndExceptionBlock();
@@ -2236,7 +2237,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
-            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
 
             // End of catch block
             _moveNextMethodIL.EndExceptionBlock();
@@ -2342,7 +2343,8 @@ namespace Venflow.Dynamic.Inserter
 
             if (underlyingType is { } &&
                 (underlyingType.IsEnum ||
-                underlyingType == typeof(Guid)))
+                underlyingType == typeof(Guid) ||
+                underlyingType == typeof(ulong)))
             {
                 var dbNullType = typeof(DBNull);
 
@@ -2409,7 +2411,14 @@ namespace Venflow.Dynamic.Inserter
                 _moveNextMethodIL.Emit(OpCodes.Ldloca, propertyLocal);
                 _moveNextMethodIL.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("Value").GetGetMethod());
 
-                if (underlyingType.IsEnum &&
+                if (underlyingType == typeof(ulong))
+                {
+                    underlyingType = typeof(long);
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
+                    _moveNextMethodIL.Emit(OpCodes.Add);
+                }
+                else if (underlyingType.IsEnum &&
                     column is not IPostgreEnumEntityColumn)
                 {
                     underlyingType = Enum.GetUnderlyingType(underlyingType);
@@ -2448,6 +2457,13 @@ namespace Venflow.Dynamic.Inserter
                     column is not IPostgreEnumEntityColumn)
                 {
                     npgsqlType = Enum.GetUnderlyingType(column.PropertyInfo.PropertyType);
+                }
+                else if (column.PropertyInfo.PropertyType == typeof(ulong))
+                {
+                    npgsqlType = typeof(long);
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
+                    _moveNextMethodIL.Emit(OpCodes.Add);
                 }
                 else
                 {
