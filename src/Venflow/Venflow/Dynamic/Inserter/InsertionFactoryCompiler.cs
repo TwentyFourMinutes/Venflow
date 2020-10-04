@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -60,7 +60,8 @@ namespace Venflow.Dynamic.Inserter
             var primaryColumn = (IPrimaryEntityColumn)_rootEntity.GetPrimaryColumn();
 
             if (primaryColumn.IsServerSideGenerated ||
-                entities is { })
+                !isSingleInsert ||
+                entities.Length > 1)
             {
                 _inserterTypeBuilder = TypeFactory.GetNewInserterBuilder(_rootEntity.EntityName, TypeAttributes.Public | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit);
                 _stateMachineTypeBuilder = _inserterTypeBuilder.DefineNestedType("StateMachine", TypeAttributes.NestedPrivate | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, typeof(ValueType), new[] { typeof(IAsyncStateMachine) });
@@ -574,7 +575,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
-            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
 
             // End of catch block
             _moveNextMethodIL.EndExceptionBlock();
@@ -1237,7 +1238,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
-            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
 
             // End of catch block
             _moveNextMethodIL.EndExceptionBlock();
@@ -1402,7 +1403,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
-            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
 
             // End of catch block
             _moveNextMethodIL.EndExceptionBlock();
@@ -2236,7 +2237,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
-            _moveNextMethodIL.Emit(OpCodes.Leave, endOfMethodLabel);
+            _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
 
             // End of catch block
             _moveNextMethodIL.EndExceptionBlock();
