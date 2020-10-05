@@ -184,8 +184,10 @@ namespace Venflow.Dynamic.Inserter
             // Start try block
             _moveNextMethodIL.BeginExceptionBlock();
 
+            var skipPrimaryKey = ((IPrimaryEntityColumn)_rootEntity.GetPrimaryColumn()).IsServerSideGenerated;
+
             _moveNextMethodIL.Emit(OpCodes.Ldloc, _stateLocal);
-            var switchBuilder = _moveNextMethodIL.EmitSwitch(4);
+            var switchBuilder = _moveNextMethodIL.EmitSwitch(skipPrimaryKey ? 4 : 1);
 
             var asyncGenerator = new ILAsyncGenerator(_moveNextMethodIL, switchBuilder, _methodBuilderField, _stateField, _stateLocal, retOfMethodLabel, _stateMachineTypeBuilder);
 
@@ -231,8 +233,6 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandLocal.LocalType.GetProperty("Connection", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetSetMethod());
 
             var stringBuilder = new StringBuilder();
-
-            var skipPrimaryKey = ((IPrimaryEntityColumn)_rootEntity.GetPrimaryColumn()).IsServerSideGenerated;
 
             var columnCount = _rootEntity.GetColumnCount();
             var columnOffset = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0;
@@ -363,7 +363,7 @@ namespace Venflow.Dynamic.Inserter
 
             if (skipPrimaryKey)
             {
-                // Append " RETURNING \"PrimaryKey\""
+                // Append " RETURNING \"PrimaryKey\";"
                 _moveNextMethodIL.Emit(OpCodes.Ldloc, commandBuilderLocal);
                 _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING \"");
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
@@ -373,6 +373,15 @@ namespace Venflow.Dynamic.Inserter
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
                 _moveNextMethodIL.Emit(OpCodes.Pop);
             }
+            else
+            {
+                // Append ";"
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, commandBuilderLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4, (int)';');
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(char) }));
+                _moveNextMethodIL.Emit(OpCodes.Pop);
+            }
+
 
             // outer loop iterator increment
             _moveNextMethodIL.Emit(OpCodes.Ldloc, outerIteratorLocal);
@@ -541,6 +550,7 @@ namespace Venflow.Dynamic.Inserter
                 _moveNextMethodIL.Emit(OpCodes.Ldloc, npgsqlCommandLocal);
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, _cancellationTokenField);
+                _moveNextMethodIL.Emit(OpCodes.Callvirt, commandType.GetMethod("ExecuteNonQueryAsync", new[] { _cancellationTokenField.FieldType }));
 
                 asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<int>), _moveNextMethodIL.DeclareLocal(typeof(TaskAwaiter<int>)), _stateMachineTypeBuilder.DefineField("_intTaskAwaiter", typeof(TaskAwaiter<int>), FieldAttributes.Private));
 
