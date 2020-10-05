@@ -44,7 +44,7 @@ Install-Package Venflow
 
 ## Comparison
 
-Benchmarking ORM's isn't an easy task, since there are a bunch of different factors which can alter the result in one way or another. I do not show any beautiful graphs here for the simple reason, that showing them would be pretty impractical, since there would be just too many. That is also the reason why I tried to come up with a composite number based on the benchmark results. If you still want check all the individual benchmarks, which you defiantly should, the source code can be found [here](./src/Venflow/Venflow.Benchmarks) and the results as `.csv` and `.md` are over [here](./benchmarks).
+Benchmarking ORM's isn't an easy task, since there are a bunch of different factors which can alter the result in one way or another. I do not show any beautiful graphs here for the simple reason, that showing them would be pretty impractical, since there would be just too many. That is also the reason why I tried to come up with a composite number based on the benchmark results. If you still want check all the individual benchmarks, which you definitely should, the source code can be found [here](./src/Venflow/Venflow.Benchmarks) and the results as `.csv` and `.md` are over [here](./benchmarks).
 
 Lets just directly hop into the composite numbers of each tested ORM.
 
