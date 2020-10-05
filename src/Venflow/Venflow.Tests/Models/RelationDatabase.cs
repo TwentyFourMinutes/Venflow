@@ -10,6 +10,7 @@ namespace Venflow.Tests.Models
 
         public Table<UncommonType> UncommonTypes { get; set; }
         public Table<User> Users { get; set; }
+        public Table<Blog> Blogs { get; set; }
 
         public RelationDatabase() : base(SecretsHandler.GetConnectionString<RelationDatabase>())
         {

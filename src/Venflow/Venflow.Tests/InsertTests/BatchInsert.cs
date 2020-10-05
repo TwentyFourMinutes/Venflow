@@ -29,7 +29,7 @@ namespace Venflow.Tests.InsertTests
                 new User { Id = 1, Name = "Bar" }
             };
 
-            var insertCount = await Database.Users.InsertAsync(users);
+            var insertCount = await Database.Users.Insert().InsertAsync(users);
 
             Assert.Equal(2, insertCount);
 
@@ -46,6 +46,22 @@ namespace Venflow.Tests.InsertTests
             Assert.Equal(4, insertCount);
 
             Assert.Equal(2, await Database.People.DeleteAsync(people));
+        }
+
+        [Fact]
+        public async Task InsertWithRelationNoPKAsync()
+        {
+            var users = new List<User>
+            {
+                new User { Id = 20, Name = "Foo", Blogs = new List<Blog> { new Blog { Id = 21, Topic = "BazFoo" } } },
+                new User { Id = 22, Name = "Bar",  Blogs = new List<Blog> { new Blog { Id = 23, Topic = "BazBar" } }}
+            };
+
+            var insertCount = await Database.Users.InsertAsync(users);
+
+            Assert.Equal(4, insertCount);
+
+            Assert.Equal(2, await Database.Users.DeleteAsync(users));
         }
 
         [Fact]
