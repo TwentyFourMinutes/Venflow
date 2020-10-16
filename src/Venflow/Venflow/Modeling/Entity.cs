@@ -16,6 +16,8 @@ namespace Venflow.Modeling
         internal MaterializerFactory<TEntity> MaterializerFactory { get; }
         internal InsertionFactory<TEntity> InsertionFactory { get; }
 
+        internal override bool HasDbGeneratedPrimaryKey => PrimaryColumn.IsServerSideGenerated;
+
         internal Entity(Type entityType, Type? proxyEntityType, string tableName, bool isInNullableContext, bool defaultPropNullability, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity>? primaryColumn, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier) : base(entityType, proxyEntityType, tableName, isInNullableContext, defaultPropNullability, columnListString, explicitColumnListString, nonPrimaryColumnListString)
         {
             ChangeTrackerFactory = changeTrackerFactory;
@@ -97,6 +99,9 @@ namespace Venflow.Modeling
 
         internal bool IsInNullableContext { get; }
         internal bool DefaultPropNullability { get; }
+
+
+        internal abstract bool HasDbGeneratedPrimaryKey { get; }
 
         internal Type EntityType { get; }
         internal Type? ProxyEntityType { get; }

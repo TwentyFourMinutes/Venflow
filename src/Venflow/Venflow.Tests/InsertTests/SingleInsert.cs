@@ -41,7 +41,7 @@ namespace Venflow.Tests.InsertTests
                 Blogs = new List<Blog> { new Blog { Id = 11, Topic = "BazFoo" } }
             };
 
-            var insertCount = await Database.Users.InsertAsync(user);
+            var insertCount = await Database.Users.Insert().InsertWith(x => x.Blogs).InsertAsync(user);
 
             Assert.Equal(2, insertCount);
 

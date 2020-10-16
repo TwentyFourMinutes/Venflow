@@ -184,7 +184,7 @@ namespace Venflow.Dynamic.Inserter
             // Start try block
             _moveNextMethodIL.BeginExceptionBlock();
 
-            var skipPrimaryKey = ((IPrimaryEntityColumn)_rootEntity.GetPrimaryColumn()).IsServerSideGenerated;
+            var skipPrimaryKey = _rootEntity.HasDbGeneratedPrimaryKey;
 
             _moveNextMethodIL.Emit(OpCodes.Ldloc, _stateLocal);
             var switchBuilder = _moveNextMethodIL.EmitSwitch(skipPrimaryKey ? 4 : 1);
@@ -645,7 +645,7 @@ namespace Venflow.Dynamic.Inserter
 
             for (int entityIndex = entities.Length - 1; entityIndex >= 0; entityIndex--)
             {
-                awaiterCount += ((IPrimaryEntityColumn)entities[entityIndex].Entity.GetPrimaryColumn()).IsServerSideGenerated ? 4 : 1;
+                awaiterCount += entities[entityIndex].Entity.HasDbGeneratedPrimaryKey ? 4 : 1;
             }
 
             var switchBuilder = _moveNextMethodIL.EmitSwitch(awaiterCount);
@@ -743,7 +743,7 @@ namespace Venflow.Dynamic.Inserter
 
                 var stringBuilder = new StringBuilder();
 
-                var skipPrimaryKey = ((IPrimaryEntityColumn)entity.GetPrimaryColumn()).IsServerSideGenerated;
+                var skipPrimaryKey = entity.HasDbGeneratedPrimaryKey;
 
                 var columnCount = entity.GetColumnCount();
                 var columnOffset = skipPrimaryKey ? entity.GetRegularColumnOffset() : 0;
@@ -1193,7 +1193,6 @@ namespace Venflow.Dynamic.Inserter
 
                     asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<int>), intTaskAwaiterLocal, intTaskAwaiterField);
 
-
                     _moveNextMethodIL.Emit(OpCodes.Pop);
                 }
 
@@ -1328,7 +1327,7 @@ namespace Venflow.Dynamic.Inserter
             // Create command and assign sql command and connection
             var sqlBuilder = new StringBuilder();
 
-            var skipPrimaryKey = ((IPrimaryEntityColumn)_rootEntity.GetPrimaryColumn()).IsServerSideGenerated;
+            var skipPrimaryKey = _rootEntity.HasDbGeneratedPrimaryKey;
 
             sqlBuilder.Append("INSERT INTO ")
                       .Append(_rootEntity.TableName)
@@ -1475,7 +1474,7 @@ namespace Venflow.Dynamic.Inserter
                     continue;
                 }
 
-                awaiterCount += ((IPrimaryEntityColumn)entity.GetPrimaryColumn()).IsServerSideGenerated ? 4 : 1;
+                awaiterCount += entity.HasDbGeneratedPrimaryKey ? 4 : 1;
             }
 
             _moveNextMethodIL.Emit(OpCodes.Ldloc, _stateLocal);
@@ -1527,7 +1526,7 @@ namespace Venflow.Dynamic.Inserter
 
                 var stringBuilder = new StringBuilder();
 
-                var skipPrimaryKey = ((IPrimaryEntityColumn)entity.GetPrimaryColumn()).IsServerSideGenerated;
+                var skipPrimaryKey = entity.HasDbGeneratedPrimaryKey;
 
                 var columnCount = entity.GetColumnCount();
                 var columnOffset = skipPrimaryKey ? entity.GetRegularColumnOffset() : 0;
@@ -2501,6 +2500,7 @@ namespace Venflow.Dynamic.Inserter
             private readonly HashSet<long> _vistiedEntities;
             private readonly HashSet<uint> _visitedRelations;
             private readonly Dictionary<long, FieldBuilder> _entityCollections;
+            private readonly Dictionary<long, EntityRelationHolder> _entityHolders;
 
             internal EntitySeprator(ILGenerator ilGenerator, TypeBuilder typeBuilder, Entity rootEntity, EntityRelationHolder[] entities, ObjectIDGenerator reachableEntities, HashSet<uint> reachableRelations)
             {
@@ -2514,6 +2514,15 @@ namespace Venflow.Dynamic.Inserter
                 _vistiedEntities = new HashSet<long>();
                 _visitedRelations = new HashSet<uint>();
                 _entityCollections = new Dictionary<long, FieldBuilder>();
+
+                _entityHolders = new Dictionary<long, EntityRelationHolder>(entities.Length);
+
+                for (int i = 0; i < entities.Length; i++)
+                {
+                    var entity = entities[i];
+
+                    _entityHolders.Add(_reachableEntities.HasId(entity.Entity, out _), entity);
+                }
             }
 
             internal Dictionary<long, FieldBuilder> WriteEntitySeperater(FieldBuilder entityInsertField)
@@ -2544,7 +2553,7 @@ namespace Venflow.Dynamic.Inserter
                 _ilGenerator.Emit(OpCodes.Callvirt, entityInsertField.FieldType.GetMethod("get_Item"));
                 _ilGenerator.Emit(OpCodes.Stloc, iteratorElementLocal);
 
-                WriteEntitySeperaterBase(_rootEntity, iteratorElementLocal);
+                WriteEntitySeperaterBase(_rootEntity, iteratorElementLocal, null, null);
 
                 // loop iterator increment
                 _ilGenerator.Emit(OpCodes.Ldloc, iteratorLocal);
@@ -2576,7 +2585,7 @@ namespace Venflow.Dynamic.Inserter
                 _ilGenerator.Emit(OpCodes.Ldfld, entityInsertField);
                 _ilGenerator.Emit(OpCodes.Stloc, entityInsertLocal);
 
-                WriteEntitySeperaterBase(_rootEntity, entityInsertLocal);
+                WriteEntitySeperaterBase(_rootEntity, entityInsertLocal, null, null);
 
                 return _entityCollections;
             }
@@ -2611,7 +2620,7 @@ namespace Venflow.Dynamic.Inserter
                 _firstTimeLocal = _ilGenerator.DeclareLocal(typeof(bool));
             }
 
-            private void WriteEntitySeperaterBase(Entity entity, LocalBuilder leftEntityLocal)
+            private void WriteEntitySeperaterBase(Entity entity, LocalBuilder leftEntityLocal, Entity? lastEntity, LocalBuilder? lastEntityLocal)
             {
                 var entityId = _reachableEntities.HasId(entity, out _);
 
@@ -2632,6 +2641,26 @@ namespace Venflow.Dynamic.Inserter
 
                 _ilGenerator.Emit(OpCodes.Ldloc, _firstTimeLocal);
                 _ilGenerator.Emit(OpCodes.Brfalse, afterSplitLabel);
+
+                if (lastEntity is { } &&
+                    _entityHolders.TryGetValue(_reachableEntities.HasId(entity, out _), out var entityHolder) &&
+                    entityHolder.DirectAssignedRelation is { })
+                {
+                    if (entityHolder.DirectAssignedRelation.ForeignKeyLocation == ForeignKeyLocation.Left)
+                    {
+                        _ilGenerator.Emit(OpCodes.Ldloc, leftEntityLocal);
+                        _ilGenerator.Emit(OpCodes.Ldloc, lastEntityLocal);
+                        _ilGenerator.Emit(OpCodes.Callvirt, lastEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                        _ilGenerator.Emit(OpCodes.Callvirt, entityHolder.DirectAssignedRelation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                    }
+                    else
+                    {
+                        _ilGenerator.Emit(OpCodes.Ldloc, lastEntityLocal);
+                        _ilGenerator.Emit(OpCodes.Ldloc, leftEntityLocal);
+                        _ilGenerator.Emit(OpCodes.Callvirt, entity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                        _ilGenerator.Emit(OpCodes.Callvirt, entityHolder.DirectAssignedRelation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                    }
+                }
 
                 // Add self to collection
                 if (entity != _rootEntity)
@@ -2672,7 +2701,7 @@ namespace Venflow.Dynamic.Inserter
                         _ilGenerator.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
                         _ilGenerator.Emit(OpCodes.Stloc, rightEntityLocal);
 
-                        WriteEntitySeperaterBase(relation.RightEntity, rightEntityLocal);
+                        WriteEntitySeperaterBase(relation.RightEntity, rightEntityLocal, entity, leftEntityLocal);
                     }
                     else
                     {
@@ -2703,7 +2732,7 @@ namespace Venflow.Dynamic.Inserter
                         _ilGenerator.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.GetMethod("get_Item"));
                         _ilGenerator.Emit(OpCodes.Stloc, rightEntityLocal);
 
-                        WriteEntitySeperaterBase(relation.RightEntity, rightEntityLocal);
+                        WriteEntitySeperaterBase(relation.RightEntity, rightEntityLocal, entity, leftEntityLocal);
 
                         // loop iterator increment
                         _ilGenerator.Emit(OpCodes.Ldloc, iteratorLocal);

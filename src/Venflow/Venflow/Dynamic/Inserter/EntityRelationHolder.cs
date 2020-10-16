@@ -8,6 +8,7 @@ namespace Venflow.Dynamic.Inserter
         internal Entity Entity { get; }
         internal List<EntityRelation> SelfAssignedRelations { get; }
         internal List<EntityRelation> ForeignAssignedRelations { get; }
+        internal EntityRelation? DirectAssignedRelation { get; set; }
 
         internal EntityRelationHolder(Entity entity)
         {
