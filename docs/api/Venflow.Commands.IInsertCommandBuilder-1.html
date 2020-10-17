@@ -131,20 +131,44 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IInsertCommandBuilder_1_DoNotDoNotSetPopulateRelation.md&amp;value=---%0Auid%3A%20Venflow.Commands.IInsertCommandBuilder%601.DoNotDoNotSetPopulateRelation%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IInsertCommandBuilder_1_InsertAsync__0_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IInsertCommandBuilder%601.InsertAsync(%600%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IInsertCommandBuilder.cs/#L28">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IInsertCommandBuilder.cs/#L20">View Source</a>
   </span>
-  <a id="Venflow_Commands_IInsertCommandBuilder_1_DoNotDoNotSetPopulateRelation_" data-uid="Venflow.Commands.IInsertCommandBuilder`1.DoNotDoNotSetPopulateRelation*"></a>
-  <h4 id="Venflow_Commands_IInsertCommandBuilder_1_DoNotDoNotSetPopulateRelation" data-uid="Venflow.Commands.IInsertCommandBuilder`1.DoNotDoNotSetPopulateRelation">DoNotDoNotSetPopulateRelation()</h4>
-  <div class="markdown level1 summary"><p>Defines if the insertion shouldn't populate all foreign properties.</p>
+  <a id="Venflow_Commands_IInsertCommandBuilder_1_InsertAsync_" data-uid="Venflow.Commands.IInsertCommandBuilder`1.InsertAsync*"></a>
+  <h4 id="Venflow_Commands_IInsertCommandBuilder_1_InsertAsync__0_System_Threading_CancellationToken_" data-uid="Venflow.Commands.IInsertCommandBuilder`1.InsertAsync(`0,System.Threading.CancellationToken)">InsertAsync(TEntity, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Asynchronously inserts a single entity.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IInsertCommandBuilder&lt;TEntity&gt; DoNotDoNotSetPopulateRelation()</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;int&gt; InsertAsync(TEntity entity, CancellationToken cancellationToken = default(CancellationToken))</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TEntity</span></td>
+        <td><span class="parametername">entity</span></td>
+        <td><p>The entity instance which should be inserted.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The cancellation token, which is used to cancel the operation</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -155,60 +179,52 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Commands.IInsertCommandBuilder-1.html">IInsertCommandBuilder</a>&lt;TEntity&gt;</td>
-        <td><p>An object that can be used to further configure the operation.</p>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td><p>A task representing the asynchronous operation, with the number of rows affected if known; 0 otherwise.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IInsertCommandBuilder_1_DoNotSetIdentityColumns.md&amp;value=---%0Auid%3A%20Venflow.Commands.IInsertCommandBuilder%601.DoNotSetIdentityColumns%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IInsertCommandBuilder_1_InsertAsync_System_Collections_Generic_IList__0__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IInsertCommandBuilder%601.InsertAsync(System.Collections.Generic.IList%7B%600%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IInsertCommandBuilder.cs/#L23">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IInsertCommandBuilder.cs/#L27">View Source</a>
   </span>
-  <a id="Venflow_Commands_IInsertCommandBuilder_1_DoNotSetIdentityColumns_" data-uid="Venflow.Commands.IInsertCommandBuilder`1.DoNotSetIdentityColumns*"></a>
-  <h4 id="Venflow_Commands_IInsertCommandBuilder_1_DoNotSetIdentityColumns" data-uid="Venflow.Commands.IInsertCommandBuilder`1.DoNotSetIdentityColumns">DoNotSetIdentityColumns()</h4>
-  <div class="markdown level1 summary"><p>Defines if the insertion shouldn't populate identity columns.</p>
+  <a id="Venflow_Commands_IInsertCommandBuilder_1_InsertAsync_" data-uid="Venflow.Commands.IInsertCommandBuilder`1.InsertAsync*"></a>
+  <h4 id="Venflow_Commands_IInsertCommandBuilder_1_InsertAsync_System_Collections_Generic_IList__0__System_Threading_CancellationToken_" data-uid="Venflow.Commands.IInsertCommandBuilder`1.InsertAsync(System.Collections.Generic.IList{`0},System.Threading.CancellationToken)">InsertAsync(IList&lt;TEntity&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Asynchronously inserts a set of entities.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IInsertCommandBuilder&lt;TEntity&gt; DoNotSetIdentityColumns()</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;int&gt; InsertAsync(IList&lt;TEntity&gt; entities, CancellationToken cancellationToken = default(CancellationToken))</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
+  <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>
         <th>Type</th>
+        <th>Name</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Commands.IInsertCommandBuilder-1.html">IInsertCommandBuilder</a>&lt;TEntity&gt;</td>
-        <td><p>An object that can be used to further configure the operation.</p>
+        <td><span class="xref">System.Collections.Generic.IList</span>&lt;TEntity&gt;</td>
+        <td><span class="parametername">entities</span></td>
+        <td><p>The entity instances which should be inserted.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The cancellation token, which is used to cancel the operation</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IInsertCommandBuilder_1_PopulateRelation.md&amp;value=---%0Auid%3A%20Venflow.Commands.IInsertCommandBuilder%601.PopulateRelation%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IInsertCommandBuilder.cs/#L18">View Source</a>
-  </span>
-  <a id="Venflow_Commands_IInsertCommandBuilder_1_PopulateRelation_" data-uid="Venflow.Commands.IInsertCommandBuilder`1.PopulateRelation*"></a>
-  <h4 id="Venflow_Commands_IInsertCommandBuilder_1_PopulateRelation" data-uid="Venflow.Commands.IInsertCommandBuilder`1.PopulateRelation">PopulateRelation()</h4>
-  <div class="markdown level1 summary"><p>Defines if the insertion should populate all foreign properties.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IInsertCommandBuilder&lt;TEntity&gt; PopulateRelation()</code></pre>
-  </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -219,40 +235,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Commands.IInsertCommandBuilder-1.html">IInsertCommandBuilder</a>&lt;TEntity&gt;</td>
-        <td><p>An object that can be used to further configure the operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IInsertCommandBuilder_1_SetIdentityColumns.md&amp;value=---%0Auid%3A%20Venflow.Commands.IInsertCommandBuilder%601.SetIdentityColumns%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IInsertCommandBuilder.cs/#L13">View Source</a>
-  </span>
-  <a id="Venflow_Commands_IInsertCommandBuilder_1_SetIdentityColumns_" data-uid="Venflow.Commands.IInsertCommandBuilder`1.SetIdentityColumns*"></a>
-  <h4 id="Venflow_Commands_IInsertCommandBuilder_1_SetIdentityColumns" data-uid="Venflow.Commands.IInsertCommandBuilder`1.SetIdentityColumns">SetIdentityColumns()</h4>
-  <div class="markdown level1 summary"><p>Defines if the insertion should populate identity columns.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IInsertCommandBuilder&lt;TEntity&gt; SetIdentityColumns()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Venflow.Commands.IInsertCommandBuilder-1.html">IInsertCommandBuilder</a>&lt;TEntity&gt;</td>
-        <td><p>An object that can be used to further configure the operation.</p>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td><p>A task representing the asynchronous operation, with the number of rows affected if known; 0 otherwise.</p>
 </td>
       </tr>
     </tbody>
@@ -276,7 +260,7 @@
                     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IInsertCommandBuilder_1.md&amp;value=---%0Auid%3A%20Venflow.Commands.IInsertCommandBuilder%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IInsertCommandBuilder.cs/#L7" class="contribution-link">View Source</a>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IInsertCommandBuilder.cs/#L11" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

@@ -140,7 +140,7 @@
     <pre><code class="lang-csharp hljs">public abstract class Database : IAsyncDisposable, IDisposable</code></pre>
   </div>
   <h5 id="Venflow_Database_remarks"><strong>Remarks</strong></h5>
-  <div class="markdown level0 remarks"><p>Typically you create a class that derives from <a class="xref" href="Venflow.Database.html">Database</a> and contains <a class="xref" href="Venflow.Modeling.Table-1.html">Table&lt;TEntity&gt;</a> properties for each entity in the Database. All the <a class="xref" href="Venflow.Modeling.Table-1.html">Table&lt;TEntity&gt;</a> properties must have a public setter, they are automatically initialized when the instance of the derived type is created.</p>
+  <div class="markdown level0 remarks"><p>Typically you create a class that derives from <a class="xref" href="Venflow.Database.html">Database</a> and contains <a class="xref" href="Venflow.Table-1.html">Table&lt;TEntity&gt;</a> properties for each entity in the Database. All the <a class="xref" href="Venflow.Table-1.html">Table&lt;TEntity&gt;</a> properties must have a public setter, they are automatically initialized when the instance of the derived type is created.</p>
 </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -149,7 +149,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database__ctor_System_String_.md&amp;value=---%0Auid%3A%20Venflow.Database.%23ctor(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L40">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L41">View Source</a>
   </span>
   <a id="Venflow_Database__ctor_" data-uid="Venflow.Database.#ctor*"></a>
   <h4 id="Venflow_Database__ctor_System_String_" data-uid="Venflow.Database.#ctor(System.String)">Database(String)</h4>
@@ -185,7 +185,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_Configure_Venflow_DatabaseOptionsBuilder_.md&amp;value=---%0Auid%3A%20Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L313">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L312">View Source</a>
   </span>
   <a id="Venflow_Database_Configure_" data-uid="Venflow.Database.Configure*"></a>
   <h4 id="Venflow_Database_Configure_Venflow_DatabaseOptionsBuilder_" data-uid="Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)">Configure(DatabaseOptionsBuilder)</h4>
@@ -219,7 +219,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_Custom__1.md&amp;value=---%0Auid%3A%20Venflow.Database.Custom%60%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L212">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L213">View Source</a>
   </span>
   <a id="Venflow_Database_Custom_" data-uid="Venflow.Database.Custom*"></a>
   <h4 id="Venflow_Database_Custom__1" data-uid="Venflow.Database.Custom``1">Custom&lt;TEntity&gt;()</h4>
@@ -241,8 +241,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Modeling.TableBase-1.html">TableBase</a>&lt;TEntity&gt;</td>
-        <td><p>A <a class="xref" href="Venflow.Modeling.TableBase-1.html">TableBase&lt;TEntity&gt;</a> instance from which queries can be executed.</p>
+        <td><a class="xref" href="Venflow.TableBase-1.html">TableBase</a>&lt;TEntity&gt;</td>
+        <td><p>A <a class="xref" href="Venflow.TableBase-1.html">TableBase&lt;TEntity&gt;</a> instance from which queries can be executed.</p>
 </td>
       </tr>
     </tbody>
@@ -270,7 +270,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_Dispose.md&amp;value=---%0Auid%3A%20Venflow.Database.Dispose%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L333">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L332">View Source</a>
   </span>
   <a id="Venflow_Database_Dispose_" data-uid="Venflow.Database.Dispose*"></a>
   <h4 id="Venflow_Database_Dispose" data-uid="Venflow.Database.Dispose">Dispose()</h4>
@@ -289,7 +289,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_DisposeAsync.md&amp;value=---%0Auid%3A%20Venflow.Database.DisposeAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L319">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L318">View Source</a>
   </span>
   <a id="Venflow_Database_DisposeAsync_" data-uid="Venflow.Database.DisposeAsync*"></a>
   <h4 id="Venflow_Database_DisposeAsync" data-uid="Venflow.Database.DisposeAsync">DisposeAsync()</h4>
@@ -321,7 +321,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync_System_String_Npgsql_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync(System.String%2CNpgsql.NpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L92">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L93">View Source</a>
   </span>
   <a id="Venflow_Database_ExecuteAsync_" data-uid="Venflow.Database.ExecuteAsync*"></a>
   <h4 id="Venflow_Database_ExecuteAsync_System_String_Npgsql_NpgsqlParameter___" data-uid="Venflow.Database.ExecuteAsync(System.String,Npgsql.NpgsqlParameter[])">ExecuteAsync(String, NpgsqlParameter[])</h4>
@@ -380,7 +380,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync_System_String_System_Collections_Generic_IList_Npgsql_NpgsqlParameter__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync(System.String%2CSystem.Collections.Generic.IList%7BNpgsql.NpgsqlParameter%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L71">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L72">View Source</a>
   </span>
   <a id="Venflow_Database_ExecuteAsync_" data-uid="Venflow.Database.ExecuteAsync*"></a>
   <h4 id="Venflow_Database_ExecuteAsync_System_String_System_Collections_Generic_IList_Npgsql_NpgsqlParameter__System_Threading_CancellationToken_" data-uid="Venflow.Database.ExecuteAsync(System.String,System.Collections.Generic.IList{Npgsql.NpgsqlParameter},System.Threading.CancellationToken)">ExecuteAsync(String, IList&lt;NpgsqlParameter&gt;, CancellationToken)</h4>
@@ -445,7 +445,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync_System_String_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync(System.String%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L54">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L55">View Source</a>
   </span>
   <a id="Venflow_Database_ExecuteAsync_" data-uid="Venflow.Database.ExecuteAsync*"></a>
   <h4 id="Venflow_Database_ExecuteAsync_System_String_System_Threading_CancellationToken_" data-uid="Venflow.Database.ExecuteAsync(System.String,System.Threading.CancellationToken)">ExecuteAsync(String, CancellationToken)</h4>
@@ -504,7 +504,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync__1_System_String_Npgsql_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync%60%601(System.String%2CNpgsql.NpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L173">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L174">View Source</a>
   </span>
   <a id="Venflow_Database_ExecuteAsync_" data-uid="Venflow.Database.ExecuteAsync*"></a>
   <h4 id="Venflow_Database_ExecuteAsync__1_System_String_Npgsql_NpgsqlParameter___" data-uid="Venflow.Database.ExecuteAsync``1(System.String,Npgsql.NpgsqlParameter[])">ExecuteAsync&lt;T&gt;(String, NpgsqlParameter[])</h4>
@@ -580,7 +580,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync__1_System_String_System_Collections_Generic_IList_Npgsql_NpgsqlParameter__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync%60%601(System.String%2CSystem.Collections.Generic.IList%7BNpgsql.NpgsqlParameter%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L151">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L152">View Source</a>
   </span>
   <a id="Venflow_Database_ExecuteAsync_" data-uid="Venflow.Database.ExecuteAsync*"></a>
   <h4 id="Venflow_Database_ExecuteAsync__1_System_String_System_Collections_Generic_IList_Npgsql_NpgsqlParameter__System_Threading_CancellationToken_" data-uid="Venflow.Database.ExecuteAsync``1(System.String,System.Collections.Generic.IList{Npgsql.NpgsqlParameter},System.Threading.CancellationToken)">ExecuteAsync&lt;T&gt;(String, IList&lt;NpgsqlParameter&gt;, CancellationToken)</h4>
@@ -662,7 +662,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync__1_System_String_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync%60%601(System.String%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L133">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L134">View Source</a>
   </span>
   <a id="Venflow_Database_ExecuteAsync_" data-uid="Venflow.Database.ExecuteAsync*"></a>
   <h4 id="Venflow_Database_ExecuteAsync__1_System_String_System_Threading_CancellationToken_" data-uid="Venflow.Database.ExecuteAsync``1(System.String,System.Threading.CancellationToken)">ExecuteAsync&lt;T&gt;(String, CancellationToken)</h4>
@@ -738,7 +738,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteInterpolatedAsync_System_FormattableString_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteInterpolatedAsync(System.FormattableString%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L113">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L114">View Source</a>
   </span>
   <a id="Venflow_Database_ExecuteInterpolatedAsync_" data-uid="Venflow.Database.ExecuteInterpolatedAsync*"></a>
   <h4 id="Venflow_Database_ExecuteInterpolatedAsync_System_FormattableString_System_Threading_CancellationToken_" data-uid="Venflow.Database.ExecuteInterpolatedAsync(System.FormattableString,System.Threading.CancellationToken)">ExecuteInterpolatedAsync(FormattableString, CancellationToken)</h4>
@@ -797,7 +797,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteInterpolatedAsync__1_System_FormattableString_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteInterpolatedAsync%60%601(System.FormattableString%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L195">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L196">View Source</a>
   </span>
   <a id="Venflow_Database_ExecuteInterpolatedAsync_" data-uid="Venflow.Database.ExecuteInterpolatedAsync*"></a>
   <h4 id="Venflow_Database_ExecuteInterpolatedAsync__1_System_FormattableString_System_Threading_CancellationToken_" data-uid="Venflow.Database.ExecuteInterpolatedAsync``1(System.FormattableString,System.Threading.CancellationToken)">ExecuteInterpolatedAsync&lt;T&gt;(FormattableString, CancellationToken)</h4>
@@ -873,7 +873,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_GetConnection.md&amp;value=---%0Auid%3A%20Venflow.Database.GetConnection%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L246">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L247">View Source</a>
   </span>
   <a id="Venflow_Database_GetConnection_" data-uid="Venflow.Database.GetConnection*"></a>
   <h4 id="Venflow_Database_GetConnection" data-uid="Venflow.Database.GetConnection">GetConnection()</h4>
@@ -926,7 +926,7 @@
                     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database.md&amp;value=---%0Auid%3A%20Venflow.Database%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L27" class="contribution-link">View Source</a>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L29" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>
