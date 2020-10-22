@@ -133,6 +133,8 @@ Subsequent joins can be configured using the `ThenWith` method. Do note, that on
 - Direct support for many to many relations
 - Support for materialized Views
 - Bulk operation support from [`PostgreSQL.Bulk`](https://github.com/TwentyFourMinutes/PostgreSQL.Bulk)
+- Code-First
+- AOT proxy/entity generation with Source Generators
 
 ### Acknowledgements
 
