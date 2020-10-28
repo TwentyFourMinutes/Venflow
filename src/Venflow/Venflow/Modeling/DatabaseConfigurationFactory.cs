@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Reflection;
 using Venflow.Dynamic;
 using Venflow.Dynamic.Instantiater;
@@ -59,10 +58,7 @@ namespace Venflow.Modeling
 
             var propertiesSpan = databaseType.GetProperties(BindingFlags.Public | BindingFlags.Instance).AsSpan();
 
-            if (!VenflowConfiguration.ValidationSettingSet)
-            {
-                SetValidationSettings(databaseType.Assembly);
-            }
+            VenflowConfiguration.SetDefaultValidationIfNeeded(databaseType.Assembly);
 
             var tableType = typeof(Table<>);
             var configurationType = typeof(EntityConfiguration<>);
@@ -138,20 +134,6 @@ namespace Venflow.Modeling
             }
 
             return tables;
-        }
-
-        private void SetValidationSettings(Assembly assembly)
-        {
-            var attribute = assembly.GetCustomAttribute<DebuggableAttribute>();
-
-            if (attribute is null)
-            {
-                VenflowConfiguration.UseDeepValidation(false);
-
-                return;
-            }
-
-            VenflowConfiguration.UseDeepValidation(attribute.IsJITTrackingEnabled);
         }
 
         private void AddToConfigurations(EntityFactory entityFactory)
