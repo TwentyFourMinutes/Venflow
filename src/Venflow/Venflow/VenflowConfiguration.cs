@@ -8,11 +8,12 @@ namespace Venflow
     /// </summary>
     public static class VenflowConfiguration
     {
-
         /// <summary>
         /// Determines whether or not Venflow will perform more extensive validation through out its usage. This setting will be set to <see langword="true"></see> automatically, if you are in DEBUG, otherwise <see langword="false"></see>.
         /// </summary>
         public static bool ShouldUseDeepValidation { get; private set; }
+
+        internal static bool PopulateColumnInformation { get; set; }
 
         private static bool _validationSettingSet;
 

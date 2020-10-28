@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace Venflow.Modeling
 {
@@ -8,7 +9,7 @@ namespace Venflow.Modeling
     {
         public bool IsServerSideGenerated { get; }
 
-        internal PrimaryEntityColumn(PropertyInfo propertyInfo, string columnName, Func<TEntity, string, NpgsqlParameter> valueRetriever, bool isServerSideGenerated) : base(propertyInfo, columnName, valueRetriever, false)
+        internal PrimaryEntityColumn(PropertyInfo propertyInfo, string columnName, Func<TEntity, string, NpgsqlParameter> valueRetriever, bool isServerSideGenerated, uint? precision, uint? scale, NpgsqlDbType dbType) : base(propertyInfo, columnName, valueRetriever, false, precision, scale, dbType)
         {
             IsServerSideGenerated = isServerSideGenerated;
         }

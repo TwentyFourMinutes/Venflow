@@ -16,7 +16,8 @@ using Venflow.Enums;
 
 namespace Venflow.Modeling.Definitions.Builder
 {
-    internal class EntityBuilder<TEntity> : EntityBuilder, IEntityBuilder<TEntity> where TEntity : class, new()
+    internal class EntityBuilder<TEntity> : EntityBuilder, IEntityBuilder<TEntity>, IEntityPropertyBuilder<TEntity>
+        where TEntity : class, new()
     {
         internal bool IsCustomEntity { get; set; }
 
@@ -28,6 +29,8 @@ namespace Venflow.Modeling.Definitions.Builder
 
         internal bool EntityInNullableContext { get; }
         internal bool DefaultPropNullability { get; }
+
+        private ColumnDefinition<TEntity>? _lastColumnDefinition;
 
         private readonly HashSet<string> _ignoredColumns;
         private readonly ValueRetrieverFactory<TEntity> _valueRetrieverFactory;
@@ -88,6 +91,22 @@ namespace Venflow.Modeling.Definitions.Builder
             var property = propertySelector.ValidatePropertySelector();
 
             _ignoredColumns.Add(property.Name);
+
+            return this;
+        }
+
+        IEntityPropertyBuilder<TEntity> IEntityBuilder<TEntity>.Property<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector)
+        {
+            var property = propertySelector.ValidatePropertySelector();
+
+            if (!ColumnDefinitions.TryGetValue(property.Name, out var columnDefinition))
+            {
+                columnDefinition = new ColumnDefinition<TEntity>(property.Name);
+
+                ColumnDefinitions.Add(property.Name, columnDefinition);
+            }
+
+            _lastColumnDefinition = columnDefinition;
 
             return this;
         }
@@ -282,7 +301,7 @@ namespace Venflow.Modeling.Definitions.Builder
                                 throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
                             }
 
-                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, false), primaryDefintion.IsServerSideGenerated);
+                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, false), primaryDefintion.IsServerSideGenerated, definition.Precision, definition.Scale, definition.DbType);
 
                             columns.Insert(0, primaryColumn);
 
@@ -301,7 +320,7 @@ namespace Venflow.Modeling.Definitions.Builder
                             break;
                         case PostgreEnumColumnDefenition<TEntity> enumDefinition:
 
-                            var enumColumn = new PostgreEnumEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, true));
+                            var enumColumn = new PostgreEnumEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, true), definition.Precision, definition.Scale, definition.DbType);
 
                             columns.Add(enumColumn);
 
@@ -327,7 +346,7 @@ namespace Venflow.Modeling.Definitions.Builder
                         throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
                     }
 
-                    primaryColumn = new PrimaryEntityColumn<TEntity>(property, annotedPrimaryKey.Name, _valueRetrieverFactory.GenerateRetriever(property, false), true);
+                    primaryColumn = new PrimaryEntityColumn<TEntity>(property, annotedPrimaryKey.Name, _valueRetrieverFactory.GenerateRetriever(property, false), true, definition.Precision, definition.Scale, definition.DbType);
 
                     columns.Insert(0, primaryColumn);
 
@@ -367,7 +386,7 @@ namespace Venflow.Modeling.Definitions.Builder
                         columnName = property.Name;
                     }
 
-                    var column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(property, false), isPropertyTypeNullableReferenceType);
+                    var column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(property, false), isPropertyTypeNullableReferenceType, definition.Precision, definition.Scale, definition.DbType);
 
                     columns.Add(column);
 
@@ -393,7 +412,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
             if (columns.Count == 0)
             {
-                throw new InvalidOperationException($"The entity '{Type.Name}' doesn't contain any columns/mapped propertiesSpan. A entity needs at least one column/mapped property.");
+                throw new InvalidOperationException($"The entity '{Type.Name}' doesn't contain any columns/mapped properties. A entity needs at least one column/mapped property.");
             }
 
             if (changeTrackingColumns.Count != 0)
@@ -459,6 +478,8 @@ namespace Venflow.Modeling.Definitions.Builder
         /// <returns>The same builder instance so that multiple calls can be chained.</returns>
         IEntityBuilder<TEntity> Ignore<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector);
 
+        IEntityPropertyBuilder<TEntity> Property<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector);
+
         /// <summary>
         /// Sets the property that defines the primary key for this entity type. This is the Fluent API equivalent to the <see cref="KeyAttribute"/>.
         /// </summary>
@@ -469,7 +490,7 @@ namespace Venflow.Modeling.Definitions.Builder
         IEntityBuilder<TEntity> MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option);
 
         /// <summary>
-        /// Maps a PostgreSQL enum to a CLR enum.
+        /// Maps a PostgreSQL enum to a CLR enum column.
         /// </summary>
         /// <typeparam name="TTarget">The type of the enum.</typeparam>
         /// <param name="propertySelector">A lambda expression representing the enum which should be mapped on this entity type.</param>
@@ -480,7 +501,7 @@ namespace Venflow.Modeling.Definitions.Builder
             where TTarget : struct, Enum;
 
         /// <summary>
-        /// Maps a PostgreSQL enum to a CLR enum.
+        /// Maps a PostgreSQL enum to a CLR enum column.
         /// </summary>
         /// <typeparam name="TTarget">The type of the enum.</typeparam>
         /// <param name="propertySelector">A lambda expression representing the enum which should be mapped on this entity type.</param>
