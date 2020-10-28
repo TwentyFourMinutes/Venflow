@@ -118,7 +118,7 @@ namespace Venflow.Modeling
 
                 if (configurations.TryGetValue(entityType, out var configuration))
                 {
-                    var entityConfiguration = (EntityConfiguration)Activator.CreateInstance(configuration)!;
+                    var entityConfiguration = (IEntityConfiguration)Activator.CreateInstance(configuration)!;
 
                     AddToConfigurations(entityConfiguration.BuildConfiguration(property.Name));
                 }
