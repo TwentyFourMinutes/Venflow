@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Venflow | Venflow Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Venflow | Venflow Documentation ">
+    
+    <meta property="og:locale" content="en-us">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Venflow Docs">
+    <meta property="og:image" content="">
+    <meta property="og:image:alt" content="Venflow Logo">
+    <meta name="theme-color" content="#995EA7">
+    <meta name="generator" content="docfx 2.56.2.0">
+    <meta property="docfx:navrel" content="toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    <meta id="docfx-style:rel" content="">
+    <link rel="preload" href="styles/search-worker.js" as="script">
+    <link rel="preload" href="fonts/glyphicons-halflings-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles/docfx.vendor.minify.css">
+    <link rel="stylesheet" href="styles/docfx.css">
+    <link rel="stylesheet" href="styles/master.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/material.css">
+    <link rel="stylesheet" href="styles/theme-switcher.css">
+    <link href="https://cdn.rawgit.com/noelboss/featherlight/1.7.6/release/featherlight.min.css" type="text/css" rel="stylesheet">
+    
+    <meta property="docfx:rel" content="">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="index.html">
+                <img id="logo" class="svg" src="venflow.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="venflow">Venflow</h1>
+
+<p><a href="https://www.nuget.org/packages/Venflow"><img alt="Nuget" src="https://img.shields.io/nuget/v/Venflow"></a> <a href="https://www.nuget.org/packages/Venflow"><img alt="Nuget" src="https://img.shields.io/nuget/dt/Venflow"></a> <a href="https://github.com/TwentyFourMinutes/Venflow/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/TwentyFourMinutes/DulcisX"></a> <a href="https://github.com/TwentyFourMinutes/Venflow/blob/master/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/TwentyFourMinutes/DulcisX"></a> <a href="https://discordapp.com/invite/EYKxkce"><img alt="Discord" src="https://discordapp.com/api/guilds/275377268728135680/widget.png"></a></p>
+<p>Venflow is a brand new and from the ground up written ORM which tries to provide an alternative to EF-Core and many other ORMs. It allows you to define Models and their relations with each other. Additionally it maps all queries on its own while still maintaining great performance, with options for custom SQL.</p>
+<h2 id="about">About</h2>
+<p>Lets face it, EF-Core is awesome, but it can be slow, really slow. However this library tries to overcome that by providing similar features while maintaining great performance. Venflow comes with a very similar UX to Dapper and EF-Core, in order to keep the learning curve as low as possible.</p>
+<h4 id="features">Features</h4>
+<ul>
+<li>Simple change-tracking for update operations</li>
+<li>Autogenerated Inserts</li>
+<li>Autogenerated Deletes</li>
+<li>Autogenerated Query Materializer, Join Generator</li>
+<li>SQL Injection safe string Interpolated SQL</li>
+</ul>
+<h3 id="collaboration">Collaboration</h3>
+<p>If you want to collaborate on this project more, than creating issues and PR's, feel free to contact me on any of the mentioned contacts at the bottom of the file.</p>
+<p>How you can help other than that? This can be done in numerous ways, over on the issue section, such as:</p>
+<ul>
+<li>Creating feature requests</li>
+<li>Creating pull requests</li>
+<li>Reporting bugs</li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>The alpha versions of Venflow can currently be downloaded on <a href="https://www.nuget.org/packages/Venflow">nuget.org</a>. However please do note that since this package is still in beta, it may still contain bugs and other issues.</p>
+<p>Also you can install it via the <strong>P</strong>ackage <strong>M</strong>anager <strong>C</strong>onsole:</p>
+<pre><code>Install-Package Venflow
+</code></pre>
+<h2 id="comparison">Comparison</h2>
+<p>Benchmarking ORM's isn't quite an easy task, since there are a bunch of different factors which can alter the result in one way or another. I do not show any beautiful graphs here for the simple reason, that showing them would be pretty impractical, since there would be just too many. That is also the reason why I tried to come up with a composite number based on the benchmark results. If you still want check all the individual benchmarks, which you defiantly should, the source code can be found <a href="https://github.com/TwentyFourMinutes/Venflow/tree/dev/src/Venflow/Venflow.Benchmarks">here</a> and the results as <code>.csv</code> and <code>.md</code> are over <a href="https://github.com/TwentyFourMinutes/Venflow/tree/dev/benchmarks">here</a>.</p>
+<p>Lets just directly hop into the composite numbers of each tested ORM.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ORM Name</th>
+<th style="text-align: center;">Composite Score*</th>
+<th style="text-align: center;">Mean Score*</th>
+<th style="text-align: center;">Allocation Score*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">#1 <a href="https://github.com/TwentyFourMinutes/Venflow">Venflow</a></td>
+<td style="text-align: center;">9.204</td>
+<td style="text-align: center;">8.463</td>
+<td style="text-align: center;">0.741</td>
+</tr>
+<tr>
+<td style="text-align: left;">#2 <a href="https://github.com/StackExchange/Dapper">Dapper</a>**</td>
+<td style="text-align: center;">16.794</td>
+<td style="text-align: center;">13.076</td>
+<td style="text-align: center;">3.718</td>
+</tr>
+<tr>
+<td style="text-align: left;">#3 <a href="https://github.com/mikependon/RepoDb">RepoDb</a>**</td>
+<td style="text-align: center;">49.494</td>
+<td style="text-align: center;">43.254</td>
+<td style="text-align: center;">6.240</td>
+</tr>
+<tr>
+<td style="text-align: left;">#4 <a href="https://github.com/dotnet/efcore">EFCore</a></td>
+<td style="text-align: center;">245.869</td>
+<td style="text-align: center;">195.152</td>
+<td style="text-align: center;">50.717</td>
+</tr>
+</tbody>
+</table>
+<p>* Lower is considered to be better <br>
+** Do have missing benchmark entries for specific benchmark groups and therefor either might have better/worse scores.</p>
+<p>Now how do I calculate this <em>magic number</em>? The formula is as following:</p>
+<pre><code>compositeScore = Σ((meanTime / lowestMeanTimeOfGroup - 1) + (allocation / lowestAllocationOfGroup - 1) / 10)
+</code></pre>
+<p>A group is considered as a list of benchmark entries which are inside the same file and have the same *count and target framework. Now as some ORM's don't have any benchmarks entries for specific benchmark groups it will take instead take the <em>lowest</em> mean and the <em>lowest</em>  allocation from this group. The source code of the calculation can be found <a href="https://github.com/TwentyFourMinutes/Venflow/tree/dev/src/Venflow/Venflow.Score">here</a>.</p>
+<h4 id="disclaimer">Disclaimer</h4>
+<p>The benchmarks themselves or even the calculation of the composite numbers may not be right and contain bugs. Therefor consider these results with a grain of salt. If you find any bugs inside the calculations or in the benchmarks please create an issue and I'll try to fix it ASAP.</p>
+<h2 id="is-this-package-for-you">Is this package for you?</h2>
+<p>This package is more a competitor to Dapper than EF-Core since it supports Linq2Sql, Database first and migrations, which both Dapper and Venflow don't support out of the box. On the other hand you need to consider the Database you will end up using, if you aren't using PostgreSQL you will have to use a different ORM, at least at this state of the project.</p>
+<h4 id="but-why-should-i-use-venflow-over-dapper-anyway">But why should I use Venflow over Dapper anyway?</h4>
+<p>Venflow supports a lot more things out of the box, such as automatic generated Delete/Insert statements, as well as simple change tracking to easily update specific entities. Another big factor, which probably is one of the biggest differences to Dapper, are the automatically generated materializers for queries. A lot of the times a materializer generated by Venflow will <em>always</em> be faster, especially for bigger tables, than a hand written Dapper one. This is due to the nature of how Dapper and Venflow handle the parsing of SQL results.</p>
+<h2 id="road-map">Road map</h2>
+<ul>
+<li>Composed PK support</li>
+<li>Direct support for many to many relations</li>
+</ul>
+<h3 id="acknowledgements">Acknowledgements</h3>
+<p>I also want to mention all the other great ORM's out there, build by awesome people, which helped with building Venflow in one way or another.</p>
+<ul>
+<li><a href="https://github.com/dotnet/efcore">EF-Core</a> by <a href="https://github.com/dotnet">Microsoft and the .Net team</a></li>
+<li><a href="https://github.com/mikependon/RepoDb">RepoDb</a> by <a href="https://github.com/mikependon">mikependon</a></li>
+</ul>
+<h2 id="notes">Notes</h2>
+<h3 id="contact-information">Contact information</h3>
+<p>If you feel like something is not working as intended or you are experiencing issues, feel free to create an issue. Also for feature requests just create an issue. For further information feel free to send me a <a href="mailto:office@twenty-four.dev">mail</a> to <code>office@twenty-four.dev</code> or message me on Discord <code>24_minutes#7496</code>.</p>
+<h2 id="sponsors">Sponsors</h2>
+<p>I wanna thank <a href="https://www.jetbrains.com/?from=DulcisX">JetBrains</a> for providing me and the project with a free Open Source license for their whole JetBrains suite. Their Tools greatly improve the development speed of this Project. If you want to get a free Open Source license for your own project and their collaborators, visit their <a href="https://www.jetbrains.com/opensource/">Open Source page</a>.</p>
+<p><a href="https://www.jetbrains.com/?from=DulcisX"><img width="350px" src="images/jetbrains_logo.png"></a></p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="theme-switch-field">
+                <p>Theme</p>
+                <select id="theme-switcher">
+                  <option value="dark">Dark
+                  <option value="gray">Gray
+                  <option value="light">Light
+                </select>
+              </div>
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/docs/docfx/index.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <span>Copyright © 2020 Twenty</span>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="styles/docfx.js"></script>
+    <script type="text/javascript" src="styles/main.js"></script>
+    <script type="text/javascript" src="styles/styleswitcher.js"></script>  </body>
+</html>

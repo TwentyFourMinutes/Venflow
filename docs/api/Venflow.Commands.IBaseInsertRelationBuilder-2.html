@@ -1,0 +1,426 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Interface IBaseInsertRelationBuilder&lt;TRelationEntity, TRootEntity&gt;
+   | Venflow Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Interface IBaseInsertRelationBuilder&lt;TRelationEntity, TRootEntity&gt;
+   | Venflow Documentation ">
+    
+    <meta property="og:locale" content="en-us">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Venflow Docs">
+    <meta property="og:image" content="">
+    <meta property="og:image:alt" content="Venflow Logo">
+    <meta name="theme-color" content="#995EA7">
+    <meta name="generator" content="docfx 2.56.3.0">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    <meta id="docfx-style:rel" content="../">
+    <link rel="preload" href="../styles/search-worker.js" as="script">
+    <link rel="preload" href="../fonts/glyphicons-halflings-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.minify.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/master.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/material.css">
+    <link rel="stylesheet" href="../styles/theme-switcher.css">
+    <link href="https://cdn.rawgit.com/noelboss/featherlight/1.7.6/release/featherlight.min.css" type="text/css" rel="stylesheet">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../venflow.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Venflow.Commands.IBaseInsertRelationBuilder`2">
+  
+  
+  <h1 id="Venflow_Commands_IBaseInsertRelationBuilder_2" data-uid="Venflow.Commands.IBaseInsertRelationBuilder`2" class="text-break">Interface IBaseInsertRelationBuilder&lt;TRelationEntity, TRootEntity&gt;
+  </h1>
+  <div class="markdown level0 summary"><p>Represents a base insert relation builder to configure the insert.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Venflow.Commands.IInsertCommandBuilder-1.html#Venflow_Commands_IInsertCommandBuilder_1_InsertAsync__0_System_Threading_CancellationToken_">IInsertCommandBuilder&lt;TRootEntity&gt;.InsertAsync(TRootEntity, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Venflow.Commands.IInsertCommandBuilder-1.html#Venflow_Commands_IInsertCommandBuilder_1_InsertAsync_System_Collections_Generic_IList__0__System_Threading_CancellationToken_">IInsertCommandBuilder&lt;TRootEntity&gt;.InsertAsync(IList&lt;TRootEntity&gt;, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-1.html#Venflow_Commands_ISpecficVenflowCommandBuilder_1_Build">ISpecficVenflowCommandBuilder&lt;IInsertCommand&lt;TRootEntity&gt;&gt;.Build()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Venflow.Commands.html">Venflow.Commands</a></h6>
+  <h6><strong>Assembly</strong>: Venflow.dll</h6>
+  <h5 id="Venflow_Commands_IBaseInsertRelationBuilder_2_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IBaseInsertRelationBuilder&lt;TRelationEntity, TRootEntity&gt; : IInsertCommandBuilder&lt;TRootEntity&gt;, ISpecficVenflowCommandBuilder&lt;IInsertCommand&lt;TRootEntity&gt;&gt; where TRelationEntity : class, new()
+    where TRootEntity : class, new()</code></pre>
+  </div>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TRelationEntity</span></td>
+        <td><p>The type of the entity which will be joined with.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TRootEntity</span></td>
+        <td><p>The root type of the entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWith__1_System_Linq_Expressions_Expression_System_Func__1___0___.md&amp;value=---%0Auid%3A%20Venflow.Commands.IBaseInsertRelationBuilder%602.InsertWith%60%601(System.Linq.Expressions.Expression%7BSystem.Func%7B%601%2C%60%600%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IBaseInsertRelationBuilder.cs/#L28">View Source</a>
+  </span>
+  <a id="Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWith_" data-uid="Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith*"></a>
+  <h4 id="Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWith__1_System_Linq_Expressions_Expression_System_Func__1___0___" data-uid="Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})">InsertWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, TToEntity&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Allows to configure the inserted relations with the current insert.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IInsertRelationBuilder&lt;TToEntity, TRootEntity&gt; InsertWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, TToEntity&gt;&gt; propertySelector)
+    where TToEntity : class, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Linq.Expressions.Expression</span>&lt;<span class="xref">System.Func</span>&lt;TRootEntity, TToEntity&gt;&gt;</td>
+        <td><span class="parametername">propertySelector</span></td>
+        <td><p>A lambda expression representing the navigation property which should get inserted with the root entity during insertion.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IInsertRelationBuilder-2.html">IInsertRelationBuilder</a>&lt;TToEntity, TRootEntity&gt;</td>
+        <td><p>An object that can be used to further configure the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TToEntity</span></td>
+        <td><p>The type of the inserted entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0____.md&amp;value=---%0Auid%3A%20Venflow.Commands.IBaseInsertRelationBuilder%602.InsertWith%60%601(System.Linq.Expressions.Expression%7BSystem.Func%7B%601%2CSystem.Collections.Generic.IList%7B%60%600%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IBaseInsertRelationBuilder.cs/#L37">View Source</a>
+  </span>
+  <a id="Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWith_" data-uid="Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith*"></a>
+  <h4 id="Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0____" data-uid="Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})">InsertWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, IList&lt;TToEntity&gt;&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Allows to configure the inserted relations with the current insert.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IInsertRelationBuilder&lt;TToEntity, TRootEntity&gt; InsertWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, IList&lt;TToEntity&gt;&gt;&gt; propertySelector)
+    where TToEntity : class, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Linq.Expressions.Expression</span>&lt;<span class="xref">System.Func</span>&lt;TRootEntity, <span class="xref">System.Collections.Generic.IList</span>&lt;TToEntity&gt;&gt;&gt;</td>
+        <td><span class="parametername">propertySelector</span></td>
+        <td><p>A lambda expression representing the navigation property which should get inserted with the root entity during insertion.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IInsertRelationBuilder-2.html">IInsertRelationBuilder</a>&lt;TToEntity, TRootEntity&gt;</td>
+        <td><p>An object that can be used to further configure the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TToEntity</span></td>
+        <td><p>The type of the inserted entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0____.md&amp;value=---%0Auid%3A%20Venflow.Commands.IBaseInsertRelationBuilder%602.InsertWith%60%601(System.Linq.Expressions.Expression%7BSystem.Func%7B%601%2CSystem.Collections.Generic.List%7B%60%600%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IBaseInsertRelationBuilder.cs/#L46">View Source</a>
+  </span>
+  <a id="Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWith_" data-uid="Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith*"></a>
+  <h4 id="Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0____" data-uid="Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})">InsertWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, List&lt;TToEntity&gt;&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Allows to configure the inserted relations with the current insert.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IInsertRelationBuilder&lt;TToEntity, TRootEntity&gt; InsertWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, List&lt;TToEntity&gt;&gt;&gt; propertySelector)
+    where TToEntity : class, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Linq.Expressions.Expression</span>&lt;<span class="xref">System.Func</span>&lt;TRootEntity, <span class="xref">System.Collections.Generic.List</span>&lt;TToEntity&gt;&gt;&gt;</td>
+        <td><span class="parametername">propertySelector</span></td>
+        <td><p>A lambda expression representing the navigation property which should get inserted with the root entity during insertion.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IInsertRelationBuilder-2.html">IInsertRelationBuilder</a>&lt;TToEntity, TRootEntity&gt;</td>
+        <td><p>An object that can be used to further configure the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TToEntity</span></td>
+        <td><p>The type of the inserted entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWithAll.md&amp;value=---%0Auid%3A%20Venflow.Commands.IBaseInsertRelationBuilder%602.InsertWithAll%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IBaseInsertRelationBuilder.cs/#L20">View Source</a>
+  </span>
+  <a id="Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWithAll_" data-uid="Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWithAll*"></a>
+  <h4 id="Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWithAll" data-uid="Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWithAll">InsertWithAll()</h4>
+  <div class="markdown level1 summary"><p>Allows to configure the current insert, to insert all populated relations which can be reached.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IBaseInsertRelationBuilder&lt;TRootEntity, TRootEntity&gt; InsertWithAll()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IBaseInsertRelationBuilder-2.html">IBaseInsertRelationBuilder</a>&lt;TRootEntity, TRootEntity&gt;</td>
+        <td><p>An object that can be used to further configure the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="theme-switch-field">
+                <p>Theme</p>
+                <select id="theme-switcher">
+                  <option value="dark">Dark
+                  <option value="gray">Gray
+                  <option value="light">Light
+                </select>
+              </div>
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IBaseInsertRelationBuilder_2.md&amp;value=---%0Auid%3A%20Venflow.Commands.IBaseInsertRelationBuilder%602%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IBaseInsertRelationBuilder.cs/#L12" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <span>Copyright © 2020 Twenty</span>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+    <script type="text/javascript" src="../styles/styleswitcher.js"></script>  </body>
+</html>

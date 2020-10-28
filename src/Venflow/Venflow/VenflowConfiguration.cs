@@ -1,16 +1,20 @@
-﻿namespace Venflow
+﻿using System.Diagnostics;
+using System.Reflection;
+
+namespace Venflow
 {
     /// <summary>
     /// Contains methods to globally set the configuration of Venflow.
     /// </summary>
     public static class VenflowConfiguration
     {
-        internal static bool ValidationSettingSet { get; private set; }
 
         /// <summary>
         /// Determines whether or not Venflow will perform more extensive validation through out its usage. This setting will be set to <see langword="true"></see> automatically, if you are in DEBUG, otherwise <see langword="false"></see>.
         /// </summary>
         public static bool ShouldUseDeepValidation { get; private set; }
+
+        private static bool _validationSettingSet;
 
         /// <summary>
         /// Changes the value of the <see cref="ShouldUseDeepValidation"/> property.
@@ -19,7 +23,24 @@
         public static void UseDeepValidation(bool validation)
         {
             ShouldUseDeepValidation = validation;
-            ValidationSettingSet = true;
+            _validationSettingSet = true;
+        }
+
+        internal static void SetDefaultValidationIfNeeded(Assembly assembly)
+        {
+            if (_validationSettingSet)
+                return;
+
+            var attribute = assembly.GetCustomAttribute<DebuggableAttribute>();
+
+            if (attribute is null)
+            {
+                UseDeepValidation(false);
+
+                return;
+            }
+
+            UseDeepValidation(attribute.IsJITTrackingEnabled);
         }
     }
 }

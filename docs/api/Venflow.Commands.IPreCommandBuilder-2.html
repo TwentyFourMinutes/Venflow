@@ -17,7 +17,7 @@
     <meta property="og:image" content="">
     <meta property="og:image:alt" content="Venflow Logo">
     <meta name="theme-color" content="#995EA7">
-    <meta name="generator" content="docfx 2.56.2.0">
+    <meta name="generator" content="docfx 2.56.3.0">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
     <meta id="docfx-style:rel" content="../">
@@ -96,7 +96,7 @@
   
   <h1 id="Venflow_Commands_IPreCommandBuilder_2" data-uid="Venflow.Commands.IPreCommandBuilder`2" class="text-break">Interface IPreCommandBuilder&lt;TEntity, TReturn&gt;
   </h1>
-  <div class="markdown level0 summary"><p>Represents a command builder to configure the query.</p>
+  <div class="markdown level0 summary"><p>Represents a pre-command builder to configure the query.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritedMembers">
@@ -105,13 +105,7 @@
       <a class="xref" href="Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_TrackChanges_System_Boolean_">IQueryCommandBuilder&lt;TEntity, TReturn&gt;.TrackChanges(Boolean)</a>
     </div>
     <div>
-      <a class="xref" href="Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_JoinWith__1_System_Linq_Expressions_Expression_System_Func__0___0___Venflow_Enums_JoinBehaviour_">IQueryCommandBuilder&lt;TEntity, TReturn&gt;.JoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TEntity, TToEntity&gt;&gt;, JoinBehaviour)</a>
-    </div>
-    <div>
-      <a class="xref" href="Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_JoinWith__1_System_Linq_Expressions_Expression_System_Func__0_System_Collections_Generic_IList___0____Venflow_Enums_JoinBehaviour_">IQueryCommandBuilder&lt;TEntity, TReturn&gt;.JoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TEntity, IList&lt;TToEntity&gt;&gt;&gt;, JoinBehaviour)</a>
-    </div>
-    <div>
-      <a class="xref" href="Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_JoinWith__1_System_Linq_Expressions_Expression_System_Func__0_System_Collections_Generic_List___0____Venflow_Enums_JoinBehaviour_">IQueryCommandBuilder&lt;TEntity, TReturn&gt;.JoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TEntity, List&lt;TToEntity&gt;&gt;&gt;, JoinBehaviour)</a>
+      <a class="xref" href="Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_QueryAsync_System_Threading_CancellationToken_">IQueryCommandBuilder&lt;TEntity, TReturn&gt;.QueryAsync(CancellationToken)</a>
     </div>
     <div>
       <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-1.html#Venflow_Commands_ISpecficVenflowCommandBuilder_1_Build">ISpecficVenflowCommandBuilder&lt;IQueryCommand&lt;TEntity, TReturn&gt;&gt;.Build()</a>
@@ -161,7 +155,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IQueryCommandBuilder&lt;TEntity, TReturn&gt; AddFormatter()</code></pre>
+    <pre><code class="lang-csharp hljs">IBaseQueryRelationBuilder&lt;TEntity, TEntity, TReturn&gt; AddFormatter()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -173,7 +167,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Commands.IQueryCommandBuilder-2.html">IQueryCommandBuilder</a>&lt;TEntity, TReturn&gt;</td>
+        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, TReturn&gt;</td>
         <td><p>An object that can be used to further configure the operation.</p>
 </td>
       </tr>

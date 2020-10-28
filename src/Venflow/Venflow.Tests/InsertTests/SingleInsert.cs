@@ -20,6 +20,35 @@ namespace Venflow.Tests.InsertTests
         }
 
         [Fact]
+        public async Task InsertWithNoRelationNoPKAsync()
+        {
+            var user = new User { Id = 0, Name = "Foo" };
+
+            var insertCount = await Database.Users.Insert().InsertAsync(user);
+
+            Assert.Equal(1, insertCount);
+
+            Assert.Equal(1, await Database.Users.DeleteAsync(user));
+        }
+
+        [Fact]
+        public async Task InsertWithRelationNoPKAsync()
+        {
+            var user = new User
+            {
+                Id = 10,
+                Name = "Foo",
+                Blogs = new List<Blog> { new Blog { Id = 11, Topic = "BazFoo" } }
+            };
+
+            var insertCount = await Database.Users.Insert().InsertWith(x => x.Blogs).InsertAsync(user);
+
+            Assert.Equal(2, insertCount);
+
+            Assert.Equal(1, await Database.Users.DeleteAsync(user));
+        }
+
+        [Fact]
         public async Task InsertWithPartialRelationAsync()
         {
             var person = GetPersonWithFullRelation();

@@ -17,7 +17,7 @@
     <meta property="og:image" content="">
     <meta property="og:image:alt" content="Venflow Logo">
     <meta name="theme-color" content="#995EA7">
-    <meta name="generator" content="docfx 2.56.2.0">
+    <meta name="generator" content="docfx 2.56.3.0">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
     <meta id="docfx-style:rel" content="../">
@@ -98,13 +98,14 @@
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="markdown level0 remarks"></div>
-    <h3 id="classes">Classes
-  </h3>
-      <h4><a class="xref" href="Venflow.Commands.JoinBuilder-3.html">JoinBuilder&lt;TRelationEntity, TEntity, TReturn&gt;</a></h4>
-      <section><p>Represents a query command builder which helps configuring the materialized joins.</p>
-</section>
     <h3 id="interfaces">Interfaces
   </h3>
+      <h4><a class="xref" href="Venflow.Commands.IBaseInsertRelationBuilder-2.html">IBaseInsertRelationBuilder&lt;TRelationEntity, TRootEntity&gt;</a></h4>
+      <section><p>Represents a base insert relation builder to configure the insert.</p>
+</section>
+      <h4><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder&lt;TRelationEntity, TRootEntity, TReturn&gt;</a></h4>
+      <section><p>Represents a base query relation builder to configure the query.</p>
+</section>
       <h4><a class="xref" href="Venflow.Commands.IDeleteCommand-1.html">IDeleteCommand&lt;TEntity&gt;</a></h4>
       <section><p>Represents a command which performs deletions of entities.</p>
 </section>
@@ -117,14 +118,20 @@
       <h4><a class="xref" href="Venflow.Commands.IInsertCommandBuilder-1.html">IInsertCommandBuilder&lt;TEntity&gt;</a></h4>
       <section><p>Represents a command builder to configure the insertion.</p>
 </section>
+      <h4><a class="xref" href="Venflow.Commands.IInsertRelationBuilder-2.html">IInsertRelationBuilder&lt;TRelationEntity, TRootEntity&gt;</a></h4>
+      <section><p>Represents a insert relation builder to configure the insert.</p>
+</section>
       <h4><a class="xref" href="Venflow.Commands.IPreCommandBuilder-2.html">IPreCommandBuilder&lt;TEntity, TReturn&gt;</a></h4>
-      <section><p>Represents a command builder to configure the query.</p>
+      <section><p>Represents a pre-command builder to configure the query.</p>
 </section>
       <h4><a class="xref" href="Venflow.Commands.IQueryCommand-2.html">IQueryCommand&lt;TEntity, TReturn&gt;</a></h4>
       <section><p>Represents a command which performs queries and materialize the results to entities.</p>
 </section>
       <h4><a class="xref" href="Venflow.Commands.IQueryCommandBuilder-2.html">IQueryCommandBuilder&lt;TEntity, TReturn&gt;</a></h4>
       <section><p>Represents a command builder to configure the query.</p>
+</section>
+      <h4><a class="xref" href="Venflow.Commands.IQueryRelationBuilder-3.html">IQueryRelationBuilder&lt;TRelationEntity, TRootEntity, TReturn&gt;</a></h4>
+      <section><p>Represents a query relation builder to configure the query.</p>
 </section>
       <h4><a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-1.html">ISpecficVenflowCommandBuilder&lt;TCommand&gt;</a></h4>
       <section><p>Represents a generic command builder for all CRUD operations to finalize the configuration.</p>

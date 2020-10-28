@@ -51,7 +51,7 @@ namespace Venflow.Dynamic.Inserter
             }
 
             VisitedEntityIds.GetId(entity, out _);
-            CollectAllReachableEntities(entity);
+            CollectAllReachableEntities(entity, null);
 
             BaseCompile();
         }
@@ -73,6 +73,15 @@ namespace Venflow.Dynamic.Inserter
 
                     var relation = path.CurrentRelation;
 
+                    ReachableRelations.Add(relation.RelationId);
+
+                    if (!relation.RightEntity.HasDbGeneratedPrimaryKey)
+                    {
+                        BaseCompileFromRelations(path, relation.Sibiling);
+
+                        continue;
+                    }
+
                     if (relation.ForeignKeyLocation == ForeignKeyLocation.Left)
                     {
                         entityHolder.SelfAssignedRelations.Add(relation);
@@ -82,18 +91,21 @@ namespace Venflow.Dynamic.Inserter
                         entityHolder.ForeignAssignedRelations.Add(relation);
                     }
 
-                    ReachableRelations.Add(relation.RelationId);
-
-                    BaseCompileFromRelations(path);
+                    BaseCompileFromRelations(path, null);
                 }
             }
 
             BaseCompile();
         }
 
-        private void BaseCompileFromRelations(IRelationPath relationPath)
+        private void BaseCompileFromRelations(IRelationPath relationPath, EntityRelation? toAssign)
         {
             var entityHolder = new EntityRelationHolder(relationPath.Entity);
+
+            if (toAssign is { })
+            {
+                entityHolder.DirectAssignedRelation = toAssign;
+            }
 
             VisitedEntityIds.GetId(relationPath.Entity, out _);
             _reachableEntities.Add(entityHolder);
@@ -104,6 +116,15 @@ namespace Venflow.Dynamic.Inserter
 
                 var relation = path.CurrentRelation;
 
+                ReachableRelations.Add(relation.RelationId);
+
+                if (!relation.RightEntity.HasDbGeneratedPrimaryKey)
+                {
+                    BaseCompileFromRelations(path, relation.Sibiling);
+
+                    continue;
+                }
+
                 if (relation.ForeignKeyLocation == ForeignKeyLocation.Left)
                 {
                     entityHolder.SelfAssignedRelations.Add(relation);
@@ -113,21 +134,31 @@ namespace Venflow.Dynamic.Inserter
                     entityHolder.ForeignAssignedRelations.Add(relation);
                 }
 
-                ReachableRelations.Add(relation.RelationId);
-
-                BaseCompileFromRelations(path);
+                BaseCompileFromRelations(path, null);
             }
         }
 
-        private void CollectAllReachableEntities(Entity entity)
+        private void CollectAllReachableEntities(Entity entity, EntityRelation? toAssign)
         {
             var entityHolder = new EntityRelationHolder(entity);
+
+            if (toAssign is { })
+            {
+                entityHolder.DirectAssignedRelation = toAssign;
+            }
 
             _reachableEntities.Add(entityHolder);
 
             for (int relationIndex = entity.Relations.Count - 1; relationIndex >= 0; relationIndex--)
             {
                 var relation = entity.Relations[relationIndex];
+
+                if (!relation.RightEntity.HasDbGeneratedPrimaryKey)
+                {
+                    ReachableRelations.Add(relation.RelationId);
+
+                    continue;
+                }
 
                 if (relation.LeftNavigationProperty is null ||
                     !ReachableRelations.Add(relation.RelationId))
@@ -153,7 +184,7 @@ namespace Venflow.Dynamic.Inserter
                 VisitedEntityIds.GetId(relation.RightEntity, out var newEntity);
 
                 if (newEntity)
-                    CollectAllReachableEntities(relation.RightEntity);
+                    CollectAllReachableEntities(relation.RightEntity, relation.Sibiling);
             }
         }
 

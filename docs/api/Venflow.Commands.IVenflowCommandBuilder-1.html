@@ -17,7 +17,7 @@
     <meta property="og:image" content="">
     <meta property="og:image:alt" content="Venflow Logo">
     <meta name="theme-color" content="#995EA7">
-    <meta name="generator" content="docfx 2.56.2.0">
+    <meta name="generator" content="docfx 2.56.3.0">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
     <meta id="docfx-style:rel" content="../">
@@ -129,7 +129,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IVenflowCommandBuilder_1_Delete.md&amp;value=---%0Auid%3A%20Venflow.Commands.IVenflowCommandBuilder%601.Delete%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L79">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L60">View Source</a>
   </span>
   <a id="Venflow_Commands_IVenflowCommandBuilder_1_Delete_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.Delete*"></a>
   <h4 id="Venflow_Commands_IVenflowCommandBuilder_1_Delete" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.Delete">Delete()</h4>
@@ -161,7 +161,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IVenflowCommandBuilder_1_Insert.md&amp;value=---%0Auid%3A%20Venflow.Commands.IVenflowCommandBuilder%601.Insert%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L74">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L55">View Source</a>
   </span>
   <a id="Venflow_Commands_IVenflowCommandBuilder_1_Insert_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.Insert*"></a>
   <h4 id="Venflow_Commands_IVenflowCommandBuilder_1_Insert" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.Insert">Insert()</h4>
@@ -170,7 +170,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IInsertCommandBuilder&lt;TEntity&gt; Insert()</code></pre>
+    <pre><code class="lang-csharp hljs">IBaseInsertRelationBuilder&lt;TEntity, TEntity&gt; Insert()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -182,7 +182,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Commands.IInsertCommandBuilder-1.html">IInsertCommandBuilder</a>&lt;TEntity&gt;</td>
+        <td><a class="xref" href="Venflow.Commands.IBaseInsertRelationBuilder-2.html">IBaseInsertRelationBuilder</a>&lt;TEntity, TEntity&gt;</td>
         <td><p>A Fluent API Builder for a insert command.</p>
 </td>
       </tr>
@@ -190,45 +190,10 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch.md&amp;value=---%0Auid%3A%20Venflow.Commands.IVenflowCommandBuilder%601.QueryBatch%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L42">View Source</a>
-  </span>
-  <a id="Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch*"></a>
-  <h4 id="Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch">QueryBatch()</h4>
-  <div class="markdown level1 summary"><p>Creates a new query command builder, which expects a set of primary rows to be returned.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IPreCommandBuilder&lt;TEntity, List&lt;TEntity&gt;&gt; QueryBatch()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Venflow.Commands.IPreCommandBuilder-2.html">IPreCommandBuilder</a>&lt;TEntity, <span class="xref">System.Collections.Generic.List</span>&lt;TEntity&gt;&gt;</td>
-        <td><p>A Fluent API Builder for a query command.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This method represents the following SQL statement &quot;SELECT * FROM table&quot;</p>
-</div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_System_String_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IVenflowCommandBuilder%601.QueryBatch(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L55">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L36">View Source</a>
   </span>
   <a id="Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch*"></a>
   <h4 id="Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_System_String_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.String)">QueryBatch(String)</h4>
@@ -237,7 +202,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IPreCommandBuilder&lt;TEntity, List&lt;TEntity&gt;&gt; QueryBatch(string sql)</code></pre>
+    <pre><code class="lang-csharp hljs">IBaseQueryRelationBuilder&lt;TEntity, TEntity, List&lt;TEntity&gt;&gt; QueryBatch(string sql)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -267,7 +232,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Commands.IPreCommandBuilder-2.html">IPreCommandBuilder</a>&lt;TEntity, <span class="xref">System.Collections.Generic.List</span>&lt;TEntity&gt;&gt;</td>
+        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, <span class="xref">System.Collections.Generic.List</span>&lt;TEntity&gt;&gt;</td>
         <td><p>A Fluent API Builder for a query command.</p>
 </td>
       </tr>
@@ -278,7 +243,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_System_String_Npgsql_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.Commands.IVenflowCommandBuilder%601.QueryBatch(System.String%2CNpgsql.NpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L62">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L43">View Source</a>
   </span>
   <a id="Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch*"></a>
   <h4 id="Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_System_String_Npgsql_NpgsqlParameter___" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.String,Npgsql.NpgsqlParameter[])">QueryBatch(String, NpgsqlParameter[])</h4>
@@ -287,7 +252,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IPreCommandBuilder&lt;TEntity, List&lt;TEntity&gt;&gt; QueryBatch(string sql, params NpgsqlParameter[] parameters)</code></pre>
+    <pre><code class="lang-csharp hljs">IBaseQueryRelationBuilder&lt;TEntity, TEntity, List&lt;TEntity&gt;&gt; QueryBatch(string sql, params NpgsqlParameter[] parameters)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -323,71 +288,18 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Commands.IPreCommandBuilder-2.html">IPreCommandBuilder</a>&lt;TEntity, <span class="xref">System.Collections.Generic.List</span>&lt;TEntity&gt;&gt;</td>
+        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, <span class="xref">System.Collections.Generic.List</span>&lt;TEntity&gt;&gt;</td>
         <td><p>A Fluent API Builder for a query command.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_System_UInt64_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IVenflowCommandBuilder%601.QueryBatch(System.UInt64)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L49">View Source</a>
-  </span>
-  <a id="Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch*"></a>
-  <h4 id="Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_System_UInt64_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.UInt64)">QueryBatch(UInt64)</h4>
-  <div class="markdown level1 summary"><p>Creates a new query command builder, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <a class="xref" href="Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle_System_String_Npgsql_NpgsqlParameter___">QuerySingle(String, NpgsqlParameter[])</a> or <a class="xref" href="Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryInterpolatedSingle_System_FormattableString_">QueryInterpolatedSingle(FormattableString)</a>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IPreCommandBuilder&lt;TEntity, List&lt;TEntity&gt;&gt; QueryBatch(ulong count)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.UInt64</span></td>
-        <td><span class="parametername">count</span></td>
-        <td><p>A value specifying the maximum returned primary rows.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Venflow.Commands.IPreCommandBuilder-2.html">IPreCommandBuilder</a>&lt;TEntity, <span class="xref">System.Collections.Generic.List</span>&lt;TEntity&gt;&gt;</td>
-        <td><p>A Fluent API Builder for a query command.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_System_UInt64__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This method will automatically generate a SQL SELECT statement with a LIMIT.</p>
-</div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IVenflowCommandBuilder_1_QueryInterpolatedBatch_System_FormattableString_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IVenflowCommandBuilder%601.QueryInterpolatedBatch(System.FormattableString)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L68">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L49">View Source</a>
   </span>
   <a id="Venflow_Commands_IVenflowCommandBuilder_1_QueryInterpolatedBatch_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedBatch*"></a>
   <h4 id="Venflow_Commands_IVenflowCommandBuilder_1_QueryInterpolatedBatch_System_FormattableString_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedBatch(System.FormattableString)">QueryInterpolatedBatch(FormattableString)</h4>
@@ -396,7 +308,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IPreCommandBuilder&lt;TEntity, List&lt;TEntity&gt;&gt; QueryInterpolatedBatch(FormattableString sql)</code></pre>
+    <pre><code class="lang-csharp hljs">IBaseQueryRelationBuilder&lt;TEntity, TEntity, List&lt;TEntity&gt;&gt; QueryInterpolatedBatch(FormattableString sql)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -426,7 +338,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Commands.IPreCommandBuilder-2.html">IPreCommandBuilder</a>&lt;TEntity, <span class="xref">System.Collections.Generic.List</span>&lt;TEntity&gt;&gt;</td>
+        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, <span class="xref">System.Collections.Generic.List</span>&lt;TEntity&gt;&gt;</td>
         <td><p>A Fluent API Builder for a query command.</p>
 </td>
       </tr>
@@ -437,7 +349,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IVenflowCommandBuilder_1_QueryInterpolatedSingle_System_FormattableString_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IVenflowCommandBuilder%601.QueryInterpolatedSingle(System.FormattableString)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L36">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L30">View Source</a>
   </span>
   <a id="Venflow_Commands_IVenflowCommandBuilder_1_QueryInterpolatedSingle_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedSingle*"></a>
   <h4 id="Venflow_Commands_IVenflowCommandBuilder_1_QueryInterpolatedSingle_System_FormattableString_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedSingle(System.FormattableString)">QueryInterpolatedSingle(FormattableString)</h4>
@@ -446,7 +358,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IPreCommandBuilder&lt;TEntity, TEntity&gt; QueryInterpolatedSingle(FormattableString sql)</code></pre>
+    <pre><code class="lang-csharp hljs">IBaseQueryRelationBuilder&lt;TEntity, TEntity, TEntity&gt; QueryInterpolatedSingle(FormattableString sql)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -476,53 +388,18 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Commands.IPreCommandBuilder-2.html">IPreCommandBuilder</a>&lt;TEntity, TEntity&gt;</td>
+        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, TEntity&gt;</td>
         <td><p>A Fluent API Builder for a query command.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle.md&amp;value=---%0Auid%3A%20Venflow.Commands.IVenflowCommandBuilder%601.QuerySingle%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L18">View Source</a>
-  </span>
-  <a id="Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle*"></a>
-  <h4 id="Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle">QuerySingle()</h4>
-  <div class="markdown level1 summary"><p>Creates a new query command builder, which expects a single returned primary row.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IPreCommandBuilder&lt;TEntity, TEntity&gt; QuerySingle()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Venflow.Commands.IPreCommandBuilder-2.html">IPreCommandBuilder</a>&lt;TEntity, TEntity&gt;</td>
-        <td><p>A Fluent API Builder for a query command.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle_remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This method represents the following SQL statement &quot;SELECT * FROM table LIMIT 1&quot;.</p>
-</div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle_System_String_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IVenflowCommandBuilder%601.QuerySingle(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L23">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L17">View Source</a>
   </span>
   <a id="Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle*"></a>
   <h4 id="Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle_System_String_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(System.String)">QuerySingle(String)</h4>
@@ -531,7 +408,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IPreCommandBuilder&lt;TEntity, TEntity&gt; QuerySingle(string sql)</code></pre>
+    <pre><code class="lang-csharp hljs">IBaseQueryRelationBuilder&lt;TEntity, TEntity, TEntity&gt; QuerySingle(string sql)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -560,7 +437,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Commands.IPreCommandBuilder-2.html">IPreCommandBuilder</a>&lt;TEntity, TEntity&gt;</td>
+        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, TEntity&gt;</td>
         <td><p>An object that can be used to further configure the operation.</p>
 </td>
       </tr>
@@ -571,7 +448,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle_System_String_Npgsql_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.Commands.IVenflowCommandBuilder%601.QuerySingle(System.String%2CNpgsql.NpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L30">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L24">View Source</a>
   </span>
   <a id="Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle*"></a>
   <h4 id="Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle_System_String_Npgsql_NpgsqlParameter___" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])">QuerySingle(String, NpgsqlParameter[])</h4>
@@ -580,7 +457,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IPreCommandBuilder&lt;TEntity, TEntity&gt; QuerySingle(string sql, params NpgsqlParameter[] parameters)</code></pre>
+    <pre><code class="lang-csharp hljs">IBaseQueryRelationBuilder&lt;TEntity, TEntity, TEntity&gt; QuerySingle(string sql, params NpgsqlParameter[] parameters)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -616,7 +493,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Commands.IPreCommandBuilder-2.html">IPreCommandBuilder</a>&lt;TEntity, TEntity&gt;</td>
+        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, TEntity&gt;</td>
         <td><p>A Fluent API Builder for a query command.</p>
 </td>
       </tr>
@@ -627,7 +504,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IVenflowCommandBuilder_1_Update.md&amp;value=---%0Auid%3A%20Venflow.Commands.IVenflowCommandBuilder%601.Update%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L85">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IVenflowCommandBuilder.cs/#L66">View Source</a>
   </span>
   <a id="Venflow_Commands_IVenflowCommandBuilder_1_Update_" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.Update*"></a>
   <h4 id="Venflow_Commands_IVenflowCommandBuilder_1_Update" data-uid="Venflow.Commands.IVenflowCommandBuilder`1.Update">Update()</h4>
