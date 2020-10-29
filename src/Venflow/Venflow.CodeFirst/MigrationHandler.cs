@@ -12,7 +12,7 @@ namespace Venflow.CodeFirst
     {
         public async Task MigrateAsync<TDatabase>() where TDatabase : Database, new()
         {
-            VenflowConfiguration.PopulateColumnInformation = true;
+            VenflowConfiguration.PopulateEntityInformation = true;
 
             var database = new TDatabase();
 

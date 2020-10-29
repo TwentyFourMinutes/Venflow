@@ -13,7 +13,7 @@ namespace Venflow
         /// </summary>
         public static bool ShouldUseDeepValidation { get; private set; }
 
-        internal static bool PopulateColumnInformation { get; set; }
+        internal static bool PopulateEntityInformation { get; set; }
 
         private static bool _validationSettingSet;
 

@@ -4,7 +4,6 @@ using NpgsqlTypes;
 
 namespace Venflow.Modeling.Definitions.Builder
 {
-
     public interface IEntityPropertyBuilder<TEntity>
         where TEntity : class, new()
     {

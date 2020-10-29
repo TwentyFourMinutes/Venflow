@@ -183,7 +183,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
         IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.HasDefaultValue(string sql)
         {
-            if (VenflowConfiguration.PopulateColumnInformation)
+            if (VenflowConfiguration.PopulateEntityInformation)
                 _lastColumnDefinition.Value.column.Information.DefaultValue = sql;
 
             return this;
@@ -198,7 +198,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
         IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.HasPrecision(uint precision)
         {
-            if (VenflowConfiguration.PopulateColumnInformation)
+            if (VenflowConfiguration.PopulateEntityInformation)
                 _lastColumnDefinition.Value.column.Information.Precision = precision;
 
             return this;
@@ -206,7 +206,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
         IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.HasPrecision(uint precision, uint scale)
         {
-            if (VenflowConfiguration.PopulateColumnInformation)
+            if (VenflowConfiguration.PopulateEntityInformation)
             {
                 _lastColumnDefinition.Value.column.Information.Precision = precision;
                 _lastColumnDefinition.Value.column.Information.Scale = scale;
@@ -215,10 +215,9 @@ namespace Venflow.Modeling.Definitions.Builder
             return this;
         }
 
-
         IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.HasMaxLength(uint length)
         {
-            if (VenflowConfiguration.PopulateColumnInformation)
+            if (VenflowConfiguration.PopulateEntityInformation)
                 _lastColumnDefinition.Value.column.Information.Precision = length;
 
             return this;
@@ -233,7 +232,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
         IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.WithComment(string comment)
         {
-            if (VenflowConfiguration.PopulateColumnInformation)
+            if (VenflowConfiguration.PopulateEntityInformation)
                 _lastColumnDefinition.Value.column.Information.Comment = comment;
 
             return this;
@@ -241,7 +240,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
         IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.IsRequired()
         {
-            if (VenflowConfiguration.PopulateColumnInformation)
+            if (VenflowConfiguration.PopulateEntityInformation)
                 _lastColumnDefinition.Value.column.IsNullable = true;
 
             return this;
@@ -249,7 +248,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
         IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.IsRequired(bool required)
         {
-            if (VenflowConfiguration.PopulateColumnInformation)
+            if (VenflowConfiguration.PopulateEntityInformation)
                 _lastColumnDefinition.Value.column.IsNullable = required;
 
             return this;

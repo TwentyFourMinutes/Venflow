@@ -14,7 +14,7 @@ namespace Venflow.Modeling.Definitions
         {
             Name = name;
 
-            if (VenflowConfiguration.PopulateColumnInformation)
+            if (VenflowConfiguration.PopulateEntityInformation)
                 Information = new ColumnInformationDefiniton();
         }
     }
