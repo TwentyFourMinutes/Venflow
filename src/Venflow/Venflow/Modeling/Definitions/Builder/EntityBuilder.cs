@@ -406,11 +406,12 @@ namespace Venflow.Modeling.Definitions.Builder
         internal override void IgnoreProperty(string propertyName)
             => _ignoredColumns.Add(propertyName);
 
-        internal EntityColumnCollection<TEntity> Build()
+        internal EntityColumnCollection<TEntity> BuildColumns()
         {
             var properties = Type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-            if (properties is null || properties.Length == 0)
+            if (properties is null ||
+                properties.Length == 0)
             {
                 throw new TypeArgumentException($"The entity '{Type.Name}' doesn't contain any columns/properties. A entity needs at least one column/property.");
             }
@@ -433,7 +434,10 @@ namespace Venflow.Modeling.Definitions.Builder
             {
                 var property = propertiesSpan[i];
 
-                if (property.CanWrite && property.SetMethod!.IsPublic && !_ignoredColumns.Contains(property.Name) && !Attribute.IsDefined(property, notMappedAttributeType))
+                if (property.CanWrite &&
+                    property.SetMethod!.IsPublic &&
+                    !_ignoredColumns.Contains(property.Name) &&
+                    !Attribute.IsDefined(property, notMappedAttributeType))
                 {
                     if (IsCustomEntity &&
                         (Attribute.IsDefined(property, primaryKeyAttributeType) ||
@@ -468,13 +472,15 @@ namespace Venflow.Modeling.Definitions.Builder
 
                 ColumnDefinition? definition = default;
 
-                if (IsCustomEntity && ColumnDefinitions.TryGetValue(property.Name, out definition))
+                if (IsCustomEntity &&
+                    ColumnDefinitions.TryGetValue(property.Name, out definition))
                 {
                     switch (definition)
                     {
                         case PrimaryColumnDefinition primaryDefintion:
 
-                            if (EntityInNullableContext && isPropertyTypeNullableReferenceType)
+                            if (EntityInNullableContext &&
+                                isPropertyTypeNullableReferenceType)
                             {
                                 throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
                             }
@@ -487,7 +493,8 @@ namespace Venflow.Modeling.Definitions.Builder
 
                             var setMethod = property.GetSetMethod();
 
-                            if (setMethod.IsVirtual && !setMethod.IsFinal)
+                            if (setMethod.IsVirtual &&
+                                !setMethod.IsFinal)
                             {
                                 changeTrackingColumns.Add(columnIndex, primaryColumn);
                             }
@@ -504,7 +511,8 @@ namespace Venflow.Modeling.Definitions.Builder
 
                             setMethod = property.GetSetMethod();
 
-                            if (setMethod.IsVirtual && !setMethod.IsFinal)
+                            if (setMethod.IsVirtual &&
+                                !setMethod.IsFinal)
                             {
                                 changeTrackingColumns.Add(columnIndex, enumColumn);
                             }

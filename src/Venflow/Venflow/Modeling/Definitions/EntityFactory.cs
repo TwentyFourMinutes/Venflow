@@ -21,7 +21,7 @@ namespace Venflow.Modeling.Definitions
 
         internal override Entity BuildEntity()
         {
-            var columns = _entityBuilder.Build();
+            var columns = _entityBuilder.BuildColumns();
 
             _entity = new Entity<TEntity>(_entityBuilder.Type, _entityBuilder.ChangeTrackerFactory?.ProxyType, _entityBuilder.TableName,
                 _entityBuilder.EntityInNullableContext, _entityBuilder.DefaultPropNullability, columns,
