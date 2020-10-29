@@ -18,7 +18,7 @@ using Venflow.Enums;
 
 namespace Venflow.Modeling.Definitions.Builder
 {
-    internal class EntityBuilder<TEntity> : EntityBuilder, IEntityBuilder<TEntity>, IEntityPropertyBuilder<TEntity>
+    internal class EntityBuilder<TEntity> : EntityBuilder, IEntityBuilder<TEntity>, IEntityPropertyBuilder<TEntity>, IIndexBuilder<TEntity>
         where TEntity : class, new()
     {
         internal bool IsCustomEntity { get; set; }
@@ -33,6 +33,7 @@ namespace Venflow.Modeling.Definitions.Builder
         internal bool DefaultPropNullability { get; }
 
         private (PropertyInfo property, ColumnDefinition column)? _lastColumnDefinition;
+        private EntityIndexDefinition? _lastIndexDefinition;
 
         private readonly HashSet<string> _ignoredColumns;
         private readonly ValueRetrieverFactory<TEntity> _valueRetrieverFactory;
@@ -99,7 +100,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
         IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option)
         {
-            MapId(propertySelector, option);
+            MapId(propertySelector.ValidatePropertySelector(), option);
 
             return this;
         }
@@ -167,16 +168,58 @@ namespace Venflow.Modeling.Definitions.Builder
             return this;
         }
 
-        IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.IsId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option)
+        IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.IsId(DatabaseGeneratedOption option)
         {
-            MapId(propertySelector, option);
+            if (VenflowConfiguration.PopulateEntityInformation)
+                MapId(_lastColumnDefinition.Value.property, option);
 
             return this;
         }
 
         IEntityBuilder<TEntity> IEntityPropertyBuilder<TEntity>.HasPostgresEnum(string? name, INpgsqlNameTranslator? npgsqlNameTranslator)
         {
-            MapPostgresEnum(_lastColumnDefinition.Value.property, name, npgsqlNameTranslator);
+            if (VenflowConfiguration.PopulateEntityInformation)
+                MapPostgresEnum(_lastColumnDefinition.Value.property, name, npgsqlNameTranslator);
+
+            return this;
+        }
+
+        IIndexBuilder<TEntity> IEntityBuilder<TEntity>.MapIndex<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector)
+        {
+            if (VenflowConfiguration.PopulateEntityInformation)
+            {
+                _lastIndexDefinition = new EntityIndexDefinition(propertySelector.ValidatePropertySelector(false));
+
+                Indices.Add(_lastIndexDefinition);
+            }
+
+            return this;
+        }
+
+        IIndexBuilder<TEntity> IEntityBuilder<TEntity>.MapIndex<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string name)
+        {
+            if (VenflowConfiguration.PopulateEntityInformation)
+            {
+                _lastIndexDefinition = new EntityIndexDefinition(propertySelector.ValidatePropertySelector(false));
+
+                Indices.Add(_lastIndexDefinition);
+
+                return ((IIndexBuilder<TEntity>)this).HasName(name);
+            }
+
+            return this;
+        }
+
+        IIndexBuilder<TEntity> IEntityBuilder<TEntity>.MapIndex(Expression<Func<TEntity, object>> propertySelector, string name)
+        {
+            if (VenflowConfiguration.PopulateEntityInformation)
+            {
+                _lastIndexDefinition = new EntityIndexDefinition(propertySelector.ValidateMultiPropertySelector());
+
+                Indices.Add(_lastIndexDefinition);
+
+                return ((IIndexBuilder<TEntity>)this).HasName(name);
+            }
 
             return this;
         }
@@ -254,10 +297,8 @@ namespace Venflow.Modeling.Definitions.Builder
             return this;
         }
 
-        private void MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option)
+        private void MapId(PropertyInfo property, DatabaseGeneratedOption option)
         {
-            var property = propertySelector.ValidatePropertySelector();
-
             var isServerSideGenerated = option != DatabaseGeneratedOption.None;
 
             if (ColumnDefinitions.TryGetValue(property.Name, out var columnDefinition))
@@ -623,11 +664,14 @@ namespace Venflow.Modeling.Definitions.Builder
         }
 
         internal List<EntityRelationDefinition> Relations { get; }
+        internal List<EntityIndexDefinition>? Indices { get; }
         internal abstract Type Type { get; }
 
         protected EntityBuilder()
         {
-            Relations = new List<EntityRelationDefinition>();
+            Relations = new();
+            if (VenflowConfiguration.PopulateEntityInformation)
+                Indices = new();
         }
 
         internal abstract void IgnoreProperty(string propertyName);

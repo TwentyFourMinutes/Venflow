@@ -21,6 +21,8 @@ namespace Venflow.Modeling.Definitions
         internal RelationType RelationType { get; }
         internal ForeignKeyLocation ForeignKeyLocation { get; }
 
+        internal RelationInformationDefinition? Information { get; }
+
         internal EntityRelationDefinition(uint relationId, EntityBuilder leftEntity, PropertyInfo? leftNavigationProperty, string rightEntityName, PropertyInfo? rightNavigationProperty, string foreignKeyColumnName, RelationType relationType, ForeignKeyLocation foreignKeyLocation)
         {
             RelationId = relationId;
@@ -31,6 +33,9 @@ namespace Venflow.Modeling.Definitions
             ForeignKeyColumnName = foreignKeyColumnName;
             RelationType = relationType;
             ForeignKeyLocation = foreignKeyLocation;
+
+            if (VenflowConfiguration.PopulateEntityInformation)
+                Information = new RelationInformationDefinition();
         }
     }
 }

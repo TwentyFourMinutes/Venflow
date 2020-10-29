@@ -1,4 +1,4 @@
-﻿namespace Venflow.Modeling.Definitions.Builder
+﻿namespace Venflow.Enums
 {
     public enum ConstraintAction
     {

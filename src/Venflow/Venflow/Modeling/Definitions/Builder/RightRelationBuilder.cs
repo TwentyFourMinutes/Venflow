@@ -6,8 +6,12 @@ using Venflow.Enums;
 
 namespace Venflow.Modeling.Definitions.Builder
 {
-    internal class RightRelationBuilder<TEntity, TRelation> : INotRequiredMultiRightRelationBuilder<TEntity, TRelation>, IRequiredMultiRightRelationBuilder<TEntity, TRelation>, IForeignKeyRelationBuilder<TEntity, TRelation> where TEntity : class, new() where TRelation : class
+    internal class RightRelationBuilder<TEntity, TRelation> : INotRequiredMultiRightRelationBuilder<TEntity, TRelation>, IRequiredMultiRightRelationBuilder<TEntity, TRelation>, IForeignKeyRelationBuilder<TEntity, TRelation>, IRelationConfigurationBuilder<TEntity, TRelation>
+        where TEntity : class, new()
+        where TRelation : class
     {
+        private EntityRelationDefinition _entityRelationDefinition;
+
         private PropertyInfo? _rightNavigationProperty;
         private RelationPartType _leftRelationType;
 
@@ -55,19 +59,60 @@ namespace Venflow.Modeling.Definitions.Builder
             return this;
         }
 
-        void IForeignKeyRelationBuilder<TEntity, TRelation>.UsingForeignKey<TKey>(Expression<Func<TEntity, TKey>> navigationProperty)
+        IRelationConfigurationBuilder<TEntity, TRelation> IForeignKeyRelationBuilder<TEntity, TRelation>.UsingForeignKey<TKey>(Expression<Func<TEntity, TKey>> navigationProperty)
         {
             ApplyRelation(navigationProperty.ValidatePropertySelector(), ForeignKeyLocation.Left);
+
+            return this;
         }
 
-        void IForeignKeyRelationBuilder<TEntity, TRelation>.UsingForeignKey<TKey>(Expression<Func<TRelation, TKey>> navigationProperty)
+        IRelationConfigurationBuilder<TEntity, TRelation> IForeignKeyRelationBuilder<TEntity, TRelation>.UsingForeignKey<TKey>(Expression<Func<TRelation, TKey>> navigationProperty)
         {
             ApplyRelation(navigationProperty.ValidatePropertySelector(), ForeignKeyLocation.Right);
+
+            return this;
+        }
+
+        IRelationConfigurationBuilder<TEntity, TRelation> IRelationConfigurationBuilder<TEntity, TRelation>.HasConstraintName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new InvalidOperationException($"The constraint name '{name}' is invalid");
+            }
+
+            if (VenflowConfiguration.PopulateEntityInformation)
+            {
+                _entityRelationDefinition.Information.ConstraintName = name;
+            }
+
+            return this;
+        }
+
+        IRelationConfigurationBuilder<TEntity, TRelation> IRelationConfigurationBuilder<TEntity, TRelation>.OnDelete(ConstraintAction constraintAction)
+        {
+            if (VenflowConfiguration.PopulateEntityInformation)
+            {
+                _entityRelationDefinition.Information.OnDeleteAction = constraintAction;
+            }
+
+            return this;
+        }
+
+        IRelationConfigurationBuilder<TEntity, TRelation> IRelationConfigurationBuilder<TEntity, TRelation>.OnUpdate(ConstraintAction constraintAction)
+        {
+            if (VenflowConfiguration.PopulateEntityInformation)
+            {
+                _entityRelationDefinition.Information.OnUpdateAction = constraintAction;
+            }
+
+            return this;
         }
 
         private void ApplyRelation(PropertyInfo foreignKey, ForeignKeyLocation keyLoaction)
         {
-            _entityBuilder.Relations.Add(new EntityRelationDefinition(EntityBuilder.RelationCounter++, _entityBuilder, _leftNavigationProperty, typeof(TRelation).Name, _rightNavigationProperty, foreignKey.Name, GetRelationFromParts(_leftRelationType, _rightRelationType), keyLoaction));
+            _entityRelationDefinition = new EntityRelationDefinition(EntityBuilder.RelationCounter++, _entityBuilder, _leftNavigationProperty, typeof(TRelation).Name, _rightNavigationProperty, foreignKey.Name, GetRelationFromParts(_leftRelationType, _rightRelationType), keyLoaction);
+
+            _entityBuilder.Relations.Add(_entityRelationDefinition);
         }
 
         private RelationType GetRelationFromParts(RelationPartType leftPart, RelationPartType rightPart)
