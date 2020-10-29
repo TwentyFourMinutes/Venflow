@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Npgsql;
 using NpgsqlTypes;
-using Venflow.Enums;
 
 namespace Venflow.Modeling.Definitions.Builder
 {
@@ -9,9 +8,9 @@ namespace Venflow.Modeling.Definitions.Builder
     public interface IEntityPropertyBuilder<TEntity>
         where TEntity : class, new()
     {
-        IIndexBuilder<TEntity> IsId<TTarget>(DatabaseGeneratedOption option);
-        IIndexBuilder<TEntity> IsIndex<TTarget>();
-        IIndexBuilder<TEntity> IsIndex<TTarget>(string name);
+        IEntityPropertyBuilder<TEntity> IsId(DatabaseGeneratedOption option);
+        IIndexBuilder<TEntity> IsIndex();
+        IIndexBuilder<TEntity> IsIndex(string name);
 
         /// <summary>
         /// Maps a PostgreSQL enum to this CLR enum column.
