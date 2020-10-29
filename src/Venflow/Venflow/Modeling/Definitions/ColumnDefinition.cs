@@ -1,17 +1,14 @@
-﻿using System;
-using Npgsql;
-using NpgsqlTypes;
+﻿using NpgsqlTypes;
 
 namespace Venflow.Modeling.Definitions
 {
-    internal class ColumnDefinition<TEntity> where TEntity : class, new()
+    internal class ColumnDefinition
     {
         internal string Name { get; set; }
 
-        internal ColumnInformationDefiniton? Information { get; }
-        internal NpgsqlDbType DbType { get; set; }
-
-        internal Action<TEntity, NpgsqlDataReader>? ValueWriter { get; set; }
+        internal ColumnInformationDefiniton? Information { get; set; }
+        internal NpgsqlDbType? DbType { get; set; }
+        internal bool? IsNullable { get; set; }
 
         internal ColumnDefinition(string name)
         {

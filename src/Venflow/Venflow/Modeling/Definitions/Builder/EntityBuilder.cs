@@ -9,6 +9,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Npgsql;
+using Npgsql.TypeMapping;
+using NpgsqlTypes;
 using Venflow.Dynamic;
 using Venflow.Dynamic.Proxies;
 using Venflow.Dynamic.Retriever;
@@ -25,12 +27,12 @@ namespace Venflow.Modeling.Definitions.Builder
 
         internal ChangeTrackerFactory<TEntity>? ChangeTrackerFactory { get; private set; }
         internal string? TableName { get; private set; }
-        internal IDictionary<string, ColumnDefinition<TEntity>> ColumnDefinitions { get; }
+        internal IDictionary<string, ColumnDefinition> ColumnDefinitions { get; }
 
         internal bool EntityInNullableContext { get; }
         internal bool DefaultPropNullability { get; }
 
-        private ColumnDefinition<TEntity>? _lastColumnDefinition;
+        private (PropertyInfo property, ColumnDefinition column)? _lastColumnDefinition;
 
         private readonly HashSet<string> _ignoredColumns;
         private readonly ValueRetrieverFactory<TEntity> _valueRetrieverFactory;
@@ -40,7 +42,7 @@ namespace Venflow.Modeling.Definitions.Builder
             TableName = tableName;
 
             Type = typeof(TEntity);
-            ColumnDefinitions = new Dictionary<string, ColumnDefinition<TEntity>>();
+            ColumnDefinitions = new Dictionary<string, ColumnDefinition>();
             _ignoredColumns = new HashSet<string>();
             _valueRetrieverFactory = new ValueRetrieverFactory<TEntity>(Type);
             IsCustomEntity = true;
@@ -78,7 +80,7 @@ namespace Venflow.Modeling.Definitions.Builder
             }
             else
             {
-                definition = new ColumnDefinition<TEntity>(columnName);
+                definition = new ColumnDefinition(columnName);
 
                 ColumnDefinitions.Add(property.Name, definition);
             }
@@ -95,50 +97,9 @@ namespace Venflow.Modeling.Definitions.Builder
             return this;
         }
 
-        IEntityPropertyBuilder<TEntity> IEntityBuilder<TEntity>.Property<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector)
-        {
-            var property = propertySelector.ValidatePropertySelector();
-
-            if (!ColumnDefinitions.TryGetValue(property.Name, out var columnDefinition))
-            {
-                columnDefinition = new ColumnDefinition<TEntity>(property.Name);
-
-                ColumnDefinitions.Add(property.Name, columnDefinition);
-            }
-
-            _lastColumnDefinition = columnDefinition;
-
-            return this;
-        }
-
         IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option)
         {
-            var property = propertySelector.ValidatePropertySelector();
-
-            var isServerSideGenerated = option != DatabaseGeneratedOption.None;
-
-            var columnDefinition = new PrimaryColumnDefinition<TEntity>(property.Name)
-            {
-                IsServerSideGenerated = isServerSideGenerated
-            };
-
-            if (ColumnDefinitions.TryGetValue(property.Name, out var definition))
-            {
-                columnDefinition.Name = definition.Name;
-
-                ColumnDefinitions.Remove(property.Name);
-            }
-
-            ColumnDefinitions.Add(property.Name, columnDefinition);
-
-            return this;
-        }
-
-        IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapPostgresEnum<TTarget>(Expression<Func<TEntity, TTarget?>> propertySelector, string? name, INpgsqlNameTranslator? npgsqlNameTranslator)
-        {
-            var property = propertySelector.ValidatePropertySelector();
-
-            MapPostgresEnum<TTarget>(property, name, npgsqlNameTranslator);
+            MapId(propertySelector, option);
 
             return this;
         }
@@ -152,8 +113,262 @@ namespace Venflow.Modeling.Definitions.Builder
             return this;
         }
 
+        IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapPostgresEnum<TTarget>(Expression<Func<TEntity, TTarget?>> propertySelector, string? name, INpgsqlNameTranslator? npgsqlNameTranslator)
+        {
+            var property = propertySelector.ValidatePropertySelector();
+
+            MapPostgresEnum<TTarget>(property, name, npgsqlNameTranslator);
+
+            return this;
+        }
+
+        INotRequiredSingleRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasMany<TRelation>(Expression<Func<TEntity, IList<TRelation>>> navigationProperty) where TRelation : class
+        {
+            var property = navigationProperty.ValidatePropertySelector(false);
+
+            IgnoreProperty(property.Name);
+
+            return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.Many, property, this);
+        }
+
+        IRequiredSingleRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasMany<TRelation>()
+        {
+            return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.Many, null, this);
+        }
+
+        INotRequiredMultiRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasOne<TRelation>(Expression<Func<TEntity, TRelation>> navigationProperty) where TRelation : class
+        {
+            var property = navigationProperty.ValidatePropertySelector();
+
+            IgnoreProperty(property.Name);
+
+            return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.One, property, this);
+        }
+
+        IRequiredMultiRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasOne<TRelation>()
+        {
+            return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.One, null, this);
+        }
+
+
+        IEntityPropertyBuilder<TEntity> IEntityBuilder<TEntity>.Property<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector)
+        {
+            var property = propertySelector.ValidatePropertySelector();
+
+            if (!ColumnDefinitions.TryGetValue(property.Name, out var columnDefinition))
+            {
+                columnDefinition = new ColumnDefinition(property.Name);
+
+                ColumnDefinitions.Add(property.Name, columnDefinition);
+            }
+
+            _lastColumnDefinition = (property, columnDefinition);
+
+            return this;
+        }
+
+        IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.IsId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option)
+        {
+            MapId(propertySelector, option);
+
+            return this;
+        }
+
+        IEntityBuilder<TEntity> IEntityPropertyBuilder<TEntity>.HasPostgresEnum(string? name, INpgsqlNameTranslator? npgsqlNameTranslator)
+        {
+            MapPostgresEnum(_lastColumnDefinition.Value.property, name, npgsqlNameTranslator);
+
+            return this;
+        }
+
+        IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.HasDefaultValue(string sql)
+        {
+            if (VenflowConfiguration.PopulateColumnInformation)
+                _lastColumnDefinition.Value.column.Information.DefaultValue = sql;
+
+            return this;
+        }
+
+        IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.HasDbType(NpgsqlDbType dbType)
+        {
+            _lastColumnDefinition.Value.column.DbType = dbType;
+
+            return this;
+        }
+
+        IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.HasPrecision(uint precision)
+        {
+            if (VenflowConfiguration.PopulateColumnInformation)
+                _lastColumnDefinition.Value.column.Information.Precision = precision;
+
+            return this;
+        }
+
+        IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.HasPrecision(uint precision, uint scale)
+        {
+            if (VenflowConfiguration.PopulateColumnInformation)
+            {
+                _lastColumnDefinition.Value.column.Information.Precision = precision;
+                _lastColumnDefinition.Value.column.Information.Scale = scale;
+            }
+
+            return this;
+        }
+
+
+        IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.HasMaxLength(uint length)
+        {
+            if (VenflowConfiguration.PopulateColumnInformation)
+                _lastColumnDefinition.Value.column.Information.Precision = length;
+
+            return this;
+        }
+
+        IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.WithName(string name)
+        {
+            _lastColumnDefinition.Value.column.Name = name;
+
+            return this;
+        }
+
+        IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.WithComment(string comment)
+        {
+            if (VenflowConfiguration.PopulateColumnInformation)
+                _lastColumnDefinition.Value.column.Information.Comment = comment;
+
+            return this;
+        }
+
+        IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.IsRequired()
+        {
+            if (VenflowConfiguration.PopulateColumnInformation)
+                _lastColumnDefinition.Value.column.IsNullable = true;
+
+            return this;
+        }
+
+        IEntityPropertyBuilder<TEntity> IEntityPropertyBuilder<TEntity>.IsRequired(bool required)
+        {
+            if (VenflowConfiguration.PopulateColumnInformation)
+                _lastColumnDefinition.Value.column.IsNullable = required;
+
+            return this;
+        }
+
+        private void MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option)
+        {
+            var property = propertySelector.ValidatePropertySelector();
+
+            var isServerSideGenerated = option != DatabaseGeneratedOption.None;
+
+            if (ColumnDefinitions.TryGetValue(property.Name, out var columnDefinition))
+            {
+                columnDefinition = new PrimaryColumnDefinition(columnDefinition.Name)
+                {
+                    Name = columnDefinition.Name,
+                    DbType = columnDefinition.DbType,
+                    Information = columnDefinition.Information,
+                    IsNullable = columnDefinition.IsNullable,
+                    IsServerSideGenerated = isServerSideGenerated
+                };
+
+                ColumnDefinitions[property.Name] = columnDefinition;
+
+                if (_lastColumnDefinition.HasValue &&
+                    property.Name == _lastColumnDefinition.Value.property.Name)
+                {
+                    _lastColumnDefinition = (property, columnDefinition);
+                }
+            }
+
+            else
+            {
+                columnDefinition = new PrimaryColumnDefinition(property.Name)
+                {
+                    IsServerSideGenerated = true
+                };
+
+                ColumnDefinitions.Add(property.Name, columnDefinition);
+            }
+        }
+        private void MapPostgresEnum(PropertyInfo property, string? name, INpgsqlNameTranslator? npgsqlNameTranslator)
+        {
+            name = GetValueOrDefaultName(property, name);
+
+            if (!PostgreSQLEnums.Contains(name))
+            {
+                typeof(INpgsqlTypeMapper).GetMethod("MapEnum")
+                                         .MakeGenericMethod(property.PropertyType)
+                                         .Invoke(null, new object[] { name, npgsqlNameTranslator });
+
+                PostgreSQLEnums.Add(name);
+            }
+
+            if (ColumnDefinitions.TryGetValue(property.Name, out var columnDefinition))
+            {
+                columnDefinition = new PostgreEnumColumnDefinition(columnDefinition.Name)
+                {
+                    Name = columnDefinition.Name,
+                    DbType = columnDefinition.DbType,
+                    Information = columnDefinition.Information,
+                    IsNullable = columnDefinition.IsNullable
+                };
+
+                ColumnDefinitions[property.Name] = columnDefinition;
+
+                if (_lastColumnDefinition.HasValue &&
+                    property.Name == _lastColumnDefinition.Value.property.Name)
+                {
+                    _lastColumnDefinition = (property, columnDefinition);
+                }
+            }
+            else
+            {
+                columnDefinition = new PostgreEnumColumnDefinition(property.Name);
+
+                ColumnDefinitions.Add(property.Name, columnDefinition);
+            }
+        }
+
         private void MapPostgresEnum<TTarget>(PropertyInfo property, string? name, INpgsqlNameTranslator? npgsqlNameTranslator)
-            where TTarget : struct, Enum
+           where TTarget : struct, Enum
+        {
+            name = GetValueOrDefaultName(property, name);
+
+            if (!PostgreSQLEnums.Contains(name))
+            {
+                NpgsqlConnection.GlobalTypeMapper.MapEnum<TTarget>(name, npgsqlNameTranslator);
+
+                PostgreSQLEnums.Add(name);
+            }
+
+            if (ColumnDefinitions.TryGetValue(property.Name, out var columnDefinition))
+            {
+                columnDefinition = new PostgreEnumColumnDefinition(columnDefinition.Name)
+                {
+                    Name = columnDefinition.Name,
+                    DbType = columnDefinition.DbType,
+                    Information = columnDefinition.Information,
+                    IsNullable = columnDefinition.IsNullable
+                };
+
+                ColumnDefinitions[property.Name] = columnDefinition;
+
+                if (_lastColumnDefinition.HasValue &&
+                    property.Name == _lastColumnDefinition.Value.property.Name)
+                {
+                    _lastColumnDefinition = (property, columnDefinition);
+                }
+            }
+            else
+            {
+                columnDefinition = new PostgreEnumColumnDefinition(property.Name);
+
+                ColumnDefinitions.Add(property.Name, columnDefinition);
+            }
+        }
+
+        private string GetValueOrDefaultName(PropertyInfo property, string? name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -185,44 +400,7 @@ namespace Venflow.Modeling.Definitions.Builder
                 name = nameBuilder.ToString();
             }
 
-            if (!PostgreSQLEnums.Contains(name))
-            {
-                NpgsqlConnection.GlobalTypeMapper.MapEnum<TTarget>(name, npgsqlNameTranslator);
-
-                PostgreSQLEnums.Add(name);
-            }
-
-            var columnDefinition = new PostgreEnumColumnDefenition<TEntity>(property.Name);
-
-            ColumnDefinitions.Add(property.Name, columnDefinition);
-        }
-
-        INotRequiredSingleRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasMany<TRelation>(Expression<Func<TEntity, IList<TRelation>>> navigationProperty) where TRelation : class
-        {
-            var property = navigationProperty.ValidatePropertySelector(false);
-
-            IgnoreProperty(property.Name);
-
-            return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.Many, property, this);
-        }
-
-        IRequiredSingleRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasMany<TRelation>()
-        {
-            return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.Many, null, this);
-        }
-
-        INotRequiredMultiRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasOne<TRelation>(Expression<Func<TEntity, TRelation>> navigationProperty) where TRelation : class
-        {
-            var property = navigationProperty.ValidatePropertySelector();
-
-            IgnoreProperty(property.Name);
-
-            return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.One, property, this);
-        }
-
-        IRequiredMultiRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasOne<TRelation>()
-        {
-            return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.One, null, this);
+            return name;
         }
 
         internal override void IgnoreProperty(string propertyName)
@@ -288,13 +466,13 @@ namespace Venflow.Modeling.Definitions.Builder
 
                 // Handle custom columns
 
-                ColumnDefinition<TEntity>? definition = default;
+                ColumnDefinition? definition = default;
 
                 if (IsCustomEntity && ColumnDefinitions.TryGetValue(property.Name, out definition))
                 {
                     switch (definition)
                     {
-                        case PrimaryColumnDefinition<TEntity> primaryDefintion:
+                        case PrimaryColumnDefinition primaryDefintion:
 
                             if (EntityInNullableContext && isPropertyTypeNullableReferenceType)
                             {
@@ -318,7 +496,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                             hasCustomDefinition = true;
                             break;
-                        case PostgreEnumColumnDefenition<TEntity> enumDefinition:
+                        case PostgreEnumColumnDefinition<TEntity> enumDefinition:
 
                             var enumColumn = new PostgreEnumEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, true), definition.Precision, definition.Scale, definition.DbType);
 
@@ -488,6 +666,12 @@ namespace Venflow.Modeling.Definitions.Builder
         /// <param name="option">The option which define how the primary key is generate.</param>
         /// <returns>The same builder instance so that multiple calls can be chained.</returns>
         IEntityBuilder<TEntity> MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option);
+
+        IIndexBuilder<TEntity> MapIndex<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector);
+
+        IIndexBuilder<TEntity> MapIndex<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string name);
+
+        IIndexBuilder<TEntity> MapIndex(Expression<Func<TEntity, object>> propertySelector, string name);
 
         /// <summary>
         /// Maps a PostgreSQL enum to a CLR enum column.

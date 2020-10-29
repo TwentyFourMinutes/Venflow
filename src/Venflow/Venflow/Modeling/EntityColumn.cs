@@ -25,19 +25,16 @@ namespace Venflow.Modeling
 
         internal bool IsNullable => IsNullableReferenceType || Nullable.GetUnderlyingType(PropertyInfo.PropertyType) != null;
 
-        internal uint? Precision { get; }
-        internal uint? Scale { get; }
-
         internal NpgsqlDbType DbType { get; }
+        internal ColumnInformation? Information { get; }
 
-        protected EntityColumn(PropertyInfo propertyInfo, string columnName, bool isNullableReferenceType, uint? precision, uint? scale, NpgsqlDbType dbType)
+        protected EntityColumn(PropertyInfo propertyInfo, string columnName, bool isNullableReferenceType, NpgsqlDbType dbType, ColumnInformation? information)
         {
             PropertyInfo = propertyInfo;
             ColumnName = columnName;
             IsNullableReferenceType = isNullableReferenceType;
-            Precision = precision;
-            Scale = scale;
             DbType = dbType;
+            Information = information;
         }
     }
 }

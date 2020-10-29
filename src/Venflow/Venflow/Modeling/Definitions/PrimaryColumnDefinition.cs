@@ -1,6 +1,6 @@
 ﻿namespace Venflow.Modeling.Definitions
 {
-    internal class PrimaryColumnDefinition<TEntity> : ColumnDefinition<TEntity> where TEntity : class, new()
+    internal class PrimaryColumnDefinition : ColumnDefinition
     {
         internal bool IsServerSideGenerated { get; set; }
 
