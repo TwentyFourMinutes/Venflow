@@ -37,5 +37,36 @@ namespace Venflow.Modeling.Definitions
 
             return property;
         }
+
+        internal static PropertyInfo[] ValidateMultiPropertySelector<TSource>(this Expression<Func<TSource, object>> propertiesSelector, Type parent)
+        {
+            if (propertiesSelector.Body is not NewExpression newExpression)
+            {
+                throw new InvalidOperationException($"The expression doesn't represent an anonymous object.");
+            }
+
+            var propertyInfos = new PropertyInfo[newExpression.Members.Count];
+
+            for (int memberIndex = 0; memberIndex < newExpression.Members.Count; memberIndex++)
+            {
+                var member = newExpression.Members[memberIndex];
+
+                if (member is not PropertyInfo property)
+                {
+                    throw new InvalidOperationException($"The member {member} doesn't represent a property.");
+                }
+
+                var parentProperty = parent.GetProperty(property.Name);
+
+                if (parentProperty is null)
+                {
+                    throw new InvalidOperationException($"The entity {parent.Name} doesn't contain a property named {property.Name}");
+                }
+
+                propertyInfos[memberIndex] = parentProperty;
+            }
+
+            return propertyInfos;
+        }
     }
 }
