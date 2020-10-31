@@ -1,4 +1,6 @@
-﻿namespace Venflow.CodeFirst.Operations
+﻿using System.Text;
+
+namespace Venflow.CodeFirst.Operations
 {
     internal class DropTableMigration : IMigrationChange
     {
@@ -12,6 +14,11 @@
         public void ApplyChanges(MigrationContext migrationContext, MigrationEntity? migrationEntity)
         {
             migrationContext.Entities.Remove(Name);
+        }
+
+        public void ApplyMigration(StringBuilder migration, MigrationEntity? migrationEntity)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

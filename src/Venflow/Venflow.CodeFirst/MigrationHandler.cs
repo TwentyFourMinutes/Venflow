@@ -3,16 +3,26 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Venflow.CodeFirst.Data;
 using Venflow.Modeling;
 
 namespace Venflow.CodeFirst
 {
-
-    public class MigrationHandler
+    public class MigrationHandler<TDatabase> : IAsyncDisposable, IDisposable
+        where TDatabase : Database, new()
     {
-        public async Task MigrateAsync<TDatabase>() where TDatabase : Database, new()
+        private readonly TDatabase _database;
+
+        public MigrationHandler()
         {
             VenflowConfiguration.PopulateEntityInformation = true;
+
+            _database = new();
+        }
+
+        public async Task MigrateAsync()
+        {
+
 
             var database = new TDatabase();
 
@@ -24,8 +34,6 @@ namespace Venflow.CodeFirst
 
                 return;
             }
-
-
         }
 
         private void CreateMigration(Database database)
@@ -41,6 +49,21 @@ namespace Venflow.CodeFirst
             migrationGenerator.Finish();
         }
 
+        private async Task EnsureMigrationTableCreated()
+        {
+            var sql = @"SELECT EXISTS (
+   SELECT
+   FROM   information_schema.tables
+   WHERE  table_schema = 'public' AND table_name = '_VenflowMigrations'
+);";
+            if (!await _database.ExecuteAsync<bool>(sql))
+            {
+                var migrationSql = new MigrationTableMigration().ApplyMigration();
+
+
+            }
+        }
+
         public void Migrate<TDatabase>(TDatabase database) where TDatabase : Database
         {
             var checksum = ComposeChecksum(database);
@@ -52,14 +75,7 @@ namespace Venflow.CodeFirst
 
             var lastMigration = default(MigrationDatabaseEntity);
 
-            try
-            {
-                lastMigration = await migrationDatabase.Migrations.QuerySingle(@$"SELECT * FROM ""_VenflowMigrations"" ORDER BY ""Timestamp"" DESC LIMIT 1").QueryAsync();
-            }
-            catch (Npgsql.PostgresException exception) when (exception.Message == @"42P01: relation ""_VenflowMigrations"" does not exist")
-            {
-                await migrationDatabase.ExecuteAsync(@"CREATE TABLE ""_VenflowMigrations""");
-            }
+            lastMigration = await migrationDatabase.Migrations.QuerySingle(@$"SELECT * FROM ""_VenflowMigrations"" ORDER BY ""Timestamp"" DESC LIMIT 1").QueryAsync();
 
             return lastMigration;
         }
@@ -95,6 +111,20 @@ namespace Venflow.CodeFirst
             }
 
             return Convert.ToBase64String(SHA1.HashData(Encoding.ASCII.GetBytes(checksumBuilder.ToString())));
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            VenflowConfiguration.PopulateEntityInformation = false;
+
+            return _database.DisposeAsync();
+        }
+
+        public void Dispose()
+        {
+            VenflowConfiguration.PopulateEntityInformation = false;
+
+            _database.Dispose();
         }
     }
 }

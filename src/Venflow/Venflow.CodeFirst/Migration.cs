@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Venflow.CodeFirst
 {
@@ -26,14 +27,38 @@ namespace Venflow.CodeFirst
             return entityMigration;
         }
 
-        public void ApplyMigration()
+        public StringBuilder ApplyMigration()
         {
-            var yeet = new MigrationContext();
+            var migrationSqlBuilder = new StringBuilder();
 
-            ApplyMigration(yeet);
+            ApplyMigration(migrationSqlBuilder);
+
+            return migrationSqlBuilder;
         }
 
-        internal void ApplyMigration(MigrationContext migrationContext)
+        internal void ApplyMigration(StringBuilder migrationSqlBuilder)
+        {
+            Changes();
+
+            var migrationContext = new MigrationContext();
+
+            foreach (var entityMigration in _entityMigrations)
+            {
+                foreach (var migrationChange in entityMigration.MigrationChanges)
+                {
+                    migrationChange.ApplyMigration(migrationSqlBuilder, migrationContext.Entities.GetValueOrDefault(entityMigration.TableName));
+                }
+            }
+        }
+
+        public void ApplyChanges()
+        {
+            var migrationContext = new MigrationContext();
+
+            ApplyChanges(migrationContext);
+        }
+
+        internal void ApplyChanges(MigrationContext migrationContext)
         {
             Changes();
 

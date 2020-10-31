@@ -1,15 +1,8 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using NpgsqlTypes;
-using Venflow.Modeling;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Venflow.Modeling.Definitions;
 using Venflow.Modeling.Definitions.Builder;
 
-namespace Venflow.CodeFirst
+namespace Venflow.CodeFirst.Data
 {
 
     public class MigrationDatabaseEntityConfiguration : EntityConfiguration<MigrationDatabaseEntity>

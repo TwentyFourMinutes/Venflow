@@ -21,7 +21,10 @@ namespace Venflow.CodeFirst
             => MigrationChanges.Add(new DropTableMigration(TableName));
 
         public void AddColumn(string name, Type type, bool isNullable)
-            => MigrationChanges.Add(new CreateColumnMigration(name, type, isNullable));
+            => MigrationChanges.Add(new CreateColumnMigration(name, type, new ColumnDetails { IsNullable = isNullable }));
+
+        public void AddColumn(string name, Type type, ColumnDetails columnDetails)
+            => MigrationChanges.Add(new CreateColumnMigration(name, type, columnDetails));
 
         public void DropColumn(string name)
             => MigrationChanges.Add(new DropColumnMigration(name));
