@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,7 +31,11 @@ namespace Venflow
     {
         internal IReadOnlyDictionary<string, Entity> Entities { get; private set; }
 
-        internal string ConnectionString { get; }
+        /// <summary>
+        /// Contains the connection string.
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public string ConnectionString { get; }
 
         private NpgsqlConnection? _connection;
 
@@ -282,15 +287,31 @@ namespace Venflow
         }
 
         /// <summary>
-        /// Gets or creates a new connections, if none got created yet.
+        /// Gets or creates a new connection, if none got created yet.
         /// </summary>
         /// <returns>the <see cref="NpgsqlConnection"/>.</returns>
+        /// <remarks>If you need to set the connection, you can do so through the <see cref="SetConnection(NpgsqlConnection)"/> method. Note that this method is hidden from the editor and it might no be immediately get picked up by the IntelliSense.</remarks>
         public NpgsqlConnection GetConnection()
         {
             if (_connection is { })
                 return _connection;
 
             return _connection = new NpgsqlConnection(ConnectionString);
+        }
+
+        /// <summary>
+        /// Sets the underlying connection of the current database instance.
+        /// </summary>
+        /// <param name="connection">the <see cref="NpgsqlConnection"/> instance to be set.</param>
+        /// <remarks>If you need to access the connection string, it can be obtained from the <see cref="ConnectionString"/> property. Note that this property is hidden from the editor and it might no be immediately get picked up by the IntelliSense.</remarks>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public void SetConnection(NpgsqlConnection connection)
+        {
+            if (_connection is { } &&
+                _connection.State == ConnectionState.Open)
+                throw new InvalidOperationException("You can not set the connection of this database instance, before the current underlying one is not disposed.");
+
+            _connection = connection;
         }
 
         private void Build()
