@@ -46,6 +46,47 @@ namespace Venflow
         }
 
         /// <summary>
+        /// Asynchronously begins a new transaction.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
+        public async Task<NpgsqlTransaction> BeginTransactionAsync(
+#if !NET48
+            CancellationToken cancellationToken = default
+#endif
+            )
+        {
+            await ValidateConnectionAsync();
+
+#if NET48
+            return _connection.BeginTransaction();
+#else
+            return await _connection.BeginTransactionAsync(cancellationToken);
+#endif
+        }
+
+        /// <summary>
+        /// Asynchronously begins a new transaction.
+        /// </summary>
+        /// <param name="isolationLevel">The isolation level under which the transaction should run.</param>
+        /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
+        public async Task<NpgsqlTransaction> BeginTransactionAsync(IsolationLevel isolationLevel
+#if !NET48
+            , CancellationToken cancellationToken = default
+#endif
+            )
+        {
+            await ValidateConnectionAsync();
+
+#if NET48
+            return _connection.BeginTransaction(isolationLevel);
+#else
+            return await _connection.BeginTransactionAsync(isolationLevel, cancellationToken);
+#endif
+        }
+
+        /// <summary>
         /// Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.
         /// </summary>
         /// <param name="sql">The SQL to execute.</param>
