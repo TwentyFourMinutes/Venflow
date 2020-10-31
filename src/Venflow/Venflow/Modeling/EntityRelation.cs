@@ -21,8 +21,10 @@ namespace Venflow.Modeling
 
         internal EntityRelation Sibiling { get; set; }
 
+        internal RelationInformation? Information { get; }
+
         internal EntityRelation(uint relationId, Entity leftEntity, PropertyInfo? leftNavigationProperty, bool isLeftNavigationPropertyNullable, Entity rightEntity,
-            PropertyInfo? rightNavigationProperty, bool isRightNavigationPropertyNullable, EntityColumn foreignKeyColumn, RelationType relationType, ForeignKeyLocation foreignKeyLocation)
+            PropertyInfo? rightNavigationProperty, bool isRightNavigationPropertyNullable, EntityColumn foreignKeyColumn, RelationType relationType, ForeignKeyLocation foreignKeyLocation, RelationInformation? information)
         {
             RelationId = relationId;
             LeftEntity = leftEntity;
@@ -34,6 +36,7 @@ namespace Venflow.Modeling
             ForeignKeyColumn = foreignKeyColumn;
             RelationType = relationType;
             ForeignKeyLocation = foreignKeyLocation;
+            Information = information;
         }
     }
 }

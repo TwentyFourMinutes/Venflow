@@ -9,7 +9,7 @@ namespace Venflow.Modeling
     {
         internal Func<TEntity, string, NpgsqlParameter> ValueRetriever { get; }
 
-        internal EntityColumn(PropertyInfo propertyInfo, string columnName, Func<TEntity, string, NpgsqlParameter> valueRetriever, bool isNullableReferenceType, uint? precision, uint? scale, NpgsqlDbType dbType) : base(propertyInfo, columnName, isNullableReferenceType, precision, scale, dbType)
+        internal EntityColumn(PropertyInfo propertyInfo, string columnName, Func<TEntity, string, NpgsqlParameter> valueRetriever, bool isNullableReferenceType, NpgsqlDbType? dbType, ColumnInformation? columnInformation) : base(propertyInfo, columnName, isNullableReferenceType, dbType, columnInformation)
         {
             ValueRetriever = valueRetriever;
         }
@@ -25,10 +25,10 @@ namespace Venflow.Modeling
 
         internal bool IsNullable => IsNullableReferenceType || Nullable.GetUnderlyingType(PropertyInfo.PropertyType) != null;
 
-        internal NpgsqlDbType DbType { get; }
+        internal NpgsqlDbType? DbType { get; }
         internal ColumnInformation? Information { get; }
 
-        protected EntityColumn(PropertyInfo propertyInfo, string columnName, bool isNullableReferenceType, NpgsqlDbType dbType, ColumnInformation? information)
+        protected EntityColumn(PropertyInfo propertyInfo, string columnName, bool isNullableReferenceType, NpgsqlDbType? dbType, ColumnInformation? information)
         {
             PropertyInfo = propertyInfo;
             ColumnName = columnName;

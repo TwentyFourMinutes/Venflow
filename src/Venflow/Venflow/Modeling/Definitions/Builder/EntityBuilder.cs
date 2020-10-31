@@ -176,6 +176,32 @@ namespace Venflow.Modeling.Definitions.Builder
             return this;
         }
 
+        IIndexBuilder<TEntity> IEntityPropertyBuilder<TEntity>.IsIndex()
+        {
+            if (VenflowConfiguration.PopulateEntityInformation)
+            {
+                _lastIndexDefinition = new EntityIndexDefinition(_lastColumnDefinition.Value.property);
+
+                Indices.Add(_lastIndexDefinition);
+            }
+
+            return this;
+        }
+
+        IIndexBuilder<TEntity> IEntityPropertyBuilder<TEntity>.IsIndex(string name)
+        {
+            if (VenflowConfiguration.PopulateEntityInformation)
+            {
+                _lastIndexDefinition = new EntityIndexDefinition(_lastColumnDefinition.Value.property);
+
+                Indices.Add(_lastIndexDefinition);
+
+                return ((IIndexBuilder<TEntity>)this).HasName(name);
+            }
+
+            return this;
+        }
+
         IEntityBuilder<TEntity> IEntityPropertyBuilder<TEntity>.HasPostgresEnum(string? name, INpgsqlNameTranslator? npgsqlNameTranslator)
         {
             if (VenflowConfiguration.PopulateEntityInformation)
@@ -214,7 +240,7 @@ namespace Venflow.Modeling.Definitions.Builder
         {
             if (VenflowConfiguration.PopulateEntityInformation)
             {
-                _lastIndexDefinition = new EntityIndexDefinition(propertySelector.ValidateMultiPropertySelector());
+                _lastIndexDefinition = new EntityIndexDefinition(propertySelector.ValidateMultiPropertySelector(Type));
 
                 Indices.Add(_lastIndexDefinition);
 
@@ -297,6 +323,61 @@ namespace Venflow.Modeling.Definitions.Builder
             return this;
         }
 
+        IIndexBuilder<TEntity> IIndexBuilder<TEntity>.HasName(string name)
+        {
+            if (VenflowConfiguration.PopulateEntityInformation)
+            {
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    throw new InvalidOperationException($"The index name '{name}' is invalid.");
+                }
+
+                _lastIndexDefinition.Name = name;
+            }
+
+            return this;
+        }
+
+        IIndexBuilder<TEntity> IIndexBuilder<TEntity>.IsUnique()
+        {
+            if (VenflowConfiguration.PopulateEntityInformation)
+                _lastIndexDefinition.IsUnique = true;
+
+            return this;
+        }
+
+        IIndexBuilder<TEntity> IIndexBuilder<TEntity>.IsConcurrent()
+        {
+            if (VenflowConfiguration.PopulateEntityInformation)
+                _lastIndexDefinition.IsConcurrent = true;
+
+            return this;
+        }
+
+        IIndexBuilder<TEntity> IIndexBuilder<TEntity>.WithMethod(IndexMethod indexMethod)
+        {
+            if (VenflowConfiguration.PopulateEntityInformation)
+                _lastIndexDefinition.IndexMethod = indexMethod;
+
+            return this;
+        }
+
+        IIndexBuilder<TEntity> IIndexBuilder<TEntity>.WithSortOder(IndexSortOrder order)
+        {
+            if (VenflowConfiguration.PopulateEntityInformation)
+                _lastIndexDefinition.SortOder = order;
+
+            return this;
+        }
+
+        IIndexBuilder<TEntity> IIndexBuilder<TEntity>.WithNullSortOrder(IndexNullSortOrder order)
+        {
+            if (VenflowConfiguration.PopulateEntityInformation)
+                _lastIndexDefinition.NullSortOder = order;
+
+            return this;
+        }
+
         private void MapId(PropertyInfo property, DatabaseGeneratedOption option)
         {
             var isServerSideGenerated = option != DatabaseGeneratedOption.None;
@@ -320,7 +401,6 @@ namespace Venflow.Modeling.Definitions.Builder
                     _lastColumnDefinition = (property, columnDefinition);
                 }
             }
-
             else
             {
                 columnDefinition = new PrimaryColumnDefinition(property.Name)
@@ -446,6 +526,23 @@ namespace Venflow.Modeling.Definitions.Builder
         internal override void IgnoreProperty(string propertyName)
             => _ignoredColumns.Add(propertyName);
 
+        internal EntityIndex[]? BuildIndices()
+        {
+            if (!VenflowConfiguration.PopulateEntityInformation)
+                return null;
+
+            var indices = new EntityIndex[Indices.Count];
+
+            for (int indexIterator = 0; indexIterator < indices.Length; indexIterator++)
+            {
+                var index = Indices[indexIterator];
+
+                indices[indexIterator] = new EntityIndex(index.Name, index.Properties, index.IsUnique, index.IsConcurrent, index.IndexMethod, index.SortOder, index.NullSortOder);
+            }
+
+            return indices;
+        }
+
         internal EntityColumnCollection<TEntity> BuildColumns()
         {
             var properties = Type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -525,7 +622,7 @@ namespace Venflow.Modeling.Definitions.Builder
                                 throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
                             }
 
-                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, false), primaryDefintion.IsServerSideGenerated, definition.Precision, definition.Scale, definition.DbType);
+                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, false), primaryDefintion.IsServerSideGenerated, definition.DbType, new ColumnInformation(definition.Information.Precision, definition.Information.Scale, definition.Information.Comment, definition.Information.DefaultValue));
 
                             columns.Insert(0, primaryColumn);
 
@@ -543,9 +640,9 @@ namespace Venflow.Modeling.Definitions.Builder
 
                             hasCustomDefinition = true;
                             break;
-                        case PostgreEnumColumnDefinition<TEntity> enumDefinition:
+                        case PostgreEnumColumnDefinition enumDefinition:
 
-                            var enumColumn = new PostgreEnumEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, true), definition.Precision, definition.Scale, definition.DbType);
+                            var enumColumn = new PostgreEnumEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, true), definition.DbType, new ColumnInformation(definition.Information.Precision, definition.Information.Scale, definition.Information.Comment, definition.Information.DefaultValue));
 
                             columns.Add(enumColumn);
 
@@ -572,7 +669,7 @@ namespace Venflow.Modeling.Definitions.Builder
                         throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
                     }
 
-                    primaryColumn = new PrimaryEntityColumn<TEntity>(property, annotedPrimaryKey.Name, _valueRetrieverFactory.GenerateRetriever(property, false), true, definition.Precision, definition.Scale, definition.DbType);
+                    primaryColumn = new PrimaryEntityColumn<TEntity>(property, annotedPrimaryKey.Name, _valueRetrieverFactory.GenerateRetriever(property, false), true, default, new ColumnInformation(default, default, null, null));
 
                     columns.Insert(0, primaryColumn);
 
@@ -595,6 +692,8 @@ namespace Venflow.Modeling.Definitions.Builder
                 {
                     string columnName;
 
+                    EntityColumn<TEntity> column;
+
                     if (IsCustomEntity &&
                         definition is not null)
                     {
@@ -606,13 +705,14 @@ namespace Venflow.Modeling.Definitions.Builder
                         {
                             relation.ForeignKeyColumnName = columnName;
                         }
+
+                        column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(property, false), isPropertyTypeNullableReferenceType, definition.DbType, new ColumnInformation(definition.Information.Precision, definition.Information.Scale, definition.Information.Comment, definition.Information.DefaultValue));
                     }
                     else
                     {
                         columnName = property.Name;
+                        column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(property, false), isPropertyTypeNullableReferenceType, default, new ColumnInformation(default, default, null, null));
                     }
-
-                    var column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(property, false), isPropertyTypeNullableReferenceType, definition.Precision, definition.Scale, definition.DbType);
 
                     columns.Add(column);
 

@@ -75,13 +75,13 @@ namespace Venflow.Modeling.Definitions.Builder
 
         IRelationConfigurationBuilder<TEntity, TRelation> IRelationConfigurationBuilder<TEntity, TRelation>.HasConstraintName(string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new InvalidOperationException($"The constraint name '{name}' is invalid");
-            }
-
             if (VenflowConfiguration.PopulateEntityInformation)
             {
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    throw new InvalidOperationException($"The constraint name '{name}' is invalid.");
+                }
+
                 _entityRelationDefinition.Information.ConstraintName = name;
             }
 

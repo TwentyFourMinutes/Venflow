@@ -18,7 +18,7 @@ namespace Venflow.Modeling
 
         internal override bool HasDbGeneratedPrimaryKey => PrimaryColumn.IsServerSideGenerated;
 
-        internal Entity(Type entityType, Type? proxyEntityType, string tableName, bool isInNullableContext, bool defaultPropNullability, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity>? primaryColumn, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier) : base(entityType, proxyEntityType, tableName, isInNullableContext, defaultPropNullability, columnListString, explicitColumnListString, nonPrimaryColumnListString)
+        internal Entity(Type entityType, Type? proxyEntityType, string tableName, bool isInNullableContext, bool defaultPropNullability, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity>? primaryColumn, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier, EntityIndex[]? indices) : base(entityType, proxyEntityType, tableName, isInNullableContext, defaultPropNullability, columnListString, explicitColumnListString, nonPrimaryColumnListString, indices)
         {
             ChangeTrackerFactory = changeTrackerFactory;
             ChangeTrackerApplier = changeTrackerApplier;
@@ -100,19 +100,19 @@ namespace Venflow.Modeling
         internal bool IsInNullableContext { get; }
         internal bool DefaultPropNullability { get; }
 
-
         internal abstract bool HasDbGeneratedPrimaryKey { get; }
 
         internal Type EntityType { get; }
         internal Type? ProxyEntityType { get; }
 
         internal TrioKeyCollection<uint, string, EntityRelation>? Relations { get; set; }
+        internal EntityIndex[]? Indices { get; }
 
         internal string ColumnListString { get; }
         internal string ExplicitColumnListString { get; }
         internal string NonPrimaryColumnListString { get; }
 
-        protected Entity(Type entityType, Type? proxyEntityType, string tableName, bool isInNullableContext, bool defaultPropNullability, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString)
+        protected Entity(Type entityType, Type? proxyEntityType, string tableName, bool isInNullableContext, bool defaultPropNullability, string columnListString, string explicitColumnListString, string nonPrimaryColumnListString, EntityIndex[]? indices)
         {
             EntityType = entityType;
             ProxyEntityType = proxyEntityType;
@@ -124,6 +124,7 @@ namespace Venflow.Modeling
             ColumnListString = columnListString;
             ExplicitColumnListString = explicitColumnListString;
             NonPrimaryColumnListString = nonPrimaryColumnListString;
+            Indices = indices;
         }
 
         internal abstract EntityColumn GetPrimaryColumn();

@@ -30,7 +30,7 @@ namespace Venflow.Modeling.Definitions
                 _entityBuilder.IsCustomEntity ? GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames) : string.Empty,
                 _entityBuilder.IsCustomEntity ? GetColumnListString(columns, ColumnListStringOptions.None) : string.Empty,
                 _entityBuilder.IsCustomEntity ? _entityBuilder.ChangeTrackerFactory?.GetProxyFactory() : default,
-                _entityBuilder.IsCustomEntity ? _entityBuilder.ChangeTrackerFactory?.GetProxyApplyingFactory(columns) : default);
+                _entityBuilder.IsCustomEntity ? _entityBuilder.ChangeTrackerFactory?.GetProxyApplyingFactory(columns) : default, _entityBuilder.BuildIndices());
 
             return _entity;
         }
@@ -100,7 +100,7 @@ namespace Venflow.Modeling.Definitions
                     keyColumn = relationEntity.GetColumn(relation.ForeignKeyColumnName);
                 }
 
-                var entityRelation = new EntityRelation(relation.RelationId, _entity, relation.LeftNavigationProperty, relation.LeftNavigationProperty?.IsNullableReferenceType(_entity.IsInNullableContext, _entity.DefaultPropNullability) ?? false, relationEntity, relation.RightNavigationProperty, relation.RightNavigationProperty?.IsNullableReferenceType(_entity.IsInNullableContext, _entity.DefaultPropNullability) ?? false, keyColumn, relation.RelationType, relation.ForeignKeyLocation);
+                var entityRelation = new EntityRelation(relation.RelationId, _entity, relation.LeftNavigationProperty, relation.LeftNavigationProperty?.IsNullableReferenceType(_entity.IsInNullableContext, _entity.DefaultPropNullability) ?? false, relationEntity, relation.RightNavigationProperty, relation.RightNavigationProperty?.IsNullableReferenceType(_entity.IsInNullableContext, _entity.DefaultPropNullability) ?? false, keyColumn, relation.RelationType, relation.ForeignKeyLocation, VenflowConfiguration.PopulateEntityInformation ? new RelationInformation(relation.Information.ConstraintName, relation.Information.OnUpdateAction, relation.Information.OnDeleteAction) : null);
 
                 if (VenflowConfiguration.ShouldUseDeepValidation &&
                     relation.RelationType == RelationType.OneToMany &&

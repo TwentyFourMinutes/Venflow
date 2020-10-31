@@ -1,4 +1,6 @@
-﻿namespace Venflow.Modeling.Definitions.Builder
+﻿using Venflow.Enums;
+
+namespace Venflow.Modeling.Definitions.Builder
 {
     public interface IRelationConfigurationBuilder<TEntity, TRelation>
         where TEntity : class, new()
