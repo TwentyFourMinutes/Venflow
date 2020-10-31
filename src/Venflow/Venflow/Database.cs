@@ -61,7 +61,7 @@ namespace Venflow
 #if NET48
             return _connection.BeginTransaction();
 #else
-            return await _connection.BeginTransactionAsync(cancellationToken);
+            return await GetConnection().BeginTransactionAsync(cancellationToken);
 #endif
         }
 
@@ -82,7 +82,7 @@ namespace Venflow
 #if NET48
             return _connection.BeginTransaction(isolationLevel);
 #else
-            return await _connection.BeginTransactionAsync(isolationLevel, cancellationToken);
+            return await GetConnection().BeginTransactionAsync(isolationLevel, cancellationToken);
 #endif
         }
 
