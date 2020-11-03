@@ -8,14 +8,14 @@ namespace Venflow.Benchmarks.Benchmarks
 {
     public abstract class BenchmarkBase
     {
-        public BenchmarkDb Database { get; set; }
+        public BenchmarkDatabase Database { get; set; }
         public BenchmarkDbContext PersonDbContext { get; set; }
 
         private static bool _initDone = false;
 
         public virtual Task Setup()
         {
-            Database = new BenchmarkDb();
+            Database = new BenchmarkDatabase();
 
             if (!_initDone)
             {

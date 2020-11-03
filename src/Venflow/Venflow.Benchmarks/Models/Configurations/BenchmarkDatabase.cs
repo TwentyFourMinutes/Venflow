@@ -2,13 +2,13 @@
 
 namespace Venflow.Benchmarks.Models.Configurations
 {
-    public class BenchmarkDb : Database
+    public class BenchmarkDatabase : Database
     {
         public Table<Person> People { get; set; }
         public Table<Email> Emails { get; set; }
         public Table<EmailContent> EmailContents { get; set; }
 
-        public BenchmarkDb() : base(SecretsHandler.GetConnectionString<Startup>())
+        public BenchmarkDatabase() : base(SecretsHandler.GetConnectionString<Startup>())
         {
         }
     }

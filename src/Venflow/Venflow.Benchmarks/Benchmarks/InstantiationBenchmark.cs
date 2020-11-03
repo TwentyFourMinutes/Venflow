@@ -23,7 +23,7 @@ namespace Venflow.Benchmarks.Benchmarks
         [Benchmark]
         public ValueTask InstantiateVenflowDatabase()
         {
-            return new BenchmarkDb().DisposeAsync();
+            return new BenchmarkDatabase().DisposeAsync();
         }
     }
 }
