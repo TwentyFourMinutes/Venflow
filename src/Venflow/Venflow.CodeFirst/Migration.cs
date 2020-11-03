@@ -6,6 +6,8 @@ namespace Venflow.CodeFirst
 {
     public abstract class Migration
     {
+        public abstract string Name { get; }
+
         private readonly List<EntityMigration> _entityMigrations;
 
         protected Migration()
@@ -46,16 +48,10 @@ namespace Venflow.CodeFirst
             {
                 foreach (var migrationChange in entityMigration.MigrationChanges)
                 {
-                    migrationChange.ApplyMigration(migrationSqlBuilder, migrationContext.Entities.GetValueOrDefault(entityMigration.TableName));
+                    migrationChange.ApplyChanges(migrationContext);
+                    migrationChange.ApplyMigration(migrationSqlBuilder);
                 }
             }
-        }
-
-        public void ApplyChanges()
-        {
-            var migrationContext = new MigrationContext();
-
-            ApplyChanges(migrationContext);
         }
 
         internal void ApplyChanges(MigrationContext migrationContext)
@@ -66,7 +62,7 @@ namespace Venflow.CodeFirst
             {
                 foreach (var migrationChange in entityMigration.MigrationChanges)
                 {
-                    migrationChange.ApplyChanges(migrationContext, migrationContext.Entities.GetValueOrDefault(entityMigration.TableName));
+                    migrationChange.ApplyChanges(migrationContext);
                 }
             }
         }

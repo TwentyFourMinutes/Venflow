@@ -1,42 +1,87 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Security.Cryptography;
+using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
-using NpgsqlTypes;
-using Venflow.Modeling;
-using Venflow.Modeling.Definitions;
-using Venflow.Modeling.Definitions.Builder;
+using Venflow.CodeFirst.Operations;
 
 namespace Venflow.CodeFirst
 {
-
     internal class MigrationGenerator
     {
         private readonly StringBuilder _sourceCode;
+        private readonly string _parentNamespace;
         private readonly string _migrationName;
 
-        internal MigrationGenerator(string migrationName)
+        internal MigrationGenerator(string parentNamespace, string migrationName)
         {
             _sourceCode = new StringBuilder();
+            _parentNamespace = parentNamespace;
             _migrationName = migrationName;
         }
 
-        internal void Start()
+        internal string GenerateMigrationClass(List<IMigrationChange> migrationChanges)
         {
-            _sourceCode.Append($@"
-namespace Venflow.CodeFirst
-{{
-    internal sealed class {_migrationName} : Migration
-    {{");
+            Start();
+
+            WriteMigrations(migrationChanges);
+
+            return Finish();
+        }
+        private void Start()
+        {
+            _sourceCode.Append(@"
+namespace ").Append(_parentNamespace).Append(@"
+{
+    internal sealed class ").Append(_migrationName).Append(@" : Migration
+    {
+        public override string Name => """).Append(_migrationName).Append(@""";
+
+        public override void Changes()
+        {
+            ");
         }
 
-        internal void Finish()
+        private void WriteMigrations(List<IMigrationChange> migrationChanges)
         {
-            _sourceCode.Append($@"
-    }}
-}}");
+            var lastEntity = default(MigrationEntity);
+
+            foreach (var migrationChange in migrationChanges)
+            {
+                if (migrationChange.MigrationEntity != lastEntity)
+                {
+                    if (lastEntity is not null)
+                    {
+                        _sourceCode.AppendLine(@"
+            });");
+                        _sourceCode.AppendLine();
+                        _sourceCode.Append("            ");
+                    }
+
+                    lastEntity = migrationChange.MigrationEntity;
+
+                    _sourceCode.Append(@"Entity(""").Append(lastEntity.Name).AppendLine(@""", migration =>
+            {");
+                }
+
+                _sourceCode.Append("                ");
+
+                migrationChange.CreateMigration(_sourceCode);
+
+                _sourceCode.Append(Environment.NewLine);
+                _sourceCode.Append(Environment.NewLine);
+            }
+
+            _sourceCode.Length -= Environment.NewLine.Length;
+
+            _sourceCode.AppendLine("                }");
+        }
+
+        private string Finish()
+        {
+            _sourceCode.Append(@"
+        }
+    }
+}");
+            return _sourceCode.ToString();
         }
     }
 }

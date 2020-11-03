@@ -4,21 +4,29 @@ namespace Venflow.CodeFirst.Operations
 {
     internal class DropTableMigration : IMigrationChange
     {
-        public string Name { get; }
+        public MigrationEntity MigrationEntity { get; }
 
-        public DropTableMigration(string name)
+        internal string Name { get; }
+
+        internal DropTableMigration(string name, MigrationEntity migrationEntity)
         {
             Name = name;
+            MigrationEntity = migrationEntity;
         }
 
-        public void ApplyChanges(MigrationContext migrationContext, MigrationEntity? migrationEntity)
+        public void ApplyChanges(MigrationContext migrationContext)
         {
             migrationContext.Entities.Remove(Name);
         }
 
-        public void ApplyMigration(StringBuilder migration, MigrationEntity? migrationEntity)
+        public void ApplyMigration(StringBuilder migration)
         {
-            throw new System.NotImplementedException();
+            migration.Append(@"DROP TABLE """).Append(Name).AppendLine(@""";");
+        }
+
+        public void CreateMigration(StringBuilder migrationClass)
+        {
+            migrationClass.Append("migration.Drop();");
         }
     }
 }

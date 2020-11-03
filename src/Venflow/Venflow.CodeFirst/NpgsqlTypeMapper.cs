@@ -10,6 +10,7 @@ namespace Venflow.CodeFirst
     {
         private static readonly object _typeMapperInstance;
         private static readonly Func<object, Type, NpgsqlDbType> _typeMapper;
+
         static NpgsqlTypeMapper()
         {
             var globalTypeMapperType = typeof(NpgsqlCommand).Assembly.GetTypes().First(x => x.Name == "GlobalTypeMapper");
@@ -22,6 +23,7 @@ namespace Venflow.CodeFirst
 
             _typeMapper = Expression.Lambda<Func<object, Type, NpgsqlDbType>>(Expression.Call(Expression.Convert(typeMapperParameter, globalTypeMapperType), mapperMethod, typeParameter), typeMapperParameter, typeParameter).Compile();
         }
+
         internal static NpgsqlDbType GetDbType(Type type)
         {
             return _typeMapper.Invoke(_typeMapperInstance, type);

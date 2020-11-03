@@ -4,23 +4,31 @@ namespace Venflow.CodeFirst.Operations
 {
     internal class CreateTableMigration : IMigrationChange
     {
-        public string Name { get; }
+        public MigrationEntity MigrationEntity { get; }
 
-        public CreateTableMigration(string name)
+        internal string Name { get; }
+
+        public CreateTableMigration(string name, MigrationEntity migrationEntity)
         {
             Name = name;
+            MigrationEntity = migrationEntity;
         }
 
-        public void ApplyChanges(MigrationContext migrationContext, MigrationEntity? migrationEntity)
+        public void ApplyChanges(MigrationContext migrationContext)
         {
-            migrationContext.Entities.Add(Name, new MigrationEntity(Name));
+            migrationContext.Entities.Add(Name, MigrationEntity);
         }
 
-        public void ApplyMigration(StringBuilder migration, MigrationEntity? migrationEntity)
+        public void ApplyMigration(StringBuilder migration)
         {
             migration.Append(@"CREATE TABLE """)
-                     .Append(migrationEntity.Name)
-                     .Append(@""";");
+                     .Append(Name)
+                     .AppendLine(@""" ();");
+        }
+
+        public void CreateMigration(StringBuilder migrationClass)
+        {
+            migrationClass.Append("migration.Create();");
         }
     }
 }

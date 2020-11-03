@@ -6,23 +6,26 @@ namespace Venflow.CodeFirst.Operations
 {
     internal class CreateColumnMigration : IMigrationChange
     {
+        public MigrationEntity MigrationEntity { get; }
+
         internal string Name { get; }
         internal Type Type { get; }
         internal ColumnDetails Details { get; }
 
-        internal CreateColumnMigration(string name, Type type, ColumnDetails details)
+        internal CreateColumnMigration(string name, Type type, ColumnDetails details, MigrationEntity migrationEntity)
         {
             Name = name;
             Type = type;
             Details = details;
+            MigrationEntity = migrationEntity;
         }
 
-        public void ApplyChanges(MigrationContext migrationContext, MigrationEntity? migrationEntity)
+        public void ApplyChanges(MigrationContext migrationContext)
         {
-            migrationEntity.Columns.Add(Name, new MigrationColumn(Name, Type, Details));
+            MigrationEntity.Columns.Add(Name, new MigrationColumn(Name, Type, Details));
         }
 
-        public void ApplyMigration(StringBuilder migration, MigrationEntity? migrationEntity)
+        public void ApplyMigration(StringBuilder migration)
         {
             NpgsqlDbType columnDbType;
 
@@ -30,16 +33,23 @@ namespace Venflow.CodeFirst.Operations
             {
                 columnDbType = NpgsqlDbType.Bigint;
             }
+            // TODO: Check for native postgres enums
             else
             {
                 columnDbType = NpgsqlTypeMapper.GetDbType(Type);
             }
 
+            if (columnDbType == NpgsqlDbType.Text &&
+               Details.Precision.HasValue)
+            {
+                columnDbType = NpgsqlDbType.Varchar;
+            }
+
             migration.Append(@"ALTER TABLE """)
-                     .Append(migrationEntity.Name)
-                     .Append(@""" ADD COLUMN ")
+                     .Append(MigrationEntity.Name)
+                     .Append(@""" ADD COLUMN """)
                      .Append(Name)
-                     .Append(' ')
+                     .Append(@""" ")
                      .Append(columnDbType);
 
             if (Details.Precision.HasValue)
@@ -71,6 +81,11 @@ namespace Venflow.CodeFirst.Operations
             }
 
             migration.AppendLine(";");
+        }
+
+        public void CreateMigration(StringBuilder migrationClass)
+        {
+            migrationClass.Append("migration.AddColumn(").Append(Name).Append(", typeof(").Append(Type.FullName).Append("), new ColumnDetails { IsPrimaryKey = ").Append(Details.IsPrimaryKey.ToString().ToLower()).Append(", IsNullable = ").Append(Details.IsNullable.ToString().ToLower()).Append(", Precision = ").Append(Details?.Precision.ToString() ?? "null").Append(", Scale = ").Append(Details?.Scale.ToString() ?? "null").Append(" });");
         }
     }
 }
