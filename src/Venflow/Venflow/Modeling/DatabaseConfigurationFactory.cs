@@ -109,7 +109,8 @@ namespace Venflow.Modeling
             {
                 var property = propertiesSpan[i];
 
-                if (property.PropertyType.GetGenericTypeDefinition() != tableType)
+                if (!property.PropertyType.IsGenericType ||
+                    property.PropertyType.GetGenericTypeDefinition() != tableType)
                 {
                     continue;
                 }
