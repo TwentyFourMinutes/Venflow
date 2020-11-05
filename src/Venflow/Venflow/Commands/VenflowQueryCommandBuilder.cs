@@ -211,5 +211,31 @@ namespace Venflow.Commands
 
             return new QueryRelationBuilder<TEntity, TEntity, TReturn>(_entityConfiguration, this, _relationBuilderValues).JoinWith(propertySelector, joinBehaviour);
         }
+        IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.LeftJoinWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector)
+            => JoinWith(propertySelector, JoinBehaviour.LeftJoin);
+
+        IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.LeftJoinWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>> propertySelector)
+            => JoinWith(propertySelector, JoinBehaviour.LeftJoin);
+
+        IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.LeftJoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector)
+            => JoinWith(propertySelector, JoinBehaviour.LeftJoin);
+
+        IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.RightJoinWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector)
+            => JoinWith(propertySelector, JoinBehaviour.RightJoin);
+
+        IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.RightJoinWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>> propertySelector)
+            => JoinWith(propertySelector, JoinBehaviour.RightJoin);
+
+        IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.RightJoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector)
+            => JoinWith(propertySelector, JoinBehaviour.RightJoin);
+
+        IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.FullJoinWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector)
+            => JoinWith(propertySelector, JoinBehaviour.FullJoin);
+
+        IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.FullJoinWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>> propertySelector)
+            => JoinWith(propertySelector, JoinBehaviour.FullJoin);
+
+        IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.FullJoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector)
+            => JoinWith(propertySelector, JoinBehaviour.FullJoin);
     }
 }
