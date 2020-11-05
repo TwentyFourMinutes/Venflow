@@ -2,7 +2,6 @@
 
 namespace Venflow.CodeFirst.Data
 {
-
     public class MigrationDatabaseEntity
     {
         public string Name { get; set; }
