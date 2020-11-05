@@ -386,14 +386,20 @@ namespace Venflow.Modeling.Definitions.Builder
                 }
             }
 
-            if (primaryColumn is null && IsCustomEntity)
+            if (primaryColumn is null
+                && IsCustomEntity)
             {
                 throw new InvalidOperationException($"The EntityBuilder couldn't find the primary key on the entity '{Type.Name}', it isn't named 'Id', the KeyAttribute wasn't set nor was any property in the configuration defined as the primary key.");
             }
 
             if (columns.Count == 0)
             {
-                throw new InvalidOperationException($"The entity '{Type.Name}' doesn't contain any columns/mapped propertiesSpan. A entity needs at least one column/mapped property.");
+                throw new InvalidOperationException($"The entity '{Type.Name}' doesn't contain any columns/mapped properties. A entity needs at least one column/mapped property.");
+            }
+
+            if (regularColumnsOffset == columns.Count)
+            {
+                throw new InvalidOperationException($"The entity '{Type.Name}' doesn't contain any non-primary/non-database generated columns/mapped properties. A entity needs at least one non-primary/non-database generated column/mapped property.");
             }
 
             if (changeTrackingColumns.Count != 0)
