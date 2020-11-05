@@ -25,32 +25,32 @@ namespace Venflow.Commands
 
         #region Query
 
-        public IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> QuerySingle(string sql)
+        IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> IVenflowCommandBuilder<TEntity>.QuerySingle(string sql)
         {
             return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, _disposeCommand, true);
         }
 
-        public IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> QuerySingle(string sql, params NpgsqlParameter[] parameters)
+        IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> IVenflowCommandBuilder<TEntity>.QuerySingle(string sql, params NpgsqlParameter[] parameters)
         {
             return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, parameters, _disposeCommand, true);
         }
 
-        public IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> QueryInterpolatedSingle(FormattableString sql)
+        IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> IVenflowCommandBuilder<TEntity>.QueryInterpolatedSingle(FormattableString sql)
         {
             return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, _disposeCommand, true);
         }
 
-        public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch(string sql)
+        IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> IVenflowCommandBuilder<TEntity>.QueryBatch(string sql)
         {
             return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, sql, _disposeCommand, false);
         }
 
-        public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch(string sql, params NpgsqlParameter[] parameters)
+        IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> IVenflowCommandBuilder<TEntity>.QueryBatch(string sql, params NpgsqlParameter[] parameters)
         {
             return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, sql, parameters, _disposeCommand, false);
         }
 
-        public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryInterpolatedBatch(FormattableString sql)
+        IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> IVenflowCommandBuilder<TEntity>.QueryInterpolatedBatch(FormattableString sql)
         {
             return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, sql, _disposeCommand, false);
         }
@@ -59,7 +59,7 @@ namespace Venflow.Commands
 
         #region Insert
 
-        public IBaseInsertRelationBuilder<TEntity, TEntity> Insert()
+        IBaseInsertRelationBuilder<TEntity, TEntity> IVenflowCommandBuilder<TEntity>.Insert()
         {
             return new VenflowInsertCommandBuilder<TEntity>(_database, _entityConfiguration, _command, _disposeCommand);
         }
@@ -68,7 +68,7 @@ namespace Venflow.Commands
 
         #region Delete
 
-        public IDeleteCommandBuilder<TEntity> Delete()
+        IDeleteCommandBuilder<TEntity> IVenflowCommandBuilder<TEntity>.Delete()
         {
             return new VenflowDeleteCommandBuilder<TEntity>(_database, _entityConfiguration, _command, _disposeCommand);
         }
@@ -77,7 +77,7 @@ namespace Venflow.Commands
 
         #region Update
 
-        public IUpdateCommandBuilder<TEntity> Update()
+        IUpdateCommandBuilder<TEntity> IVenflowCommandBuilder<TEntity>.Update()
         {
             return new VenflowUpdateCommandBuilder<TEntity>(_database, _entityConfiguration, _command, _disposeCommand);
         }
