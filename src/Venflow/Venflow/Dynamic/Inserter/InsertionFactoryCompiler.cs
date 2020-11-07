@@ -829,11 +829,21 @@ namespace Venflow.Dynamic.Inserter
                 {
                     var relation = entityHolder.SelfAssignedRelations[relationIndex];
 
+                    // Check if navigation property is null
+
+                    var afterBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Brfalse, afterBodyLabel);
+
                     _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
                     _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+
+                    _moveNextMethodIL.MarkLabel(afterBodyLabel);
                 }
 
                 // append placeholders to command builder
@@ -1590,6 +1600,15 @@ namespace Venflow.Dynamic.Inserter
                     {
                         var relation = entityHolder.SelfAssignedRelations[relationIndex];
 
+                        // Check if navigation property is null
+
+                        var afterBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Brfalse, afterBodyLabel);
+
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -1597,6 +1616,8 @@ namespace Venflow.Dynamic.Inserter
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+
+                        _moveNextMethodIL.MarkLabel(afterBodyLabel);
                     }
 
                     // Assign parameters to command
@@ -1849,11 +1870,21 @@ namespace Venflow.Dynamic.Inserter
                     {
                         var relation = entityHolder.SelfAssignedRelations[relationIndex];
 
+                        // Check if navigation property is null
+
+                        var afterBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Brfalse, afterBodyLabel);
+
                         _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
                         _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+
+                        _moveNextMethodIL.MarkLabel(afterBodyLabel);
                     }
 
                     // append placeholders to command builder
