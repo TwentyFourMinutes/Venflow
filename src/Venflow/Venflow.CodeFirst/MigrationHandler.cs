@@ -42,8 +42,14 @@ namespace Venflow.CodeFirst
             _migrationAssembly = migrationAssembly;
         }
 
-        public async Task MigrateAsync()
+        public async Task MigrateAsync(string migrationName)
         {
+            if (string.IsNullOrWhiteSpace(migrationName))
+                throw new ArgumentException("Can not be null, empty or filled with whitespace.", nameof(migrationName));
+
+            if (char.IsDigit(migrationName[0]))
+                throw new ArgumentException("Can not start with a digit.", nameof(migrationName));
+
             var lastMigration = default(MigrationDatabaseEntity);
 
             var currentChecksum = ComposeChecksum();
@@ -70,9 +76,9 @@ namespace Venflow.CodeFirst
             if (changes.Count == 0)
                 return;
 
-            var migrationClassCreationTask = Task.Run(() => Console.WriteLine(CreateMigrationClass("NotYetDefined", changes)));
+            var migrationClassCreationTask = Task.Run(() => Console.WriteLine(CreateMigrationClass(migrationName, changes)));
 
-            await ApplyMigration("NotYetDefined", changes, currentChecksum);
+            await ApplyMigration(migrationName, changes, currentChecksum);
 
             await migrationClassCreationTask;
         }
@@ -83,7 +89,7 @@ namespace Venflow.CodeFirst
 
             foreach (var entityKV in _database.Entities)
             {
-                var migrationEntity = new MigrationEntity(entityKV.Value.TableName);
+                var migrationEntity = new MigrationEntity(entityKV.Value.RawTableName);
 
                 if (migrationContext.Entities.TryGetValue(entityKV.Key, out var oldEntity))
                 {
@@ -121,7 +127,7 @@ namespace Venflow.CodeFirst
                 }
                 else
                 {
-                    migrationChanges.Add(new CreateTableMigration(entityKV.Value.TableName, migrationEntity));
+                    migrationChanges.Add(new CreateTableMigration(entityKV.Value.RawTableName, migrationEntity));
 
                     // TODO: Add Default value and SQL Comment
                     for (int columnIndex = 0; columnIndex < entityKV.Value.GetColumnCount(); columnIndex++)
@@ -202,15 +208,26 @@ namespace Venflow.CodeFirst
             {
                 migrationChange.ApplyMigration(migrationSql);
             }
+            Console.WriteLine(migrationSql);
 
-            await _database.ExecuteAsync(migrationSql.ToString());
+            await using var transaction = await _database.BeginTransactionAsync();
+
+            try
+            {
+                await _database.ExecuteAsync(migrationSql.ToString());
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
             await _migrationDatabase.Migrations.InsertAsync(new MigrationDatabaseEntity { Name = migrationName, Checksum = checksum, Timestamp = DateTime.UtcNow });
         }
-
         private string CreateMigrationClass(string migrationName, List<IMigrationChange> migrationChanges)
         {
-            var migrationGenerator = new MigrationGenerator(_migrationAssembly.GetName().Name, GenerateMigrationKey() + "_" + migrationName);
+            var migrationGenerator = new MigrationGenerator(_migrationAssembly.GetName().Name, migrationName, GenerateMigrationKey() + "_" + migrationName);
 
             return migrationGenerator.GenerateMigrationClass(migrationChanges);
         }

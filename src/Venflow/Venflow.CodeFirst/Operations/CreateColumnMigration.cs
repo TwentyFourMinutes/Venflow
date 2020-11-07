@@ -69,15 +69,13 @@ namespace Venflow.CodeFirst.Operations
                 }
             }
 
-            migration.Append(' ');
-
             if (Details.IsPrimaryKey)
             {
-                migration.Append("PRIMARY KEY");
+                migration.Append(" PRIMARY KEY");
             }
             else if (!Details.IsNullable)
             {
-                migration.Append("NOT NULL");
+                migration.Append(" NOT NULL");
             }
 
             migration.AppendLine(";");
@@ -85,7 +83,7 @@ namespace Venflow.CodeFirst.Operations
 
         public void CreateMigration(StringBuilder migrationClass)
         {
-            migrationClass.Append("migration.AddColumn(").Append(Name).Append(", typeof(").Append(Type.FullName).Append("), new ColumnDetails { IsPrimaryKey = ").Append(Details.IsPrimaryKey.ToString().ToLower()).Append(", IsNullable = ").Append(Details.IsNullable.ToString().ToLower()).Append(", Precision = ").Append(Details?.Precision.ToString() ?? "null").Append(", Scale = ").Append(Details?.Scale.ToString() ?? "null").Append(" });");
+            migrationClass.Append("migration.AddColumn(").Append(Name).Append(", typeof(").Append(Type.FullName).Append("), new ColumnDetails { IsPrimaryKey = ").Append(Details.IsPrimaryKey.ToString().ToLower()).Append(", IsNullable = ").Append(Details.IsNullable.ToString().ToLower()).Append(", Precision = ").Append(Details?.Precision?.ToString() ?? "null").Append(", Scale = ").Append(Details?.Scale?.ToString() ?? "null").Append(" });");
         }
     }
 }

@@ -405,7 +405,7 @@ namespace Venflow.Modeling.Definitions.Builder
             {
                 columnDefinition = new PrimaryColumnDefinition(property.Name)
                 {
-                    IsServerSideGenerated = true
+                    IsServerSideGenerated = isServerSideGenerated
                 };
 
                 ColumnDefinitions.Add(property.Name, columnDefinition);

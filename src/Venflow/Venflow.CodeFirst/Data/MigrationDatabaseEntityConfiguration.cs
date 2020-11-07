@@ -10,6 +10,7 @@ namespace Venflow.CodeFirst.Data
         protected override void Configure(IEntityBuilder<MigrationDatabaseEntity> entityBuilder)
         {
             entityBuilder.MapToTable("_VenflowMigrations");
+
             entityBuilder.MapId(x => x.Name, DatabaseGeneratedOption.None);
         }
     }

@@ -10,12 +10,14 @@ namespace Venflow.CodeFirst
         private readonly StringBuilder _sourceCode;
         private readonly string _parentNamespace;
         private readonly string _migrationName;
+        private readonly string _fullMigrationName;
 
-        internal MigrationGenerator(string parentNamespace, string migrationName)
+        internal MigrationGenerator(string parentNamespace, string migrationName, string fullMigrationName)
         {
             _sourceCode = new StringBuilder();
             _parentNamespace = parentNamespace;
             _migrationName = migrationName;
+            _fullMigrationName = fullMigrationName;
         }
 
         internal string GenerateMigrationClass(List<IMigrationChange> migrationChanges)
@@ -33,7 +35,7 @@ namespace ").Append(_parentNamespace).Append(@"
 {
     internal sealed class ").Append(_migrationName).Append(@" : Migration
     {
-        public override string Name => """).Append(_migrationName).Append(@""";
+        public override string Name => """).Append(_fullMigrationName).Append(@""";
 
         public override void Changes()
         {
@@ -50,6 +52,8 @@ namespace ").Append(_parentNamespace).Append(@"
                 {
                     if (lastEntity is not null)
                     {
+                        _sourceCode.Length -= Environment.NewLine.Length * 2;
+
                         _sourceCode.AppendLine(@"
             });");
                         _sourceCode.AppendLine();
@@ -66,13 +70,13 @@ namespace ").Append(_parentNamespace).Append(@"
 
                 migrationChange.CreateMigration(_sourceCode);
 
-                _sourceCode.Append(Environment.NewLine);
-                _sourceCode.Append(Environment.NewLine);
+                _sourceCode.AppendLine();
+                _sourceCode.AppendLine();
             }
 
             _sourceCode.Length -= Environment.NewLine.Length;
 
-            _sourceCode.AppendLine("                }");
+            _sourceCode.AppendLine("            }");
         }
 
         private string Finish()
