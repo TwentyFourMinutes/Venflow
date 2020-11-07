@@ -7,6 +7,9 @@ title: Setup Venflow
 
 ## Configure the Database
 
+> [!WARNING] 
+> Be aware, that LINQPad may throw unexpected errors and you therefor should use a real .Net Project instead.
+
 In Venflow you are reflecting your PostgreSQL database with the `Database` class, which will host all of your tables. In the following example we will configure a database containing two tables, `Blogs` and `Posts`. One Blog contains many posts and a post contains a single Blog.
 
 ```cs

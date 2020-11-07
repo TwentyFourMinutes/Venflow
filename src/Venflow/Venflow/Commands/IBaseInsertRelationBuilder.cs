@@ -17,7 +17,7 @@ namespace Venflow.Commands
         /// Allows to configure the current insert, to insert all populated relations which can be reached.
         /// </summary>
         /// <returns>An object that can be used to further configure the operation.</returns>
-        IBaseInsertRelationBuilder<TRootEntity, TRootEntity> InsertWithAll();
+        IBaseInsertRelationBuilder<TRootEntity, TRootEntity> WithAll();
 
         /// <summary>
         /// Allows to configure the inserted relations with the current insert.
@@ -25,7 +25,7 @@ namespace Venflow.Commands
         /// <typeparam name="TToEntity">The type of the inserted entity.</typeparam>
         /// <param name="propertySelector">A lambda expression representing the navigation property which should get inserted with the root entity during insertion.</param>
         /// <returns>An object that can be used to further configure the operation.</returns>
-        IInsertRelationBuilder<TToEntity, TRootEntity> InsertWith<TToEntity>(Expression<Func<TRootEntity, TToEntity>> propertySelector)
+        IInsertRelationBuilder<TToEntity, TRootEntity> With<TToEntity>(Expression<Func<TRootEntity, TToEntity>> propertySelector)
             where TToEntity : class, new();
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Venflow.Commands
         /// <typeparam name="TToEntity">The type of the inserted entity.</typeparam>
         /// <param name="propertySelector">A lambda expression representing the navigation property which should get inserted with the root entity during insertion.</param>
         /// <returns>An object that can be used to further configure the operation.</returns>
-        IInsertRelationBuilder<TToEntity, TRootEntity> InsertWith<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>> propertySelector)
+        IInsertRelationBuilder<TToEntity, TRootEntity> With<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>> propertySelector)
             where TToEntity : class, new();
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Venflow.Commands
         /// <typeparam name="TToEntity">The type of the inserted entity.</typeparam>
         /// <param name="propertySelector">A lambda expression representing the navigation property which should get inserted with the root entity during insertion.</param>
         /// <returns>An object that can be used to further configure the operation.</returns>
-        IInsertRelationBuilder<TToEntity, TRootEntity> InsertWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>> propertySelector)
+        IInsertRelationBuilder<TToEntity, TRootEntity> With<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>> propertySelector)
             where TToEntity : class, new();
     }
 }

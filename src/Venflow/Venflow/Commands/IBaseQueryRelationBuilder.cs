@@ -21,7 +21,7 @@ namespace Venflow.Commands
         /// </summary>
         /// <typeparam name="TToEntity">The type of the joined entity.</typeparam>
         /// <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-        /// <param name="joinBehaviour">Configures the type of this join.</param>
+        /// <param name="joinBehaviour">Configures the type of this join. You are not forced to use this parameter! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to define it.</param>
         /// <returns>An object that can be used to further configure the operation.</returns>
         IQueryRelationBuilder<TToEntity, TRootEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TRootEntity, TToEntity>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin)
             where TToEntity : class, new();
@@ -31,7 +31,7 @@ namespace Venflow.Commands
         /// </summary>
         /// <typeparam name="TToEntity">The type of the joined entity.</typeparam>
         /// <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-        /// <param name="joinBehaviour">Configures the type of this join.</param>
+        /// <param name="joinBehaviour">Configures the type of this join. You are not forced to use this parameter! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to define it.</param>
         /// <returns>An object that can be used to further configure the operation.</returns>
         IQueryRelationBuilder<TToEntity, TRootEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin)
             where TToEntity : class, new();
@@ -41,9 +41,100 @@ namespace Venflow.Commands
         /// </summary>
         /// <typeparam name="TToEntity">The type of the joined entity.</typeparam>
         /// <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-        /// <param name="joinBehaviour">Configures the type of this join.</param>
+        /// <param name="joinBehaviour">Configures the type of this join. You are not forced to use this parameter! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to define it.</param>
         /// <returns>An object that can be used to further configure the operation.</returns>
         IQueryRelationBuilder<TToEntity, TRootEntity, TReturn> JoinWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>> propertySelector, JoinBehaviour joinBehaviour = JoinBehaviour.InnerJoin)
+            where TToEntity : class, new();
+
+        /// <summary>
+        /// Allows to configure materialized left joins for the current query.
+        /// </summary>
+        /// <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+        /// <returns>An object that can be used to further configure the operation.</returns>
+        /// <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        IQueryRelationBuilder<TToEntity, TRootEntity, TReturn> LeftJoinWith<TToEntity>(Expression<Func<TRootEntity, TToEntity>> propertySelector)
+            where TToEntity : class, new();
+
+        /// <summary>
+        /// Allows to configure materialized left joins for the current query.
+        /// </summary>
+        /// <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+        /// <returns>An object that can be used to further configure the operation.</returns>
+        /// <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        IQueryRelationBuilder<TToEntity, TRootEntity, TReturn> LeftJoinWith<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>> propertySelector)
+            where TToEntity : class, new();
+
+        /// <summary>
+        /// Allows to configure materialized left joins for the current query.
+        /// </summary>
+        /// <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+        /// <returns>An object that can be used to further configure the operation.</returns>
+        /// <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        IQueryRelationBuilder<TToEntity, TRootEntity, TReturn> LeftJoinWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>> propertySelector)
+            where TToEntity : class, new();
+
+        /// <summary>
+        /// Allows to configure materialized right joins for the current query.
+        /// </summary>
+        /// <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+        /// <returns>An object that can be used to further configure the operation.</returns>
+        /// <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        IQueryRelationBuilder<TToEntity, TRootEntity, TReturn> RightJoinWith<TToEntity>(Expression<Func<TRootEntity, TToEntity>> propertySelector)
+            where TToEntity : class, new();
+
+        /// <summary>
+        /// Allows to configure materialized right joins for the current query.
+        /// </summary>
+        /// <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+        /// <returns>An object that can be used to further configure the operation.</returns>
+        /// <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        IQueryRelationBuilder<TToEntity, TRootEntity, TReturn> RightJoinWith<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>> propertySelector)
+            where TToEntity : class, new();
+
+        /// <summary>
+        /// Allows to configure materialized right joins for the current query.
+        /// </summary>
+        /// <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+        /// <returns>An object that can be used to further configure the operation.</returns>
+        /// <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        IQueryRelationBuilder<TToEntity, TRootEntity, TReturn> RightJoinWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>> propertySelector)
+            where TToEntity : class, new();
+
+
+        /// <summary>
+        /// Allows to configure materialized full joins for the current query.
+        /// </summary>
+        /// <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+        /// <returns>An object that can be used to further configure the operation.</returns>
+        /// <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        IQueryRelationBuilder<TToEntity, TRootEntity, TReturn> FullJoinWith<TToEntity>(Expression<Func<TRootEntity, TToEntity>> propertySelector)
+            where TToEntity : class, new();
+
+        /// <summary>
+        /// Allows to configure materialized full joins for the current query.
+        /// </summary>
+        /// <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+        /// <returns>An object that can be used to further configure the operation.</returns>
+        /// <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        IQueryRelationBuilder<TToEntity, TRootEntity, TReturn> FullJoinWith<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>> propertySelector)
+            where TToEntity : class, new();
+
+        /// <summary>
+        /// Allows to configure materialized full joins for the current query.
+        /// </summary>
+        /// <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+        /// <returns>An object that can be used to further configure the operation.</returns>
+        /// <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        IQueryRelationBuilder<TToEntity, TRootEntity, TReturn> FullJoinWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>> propertySelector)
             where TToEntity : class, new();
     }
 }

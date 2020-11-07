@@ -107,7 +107,7 @@ namespace Venflow
         /// <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar')". This API is using parameterized commands.</remarks>
         public Task<int> InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
-            return Insert(true).InsertWithAll().Build().InsertAsync(entity, cancellationToken);
+            return Insert(true).WithAll().Build().InsertAsync(entity, cancellationToken);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Venflow
         /// <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar'), ('foo', 'bar')". This API is using parameterized commands.</remarks>
         public Task<int> InsertAsync(IList<TEntity> entities, CancellationToken cancellationToken = default)
         {
-            return Insert(true).InsertWithAll().Build().InsertAsync(entities, cancellationToken);
+            return Insert(true).WithAll().Build().InsertAsync(entities, cancellationToken);
         }
 
 

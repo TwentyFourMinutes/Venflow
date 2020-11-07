@@ -8,6 +8,24 @@ namespace Venflow.Tests.InsertTests
     public class SingleInsert : TestBase
     {
         [Fact]
+        public async Task InsertIndividualRelationAsync()
+        {
+            var person = GetPerson();
+
+            var insertCount = await Database.People.InsertAsync(person);
+
+            Assert.Equal(1, insertCount);
+
+            var email = new Email { Address = "None", PersonId = person.Id };
+
+            insertCount = await Database.Emails.InsertAsync(email);
+
+            Assert.Equal(1, insertCount);
+
+            Assert.Equal(1, await Database.People.DeleteAsync(person));
+        }
+
+        [Fact]
         public async Task InsertWithNoRelationAsync()
         {
             var person = GetPerson();
@@ -41,7 +59,7 @@ namespace Venflow.Tests.InsertTests
                 Blogs = new List<Blog> { new Blog { Id = 11, Topic = "BazFoo" } }
             };
 
-            var insertCount = await Database.Users.Insert().InsertWith(x => x.Blogs).InsertAsync(user);
+            var insertCount = await Database.Users.Insert().With(x => x.Blogs).InsertAsync(user);
 
             Assert.Equal(2, insertCount);
 
@@ -53,7 +71,7 @@ namespace Venflow.Tests.InsertTests
         {
             var person = GetPersonWithFullRelation();
 
-            var insertCount = await Database.People.Insert().InsertWith(x => x.Emails).InsertAsync(person);
+            var insertCount = await Database.People.Insert().With(x => x.Emails).InsertAsync(person);
 
             Assert.Equal(2, insertCount);
 
@@ -65,7 +83,7 @@ namespace Venflow.Tests.InsertTests
         {
             var email = GetEmailWithFullRelation();
 
-            var insertCount = await Database.Emails.Insert().InsertWith(x => x.Person).InsertAsync(email);
+            var insertCount = await Database.Emails.Insert().With(x => x.Person).InsertAsync(email);
 
             Assert.Equal(2, insertCount);
 
