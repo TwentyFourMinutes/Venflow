@@ -51,32 +51,32 @@ namespace Venflow.Commands
             return Build().InsertAsync(entities, cancellationToken);
         }
 
-        public IBaseInsertRelationBuilder<TEntity, TEntity> InsertWithAll()
+        public IBaseInsertRelationBuilder<TEntity, TEntity> WithAll()
         {
             _isFullInsert = true;
 
             return this;
         }
 
-        IInsertRelationBuilder<TToEntity, TEntity> IBaseInsertRelationBuilder<TEntity, TEntity>.InsertWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector)
+        IInsertRelationBuilder<TToEntity, TEntity> IBaseInsertRelationBuilder<TEntity, TEntity>.With<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector)
         {
             _relationBuilderValues = new RelationBuilderValues(_entityConfiguration);
 
-            return new InsertRelationBuilder<TEntity, TEntity>(_entityConfiguration, _entityConfiguration, this, _relationBuilderValues).InsertWith(propertySelector);
+            return new InsertRelationBuilder<TEntity, TEntity>(_entityConfiguration, _entityConfiguration, this, _relationBuilderValues).With(propertySelector);
         }
 
-        IInsertRelationBuilder<TToEntity, TEntity> IBaseInsertRelationBuilder<TEntity, TEntity>.InsertWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>> propertySelector)
+        IInsertRelationBuilder<TToEntity, TEntity> IBaseInsertRelationBuilder<TEntity, TEntity>.With<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>> propertySelector)
         {
             _relationBuilderValues = new RelationBuilderValues(_entityConfiguration);
 
-            return new InsertRelationBuilder<TEntity, TEntity>(_entityConfiguration, _entityConfiguration, this, _relationBuilderValues).InsertWith(propertySelector);
+            return new InsertRelationBuilder<TEntity, TEntity>(_entityConfiguration, _entityConfiguration, this, _relationBuilderValues).With(propertySelector);
         }
 
-        IInsertRelationBuilder<TToEntity, TEntity> IBaseInsertRelationBuilder<TEntity, TEntity>.InsertWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector)
+        IInsertRelationBuilder<TToEntity, TEntity> IBaseInsertRelationBuilder<TEntity, TEntity>.With<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector)
         {
             _relationBuilderValues = new RelationBuilderValues(_entityConfiguration);
 
-            return new InsertRelationBuilder<TEntity, TEntity>(_entityConfiguration, _entityConfiguration, this, _relationBuilderValues).InsertWith(propertySelector);
+            return new InsertRelationBuilder<TEntity, TEntity>(_entityConfiguration, _entityConfiguration, this, _relationBuilderValues).With(propertySelector);
         }
     }
 }

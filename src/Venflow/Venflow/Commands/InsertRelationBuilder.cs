@@ -25,15 +25,15 @@ namespace Venflow.Commands
             _relationBuilder = relationBuilder;
         }
 
-        public IInsertRelationBuilder<TToEntity, TRootEntity> InsertWith<TToEntity>(Expression<Func<TRootEntity, TToEntity>> propertySelector)
+        public IInsertRelationBuilder<TToEntity, TRootEntity> With<TToEntity>(Expression<Func<TRootEntity, TToEntity>> propertySelector)
             where TToEntity : class, new()
             => new InsertRelationBuilder<TToEntity, TRootEntity>(_root, _relationBuilder.BaseRelationWith(_root, propertySelector), _commandBuilder, _relationBuilder);
 
-        public IInsertRelationBuilder<TToEntity, TRootEntity> InsertWith<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>> propertySelector)
+        public IInsertRelationBuilder<TToEntity, TRootEntity> With<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>> propertySelector)
             where TToEntity : class, new()
             => new InsertRelationBuilder<TToEntity, TRootEntity>(_root, _relationBuilder.BaseRelationWith(_root, propertySelector), _commandBuilder, _relationBuilder);
 
-        public IInsertRelationBuilder<TToEntity, TRootEntity> InsertWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>> propertySelector)
+        public IInsertRelationBuilder<TToEntity, TRootEntity> With<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>> propertySelector)
            where TToEntity : class, new()
             => new InsertRelationBuilder<TToEntity, TRootEntity>(_root, _relationBuilder.BaseRelationWith(_root, propertySelector), _commandBuilder, _relationBuilder);
 
@@ -58,7 +58,7 @@ namespace Venflow.Commands
         Task<int> IInsertCommandBuilder<TRootEntity>.InsertAsync(IList<TRootEntity> entities, CancellationToken cancellationToken)
              => _commandBuilder.InsertAsync(entities, cancellationToken);
 
-        IBaseInsertRelationBuilder<TRootEntity, TRootEntity> IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.InsertWithAll()
-             => _commandBuilder.InsertWithAll();
+        IBaseInsertRelationBuilder<TRootEntity, TRootEntity> IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.WithAll()
+             => _commandBuilder.WithAll();
     }
 }

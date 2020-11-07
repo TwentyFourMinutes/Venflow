@@ -41,7 +41,7 @@ namespace Venflow.Tests.InsertTests
                 Blogs = new List<Blog> { new Blog { Id = 11, Topic = "BazFoo" } }
             };
 
-            var insertCount = await Database.Users.Insert().InsertWith(x => x.Blogs).InsertAsync(user);
+            var insertCount = await Database.Users.Insert().With(x => x.Blogs).InsertAsync(user);
 
             Assert.Equal(2, insertCount);
 
@@ -53,7 +53,7 @@ namespace Venflow.Tests.InsertTests
         {
             var person = GetPersonWithFullRelation();
 
-            var insertCount = await Database.People.Insert().InsertWith(x => x.Emails).InsertAsync(person);
+            var insertCount = await Database.People.Insert().With(x => x.Emails).InsertAsync(person);
 
             Assert.Equal(2, insertCount);
 
@@ -65,7 +65,7 @@ namespace Venflow.Tests.InsertTests
         {
             var email = GetEmailWithFullRelation();
 
-            var insertCount = await Database.Emails.Insert().InsertWith(x => x.Person).InsertAsync(email);
+            var insertCount = await Database.Emails.Insert().With(x => x.Person).InsertAsync(email);
 
             Assert.Equal(2, insertCount);
 
