@@ -15,7 +15,6 @@ using Venflow.Modeling;
 namespace Venflow.Dynamic.Inserter
 {
     // TODO: Add CommandBehaviour.SingleRow to batch inserts
-    // TODO: Consider adding reversed loops
     // TODO: Consider adding Spans
     internal class InsertionFactoryCompiler
     {
@@ -1052,6 +1051,12 @@ namespace Venflow.Dynamic.Inserter
                         {
                             var relation = entityHolder.ForeignAssignedRelations[relationIndex];
 
+                            var afterOuterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                            _moveNextMethodIL.Emit(OpCodes.Brfalse, afterOuterNullCheckBodyLabel);
+
                             if (relation.RelationType == RelationType.OneToMany)
                             {
                                 innerIteratorLocal ??= _moveNextMethodIL.DeclareLocal(_intType);
@@ -1060,12 +1065,6 @@ namespace Venflow.Dynamic.Inserter
                                 var innertStartLoopBodyLabel = _moveNextMethodIL.DefineLabel();
 
                                 var foreignEntityLocal = _moveNextMethodIL.DeclareLocal(relation.RightEntity.EntityType);
-
-                                var afterOuterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
-
-                                _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
-                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                                _moveNextMethodIL.Emit(OpCodes.Brfalse, afterOuterNullCheckBodyLabel);
 
                                 // Assign 0 to the iterator
                                 _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
@@ -1109,25 +1108,16 @@ namespace Venflow.Dynamic.Inserter
                                 _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.FindProperty("Count", _genericICollectionType).GetGetMethod());
                                 _moveNextMethodIL.Emit(OpCodes.Blt, innertStartLoopBodyLabel);
 
-                                _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
                             }
                             else
                             {
-                                // check if element is not null
-                                var afterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
-
-                                _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
-                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                                _moveNextMethodIL.Emit(OpCodes.Brfalse, afterNullCheckBodyLabel);
-
                                 // assign entity primary key to foreign key on navigation entity
                                 _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
                                 _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
                                 _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
                                 _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
-
-                                _moveNextMethodIL.MarkLabel(afterNullCheckBodyLabel);
                             }
+                            _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
                         }
                     }
                     else
@@ -1667,7 +1657,6 @@ namespace Venflow.Dynamic.Inserter
 
                         asyncGenerator.WriteAsyncMethodAwaiter(typeof(Task<int>), intTaskAwaiterLocal, intTaskAwaiterField);
 
-
                         _moveNextMethodIL.Emit(OpCodes.Pop);
                     }
 
@@ -1679,6 +1668,13 @@ namespace Venflow.Dynamic.Inserter
                         {
                             var relation = entityHolder.ForeignAssignedRelations[relationIndex];
 
+                            var afterOuterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                            _moveNextMethodIL.Emit(OpCodes.Brfalse, afterOuterNullCheckBodyLabel);
+
                             if (relation.RelationType == RelationType.OneToMany)
                             {
                                 innerIteratorLocal ??= _moveNextMethodIL.DeclareLocal(_intType);
@@ -1687,13 +1683,6 @@ namespace Venflow.Dynamic.Inserter
                                 var innertStartLoopBodyLabel = _moveNextMethodIL.DefineLabel();
 
                                 var foreignEntityLocal = _moveNextMethodIL.DeclareLocal(relation.RightEntity.EntityType);
-
-                                var afterOuterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
-
-                                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                                _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
-                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                                _moveNextMethodIL.Emit(OpCodes.Brfalse, afterOuterNullCheckBodyLabel);
 
                                 // Assign 0 to the iterator
                                 _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
@@ -1740,19 +1729,9 @@ namespace Venflow.Dynamic.Inserter
                                 _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
                                 _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.FindProperty("Count", _genericICollectionType).GetGetMethod());
                                 _moveNextMethodIL.Emit(OpCodes.Blt, innertStartLoopBodyLabel);
-
-                                _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
                             }
                             else
                             {
-                                // check if element is not null
-                                var afterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
-
-                                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                                _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
-                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                                _moveNextMethodIL.Emit(OpCodes.Brfalse, afterNullCheckBodyLabel);
-
                                 // assign entity primary key to foreign key on navigation entity
                                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                                 _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
@@ -1761,9 +1740,9 @@ namespace Venflow.Dynamic.Inserter
                                 _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
                                 _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
                                 _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
-
-                                _moveNextMethodIL.MarkLabel(afterNullCheckBodyLabel);
                             }
+
+                            _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
                         }
                     }
                 }
@@ -2093,6 +2072,12 @@ namespace Venflow.Dynamic.Inserter
                             {
                                 var relation = entityHolder.ForeignAssignedRelations[relationIndex];
 
+                                var afterOuterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
+
+                                _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
+                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
+                                _moveNextMethodIL.Emit(OpCodes.Brfalse, afterOuterNullCheckBodyLabel);
+
                                 if (relation.RelationType == RelationType.OneToMany)
                                 {
                                     innerIteratorLocal ??= _moveNextMethodIL.DeclareLocal(_intType);
@@ -2101,12 +2086,6 @@ namespace Venflow.Dynamic.Inserter
                                     var innertStartLoopBodyLabel = _moveNextMethodIL.DefineLabel();
 
                                     var foreignEntityLocal = _moveNextMethodIL.DeclareLocal(relation.RightEntity.EntityType);
-
-                                    var afterOuterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
-
-                                    _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
-                                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                                    _moveNextMethodIL.Emit(OpCodes.Brfalse, afterOuterNullCheckBodyLabel);
 
                                     // Assign 0 to the iterator
                                     _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
@@ -2149,26 +2128,17 @@ namespace Venflow.Dynamic.Inserter
                                     _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
                                     _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.PropertyType.FindProperty("Count", _genericICollectionType).GetGetMethod());
                                     _moveNextMethodIL.Emit(OpCodes.Blt, innertStartLoopBodyLabel);
-
-                                    _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
                                 }
                                 else
                                 {
-                                    // check if element is not null
-                                    var afterNullCheckBodyLabel = _moveNextMethodIL.DefineLabel();
-
-                                    _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
-                                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
-                                    _moveNextMethodIL.Emit(OpCodes.Brfalse, afterNullCheckBodyLabel);
-
                                     // assign entity primary key to foreign key on navigation entity
                                     _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
                                     _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
                                     _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
                                     _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
-
-                                    _moveNextMethodIL.MarkLabel(afterNullCheckBodyLabel);
                                 }
+
+                                _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
                             }
                         }
                         else
