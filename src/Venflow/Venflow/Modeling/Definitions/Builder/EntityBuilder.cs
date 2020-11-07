@@ -384,6 +384,9 @@ namespace Venflow.Modeling.Definitions.Builder
 
             if (ColumnDefinitions.TryGetValue(property.Name, out var columnDefinition))
             {
+                if (columnDefinition is PrimaryColumnDefinition)
+                    throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' can't be configured to be an enum while also being a primary key.");
+
                 columnDefinition = new PrimaryColumnDefinition(columnDefinition.Name)
                 {
                     Name = columnDefinition.Name,
@@ -426,6 +429,9 @@ namespace Venflow.Modeling.Definitions.Builder
 
             if (ColumnDefinitions.TryGetValue(property.Name, out var columnDefinition))
             {
+                if (columnDefinition is PrimaryColumnDefinition)
+                    throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' can't be configured to be an enum while also being a primary key.");
+
                 columnDefinition = new PostgreEnumColumnDefinition(columnDefinition.Name)
                 {
                     Name = columnDefinition.Name,
@@ -464,6 +470,9 @@ namespace Venflow.Modeling.Definitions.Builder
 
             if (ColumnDefinitions.TryGetValue(property.Name, out var columnDefinition))
             {
+                if (columnDefinition is PrimaryColumnDefinition)
+                    throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' can't be configured to be an enum while also being a primary key.");
+
                 columnDefinition = new PostgreEnumColumnDefinition(columnDefinition.Name)
                 {
                     Name = columnDefinition.Name,
