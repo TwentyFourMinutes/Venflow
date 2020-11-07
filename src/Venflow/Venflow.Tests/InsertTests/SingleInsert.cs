@@ -8,6 +8,24 @@ namespace Venflow.Tests.InsertTests
     public class SingleInsert : TestBase
     {
         [Fact]
+        public async Task InsertIndividualRelationAsync()
+        {
+            var person = GetPerson();
+
+            var insertCount = await Database.People.InsertAsync(person);
+
+            Assert.Equal(1, insertCount);
+
+            var email = new Email { Address = "None", PersonId = person.Id };
+
+            insertCount = await Database.Emails.InsertAsync(email);
+
+            Assert.Equal(1, insertCount);
+
+            Assert.Equal(1, await Database.People.DeleteAsync(person));
+        }
+
+        [Fact]
         public async Task InsertWithNoRelationAsync()
         {
             var person = GetPerson();
