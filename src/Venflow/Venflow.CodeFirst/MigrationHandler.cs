@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -42,7 +43,7 @@ namespace Venflow.CodeFirst
             _migrationAssembly = migrationAssembly;
         }
 
-        public async Task MigrateAsync(string migrationName)
+        public bool TryCreateMigration(string migrationName, [NotNullWhen(true)] string? migrationCode)
         {
             if (string.IsNullOrWhiteSpace(migrationName))
                 throw new ArgumentException("Can not be null, empty or filled with whitespace.", nameof(migrationName));
@@ -50,37 +51,75 @@ namespace Venflow.CodeFirst
             if (char.IsDigit(migrationName[0]))
                 throw new ArgumentException("Can not start with a digit.", nameof(migrationName));
 
+            List<IMigrationChange> changes;
+
+            if (!TryGetOldDatabaseSchema(out var migrationContext))
+            {
+                changes = GetMigrationChanges(new MigrationContext());
+            }
+            else
+            {
+                changes = GetMigrationChanges(migrationContext);
+            }
+
+            if (changes.Count == 0)
+            {
+                return false;
+            }
+
+            migrationCode = CreateMigrationClass(migrationName, changes);
+
+            return true;
+        }
+
+        public async Task<List<Migration>> GetDatabaseMigrationDifferencesAsync()
+        {
+            var migrationsToApply = new List<Migration>();
+
             var lastMigration = default(MigrationDatabaseEntity);
 
-            var currentChecksum = ComposeChecksum();
-
-            if (await EnsureMigrationTableCreated(currentChecksum))
+            if (await EnsureMigrationTableCreated())
             {
                 lastMigration = await GetLastMigrationAsync();
             }
 
-            List<IMigrationChange> changes;
+            var currentChecksum = ComposeChecksum();
 
-            if (lastMigration is null)
+            if (lastMigration is not null &&
+                currentChecksum == lastMigration.Checksum)
             {
-                changes = GetMigrationChanges(new MigrationContext());
-
+                return migrationsToApply;
             }
-            else if (currentChecksum == lastMigration.Checksum)
-                return;
+
+            if (lastMigration is not null)
+            {
+                var localMigrations = GetAllLocalMigrations();
+
+                var matchingMigrationFound = false;
+
+                foreach (var localMigration in localMigrations)
+                {
+                    if (matchingMigrationFound)
+                    {
+                        migrationsToApply.Add(localMigration);
+                    }
+                    else if (localMigration.Name == lastMigration.Name)
+                    {
+                        matchingMigrationFound = true;
+                    }
+                }
+            }
             else
             {
-                changes = GetMigrationChanges(GetOldDatabaseSchema());
+                migrationsToApply.AddRange(GetAllLocalMigrations());
             }
 
-            if (changes.Count == 0)
-                return;
+            return migrationsToApply;
+        }
 
-            var migrationClassCreationTask = Task.Run(() => Console.WriteLine(CreateMigrationClass(migrationName, changes)));
-
-            await ApplyMigration(migrationName, changes, currentChecksum);
-
-            await migrationClassCreationTask;
+        public Task UpdateDatabaseAsync(List<Migration> migrationsToApply)
+        {
+            return ApplyMigrationsAsync(migrationsToApply);
         }
 
         private List<IMigrationChange> GetMigrationChanges(MigrationContext migrationContext)
@@ -170,11 +209,13 @@ namespace Venflow.CodeFirst
             return migrationChanges;
         }
 
-        private MigrationContext GetOldDatabaseSchema()
+        private bool TryGetOldDatabaseSchema(out MigrationContext migrationContext)
         {
             var baseMigrationType = typeof(Migration);
 
-            var migrationContext = new MigrationContext();
+            migrationContext = new MigrationContext();
+
+            var containsMigrations = false;
 
             foreach (var migrationType in _migrationAssembly.GetTypes().Where(x => x.BaseType == baseMigrationType).OrderBy(x =>
             {
@@ -186,45 +227,58 @@ namespace Venflow.CodeFirst
                 var migration = (Migration)Activator.CreateInstance(migrationType);
 
                 migration.ApplyChanges(migrationContext);
+
+                containsMigrations = true;
             }
 
-            return migrationContext;
+            return containsMigrations;
         }
 
-        private async Task ApplyMigration(Migration migration, string checksum)
+        private IEnumerable<Migration> GetAllLocalMigrations()
         {
-            var migrationSql = migration.ApplyMigration();
+            var baseMigrationType = typeof(Migration);
 
-            await _database.ExecuteAsync(migrationSql.ToString());
+            return _migrationAssembly.GetTypes().Where(x => x.BaseType == baseMigrationType).OrderBy(x =>
+            {
+                var hexDate = x.Name[..x.Name.IndexOf("_")];
 
-            await _migrationDatabase.Migrations.InsertAsync(new MigrationDatabaseEntity { Name = migration.Name, Checksum = checksum, Timestamp = DateTime.UtcNow });
+                return Convert.ToInt64(hexDate.ToUpper(), 16);
+            }).Select(x => (Migration)Activator.CreateInstance(x));
         }
 
-        private async Task ApplyMigration(string migrationName, List<IMigrationChange> migrationChanges, string checksum)
+        private Task ApplyVirtualMigrationAsync(Migration migration)
         {
             var migrationSql = new StringBuilder();
 
-            foreach (var migrationChange in migrationChanges)
+            migration.ApplyMigration(migrationSql);
+
+            return _database.ExecuteAsync(migrationSql.ToString());
+        }
+
+        private async Task ApplyMigrationsAsync(List<Migration> migrations)
+        {
+            var migrationSql = new StringBuilder();
+
+            var appliedMigrations = new MigrationDatabaseEntity[migrations.Count];
+
+            var migrationIndex = 0;
+
+            foreach (var migration in migrations)
             {
-                migrationChange.ApplyMigration(migrationSql);
+                migration.ApplyMigration(migrationSql);
+
+                appliedMigrations[migrationIndex++] = new MigrationDatabaseEntity { Name = migration.Name, Checksum = migration.Checksum, Timestamp = DateTime.UtcNow });
             }
-            Console.WriteLine(migrationSql);
 
             await using var transaction = await _database.BeginTransactionAsync();
 
-            try
-            {
-                await _database.ExecuteAsync(migrationSql.ToString());
+            await _database.ExecuteAsync(migrationSql.ToString());
 
-                await transaction.CommitAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            await transaction.CommitAsync();
 
-            await _migrationDatabase.Migrations.InsertAsync(new MigrationDatabaseEntity { Name = migrationName, Checksum = checksum, Timestamp = DateTime.UtcNow });
+            await _migrationDatabase.Migrations.InsertAsync(appliedMigrations);
         }
+
         private string CreateMigrationClass(string migrationName, List<IMigrationChange> migrationChanges)
         {
             var migrationGenerator = new MigrationGenerator(_migrationAssembly.GetName().Name, migrationName, GenerateMigrationKey() + "_" + migrationName);
@@ -232,7 +286,7 @@ namespace Venflow.CodeFirst
             return migrationGenerator.GenerateMigrationClass(migrationChanges);
         }
 
-        private async Task<bool> EnsureMigrationTableCreated(string checksum)
+        private async Task<bool> EnsureMigrationTableCreated()
         {
             var sql = @"SELECT EXISTS (
    SELECT
@@ -242,7 +296,7 @@ namespace Venflow.CodeFirst
 
             if (!await _database.ExecuteAsync<bool>(sql))
             {
-                ApplyMigration(new MigrationTableMigration(), checksum);
+                await ApplyVirtualMigrationAsync(new MigrationTableMigration());
 
                 return false;
             }

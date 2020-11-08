@@ -5,9 +5,8 @@ namespace Venflow.CodeFirst.Data
 {
     internal class MigrationTableMigration : Migration
     {
-        public override string Name => _name;
-
-        private static readonly string _name = MigrationHandler.GenerateMigrationKey() + "_Init";
+        public override string Name => null!;
+        public override string Checksum => null!;
 
         public override void Changes()
         {

@@ -7,8 +7,10 @@ namespace Venflow.CodeFirst
     public abstract class Migration
     {
         public abstract string Name { get; }
+        public abstract string Checksum { get; }
 
-        private readonly List<EntityMigration> _entityMigrations;
+
+        private readonly Dictionary<string, EntityMigration> _entityMigrations;
 
         protected Migration()
         {
@@ -22,33 +24,24 @@ namespace Venflow.CodeFirst
 
         private EntityMigration GetEntityMigration(string tableName)
         {
-            var entityMigration = new EntityMigration(tableName);
+            if (!_entityMigrations.TryGetValue(tableName, out var entityMigration))
+            {
+                entityMigration = new EntityMigration(tableName);
 
-            _entityMigrations.Add(entityMigration);
+                _entityMigrations.Add(tableName, entityMigration);
+            }
 
             return entityMigration;
         }
 
-        public StringBuilder ApplyMigration()
-        {
-            var migrationSqlBuilder = new StringBuilder();
-
-            ApplyMigration(migrationSqlBuilder);
-
-            return migrationSqlBuilder;
-        }
-
-        internal void ApplyMigration(StringBuilder migrationSqlBuilder)
+        public void ApplyMigration(StringBuilder migrationSqlBuilder)
         {
             Changes();
 
-            var migrationContext = new MigrationContext();
-
-            foreach (var entityMigration in _entityMigrations)
+            foreach (var entityMigration in _entityMigrations.Values)
             {
                 foreach (var migrationChange in entityMigration.MigrationChanges)
                 {
-                    migrationChange.ApplyChanges(migrationContext);
                     migrationChange.ApplyMigration(migrationSqlBuilder);
                 }
             }
@@ -58,7 +51,7 @@ namespace Venflow.CodeFirst
         {
             Changes();
 
-            foreach (var entityMigration in _entityMigrations)
+            foreach (var entityMigration in _entityMigrations.Values)
             {
                 foreach (var migrationChange in entityMigration.MigrationChanges)
                 {
