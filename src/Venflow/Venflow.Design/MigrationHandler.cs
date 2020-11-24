@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Venflow.CodeFirst.Data;
-using Venflow.CodeFirst.Operations;
+using Venflow.Design.Data;
+using Venflow.Design.Operations;
 using Venflow.Modeling;
 
-namespace Venflow.CodeFirst
+namespace Venflow.Design
 {
     public abstract class MigrationHandler
     {
@@ -43,7 +42,7 @@ namespace Venflow.CodeFirst
             _migrationAssembly = migrationAssembly;
         }
 
-        public bool TryCreateMigration(string migrationName, [NotNullWhen(true)] string? migrationCode)
+        public bool TryCreateMigration(string migrationName, string? migrationCode)
         {
             if (string.IsNullOrWhiteSpace(migrationName))
                 throw new ArgumentException("Can not be null, empty or filled with whitespace.", nameof(migrationName));
@@ -211,21 +210,12 @@ namespace Venflow.CodeFirst
 
         private bool TryGetOldDatabaseSchema(out MigrationContext migrationContext)
         {
-            var baseMigrationType = typeof(Migration);
-
             migrationContext = new MigrationContext();
 
             var containsMigrations = false;
 
-            foreach (var migrationType in _migrationAssembly.GetTypes().Where(x => x.BaseType == baseMigrationType).OrderBy(x =>
+            foreach (var migration in GetAllLocalMigrations())
             {
-                var hexDate = x.Name[..x.Name.IndexOf("_")];
-
-                return Convert.ToInt64(hexDate.ToUpper(), 16);
-            }))
-            {
-                var migration = (Migration)Activator.CreateInstance(migrationType);
-
                 migration.ApplyChanges(migrationContext);
 
                 containsMigrations = true;
@@ -240,7 +230,7 @@ namespace Venflow.CodeFirst
 
             return _migrationAssembly.GetTypes().Where(x => x.BaseType == baseMigrationType).OrderBy(x =>
             {
-                var hexDate = x.Name[..x.Name.IndexOf("_")];
+                var hexDate = x.Name.Substring(0, x.Name.IndexOf("_"));
 
                 return Convert.ToInt64(hexDate.ToUpper(), 16);
             }).Select(x => (Migration)Activator.CreateInstance(x));
@@ -267,7 +257,7 @@ namespace Venflow.CodeFirst
             {
                 migration.ApplyMigration(migrationSql);
 
-                appliedMigrations[migrationIndex++] = new MigrationDatabaseEntity { Name = migration.Name, Checksum = migration.Checksum, Timestamp = DateTime.UtcNow });
+                appliedMigrations[migrationIndex++] = new MigrationDatabaseEntity { Name = migration.Name, Checksum = migration.Checksum, Timestamp = DateTime.UtcNow };
             }
 
             await using var transaction = await _database.BeginTransactionAsync();
@@ -385,7 +375,9 @@ namespace Venflow.CodeFirst
                 }
             }
 
-            return Convert.ToBase64String(SHA1.HashData(Encoding.ASCII.GetBytes(checksumBuilder.ToString())));
+            using var sha = SHA1.Create();
+
+            return Convert.ToBase64String(sha.ComputeHash(Encoding.ASCII.GetBytes(checksumBuilder.ToString())));
         }
 
         public ValueTask DisposeAsync()

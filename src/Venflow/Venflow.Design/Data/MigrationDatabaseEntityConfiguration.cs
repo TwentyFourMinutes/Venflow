@@ -2,7 +2,7 @@
 using Venflow.Modeling.Definitions;
 using Venflow.Modeling.Definitions.Builder;
 
-namespace Venflow.CodeFirst.Data
+namespace Venflow.Design.Data
 {
 
     public class MigrationDatabaseEntityConfiguration : EntityConfiguration<MigrationDatabaseEntity>

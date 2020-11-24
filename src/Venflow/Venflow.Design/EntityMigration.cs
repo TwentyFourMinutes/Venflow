@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Venflow.CodeFirst.Operations;
+using Venflow.Design.Operations;
 
-namespace Venflow.CodeFirst
+namespace Venflow.Design
 {
     public class EntityMigration
     {

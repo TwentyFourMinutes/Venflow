@@ -1,7 +1,7 @@
 ﻿using System;
-using Venflow.CodeFirst.Operations;
+using Venflow.Design.Operations;
 
-namespace Venflow.CodeFirst.Data
+namespace Venflow.Design.Data
 {
     internal class MigrationTableMigration : Migration
     {

@@ -1,4 +1,4 @@
-﻿namespace Venflow.CodeFirst.Data
+﻿namespace Venflow.Design.Data
 {
     internal class MigrationDatabase : Database
     {

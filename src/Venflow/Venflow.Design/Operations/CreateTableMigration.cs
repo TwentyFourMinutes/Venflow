@@ -1,14 +1,14 @@
 ﻿using System.Text;
 
-namespace Venflow.CodeFirst.Operations
+namespace Venflow.Design.Operations
 {
-    internal class DropColumnMigration : IMigrationChange
+    internal class CreateTableMigration : IMigrationChange
     {
         public MigrationEntity MigrationEntity { get; }
 
         internal string Name { get; }
 
-        internal DropColumnMigration(string name, MigrationEntity migrationEntity)
+        public CreateTableMigration(string name, MigrationEntity migrationEntity)
         {
             Name = name;
             MigrationEntity = migrationEntity;
@@ -16,17 +16,19 @@ namespace Venflow.CodeFirst.Operations
 
         public void ApplyChanges(MigrationContext migrationContext)
         {
-            MigrationEntity.Columns.Remove(Name);
+            migrationContext.Entities.Add(Name, MigrationEntity);
         }
 
         public void ApplyMigration(StringBuilder migration)
         {
-            migration.Append(@"ALTER TABLE """).Append(MigrationEntity.Name).Append(@""" DROP COLUMN """).Append(Name).AppendLine(@""";");
+            migration.Append(@"CREATE TABLE """)
+                     .Append(Name)
+                     .AppendLine(@""" ();");
         }
 
         public void CreateMigration(StringBuilder migrationClass)
         {
-            migrationClass.Append("migration.DropColumn(").Append(Name).Append(')');
+            migrationClass.Append("migration.Create();");
         }
     }
 }

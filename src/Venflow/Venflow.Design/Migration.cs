@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Venflow.CodeFirst
+namespace Venflow.Design
 {
     public abstract class Migration
     {

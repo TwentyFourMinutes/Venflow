@@ -1,7 +1,7 @@
 ﻿using System;
-using Venflow.CodeFirst.Operations;
+using Venflow.Design.Operations;
 
-namespace Venflow.CodeFirst
+namespace Venflow.Design
 {
     internal class MigrationColumn
     {

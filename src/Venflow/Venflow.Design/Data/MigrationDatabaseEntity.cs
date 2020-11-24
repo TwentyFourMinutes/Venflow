@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Venflow.CodeFirst.Data
+namespace Venflow.Design.Data
 {
     public class MigrationDatabaseEntity
     {

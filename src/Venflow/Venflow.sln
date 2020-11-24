@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30021.99
@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Execution", "Venflo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Compatible", "Venflow.Compatible\Venflow.Compatible.csproj", "{2D71E3EF-0513-455A-98D1-B464C8E6689A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venflow.CodeFirst", "Venflow.CodeFirst\Venflow.CodeFirst.csproj", "{8E07F175-6949-4D4D-ABF8-DE6E43415BD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Design", "Venflow.Design\Venflow.Design.csproj", "{8E07F175-6949-4D4D-ABF8-DE6E43415BD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

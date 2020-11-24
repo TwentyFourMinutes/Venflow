@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Venflow.CodeFirst.Operations
+namespace Venflow.Design.Operations
 {
     internal class DropTableMigration : IMigrationChange
     {

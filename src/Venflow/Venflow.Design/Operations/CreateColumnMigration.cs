@@ -2,7 +2,7 @@
 using System.Text;
 using NpgsqlTypes;
 
-namespace Venflow.CodeFirst.Operations
+namespace Venflow.Design.Operations
 {
     internal class CreateColumnMigration : IMigrationChange
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Venflow.CodeFirst.Operations;
+using Venflow.Design.Operations;
 
-namespace Venflow.CodeFirst
+namespace Venflow.Design
 {
     internal class MigrationGenerator
     {

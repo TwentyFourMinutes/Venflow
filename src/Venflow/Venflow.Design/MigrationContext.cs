@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Venflow.CodeFirst
+namespace Venflow.Design
 {
     internal class MigrationContext
     {

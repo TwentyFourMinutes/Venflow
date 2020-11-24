@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using Npgsql;
 using NpgsqlTypes;
 
-namespace Venflow.CodeFirst
+namespace Venflow.Design
 {
     internal static class NpgsqlTypeMapper
     {
