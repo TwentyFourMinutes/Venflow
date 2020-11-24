@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30021.99
@@ -20,6 +20,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Design", "Venflow.Design\Venflow.Design.csproj", "{8E07F175-6949-4D4D-ABF8-DE6E43415BD0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venflow.VSIX", "Venflow.VSIX\Venflow.VSIX.csproj", "{C9ADEF65-347D-4C5F-986E-EEB1FAA9F459}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venflow.Tools", "Venflow.Tools\Venflow.Tools.csproj", "{89E419E6-D194-46E3-B371-45E85D1673F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,14 @@ Global
 		{8E07F175-6949-4D4D-ABF8-DE6E43415BD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E07F175-6949-4D4D-ABF8-DE6E43415BD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E07F175-6949-4D4D-ABF8-DE6E43415BD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9ADEF65-347D-4C5F-986E-EEB1FAA9F459}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9ADEF65-347D-4C5F-986E-EEB1FAA9F459}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9ADEF65-347D-4C5F-986E-EEB1FAA9F459}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9ADEF65-347D-4C5F-986E-EEB1FAA9F459}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89E419E6-D194-46E3-B371-45E85D1673F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89E419E6-D194-46E3-B371-45E85D1673F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89E419E6-D194-46E3-B371-45E85D1673F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89E419E6-D194-46E3-B371-45E85D1673F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

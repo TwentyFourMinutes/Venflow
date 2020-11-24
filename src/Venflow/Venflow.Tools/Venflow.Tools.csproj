@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/TwentyFourMinutes/Venflow</RepositoryUrl>
+    <PackageTags>Venflow ORM ORM-Framework O/RM Data Postgres SQL PostgreSQL</PackageTags>
+    <Copyright>Copyright ©2020 Twenty</Copyright>
+    <Description>A brand new, lightweight and fast ORM, build for PostgreSQL.</Description>
+    <Company>Twenty</Company>
+    <Authors>Twenty</Authors>
+    <Language>en</Language>
+    <Version>1.0.0.0-rc1</Version>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Title>Venflow</Title>
+    <PackageOutputPath>bin\Package</PackageOutputPath>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>../../../Venflow.snk</AssemblyOriginatorKeyFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <IsTool>true</IsTool>
+    <ContentTargetFolders>tools</ContentTargetFolders>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PowerShellStandard.Library" Version="7.0.0-preview.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="init.ps1" Pack="true"/>
+  </ItemGroup>
+
+</Project>
