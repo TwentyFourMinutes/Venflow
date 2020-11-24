@@ -11,13 +11,13 @@
             <typeparam name="TRelationEntity">The type of the entity which will be joined with.</typeparam>
             <typeparam name="TRootEntity">The root type of the entity.</typeparam>
         </member>
-        <member name="M:Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWithAll">
+        <member name="M:Venflow.Commands.IBaseInsertRelationBuilder`2.WithAll">
             <summary>
             Allows to configure the current insert, to insert all populated relations which can be reached.
             </summary>
             <returns>An object that can be used to further configure the operation.</returns>
         </member>
-        <member name="M:Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})">
+        <member name="M:Venflow.Commands.IBaseInsertRelationBuilder`2.With``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})">
             <summary>
             Allows to configure the inserted relations with the current insert.
             </summary>
@@ -25,7 +25,7 @@
             <param name="propertySelector">A lambda expression representing the navigation property which should get inserted with the root entity during insertion.</param>
             <returns>An object that can be used to further configure the operation.</returns>
         </member>
-        <member name="M:Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})">
+        <member name="M:Venflow.Commands.IBaseInsertRelationBuilder`2.With``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})">
             <summary>
             Allows to configure the inserted relations with the current insert.
             </summary>
@@ -33,7 +33,7 @@
             <param name="propertySelector">A lambda expression representing the navigation property which should get inserted with the root entity during insertion.</param>
             <returns>An object that can be used to further configure the operation.</returns>
         </member>
-        <member name="M:Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})">
+        <member name="M:Venflow.Commands.IBaseInsertRelationBuilder`2.With``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})">
             <summary>
             Allows to configure the inserted relations with the current insert.
             </summary>
@@ -55,7 +55,7 @@
             </summary>
             <typeparam name="TToEntity">The type of the joined entity.</typeparam>
             <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-            <param name="joinBehaviour">Configures the type of this join.</param>
+            <param name="joinBehaviour">Configures the type of this join. You are not forced to use this parameter! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to define it.</param>
             <returns>An object that can be used to further configure the operation.</returns>
         </member>
         <member name="M:Venflow.Commands.IBaseQueryRelationBuilder`3.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}},Venflow.Enums.JoinBehaviour)">
@@ -64,7 +64,7 @@
             </summary>
             <typeparam name="TToEntity">The type of the joined entity.</typeparam>
             <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-            <param name="joinBehaviour">Configures the type of this join.</param>
+            <param name="joinBehaviour">Configures the type of this join. You are not forced to use this parameter! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to define it.</param>
             <returns>An object that can be used to further configure the operation.</returns>
         </member>
         <member name="M:Venflow.Commands.IBaseQueryRelationBuilder`3.JoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}},Venflow.Enums.JoinBehaviour)">
@@ -73,8 +73,89 @@
             </summary>
             <typeparam name="TToEntity">The type of the joined entity.</typeparam>
             <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-            <param name="joinBehaviour">Configures the type of this join.</param>
+            <param name="joinBehaviour">Configures the type of this join. You are not forced to use this parameter! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to define it.</param>
             <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})">
+            <summary>
+            Allows to configure materialized left joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})">
+            <summary>
+            Allows to configure materialized left joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})">
+            <summary>
+            Allows to configure materialized left joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})">
+            <summary>
+            Allows to configure materialized right joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})">
+            <summary>
+            Allows to configure materialized right joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})">
+            <summary>
+            Allows to configure materialized right joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})">
+            <summary>
+            Allows to configure materialized full joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})">
+            <summary>
+            Allows to configure materialized full joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})">
+            <summary>
+            Allows to configure materialized full joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
         </member>
         <member name="T:Venflow.Commands.IDeleteCommand`1">
             <summary>
@@ -317,7 +398,7 @@
             </summary>
             <typeparam name="TToEntity">The type of the joined entity.</typeparam>
             <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-            <param name="joinBehaviour">Configures the type of this join.</param>
+            <param name="joinBehaviour">Configures the type of this join. You are not forced to use this parameter! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to define it.</param>
             <returns>An object that can be used to further configure the operation.</returns>
         </member>
         <member name="M:Venflow.Commands.IQueryRelationBuilder`3.ThenWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}},Venflow.Enums.JoinBehaviour)">
@@ -326,7 +407,7 @@
             </summary>
             <typeparam name="TToEntity">The type of the joined entity.</typeparam>
             <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-            <param name="joinBehaviour">Configures the type of this join.</param>
+            <param name="joinBehaviour">Configures the type of this join. You are not forced to use this parameter! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to define it.</param>
             <returns>An object that can be used to further configure the operation.</returns>
         </member>
         <member name="M:Venflow.Commands.IQueryRelationBuilder`3.ThenWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}},Venflow.Enums.JoinBehaviour)">
@@ -335,8 +416,89 @@
             </summary>
             <typeparam name="TToEntity">The type of the joined entity.</typeparam>
             <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
-            <param name="joinBehaviour">Configures the type of this join.</param>
+            <param name="joinBehaviour">Configures the type of this join. You are not forced to use this parameter! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to define it.</param>
             <returns>An object that can be used to further configure the operation.</returns>
+        </member>
+        <member name="M:Venflow.Commands.IQueryRelationBuilder`3.ThenLeftWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+            Allows to configure materialized left joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IQueryRelationBuilder`3.ThenLeftWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}})">
+            <summary>
+            Allows to configure materialized left joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IQueryRelationBuilder`3.ThenLeftWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}})">
+            <summary>
+            Allows to configure materialized left joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IQueryRelationBuilder`3.ThenRightWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+            Allows to configure materialized right joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IQueryRelationBuilder`3.ThenRightWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}})">
+            <summary>
+            Allows to configure materialized right joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IQueryRelationBuilder`3.ThenRightWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}})">
+            <summary>
+            Allows to configure materialized right joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IQueryRelationBuilder`3.ThenFullWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+            Allows to configure materialized full joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IQueryRelationBuilder`3.ThenFullWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}})">
+            <summary>
+            Allows to configure materialized full joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IQueryRelationBuilder`3.ThenFullWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}})">
+            <summary>
+            Allows to configure materialized full joins for the current query.
+            </summary>
+            <typeparam name="TToEntity">The type of the joined entity.</typeparam>
+            <param name="propertySelector">A lambda expression representing the navigation property which should get joined on doing materialization.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
         </member>
         <member name="T:Venflow.Commands.ISpecficVenflowCommandBuilder`1">
             <summary>
@@ -523,11 +685,31 @@
             Typically you create a class that derives from <see cref="T:Venflow.Database"/> and contains <seealso cref="T:Venflow.Table`1"/> properties for each entity in the Database. All the <seealso cref="T:Venflow.Table`1"/> properties must have a public setter, they are automatically initialized when the instance of the derived type is created.
             </remarks>
         </member>
+        <member name="P:Venflow.Database.ConnectionString">
+            <summary>
+            Contains the connection string.
+            </summary>
+        </member>
         <member name="M:Venflow.Database.#ctor(System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:Venflow.Database"/> class using the specified <paramref name="connectionString"/>.
             </summary>
             <param name="connectionString">The connection string to your PostgreSQL Database.</param>
+        </member>
+        <member name="M:Venflow.Database.BeginTransactionAsync(System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously begins a new transaction.
+            </summary>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
+        </member>
+        <member name="M:Venflow.Database.BeginTransactionAsync(System.Data.IsolationLevel,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously begins a new transaction.
+            </summary>
+            <param name="isolationLevel">The isolation level under which the transaction should run.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
+            <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
         </member>
         <member name="M:Venflow.Database.ExecuteAsync(System.String,System.Threading.CancellationToken)">
             <summary>
@@ -616,9 +798,17 @@
         </member>
         <member name="M:Venflow.Database.GetConnection">
             <summary>
-            Gets or creates a new connections, if none got created yet.
+            Gets or creates a new connection, if none got created yet.
             </summary>
             <returns>the <see cref="T:Npgsql.NpgsqlConnection"/>.</returns>
+            <remarks>If you need to set the connection, you can do so through the <see cref="M:Venflow.Database.SetConnection(Npgsql.NpgsqlConnection)"/> method. Note that this method is hidden from the editor and it might no be immediately get picked up by the IntelliSense.</remarks>
+        </member>
+        <member name="M:Venflow.Database.SetConnection(Npgsql.NpgsqlConnection)">
+            <summary>
+            Sets the underlying connection of the current database instance.
+            </summary>
+            <param name="connection">the <see cref="T:Npgsql.NpgsqlConnection"/> instance to be set.</param>
+            <remarks>If you need to access the connection string, it can be obtained from the <see cref="P:Venflow.Database.ConnectionString"/> property. Note that this property is hidden from the editor and it might no be immediately get picked up by the IntelliSense.</remarks>
         </member>
         <member name="M:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)">
             <summary>
@@ -812,7 +1002,7 @@
         </member>
         <member name="M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapPostgresEnum``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,Npgsql.INpgsqlNameTranslator)">
             <summary>
-            Maps a PostgreSQL enum to a CLR enum.
+            Maps a PostgreSQL enum to a CLR enum column.
             </summary>
             <typeparam name="TTarget">The type of the enum.</typeparam>
             <param name="propertySelector">A lambda expression representing the enum which should be mapped on this entity type.</param>
@@ -822,13 +1012,27 @@
         </member>
         <member name="M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapPostgresEnum``1(System.Linq.Expressions.Expression{System.Func{`0,System.Nullable{``0}}},System.String,Npgsql.INpgsqlNameTranslator)">
             <summary>
-            Maps a PostgreSQL enum to a CLR enum.
+            Maps a PostgreSQL enum to a CLR enum column.
             </summary>
             <typeparam name="TTarget">The type of the enum.</typeparam>
             <param name="propertySelector">A lambda expression representing the enum which should be mapped on this entity type.</param>
             <param name="name">The name of the enum in PostgreSQL, if none used it will try to convert the name of the CLR enum e.g. 'FooBar' to 'foo_bar'</param>
             <param name="npgsqlNameTranslator">A component which will be used to translate CLR names (e.g. SomeClass) into database names (e.g. some_class). Defaults to <see cref="T:Npgsql.NameTranslation.NpgsqlSnakeCaseNameTranslator"/>.</param>
             <returns>The same builder instance so that multiple calls can be chained.</returns>
+        </member>
+        <member name="M:Venflow.Modeling.Definitions.Builder.IEntityPropertyBuilder`1.HasPostgresEnum(System.String,Npgsql.INpgsqlNameTranslator)">
+            <summary>
+            Maps a PostgreSQL enum to this CLR enum column.
+            </summary>
+            <param name="name">The name of the enum in PostgreSQL, if none used it will try to convert the name of the CLR enum e.g. 'FooBar' to 'foo_bar'</param>
+            <param name="npgsqlNameTranslator">A component which will be used to translate CLR names (e.g. SomeClass) into database names (e.g. some_class). Defaults to <see cref="T:Npgsql.NameTranslation.NpgsqlSnakeCaseNameTranslator"/>.</param>
+            <returns>The same builder instance so that multiple calls can be chained.</returns>
+        </member>
+        <member name="M:Venflow.Modeling.Definitions.Builder.IEntityPropertyBuilder`1.IsRequired">
+            <summary>
+            only required in non C#8+ null-able context
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder`2">
             <summary>
@@ -1002,11 +1206,6 @@
             Allows for configuration of the entity <typeparamref name="TEntity"/>.
             </summary>
             <param name="entityBuilder">The builder used to configure the entity.</param>
-        </member>
-        <member name="T:Venflow.Modeling.Definitions.EntityConfiguration">
-            <summary>
-            <strong>This is a class which is only used for type safety, do not inherit!</strong>
-            </summary>
         </member>
         <member name="T:Venflow.NpgsqlCommandExtensions">
             <summary>
