@@ -18,20 +18,88 @@ namespace Venflow.Design
 
         }
 
+        public abstract bool TryCreateMigration(string migrationName, out string? migrationCode);
+
+        public abstract Task<List<Migration>> GetDatabaseMigrationDifferencesAsync();
+
+        public abstract Task UpdateDatabaseAsync(List<Migration> migrationsToApply);
+
+        public static MigrationHandler GetMigrationHandler(Assembly migrationAssembly)
+        {
+            Type[] types;
+
+            try
+            {
+                types = migrationAssembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                types = e.Types.Where(x => x is not null).ToArray();
+            }
+
+            var databaseBaseType = typeof(Database);
+
+            var databaseType = default(Type);
+
+            foreach (var type in types)
+            {
+                if (type.IsAbstract ||
+                    type.IsGenericType ||
+                    !databaseBaseType.IsAssignableFrom(type))
+                    continue;
+
+                databaseType = type;
+            }
+
+            if (databaseType is null)
+            {
+                throw new InvalidOperationException($"There is no non-abstract and non-generic Database type in assembly '{migrationAssembly.FullName}'.");
+            }
+
+            return (MigrationHandler)Activator.CreateInstance(typeof(MigrationHandler<>).MakeGenericType(databaseType), new object[] { migrationAssembly, types })!;
+        }
+
+        public static MigrationHandler GetMigrationHandler(Assembly migrationAssembly, Type databaseType)
+        {
+            if (typeof(Database).IsAssignableFrom(databaseType))
+                throw new InvalidOperationException("The specified type has to inherit the 'Database' type.");
+            else if (databaseType.IsAbstract)
+                throw new InvalidOperationException("The specified type has to be non-abstract.");
+            else if (databaseType.IsGenericType)
+                throw new InvalidOperationException("The specified type has to be non-generic.");
+
+            Type[] types;
+
+            try
+            {
+                types = migrationAssembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                types = e.Types.Where(x => x is not null).ToArray();
+            }
+
+            return (MigrationHandler)Activator.CreateInstance(typeof(MigrationHandler<>).MakeGenericType(databaseType), new object[] { migrationAssembly, types })!;
+        }
+
+        public static MigrationHandler GetMigrationHandler<TDatabase>(Assembly migrationAssembly) where TDatabase : Database
+            => GetMigrationHandler(migrationAssembly, typeof(TDatabase));
+
         internal static string GenerateMigrationKey()
         {
             return DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString("X2").ToLower();
         }
     }
 
-    public class MigrationHandler<TDatabase> : MigrationHandler, IAsyncDisposable, IDisposable
+    public sealed class MigrationHandler<TDatabase> : MigrationHandler, IAsyncDisposable, IDisposable
         where TDatabase : Database, new()
     {
         private readonly TDatabase _database;
         private readonly MigrationDatabase _migrationDatabase;
         private readonly Assembly _migrationAssembly;
+        private readonly Type[] _migrationAssemblyTypes;
 
-        public MigrationHandler(Assembly migrationAssembly)
+        public MigrationHandler(Assembly migrationAssembly, Type[] migrationAssemblyTypes)
         {
             VenflowConfiguration.PopulateEntityInformation = true;
             _database = new();
@@ -40,9 +108,10 @@ namespace Venflow.Design
             _migrationDatabase.SetConnection(_database.GetConnection());
 
             _migrationAssembly = migrationAssembly;
+            _migrationAssemblyTypes = migrationAssemblyTypes;
         }
 
-        public bool TryCreateMigration(string migrationName, string? migrationCode)
+        public override bool TryCreateMigration(string migrationName, out string? migrationCode)
         {
             if (string.IsNullOrWhiteSpace(migrationName))
                 throw new ArgumentException("Can not be null, empty or filled with whitespace.", nameof(migrationName));
@@ -63,6 +132,8 @@ namespace Venflow.Design
 
             if (changes.Count == 0)
             {
+                migrationCode = null;
+
                 return false;
             }
 
@@ -71,7 +142,7 @@ namespace Venflow.Design
             return true;
         }
 
-        public async Task<List<Migration>> GetDatabaseMigrationDifferencesAsync()
+        public override async Task<List<Migration>> GetDatabaseMigrationDifferencesAsync()
         {
             var migrationsToApply = new List<Migration>();
 
@@ -116,7 +187,7 @@ namespace Venflow.Design
             return migrationsToApply;
         }
 
-        public Task UpdateDatabaseAsync(List<Migration> migrationsToApply)
+        public override Task UpdateDatabaseAsync(List<Migration> migrationsToApply)
         {
             return ApplyMigrationsAsync(migrationsToApply);
         }
@@ -228,7 +299,7 @@ namespace Venflow.Design
         {
             var baseMigrationType = typeof(Migration);
 
-            return _migrationAssembly.GetTypes().Where(x => x.BaseType == baseMigrationType).OrderBy(x =>
+            return _migrationAssemblyTypes.Where(x => x.BaseType == baseMigrationType).OrderBy(x =>
             {
                 var hexDate = x.Name.Substring(0, x.Name.IndexOf("_"));
 
