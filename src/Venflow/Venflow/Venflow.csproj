@@ -4,23 +4,24 @@
     <TargetFrameworks>net5.0;netcoreapp3.1;net48;netstandard2.1</TargetFrameworks>
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
+    <AnalysisLevel>preview</AnalysisLevel>
+
+    <Title>Venflow</Title>
+    <Authors>Twenty</Authors>
+    <Company>Twenty</Company>
+    <Version>1.0.0.0-rc1</Version>
+    <Language>en</Language>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Description>A brand new, lightweight and fast ORM, build for PostgreSQL.</Description>
     <RepositoryUrl>https://github.com/TwentyFourMinutes/Venflow</RepositoryUrl>
     <PackageTags>Venflow ORM ORM-Framework O/RM Data Postgres SQL PostgreSQL</PackageTags>
     <Copyright>Copyright ©2020 Twenty</Copyright>
-    <Description>A brand new, lightweight and fast ORM, build for PostgreSQL.</Description>
-    <Company>Twenty</Company>
-    <Authors>Twenty</Authors>
-    <Language>en</Language>
-    <Version>1.0.0.0-rc1</Version>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Title>Venflow</Title>
-    <PackageOutputPath>bin\Package</PackageOutputPath>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <SignAssembly>true</SignAssembly>
+    <PackageOutputPath>bin\Package</PackageOutputPath>
     <AssemblyOriginatorKeyFile>../../../Venflow.snk</AssemblyOriginatorKeyFile>
-    <PackageIcon>icon.png</PackageIcon>
-    <AnalysisLevel>preview</AnalysisLevel>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -29,6 +30,7 @@
 
   <ItemGroup>
     <None Include="../../../images/icon.png" Pack="true" PackagePath="" />
+    <None Include="../../../LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,12 +46,5 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net48' Or '$(TargetFramework)' == 'netstandard2.1'">
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
     <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\..\..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
   </ItemGroup>
 </Project>
