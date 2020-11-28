@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="GetVenflowProjectMetadata" Condition="">
+    <MSBuild Condition=" '$(TargetFramework)' == '' "
+             Projects="$(MSBuildProjectFile)"
+             Targets="GetVenflowProjectMetadata"
+             Properties="TargetFramework=$(TargetFrameworks.Split(';')[0]);MetadataFile=$(MetadataFile)" />
+    <ItemGroup Condition=" '$(TargetFramework)' != '' ">
+      <VenflowProjectMetadata Include="OutputPath: $(OutputPath)" />
+      <VenflowProjectMetadata Include="ProjectDir: $(ProjectDir)" />
+      <VenflowProjectMetadata Include="TargetFileName: $(TargetFileName)" />
+    </ItemGroup>
+    <WriteLinesToFile Condition=" '$(TargetFramework)' != '' "
+                      File="$(MetadataFile)"
+                      Lines="@(VenflowProjectMetadata)" />
+  </Target>
+</Project>

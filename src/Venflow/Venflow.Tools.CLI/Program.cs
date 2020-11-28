@@ -21,18 +21,7 @@ namespace Venflow.Tools.CLI
 
             while (true)
             {
-                try
-                {
-                    await command.InvokeAsync(Console.ReadLine());
-                }
-                catch (CommandException ex)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-
-                    Console.WriteLine(ex.Message);
-
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                }
+                await command.InvokeAsync(Console.ReadLine());
             }
         }
     }

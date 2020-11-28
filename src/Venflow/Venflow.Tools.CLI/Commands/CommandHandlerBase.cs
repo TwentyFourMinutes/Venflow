@@ -1,4 +1,5 @@
-﻿using System.CommandLine;
+﻿using System;
+using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
@@ -13,8 +14,18 @@ namespace Venflow.Tools.CLI.Commands
         {
             Context = context;
 
-            await HandleAsync();
+            try
+            {
+                await HandleAsync();
+            }
+            catch (CommandException ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
 
+                Console.WriteLine(ex.Message);
+
+                Console.ForegroundColor = ConsoleColor.Gray;
+            }
             return 0;
         }
 
@@ -23,5 +34,9 @@ namespace Venflow.Tools.CLI.Commands
         [return: MaybeNull]
         protected T GetArgumentValue<T>(Argument<T> argument)
             => Context.ParseResult.ValueForArgument(argument);
+
+        [return: MaybeNull]
+        protected T GetOptionValue<T>(Option<T> option)
+            => Context.ParseResult.ValueForOption(option);
     }
 }

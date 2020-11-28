@@ -29,6 +29,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Venflow.targets"/>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="../../../images/icon.png" Pack="true" PackagePath="" />
     <None Include="../../../LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
