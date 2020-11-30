@@ -16,7 +16,7 @@ namespace Venflow.Tools.CLI
 
             await BuildProjectAsync(fullName);
 
-            var targetFilePath = Path.Combine(projectDirectoryPath, "obj", projectName + ".Venflow.targets");
+            var targetFilePath = Path.Combine(projectDirectoryPath, "obj", projectName + ".csproj.Venflow.targets");
 
             using (var rs = Assembly.GetExecutingAssembly().GetManifestResourceStream("Venflow.Tools.CLI.Resources.Venflow.targets"))
             using (var fs = new FileStream(targetFilePath,
@@ -30,10 +30,7 @@ namespace Venflow.Tools.CLI
 
             string rawMetadata;
 
-            using (var fs = new FileStream(metadataFilePath,
-                    FileMode.Open, FileAccess.Read, FileShare.Write,
-                    4096, FileOptions.RandomAccess | FileOptions.DeleteOnClose))
-            using (var sr = new StreamReader(fs))
+            try
             {
                 var properties = $"msbuild {projectName}.csproj /target:GetVenflowProjectMetadata /verbosity:quiet /nologo /property:MetadataFile=" + metadataFilePath;
 
@@ -42,7 +39,12 @@ namespace Venflow.Tools.CLI
                     throw new CommandException($"Targets build failed, ensure that your '{projectName}.csproj' file is valid.");
                 }
 
-                rawMetadata = await sr.ReadToEndAsync();
+                rawMetadata = await File.ReadAllTextAsync(metadataFilePath);
+            }
+            finally
+            {
+                if (File.Exists(metadataFilePath))
+                    File.Delete(metadataFilePath);
             }
 
             var metadata = rawMetadata.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
@@ -75,19 +77,21 @@ namespace Venflow.Tools.CLI
                 WorkingDirectory = workingDirectory
             };
 
-            var process = Process.Start(processInfo);
+            var process = new Process();
 
             var tcs = new TaskCompletionSource<int>();
 
+            process.StartInfo = processInfo;
             process.EnableRaisingEvents = true;
-
             process.Exited += (_, _) =>
             {
                 tcs.SetResult(process.ExitCode);
+
+                process.Dispose();
             };
 
             process.Start();
-
+            process.EnableRaisingEvents = true;
             return tcs.Task;
         }
     }
