@@ -59,16 +59,9 @@ namespace Venflow.Design
             return (MigrationHandler)Activator.CreateInstance(typeof(MigrationHandler<>).MakeGenericType(databaseType), new object[] { migrationAssembly, types })!;
         }
 
-        public static MigrationHandler GetMigrationHandler(Assembly migrationAssembly, Type databaseType)
+        public static MigrationHandler GetMigrationHandler(Assembly migrationAssembly, string databaseTypeName)
         {
-            if (typeof(Database).IsAssignableFrom(databaseType))
-                throw new InvalidOperationException("The specified type has to inherit the 'Database' type.");
-            else if (databaseType.IsAbstract)
-                throw new InvalidOperationException("The specified type has to be non-abstract.");
-            else if (databaseType.IsGenericType)
-                throw new InvalidOperationException("The specified type has to be non-generic.");
-
-            Type[] types;
+            IEnumerable<Type> types;
 
             try
             {
@@ -76,14 +69,23 @@ namespace Venflow.Design
             }
             catch (ReflectionTypeLoadException e)
             {
-                types = e.Types.Where(x => x is not null).ToArray();
+                types = e.Types.Where(x => x is not null);
             }
+
+            var databaseType = types.Single(x => string.Equals(x.Name, databaseTypeName));
+
+            if (typeof(Database).IsAssignableFrom(databaseType))
+                throw new InvalidOperationException("The specified type has to inherit the 'Database' type.");
+            else if (databaseType.IsAbstract)
+                throw new InvalidOperationException("The specified type has to be non-abstract.");
+            else if (databaseType.IsGenericType)
+                throw new InvalidOperationException("The specified type has to be non-generic.");
 
             return (MigrationHandler)Activator.CreateInstance(typeof(MigrationHandler<>).MakeGenericType(databaseType), new object[] { migrationAssembly, types })!;
         }
 
         public static MigrationHandler GetMigrationHandler<TDatabase>(Assembly migrationAssembly) where TDatabase : Database
-            => GetMigrationHandler(migrationAssembly, typeof(TDatabase));
+            => GetMigrationHandler(migrationAssembly, typeof(TDatabase).Name);
 
         internal static string GenerateMigrationKey()
         {
@@ -299,12 +301,14 @@ namespace Venflow.Design
         {
             var baseMigrationType = typeof(Migration);
 
-            return _migrationAssemblyTypes.Where(x => x.BaseType == baseMigrationType).OrderBy(x =>
+            return _migrationAssemblyTypes.Where(x => x.BaseType == baseMigrationType)
+                                          .Select(x => (Migration)Activator.CreateInstance(x))
+                                          .OrderBy(x =>
             {
                 var hexDate = x.Name.Substring(0, x.Name.IndexOf("_"));
 
                 return Convert.ToInt64(hexDate.ToUpper(), 16);
-            }).Select(x => (Migration)Activator.CreateInstance(x));
+            });
         }
 
         private Task ApplyVirtualMigrationAsync(Migration migration)
