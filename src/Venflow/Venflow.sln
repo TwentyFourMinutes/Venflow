@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venflow.VSIX", "Venflow.VSI
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Tools", "Venflow.Tools\Venflow.Tools.csproj", "{89E419E6-D194-46E3-B371-45E85D1673F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venflow.Tools.CLI", "Venflow.Tools.CLI\Venflow.Tools.CLI.csproj", "{12AA3632-95DF-4C69-95A5-D352A17BEC8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Tools.CLI", "Venflow.Tools.CLI\Venflow.Tools.CLI.csproj", "{12AA3632-95DF-4C69-95A5-D352A17BEC8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

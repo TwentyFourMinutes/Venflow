@@ -9,6 +9,7 @@
 
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>vf</ToolCommandName>
+    <DevelopmentDependency>true</DevelopmentDependency>
 
     <Title>Venflow</Title>
     <Authors>Twenty</Authors>
@@ -29,7 +30,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Venflow.targets"/>
+    <EmbeddedResource Include="Resources\Venflow.targets" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,10 +40,6 @@
 
   <ItemGroup>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20574.7" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Venflow.Design\Venflow.Design.csproj" />
   </ItemGroup>
 
 </Project>

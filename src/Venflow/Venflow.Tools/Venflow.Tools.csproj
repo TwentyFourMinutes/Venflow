@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
+    <DevelopmentDependency>true</DevelopmentDependency>
   </PropertyGroup>
 
   <ItemGroup>
