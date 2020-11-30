@@ -2,6 +2,7 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Venflow.Tools.CLI.Commands
@@ -51,7 +52,8 @@ namespace Venflow.Tools.CLI.Commands
                         }
                     }
 
-                    if (projectPath is null)
+                    if (projectPath is null &&
+                        Directory.Exists(projectName))
                     {
                         var multipleMatches = false;
 
@@ -104,8 +106,49 @@ namespace Venflow.Tools.CLI.Commands
 
                 Console.WriteLine("Build successful.");
 
-                Console.WriteLine(projectPath);
-                Console.WriteLine(assemblyPath);
+                var contextName = GetOptionValue(_contextNameOption);
+
+                try
+                {
+                    var migrationAssembly = Assembly.LoadFrom(assemblyPath);
+
+                    var designAssemblyPath = Path.Combine(Path.GetDirectoryName(assemblyPath), "Venflow.Design.dll");
+
+                    if (!File.Exists(designAssemblyPath))
+                        throw new CommandException($"The project `{migrationAssembly.FullName}` doesn't contain the 'Venflow.Design' NuGet package.");
+
+                    var designAssembly = Assembly.LoadFrom(designAssemblyPath);
+
+                    MigrationHandler migrationHandler;
+
+                    if (contextName is { })
+                    {
+                        migrationHandler = new MigrationHandler(designAssembly, migrationAssembly, contextName);
+                    }
+                    else
+                    {
+                        migrationHandler = new MigrationHandler(designAssembly, migrationAssembly);
+                    }
+
+                    Console.WriteLine("Creating migration...");
+
+                    var migrationName = GetArgumentValue(_migrationNameArgument);
+
+                    if (!migrationHandler.TryCreateMigration(migrationName, out var migrationCode))
+                    {
+                        throw new CommandException("No changes to last migration detected.");
+                    }
+
+                    var migrationsFolder = Directory.CreateDirectory(Path.Combine(Path.GetDirectoryName(projectPath), "Migrations")).FullName;
+
+                    await File.WriteAllTextAsync(Path.Combine(migrationsFolder, DateTimeOffset.Now.ToString("ddMMyyyyhhmmss") + "_" + migrationName + ".cs"), migrationCode);
+
+                    Console.WriteLine("Migration created.");
+                }
+                catch (Exception ex)
+                {
+                    throw new CommandException(ex.Message, ex);
+                }
             }
         }
     }
