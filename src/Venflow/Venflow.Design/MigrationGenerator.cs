@@ -30,7 +30,12 @@ namespace Venflow.Design
         }
         private void Start()
         {
-            _sourceCode.Append(@"
+            // TODO: Add namespaces from column types on the fly
+            _sourceCode.Append(
+@"using System;
+using Venflow.Design;
+using Venflow.Design.Operations;
+
 namespace ").Append(_parentNamespace).Append(@"
 {
     internal sealed class ").Append(_migrationName).Append(@" : Migration
@@ -76,7 +81,7 @@ namespace ").Append(_parentNamespace).Append(@"
 
             _sourceCode.Length -= Environment.NewLine.Length;
 
-            _sourceCode.AppendLine("            }");
+            _sourceCode.Append("            });");
         }
 
         private string Finish()
