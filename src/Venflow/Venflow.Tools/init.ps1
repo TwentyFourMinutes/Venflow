@@ -1,4 +1,4 @@
-﻿param($installPath, $toolsPath, $package, $project)
+param($installPath, $toolsPath, $package, $project)
 
 $importModulePath = (Join-Path $toolsPath 'Venflow.Tools.dll')
 
@@ -23,4 +23,19 @@ if ($importedModule)
 if ($shouldImport)
 {
     Import-Module $importModulePath
+}
+
+try
+{
+    $toolOutput = dotnet tool list -g | Out-String
+
+    # Ensure that the dotnet tool is installed
+    if(!$toolOutput.Contains('Venflow.Tools.CLI'))
+    {
+        dotnet tool install -g 'Venflow.Tools.CLI'
+    }
+}
+catch
+{
+    Write-Error 'The dotnet sdk is not installed, you can install it from https://dotnet.microsoft.com/download.'
 }
