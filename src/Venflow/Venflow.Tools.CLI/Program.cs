@@ -25,6 +25,7 @@ namespace Venflow.Tools.CLI
         internal readonly static Option<string?> ProjectNameOption = new Option<string?>(new[] { "--project", "-p" }, "The name of the project, which contains the Database class.");
         internal readonly static Option<string?> ContextNameOption = new Option<string?>(new[] { "--context", "-c" }, "The name of the Database class, from which the migration should be created.");
         internal readonly static Option<string?> AssemblyPathOption = new Option<string?>(new[] { "--assembly", "-a" }, "The full path of the assembly.");
+        internal readonly static Option<bool> NoBuildOption = new Option<bool>(new[] { "--no-build" }, _ => false, description: "Suppresses the assembly build.");
 
         internal AppRootCommand()
         {
@@ -39,6 +40,7 @@ namespace Venflow.Tools.CLI
 
             AssemblyPathOption.AddValidator(x => !File.Exists(x.GetValueOrDefault<string>()) ? "The given assembly file doesn't exist." : null);
             AddGlobalOption(AssemblyPathOption);
+            AddGlobalOption(NoBuildOption);
         }
     }
 }

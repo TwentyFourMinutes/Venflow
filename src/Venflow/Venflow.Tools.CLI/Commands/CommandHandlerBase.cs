@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Diagnostics.CodeAnalysis;
@@ -94,18 +94,21 @@ namespace Venflow.Tools.CLI.Commands
                 }
             }
 
-            Console.WriteLine("Building ...");
-
-            if (assemblyPath is null)
+            if (GetOptionValue(AppRootCommand.NoBuildOption))
             {
-                assemblyPath = await MSBuild.GetAssemblyPathFromProjectAsync(projectPath);
-            }
-            else
-            {
-                await MSBuild.BuildProjectAsync(projectPath);
-            }
+                Console.WriteLine("Building ...");
 
-            Console.WriteLine("Build successful.");
+                if (assemblyPath is null)
+                {
+                    assemblyPath = await MSBuild.GetAssemblyPathFromProjectAsync(projectPath);
+                }
+                else
+                {
+                    await MSBuild.BuildProjectAsync(projectPath);
+                }
+
+                Console.WriteLine("Build successful.");
+            }
 
             var contextName = GetOptionValue(AppRootCommand.ContextNameOption);
 
