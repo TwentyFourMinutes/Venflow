@@ -15,5 +15,9 @@ namespace Venflow.Tests.Models
         public RelationDatabase() : base(SecretsHandler.GetConnectionString<RelationDatabase>())
         {
         }
+
+        public RelationDatabase(string connectionString) : base(connectionString)
+        {
+        }
     }
 }
