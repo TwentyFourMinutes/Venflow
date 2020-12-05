@@ -631,7 +631,7 @@ namespace Venflow.Modeling.Definitions.Builder
                                 throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
                             }
 
-                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, false), primaryDefintion.IsServerSideGenerated, definition.DbType, new ColumnInformation(definition.Information.Precision, definition.Information.Scale, definition.Information.Comment, definition.Information.DefaultValue));
+                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, false), primaryDefintion.IsServerSideGenerated, definition.DbType, VenflowConfiguration.PopulateEntityInformation ? new ColumnInformation(definition.Information.Precision, definition.Information.Scale, definition.Information.Comment, definition.Information.DefaultValue) : default);
 
                             columns.Insert(0, primaryColumn);
 
@@ -651,7 +651,7 @@ namespace Venflow.Modeling.Definitions.Builder
                             break;
                         case PostgreEnumColumnDefinition enumDefinition:
 
-                            var enumColumn = new PostgreEnumEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, true), definition.DbType, new ColumnInformation(definition.Information.Precision, definition.Information.Scale, definition.Information.Comment, definition.Information.DefaultValue));
+                            var enumColumn = new PostgreEnumEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, true), definition.DbType, VenflowConfiguration.PopulateEntityInformation ? new ColumnInformation(definition.Information.Precision, definition.Information.Scale, definition.Information.Comment, definition.Information.DefaultValue) : default);
 
                             columns.Add(enumColumn);
 
@@ -678,7 +678,7 @@ namespace Venflow.Modeling.Definitions.Builder
                         throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
                     }
 
-                    primaryColumn = new PrimaryEntityColumn<TEntity>(property, annotedPrimaryKey.Name, _valueRetrieverFactory.GenerateRetriever(property, false), true, default, new ColumnInformation(default, default, null, null));
+                    primaryColumn = new PrimaryEntityColumn<TEntity>(property, annotedPrimaryKey.Name, _valueRetrieverFactory.GenerateRetriever(property, false), true, default, VenflowConfiguration.PopulateEntityInformation ? new ColumnInformation(default, default, null, null) : default);
 
                     columns.Insert(0, primaryColumn);
 
@@ -715,12 +715,12 @@ namespace Venflow.Modeling.Definitions.Builder
                             relation.ForeignKeyColumnName = columnName;
                         }
 
-                        column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(property, false), isPropertyTypeNullableReferenceType, definition.DbType, new ColumnInformation(definition.Information.Precision, definition.Information.Scale, definition.Information.Comment, definition.Information.DefaultValue));
+                        column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(property, false), isPropertyTypeNullableReferenceType, definition.DbType, VenflowConfiguration.PopulateEntityInformation ? new ColumnInformation(definition.Information.Precision, definition.Information.Scale, definition.Information.Comment, definition.Information.DefaultValue) : default);
                     }
                     else
                     {
                         columnName = property.Name;
-                        column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(property, false), isPropertyTypeNullableReferenceType, default, new ColumnInformation(default, default, null, null));
+                        column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(property, false), isPropertyTypeNullableReferenceType, default, VenflowConfiguration.PopulateEntityInformation ? new ColumnInformation(default, default, null, null) : default);
                     }
 
                     columns.Add(column);
