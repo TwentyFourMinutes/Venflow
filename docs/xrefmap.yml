@@ -67,59 +67,59 @@ references:
   fullName.vb: Venflow.Commands.IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity)
   nameWithType: IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>
   nameWithType.vb: IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity)
-- uid: Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith*
-  name: InsertWith
-  href: api/Venflow.Commands.IBaseInsertRelationBuilder-2.html#Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWith_
-  commentId: Overload:Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith
+- uid: Venflow.Commands.IBaseInsertRelationBuilder`2.With*
+  name: With
+  href: api/Venflow.Commands.IBaseInsertRelationBuilder-2.html#Venflow_Commands_IBaseInsertRelationBuilder_2_With_
+  commentId: Overload:Venflow.Commands.IBaseInsertRelationBuilder`2.With
   isSpec: "True"
-  fullName: Venflow.Commands.IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.InsertWith
-  fullName.vb: Venflow.Commands.IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).InsertWith
-  nameWithType: IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.InsertWith
-  nameWithType.vb: IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).InsertWith
-- uid: Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})
-  name: InsertWith<TToEntity>(Expression<Func<TRootEntity, TToEntity>>)
-  href: api/Venflow.Commands.IBaseInsertRelationBuilder-2.html#Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWith__1_System_Linq_Expressions_Expression_System_Func__1___0___
-  commentId: M:Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})
-  name.vb: InsertWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, TToEntity)))
-  fullName: Venflow.Commands.IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.InsertWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRootEntity, TToEntity>>)
-  fullName.vb: Venflow.Commands.IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).InsertWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, TToEntity)))
-  nameWithType: IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.InsertWith<TToEntity>(Expression<Func<TRootEntity, TToEntity>>)
-  nameWithType.vb: IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).InsertWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, TToEntity)))
-- uid: Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})
-  name: InsertWith<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>>)
-  href: api/Venflow.Commands.IBaseInsertRelationBuilder-2.html#Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0____
-  commentId: M:Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})
-  name.vb: InsertWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, IList(Of TToEntity))))
-  fullName: Venflow.Commands.IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.InsertWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRootEntity, System.Collections.Generic.IList<TToEntity>>>)
-  fullName.vb: Venflow.Commands.IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).InsertWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, System.Collections.Generic.IList(Of TToEntity))))
-  nameWithType: IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.InsertWith<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>>)
-  nameWithType.vb: IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).InsertWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, IList(Of TToEntity))))
-- uid: Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})
-  name: InsertWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>>)
-  href: api/Venflow.Commands.IBaseInsertRelationBuilder-2.html#Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0____
-  commentId: M:Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})
-  name.vb: InsertWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, List(Of TToEntity))))
-  fullName: Venflow.Commands.IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.InsertWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRootEntity, System.Collections.Generic.List<TToEntity>>>)
-  fullName.vb: Venflow.Commands.IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).InsertWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, System.Collections.Generic.List(Of TToEntity))))
-  nameWithType: IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.InsertWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>>)
-  nameWithType.vb: IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).InsertWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, List(Of TToEntity))))
-- uid: Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWithAll
-  name: InsertWithAll()
-  href: api/Venflow.Commands.IBaseInsertRelationBuilder-2.html#Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWithAll
-  commentId: M:Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWithAll
-  fullName: Venflow.Commands.IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.InsertWithAll()
-  fullName.vb: Venflow.Commands.IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).InsertWithAll()
-  nameWithType: IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.InsertWithAll()
-  nameWithType.vb: IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).InsertWithAll()
-- uid: Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWithAll*
-  name: InsertWithAll
-  href: api/Venflow.Commands.IBaseInsertRelationBuilder-2.html#Venflow_Commands_IBaseInsertRelationBuilder_2_InsertWithAll_
-  commentId: Overload:Venflow.Commands.IBaseInsertRelationBuilder`2.InsertWithAll
+  fullName: Venflow.Commands.IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.With
+  fullName.vb: Venflow.Commands.IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).With
+  nameWithType: IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.With
+  nameWithType.vb: IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).With
+- uid: Venflow.Commands.IBaseInsertRelationBuilder`2.With``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})
+  name: With<TToEntity>(Expression<Func<TRootEntity, TToEntity>>)
+  href: api/Venflow.Commands.IBaseInsertRelationBuilder-2.html#Venflow_Commands_IBaseInsertRelationBuilder_2_With__1_System_Linq_Expressions_Expression_System_Func__1___0___
+  commentId: M:Venflow.Commands.IBaseInsertRelationBuilder`2.With``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})
+  name.vb: With(Of TToEntity)(Expression(Of Func(Of TRootEntity, TToEntity)))
+  fullName: Venflow.Commands.IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.With<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRootEntity, TToEntity>>)
+  fullName.vb: Venflow.Commands.IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).With(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, TToEntity)))
+  nameWithType: IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.With<TToEntity>(Expression<Func<TRootEntity, TToEntity>>)
+  nameWithType.vb: IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).With(Of TToEntity)(Expression(Of Func(Of TRootEntity, TToEntity)))
+- uid: Venflow.Commands.IBaseInsertRelationBuilder`2.With``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})
+  name: With<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>>)
+  href: api/Venflow.Commands.IBaseInsertRelationBuilder-2.html#Venflow_Commands_IBaseInsertRelationBuilder_2_With__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0____
+  commentId: M:Venflow.Commands.IBaseInsertRelationBuilder`2.With``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})
+  name.vb: With(Of TToEntity)(Expression(Of Func(Of TRootEntity, IList(Of TToEntity))))
+  fullName: Venflow.Commands.IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.With<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRootEntity, System.Collections.Generic.IList<TToEntity>>>)
+  fullName.vb: Venflow.Commands.IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).With(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, System.Collections.Generic.IList(Of TToEntity))))
+  nameWithType: IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.With<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>>)
+  nameWithType.vb: IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).With(Of TToEntity)(Expression(Of Func(Of TRootEntity, IList(Of TToEntity))))
+- uid: Venflow.Commands.IBaseInsertRelationBuilder`2.With``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})
+  name: With<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>>)
+  href: api/Venflow.Commands.IBaseInsertRelationBuilder-2.html#Venflow_Commands_IBaseInsertRelationBuilder_2_With__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0____
+  commentId: M:Venflow.Commands.IBaseInsertRelationBuilder`2.With``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})
+  name.vb: With(Of TToEntity)(Expression(Of Func(Of TRootEntity, List(Of TToEntity))))
+  fullName: Venflow.Commands.IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.With<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRootEntity, System.Collections.Generic.List<TToEntity>>>)
+  fullName.vb: Venflow.Commands.IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).With(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, System.Collections.Generic.List(Of TToEntity))))
+  nameWithType: IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.With<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>>)
+  nameWithType.vb: IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).With(Of TToEntity)(Expression(Of Func(Of TRootEntity, List(Of TToEntity))))
+- uid: Venflow.Commands.IBaseInsertRelationBuilder`2.WithAll
+  name: WithAll()
+  href: api/Venflow.Commands.IBaseInsertRelationBuilder-2.html#Venflow_Commands_IBaseInsertRelationBuilder_2_WithAll
+  commentId: M:Venflow.Commands.IBaseInsertRelationBuilder`2.WithAll
+  fullName: Venflow.Commands.IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.WithAll()
+  fullName.vb: Venflow.Commands.IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).WithAll()
+  nameWithType: IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.WithAll()
+  nameWithType.vb: IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).WithAll()
+- uid: Venflow.Commands.IBaseInsertRelationBuilder`2.WithAll*
+  name: WithAll
+  href: api/Venflow.Commands.IBaseInsertRelationBuilder-2.html#Venflow_Commands_IBaseInsertRelationBuilder_2_WithAll_
+  commentId: Overload:Venflow.Commands.IBaseInsertRelationBuilder`2.WithAll
   isSpec: "True"
-  fullName: Venflow.Commands.IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.InsertWithAll
-  fullName.vb: Venflow.Commands.IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).InsertWithAll
-  nameWithType: IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.InsertWithAll
-  nameWithType.vb: IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).InsertWithAll
+  fullName: Venflow.Commands.IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.WithAll
+  fullName.vb: Venflow.Commands.IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).WithAll
+  nameWithType: IBaseInsertRelationBuilder<TRelationEntity, TRootEntity>.WithAll
+  nameWithType.vb: IBaseInsertRelationBuilder(Of TRelationEntity, TRootEntity).WithAll
 - uid: Venflow.Commands.IBaseQueryRelationBuilder`3
   name: IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>
   href: api/Venflow.Commands.IBaseQueryRelationBuilder-3.html
@@ -129,6 +129,42 @@ references:
   fullName.vb: Venflow.Commands.IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn)
   nameWithType: IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>
   nameWithType.vb: IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn)
+- uid: Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith*
+  name: FullJoinWith
+  href: api/Venflow.Commands.IBaseQueryRelationBuilder-3.html#Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith_
+  commentId: Overload:Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith
+  isSpec: "True"
+  fullName: Venflow.Commands.IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.FullJoinWith
+  fullName.vb: Venflow.Commands.IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).FullJoinWith
+  nameWithType: IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.FullJoinWith
+  nameWithType.vb: IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).FullJoinWith
+- uid: Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})
+  name: FullJoinWith<TToEntity>(Expression<Func<TRootEntity, TToEntity>>)
+  href: api/Venflow.Commands.IBaseQueryRelationBuilder-3.html#Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith__1_System_Linq_Expressions_Expression_System_Func__1___0___
+  commentId: M:Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})
+  name.vb: FullJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, TToEntity)))
+  fullName: Venflow.Commands.IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.FullJoinWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRootEntity, TToEntity>>)
+  fullName.vb: Venflow.Commands.IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).FullJoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, TToEntity)))
+  nameWithType: IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.FullJoinWith<TToEntity>(Expression<Func<TRootEntity, TToEntity>>)
+  nameWithType.vb: IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).FullJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, TToEntity)))
+- uid: Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})
+  name: FullJoinWith<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>>)
+  href: api/Venflow.Commands.IBaseQueryRelationBuilder-3.html#Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0____
+  commentId: M:Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})
+  name.vb: FullJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, IList(Of TToEntity))))
+  fullName: Venflow.Commands.IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.FullJoinWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRootEntity, System.Collections.Generic.IList<TToEntity>>>)
+  fullName.vb: Venflow.Commands.IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).FullJoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, System.Collections.Generic.IList(Of TToEntity))))
+  nameWithType: IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.FullJoinWith<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>>)
+  nameWithType.vb: IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).FullJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, IList(Of TToEntity))))
+- uid: Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})
+  name: FullJoinWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>>)
+  href: api/Venflow.Commands.IBaseQueryRelationBuilder-3.html#Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0____
+  commentId: M:Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})
+  name.vb: FullJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, List(Of TToEntity))))
+  fullName: Venflow.Commands.IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.FullJoinWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRootEntity, System.Collections.Generic.List<TToEntity>>>)
+  fullName.vb: Venflow.Commands.IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).FullJoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, System.Collections.Generic.List(Of TToEntity))))
+  nameWithType: IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.FullJoinWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>>)
+  nameWithType.vb: IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).FullJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, List(Of TToEntity))))
 - uid: Venflow.Commands.IBaseQueryRelationBuilder`3.JoinWith*
   name: JoinWith
   href: api/Venflow.Commands.IBaseQueryRelationBuilder-3.html#Venflow_Commands_IBaseQueryRelationBuilder_3_JoinWith_
@@ -165,6 +201,78 @@ references:
   fullName.vb: Venflow.Commands.IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).JoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, System.Collections.Generic.List(Of TToEntity))), Venflow.Enums.JoinBehaviour)
   nameWithType: IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.JoinWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>>, JoinBehaviour)
   nameWithType.vb: IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).JoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, List(Of TToEntity))), JoinBehaviour)
+- uid: Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith*
+  name: LeftJoinWith
+  href: api/Venflow.Commands.IBaseQueryRelationBuilder-3.html#Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith_
+  commentId: Overload:Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith
+  isSpec: "True"
+  fullName: Venflow.Commands.IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.LeftJoinWith
+  fullName.vb: Venflow.Commands.IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).LeftJoinWith
+  nameWithType: IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.LeftJoinWith
+  nameWithType.vb: IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).LeftJoinWith
+- uid: Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})
+  name: LeftJoinWith<TToEntity>(Expression<Func<TRootEntity, TToEntity>>)
+  href: api/Venflow.Commands.IBaseQueryRelationBuilder-3.html#Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith__1_System_Linq_Expressions_Expression_System_Func__1___0___
+  commentId: M:Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})
+  name.vb: LeftJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, TToEntity)))
+  fullName: Venflow.Commands.IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.LeftJoinWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRootEntity, TToEntity>>)
+  fullName.vb: Venflow.Commands.IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).LeftJoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, TToEntity)))
+  nameWithType: IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.LeftJoinWith<TToEntity>(Expression<Func<TRootEntity, TToEntity>>)
+  nameWithType.vb: IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).LeftJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, TToEntity)))
+- uid: Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})
+  name: LeftJoinWith<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>>)
+  href: api/Venflow.Commands.IBaseQueryRelationBuilder-3.html#Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0____
+  commentId: M:Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})
+  name.vb: LeftJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, IList(Of TToEntity))))
+  fullName: Venflow.Commands.IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.LeftJoinWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRootEntity, System.Collections.Generic.IList<TToEntity>>>)
+  fullName.vb: Venflow.Commands.IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).LeftJoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, System.Collections.Generic.IList(Of TToEntity))))
+  nameWithType: IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.LeftJoinWith<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>>)
+  nameWithType.vb: IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).LeftJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, IList(Of TToEntity))))
+- uid: Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})
+  name: LeftJoinWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>>)
+  href: api/Venflow.Commands.IBaseQueryRelationBuilder-3.html#Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0____
+  commentId: M:Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})
+  name.vb: LeftJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, List(Of TToEntity))))
+  fullName: Venflow.Commands.IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.LeftJoinWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRootEntity, System.Collections.Generic.List<TToEntity>>>)
+  fullName.vb: Venflow.Commands.IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).LeftJoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, System.Collections.Generic.List(Of TToEntity))))
+  nameWithType: IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.LeftJoinWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>>)
+  nameWithType.vb: IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).LeftJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, List(Of TToEntity))))
+- uid: Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith*
+  name: RightJoinWith
+  href: api/Venflow.Commands.IBaseQueryRelationBuilder-3.html#Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith_
+  commentId: Overload:Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith
+  isSpec: "True"
+  fullName: Venflow.Commands.IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.RightJoinWith
+  fullName.vb: Venflow.Commands.IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).RightJoinWith
+  nameWithType: IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.RightJoinWith
+  nameWithType.vb: IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).RightJoinWith
+- uid: Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})
+  name: RightJoinWith<TToEntity>(Expression<Func<TRootEntity, TToEntity>>)
+  href: api/Venflow.Commands.IBaseQueryRelationBuilder-3.html#Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith__1_System_Linq_Expressions_Expression_System_Func__1___0___
+  commentId: M:Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})
+  name.vb: RightJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, TToEntity)))
+  fullName: Venflow.Commands.IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.RightJoinWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRootEntity, TToEntity>>)
+  fullName.vb: Venflow.Commands.IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).RightJoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, TToEntity)))
+  nameWithType: IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.RightJoinWith<TToEntity>(Expression<Func<TRootEntity, TToEntity>>)
+  nameWithType.vb: IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).RightJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, TToEntity)))
+- uid: Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})
+  name: RightJoinWith<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>>)
+  href: api/Venflow.Commands.IBaseQueryRelationBuilder-3.html#Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0____
+  commentId: M:Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})
+  name.vb: RightJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, IList(Of TToEntity))))
+  fullName: Venflow.Commands.IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.RightJoinWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRootEntity, System.Collections.Generic.IList<TToEntity>>>)
+  fullName.vb: Venflow.Commands.IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).RightJoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, System.Collections.Generic.IList(Of TToEntity))))
+  nameWithType: IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.RightJoinWith<TToEntity>(Expression<Func<TRootEntity, IList<TToEntity>>>)
+  nameWithType.vb: IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).RightJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, IList(Of TToEntity))))
+- uid: Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})
+  name: RightJoinWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>>)
+  href: api/Venflow.Commands.IBaseQueryRelationBuilder-3.html#Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0____
+  commentId: M:Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})
+  name.vb: RightJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, List(Of TToEntity))))
+  fullName: Venflow.Commands.IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.RightJoinWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRootEntity, System.Collections.Generic.List<TToEntity>>>)
+  fullName.vb: Venflow.Commands.IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).RightJoinWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRootEntity, System.Collections.Generic.List(Of TToEntity))))
+  nameWithType: IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.RightJoinWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>>)
+  nameWithType.vb: IBaseQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).RightJoinWith(Of TToEntity)(Expression(Of Func(Of TRootEntity, List(Of TToEntity))))
 - uid: Venflow.Commands.IDeleteCommand`1
   name: IDeleteCommand<TEntity>
   href: api/Venflow.Commands.IDeleteCommand-1.html
@@ -542,6 +650,114 @@ references:
   fullName.vb: Venflow.Commands.IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn)
   nameWithType: IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>
   nameWithType.vb: IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn)
+- uid: Venflow.Commands.IQueryRelationBuilder`3.ThenFullWith*
+  name: ThenFullWith
+  href: api/Venflow.Commands.IQueryRelationBuilder-3.html#Venflow_Commands_IQueryRelationBuilder_3_ThenFullWith_
+  commentId: Overload:Venflow.Commands.IQueryRelationBuilder`3.ThenFullWith
+  isSpec: "True"
+  fullName: Venflow.Commands.IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenFullWith
+  fullName.vb: Venflow.Commands.IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenFullWith
+  nameWithType: IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenFullWith
+  nameWithType.vb: IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenFullWith
+- uid: Venflow.Commands.IQueryRelationBuilder`3.ThenFullWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})
+  name: ThenFullWith<TToEntity>(Expression<Func<TRelationEntity, TToEntity>>)
+  href: api/Venflow.Commands.IQueryRelationBuilder-3.html#Venflow_Commands_IQueryRelationBuilder_3_ThenFullWith__1_System_Linq_Expressions_Expression_System_Func__0___0___
+  commentId: M:Venflow.Commands.IQueryRelationBuilder`3.ThenFullWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})
+  name.vb: ThenFullWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, TToEntity)))
+  fullName: Venflow.Commands.IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenFullWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRelationEntity, TToEntity>>)
+  fullName.vb: Venflow.Commands.IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenFullWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRelationEntity, TToEntity)))
+  nameWithType: IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenFullWith<TToEntity>(Expression<Func<TRelationEntity, TToEntity>>)
+  nameWithType.vb: IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenFullWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, TToEntity)))
+- uid: Venflow.Commands.IQueryRelationBuilder`3.ThenFullWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}})
+  name: ThenFullWith<TToEntity>(Expression<Func<TRelationEntity, IList<TToEntity>>>)
+  href: api/Venflow.Commands.IQueryRelationBuilder-3.html#Venflow_Commands_IQueryRelationBuilder_3_ThenFullWith__1_System_Linq_Expressions_Expression_System_Func__0_System_Collections_Generic_IList___0____
+  commentId: M:Venflow.Commands.IQueryRelationBuilder`3.ThenFullWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}})
+  name.vb: ThenFullWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, IList(Of TToEntity))))
+  fullName: Venflow.Commands.IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenFullWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRelationEntity, System.Collections.Generic.IList<TToEntity>>>)
+  fullName.vb: Venflow.Commands.IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenFullWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRelationEntity, System.Collections.Generic.IList(Of TToEntity))))
+  nameWithType: IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenFullWith<TToEntity>(Expression<Func<TRelationEntity, IList<TToEntity>>>)
+  nameWithType.vb: IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenFullWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, IList(Of TToEntity))))
+- uid: Venflow.Commands.IQueryRelationBuilder`3.ThenFullWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}})
+  name: ThenFullWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>>)
+  href: api/Venflow.Commands.IQueryRelationBuilder-3.html#Venflow_Commands_IQueryRelationBuilder_3_ThenFullWith__1_System_Linq_Expressions_Expression_System_Func__0_System_Collections_Generic_List___0____
+  commentId: M:Venflow.Commands.IQueryRelationBuilder`3.ThenFullWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}})
+  name.vb: ThenFullWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, List(Of TToEntity))))
+  fullName: Venflow.Commands.IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenFullWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRelationEntity, System.Collections.Generic.List<TToEntity>>>)
+  fullName.vb: Venflow.Commands.IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenFullWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRelationEntity, System.Collections.Generic.List(Of TToEntity))))
+  nameWithType: IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenFullWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>>)
+  nameWithType.vb: IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenFullWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, List(Of TToEntity))))
+- uid: Venflow.Commands.IQueryRelationBuilder`3.ThenLeftWith*
+  name: ThenLeftWith
+  href: api/Venflow.Commands.IQueryRelationBuilder-3.html#Venflow_Commands_IQueryRelationBuilder_3_ThenLeftWith_
+  commentId: Overload:Venflow.Commands.IQueryRelationBuilder`3.ThenLeftWith
+  isSpec: "True"
+  fullName: Venflow.Commands.IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenLeftWith
+  fullName.vb: Venflow.Commands.IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenLeftWith
+  nameWithType: IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenLeftWith
+  nameWithType.vb: IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenLeftWith
+- uid: Venflow.Commands.IQueryRelationBuilder`3.ThenLeftWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})
+  name: ThenLeftWith<TToEntity>(Expression<Func<TRelationEntity, TToEntity>>)
+  href: api/Venflow.Commands.IQueryRelationBuilder-3.html#Venflow_Commands_IQueryRelationBuilder_3_ThenLeftWith__1_System_Linq_Expressions_Expression_System_Func__0___0___
+  commentId: M:Venflow.Commands.IQueryRelationBuilder`3.ThenLeftWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})
+  name.vb: ThenLeftWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, TToEntity)))
+  fullName: Venflow.Commands.IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenLeftWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRelationEntity, TToEntity>>)
+  fullName.vb: Venflow.Commands.IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenLeftWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRelationEntity, TToEntity)))
+  nameWithType: IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenLeftWith<TToEntity>(Expression<Func<TRelationEntity, TToEntity>>)
+  nameWithType.vb: IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenLeftWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, TToEntity)))
+- uid: Venflow.Commands.IQueryRelationBuilder`3.ThenLeftWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}})
+  name: ThenLeftWith<TToEntity>(Expression<Func<TRelationEntity, IList<TToEntity>>>)
+  href: api/Venflow.Commands.IQueryRelationBuilder-3.html#Venflow_Commands_IQueryRelationBuilder_3_ThenLeftWith__1_System_Linq_Expressions_Expression_System_Func__0_System_Collections_Generic_IList___0____
+  commentId: M:Venflow.Commands.IQueryRelationBuilder`3.ThenLeftWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}})
+  name.vb: ThenLeftWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, IList(Of TToEntity))))
+  fullName: Venflow.Commands.IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenLeftWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRelationEntity, System.Collections.Generic.IList<TToEntity>>>)
+  fullName.vb: Venflow.Commands.IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenLeftWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRelationEntity, System.Collections.Generic.IList(Of TToEntity))))
+  nameWithType: IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenLeftWith<TToEntity>(Expression<Func<TRelationEntity, IList<TToEntity>>>)
+  nameWithType.vb: IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenLeftWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, IList(Of TToEntity))))
+- uid: Venflow.Commands.IQueryRelationBuilder`3.ThenLeftWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}})
+  name: ThenLeftWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>>)
+  href: api/Venflow.Commands.IQueryRelationBuilder-3.html#Venflow_Commands_IQueryRelationBuilder_3_ThenLeftWith__1_System_Linq_Expressions_Expression_System_Func__0_System_Collections_Generic_List___0____
+  commentId: M:Venflow.Commands.IQueryRelationBuilder`3.ThenLeftWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}})
+  name.vb: ThenLeftWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, List(Of TToEntity))))
+  fullName: Venflow.Commands.IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenLeftWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRelationEntity, System.Collections.Generic.List<TToEntity>>>)
+  fullName.vb: Venflow.Commands.IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenLeftWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRelationEntity, System.Collections.Generic.List(Of TToEntity))))
+  nameWithType: IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenLeftWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>>)
+  nameWithType.vb: IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenLeftWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, List(Of TToEntity))))
+- uid: Venflow.Commands.IQueryRelationBuilder`3.ThenRightWith*
+  name: ThenRightWith
+  href: api/Venflow.Commands.IQueryRelationBuilder-3.html#Venflow_Commands_IQueryRelationBuilder_3_ThenRightWith_
+  commentId: Overload:Venflow.Commands.IQueryRelationBuilder`3.ThenRightWith
+  isSpec: "True"
+  fullName: Venflow.Commands.IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenRightWith
+  fullName.vb: Venflow.Commands.IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenRightWith
+  nameWithType: IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenRightWith
+  nameWithType.vb: IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenRightWith
+- uid: Venflow.Commands.IQueryRelationBuilder`3.ThenRightWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})
+  name: ThenRightWith<TToEntity>(Expression<Func<TRelationEntity, TToEntity>>)
+  href: api/Venflow.Commands.IQueryRelationBuilder-3.html#Venflow_Commands_IQueryRelationBuilder_3_ThenRightWith__1_System_Linq_Expressions_Expression_System_Func__0___0___
+  commentId: M:Venflow.Commands.IQueryRelationBuilder`3.ThenRightWith``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})
+  name.vb: ThenRightWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, TToEntity)))
+  fullName: Venflow.Commands.IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenRightWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRelationEntity, TToEntity>>)
+  fullName.vb: Venflow.Commands.IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenRightWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRelationEntity, TToEntity)))
+  nameWithType: IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenRightWith<TToEntity>(Expression<Func<TRelationEntity, TToEntity>>)
+  nameWithType.vb: IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenRightWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, TToEntity)))
+- uid: Venflow.Commands.IQueryRelationBuilder`3.ThenRightWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}})
+  name: ThenRightWith<TToEntity>(Expression<Func<TRelationEntity, IList<TToEntity>>>)
+  href: api/Venflow.Commands.IQueryRelationBuilder-3.html#Venflow_Commands_IQueryRelationBuilder_3_ThenRightWith__1_System_Linq_Expressions_Expression_System_Func__0_System_Collections_Generic_IList___0____
+  commentId: M:Venflow.Commands.IQueryRelationBuilder`3.ThenRightWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}})
+  name.vb: ThenRightWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, IList(Of TToEntity))))
+  fullName: Venflow.Commands.IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenRightWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRelationEntity, System.Collections.Generic.IList<TToEntity>>>)
+  fullName.vb: Venflow.Commands.IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenRightWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRelationEntity, System.Collections.Generic.IList(Of TToEntity))))
+  nameWithType: IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenRightWith<TToEntity>(Expression<Func<TRelationEntity, IList<TToEntity>>>)
+  nameWithType.vb: IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenRightWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, IList(Of TToEntity))))
+- uid: Venflow.Commands.IQueryRelationBuilder`3.ThenRightWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}})
+  name: ThenRightWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>>)
+  href: api/Venflow.Commands.IQueryRelationBuilder-3.html#Venflow_Commands_IQueryRelationBuilder_3_ThenRightWith__1_System_Linq_Expressions_Expression_System_Func__0_System_Collections_Generic_List___0____
+  commentId: M:Venflow.Commands.IQueryRelationBuilder`3.ThenRightWith``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.List{``0}}})
+  name.vb: ThenRightWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, List(Of TToEntity))))
+  fullName: Venflow.Commands.IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenRightWith<TToEntity>(System.Linq.Expressions.Expression<System.Func<TRelationEntity, System.Collections.Generic.List<TToEntity>>>)
+  fullName.vb: Venflow.Commands.IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenRightWith(Of TToEntity)(System.Linq.Expressions.Expression(Of System.Func(Of TRelationEntity, System.Collections.Generic.List(Of TToEntity))))
+  nameWithType: IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenRightWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>>)
+  nameWithType.vb: IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenRightWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, List(Of TToEntity))))
 - uid: Venflow.Commands.IQueryRelationBuilder`3.ThenWith*
   name: ThenWith
   href: api/Venflow.Commands.IQueryRelationBuilder-3.html#Venflow_Commands_IQueryRelationBuilder_3_ThenWith_
@@ -902,6 +1118,25 @@ references:
   isSpec: "True"
   fullName: Venflow.Database.Database
   nameWithType: Database.Database
+- uid: Venflow.Database.BeginTransactionAsync(System.Data.IsolationLevel,System.Threading.CancellationToken)
+  name: BeginTransactionAsync(IsolationLevel, CancellationToken)
+  href: api/Venflow.Database.html#Venflow_Database_BeginTransactionAsync_System_Data_IsolationLevel_System_Threading_CancellationToken_
+  commentId: M:Venflow.Database.BeginTransactionAsync(System.Data.IsolationLevel,System.Threading.CancellationToken)
+  fullName: Venflow.Database.BeginTransactionAsync(System.Data.IsolationLevel, System.Threading.CancellationToken)
+  nameWithType: Database.BeginTransactionAsync(IsolationLevel, CancellationToken)
+- uid: Venflow.Database.BeginTransactionAsync(System.Threading.CancellationToken)
+  name: BeginTransactionAsync(CancellationToken)
+  href: api/Venflow.Database.html#Venflow_Database_BeginTransactionAsync_System_Threading_CancellationToken_
+  commentId: M:Venflow.Database.BeginTransactionAsync(System.Threading.CancellationToken)
+  fullName: Venflow.Database.BeginTransactionAsync(System.Threading.CancellationToken)
+  nameWithType: Database.BeginTransactionAsync(CancellationToken)
+- uid: Venflow.Database.BeginTransactionAsync*
+  name: BeginTransactionAsync
+  href: api/Venflow.Database.html#Venflow_Database_BeginTransactionAsync_
+  commentId: Overload:Venflow.Database.BeginTransactionAsync
+  isSpec: "True"
+  fullName: Venflow.Database.BeginTransactionAsync
+  nameWithType: Database.BeginTransactionAsync
 - uid: Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)
   name: Configure(DatabaseOptionsBuilder)
   href: api/Venflow.Database.html#Venflow_Database_Configure_Venflow_DatabaseOptionsBuilder_

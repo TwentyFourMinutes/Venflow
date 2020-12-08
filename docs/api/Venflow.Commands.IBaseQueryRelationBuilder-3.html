@@ -17,7 +17,7 @@
     <meta property="og:image" content="">
     <meta property="og:image:alt" content="Venflow Logo">
     <meta name="theme-color" content="#995EA7">
-    <meta name="generator" content="docfx 2.56.3.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
     <meta id="docfx-style:rel" content="../">
@@ -74,11 +74,11 @@
       <div class="container body-content">
         
         <div id="search-results">
-          <div class="search-list"></div>
+          <div class="search-list">Search Results for <span></span></div>
           <div class="sr-items">
             <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
           </div>
-          <ul id="pagination"></ul>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
@@ -152,6 +152,216 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith__1_System_Linq_Expressions_Expression_System_Func__1___0___.md&amp;value=---%0Auid%3A%20Venflow.Commands.IBaseQueryRelationBuilder%603.FullJoinWith%60%601(System.Linq.Expressions.Expression%7BSystem.Func%7B%601%2C%60%600%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IBaseQueryRelationBuilder.cs/#L117">View Source</a>
+  </span>
+  <a id="Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith_" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith*"></a>
+  <h4 id="Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith__1_System_Linq_Expressions_Expression_System_Func__1___0___" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})">FullJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, TToEntity&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Allows to configure materialized full joins for the current query.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueryRelationBuilder&lt;TToEntity, TRootEntity, TReturn&gt; FullJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, TToEntity&gt;&gt; propertySelector)
+    where TToEntity : class, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Linq.Expressions.Expression</span>&lt;<span class="xref">System.Func</span>&lt;TRootEntity, TToEntity&gt;&gt;</td>
+        <td><span class="parametername">propertySelector</span></td>
+        <td><p>A lambda expression representing the navigation property which should get joined on doing materialization.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IQueryRelationBuilder-3.html">IQueryRelationBuilder</a>&lt;TToEntity, TRootEntity, TReturn&gt;</td>
+        <td><p>An object that can be used to further configure the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TToEntity</span></td>
+        <td><p>The type of the joined entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith__1_System_Linq_Expressions_Expression_System_Func__1___0____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0____.md&amp;value=---%0Auid%3A%20Venflow.Commands.IBaseQueryRelationBuilder%603.FullJoinWith%60%601(System.Linq.Expressions.Expression%7BSystem.Func%7B%601%2CSystem.Collections.Generic.IList%7B%60%600%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IBaseQueryRelationBuilder.cs/#L127">View Source</a>
+  </span>
+  <a id="Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith_" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith*"></a>
+  <h4 id="Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0____" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})">FullJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, IList&lt;TToEntity&gt;&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Allows to configure materialized full joins for the current query.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueryRelationBuilder&lt;TToEntity, TRootEntity, TReturn&gt; FullJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, IList&lt;TToEntity&gt;&gt;&gt; propertySelector)
+    where TToEntity : class, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Linq.Expressions.Expression</span>&lt;<span class="xref">System.Func</span>&lt;TRootEntity, <span class="xref">System.Collections.Generic.IList</span>&lt;TToEntity&gt;&gt;&gt;</td>
+        <td><span class="parametername">propertySelector</span></td>
+        <td><p>A lambda expression representing the navigation property which should get joined on doing materialization.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IQueryRelationBuilder-3.html">IQueryRelationBuilder</a>&lt;TToEntity, TRootEntity, TReturn&gt;</td>
+        <td><p>An object that can be used to further configure the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TToEntity</span></td>
+        <td><p>The type of the joined entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0_____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0____.md&amp;value=---%0Auid%3A%20Venflow.Commands.IBaseQueryRelationBuilder%603.FullJoinWith%60%601(System.Linq.Expressions.Expression%7BSystem.Func%7B%601%2CSystem.Collections.Generic.List%7B%60%600%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IBaseQueryRelationBuilder.cs/#L137">View Source</a>
+  </span>
+  <a id="Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith_" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith*"></a>
+  <h4 id="Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0____" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.FullJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})">FullJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, List&lt;TToEntity&gt;&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Allows to configure materialized full joins for the current query.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueryRelationBuilder&lt;TToEntity, TRootEntity, TReturn&gt; FullJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, List&lt;TToEntity&gt;&gt;&gt; propertySelector)
+    where TToEntity : class, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Linq.Expressions.Expression</span>&lt;<span class="xref">System.Func</span>&lt;TRootEntity, <span class="xref">System.Collections.Generic.List</span>&lt;TToEntity&gt;&gt;&gt;</td>
+        <td><span class="parametername">propertySelector</span></td>
+        <td><p>A lambda expression representing the navigation property which should get joined on doing materialization.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IQueryRelationBuilder-3.html">IQueryRelationBuilder</a>&lt;TToEntity, TRootEntity, TReturn&gt;</td>
+        <td><p>An object that can be used to further configure the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TToEntity</span></td>
+        <td><p>The type of the joined entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_Commands_IBaseQueryRelationBuilder_3_FullJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0_____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IBaseQueryRelationBuilder_3_JoinWith__1_System_Linq_Expressions_Expression_System_Func__1___0___Venflow_Enums_JoinBehaviour_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IBaseQueryRelationBuilder%603.JoinWith%60%601(System.Linq.Expressions.Expression%7BSystem.Func%7B%601%2C%60%600%7D%7D%2CVenflow.Enums.JoinBehaviour)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
@@ -186,7 +396,7 @@
       <tr>
         <td><a class="xref" href="Venflow.Enums.JoinBehaviour.html">JoinBehaviour</a></td>
         <td><span class="parametername">joinBehaviour</span></td>
-        <td><p>Configures the type of this join.</p>
+        <td><p>Configures the type of this join. You are not forced to use this parameter! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to define it.</p>
 </td>
       </tr>
     </tbody>
@@ -259,7 +469,7 @@
       <tr>
         <td><a class="xref" href="Venflow.Enums.JoinBehaviour.html">JoinBehaviour</a></td>
         <td><span class="parametername">joinBehaviour</span></td>
-        <td><p>Configures the type of this join.</p>
+        <td><p>Configures the type of this join. You are not forced to use this parameter! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to define it.</p>
 </td>
       </tr>
     </tbody>
@@ -332,7 +542,7 @@
       <tr>
         <td><a class="xref" href="Venflow.Enums.JoinBehaviour.html">JoinBehaviour</a></td>
         <td><span class="parametername">joinBehaviour</span></td>
-        <td><p>Configures the type of this join.</p>
+        <td><p>Configures the type of this join. You are not forced to use this parameter! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to define it.</p>
 </td>
       </tr>
     </tbody>
@@ -369,6 +579,426 @@
       </tr>
     </tbody>
   </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith__1_System_Linq_Expressions_Expression_System_Func__1___0___.md&amp;value=---%0Auid%3A%20Venflow.Commands.IBaseQueryRelationBuilder%603.LeftJoinWith%60%601(System.Linq.Expressions.Expression%7BSystem.Func%7B%601%2C%60%600%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IBaseQueryRelationBuilder.cs/#L56">View Source</a>
+  </span>
+  <a id="Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith_" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith*"></a>
+  <h4 id="Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith__1_System_Linq_Expressions_Expression_System_Func__1___0___" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})">LeftJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, TToEntity&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Allows to configure materialized left joins for the current query.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueryRelationBuilder&lt;TToEntity, TRootEntity, TReturn&gt; LeftJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, TToEntity&gt;&gt; propertySelector)
+    where TToEntity : class, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Linq.Expressions.Expression</span>&lt;<span class="xref">System.Func</span>&lt;TRootEntity, TToEntity&gt;&gt;</td>
+        <td><span class="parametername">propertySelector</span></td>
+        <td><p>A lambda expression representing the navigation property which should get joined on doing materialization.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IQueryRelationBuilder-3.html">IQueryRelationBuilder</a>&lt;TToEntity, TRootEntity, TReturn&gt;</td>
+        <td><p>An object that can be used to further configure the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TToEntity</span></td>
+        <td><p>The type of the joined entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith__1_System_Linq_Expressions_Expression_System_Func__1___0____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0____.md&amp;value=---%0Auid%3A%20Venflow.Commands.IBaseQueryRelationBuilder%603.LeftJoinWith%60%601(System.Linq.Expressions.Expression%7BSystem.Func%7B%601%2CSystem.Collections.Generic.IList%7B%60%600%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IBaseQueryRelationBuilder.cs/#L66">View Source</a>
+  </span>
+  <a id="Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith_" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith*"></a>
+  <h4 id="Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0____" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})">LeftJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, IList&lt;TToEntity&gt;&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Allows to configure materialized left joins for the current query.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueryRelationBuilder&lt;TToEntity, TRootEntity, TReturn&gt; LeftJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, IList&lt;TToEntity&gt;&gt;&gt; propertySelector)
+    where TToEntity : class, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Linq.Expressions.Expression</span>&lt;<span class="xref">System.Func</span>&lt;TRootEntity, <span class="xref">System.Collections.Generic.IList</span>&lt;TToEntity&gt;&gt;&gt;</td>
+        <td><span class="parametername">propertySelector</span></td>
+        <td><p>A lambda expression representing the navigation property which should get joined on doing materialization.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IQueryRelationBuilder-3.html">IQueryRelationBuilder</a>&lt;TToEntity, TRootEntity, TReturn&gt;</td>
+        <td><p>An object that can be used to further configure the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TToEntity</span></td>
+        <td><p>The type of the joined entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0_____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0____.md&amp;value=---%0Auid%3A%20Venflow.Commands.IBaseQueryRelationBuilder%603.LeftJoinWith%60%601(System.Linq.Expressions.Expression%7BSystem.Func%7B%601%2CSystem.Collections.Generic.List%7B%60%600%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IBaseQueryRelationBuilder.cs/#L76">View Source</a>
+  </span>
+  <a id="Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith_" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith*"></a>
+  <h4 id="Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0____" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.LeftJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})">LeftJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, List&lt;TToEntity&gt;&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Allows to configure materialized left joins for the current query.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueryRelationBuilder&lt;TToEntity, TRootEntity, TReturn&gt; LeftJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, List&lt;TToEntity&gt;&gt;&gt; propertySelector)
+    where TToEntity : class, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Linq.Expressions.Expression</span>&lt;<span class="xref">System.Func</span>&lt;TRootEntity, <span class="xref">System.Collections.Generic.List</span>&lt;TToEntity&gt;&gt;&gt;</td>
+        <td><span class="parametername">propertySelector</span></td>
+        <td><p>A lambda expression representing the navigation property which should get joined on doing materialization.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IQueryRelationBuilder-3.html">IQueryRelationBuilder</a>&lt;TToEntity, TRootEntity, TReturn&gt;</td>
+        <td><p>An object that can be used to further configure the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TToEntity</span></td>
+        <td><p>The type of the joined entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_Commands_IBaseQueryRelationBuilder_3_LeftJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0_____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith__1_System_Linq_Expressions_Expression_System_Func__1___0___.md&amp;value=---%0Auid%3A%20Venflow.Commands.IBaseQueryRelationBuilder%603.RightJoinWith%60%601(System.Linq.Expressions.Expression%7BSystem.Func%7B%601%2C%60%600%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IBaseQueryRelationBuilder.cs/#L86">View Source</a>
+  </span>
+  <a id="Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith_" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith*"></a>
+  <h4 id="Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith__1_System_Linq_Expressions_Expression_System_Func__1___0___" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})">RightJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, TToEntity&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Allows to configure materialized right joins for the current query.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueryRelationBuilder&lt;TToEntity, TRootEntity, TReturn&gt; RightJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, TToEntity&gt;&gt; propertySelector)
+    where TToEntity : class, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Linq.Expressions.Expression</span>&lt;<span class="xref">System.Func</span>&lt;TRootEntity, TToEntity&gt;&gt;</td>
+        <td><span class="parametername">propertySelector</span></td>
+        <td><p>A lambda expression representing the navigation property which should get joined on doing materialization.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IQueryRelationBuilder-3.html">IQueryRelationBuilder</a>&lt;TToEntity, TRootEntity, TReturn&gt;</td>
+        <td><p>An object that can be used to further configure the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TToEntity</span></td>
+        <td><p>The type of the joined entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith__1_System_Linq_Expressions_Expression_System_Func__1___0____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0____.md&amp;value=---%0Auid%3A%20Venflow.Commands.IBaseQueryRelationBuilder%603.RightJoinWith%60%601(System.Linq.Expressions.Expression%7BSystem.Func%7B%601%2CSystem.Collections.Generic.IList%7B%60%600%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IBaseQueryRelationBuilder.cs/#L96">View Source</a>
+  </span>
+  <a id="Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith_" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith*"></a>
+  <h4 id="Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0____" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.IList{``0}}})">RightJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, IList&lt;TToEntity&gt;&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Allows to configure materialized right joins for the current query.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueryRelationBuilder&lt;TToEntity, TRootEntity, TReturn&gt; RightJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, IList&lt;TToEntity&gt;&gt;&gt; propertySelector)
+    where TToEntity : class, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Linq.Expressions.Expression</span>&lt;<span class="xref">System.Func</span>&lt;TRootEntity, <span class="xref">System.Collections.Generic.IList</span>&lt;TToEntity&gt;&gt;&gt;</td>
+        <td><span class="parametername">propertySelector</span></td>
+        <td><p>A lambda expression representing the navigation property which should get joined on doing materialization.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IQueryRelationBuilder-3.html">IQueryRelationBuilder</a>&lt;TToEntity, TRootEntity, TReturn&gt;</td>
+        <td><p>An object that can be used to further configure the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TToEntity</span></td>
+        <td><p>The type of the joined entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList___0_____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0____.md&amp;value=---%0Auid%3A%20Venflow.Commands.IBaseQueryRelationBuilder%603.RightJoinWith%60%601(System.Linq.Expressions.Expression%7BSystem.Func%7B%601%2CSystem.Collections.Generic.List%7B%60%600%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IBaseQueryRelationBuilder.cs/#L106">View Source</a>
+  </span>
+  <a id="Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith_" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith*"></a>
+  <h4 id="Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0____" data-uid="Venflow.Commands.IBaseQueryRelationBuilder`3.RightJoinWith``1(System.Linq.Expressions.Expression{System.Func{`1,System.Collections.Generic.List{``0}}})">RightJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, List&lt;TToEntity&gt;&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Allows to configure materialized right joins for the current query.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueryRelationBuilder&lt;TToEntity, TRootEntity, TReturn&gt; RightJoinWith&lt;TToEntity&gt;(Expression&lt;Func&lt;TRootEntity, List&lt;TToEntity&gt;&gt;&gt; propertySelector)
+    where TToEntity : class, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Linq.Expressions.Expression</span>&lt;<span class="xref">System.Func</span>&lt;TRootEntity, <span class="xref">System.Collections.Generic.List</span>&lt;TToEntity&gt;&gt;&gt;</td>
+        <td><span class="parametername">propertySelector</span></td>
+        <td><p>A lambda expression representing the navigation property which should get joined on doing materialization.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IQueryRelationBuilder-3.html">IQueryRelationBuilder</a>&lt;TToEntity, TRootEntity, TReturn&gt;</td>
+        <td><p>An object that can be used to further configure the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TToEntity</span></td>
+        <td><p>The type of the joined entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_Commands_IBaseQueryRelationBuilder_3_RightJoinWith__1_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_List___0_____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</p>
+</div>
 </article>
           </div>
           
