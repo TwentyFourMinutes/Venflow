@@ -685,11 +685,6 @@
             Typically you create a class that derives from <see cref="T:Venflow.Database"/> and contains <seealso cref="T:Venflow.Table`1"/> properties for each entity in the Database. All the <seealso cref="T:Venflow.Table`1"/> properties must have a public setter, they are automatically initialized when the instance of the derived type is created.
             </remarks>
         </member>
-        <member name="P:Venflow.Database.ConnectionString">
-            <summary>
-            Contains the connection string.
-            </summary>
-        </member>
         <member name="M:Venflow.Database.#ctor(System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:Venflow.Database"/> class using the specified <paramref name="connectionString"/>.
@@ -798,17 +793,9 @@
         </member>
         <member name="M:Venflow.Database.GetConnection">
             <summary>
-            Gets or creates a new connection, if none got created yet.
+            Gets or creates a new connections, if none got created yet.
             </summary>
             <returns>the <see cref="T:Npgsql.NpgsqlConnection"/>.</returns>
-            <remarks>If you need to set the connection, you can do so through the <see cref="M:Venflow.Database.SetConnection(Npgsql.NpgsqlConnection)"/> method. Note that this method is hidden from the editor and it might no be immediately get picked up by the IntelliSense.</remarks>
-        </member>
-        <member name="M:Venflow.Database.SetConnection(Npgsql.NpgsqlConnection)">
-            <summary>
-            Sets the underlying connection of the current database instance.
-            </summary>
-            <param name="connection">the <see cref="T:Npgsql.NpgsqlConnection"/> instance to be set.</param>
-            <remarks>If you need to access the connection string, it can be obtained from the <see cref="P:Venflow.Database.ConnectionString"/> property. Note that this property is hidden from the editor and it might no be immediately get picked up by the IntelliSense.</remarks>
         </member>
         <member name="M:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)">
             <summary>
@@ -1002,7 +989,7 @@
         </member>
         <member name="M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapPostgresEnum``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,Npgsql.INpgsqlNameTranslator)">
             <summary>
-            Maps a PostgreSQL enum to a CLR enum column.
+            Maps a PostgreSQL enum to a CLR enum.
             </summary>
             <typeparam name="TTarget">The type of the enum.</typeparam>
             <param name="propertySelector">A lambda expression representing the enum which should be mapped on this entity type.</param>
@@ -1012,27 +999,13 @@
         </member>
         <member name="M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapPostgresEnum``1(System.Linq.Expressions.Expression{System.Func{`0,System.Nullable{``0}}},System.String,Npgsql.INpgsqlNameTranslator)">
             <summary>
-            Maps a PostgreSQL enum to a CLR enum column.
+            Maps a PostgreSQL enum to a CLR enum.
             </summary>
             <typeparam name="TTarget">The type of the enum.</typeparam>
             <param name="propertySelector">A lambda expression representing the enum which should be mapped on this entity type.</param>
             <param name="name">The name of the enum in PostgreSQL, if none used it will try to convert the name of the CLR enum e.g. 'FooBar' to 'foo_bar'</param>
             <param name="npgsqlNameTranslator">A component which will be used to translate CLR names (e.g. SomeClass) into database names (e.g. some_class). Defaults to <see cref="T:Npgsql.NameTranslation.NpgsqlSnakeCaseNameTranslator"/>.</param>
             <returns>The same builder instance so that multiple calls can be chained.</returns>
-        </member>
-        <member name="M:Venflow.Modeling.Definitions.Builder.IEntityPropertyBuilder`1.HasPostgresEnum(System.String,Npgsql.INpgsqlNameTranslator)">
-            <summary>
-            Maps a PostgreSQL enum to this CLR enum column.
-            </summary>
-            <param name="name">The name of the enum in PostgreSQL, if none used it will try to convert the name of the CLR enum e.g. 'FooBar' to 'foo_bar'</param>
-            <param name="npgsqlNameTranslator">A component which will be used to translate CLR names (e.g. SomeClass) into database names (e.g. some_class). Defaults to <see cref="T:Npgsql.NameTranslation.NpgsqlSnakeCaseNameTranslator"/>.</param>
-            <returns>The same builder instance so that multiple calls can be chained.</returns>
-        </member>
-        <member name="M:Venflow.Modeling.Definitions.Builder.IEntityPropertyBuilder`1.IsRequired">
-            <summary>
-            only required in non C#8+ null-able context
-            </summary>
-            <returns></returns>
         </member>
         <member name="T:Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder`2">
             <summary>
@@ -1206,6 +1179,11 @@
             Allows for configuration of the entity <typeparamref name="TEntity"/>.
             </summary>
             <param name="entityBuilder">The builder used to configure the entity.</param>
+        </member>
+        <member name="T:Venflow.Modeling.Definitions.EntityConfiguration">
+            <summary>
+            <strong>This is a class which is only used for type safety, do not inherit!</strong>
+            </summary>
         </member>
         <member name="T:Venflow.NpgsqlCommandExtensions">
             <summary>

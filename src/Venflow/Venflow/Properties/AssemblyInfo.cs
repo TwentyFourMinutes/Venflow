@@ -1,6 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
 using Fody;
 
+#if NET5_0
+[module: SkipLocalsInit]
+#endif
+
 [assembly: InternalsVisibleTo("Venflow.Dynamic, PublicKey=" +
 "002400000480000094000000060200000024000052534131000400000100010099f3f8321d5f56" +
 "b9152b82741511adb2186619b29d92bcf32d16cbb2d6751ecdb4ea393cbd3e75648baf7ab3deb4" +
