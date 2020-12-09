@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
@@ -22,7 +22,9 @@ namespace Venflow.Modeling
 
         internal DatabaseConfiguration BuildConfiguration(Type databaseType, IReadOnlyList<Assembly> configurationAssemblies)
         {
-            var tables = FindEntityConfigurations(databaseType, configurationAssemblies);
+            var tables = GetDatabaseTables(databaseType);
+
+            CreateEntityConfigurations(databaseType, tables, configurationAssemblies);
 
             var entities = new Dictionary<string, Entity>();
             var entitiesArray = new Entity[_entityFactories.Count];
@@ -49,18 +51,16 @@ namespace Venflow.Modeling
                 entityFactory.ApplyForeignRelations(entities);
             }
 
-            return new DatabaseConfiguration(DatabaseTableFactory.CreateInstantiater(databaseType, tables, entitiesArray), new ReadOnlyDictionary<string, Entity>(entities), entitiesArray);
+            return new DatabaseConfiguration(DatabaseTableFactory.GetOrCreateInstantiater(databaseType
+                ), new ReadOnlyDictionary<string, Entity>(entities), entitiesArray);
         }
 
-        private List<PropertyInfo> FindEntityConfigurations(Type databaseType, IReadOnlyList<Assembly> configurationAssemblies)
+        private void CreateEntityConfigurations(Type databaseType, List<PropertyInfo> databaseTables, IReadOnlyList<Assembly> configurationAssemblies)
         {
             var configurationAssembliesSpan = ((List<Assembly>)configurationAssemblies).AsSpan();
 
-            var propertiesSpan = databaseType.GetProperties(BindingFlags.Public | BindingFlags.Instance).AsSpan();
-
             VenflowConfiguration.SetDefaultValidationIfNeeded(databaseType.Assembly);
 
-            var tableType = typeof(Table<>);
             var configurationType = typeof(EntityConfiguration<>);
 
             var configurations = new Dictionary<Type, Type>();
@@ -97,25 +97,20 @@ namespace Venflow.Modeling
                 }
             }
 
-            var tables = new List<PropertyInfo>();
-
             var genericEntityBuilderType = typeof(EntityBuilder<>);
             var genericEntityFactoryType = typeof(EntityFactory<>);
 
-            for (int i = propertiesSpan.Length - 1; i >= 0; i--)
-            {
-                var property = propertiesSpan[i];
+            var databaseTablesSpan = databaseTables.AsSpan();
 
-                if (property.PropertyType.GetGenericTypeDefinition() != tableType)
-                {
-                    continue;
-                }
+            for (int i = databaseTablesSpan.Length - 1; i >= 0; i--)
+            {
+                var property = databaseTablesSpan[i];
 
                 var entityType = property.PropertyType.GetGenericArguments()[0];
 
                 if (configurations.TryGetValue(entityType, out var configuration))
                 {
-                    var entityConfiguration = (EntityConfiguration)Activator.CreateInstance(configuration)!;
+                    var entityConfiguration = (IEntityConfiguration)Activator.CreateInstance(configuration)!;
 
                     AddToConfigurations(entityConfiguration.BuildConfiguration(property.Name));
                 }
@@ -129,12 +124,34 @@ namespace Venflow.Modeling
 
                     AddToConfigurations((EntityFactory)entityFactoryInstance);
                 }
+            }
+        }
+
+        private List<PropertyInfo> GetDatabaseTables(Type databaseType)
+        {
+            var propertiesSpan = databaseType.GetProperties(BindingFlags.Public | BindingFlags.Instance).AsSpan();
+
+            VenflowConfiguration.SetDefaultValidationIfNeeded(databaseType.Assembly);
+
+            var tableType = typeof(ITable);
+
+            var tables = new List<PropertyInfo>();
+
+            for (int i = propertiesSpan.Length - 1; i >= 0; i--)
+            {
+                var property = propertiesSpan[i];
+
+                if (!tableType.IsAssignableFrom(property.PropertyType))
+                {
+                    continue;
+                }
 
                 tables.Add(property);
             }
 
             return tables;
         }
+
 
         private void AddToConfigurations(EntityFactory entityFactory)
         {

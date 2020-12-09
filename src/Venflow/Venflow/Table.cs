@@ -10,11 +10,14 @@ using Venflow.Modeling;
 
 namespace Venflow
 {
+    internal interface ITable { }
+
     /// <summary>
     /// A <see cref="Table{TEntity}"/> is used to perform CRUD operations against the table represented by <typeparamref name="TEntity"/>.
     /// </summary>
     /// <typeparam name="TEntity">The entity which represents a table in the Database.</typeparam>
-    public sealed class Table<TEntity> : TableBase<TEntity> where TEntity : class, new()
+    public sealed class Table<TEntity> : TableBase<TEntity>, ITable
+        where TEntity : class, new()
     {
         internal Table(Database database, Entity<TEntity> configuration) : base(database, configuration)
         {
