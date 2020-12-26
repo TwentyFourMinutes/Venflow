@@ -12,14 +12,14 @@ namespace Venflow.Modeling.Definitions
 
             if (body is null)
             {
-                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property.", nameof(propertySelector));
+                throw new ArgumentException($"The provided '{body}' is not pointing to a property.", nameof(propertySelector));
             }
 
             var property = body.Member as PropertyInfo;
 
             if (property is null)
             {
-                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property.", nameof(propertySelector));
+                throw new ArgumentException($"The provided '{body}' is not pointing to a property.", nameof(propertySelector));
             }
 
             if (validateSetter && (!property.CanWrite || !property.SetMethod.IsPublic))
@@ -32,7 +32,7 @@ namespace Venflow.Modeling.Definitions
             if (type != property.ReflectedType &&
                 !type.IsSubclassOf(property.ReflectedType))
             {
-                throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property on the entity itself.", nameof(propertySelector));
+                throw new ArgumentException($"The provided '{body}' is not pointing to a property on the entity itself.", nameof(propertySelector));
             }
 
             return property;
@@ -53,14 +53,14 @@ namespace Venflow.Modeling.Definitions
 
                 if (member is not PropertyInfo property)
                 {
-                    throw new InvalidOperationException($"The member {member} doesn't represent a property.");
+                    throw new InvalidOperationException($"The member '{member}' doesn't represent a property.");
                 }
 
                 var parentProperty = parent.GetProperty(property.Name);
 
                 if (parentProperty is null)
                 {
-                    throw new InvalidOperationException($"The entity {parent.Name} doesn't contain a property named {property.Name}");
+                    throw new InvalidOperationException($"The entity '{parent.Name}' doesn't contain a property named '{property.Name}'");
                 }
 
                 propertyInfos[memberIndex] = parentProperty;
