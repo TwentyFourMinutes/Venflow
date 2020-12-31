@@ -1,7 +1,7 @@
 ﻿namespace Venflow.Enums
 {
     /// <summary>
-    /// Specifies the behaviour for a specific join between two tables.
+    /// Specifies the behavior for a specific join between two tables.
     /// </summary>
     public enum JoinBehaviour : byte
     {

@@ -110,7 +110,16 @@ namespace Venflow.Commands
             => JoinWith(propertySelector, JoinBehaviour.FullJoin);
 
         public IQueryCommandBuilder<TRootEntity, TReturn> TrackChanges(bool trackChanges = true)
-             => _commandBuilder.TrackChanges(trackChanges);
+            => _commandBuilder.TrackChanges(trackChanges);
+
+        public IQueryCommandBuilder<TRootEntity, TReturn> LogTo(bool shouldLog = true)
+            => _commandBuilder.LogTo(shouldLog);
+
+        public IQueryCommandBuilder<TRootEntity, TReturn> LogTo(Action<string> logger, bool includeSensitiveData)
+            => _commandBuilder.LogTo(logger, includeSensitiveData);
+
+        public IQueryCommandBuilder<TRootEntity, TReturn> LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers)
+            => _commandBuilder.LogTo(loggers);
 
 #if !NET48
         [return: MaybeNull]

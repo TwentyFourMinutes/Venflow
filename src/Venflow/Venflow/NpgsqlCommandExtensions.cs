@@ -114,5 +114,64 @@ namespace Venflow
 
             command.CommandText = argumentedSql.ToString();
         }
+
+        /// <summary>
+        /// Gets the un-parameterized command text of the used <see cref="NpgsqlCommand"/>.
+        /// </summary>
+        /// <param name="command">The command of which the command text should be set. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
+        /// <returns>The un-parameterized command text.</returns>
+        /// <remarks>
+        /// <strong>This API may very likely not return the exact SQL the server will be using!</strong> This is due to its client-side implementation. The returned SQL is just a rough estimate of what the server may be using. Additionally this API does require the naming of parameters to be like '@p' followed by their index. Furthermore the parameters have to be in the exact order as their placeholder.
+        /// </remarks>
+        public static string GetUnParameterizedCommandText(this NpgsqlCommand command)
+        {
+            var sqlLength = command.CommandText.Length;
+
+            var argumentedSql = new StringBuilder(sqlLength);
+
+            var sqlSpan = command.CommandText.AsSpan();
+
+            var argumentIndex = 0;
+
+            for (int spanIndex = 0; spanIndex < sqlLength; spanIndex++)
+            {
+                var spanChar = sqlSpan[spanIndex];
+
+                if (spanChar == '@' &&
+                    spanIndex + 2 < sqlLength &&
+                    sqlSpan[spanIndex + 1] == 'p')
+                {
+                    for (spanIndex++; spanIndex < sqlLength; spanIndex++)
+                    {
+                        spanChar = sqlSpan[spanIndex];
+
+                        if (spanChar is < '0' or > '9')
+                            break;
+                    }
+
+                    spanIndex++;
+
+                    var argument = command.Parameters[argumentIndex++];
+
+                    if (argument.Value is null ||
+                        argument.Value is DBNull)
+                    {
+                        argumentedSql.Append("null");
+                    }
+                    else
+                    {
+                        argumentedSql.Append('\'')
+                                     .Append(argument.Value.ToString())
+                                     .Append('\'');
+                    }
+                }
+                else
+                {
+                    argumentedSql.Append(spanChar);
+                }
+            }
+
+            return argumentedSql.ToString();
+        }
     }
 }

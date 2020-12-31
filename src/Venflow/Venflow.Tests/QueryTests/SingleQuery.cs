@@ -28,6 +28,31 @@ namespace Venflow.Tests.QueryTests
         }
 
         [Fact]
+        public async Task QueryWithLogger()
+        {
+            var person = await InsertPersonAsync();
+
+            var hasLogHit = false;
+
+            var queriedPerson = await Database.People.QueryInterpolatedSingle(@$"SELECT * FROM ""People"" WHERE ""People"".""Id"" = {person.Id}").LogTo(e =>
+            {
+                hasLogHit = true;
+
+                Assert.DoesNotContain("@p1", e);
+            }, true).QueryAsync();
+
+            Assert.True(hasLogHit);
+
+            Assert.NotNull(queriedPerson);
+
+            Assert.Equal(person.Id, queriedPerson.Id);
+            Assert.Equal(person.Name, queriedPerson.Name);
+            Assert.Null(queriedPerson.Emails);
+
+            await Database.People.DeleteAsync(person);
+        }
+
+        [Fact]
         public async Task QueryWithInterpolatedArray()
         {
             var person = await InsertPersonAsync();

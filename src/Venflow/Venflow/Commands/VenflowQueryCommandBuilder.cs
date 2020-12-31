@@ -18,6 +18,7 @@ namespace Venflow.Commands
         private bool _trackChanges;
         private QueryGenerationOptions _queryGenerationOptions;
         private bool _disposeCommand;
+        private bool? shouldForceLog;
 
         private RelationBuilderValues? _relationBuilderValues;
         private readonly bool _singleResult;
@@ -27,6 +28,7 @@ namespace Venflow.Commands
         private readonly Database _database;
         private readonly Entity<TEntity> _entityConfiguration;
         private readonly object?[]? _interploatedSqlParameters;
+        private readonly List<(Action<string>, bool)> _loggers;
 
         private VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, QueryGenerationOptions queryGenerationOptions, bool disposeCommand, bool singleResult)
         {
@@ -36,6 +38,8 @@ namespace Venflow.Commands
             _command = command;
             _disposeCommand = disposeCommand;
             _singleResult = singleResult;
+
+            _loggers = new(0);
             _commandString = new StringBuilder();
         }
 
@@ -63,6 +67,27 @@ namespace Venflow.Commands
         public IQueryCommandBuilder<TEntity, TReturn> TrackChanges(bool trackChanges = true)
         {
             _trackChanges = trackChanges;
+
+            return this;
+        }
+
+        public IQueryCommandBuilder<TEntity, TReturn> LogTo(bool shouldLog = true)
+        {
+            shouldForceLog = shouldLog;
+
+            return this;
+        }
+
+        public IQueryCommandBuilder<TEntity, TReturn> LogTo(Action<string> logger, bool includeSensitiveData)
+        {
+            _loggers.Add((logger, includeSensitiveData));
+
+            return this;
+        }
+
+        public IQueryCommandBuilder<TEntity, TReturn> LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers)
+        {
+            _loggers.AddRange(loggers);
 
             return this;
         }
@@ -186,7 +211,7 @@ namespace Venflow.Commands
                 _command.CommandText = argumentedSql.ToString();
             }
 
-            return new VenflowQueryCommand<TEntity, TReturn>(_database, _entityConfiguration, _command, _relationBuilderValues, _trackChanges, _disposeCommand, _singleResult && _relationBuilderValues is null);
+            return new VenflowQueryCommand<TEntity, TReturn>(_database, _entityConfiguration, _command, _relationBuilderValues, _trackChanges, _disposeCommand, _singleResult && _relationBuilderValues is null, _loggers, shouldForceLog);
         }
 
         private void AppendJoins(StringBuilder sb)

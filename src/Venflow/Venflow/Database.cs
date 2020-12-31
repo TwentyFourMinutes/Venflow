@@ -5,6 +5,8 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
+using NpgsqlTypes;
+using Venflow.Enums;
 using Venflow.Modeling;
 using Venflow.Modeling.Definitions;
 using Venflow.Modeling.Definitions.Builder;
@@ -15,7 +17,7 @@ namespace Venflow
     {
         internal static ConcurrentDictionary<Type, DatabaseConfiguration> DatabaseConfigurations { get; } = new ConcurrentDictionary<Type, DatabaseConfiguration>();
 
-        internal static Dictionary<Type, Entity> CustomEntities { get; } = new Dictionary<Type, Entity>();
+        internal static Dictionary<Type, Entity> CustomEntities { get; } = new Dictionary<Type, Entity>(0);
 
         internal static object BuildLocker { get; } = new object();
     }
@@ -24,15 +26,18 @@ namespace Venflow
     /// A <see cref="Database"/> instance represents a session with the database and can be used to perform CRUD operations with your tables and entities.
     /// </summary>
     /// <remarks>
-    /// Typically you create a class that derives from <see cref="Database"/> and contains <seealso cref="Table{TEntity}"/> properties for each entity in the Database. All the <seealso cref="Table{TEntity}"/> properties must have a public setter, they are automatically initialized when the instance of the derived type is created.
+    /// Typically you create a class that derives from <see cref="Database"/> and contains <see cref="Table{TEntity}"/> properties for each entity in the Database. All the <see cref="Table{TEntity}"/> properties must have a public setter, they are automatically initialized when the instance of the derived type is created.
     /// </remarks>
     public abstract class Database : IAsyncDisposable, IDisposable
     {
         internal IReadOnlyDictionary<string, Entity> Entities { get; private set; }
+        internal LoggingBehavior DefaultLoggingBehavior { get; private set; }
 
         internal string ConnectionString { get; }
 
         private NpgsqlConnection? _connection;
+
+        private IReadOnlyList<(Action<string> logger, bool includeSensitiveData)> _loggers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Database"/> class using the specified <paramref name="connectionString"/>.
@@ -243,6 +248,8 @@ namespace Venflow
             command.Connection = GetConnection();
             command.SetInterpolatedCommandText(sql);
 
+            var npgsql = new NpgsqlDateTime(DateTime.Now);
+
             return (T)await command.ExecuteScalarAsync(cancellationToken);
         }
 
@@ -293,40 +300,54 @@ namespace Venflow
             return _connection = new NpgsqlConnection(ConnectionString);
         }
 
+        internal void ExecuteLoggers(NpgsqlCommand command)
+            => ExecuteLoggers(_loggers, command);
+
+        internal void ExecuteLoggers(IReadOnlyList<(Action<string> logger, bool includeSensitiveData)> loggers, NpgsqlCommand command)
+        {
+            for (int loggerIndex = 0; loggerIndex < loggers.Count; loggerIndex++)
+            {
+                var loggingProvider = loggers[loggerIndex];
+
+                if (loggingProvider.includeSensitiveData)
+                {
+                    loggingProvider.logger.Invoke(command.GetUnParameterizedCommandText());
+                }
+                else
+                {
+                    loggingProvider.logger.Invoke(command.CommandText);
+                }
+            }
+        }
+
         private void Build()
         {
             var type = this.GetType();
 
-            if (DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(type, out var configuration))
+            if (!DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(type, out var configuration))
             {
-                Entities = configuration.Entities;
-
-                configuration.InstantiateDatabase(this);
-
-                return;
-            }
-
-            lock (DatabaseConfigurationCache.BuildLocker)
-            {
-                if (!DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(type, out configuration))
+                lock (DatabaseConfigurationCache.BuildLocker)
                 {
-                    var dbConfigurator = new DatabaseConfigurationFactory();
+                    if (!DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(type, out configuration))
+                    {
+                        var dbConfigurator = new DatabaseConfigurationFactory();
 
-                    var optionsBuilder = new DatabaseOptionsBuilder(type.Assembly);
+                        var optionsBuilder = new DatabaseOptionsBuilder(type.Assembly);
 
-                    Configure(optionsBuilder);
+                        Configure(optionsBuilder);
 
-                    var options = optionsBuilder.Build();
+                        configuration = dbConfigurator.BuildConfiguration(type, optionsBuilder.Build());
 
-                    configuration = dbConfigurator.BuildConfiguration(type, options.ConfigurationAssemblies);
-
-                    DatabaseConfigurationCache.DatabaseConfigurations.TryAdd(type, configuration);
+                        DatabaseConfigurationCache.DatabaseConfigurations.TryAdd(type, configuration);
+                    }
                 }
-
-                Entities = configuration.Entities;
-
-                configuration.InstantiateDatabase(this);
             }
+
+            Entities = configuration.Entities;
+            _loggers = configuration.Loggers;
+            DefaultLoggingBehavior = configuration.DefaultLoggingBehavior;
+
+            configuration.InstantiateDatabase(this);
         }
 
         private ValueTask ValidateConnectionAsync()

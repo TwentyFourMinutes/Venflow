@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
+using Venflow.Enums;
 using Venflow.Modeling;
 
 namespace Venflow.Commands
@@ -14,12 +16,16 @@ namespace Venflow.Commands
         private readonly RelationBuilderValues? _relationBuilderValues;
         private readonly bool _trackingChanges;
         private readonly bool _isSingleResult;
+        private readonly List<(Action<string> logger, bool includeSensitiveData)> _loggers;
+        private readonly bool? _shouldForceLog;
 
-        internal VenflowQueryCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, RelationBuilderValues? relationBuilderValues, bool trackingChanges, bool disposeCommand, bool isSingleResult) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
+        internal VenflowQueryCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, RelationBuilderValues? relationBuilderValues, bool trackingChanges, bool disposeCommand, bool isSingleResult, List<(Action<string> logger, bool includeSensitiveData)> loggers, bool? shouldForceLog) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
         {
             _relationBuilderValues = relationBuilderValues;
             _trackingChanges = trackingChanges;
             _isSingleResult = isSingleResult;
+            _loggers = loggers;
+            _shouldForceLog = shouldForceLog;
         }
 
         async Task<TReturn> IQueryCommand<TEntity, TReturn>.QueryAsync(CancellationToken cancellationToken)
@@ -27,6 +33,19 @@ namespace Venflow.Commands
             await ValidateConnectionAsync();
 
             await using var reader = await UnderlyingCommand.ExecuteReaderAsync(_isSingleResult ? CommandBehavior.SingleRow : CommandBehavior.Default, cancellationToken);
+
+            if (Database.DefaultLoggingBehavior == LoggingBehavior.Always && (!_shouldForceLog.HasValue || _shouldForceLog.Value) ||
+                (_shouldForceLog.HasValue && _shouldForceLog.Value))
+            {
+                if (_loggers.Count == 0)
+                {
+                    Database.ExecuteLoggers(UnderlyingCommand);
+                }
+                else
+                {
+                    Database.ExecuteLoggers(_loggers, UnderlyingCommand);
+                }
+            }
 
             Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> materializer;
 

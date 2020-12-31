@@ -377,6 +377,31 @@
             <param name="trackChanges">Determines if change tracking should be applied.</param>
             <returns>An object that can be used to further configure the operation.</returns>
         </member>
+        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.Boolean)">
+            <summary>
+            Determines whether or not to log the query to the provided loggers.
+            </summary>
+            <param name="shouldLog">Determines if this query should be logged. This is helpful, if you configured the default logging behavior to be <see langword="true"/>.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You can configure the loggers in the <see cref="M:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)"/> method with the <see cref="M:Venflow.DatabaseOptionsBuilder.LogTo(System.Action{System.String},System.Boolean)"/> methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.Action{System.String},System.Boolean)">
+            <summary>
+            Logs the query to the provided <paramref name="logger"/>.
+            </summary>
+            <param name="logger">The logger which is being used for this query.</param>
+            <param name="includeSensitiveData">Determines whether or not to show populated parameters in this query.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>Be aware, that once you configure a logger on a query, the global configured loggers won't be executed for this query.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.ValueTuple{System.Action{System.String},System.Boolean}[])">
+            <summary>
+            Logs the query to the provided <paramref name="loggers"/>.
+            </summary>
+            <param name="loggers">The loggers which are being used for this query.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>Be aware, that once you configure one or more loggers on a query, the global configured loggers won't be executed for this query.</remarks>
+        </member>
         <member name="M:Venflow.Commands.IQueryCommandBuilder`2.QueryAsync(System.Threading.CancellationToken)">
             <summary>
             Asynchronously performs queries and materializes the result.
@@ -682,7 +707,7 @@
             A <see cref="T:Venflow.Database"/> instance represents a session with the database and can be used to perform CRUD operations with your tables and entities.
             </summary>
             <remarks>
-            Typically you create a class that derives from <see cref="T:Venflow.Database"/> and contains <seealso cref="T:Venflow.Table`1"/> properties for each entity in the Database. All the <seealso cref="T:Venflow.Table`1"/> properties must have a public setter, they are automatically initialized when the instance of the derived type is created.
+            Typically you create a class that derives from <see cref="T:Venflow.Database"/> and contains <see cref="T:Venflow.Table`1"/> properties for each entity in the Database. All the <see cref="T:Venflow.Table`1"/> properties must have a public setter, they are automatically initialized when the instance of the derived type is created.
             </remarks>
         </member>
         <member name="M:Venflow.Database.#ctor(System.String)">
@@ -820,23 +845,50 @@
             Provides an option builder to further configure a <see cref="T:Venflow.Database"/> instance.
             </summary>
         </member>
+        <member name="P:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior">
+            <summary>
+            Gets or sets the default LoggingBehavior on commands for this <see cref="T:Venflow.Database"/>. The default is <see cref="F:Venflow.Enums.LoggingBehavior.Always"/>.
+            </summary>
+        </member>
         <member name="M:Venflow.DatabaseOptionsBuilder.AddConfigurations``1">
             <summary>
             Adds the assembly of the type <typeparamref name="T"/> to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
             </summary>
             <typeparam name="T">The type of which the assembly should be added to the lookup list.</typeparam>
+            <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/>.</returns>
+            <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
         </member>
         <member name="M:Venflow.DatabaseOptionsBuilder.AddConfigurations(System.Reflection.Assembly)">
-             <summary>
-             Adds the assembly to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
-             </summary>
+            <summary>
+            Adds the assembly to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
+            </summary>
             <param name="assembly">The assembly which should be added to the lookup list.</param>
+            <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/>.</returns>
+            <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
         </member>
         <member name="M:Venflow.DatabaseOptionsBuilder.AddConfigurations(System.Reflection.Assembly[])">
-             <summary>
-             Adds the assemblies to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
-             </summary>
+            <summary>
+            Adds the assemblies to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
+            </summary>
             <param name="assemblies">The assemblies which should be added to the lookup list.</param>
+            <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/>.</returns>
+            <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
+        </member>
+        <member name="M:Venflow.DatabaseOptionsBuilder.LogTo(System.Action{System.String},System.Boolean)">
+            <summary>
+            Adds a logger, which allows for logging of executed SQL commands.
+            </summary>
+            <param name="logger">The logger action which is being used to log SQL commands.</param>
+            <param name="includeSensitiveData">Determines whether or not to show populated parameters in the commands. <strong>Be aware, that the parameters get injected by the client and the SQL is likely not the exact same as the one executed by the server.</strong></param>
+            <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/>.</returns>
+            <remarks>This currently only includes the following API's:
+            <list type="bullet">
+                <item>QuerySingle</item>
+                <item>QueryBatch</item>
+                <item>QueryAsync</item>
+            </list>
+            Also consider configuring the <see cref="P:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior"/> property.
+            </remarks>
         </member>
         <member name="T:Venflow.Enums.ForeignTruncateOptions">
             <summary>
@@ -880,7 +932,7 @@
         </member>
         <member name="T:Venflow.Enums.JoinBehaviour">
             <summary>
-            Specifies the behaviour for a specific join between two tables.
+            Specifies the behavior for a specific join between two tables.
             </summary>
         </member>
         <member name="F:Venflow.Enums.JoinBehaviour.InnerJoin">
@@ -901,6 +953,21 @@
         <member name="F:Venflow.Enums.JoinBehaviour.FullJoin">
             <summary>
             Returns all records when there is a match in either left or right table
+            </summary>
+        </member>
+        <member name="T:Venflow.Enums.LoggingBehavior">
+            <summary>
+            Specifies the logging behavior for Venflow commands.
+            </summary>
+        </member>
+        <member name="F:Venflow.Enums.LoggingBehavior.Always">
+            <summary>
+            Logs all commands.
+            </summary>
+        </member>
+        <member name="F:Venflow.Enums.LoggingBehavior.Never">
+            <summary>
+            Never logs commands.
             </summary>
         </member>
         <member name="T:Venflow.InvalidEntityRelationException">
@@ -1180,11 +1247,6 @@
             </summary>
             <param name="entityBuilder">The builder used to configure the entity.</param>
         </member>
-        <member name="T:Venflow.Modeling.Definitions.EntityConfiguration">
-            <summary>
-            <strong>This is a class which is only used for type safety, do not inherit!</strong>
-            </summary>
-        </member>
         <member name="T:Venflow.NpgsqlCommandExtensions">
             <summary>
             Provides a set of useful extension methods for the <see cref="T:Npgsql.NpgsqlCommand"/> class.
@@ -1206,6 +1268,16 @@
             </summary>
             <param name="command">The command of which the command text should be set. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
             <param name="sql">A string containing the SQL statement.</param>
+        </member>
+        <member name="M:Venflow.NpgsqlCommandExtensions.GetUnParameterizedCommandText(Npgsql.NpgsqlCommand)">
+            <summary>
+            Gets the un-parameterized command text of the used <see cref="T:Npgsql.NpgsqlCommand"/>.
+            </summary>
+            <param name="command">The command of which the command text should be set. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
+            <returns>The un-parameterized command text.</returns>
+            <remarks>
+            <strong>This API may very likely not return the exact SQL the server will be using!</strong> This is due to its client-side implementation. The returned SQL is just a rough estimate of what the server may be using. Additionally this API does require the naming of parameters to be like '@p' followed by their index. Furthermore the parameters have to be in the exact order as their placeholder.
+            </remarks>
         </member>
         <member name="T:Venflow.ParameterTypeHandler">
             <summary>
