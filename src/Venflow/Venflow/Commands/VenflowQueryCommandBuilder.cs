@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
@@ -93,33 +94,96 @@ namespace Venflow.Commands
             }
             else
             {
+                var hasGeneratedJoins = (_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0 && _relationBuilderValues is not null;
+
                 var argumentsSpan = _interploatedSqlParameters.AsSpan();
 
-                var parameterNames = new string[argumentsSpan.Length];
-                var parameterNamesSpan = parameterNames.AsSpan();
+                var sqlLength = _rawSql.Length;
 
-                for (int argumentIndex = 0; argumentIndex < argumentsSpan.Length; argumentIndex++)
+                var argumentedSql = new StringBuilder(sqlLength);
+
+                var sqlSpan = _rawSql.AsSpan();
+
+                var argumentIndex = 0;
+                var parameterIndex = 0;
+
+                for (int spanIndex = 0; spanIndex < sqlLength; spanIndex++)
                 {
-                    var parameterName = "@p" + argumentIndex;
+                    var spanChar = sqlSpan[spanIndex];
 
-                    parameterNamesSpan[argumentIndex] = parameterName;
+                    if (spanChar == '{' &&
+                        spanIndex + 2 < sqlLength)
+                    {
+                        for (spanIndex++; spanIndex < sqlLength; spanIndex++)
+                        {
+                            spanChar = sqlSpan[spanIndex];
 
-                    _command.Parameters.Add(ParameterTypeHandler.HandleParameter(parameterName, argumentsSpan[argumentIndex]));
+                            if (spanChar == '}')
+                                break;
+
+                            if (spanChar is < '0' or > '9')
+                                throw new InvalidOperationException();
+                        }
+
+                        var argument = argumentsSpan[argumentIndex++];
+
+                        if (argument is IList list)
+                        {
+                            if (list.Count > 0)
+                            {
+                                var listType = default(Type);
+
+                                for (int listIndex = 0; listIndex < list.Count; listIndex++)
+                                {
+                                    var listItem = list[listIndex];
+
+                                    if (listType is null &&
+                                        listItem is not null)
+                                    {
+                                        listType = listItem.GetType();
+
+                                        if (listType == typeof(object))
+                                            throw new InvalidOperationException("The SQL string interpolation doesn't support object lists.");
+                                    }
+
+                                    var parameterName = "@p" + parameterIndex++.ToString();
+
+                                    argumentedSql.Append(parameterName)
+                                                 .Append(", ");
+
+                                    _command.Parameters.Add(ParameterTypeHandler.HandleParameter(parameterName, listType!, listItem));
+                                }
+
+                                argumentedSql.Length -= 2;
+                            }
+
+                            parameterIndex--;
+                        }
+                        else
+                        {
+                            var parameterName = "@p" + parameterIndex++.ToString();
+
+                            argumentedSql.Append(parameterName);
+
+                            _command.Parameters.Add(ParameterTypeHandler.HandleParameter(parameterName, argument));
+                        }
+                    }
+                    else if (hasGeneratedJoins &&
+                             spanChar == '>' &&
+                             spanIndex + 1 < sqlLength &&
+                             sqlSpan[spanIndex + 1] == '<')
+                    {
+                        AppendJoins(argumentedSql);
+
+                        spanIndex++;
+                    }
+                    else
+                    {
+                        argumentedSql.Append(spanChar);
+                    }
                 }
 
-                var argumentedSql = string.Format(_rawSql, parameterNames);
-
-                if ((_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0 &&
-                     _relationBuilderValues is { })
-                {
-                    var joinBuilder = new StringBuilder();
-
-                    AppendJoins(joinBuilder);
-
-                    argumentedSql = argumentedSql.Replace("><", joinBuilder.ToString());
-                }
-
-                _command.CommandText = argumentedSql;
+                _command.CommandText = argumentedSql.ToString();
             }
 
             return new VenflowQueryCommand<TEntity, TReturn>(_database, _entityConfiguration, _command, _relationBuilderValues, _trackChanges, _disposeCommand, _singleResult && _relationBuilderValues is null);
@@ -178,7 +242,6 @@ namespace Venflow.Commands
 
                 sb.Append('"');
             }
-
         }
 
 #if !NET48

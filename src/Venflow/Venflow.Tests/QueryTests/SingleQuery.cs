@@ -28,6 +28,16 @@ namespace Venflow.Tests.QueryTests
         }
 
         [Fact]
+        public async Task QueryWithInterpolatedArray()
+        {
+            var person = await InsertPersonAsync();
+
+            var queriedPerson = await Database.ExecuteInterpolatedAsync<long>($@"SELECT COUNT(1) FROM ""People"" WHERE ""People"".""Id"" IN ({new[] { person.Id, new Random().Next() }})");
+
+            Assert.Equal(1, queriedPerson);
+        }
+
+        [Fact]
         public async Task QueryWithMissingColumnAsync()
         {
             var person = await InsertPersonAsync();

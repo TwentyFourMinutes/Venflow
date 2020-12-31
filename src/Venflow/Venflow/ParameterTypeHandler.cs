@@ -38,5 +38,18 @@ namespace Venflow
 
             return handler.Handle(name, val);
         }
+
+        internal static NpgsqlParameter HandleParameter(string name, Type type, object? val)
+        {
+            if (val is null)
+            {
+                return new NpgsqlParameter(name, DBNull.Value);
+            }
+
+            if (!_typeHandlers.TryGetValue(type, out var handler))
+                return new NpgsqlParameter(name, val);
+
+            return handler.Handle(name, val);
+        }
     }
 }
