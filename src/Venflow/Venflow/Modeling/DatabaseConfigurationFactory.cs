@@ -31,12 +31,12 @@ namespace Venflow.Modeling
 
             var entityFactoriesSpan = _entityFactories.AsSpan();
 
-            for (int i = entityFactoriesSpan.Length - 1; i >= 0; i--)
+            for (int i = 0; i < entityFactoriesSpan.Length; i++)
             {
                 entityFactoriesSpan[i].ConfigureForeignRelations(_entityBuilders);
             }
 
-            for (int i = entityFactoriesSpan.Length - 1; i >= 0; i--)
+            for (int i = 0; i < entityFactoriesSpan.Length; i++)
             {
                 var entity = entityFactoriesSpan[i].BuildEntity();
 
@@ -44,15 +44,15 @@ namespace Venflow.Modeling
                 entitiesArray[i] = entity;
             }
 
-            for (int i = entityFactoriesSpan.Length - 1; i >= 0; i--)
+            for (int i = 0; i < entityFactoriesSpan.Length; i++)
             {
                 var entityFactory = entityFactoriesSpan[i];
 
                 entityFactory.ApplyForeignRelations(entities);
             }
 
-            return new DatabaseConfiguration(DatabaseTableFactory.GetOrCreateInstantiater(databaseType
-                ), new ReadOnlyDictionary<string, Entity>(entities), entitiesArray);
+            return new DatabaseConfiguration(DatabaseTableFactory.CreateInstantiater(databaseType, tables, entitiesArray),
+                                             new ReadOnlyDictionary<string, Entity>(entities), entitiesArray);
         }
 
         private void CreateEntityConfigurations(Type databaseType, List<PropertyInfo> databaseTables, IReadOnlyList<Assembly> configurationAssemblies)
@@ -102,7 +102,7 @@ namespace Venflow.Modeling
 
             var databaseTablesSpan = databaseTables.AsSpan();
 
-            for (int i = databaseTablesSpan.Length - 1; i >= 0; i--)
+            for (int i = 0; i < databaseTablesSpan.Length; i++)
             {
                 var property = databaseTablesSpan[i];
 
@@ -137,7 +137,7 @@ namespace Venflow.Modeling
 
             var tables = new List<PropertyInfo>();
 
-            for (int i = propertiesSpan.Length - 1; i >= 0; i--)
+            for (int i = 0; i < propertiesSpan.Length; i++)
             {
                 var property = propertiesSpan[i];
 

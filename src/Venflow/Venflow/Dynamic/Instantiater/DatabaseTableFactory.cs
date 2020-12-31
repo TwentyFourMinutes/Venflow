@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -21,7 +21,7 @@ namespace Venflow.Dynamic.Instantiater
 
             var instantiaterMethodIL = instantiaterMethod.GetILGenerator();
 
-            for (int i = tableProperties.Count - 1; i >= 0; i--)
+            for (int i = 0; i < tableProperties.Count; i++)
             {
                 var tableProperty = tableProperties[i];
 
