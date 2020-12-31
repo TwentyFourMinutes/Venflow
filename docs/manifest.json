@@ -30,7 +30,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Commands.IBaseQueryRelationBuilder-3.html",
-          "hash": "jNvBtzk2sHck8j6nyJ93kQ=="
+          "hash": "tbh30pY5mmiiMIEDOY55LA=="
         }
       },
       "is_incremental": false,
@@ -102,7 +102,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Commands.IPreCommandBuilder-2.html",
-          "hash": "fiXNt+BsLTkLWn3DXky2ww=="
+          "hash": "VsCjXLny4OrY/gh05tecXw=="
         }
       },
       "is_incremental": false,
@@ -126,7 +126,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Commands.IQueryCommandBuilder-2.html",
-          "hash": "kJxBskgyL7GPcAb269RyeQ=="
+          "hash": "Wl2VWRbq3GWreYspHy3hhw=="
         }
       },
       "is_incremental": false,
@@ -138,7 +138,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Commands.IQueryRelationBuilder-3.html",
-          "hash": "TFgRwxFXbIgK89/U7B9Kvg=="
+          "hash": "x+BgixaYDdIiAERs8ajDCw=="
         }
       },
       "is_incremental": false,
@@ -222,7 +222,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Database.html",
-          "hash": "54mRrCU/l0z1KQMd+ZG3rw=="
+          "hash": "W6/cX5h271ZVoPYcQPs+qA=="
         }
       },
       "is_incremental": false,
@@ -234,7 +234,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.DatabaseOptionsBuilder.html",
-          "hash": "RSBI4FIjF3H2+o/AInMM4g=="
+          "hash": "mk09VgAvFxDnKFoIeW/S7w=="
         }
       },
       "is_incremental": false,
@@ -270,7 +270,19 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Enums.JoinBehaviour.html",
-          "hash": "tRwnWNYgRVjX/HZUedRYOA=="
+          "hash": "NFfRPJKDiAydCpnsKUtYSw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Enums.LoggingBehavior.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Enums.LoggingBehavior.html",
+          "hash": "DdZ4/2lvmzMoCUHf1SRe0w=="
         }
       },
       "is_incremental": false,
@@ -282,7 +294,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Enums.html",
-          "hash": "CIoyNa3ZU/wpH18881bLgw=="
+          "hash": "ybq750lZEx4iuZrhAHHmRA=="
         }
       },
       "is_incremental": false,
@@ -414,19 +426,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Modeling.Definitions.EntityConfiguration-1.html",
-          "hash": "hbBHtgqBzg/rcnRoVNwROw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Venflow.Modeling.Definitions.EntityConfiguration.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Venflow.Modeling.Definitions.EntityConfiguration.html",
-          "hash": "1+8ZY/+A4WY/+d3DZisgPA=="
+          "hash": "Pb3L3mkPfUCnMwXLe9g3RA=="
         }
       },
       "is_incremental": false,
@@ -438,7 +438,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Modeling.Definitions.html",
-          "hash": "9mM6/BPZJoSz/7Jsijvq8Q=="
+          "hash": "wlxujSF+dbPJLwJMi8Eo9w=="
         }
       },
       "is_incremental": false,
@@ -450,7 +450,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.NpgsqlCommandExtensions.html",
-          "hash": "97c2s0520k+r/ydbRlLHdw=="
+          "hash": "5HnIUUZObTReknPUYTa3RA=="
         }
       },
       "is_incremental": false,
@@ -474,7 +474,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Table-1.html",
-          "hash": "/AS6oTXT0J7HSxoWTgQBaw=="
+          "hash": "rqZoLgzuZStu1ptxA4zhXg=="
         }
       },
       "is_incremental": false,
@@ -546,7 +546,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "hd/H8PxUv3yOcZZ11wdX2w=="
+          "hash": "er+t/PN5zD5I7Ypm0kPWNA=="
         }
       },
       "is_incremental": false,
@@ -793,25 +793,23 @@
   "incremental_info": [
     {
       "status": {
-        "can_incremental": false,
-        "details": "Disable incremental build by force rebuild option.",
+        "can_incremental": true,
         "incrementalPhase": "build",
         "total_file_count": 0,
-        "skipped_file_count": 0,
-        "full_build_reason_code": "ForceRebuild"
+        "skipped_file_count": 0
       },
       "processors": {
         "ConceptualDocumentProcessor": {
-          "can_incremental": false,
+          "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 16,
-          "skipped_file_count": 0
+          "skipped_file_count": 16
         },
         "ManagedReferenceDocumentProcessor": {
-          "can_incremental": false,
+          "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 43,
-          "skipped_file_count": 0
+          "skipped_file_count": 30
         },
         "ResourceDocumentProcessor": {
           "can_incremental": false,

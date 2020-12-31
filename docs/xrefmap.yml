@@ -607,6 +607,41 @@ references:
   fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn)
   nameWithType: IQueryCommandBuilder<TEntity, TReturn>
   nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn)
+- uid: Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.Action{System.String},System.Boolean)
+  name: LogTo(Action<String>, Boolean)
+  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_Action_System_String__System_Boolean_
+  commentId: M:Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.Action{System.String},System.Boolean)
+  name.vb: LogTo(Action(Of String), Boolean)
+  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.LogTo(System.Action<System.String>, System.Boolean)
+  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).LogTo(System.Action(Of System.String), System.Boolean)
+  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.LogTo(Action<String>, Boolean)
+  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).LogTo(Action(Of String), Boolean)
+- uid: Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.Boolean)
+  name: LogTo(Boolean)
+  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_Boolean_
+  commentId: M:Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.Boolean)
+  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.LogTo(System.Boolean)
+  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).LogTo(System.Boolean)
+  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.LogTo(Boolean)
+  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).LogTo(Boolean)
+- uid: Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.ValueTuple{System.Action{System.String},System.Boolean}[])
+  name: LogTo((Action<String> logger, Boolean includeSensitiveData)[])
+  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_ValueTuple_System_Action_System_String__System_Boolean____
+  commentId: M:Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.ValueTuple{System.Action{System.String},System.Boolean}[])
+  name.vb: LogTo((logger As Action(Of String), includeSensitiveData As Boolean)())
+  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.LogTo(System.ValueTuple<System.Action<System.String>, System.Boolean>[])
+  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).LogTo(System.ValueTuple(Of System.Action(Of System.String), System.Boolean)())
+  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.LogTo((Action<String> logger, Boolean includeSensitiveData)[])
+  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).LogTo((logger As Action(Of String), includeSensitiveData As Boolean)())
+- uid: Venflow.Commands.IQueryCommandBuilder`2.LogTo*
+  name: LogTo
+  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_
+  commentId: Overload:Venflow.Commands.IQueryCommandBuilder`2.LogTo
+  isSpec: "True"
+  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.LogTo
+  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).LogTo
+  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.LogTo
+  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).LogTo
 - uid: Venflow.Commands.IQueryCommandBuilder`2.QueryAsync(System.Threading.CancellationToken)
   name: QueryAsync(CancellationToken)
   href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_QueryAsync_System_Threading_CancellationToken_
@@ -1322,6 +1357,35 @@ references:
   fullName.vb: Venflow.DatabaseOptionsBuilder.AddConfigurations(Of T)()
   nameWithType: DatabaseOptionsBuilder.AddConfigurations<T>()
   nameWithType.vb: DatabaseOptionsBuilder.AddConfigurations(Of T)()
+- uid: Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior
+  name: DefaultLoggingBehavior
+  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior
+  commentId: P:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior
+  fullName: Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior
+  nameWithType: DatabaseOptionsBuilder.DefaultLoggingBehavior
+- uid: Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior*
+  name: DefaultLoggingBehavior
+  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior_
+  commentId: Overload:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior
+  isSpec: "True"
+  fullName: Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior
+  nameWithType: DatabaseOptionsBuilder.DefaultLoggingBehavior
+- uid: Venflow.DatabaseOptionsBuilder.LogTo(System.Action{System.String},System.Boolean)
+  name: LogTo(Action<String>, Boolean)
+  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_LogTo_System_Action_System_String__System_Boolean_
+  commentId: M:Venflow.DatabaseOptionsBuilder.LogTo(System.Action{System.String},System.Boolean)
+  name.vb: LogTo(Action(Of String), Boolean)
+  fullName: Venflow.DatabaseOptionsBuilder.LogTo(System.Action<System.String>, System.Boolean)
+  fullName.vb: Venflow.DatabaseOptionsBuilder.LogTo(System.Action(Of System.String), System.Boolean)
+  nameWithType: DatabaseOptionsBuilder.LogTo(Action<String>, Boolean)
+  nameWithType.vb: DatabaseOptionsBuilder.LogTo(Action(Of String), Boolean)
+- uid: Venflow.DatabaseOptionsBuilder.LogTo*
+  name: LogTo
+  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_LogTo_
+  commentId: Overload:Venflow.DatabaseOptionsBuilder.LogTo
+  isSpec: "True"
+  fullName: Venflow.DatabaseOptionsBuilder.LogTo
+  nameWithType: DatabaseOptionsBuilder.LogTo
 - uid: Venflow.Enums
   name: Venflow.Enums
   href: api/Venflow.Enums.html
@@ -1406,6 +1470,24 @@ references:
   commentId: F:Venflow.Enums.JoinBehaviour.RightJoin
   fullName: Venflow.Enums.JoinBehaviour.RightJoin
   nameWithType: JoinBehaviour.RightJoin
+- uid: Venflow.Enums.LoggingBehavior
+  name: LoggingBehavior
+  href: api/Venflow.Enums.LoggingBehavior.html
+  commentId: T:Venflow.Enums.LoggingBehavior
+  fullName: Venflow.Enums.LoggingBehavior
+  nameWithType: LoggingBehavior
+- uid: Venflow.Enums.LoggingBehavior.Always
+  name: Always
+  href: api/Venflow.Enums.LoggingBehavior.html#Venflow_Enums_LoggingBehavior_Always
+  commentId: F:Venflow.Enums.LoggingBehavior.Always
+  fullName: Venflow.Enums.LoggingBehavior.Always
+  nameWithType: LoggingBehavior.Always
+- uid: Venflow.Enums.LoggingBehavior.Never
+  name: Never
+  href: api/Venflow.Enums.LoggingBehavior.html#Venflow_Enums_LoggingBehavior_Never
+  commentId: F:Venflow.Enums.LoggingBehavior.Never
+  fullName: Venflow.Enums.LoggingBehavior.Never
+  nameWithType: LoggingBehavior.Never
 - uid: Venflow.InvalidEntityRelationException
   name: InvalidEntityRelationException
   href: api/Venflow.InvalidEntityRelationException.html
@@ -1688,12 +1770,6 @@ references:
   fullName.vb: Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder(Of TEntity, TRelation).WithOne
   nameWithType: IRequiredSingleRightRelationBuilder<TEntity, TRelation>.WithOne
   nameWithType.vb: IRequiredSingleRightRelationBuilder(Of TEntity, TRelation).WithOne
-- uid: Venflow.Modeling.Definitions.EntityConfiguration
-  name: EntityConfiguration
-  href: api/Venflow.Modeling.Definitions.EntityConfiguration.html
-  commentId: T:Venflow.Modeling.Definitions.EntityConfiguration
-  fullName: Venflow.Modeling.Definitions.EntityConfiguration
-  nameWithType: EntityConfiguration
 - uid: Venflow.Modeling.Definitions.EntityConfiguration`1
   name: EntityConfiguration<TEntity>
   href: api/Venflow.Modeling.Definitions.EntityConfiguration-1.html
