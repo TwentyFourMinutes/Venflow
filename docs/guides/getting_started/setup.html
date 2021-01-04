@@ -161,7 +161,7 @@ public class Post
     {
         entityBuilder.HasMany(b =&gt; b.Posts)
                      .WithOne(p =&gt; p.Blog)
-                     .UsingForeignKey(p =&gt; p.PostId);
+                     .UsingForeignKey(p =&gt; p.BlogId);
     }
 }
 </code></pre>

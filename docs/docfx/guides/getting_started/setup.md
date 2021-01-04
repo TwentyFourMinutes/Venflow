@@ -78,7 +78,7 @@ public class BlogConfiguration : EntityConfiguration<Blog>
     {
         entityBuilder.HasMany(b => b.Posts)
                      .WithOne(p => p.Blog)
-                     .UsingForeignKey(p => p.PostId);
+                     .UsingForeignKey(p => p.BlogId);
     }
 }
 ```
