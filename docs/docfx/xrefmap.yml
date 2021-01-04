@@ -7,6 +7,9 @@ references:
 - uid: Guides.Advanced.Enums
   name: Enums with Venflow
   href: guides/advanced/enums.html
+- uid: Guides.Advanced.Logging
+  name: Logging with Venflow
+  href: guides/advanced/logging.html
 - uid: Guides.Advanced.Nullables
   name: Nullables with Venflow
   href: guides/advanced/nullables.html

@@ -235,7 +235,7 @@ namespace Venflow
         /// Asynchronously executes a command against the current Database. This method does automatically parameterize queries from an interpolated string.
         /// </summary>
         /// <typeparam name="T">The type of the scalar result.</typeparam>
-        /// <param name="sql">The SQL to execute.</param>
+        /// <param name="sql">The interpolated SQL to execute.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the value of the scalar command.</returns>
         /// <remarks>This method represents a <see cref="System.Data.Common.DbCommand.ExecuteScalarAsync()"/> call.</remarks>

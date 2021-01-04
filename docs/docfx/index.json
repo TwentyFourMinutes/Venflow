@@ -224,6 +224,11 @@
     "title": "Enums with Venflow | Venflow Documentation",
     "keywords": "Enums with Venflow Enums are quite heavily used in C# and PostgreSQL, there are two different options of mapping you can choose from. By default any enum will be mapped as the underlying numeric data type in the database. However if you want to use a native PostgreSQL enum you have to specify that in the Configuration of your entity. public class FooConfiguration : EntityConfiguration<Foo> { protected override void Configure(IEntityBuilder<Foo> entityBuilder) { entityBuilder.MapPostgresEnum(x => x.Bar); } } Note By default the name of the enum within C# will be converted to a lower-cased _ separated name. That means FooBaz would be converted to foo_baz . If you want to override any of the naming behaviours you can pass a valid value to the name / npgsqlNameTranslator parameters."
   },
+  "guides/advanced/logging.html": {
+    "href": "guides/advanced/logging.html",
+    "title": "Logging with Venflow | Venflow Documentation",
+    "keywords": "Logging with Venflow Logging in general is a very important topic, especially in a scenario like this, in which the ORM partially creates SQL. At the current state Venflow supports logging only in a few specific cases. As of now this only covers all Query operations including QuerySingle and QueryBatch as well as their interpolation counterparts. Setup the logging provider You configure your logging provider on a Database basis, through the Configure method. Lets again use our database which we already used in the Setup Guide . Test Linq public class BlogDatabase : Database { public Table<Blog> Blogs { get; set; } public Table<Post> Posts { get; set; } public BlogDatabase() : base(\"Your connection string.\") { } }"
+  },
   "guides/advanced/nullables.html": {
     "href": "guides/advanced/nullables.html",
     "title": "Nullables with Venflow | Venflow Documentation",

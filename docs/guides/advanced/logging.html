@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Validation with Venflow | Venflow Documentation </title>
+    <title>Logging with Venflow | Venflow Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta property="og:title" content="Validation with Venflow | Venflow Documentation ">
+    <meta property="og:title" content="Logging with Venflow | Venflow Documentation ">
     
     <meta property="og:locale" content="en-us">
     <meta property="og:type" content="website">
@@ -89,13 +89,42 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Guides.Advanced.Validation">
-<h1 id="validation-with-venflow">Validation with Venflow</h1>
+            <article class="content wrap" id="_content" data-uid="Guides.Advanced.Logging">
+<h1 id="logging-with-venflow">Logging with Venflow</h1>
 
-<p>Venflow performs a lot of validation under the hood, to perform the best possible UX. However this comes at a performance trade-off. Therefor Venflow only performs these validation, if you are using Venflow in a <code>DEBUG</code> build. If you would compile your assembly to <code>RELEASE</code> these validations wouldn't be performed. In order to manually override this behaviour you can configure this setting with the static <a class="xref" href="../../api/Venflow.VenflowConfiguration.html"><code>VenflowConfiguration</code></a> class.</p>
-<p>In the below example we would tell Venflow, to always use 'Deep Validation', no matter the configuration. You should place this at very beginning of your program, however you can change this value whenever you want.</p>
-<pre><code class="lang-cs">VenflowConfiguration.UseDeepValidation(true);
+<p>Logging in general is a very important topic, especially in a scenario like this, in which the ORM partially creates SQL. At the current state Venflow supports logging only in a few specific cases. As of now this only covers all Query operations including <a class="xref" href="../../api/Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle_System_String_System_Boolean_"><code>QuerySingle</code></a> as well as their interpolation counterparts.</p>
+<h2 id="setup-the-logging-provider">Setup the logging provider</h2>
+<p>You configure your logging provider on a <a class="xref" href="../../api/Venflow.Database.html"><code>Database</code></a> basis, by overriding the <a class="xref" href="../../api/Venflow.Database.html#Venflow_Database_Configure_Venflow_DatabaseOptionsBuilder_"><code>Configure</code></a> method. For this example, lets use the database which you already know from the <a href="../getting_started/setup.html">Setup Guide</a>. By using the provided <a class="xref" href="../../api/Venflow.DatabaseOptionsBuilder.html"><code>DatabaseOptionsBuilder</code></a>, you can call the <a class="xref" href="../../api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_LogTo_System_Action_System_String__System_Boolean_"><code>LogTo</code></a> method on it. It accepts two parameters, the logging action itself as well as an optional Boolean to tell whether or not to log sensitive data to this logger. However it is important to note that Venflow, at least at the current state, only logs the executed SQL statements and nothing else.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The sensitive data logging is a bit special since it populates the parameters on the client, rather than the server. This means, that the <em>populated</em> SQL might not always be 100% accurate. It internally uses the <a class="xref" href="../../api/Venflow.NpgsqlCommandExtensions.html#Venflow_NpgsqlCommandExtensions_SetInterpolatedCommandText_Npgsql_NpgsqlCommand_System_FormattableString_"><code>NpgsqlCommandExtensions.GetUnParameterizedCommandText</code></a> extension method to do that. However it also got some other caveats, you can get more information by further inspecting the API reference.</p>
+</div>
+<pre><code class="lang-cs">public class BlogDatabase : Database
+{
+    public Table&lt;Blog&gt; Blogs { get; set; }
+    public Table&lt;Post&gt; Posts { get; set; }
+
+    public BlogDatabase() : base(&quot;Your connection string.&quot;)
+    {
+        
+    }
+    
+    protected override void Configure(DatabaseOptionsBuilder optionsBuilder)
+    {
+        // You can also configure multiple loggers.
+        optionsBuilder.LogTo(message =&gt; { Console.WriteLine(message); });
+    }
+}
 </code></pre>
+<h2 id="setup-the-logging-provider-in-a-more-specific-manner">Setup the logging provider in a more specific manner</h2>
+<p>You don't always want the ORM to log every single SQL statement ever to be executed, in this case Venflow allows to individually override the logging behaviour on a command basis by calling <a class="xref" href="../../api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_Boolean_"><code>LogTo</code></a> on the method chain. In the example down below, all globally defined loggers will be overridden by the loggers configured on the command.</p>
+<pre><code class="lang-cs">FormattableString sql = $@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; WHERE &quot;&quot;Id&quot;&quot; = {someId} LIMIT 1&quot;;
+
+var blogs = await database.Blogs.QueryInterpolatedSingle(sql)
+								.LogTo(Console.WriteLine)   // You can also configure multiple loggers.
+								.QueryAsync();
+</code></pre>
+<p>However, lets assume you wouldn't want to configure the logger on a command basis, but would rather cherry pick the commands. In that case you would need to set the  <a class="xref" href="../../api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior"><code>DatabaseOptionsBuilder.DefaultLoggingBehavior</code></a> to <a class="xref" href="../../api/Venflow.Enums.LoggingBehavior.html#Venflow_Enums_LoggingBehavior_Never"><code>DefaultLoggingBehavior.Never</code></a> in the same method you configured the global logger. Then you would want to call <a class="xref" href="../../api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_Boolean_"><code>LogTo</code></a> on all commands you would want to be logged.</p>
 </article>
           </div>
           
@@ -112,7 +141,7 @@
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/docs/docfx/guides/advanced/validation.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/docs/docfx/guides/advanced/logging.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

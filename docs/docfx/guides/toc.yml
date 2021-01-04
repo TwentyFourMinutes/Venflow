@@ -32,3 +32,5 @@
       topicUid: Guides.Advanced.Preparation
     - name: Validation
       topicUid: Guides.Advanced.Validation
+    - name: Logging
+      topicUid: Guides.Advanced.Logging

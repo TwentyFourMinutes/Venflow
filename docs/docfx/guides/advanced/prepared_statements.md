@@ -9,7 +9,10 @@ You can also prepare Query statements with Venflow through the Query Builder. Th
 
 ```cs
 var someId = 10;
-var query = await database.Blogs.QueryInterpolatedBatch($@"SELECT * FROM ""Blogs"" WHERE ""Id"" = {someId}", false).Build().PrepareAsync(); // You need to store this stamenet in a field or similar and reuse it, every time you want to query through this prepared statment.
+var query = await database.Blogs.QueryInterpolatedBatch($@"SELECT * FROM ""Blogs"" WHERE ""Id"" = {someId}", false)
+    					  		.Build()
+    					  		.PrepareAsync(); 
+// You need to store this stamenet in a field or similar and reuse it, every time you want to query through this prepared statment.
 
 var blogs = await _database.Blogs.QueryAsync(query); // You can also inline this with the line above.
 ```
