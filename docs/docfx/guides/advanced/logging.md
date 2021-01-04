@@ -5,7 +5,7 @@ title: Logging with Venflow
 
 # Logging with Venflow
 
-Logging in general is a very important topic, especially in a scenario like this, in which the ORM partially creates SQL. At the current state Venflow supports logging only in a few specific cases. As of now this only covers all Query operations including [`QuerySingle`](xref:Venflow.TableBase`1.QuerySingle(System.String,System.Boolean)) as well as their interpolation counterparts. 
+Logging in general is a very important topic, especially in a scenario like this, in which the ORM partially creates SQL. At the current state Venflow supports logging only in a few specific cases. As of now this only covers all Query operations including [`QuerySingle`](xref:Venflow.TableBase`1.QuerySingle(System.String,System.Boolean)) and  [`QueryBatch`](xref:Venflow.TableBase`1.QueryBatch(System.String,System.Boolean))  as well as their interpolation counterparts. 
 
 ## Setup the logging provider
 
@@ -42,8 +42,8 @@ You don't always want the ORM to log every single SQL statement ever to be execu
 FormattableString sql = $@"SELECT * FROM ""Blogs"" WHERE ""Id"" = {someId} LIMIT 1";
 
 var blogs = await database.Blogs.QueryInterpolatedSingle(sql)
-								.LogTo(Console.WriteLine)   // You can also configure multiple loggers.
-								.QueryAsync();
+                                .LogTo(Console.WriteLine)   // You can also configure multiple loggers.
+                                .QueryAsync();
 ```
 
 However, lets assume you wouldn't want to configure the logger on a command basis, but would rather cherry pick the commands. In that case you would need to set the  [`DatabaseOptionsBuilder.DefaultLoggingBehavior`](xref:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior) to [`DefaultLoggingBehavior.Never`](xref:Venflow.Enums.LoggingBehavior.Never) in the same method you configured the global logger. Then you would want to call [`LogTo`](xref:Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.Boolean) ) on all commands you would want to be logged.

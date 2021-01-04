@@ -92,7 +92,7 @@
             <article class="content wrap" id="_content" data-uid="Guides.Advanced.Logging">
 <h1 id="logging-with-venflow">Logging with Venflow</h1>
 
-<p>Logging in general is a very important topic, especially in a scenario like this, in which the ORM partially creates SQL. At the current state Venflow supports logging only in a few specific cases. As of now this only covers all Query operations including <a class="xref" href="../../api/Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle_System_String_System_Boolean_"><code>QuerySingle</code></a> as well as their interpolation counterparts.</p>
+<p>Logging in general is a very important topic, especially in a scenario like this, in which the ORM partially creates SQL. At the current state Venflow supports logging only in a few specific cases. As of now this only covers all Query operations including <a class="xref" href="../../api/Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle_System_String_System_Boolean_"><code>QuerySingle</code></a> and  <a class="xref" href="../../api/Venflow.TableBase-1.html#Venflow_TableBase_1_QueryBatch_System_String_System_Boolean_"><code>QueryBatch</code></a>  as well as their interpolation counterparts.</p>
 <h2 id="setup-the-logging-provider">Setup the logging provider</h2>
 <p>You configure your logging provider on a <a class="xref" href="../../api/Venflow.Database.html"><code>Database</code></a> basis, by overriding the <a class="xref" href="../../api/Venflow.Database.html#Venflow_Database_Configure_Venflow_DatabaseOptionsBuilder_"><code>Configure</code></a> method. For this example, lets use the database which you already know from the <a href="../getting_started/setup.html">Setup Guide</a>. By using the provided <a class="xref" href="../../api/Venflow.DatabaseOptionsBuilder.html"><code>DatabaseOptionsBuilder</code></a>, you can call the <a class="xref" href="../../api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_LogTo_System_Action_System_String__System_Boolean_"><code>LogTo</code></a> method on it. It accepts two parameters, the logging action itself as well as an optional Boolean to tell whether or not to log sensitive data to this logger. However it is important to note that Venflow, at least at the current state, only logs the executed SQL statements and nothing else.</p>
 <div class="NOTE">
@@ -121,8 +121,8 @@
 <pre><code class="lang-cs">FormattableString sql = $@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; WHERE &quot;&quot;Id&quot;&quot; = {someId} LIMIT 1&quot;;
 
 var blogs = await database.Blogs.QueryInterpolatedSingle(sql)
-								.LogTo(Console.WriteLine)   // You can also configure multiple loggers.
-								.QueryAsync();
+                                .LogTo(Console.WriteLine)   // You can also configure multiple loggers.
+                                .QueryAsync();
 </code></pre>
 <p>However, lets assume you wouldn't want to configure the logger on a command basis, but would rather cherry pick the commands. In that case you would need to set the  <a class="xref" href="../../api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior"><code>DatabaseOptionsBuilder.DefaultLoggingBehavior</code></a> to <a class="xref" href="../../api/Venflow.Enums.LoggingBehavior.html#Venflow_Enums_LoggingBehavior_Never"><code>DefaultLoggingBehavior.Never</code></a> in the same method you configured the global logger. Then you would want to call <a class="xref" href="../../api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_Boolean_"><code>LogTo</code></a> on all commands you would want to be logged.</p>
 </article>
