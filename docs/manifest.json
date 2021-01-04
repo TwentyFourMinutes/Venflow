@@ -354,7 +354,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder-2.html",
-          "hash": "oT7SpjAOalvhV+WP23xWIw=="
+          "hash": "E161OaPgccnJKzK7q0qq/g=="
         }
       },
       "is_incremental": false,
@@ -414,7 +414,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Modeling.Definitions.Builder.html",
-          "hash": "q2Fn7k9eSuGYTGmNQt055w=="
+          "hash": "ZvaoSa1dPLH/HN9l1CrYRQ=="
         }
       },
       "is_incremental": false,
@@ -805,25 +805,23 @@
   "incremental_info": [
     {
       "status": {
-        "can_incremental": false,
-        "details": "Cannot build incrementally because config changed.",
+        "can_incremental": true,
         "incrementalPhase": "build",
         "total_file_count": 0,
-        "skipped_file_count": 0,
-        "full_build_reason_code": "ConfigChanged"
+        "skipped_file_count": 0
       },
       "processors": {
         "ConceptualDocumentProcessor": {
-          "can_incremental": false,
+          "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 17,
-          "skipped_file_count": 0
+          "skipped_file_count": 17
         },
         "ManagedReferenceDocumentProcessor": {
-          "can_incremental": false,
+          "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 43,
-          "skipped_file_count": 0
+          "skipped_file_count": 42
         },
         "ResourceDocumentProcessor": {
           "can_incremental": false,

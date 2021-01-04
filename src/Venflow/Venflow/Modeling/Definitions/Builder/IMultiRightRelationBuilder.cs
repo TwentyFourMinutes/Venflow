@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 namespace Venflow.Modeling.Definitions.Builder
 {
     /// <summary>
-    /// summary>
     /// Instances of this class are returned from methods inside the <see cref="Table{TEntity}"/> class when using the Fluid API and it is not designed to be directly constructed in your application code.
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>

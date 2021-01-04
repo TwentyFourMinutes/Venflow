@@ -716,14 +716,14 @@
             </summary>
             <param name="connectionString">The connection string to your PostgreSQL Database.</param>
         </member>
-        <member name="M:Venflow.Database.BeginTransactionAsync">
+        <member name="M:Venflow.Database.BeginTransactionAsync(System.Threading.CancellationToken)">
             <summary>
             Asynchronously begins a new transaction.
             </summary>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
             <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
         </member>
-        <member name="M:Venflow.Database.BeginTransactionAsync(System.Data.IsolationLevel)">
+        <member name="M:Venflow.Database.BeginTransactionAsync(System.Data.IsolationLevel,System.Threading.CancellationToken)">
             <summary>
             Asynchronously begins a new transaction.
             </summary>
@@ -804,7 +804,7 @@
             Asynchronously executes a command against the current Database. This method does automatically parameterize queries from an interpolated string.
             </summary>
             <typeparam name="T">The type of the scalar result.</typeparam>
-            <param name="sql">The SQL to execute.</param>
+            <param name="sql">The interpolated SQL to execute.</param>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation, with the value of the scalar command.</returns>
             <remarks>This method represents a <see cref="M:System.Data.Common.DbCommand.ExecuteScalarAsync"/> call.</remarks>
@@ -1162,7 +1162,6 @@
         </member>
         <member name="T:Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder`2">
             <summary>
-            summary>
             Instances of this class are returned from methods inside the <see cref="T:Venflow.Table`1"/> class when using the Fluid API and it is not designed to be directly constructed in your application code.
             </summary>
             <typeparam name="TEntity"></typeparam>
@@ -1671,11 +1670,6 @@
         <member name="T:System.Runtime.CompilerServices.NullableContextAttribute">
             <summary>
             <strong>Do not use this attribute, it is reserved for the compiler.</strong>
-            </summary>
-        </member>
-    </members>
-</doc>
-g>
             </summary>
         </member>
     </members>
