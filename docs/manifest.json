@@ -569,7 +569,19 @@
       "output": {
         ".html": {
           "relative_path": "guides/advanced/enums.html",
-          "hash": "M2/8b0lghwa1VJddnVfv6g=="
+          "hash": "+4r92dzxNDFzcYivz+8KAA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/advanced/interpolation.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/advanced/interpolation.html",
+          "hash": "wd6gp2QSUmQea/qTAsj7DA=="
         }
       },
       "is_incremental": false,
@@ -581,7 +593,7 @@
       "output": {
         ".html": {
           "relative_path": "guides/advanced/logging.html",
-          "hash": "6L3FCUfV7qWHmxPMBB+HnQ=="
+          "hash": "TsAy9PFkUbxMpdKfWoQjpA=="
         }
       },
       "is_incremental": false,
@@ -713,7 +725,7 @@
       "output": {
         ".html": {
           "relative_path": "guides/operations/query.html",
-          "hash": "wOa3n0DS2O9Y4Alppawv2w=="
+          "hash": "TZSDVcJRb/eY6kTUydPSbA=="
         }
       },
       "is_incremental": false,
@@ -749,7 +761,7 @@
       "output": {
         ".html": {
           "relative_path": "guides/toc.html",
-          "hash": "EmY8TdUxb4n3tvcB8+lvcA=="
+          "hash": "WrDM3UotwRp5NTUtoIClOQ=="
         }
       },
       "is_incremental": false,
@@ -814,7 +826,7 @@
         "ConceptualDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build",
-          "total_file_count": 17,
+          "total_file_count": 18,
           "skipped_file_count": 16
         },
         "ManagedReferenceDocumentProcessor": {

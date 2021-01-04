@@ -103,6 +103,10 @@
 </code></pre>
 <div class="NOTE">
 <h5>Note</h5>
+<p>It is enough to map your PostgreSQL enum once in an assembly. However, if you prefer, you can also configure it multiple times.</p>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
 <p>By default the name of the enum within C# will be converted to a lower-cased <code>_</code> separated name. That means <code>FooBaz</code> would be converted to <code>foo_baz</code>. If you want to override any of the naming behaviours you can pass a valid value to the <code>name</code>/<code>npgsqlNameTranslator</code> parameters.</p>
 </div>
 </article>

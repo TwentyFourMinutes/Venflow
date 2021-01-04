@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Logging with Venflow | Venflow Documentation </title>
+    <title>Interpolation with Venflow | Venflow Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta property="og:title" content="Logging with Venflow | Venflow Documentation ">
+    <meta property="og:title" content="Interpolation with Venflow | Venflow Documentation ">
     
     <meta property="og:locale" content="en-us">
     <meta property="og:type" content="website">
@@ -89,42 +89,39 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Guides.Advanced.Logging">
-<h1 id="logging-with-venflow">Logging with Venflow</h1>
+            <article class="content wrap" id="_content" data-uid="Guides.Advanced.Interpolation">
+<h1 id="interpolation-with-venflow">Interpolation with Venflow</h1>
 
-<p>Logging in general is a very important topic, especially in a scenario like this, in which the ORM partially creates SQL. At the current state Venflow supports logging only in a few specific cases. As of now this only covers all Query operations including <a class="xref" href="../../api/Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle_System_String_System_Boolean_"><code>QuerySingle</code></a> and  <a class="xref" href="../../api/Venflow.TableBase-1.html#Venflow_TableBase_1_QueryBatch_System_String_System_Boolean_"><code>QueryBatch</code></a>  as well as their interpolation counterparts.</p>
-<h2 id="setup-the-logging-provider">Setup the logging provider</h2>
-<p>You configure your logging provider on a <a class="xref" href="../../api/Venflow.Database.html"><code>Database</code></a> basis, by overriding the <a class="xref" href="../../api/Venflow.Database.html#Venflow_Database_Configure_Venflow_DatabaseOptionsBuilder_"><code>Configure</code></a> method. For this example, lets use the database which you already know from the <a href="../getting_started/setup.html">Setup Guide</a>. By using the provided <a class="xref" href="../../api/Venflow.DatabaseOptionsBuilder.html"><code>DatabaseOptionsBuilder</code></a>, you can call the <a class="xref" href="../../api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_LogTo_System_Action_System_String__System_Boolean_"><code>LogTo</code></a> method on it. It accepts two parameters, the logging action itself as well as an optional Boolean to tell whether or not to log sensitive data to this logger. However it is important to note that Venflow, at least at the current state, only logs the executed SQL statements and nothing else.</p>
-<div class="NOTE">
-<h5>Note</h5>
-<p>The sensitive data logging is a bit special since it populates the parameters on the client, rather than the server. This means, that the <em>populated</em> SQL might not always be 100% accurate. It internally uses the <a class="xref" href="../../api/Venflow.NpgsqlCommandExtensions.html#Venflow_NpgsqlCommandExtensions_SetInterpolatedCommandText_Npgsql_NpgsqlCommand_System_FormattableString_"><code>NpgsqlCommandExtensions.GetUnParameterizedCommandText</code></a> extension method to do that. However it also got some other caveats, you can get more information by further inspecting the API reference.</p>
+<p><em>If you never heard about string interpolation you should check the <a href="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated">official docs</a>.</em></p>
+<p>Writing SQL can be a real pain especially while writing in by hand and keeping it injection safe. However Venflow tries to help you with all of that, especially by providing a simple way to write injection safe SQL. All API's which allow for SQL with parameters also have a counterpart called something along the lines of *Interpolation*. They accept a <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.formattablestring"><code>FormattableString</code></a> which allow for interpolated strings. Lets take a look at how this would like with a query, that queries all blogs with a similar one to the name provided by the user.</p>
+<pre><code class="lang-cs">var name = Console.ReadLine(); // The name of the blogs to find with a similar name
+
+var blogs = await database.Blogs.QueryInterpolatedBatch($@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; WHERE &quot;&quot;Name&quot;&quot; LIKE {name}&quot;)
+                                .QueryAsync();
+</code></pre>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>This way of injecting parameters is totally safe, however you need to be very careful to <strong>always</strong> choose the interpolation methods while doing this.</p>
 </div>
-<pre><code class="lang-cs">public class BlogDatabase : Database
-{
-    public Table&lt;Blog&gt; Blogs { get; set; }
-    public Table&lt;Post&gt; Posts { get; set; }
+<h3 id="extract-interpolated-sql-into-variables">Extract interpolated SQL into variables</h3>
+<p>If your SQL statement is a little bit larger than usual you might want to extract your string to a local variable or similar. However you need to be careful while choosing the variable type. Your habits might want to tell you to choose a <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string"><code>string</code></a> or <a href="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/var"><code>var</code></a> however you need to make sure that you explicitly set the variable type to <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.formattablestring"><code>FormattableString</code></a>. Otherwise the string interpolation happens inline and no parameterizing by Venflow will happen. Down below you will see a simple example of how that would look like.</p>
+<pre><code class="lang-cs">FormattableString sql = $@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; WHERE &quot;&quot;Name&quot;&quot; LIKE {Console.ReadLine()}&quot;;
 
-    public BlogDatabase() : base(&quot;Your connection string.&quot;)
-    {
-        
-    }
-    
-    protected override void Configure(DatabaseOptionsBuilder optionsBuilder)
-    {
-        // You can also configure multiple loggers.
-        optionsBuilder.LogTo(message =&gt; { Console.WriteLine(message); });
-    }
-}
+var blogs = await database.Blogs.QueryInterpolatedBatch(sql)
+                                .QueryAsync();
 </code></pre>
-<h2 id="setup-the-logging-provider-in-a-more-specific-manner">Setup the logging provider in a more specific manner</h2>
-<p>You don't always want the ORM to log every single SQL statement ever to be executed, in this case Venflow allows to individually override the logging behaviour on a command basis by calling <a class="xref" href="../../api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_Boolean_"><code>LogTo</code></a> on the method chain. In the example down below, all globally defined loggers will be overridden by the loggers configured on the command.</p>
-<pre><code class="lang-cs">FormattableString sql = $@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; WHERE &quot;&quot;Id&quot;&quot; = {someId} LIMIT 1&quot;;
+<h2 id="supported-interpolation-types">Supported interpolation types</h2>
+<p>At the current state you can use all types <a href="https://www.npgsql.org/doc/types/basic.html">Npgsql supports</a>, as well as a few neat features Venflow implemented such as the support for <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.uint64"><code>ulong</code></a>, <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.uint64"><code>ulong?</code></a> and all types that implement <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.collections.generic.ilist-1"><code>IList&lt;T&gt;</code></a>, this includes types such as arrays and all collections that implement it. Lets look at its behaviour with an example.</p>
+<pre><code class="lang-cs">var blogIds = new int[3] { 1, 2, 3 };
 
-var blog = await database.Blogs.QueryInterpolatedSingle(sql)
-                               .LogTo(Console.WriteLine)   // You can also configure multiple loggers.
-                               .QueryAsync();
+FormattableString sql = $@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; WHERE &quot;&quot;Id&quot;&quot; IN ({blogIds})&quot;;
+
+var blogs = await database.Blogs.QueryInterpolatedBatch(sql)
+                                .QueryAsync();
 </code></pre>
-<p>However, lets assume you wouldn't want to configure the logger on a command basis, but would rather cherry pick the commands. In that case you would need to set the  <a class="xref" href="../../api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior"><code>DatabaseOptionsBuilder.DefaultLoggingBehavior</code></a> to <a class="xref" href="../../api/Venflow.Enums.LoggingBehavior.html#Venflow_Enums_LoggingBehavior_Never"><code>DefaultLoggingBehavior.Never</code></a> in the same method you configured the global logger. Then you would want to call <a class="xref" href="../../api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_Boolean_"><code>LogTo</code></a> on all commands you would want to be logged.</p>
+<p>This will query all blogs with the ids <code>1</code>, <code>2</code> and <code>3</code>. The above written SQL statement will be converted to the following:</p>
+<p><code>&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; WHERE &quot;&quot;Id&quot;&quot; IN (1, 2, 3)&quot;</code></p>
+<p>Of course the numbers usually would be parametrized, however for the sake of this example it contains the values directly.</p>
 </article>
           </div>
           
@@ -141,7 +138,7 @@ var blog = await database.Blogs.QueryInterpolatedSingle(sql)
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/docs/docfx/guides/advanced/logging.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/docs/docfx/guides/advanced/interpolation.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

@@ -24,6 +24,8 @@
       topicUid: Guides.Operations.Execute
 - name: Advanced
   items:
+    - name: Interpolation
+      topicUid: Guides.Advanced.Interpolation
     - name: Enums
       topicUid: Guides.Advanced.Enums
     - name: Nullables

@@ -16,7 +16,8 @@ public class FooConfiguration : EntityConfiguration<Foo>
     }
 }
 ```
+> [!NOTE] 
+> It is enough to map your PostgreSQL enum once in an assembly. However, if you prefer, you can also configure it multiple times.
 
 > [!NOTE] 
 > By default the name of the enum within C# will be converted to a lower-cased `_` separated name. That means `FooBaz` would be converted to `foo_baz`. If you want to override any of the naming behaviours you can pass a valid value to the `name`/`npgsqlNameTranslator` parameters.
-

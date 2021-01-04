@@ -31,7 +31,7 @@ Additionally if you do not intend to reuse the the command instance you can omit
 Also, if you instead only wanted to query the first result, you can use the `QuerySingle` API.
 
 ```cs
-var blogs = await database.Blogs.QuerySingle(@"SELECT * FROM ""Blogs"" LIMIT 1").QueryAsync();
+var blog = await database.Blogs.QuerySingle(@"SELECT * FROM ""Blogs"" LIMIT 1").QueryAsync();
 ```
 
 ## Query data with relations
@@ -58,7 +58,7 @@ var blogs = await database.Blogs.QuerySingle().JoinWith(x => x.Posts).QueryAsync
 
 ## Queries with parameters
 
-Most of the times your query contains some sort of parameters. With Venflow you have two options, either by using the raw `NpgsqlParameter` class and the matching `QuerySingle`/`QueryBatch` overloads or the Interpolated SQL methods.
+Most of the times your query contains some sort of parameters. With Venflow you have two options, either by using the raw `NpgsqlParameter` class and the matching `QuerySingle`/`QueryBatch` overloads or the Interpolated SQL methods. You can learn more about string interpolation in [this guide](../advanced/interpolation.md). 
 
 In this example, we try to query the first blog with the id `5` with all of its posts. 
 

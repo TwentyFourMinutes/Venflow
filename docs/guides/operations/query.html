@@ -113,7 +113,7 @@ var blogs = await query.QueryAsync(); // You can also inline this with the line 
 </code></pre>
 <p>Additionally if you do not intend to reuse the the command instance you can omit the <code>Build</code> method call and directly call <code>QueryAsync</code>.</p>
 <p>Also, if you instead only wanted to query the first result, you can use the <code>QuerySingle</code> API.</p>
-<pre><code class="lang-cs">var blogs = await database.Blogs.QuerySingle(@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; LIMIT 1&quot;).QueryAsync();
+<pre><code class="lang-cs">var blog = await database.Blogs.QuerySingle(@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; LIMIT 1&quot;).QueryAsync();
 </code></pre>
 <h2 id="query-data-with-relations">Query data with relations</h2>
 <p>In this case we want to get the first 5 blogs with all of their posts. If you want to perform a join, the builder exposes the <code>JoinWith</code> and the <code>ThenWith</code> method to perform nested joins.</p>
@@ -131,7 +131,7 @@ var query = await database.Blogs.QueryBatch(sql).JoinWith(x =&gt; x.Posts).Query
 <pre><code class="lang-cs">var blogs = await database.Blogs.QuerySingle().JoinWith(x =&gt; x.Posts).QueryAsync();
 </code></pre>
 <h2 id="queries-with-parameters">Queries with parameters</h2>
-<p>Most of the times your query contains some sort of parameters. With Venflow you have two options, either by using the raw <code>NpgsqlParameter</code> class and the matching <code>QuerySingle</code>/<code>QueryBatch</code> overloads or the Interpolated SQL methods.</p>
+<p>Most of the times your query contains some sort of parameters. With Venflow you have two options, either by using the raw <code>NpgsqlParameter</code> class and the matching <code>QuerySingle</code>/<code>QueryBatch</code> overloads or the Interpolated SQL methods. You can learn more about string interpolation in <a href="../advanced/interpolation.html">this guide</a>.</p>
 <p>In this example, we try to query the first blog with the id <code>5</code> with all of its posts.</p>
 <pre><code class="lang-cs">FormattableString sql =
 $@&quot;SELECT * FROM 

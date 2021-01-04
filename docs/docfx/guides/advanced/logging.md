@@ -41,9 +41,9 @@ You don't always want the ORM to log every single SQL statement ever to be execu
 ```cs
 FormattableString sql = $@"SELECT * FROM ""Blogs"" WHERE ""Id"" = {someId} LIMIT 1";
 
-var blogs = await database.Blogs.QueryInterpolatedSingle(sql)
-                                .LogTo(Console.WriteLine)   // You can also configure multiple loggers.
-                                .QueryAsync();
+var blog = await database.Blogs.QueryInterpolatedSingle(sql)
+                               .LogTo(Console.WriteLine)   // You can also configure multiple loggers.
+                               .QueryAsync();
 ```
 
 However, lets assume you wouldn't want to configure the logger on a command basis, but would rather cherry pick the commands. In that case you would need to set the  [`DatabaseOptionsBuilder.DefaultLoggingBehavior`](xref:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior) to [`DefaultLoggingBehavior.Never`](xref:Venflow.Enums.LoggingBehavior.Never) in the same method you configured the global logger. Then you would want to call [`LogTo`](xref:Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.Boolean) ) on all commands you would want to be logged.
