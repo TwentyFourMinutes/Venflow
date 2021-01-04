@@ -55,7 +55,7 @@
     "globalMetadataFiles": [],
     "globalMetadata": {
       "_appTitle": "Venflow Documentation",
-      "_appFooter": "<span>Copyright © 2020 Twenty</span>",
+      "_appFooter": "<span>Copyright © 2021 Twenty</span>",
       "_enableSearch": "true",
 	  "_appFaviconPath": "favicon.ico",
 	  "_appLogoPath": "venflow.svg"
@@ -68,6 +68,9 @@
     "postProcessors": [
       "ExtractSearchIndex"
     ],
+	"xref": [
+	  "https://www.npgsql.org/xrefmap.yml"
+	],
 	"xrefService": [ 
 	  "https://xref.docs.microsoft.com/query?uid={uid}" 
 	],
