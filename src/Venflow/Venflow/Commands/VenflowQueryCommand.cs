@@ -32,8 +32,6 @@ namespace Venflow.Commands
         {
             await ValidateConnectionAsync();
 
-            await using var reader = await UnderlyingCommand.ExecuteReaderAsync(_isSingleResult ? CommandBehavior.SingleRow : CommandBehavior.Default, cancellationToken);
-
             if (Database.DefaultLoggingBehavior == LoggingBehavior.Always && (!_shouldForceLog.HasValue || _shouldForceLog.Value) ||
                 (_shouldForceLog.HasValue && _shouldForceLog.Value))
             {
@@ -46,6 +44,8 @@ namespace Venflow.Commands
                     Database.ExecuteLoggers(_loggers, UnderlyingCommand);
                 }
             }
+
+            await using var reader = await UnderlyingCommand.ExecuteReaderAsync(_isSingleResult ? CommandBehavior.SingleRow : CommandBehavior.Default, cancellationToken);
 
             Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> materializer;
 
