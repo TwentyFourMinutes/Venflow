@@ -1,6 +1,6 @@
 ﻿namespace Venflow.Enums
 {
-    internal enum RelationPartType
+    internal enum RelationPartType : byte
     {
         One,
         Many

@@ -3,7 +3,7 @@
     /// <summary>
     /// Specifies the logging behavior for Venflow commands.
     /// </summary>
-    public enum LoggingBehavior
+    public enum LoggingBehavior : byte
     {
         /// <summary>
         /// Logs all commands.
