@@ -725,7 +725,7 @@
       "output": {
         ".html": {
           "relative_path": "guides/operations/query.html",
-          "hash": "TZSDVcJRb/eY6kTUydPSbA=="
+          "hash": "xs6MdDIp7iD3Uo1MaeOtkw=="
         }
       },
       "is_incremental": false,
@@ -827,7 +827,7 @@
           "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 18,
-          "skipped_file_count": 16
+          "skipped_file_count": 17
         },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,

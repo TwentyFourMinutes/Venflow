@@ -130,6 +130,10 @@ var query = await database.Blogs.QueryBatch(sql).JoinWith(x =&gt; x.Posts).Query
 <p>If you instead only wanted to query the first blog with all of its posts, you can again use the <code>QuerySingle</code> API.</p>
 <pre><code class="lang-cs">var blogs = await database.Blogs.QuerySingle().JoinWith(x =&gt; x.Posts).QueryAsync();
 </code></pre>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>When joining with multiple relations, ensure that the order of joins configured with Venflow, are equal to the order of joins in the SQL.</p>
+</div>
 <h2 id="queries-with-parameters">Queries with parameters</h2>
 <p>Most of the times your query contains some sort of parameters. With Venflow you have two options, either by using the raw <code>NpgsqlParameter</code> class and the matching <code>QuerySingle</code>/<code>QueryBatch</code> overloads or the Interpolated SQL methods. You can learn more about string interpolation in <a href="../advanced/interpolation.html">this guide</a>.</p>
 <p>In this example, we try to query the first blog with the id <code>5</code> with all of its posts.</p>

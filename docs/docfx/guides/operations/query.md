@@ -55,6 +55,8 @@ If you instead only wanted to query the first blog with all of its posts, you ca
 ```cs
 var blogs = await database.Blogs.QuerySingle().JoinWith(x => x.Posts).QueryAsync();
 ```
+> [!WARNING] 
+> When joining with multiple relations, ensure that the order of joins configured with Venflow, are equal to the order of joins in the SQL. 
 
 ## Queries with parameters
 
