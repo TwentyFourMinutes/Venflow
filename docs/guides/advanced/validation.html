@@ -92,7 +92,7 @@
             <article class="content wrap" id="_content" data-uid="Guides.Advanced.Validation">
 <h1 id="validation-with-venflow">Validation with Venflow</h1>
 
-<p>Venflow performs a lot of validation under the hood, to perform the best possible UX. However this comes at a performance trade-off. Therefor Venflow only performs these validation, if you are using Venflow in a <code>DEBUG</code> build. If you would compile your assembly to <code>RELEASE</code> these validations wouldn't be performed. In order to manually override this behaviour you can configure this setting with the static <a class="xref" href="../../api/Venflow.VenflowConfiguration.html"><code>VenflowConfiguration</code></a> class.</p>
+<p>Venflow performs a lot of validation under the hood, to perform the best possible UX. However this comes at a performance trade-off. Therefore Venflow only performs these validation, if you are using Venflow in a <code>DEBUG</code> build. If you would compile your assembly to <code>RELEASE</code> these validations wouldn't be performed. In order to manually override this behaviour you can configure this setting with the static <a class="xref" href="../../api/Venflow.VenflowConfiguration.html"><code>VenflowConfiguration</code></a> class.</p>
 <p>In the below example we would tell Venflow, to always use 'Deep Validation', no matter the configuration. You should place this at very beginning of your program, however you can change this value whenever you want.</p>
 <pre><code class="lang-cs">VenflowConfiguration.UseDeepValidation(true);
 </code></pre>

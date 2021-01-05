@@ -8,7 +8,7 @@ title: Setup Venflow
 ## Configure the Database
 
 > [!WARNING] 
-> Be aware, that LINQPad may throw unexpected errors and you therefor should use a real .Net Project instead.
+> Be aware, that LINQPad may throw unexpected errors and you therefore should use a real .Net Project instead.
 
 In Venflow you are reflecting your PostgreSQL database with the `Database` class, which will host all of your tables. In the following example we will configure a database containing two tables, `Blogs` and `Posts`. One Blog contains many posts and a post contains a single Blog.
 
@@ -27,7 +27,7 @@ public class BlogDatabase : Database
 > Usually you would use your `Database` with an IOC Container and register it as a `Transient`/`Scoped` depending on the use.
 
 > [!WARNING] 
-> This class represents a connection to your database and therefor doesn't support multi threaded use.
+> This class represents a connection to your database and therefore doesn't support multi threaded use.
 
 ## Entities
 
