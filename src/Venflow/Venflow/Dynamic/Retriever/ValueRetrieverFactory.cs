@@ -30,10 +30,7 @@ namespace Venflow.Dynamic.Retriever
             {
                 WriteNullableRetriever(retrieverMethodIL, property, Enum.GetUnderlyingType(underlyingType));
             }
-            else if (underlyingType is { } &&
-                     (isPostgreEnum ||
-                     underlyingType == typeof(Guid) ||
-                     underlyingType == typeof(ulong)))
+            else if (underlyingType is { })
             {
                 WriteNullableRetriever(retrieverMethodIL, property, underlyingType);
             }

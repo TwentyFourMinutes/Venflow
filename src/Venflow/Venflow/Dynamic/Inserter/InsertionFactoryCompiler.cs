@@ -2353,10 +2353,7 @@ namespace Venflow.Dynamic.Inserter
 
             var stringType = typeof(string);
 
-            if (underlyingType is { } &&
-                (underlyingType.IsEnum ||
-                underlyingType == typeof(Guid) ||
-                underlyingType == typeof(ulong)))
+            if (underlyingType is { })
             {
                 var dbNullType = typeof(DBNull);
 
