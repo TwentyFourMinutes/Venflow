@@ -9,7 +9,7 @@
 
 ## About
 
-Venflow is a brand new ORM, written from the ground up to try and provide an alternative to EF-Core and many other ORMs. It allows you to define Models and their relations with each other. Additionally it maps all queries on its own while still maintaining great performance, with options for custom SQL.
+Venflow is a brand new ORM, written from the ground up to try and provide an alternative to EF-Core and many other ORMs. It allows you to define Models and their relations with each other. Additionally it maps all queries on its own while still maintaining great performance.
 
 Lets face it, EF-Core is awesome, but it can be slow, really slow. However this library tries to overcome that by providing similar features while maintaining great performance. Venflow comes with a very similar UX to Dapper and EF-Core, in order to keep the learning curve as low as possible. 
 
@@ -24,9 +24,7 @@ Lets face it, EF-Core is awesome, but it can be slow, really slow. However this 
 
 ### Collaboration
 
-If you want to collaborate on this project more, than creating issues and PR's, feel free to contact me on any of the mentioned contacts at the bottom of the file.
-
-How you can help other than that? This can be done in numerous ways, over on the issue section, such as:
+The simplest way to do so, is by giving the project a :star: and sharing the project to others. How you can help other than that? This can be done in numerous ways, over on the issue section, such as:
 
 - Creating feature requests
 - Creating pull requests
@@ -34,7 +32,7 @@ How you can help other than that? This can be done in numerous ways, over on the
 
 ## Installation
 
-The beta versions of Venflow can currently be downloaded on [nuget.org](https://www.nuget.org/packages/Venflow). However please do note that since this package is still in beta, it may still contain bugs and other issues.
+The pre-release versions of Venflow can currently be downloaded on [nuget.org](https://www.nuget.org/packages/Venflow). By now, the project should be fairly stable and safe to use.
 
 Also you can install it via the **P**ackage **M**anager **C**onsole:
 
@@ -70,7 +68,18 @@ The benchmarks themselves or even the calculation of the composite numbers may n
 
 ## Is this package for you?
 
-This package is more a competitor to Dapper than EF-Core since it supports Linq2Sql, Database first, and migrations, which neither Dapper or Venflow support out of the box. On the other hand you need to consider the Database you will end up using, if you aren't using PostgreSQL you will have to use a different ORM, at least at this state of the project. 
+Especially for ORM's it is becoming a harder challenge than ever before, to choose the right one for you. This project tries to be as transparent as possible, so if any of the following points apply to you or your project, choose a different ORM at least for your current project.
+
+- You are feeling unsure about writing raw SQL.
+- <sup>†</sup> You are using a database other than PostgreSQL.
+- <sup>†</sup> You rely on a code-first implementation.
+- You require Linq2Sql.
+
+*<sup>†</sup> indicates that this point might change it the future*
+
+#### But why should I use Venflow over EF-Core anyway?
+
+Obviously this project is nowhere near as mature as EF-Core and it already covers all your needs. However Venflow is all about performance in all its ways. You might ask yourself now, why would I even care? Well, especially for Web-Apps it really matters! Your response times for all requests involving some sort of Database interaction will immediately decrease. This also means that your application will not take up as much resources on your server. Obviously this only is applicable, if the website encounters somewhat high traffic.     
 
 #### But why should I use Venflow over Dapper anyway?
 
@@ -78,7 +87,7 @@ Venflow supports a lot more things out of the box, such as automatically generat
 
 ## Basic usage
 
-As already mentioned, Venflow tries to keep the learning curve from other ORM's as low as possible, therefor a lot of patterns will seem familiar from either EFCore or Dapper.
+As already mentioned, Venflow tries to keep the learning curve from other ORM's as low as possible, therefore a lot of patterns will seem familiar to either EFCore or Dapper.
 
 ### Basic configuration
 
