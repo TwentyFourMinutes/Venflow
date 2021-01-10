@@ -121,7 +121,7 @@ public class BlogConfiguration : EntityConfiguration<Blog>
 }
 ```
 
-A instance of your `Database` class exposes the underlying connection and the actual CRUD builders. In the example below you can see how you would query a set of Blogs with their posts.
+An instance of your `Database` class exposes the underlying connection and the actual CRUD builders. In the example below you can see how you would query a set of Blogs with their posts.
 
 ```cs
 await using var database = new BlogDatabase(); // You should register a Transient/Scoped your DI Container.
