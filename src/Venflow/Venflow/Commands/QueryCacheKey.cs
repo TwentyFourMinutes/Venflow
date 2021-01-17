@@ -26,7 +26,7 @@ namespace Venflow.Commands
 
         public bool Equals(
 #if !NET48
-            [AllowNull] 
+            [AllowNull]
 #endif
             QueryCacheKey y)
         {

@@ -112,8 +112,8 @@ namespace Venflow.Commands
         public IQueryCommandBuilder<TRootEntity, TReturn> TrackChanges(bool trackChanges = true)
             => _commandBuilder.TrackChanges(trackChanges);
 
-        public IQueryCommandBuilder<TRootEntity, TReturn> LogTo(bool shouldLog = true)
-            => _commandBuilder.LogTo(shouldLog);
+        public IQueryCommandBuilder<TRootEntity, TReturn> Log(bool shouldLog = true)
+            => _commandBuilder.Log(shouldLog);
 
         public IQueryCommandBuilder<TRootEntity, TReturn> LogTo(Action<string> logger, bool includeSensitiveData)
             => _commandBuilder.LogTo(logger, includeSensitiveData);

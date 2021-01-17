@@ -18,7 +18,7 @@ namespace Venflow.Commands
         private bool _trackChanges;
         private QueryGenerationOptions _queryGenerationOptions;
         private bool _disposeCommand;
-        private bool? shouldForceLog;
+        private bool? _shouldForceLog;
 
         private RelationBuilderValues? _relationBuilderValues;
         private readonly bool _singleResult;
@@ -71,9 +71,9 @@ namespace Venflow.Commands
             return this;
         }
 
-        public IQueryCommandBuilder<TEntity, TReturn> LogTo(bool shouldLog = true)
+        public IQueryCommandBuilder<TEntity, TReturn> Log(bool shouldLog = true)
         {
-            shouldForceLog = shouldLog;
+            _shouldForceLog = shouldLog;
 
             return this;
         }
@@ -211,7 +211,19 @@ namespace Venflow.Commands
                 _command.CommandText = argumentedSql.ToString();
             }
 
-            return new VenflowQueryCommand<TEntity, TReturn>(_database, _entityConfiguration, _command, _relationBuilderValues, _trackChanges, _disposeCommand, _singleResult && _relationBuilderValues is null, _loggers, shouldForceLog);
+            bool shouldLog;
+
+            if (_shouldForceLog.HasValue)
+            {
+                shouldLog = _shouldForceLog.Value;
+            }
+            else
+            {
+                shouldLog = _database.DefaultLoggingBehavior == LoggingBehavior.Always ||
+                            _loggers.Count != 0;
+            }
+
+            return new VenflowQueryCommand<TEntity, TReturn>(_database, _entityConfiguration, _command, _relationBuilderValues, _trackChanges, _disposeCommand, _singleResult && _relationBuilderValues is null, _loggers, shouldLog);
         }
 
         private void AppendJoins(StringBuilder sb)

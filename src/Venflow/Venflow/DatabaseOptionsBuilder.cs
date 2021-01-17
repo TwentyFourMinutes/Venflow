@@ -12,7 +12,7 @@ namespace Venflow
     public class DatabaseOptionsBuilder
     {
         /// <summary>
-        /// Gets or sets the default LoggingBehavior on commands for this <see cref="Database"/>. The default is <see cref="LoggingBehavior.Always"/>.
+        /// Gets or sets the default LoggingBehavior on commands for this <see cref="Database"/>. The default is <see cref="LoggingBehavior.Always"/>, if any loggers are defined.
         /// </summary>
         public LoggingBehavior DefaultLoggingBehavior { get; set; }
 
@@ -95,7 +95,7 @@ namespace Venflow
                 _configurationAssemblies.Add(_databaseAssembly);
             }
 
-            return new DatabaseOptions(_configurationAssemblies, _loggers, DefaultLoggingBehavior);
+            return new DatabaseOptions(_configurationAssemblies, _loggers, _loggers.Count == 0 ? LoggingBehavior.Never : DefaultLoggingBehavior);
         }
     }
 

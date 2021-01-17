@@ -25,7 +25,7 @@ namespace Venflow.Commands
         /// <param name="shouldLog">Determines if this query should be logged. This is helpful, if you configured the default logging behavior to be <see langword="true"/>.</param>
         /// <returns>An object that can be used to further configure the operation.</returns>
         /// <remarks>You can configure the loggers in the <see cref="Database.Configure(DatabaseOptionsBuilder)"/> method with the <see cref="DatabaseOptionsBuilder.LogTo(Action{string}, bool)"/> methods.</remarks>
-        IQueryCommandBuilder<TEntity, TReturn> LogTo(bool shouldLog = true);
+        IQueryCommandBuilder<TEntity, TReturn> Log(bool shouldLog = true);
 
         /// <summary>
         /// Logs the query to the provided <paramref name="logger"/>.
