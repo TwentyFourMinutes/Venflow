@@ -1224,7 +1224,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.BeginCatchBlock(exceptionLocal.LocalType);
 
             // Set state and return exception
-            _moveNextMethodIL.Emit(OpCodes.Stloc_S, exceptionLocal);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
@@ -1245,7 +1245,7 @@ namespace Venflow.Dynamic.Inserter
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
-            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, exceptionLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
             _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
 
@@ -1275,7 +1275,7 @@ namespace Venflow.Dynamic.Inserter
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
-            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, insertedCountLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, insertedCountLocal);
             _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetResult"));
 
             // End of method
@@ -2239,13 +2239,13 @@ namespace Venflow.Dynamic.Inserter
 
             _moveNextMethodIL.BeginCatchBlock(exceptionLocal.LocalType);
             // Set state and return exception
-            _moveNextMethodIL.Emit(OpCodes.Stloc_S, exceptionLocal);
+            _moveNextMethodIL.Emit(OpCodes.Stloc, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
-            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, exceptionLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, exceptionLocal);
             _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetException"));
             _moveNextMethodIL.Emit(OpCodes.Leave, retOfMethodLabel);
 
@@ -2260,7 +2260,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
             _moveNextMethodIL.Emit(OpCodes.Ldflda, _methodBuilderField);
-            _moveNextMethodIL.Emit(OpCodes.Ldloc_S, insertedCountLocal);
+            _moveNextMethodIL.Emit(OpCodes.Ldloc, insertedCountLocal);
             _moveNextMethodIL.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("SetResult"));
 
             // End of method
@@ -2377,7 +2377,7 @@ namespace Venflow.Dynamic.Inserter
                 ilGenerator.Emit(OpCodes.Stloc, propertyLocal);
                 ilGenerator.Emit(OpCodes.Ldloca, propertyLocal);
                 ilGenerator.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("HasValue").GetGetMethod());
-                ilGenerator.Emit(OpCodes.Brtrue_S, defaultRetrieverLabel);
+                ilGenerator.Emit(OpCodes.Brtrue, defaultRetrieverLabel);
 
                 // Nullable retriever
                 ilGenerator.Emit(OpCodes.Ldstr, "@" + column.ColumnName);
