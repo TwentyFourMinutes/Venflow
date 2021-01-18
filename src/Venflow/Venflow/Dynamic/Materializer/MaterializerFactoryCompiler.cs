@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Npgsql;
 using Venflow.Dynamic.IL;
 using Venflow.Dynamic.Proxies;
+using Venflow.Enums;
 using Venflow.Modeling;
 
 namespace Venflow.Dynamic.Materializer
@@ -308,10 +309,14 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethodIL.Emit(OpCodes.Ldnull);
             _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
 
-            var entityDictionaries = new Dictionary<int, FieldBuilder>();
-            var entityLastTypes = new Dictionary<int, FieldBuilder>();
+            var entityDictionaries = new Dictionary<int, FieldBuilder>(entities.Count - 1);
+            var entityLastTypes = new Dictionary<int, FieldBuilder>(entities.Count - 1);
+
+            var relationDictionaries = new Dictionary<uint, FieldBuilder>(entities.Count - 1);
+            var lastRelationMaps = new Dictionary<uint, FieldBuilder>(entities.Count);
 
             var dictionaryType = typeof(Dictionary<,>);
+            var hashSetType = typeof(HashSet<>);
 
             for (int i = 1; i < entities.Count; i++)
             {
@@ -336,6 +341,63 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Stfld, lastEntityField);
 
                 entityLastTypes.Add(entityHolder.Item1.Id, lastEntityField);
+
+                for (int relationIndex = 0; relationIndex < entityHolder.Item1.ForeignAssignedRelations.Count; relationIndex++)
+                {
+                    var relation = entityHolder.Item1.ForeignAssignedRelations[relationIndex].Item1;
+
+                    if (relation.RelationType != RelationType.ManyToOne)
+                        continue;
+
+                    // Add relationDictionary field
+
+                    var relationDictionaryName = entity.EntityName + "_Relation" + entityHolder.Item1.Id + "_" + relation.RelationId;
+
+                    var relationMap = hashSetType.MakeGenericType(relation.RightEntity.GetPrimaryColumn().PropertyInfo.PropertyType);
+
+                    var relationDictionaryField = _stateMachineTypeBuilder.DefineField("_" + relationDictionaryName, dictionaryType.MakeGenericType(entity.GetPrimaryColumn().PropertyInfo.PropertyType, relationMap), FieldAttributes.Private);
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Newobj, relationDictionaryField.FieldType.GetConstructor(Type.EmptyTypes));
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, relationDictionaryField);
+
+                    relationDictionaries.Add(relation.RelationId, relationDictionaryField);
+
+                    // Add lastRelationMap field
+
+                    var lastRelationMapField = _stateMachineTypeBuilder.DefineField("_last" + relationDictionaryName + "_Map", relationMap, FieldAttributes.Private);
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldnull);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, lastRelationMapField);
+
+                    lastRelationMaps.Add(relation.RelationId, lastRelationMapField);
+                }
+            }
+
+            var primaryEntityHolder = entities[0];
+            var primaryEntity = primaryEntityHolder.Item1.Entity;
+
+            for (int relationIndex = 0; relationIndex < primaryEntityHolder.Item1.ForeignAssignedRelations.Count; relationIndex++)
+            {
+                var relation = primaryEntityHolder.Item1.ForeignAssignedRelations[relationIndex].Item1;
+
+                if (relation.RelationType != RelationType.ManyToOne)
+                    continue;
+
+                // Add lastRelationMap field
+
+                var relationDictionaryName = primaryEntity.EntityName + "_Relation" + primaryEntityHolder.Item1.Id + "_" + relation.RelationId;
+
+                var relationMap = hashSetType.MakeGenericType(relation.RightEntity.GetPrimaryColumn().PropertyInfo.PropertyType);
+
+                var lastRelationMapField = _stateMachineTypeBuilder.DefineField("_last" + relationDictionaryName + "_Map", relationMap, FieldAttributes.Private);
+
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Newobj, lastRelationMapField.FieldType.GetConstructor(Type.EmptyTypes));
+                _moveNextMethodIL.Emit(OpCodes.Stfld, lastRelationMapField);
+
+                lastRelationMaps.Add(relation.RelationId, lastRelationMapField);
             }
 
             // setIsFirstRow to true
@@ -353,9 +415,6 @@ namespace Venflow.Dynamic.Materializer
             setNullGhostIL.Emit(OpCodes.Ldarg_0);
             setNullGhostIL.Emit(OpCodes.Ldnull);
             setNullGhostIL.Emit(OpCodes.Stfld, resultField);
-
-            var primaryEntityHolder = entities[0];
-            var primaryEntity = primaryEntityHolder.Item1.Entity;
 
             entityLastTypes.Add(primaryEntityHolder.Item1.Id, resultField);
 
@@ -495,7 +554,55 @@ namespace Venflow.Dynamic.Materializer
 
                 if (entityHolder.Item1.RequiresChangedLocal)
                 {
-                    _moveNextMethodIL.MarkLabel(afterEntityGenerationIfBody);
+                    if (entity.Relations is not null)
+                    {
+                        var afterElseLabel = _moveNextMethodIL.DefineLabel();
+
+                        for (int relationIndex = 0; relationIndex < entity.Relations.Count; relationIndex++)
+                        {
+                            var relation = entity.Relations[relationIndex];
+
+                            if (relation.RelationType != RelationType.OneToMany ||
+                                !relationDictionaries.TryGetValue(relation.RelationId, out var relationDictionaryField))
+                                continue;
+
+                            var lastRelationMapField = lastRelationMaps[relation.RelationId];
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Newobj, lastRelationMapField.FieldType.GetConstructor(Type.EmptyTypes));
+                            _moveNextMethodIL.Emit(OpCodes.Stfld, lastRelationMapField);
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, relationDictionaryField);
+                            _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRelationMapField);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relationDictionaryField.FieldType.GetMethod("Add"));
+                        }
+
+                        _moveNextMethodIL.Emit(OpCodes.Br, afterElseLabel);
+
+                        _moveNextMethodIL.MarkLabel(afterEntityGenerationIfBody);
+
+                        for (int relationIndex = 0; relationIndex < entity.Relations.Count; relationIndex++)
+                        {
+                            var relation = entity.Relations[relationIndex];
+
+                            if (relation.RelationType != RelationType.OneToMany ||
+                                !lastRelationMaps.TryGetValue(relation.RelationId, out var lastRelationMap))
+                                continue;
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldnull);
+                            _moveNextMethodIL.Emit(OpCodes.Stfld, lastRelationMap);
+                        }
+
+                        _moveNextMethodIL.MarkLabel(afterElseLabel);
+                    }
+                    else
+                    {
+                        _moveNextMethodIL.MarkLabel(afterEntityGenerationIfBody);
+                    }
 
                     var hasChangedLocal = _moveNextMethodIL.DeclareLocal(typeof(bool));
                     changedLocals.Add(entityHolder.Item1.Id, hasChangedLocal);
@@ -556,9 +663,19 @@ namespace Venflow.Dynamic.Materializer
 
                         var relation = assigningRelation.Item1;
 
+                        var lastRelationMapField = lastRelationMaps[relation.RelationId];
+
                         var afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
 
                         _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasRightEntityChangedLocal);
+                        _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
+
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRelationMapField);
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, lastRelationMapField.FieldType.GetMethod("Add"));
                         _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
 
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -614,11 +731,39 @@ namespace Venflow.Dynamic.Materializer
                         var relation = assigningRelation.Item1;
                         var lastRightEntityField = entityLastTypes[assigningRelation.Item2.Id];
 
+                        var relationDictionaryField = relationDictionaries[relation.RelationId];
+                        var lastRelationMapField = lastRelationMaps[relation.RelationId];
+
                         if (assigningRelation.Item2.Id == primaryEntityHolder.Item1.Id || entityHolder.RequiresDBNullCheck)
                         {
                             var afterLateAssignmentLabel = _moveNextMethodIL.DefineLabel();
 
                             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasLeftEntityChangedLocal);
+                            _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
+
+                            var afterIfLabel = _moveNextMethodIL.DefineLabel();
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRelationMapField);
+                            _moveNextMethodIL.Emit(OpCodes.Brtrue, afterIfLabel);
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, relationDictionaryField);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntityField);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relationDictionaryField.FieldType.GetMethod("get_Item"));
+                            _moveNextMethodIL.Emit(OpCodes.Stfld, lastRelationMapField);
+
+                            _moveNextMethodIL.MarkLabel(afterIfLabel);
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRelationMapField);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, lastRelationMapField.FieldType.GetMethod("Add"));
                             _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
 
                             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -643,6 +788,31 @@ namespace Venflow.Dynamic.Materializer
                             _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
 
                             _moveNextMethodIL.MarkLabel(oneToManyAssignmentLabel);
+
+                            var afterIfLabel = _moveNextMethodIL.DefineLabel();
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRelationMapField);
+                            _moveNextMethodIL.Emit(OpCodes.Brtrue, afterIfLabel);
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, relationDictionaryField);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntityField);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relationDictionaryField.FieldType.GetMethod("get_Item"));
+                            _moveNextMethodIL.Emit(OpCodes.Stfld, lastRelationMapField);
+
+                            _moveNextMethodIL.MarkLabel(afterIfLabel);
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRelationMapField);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, lastRelationMapField.FieldType.GetMethod("Add"));
+                            _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
 
                             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                             _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntityField);
@@ -881,9 +1051,6 @@ namespace Venflow.Dynamic.Materializer
             // Start try block
             _moveNextMethodIL.BeginExceptionBlock();
 
-            // if state zero goto await unsafe
-            var awaitUnsafeEndLabel = _moveNextMethodIL.DefineLabel();
-
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, _stateLocal);
 
             var switchBuilder = new ILSwitchBuilder(_moveNextMethodIL, 1);
@@ -916,11 +1083,15 @@ namespace Venflow.Dynamic.Materializer
             var entityDictionaries = new Dictionary<int, FieldBuilder>(entities.Count);
             var entityLastTypes = new Dictionary<int, FieldBuilder>(entities.Count);
 
-            var dictionaryType = typeof(Dictionary<,>);
+            var relationDictionaries = new Dictionary<uint, FieldBuilder>(entities.Count);
+            var lastRelationMaps = new Dictionary<uint, FieldBuilder>(entities.Count);
 
-            for (int i = entities.Count - 1; i >= 0; i--)
+            var dictionaryType = typeof(Dictionary<,>);
+            var hashSetType = typeof(HashSet<>);
+
+            for (int entityIndex = entities.Count - 1; entityIndex >= 0; entityIndex--)
             {
-                var entityHolder = entities[i];
+                var entityHolder = entities[entityIndex];
                 var entity = entityHolder.Item1.Entity;
 
                 // Add dictionary field
@@ -941,6 +1112,38 @@ namespace Venflow.Dynamic.Materializer
                 _moveNextMethodIL.Emit(OpCodes.Stfld, lastEntityField);
 
                 entityLastTypes.Add(entityHolder.Item1.Id, lastEntityField);
+
+                for (int relationIndex = 0; relationIndex < entityHolder.Item1.ForeignAssignedRelations.Count; relationIndex++)
+                {
+                    var relation = entityHolder.Item1.ForeignAssignedRelations[relationIndex].Item1;
+
+                    if (relation.RelationType != RelationType.ManyToOne)
+                        continue;
+
+                    // Add relationDictionary field
+
+                    var relationDictionaryName = entity.EntityName + "_Relation" + entityHolder.Item1.Id + "_" + relation.RelationId;
+
+                    var relationMap = hashSetType.MakeGenericType(relation.RightEntity.GetPrimaryColumn().PropertyInfo.PropertyType);
+
+                    var relationDictionaryField = _stateMachineTypeBuilder.DefineField("_" + relationDictionaryName, dictionaryType.MakeGenericType(entity.GetPrimaryColumn().PropertyInfo.PropertyType, relationMap), FieldAttributes.Private);
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Newobj, relationDictionaryField.FieldType.GetConstructor(Type.EmptyTypes));
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, relationDictionaryField);
+
+                    relationDictionaries.Add(relation.RelationId, relationDictionaryField);
+
+                    // Add lastRelationMap field
+
+                    var lastRelationMapField = _stateMachineTypeBuilder.DefineField("_last" + relationDictionaryName + "_Map", relationMap, FieldAttributes.Private);
+
+                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                    _moveNextMethodIL.Emit(OpCodes.Ldnull);
+                    _moveNextMethodIL.Emit(OpCodes.Stfld, lastRelationMapField);
+
+                    lastRelationMaps.Add(relation.RelationId, lastRelationMapField);
+                }
             }
 
             _moveNextMethodIL.Emit(OpCodes.Br, loopConditionLabel);
@@ -1064,7 +1267,55 @@ namespace Venflow.Dynamic.Materializer
 
                 if (entityHolder.Item1.RequiresChangedLocal)
                 {
-                    _moveNextMethodIL.MarkLabel(afterEntityGenerationIfBody.Value);
+                    if (entity.Relations is not null)
+                    {
+                        var afterElseLabel = _moveNextMethodIL.DefineLabel();
+
+                        for (int relationIndex = 0; relationIndex < entity.Relations.Count; relationIndex++)
+                        {
+                            var relation = entity.Relations[relationIndex];
+
+                            if (relation.RelationType != RelationType.OneToMany ||
+                                !relationDictionaries.TryGetValue(relation.RelationId, out var relationDictionaryField))
+                                continue;
+
+                            var lastRelationMapField = lastRelationMaps[relation.RelationId];
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Newobj, lastRelationMapField.FieldType.GetConstructor(Type.EmptyTypes));
+                            _moveNextMethodIL.Emit(OpCodes.Stfld, lastRelationMapField);
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, relationDictionaryField);
+                            _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRelationMapField);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relationDictionaryField.FieldType.GetMethod("Add"));
+                        }
+
+                        _moveNextMethodIL.Emit(OpCodes.Br, afterElseLabel);
+
+                        _moveNextMethodIL.MarkLabel(afterEntityGenerationIfBody.Value);
+
+                        for (int relationIndex = 0; relationIndex < entity.Relations.Count; relationIndex++)
+                        {
+                            var relation = entity.Relations[relationIndex];
+
+                            if (relation.RelationType != RelationType.OneToMany ||
+                                !lastRelationMaps.TryGetValue(relation.RelationId, out var lastRelationMap))
+                                continue;
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldnull);
+                            _moveNextMethodIL.Emit(OpCodes.Stfld, lastRelationMap);
+                        }
+
+                        _moveNextMethodIL.MarkLabel(afterElseLabel);
+                    }
+                    else
+                    {
+                        _moveNextMethodIL.MarkLabel(afterEntityGenerationIfBody.Value);
+                    }
 
                     var hasChangedLocal = _moveNextMethodIL.DeclareLocal(typeof(bool));
                     changedLocals.Add(entityHolder.Item1.Id, hasChangedLocal);
@@ -1117,9 +1368,11 @@ namespace Venflow.Dynamic.Materializer
                     {
                         var assigningRelation = entityHolder.ForeignAssignedRelations[i];
 
+                        var relation = assigningRelation.Item1;
                         var lastRightEntityField = entityLastTypes[assigningRelation.Item2.Id];
 
-                        var relation = assigningRelation.Item1;
+                        var relationDictionaryField = relationDictionaries[relation.RelationId];
+                        var lastRelationMapField = lastRelationMaps[relation.RelationId];
 
                         if (entityHolder.RequiresDBNullCheck)
                         {
@@ -1128,12 +1381,38 @@ namespace Venflow.Dynamic.Materializer
                             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, hasLeftEntityChangedLocal);
                             _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
 
+                            var afterIfLabel = _moveNextMethodIL.DefineLabel();
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRelationMapField);
+                            _moveNextMethodIL.Emit(OpCodes.Brtrue, afterIfLabel);
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, relationDictionaryField);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntityField);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relationDictionaryField.FieldType.GetMethod("get_Item"));
+                            _moveNextMethodIL.Emit(OpCodes.Stfld, lastRelationMapField);
+
+                            _moveNextMethodIL.MarkLabel(afterIfLabel);
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRelationMapField);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, lastRelationMapField.FieldType.GetMethod("Add"));
+                            _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
+
                             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                             _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntityField);
                             _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
                             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                             _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
                             _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
+
                             _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
                         }
                         else
@@ -1150,6 +1429,31 @@ namespace Venflow.Dynamic.Materializer
                             _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
 
                             _moveNextMethodIL.MarkLabel(oneToManyAssignmentLabel);
+
+                            var afterIfLabel = _moveNextMethodIL.DefineLabel();
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRelationMapField);
+                            _moveNextMethodIL.Emit(OpCodes.Brtrue, afterIfLabel);
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, relationDictionaryField);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntityField);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relationDictionaryField.FieldType.GetMethod("get_Item"));
+                            _moveNextMethodIL.Emit(OpCodes.Stfld, lastRelationMapField);
+
+                            _moveNextMethodIL.MarkLabel(afterIfLabel);
+
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRelationMapField);
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, lastRelationMapField.FieldType.GetMethod("Add"));
+                            _moveNextMethodIL.Emit(OpCodes.Brfalse, afterLateAssignmentLabel);
 
                             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                             _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntityField);
