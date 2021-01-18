@@ -613,6 +613,23 @@ references:
   fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn)
   nameWithType: IQueryCommandBuilder<TEntity, TReturn>
   nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn)
+- uid: Venflow.Commands.IQueryCommandBuilder`2.Log(System.Boolean)
+  name: Log(Boolean)
+  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_Log_System_Boolean_
+  commentId: M:Venflow.Commands.IQueryCommandBuilder`2.Log(System.Boolean)
+  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.Log(System.Boolean)
+  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).Log(System.Boolean)
+  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.Log(Boolean)
+  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).Log(Boolean)
+- uid: Venflow.Commands.IQueryCommandBuilder`2.Log*
+  name: Log
+  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_Log_
+  commentId: Overload:Venflow.Commands.IQueryCommandBuilder`2.Log
+  isSpec: "True"
+  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.Log
+  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).Log
+  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.Log
+  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).Log
 - uid: Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.Action{System.String},System.Boolean)
   name: LogTo(Action<String>, Boolean)
   href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_Action_System_String__System_Boolean_
@@ -622,14 +639,6 @@ references:
   fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).LogTo(System.Action(Of System.String), System.Boolean)
   nameWithType: IQueryCommandBuilder<TEntity, TReturn>.LogTo(Action<String>, Boolean)
   nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).LogTo(Action(Of String), Boolean)
-- uid: Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.Boolean)
-  name: LogTo(Boolean)
-  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_Boolean_
-  commentId: M:Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.Boolean)
-  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.LogTo(System.Boolean)
-  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).LogTo(System.Boolean)
-  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.LogTo(Boolean)
-  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).LogTo(Boolean)
 - uid: Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.ValueTuple{System.Action{System.String},System.Boolean}[])
   name: LogTo((Action<String> logger, Boolean includeSensitiveData)[])
   href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_ValueTuple_System_Action_System_String__System_Boolean____

@@ -377,7 +377,7 @@
             <param name="trackChanges">Determines if change tracking should be applied.</param>
             <returns>An object that can be used to further configure the operation.</returns>
         </member>
-        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.Boolean)">
+        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.Log(System.Boolean)">
             <summary>
             Determines whether or not to log the query to the provided loggers.
             </summary>
@@ -847,7 +847,7 @@
         </member>
         <member name="P:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior">
             <summary>
-            Gets or sets the default LoggingBehavior on commands for this <see cref="T:Venflow.Database"/>. The default is <see cref="F:Venflow.Enums.LoggingBehavior.Always"/>.
+            Gets or sets the default LoggingBehavior on commands for this <see cref="T:Venflow.Database"/>. The default is <see cref="F:Venflow.Enums.LoggingBehavior.Always"/>, if any loggers are defined.
             </summary>
         </member>
         <member name="M:Venflow.DatabaseOptionsBuilder.AddConfigurations``1">
