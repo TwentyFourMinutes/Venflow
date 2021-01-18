@@ -42,11 +42,11 @@
     <PackageReference Include="Fody" Version="6.3.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Npgsql" Version="5.0.0" />
+    <PackageReference Include="Npgsql" Version="5.0.1.1" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net48' Or '$(TargetFramework)' == 'netstandard2.1'">
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" />
   </ItemGroup>
 </Project>
