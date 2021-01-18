@@ -400,6 +400,19 @@ namespace Venflow.Dynamic.Materializer
                 lastRelationMaps.Add(relation.RelationId, lastRelationMapField);
             }
 
+            for (int relationIndex = 0; relationIndex < primaryEntity.Relations.Count; relationIndex++)
+            {
+                var relation = primaryEntity.Relations[relationIndex];
+
+                if (relation.RelationType != RelationType.OneToMany ||
+                    !lastRelationMaps.TryGetValue(relation.RelationId, out var lastRelationMapField))
+                    continue;
+
+                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                _moveNextMethodIL.Emit(OpCodes.Newobj, lastRelationMapField.FieldType.GetConstructor(Type.EmptyTypes));
+                _moveNextMethodIL.Emit(OpCodes.Stfld, lastRelationMapField);
+            }
+
             // setIsFirstRow to true
             var isFirstRowField = _stateMachineTypeBuilder.DefineField("isFirstRow", typeof(bool), FieldAttributes.Private);
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);

@@ -167,7 +167,7 @@ namespace Venflow.Tests.QueryTests
         }
 
         [Fact, Priority(0)]
-        public async Task QueryWithRelationAsyncAndNoIncludeAsync()
+        public async Task QueryWithRelationAndNoIncludeAsync()
         {
             var person = await InsertPersonAsync();
 
