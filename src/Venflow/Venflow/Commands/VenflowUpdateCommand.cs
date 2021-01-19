@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -157,6 +158,9 @@ namespace Venflow.Commands
             return stringBuilder.ToString();
         }
 
+#if NET5_0
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+#endif
         private void BaseUpdate(TEntity entity, int index, StringBuilder commandString)
         {
             if (!(entity is IEntityProxy<TEntity> proxy))
