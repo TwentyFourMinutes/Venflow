@@ -30,6 +30,9 @@ namespace Venflow
         /// Appends a copy of the specified SQL followed by the default line terminator to the end of the current <see cref="FormattableSqlStringBuilder"/> object.
         /// </summary>
         /// <param name="sql">The SQL to append.</param>
+        /// <remarks>
+        /// <b>This method IS NOT string interpolation safe</b>, if you want to use string interpolated SQL use the <see cref="AppendInterpolatedLine(FormattableString)"/> method.
+        /// </remarks>
         public void AppendLine(string sql)
         {
             if (_sql is null)
@@ -48,6 +51,9 @@ namespace Venflow
         /// Appends a copy of the specified SQL to this instance.
         /// </summary>
         /// <param name="sql">The SQL to append.</param>
+        /// <remarks>
+        /// <b>This method IS NOT string interpolation safe</b>, if you want to use string interpolated SQL use the <see cref="AppendInterpolated(FormattableString)"/> method.
+        /// </remarks>
         public void Append(string sql)
         {
             if (_sql is null)
@@ -60,6 +66,9 @@ namespace Venflow
         /// Appends a copy of the specified SQL followed by the default line terminator to the end of the current <see cref="FormattableSqlStringBuilder"/> object.
         /// </summary>
         /// <param name="sql">The SQL to append.</param>
+        /// <remarks>
+        /// This method is string interpolation safe.
+        /// </remarks>
         public void AppendInterpolatedLine(FormattableString sql)
         {
             AppendInterpolated(sql);
@@ -71,6 +80,9 @@ namespace Venflow
         /// Appends a copy of the specified SQL to this instance.
         /// </summary>
         /// <param name="sql">The SQL to append.</param>
+        /// <remarks>
+        /// This method is string interpolation safe.
+        /// </remarks>
         public void AppendInterpolated(FormattableString sql)
         {
             var argumentsSpan = sql.GetArguments().AsSpan();
