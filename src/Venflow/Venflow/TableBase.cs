@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
@@ -97,6 +97,15 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QueryInterpolatedSingle(sql);
 
         /// <summary>
+        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+        /// </summary>
+        /// <param name="sql">A <see cref="FormattableSqlStringBuilder"/> instance containing the SQL statement.</param>
+        /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
+        /// <returns>A Fluent API Builder for a query command.</returns>
+        public IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> QueryInterpolatedSingle(FormattableSqlStringBuilder sql, bool disposeCommand = true)
+            => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QuerySingle(sql.Build(), sql.Parameters);
+
+        /// <summary>
         /// Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="QuerySingle(string, NpgsqlParameter[])"/> or <see cref="QueryInterpolatedSingle(FormattableString, bool)"/>.
         /// </summary>
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
@@ -143,6 +152,15 @@ namespace Venflow
         /// <returns>A Fluent API Builder for a query command.</returns>
         public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryInterpolatedBatch(FormattableString sql, bool disposeCommand = true)
             => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QueryInterpolatedBatch(sql);
+
+        /// <summary>
+        /// Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+        /// </summary>
+        /// <param name="sql">A <see cref="FormattableSqlStringBuilder"/> instance containing the SQL statement.</param>
+        /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
+        /// <returns>A Fluent API Builder for a query command.</returns>
+        public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryInterpolatedBatch(FormattableSqlStringBuilder sql, bool disposeCommand = true)
+            => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).QueryBatch(sql.Build(), sql.Parameters);
 
         #endregion
 

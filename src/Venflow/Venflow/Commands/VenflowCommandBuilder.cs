@@ -35,6 +35,11 @@ namespace Venflow.Commands
             return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, parameters, _disposeCommand, true);
         }
 
+        public IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> QuerySingle(string sql, IList<NpgsqlParameter> parameters)
+        {
+            return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, parameters, _disposeCommand, true);
+        }
+
         public IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> QueryInterpolatedSingle(FormattableString sql)
         {
             return new VenflowQueryCommandBuilder<TEntity, TEntity>(_database, _entityConfiguration, _command, sql, _disposeCommand, true);
@@ -46,6 +51,11 @@ namespace Venflow.Commands
         }
 
         public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch(string sql, params NpgsqlParameter[] parameters)
+        {
+            return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, sql, parameters, _disposeCommand, false);
+        }
+
+        public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch(string sql, IList<NpgsqlParameter> parameters)
         {
             return new VenflowQueryCommandBuilder<TEntity, List<TEntity>>(_database, _entityConfiguration, _command, sql, parameters, _disposeCommand, false);
         }
