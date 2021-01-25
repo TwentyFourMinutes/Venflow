@@ -43,25 +43,33 @@ namespace Venflow.Commands
                 }
             }
 
-            await using var reader = await UnderlyingCommand.ExecuteReaderAsync(_isSingleResult ? CommandBehavior.SingleRow : CommandBehavior.Default, cancellationToken);
+            var reader = default(NpgsqlDataReader);
 
-            Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> materializer;
-
-            if (Materializer is { })
+            try
             {
-                materializer = (Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>)Materializer;
+                reader = await UnderlyingCommand.ExecuteReaderAsync(_isSingleResult ? CommandBehavior.SingleRow : CommandBehavior.Default, cancellationToken);
+
+                Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> materializer;
+
+                if (Materializer is { })
+                {
+                    materializer = (Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>)Materializer;
+                }
+                else
+                {
+                    Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer<TReturn>(_relationBuilderValues, reader.GetColumnSchema(), _trackChanges);
+                }
+
+                return await materializer(reader, cancellationToken);
             }
-            else
+            finally
             {
-                Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer<TReturn>(_relationBuilderValues, reader.GetColumnSchema(), _trackChanges);
+                if (reader is not null)
+                    await reader.DisposeAsync();
+
+                if (DisposeCommand)
+                    await this.DisposeAsync();
             }
-
-            var entities = await materializer(reader, cancellationToken);
-
-            if (DisposeCommand)
-                await this.DisposeAsync();
-
-            return entities;
         }
 
         async Task<IQueryCommand<TEntity, TReturn>> IQueryCommand<TEntity, TReturn>.PrepareAsync(CancellationToken cancellationToken)
