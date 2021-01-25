@@ -25,7 +25,7 @@ namespace Venflow.Dynamic
             _dynamicModule = _assemblyBuilder.DefineDynamicModule(_assemblyName.Name + ".dll");
 
 #if NET5_0
-            _dynamicModule.SetCustomAttribute(new CustomAttributeBuilder(typeof(System.Runtime.CompilerServices.SkipLocalsInitAttribute).GetConstructor(Type.EmptyTypes), new object[0]));
+            _dynamicModule.SetCustomAttribute(new CustomAttributeBuilder(typeof(System.Runtime.CompilerServices.SkipLocalsInitAttribute).GetConstructor(Type.EmptyTypes), Array.Empty<object>()));
 #endif
 
             _namespaceNames = new[] { "Venflow.Dynamic.Proxies.", "Venflow.Dynamic.Materializer.", "Venflow.Dynamic.Inserter." };

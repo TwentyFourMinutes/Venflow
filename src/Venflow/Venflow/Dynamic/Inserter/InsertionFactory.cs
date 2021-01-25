@@ -25,7 +25,7 @@ namespace Venflow.Dynamic.Inserter
 
         internal Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>> GetOrCreateInserter<TInsert>(RelationBuilderValues relationBuilderValues, bool isSingleInsert, bool isFullInsert) where TInsert : class
         {
-            var cacheKey = new InsertCacheKey(relationBuilderValues?.GetFlattenedRelations() ?? new EntityRelation[0], isSingleInsert);
+            var cacheKey = new InsertCacheKey(relationBuilderValues?.GetFlattenedRelations() ?? Array.Empty<EntityRelation>(), isSingleInsert);
 
             if (_inserterCache.TryGetValue(cacheKey, out var tempInserter))
             {
