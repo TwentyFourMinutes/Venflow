@@ -64,28 +64,28 @@ namespace Venflow.Commands
             }
         }
 
-        public IQueryCommandBuilder<TEntity, TReturn> TrackChanges(bool trackChanges = true)
+        public IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> TrackChanges(bool trackChanges = true)
         {
             _trackChanges = trackChanges;
 
             return this;
         }
 
-        public IQueryCommandBuilder<TEntity, TReturn> Log(bool shouldLog = true)
+        public IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> Log(bool shouldLog = true)
         {
             _shouldForceLog = shouldLog;
 
             return this;
         }
 
-        public IQueryCommandBuilder<TEntity, TReturn> LogTo(Action<string> logger, bool includeSensitiveData)
+        public IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> LogTo(Action<string> logger, bool includeSensitiveData)
         {
             _loggers.Add((logger, includeSensitiveData));
 
             return this;
         }
 
-        public IQueryCommandBuilder<TEntity, TReturn> LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers)
+        public IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers)
         {
             _loggers.AddRange(loggers);
 

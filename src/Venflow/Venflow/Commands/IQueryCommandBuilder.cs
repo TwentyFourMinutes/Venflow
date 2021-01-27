@@ -17,7 +17,7 @@ namespace Venflow.Commands
         /// </summary>
         /// <param name="trackChanges">Determines if change tracking should be applied.</param>
         /// <returns>An object that can be used to further configure the operation.</returns>
-        IQueryCommandBuilder<TEntity, TReturn> TrackChanges(bool trackChanges = true);
+        IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> TrackChanges(bool trackChanges = true);
 
         /// <summary>
         /// Determines whether or not to log the query to the provided loggers.
@@ -25,7 +25,7 @@ namespace Venflow.Commands
         /// <param name="shouldLog">Determines if this query should be logged. This is helpful, if you configured the default logging behavior to be <see langword="true"/>.</param>
         /// <returns>An object that can be used to further configure the operation.</returns>
         /// <remarks>You can configure the loggers in the <see cref="Database.Configure(DatabaseOptionsBuilder)"/> method with the <see cref="DatabaseOptionsBuilder.LogTo(Action{string}, bool)"/> methods.</remarks>
-        IQueryCommandBuilder<TEntity, TReturn> Log(bool shouldLog = true);
+        IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> Log(bool shouldLog = true);
 
         /// <summary>
         /// Logs the query to the provided <paramref name="logger"/>.
@@ -34,15 +34,15 @@ namespace Venflow.Commands
         /// <param name="includeSensitiveData">Determines whether or not to show populated parameters in this query.</param>
         /// <returns>An object that can be used to further configure the operation.</returns>
         /// <remarks>Be aware, that once you configure a logger on a query, the global configured loggers won't be executed for this query.</remarks>
-        IQueryCommandBuilder<TEntity, TReturn> LogTo(Action<string> logger, bool includeSensitiveData);
+        IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> LogTo(Action<string> logger, bool includeSensitiveData);
 
-        /// <summary>
+        /// <summary, TEntity>
         /// Logs the query to the provided <paramref name="loggers"/>.
         /// </summary>
         /// <param name="loggers">The loggers which are being used for this query.</param>
         /// <returns>An object that can be used to further configure the operation.</returns>
         /// <remarks>Be aware, that once you configure one or more loggers on a query, the global configured loggers won't be executed for this query.</remarks>
-        IQueryCommandBuilder<TEntity, TReturn> LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers);
+        IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers);
 
         /// <summary>
         /// Asynchronously performs queries and materializes the result.

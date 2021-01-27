@@ -109,16 +109,16 @@ namespace Venflow.Commands
         IQueryRelationBuilder<TToEntity, TRootEntity, TReturn> IBaseQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.FullJoinWith<TToEntity>(Expression<Func<TRootEntity, List<TToEntity>>> propertySelector)
             => JoinWith(propertySelector, JoinBehaviour.FullJoin);
 
-        public IQueryCommandBuilder<TRootEntity, TReturn> TrackChanges(bool trackChanges = true)
+        public IBaseQueryRelationBuilder<TRootEntity, TRootEntity, TReturn> TrackChanges(bool trackChanges = true)
             => _commandBuilder.TrackChanges(trackChanges);
 
-        public IQueryCommandBuilder<TRootEntity, TReturn> Log(bool shouldLog = true)
+        public IBaseQueryRelationBuilder<TRootEntity, TRootEntity, TReturn> Log(bool shouldLog = true)
             => _commandBuilder.Log(shouldLog);
 
-        public IQueryCommandBuilder<TRootEntity, TReturn> LogTo(Action<string> logger, bool includeSensitiveData)
+        public IBaseQueryRelationBuilder<TRootEntity, TRootEntity, TReturn> LogTo(Action<string> logger, bool includeSensitiveData)
             => _commandBuilder.LogTo(logger, includeSensitiveData);
 
-        public IQueryCommandBuilder<TRootEntity, TReturn> LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers)
+        public IBaseQueryRelationBuilder<TRootEntity, TRootEntity, TReturn> LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers)
             => _commandBuilder.LogTo(loggers);
 
 #if !NET48
