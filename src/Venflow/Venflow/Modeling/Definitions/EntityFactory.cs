@@ -109,9 +109,15 @@ namespace Venflow.Modeling.Definitions
                 {
                     entityInstance ??= Activator.CreateInstance(relation.LeftEntityBuilder.Type);
 
-                    if (relation.LeftNavigationProperty.GetBackingField().GetValue(entityInstance) == null)
+                    var backingValue = relation.LeftNavigationProperty.GetBackingField().GetValue(entityInstance);
+
+                    if (backingValue is null)
                     {
                         throw new InvalidOperationException($"The entity '{relation.LeftEntityBuilder.Type.Name}' defines the navigation property '{relation.LeftNavigationProperty.Name}' which doesn't have a public setter and its value isn't assigned in the constructor. Either assign it in the constructor or add a public setter.");
+                    }
+                    else if (typeof(ICollection<>).MakeGenericType(relation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0]).IsAssignableFrom(backingValue.GetType()))
+                    {
+                        throw new InvalidOperationException($"The entity '{relation.LeftEntityBuilder.Type.Name}' defines the navigation property '{relation.LeftNavigationProperty.Name}' of type '{relation.LeftNavigationProperty.PropertyType.Name}', however Venflow requires the assigned instance to implement ICollection<T>.");
                     }
                 }
 

@@ -696,7 +696,7 @@ namespace Venflow.Dynamic.Materializer
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(ICollection<>).MakeGenericType(relation.RightNavigationProperty.PropertyType.GetGenericArguments()[0]).GetMethod("Add"));
 
                         _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
                     }
@@ -784,7 +784,7 @@ namespace Venflow.Dynamic.Materializer
                             _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
                             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                             _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
-                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(ICollection<>).MakeGenericType(relation.RightNavigationProperty.PropertyType.GetGenericArguments()[0]).GetMethod("Add"));
                             _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
                         }
                         else
@@ -832,7 +832,7 @@ namespace Venflow.Dynamic.Materializer
                             _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
                             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                             _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
-                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(ICollection<>).MakeGenericType(relation.RightNavigationProperty.PropertyType.GetGenericArguments()[0]).GetMethod("Add"));
 
                             _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
                         }
@@ -1424,7 +1424,8 @@ namespace Venflow.Dynamic.Materializer
                             _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
                             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                             _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
-                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
+
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(ICollection<>).MakeGenericType(relation.RightNavigationProperty.PropertyType.GetGenericArguments()[0]).GetMethod("Add"));
 
                             _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
                         }
@@ -1473,7 +1474,7 @@ namespace Venflow.Dynamic.Materializer
                             _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.GetGetMethod());
                             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                             _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
-                            _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightNavigationProperty.PropertyType.GetMethod("Add"));
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(ICollection<>).MakeGenericType(relation.RightNavigationProperty.PropertyType.GetGenericArguments()[0]).GetMethod("Add"));
 
                             _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
                         }
