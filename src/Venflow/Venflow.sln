@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Score", "Venflow.Sc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Execution", "Venflow.Execution\Venflow.Execution.csproj", "{E9FBA152-B3BE-46D9-97C7-4D1C6B4411A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Compatible", "Venflow.Compatible\Venflow.Compatible.csproj", "{2D71E3EF-0513-455A-98D1-B464C8E6689A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,10 +45,6 @@ Global
 		{E9FBA152-B3BE-46D9-97C7-4D1C6B4411A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9FBA152-B3BE-46D9-97C7-4D1C6B4411A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9FBA152-B3BE-46D9-97C7-4D1C6B4411A0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2D71E3EF-0513-455A-98D1-B464C8E6689A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2D71E3EF-0513-455A-98D1-B464C8E6689A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2D71E3EF-0513-455A-98D1-B464C8E6689A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2D71E3EF-0513-455A-98D1-B464C8E6689A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

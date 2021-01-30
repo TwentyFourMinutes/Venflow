@@ -21,20 +21,20 @@
     <PackageReference Include="Dapper" Version="2.0.78" />
     <PackageReference Include="RepoDb" Version="1.12.6" />
     <PackageReference Include="RepoDb.PostgreSql" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.6" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'netcoreapp5.0'">
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.6" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp5.0'">
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.2" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Venflow.Compatible is the same package as Venflow, however it is based of Npgsql v4.1.4 in order to run benchmarks with ef core, since it does not support the latest alpha.-->
-    <ProjectReference Include="..\Venflow.Compatible\Venflow.Compatible.csproj" />
+    <ProjectReference Include="..\Venflow\Venflow.csproj" />
     <ProjectReference Include="..\Venflow.Shared\Venflow.Shared.csproj" />
   </ItemGroup>
 
