@@ -24,8 +24,12 @@
     <PackageOutputPath>bin\Package</PackageOutputPath>
     <AssemblyOriginatorKeyFile>../../../Venflow.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
+
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net5.0'">
@@ -38,6 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.0-beta-20204-02" PrivateAssets="All" />
     <PackageReference Include="ConfigureAwait.Fody" Version="3.3.1">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
