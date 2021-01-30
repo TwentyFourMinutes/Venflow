@@ -50,9 +50,9 @@ jobs:
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
     - name: Manual build
-      run: | 
-       .\.pipelines\restore.cmd
-        .\.pipelines\build.cmd
+      working-directory: ./src/Venflow/Venflow
+      run:  | 
+        dotnet build -c Release
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
