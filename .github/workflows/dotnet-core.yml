@@ -28,11 +28,15 @@ jobs:
       working-directory: ./src/Venflow/Venflow
 
     - name: Configure PostgreSQL
+    - uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '13.1'
+        postgresql db: 'venflow_tests'
+        postgresql user: 'venflow_tests'
+        postgresql password: 'venflow_tests'
       shell: bash
       run: |
         export VENFLOW_TESTS_CONNECTION_STRING=Server=127.0.0.1;Port=5432;Database=venflow_tests;UserId=venflow_tests;Password=venflow_tests
-        sudo -u postgres psql -c "CREATE USER venflow_tests SUPERUSER PASSWORD 'venflow_tests'"
-        sudo -u postgres psql -c "CREATE DATABASE venflow_tests OWNER venflow_tests"
 
     - name: Execute Tests
       working-directory: ./src/Venflow/Venflow.Tests
