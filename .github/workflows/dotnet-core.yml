@@ -39,4 +39,4 @@ jobs:
       working-directory: ./src/Venflow/Venflow.Tests
       run: |
         export VENFLOW_TESTS_CONNECTION_STRING=Server=127.0.0.1;Port=5432;Database=venflow_tests;UserId=venflow_tests;Password=venflow_tests
-        dotnet test -c Release --no-build --no-restore --verbosity normal -f net5.0
+        dotnet test -c Release --verbosity normal
