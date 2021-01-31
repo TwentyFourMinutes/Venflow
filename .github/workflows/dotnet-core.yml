@@ -54,4 +54,4 @@ jobs:
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ./src/Venflow/Venflow.Tests/coverage-reports/coverage.net5.0.json
+        path-to-lcov: ./src/Venflow/Venflow.Tests/coverage-reports/coverage.net5.0.info
