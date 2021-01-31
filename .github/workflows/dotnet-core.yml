@@ -44,16 +44,14 @@ jobs:
 
     - name: Execute Tests (.Net 5)
       working-directory: ./src/Venflow/Venflow.Tests
-      run: 'dotnet test -c Release --no-restore --no-build --verbosity normal -f net5.0 /p:CollectCoverage=true /p:CoverletOutput=coverage-reports/ /p:Exclude="[Venflow.Shared]*"'
+      run: 'dotnet test -c Release --no-restore --no-build --verbosity normal -f net5.0 /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=coverage-reports/ /p:Exclude="[Venflow.Shared]*"'
 
     - name: Execute Tests (.Net Core 3.1)
       working-directory: ./src/Venflow/Venflow.Tests
       run: dotnet test -c Release --no-restore --no-build --verbosity normal -f netcoreapp3.1
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
+    - name: Upload coverage report to coveralls.io
+      uses: coverallsapp/github-action@master
       with:
-        directory: ./src/Venflow/Venflow.Tests/coverage-reports
-        files: ./coverage.net5.0.json
-        flags: unittests
-        fail_ci_if_error: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ./src/Venflow/Venflow.Tests/coverage-reports/coverage.net5.0.json
