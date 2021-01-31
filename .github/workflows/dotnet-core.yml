@@ -69,4 +69,5 @@ jobs:
         BRANCH: dev
         FOLDER: docs
         TARGET_FOLDER: docs
+        PRESERVE: true
         CLEAN: true
