@@ -55,3 +55,15 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: ./src/Venflow/Venflow.Tests/coverage-reports/coverage.net5.0.info
+
+    - name: Build Documentation
+      uses: nikeee/docfx-action@v1.0.0
+      with:
+        args: ./docs/docfx/docfx.json
+    - name: Deploy Documentation to Github Pages
+      uses: JamesIves/github-pages-deploy-action@3.7.1
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: dev
+        FOLDER: ./docs
+        CLEAN: true
