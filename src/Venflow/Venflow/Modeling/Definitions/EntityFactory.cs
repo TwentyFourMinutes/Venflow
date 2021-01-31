@@ -27,7 +27,6 @@ namespace Venflow.Modeling.Definitions
                 _entityBuilder.EntityInNullableContext, _entityBuilder.DefaultPropNullability, columns,
                 _entityBuilder.IsCustomEntity ? (PrimaryEntityColumn<TEntity>)columns[0] : default,
                 _entityBuilder.IsCustomEntity ? GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns) : string.Empty,
-                _entityBuilder.IsCustomEntity ? GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns | ColumnListStringOptions.ExplicitNames) : string.Empty,
                 _entityBuilder.IsCustomEntity ? GetColumnListString(columns, ColumnListStringOptions.None) : string.Empty,
                 _entityBuilder.IsCustomEntity ? _entityBuilder.ChangeTrackerFactory?.GetProxyFactory() : default,
                 _entityBuilder.IsCustomEntity ? _entityBuilder.ChangeTrackerFactory?.GetProxyApplyingFactory(columns) : default);
@@ -115,7 +114,7 @@ namespace Venflow.Modeling.Definitions
                     {
                         throw new InvalidOperationException($"The entity '{relation.LeftEntityBuilder.Type.Name}' defines the navigation property '{relation.LeftNavigationProperty.Name}' which doesn't have a public setter and its value isn't assigned in the constructor. Either assign it in the constructor or add a public setter.");
                     }
-                    else if (typeof(ICollection<>).MakeGenericType(relation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0]).IsAssignableFrom(backingValue.GetType()))
+                    else if (typeof(ICollection<>).MakeGenericType(relation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0]).IsInstanceOfType(backingValue))
                     {
                         throw new InvalidOperationException($"The entity '{relation.LeftEntityBuilder.Type.Name}' defines the navigation property '{relation.LeftNavigationProperty.Name}' of type '{relation.LeftNavigationProperty.PropertyType.Name}', however Venflow requires the assigned instance to implement ICollection<T>.");
                     }
@@ -143,21 +142,11 @@ namespace Venflow.Modeling.Definitions
         {
             var sb = new StringBuilder();
 
-            var explictNames = (options & ColumnListStringOptions.ExplicitNames) != 0;
-
             var index = (options & ColumnListStringOptions.IncludePrimaryColumns) != 0 ? 0 : columns.RegularColumnsOffset;
 
             for (; index < columns.Count; index++)
             {
                 var column = columns[index];
-
-                if (explictNames)
-                {
-                    sb.Append('"')
-                      .Append(_entityBuilder.TableName)
-                      .Append('"')
-                      .Append('.');
-                }
 
                 sb.Append('"')
                   .Append(column.ColumnName)

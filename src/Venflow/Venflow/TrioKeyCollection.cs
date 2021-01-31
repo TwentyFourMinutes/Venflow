@@ -15,11 +15,6 @@ namespace Venflow
 
         internal int Count => _oneToValue.Length;
 
-        internal ICollection<TKeyTwo> KeysTwo => _twoToOne.Keys;
-        internal ICollection<TKeyThree> KeysThree => _threeToOne.Keys;
-
-        internal TValue[] Values => _oneToValue;
-
         internal TrioKeyCollection(TValue[] firstCollction, Dictionary<TKeyTwo, TValue> twoToOne, Dictionary<TKeyThree, TValue> threeToOne)
         {
             _oneToValue = firstCollction;
@@ -28,10 +23,6 @@ namespace Venflow
         }
 
         internal TValue this[int key] => _oneToValue[key];
-
-        internal TValue this[TKeyTwo key] => _twoToOne[key];
-
-        internal TValue this[TKeyThree key] => _threeToOne[key];
 
         internal bool TryGetValue(TKeyTwo key,
 #if !NET48

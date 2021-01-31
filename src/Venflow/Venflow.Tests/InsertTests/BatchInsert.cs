@@ -13,7 +13,7 @@ namespace Venflow.Tests.InsertTests
         {
             var people = GetPeople();
 
-            var insertCount = await Database.People.InsertAsync(people);
+            var insertCount = await Database.People.Insert().InsertAsync(people);
 
             Assert.Equal(2, insertCount);
 

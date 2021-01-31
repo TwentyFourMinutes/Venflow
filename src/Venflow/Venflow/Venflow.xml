@@ -985,24 +985,36 @@
             Appends a copy of the specified SQL followed by the default line terminator to the end of the current <see cref="T:Venflow.FormattableSqlStringBuilder"/> object.
             </summary>
             <param name="sql">The SQL to append.</param>
+            <remarks>
+            <b>This method IS NOT string interpolation safe</b>, if you want to use string interpolated SQL use the <see cref="M:Venflow.FormattableSqlStringBuilder.AppendInterpolatedLine(System.FormattableString)"/> method.
+            </remarks>
         </member>
         <member name="M:Venflow.FormattableSqlStringBuilder.Append(System.String)">
             <summary>
             Appends a copy of the specified SQL to this instance.
             </summary>
             <param name="sql">The SQL to append.</param>
+            <remarks>
+            <b>This method IS NOT string interpolation safe</b>, if you want to use string interpolated SQL use the <see cref="M:Venflow.FormattableSqlStringBuilder.AppendInterpolated(System.FormattableString)"/> method.
+            </remarks>
         </member>
         <member name="M:Venflow.FormattableSqlStringBuilder.AppendInterpolatedLine(System.FormattableString)">
             <summary>
             Appends a copy of the specified SQL followed by the default line terminator to the end of the current <see cref="T:Venflow.FormattableSqlStringBuilder"/> object.
             </summary>
             <param name="sql">The SQL to append.</param>
+            <remarks>
+            This method is string interpolation safe.
+            </remarks>
         </member>
         <member name="M:Venflow.FormattableSqlStringBuilder.AppendInterpolated(System.FormattableString)">
             <summary>
             Appends a copy of the specified SQL to this instance.
             </summary>
             <param name="sql">The SQL to append.</param>
+            <remarks>
+            This method is string interpolation safe.
+            </remarks>
         </member>
         <member name="M:Venflow.FormattableSqlStringBuilder.AppendParameter``1(``0)">
             <summary>

@@ -6,7 +6,6 @@ namespace Venflow.Enums
     internal enum ColumnListStringOptions : byte
     {
         None = 0,
-        IncludePrimaryColumns = 1,
-        ExplicitNames = 2
+        IncludePrimaryColumns = 1
     }
 }
