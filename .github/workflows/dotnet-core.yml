@@ -28,7 +28,7 @@ jobs:
       working-directory: ./src/Venflow/Venflow
 
     - name: Configure PostgreSQL
-    - uses: harmon758/postgresql-action@v1
+      uses: harmon758/postgresql-action@v1
       with:
         postgresql version: '13.1'
         postgresql db: 'venflow_tests'
