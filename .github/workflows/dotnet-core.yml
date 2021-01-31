@@ -19,6 +19,11 @@ jobs:
       with:
         dotnet-version: 5.0.102
 
+    - name: Setup .NET 3.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.405
+
     - name: Install dependencies
       run: dotnet restore
       working-directory: ./src/Venflow/Venflow
@@ -35,8 +40,13 @@ jobs:
         postgresql user: 'venflow_tests'
         postgresql password: 'venflow_tests'
 
-    - name: Execute Tests
+    - name: Prepare Tests
+      run: export "VENFLOW_TESTS_CONNECTION_STRING=Server=127.0.0.1;Port=5432;Database=venflow_tests;UserId=venflow_tests;Password=venflow_tests;"
+
+    - name: Execute Tests (.Net 5)
       working-directory: ./src/Venflow/Venflow.Tests
-      run: |
-        export "VENFLOW_TESTS_CONNECTION_STRING=Server=127.0.0.1;Port=5432;Database=venflow_tests;UserId=venflow_tests;Password=venflow_tests;"
-        dotnet test -c Release --verbosity normal
+      run: dotnet test -c Release --verbosity normal -f net5.0
+
+    - name: Execute Tests (.Net Core 3.1)
+      working-directory: ./src/Venflow/Venflow.Tests
+      run: dotnet test -c Release --verbosity normal -f netcoreapp3.1
