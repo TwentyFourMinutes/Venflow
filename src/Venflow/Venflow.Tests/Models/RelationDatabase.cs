@@ -12,8 +12,9 @@ namespace Venflow.Tests.Models
         public Table<User> Users { get; set; }
         public Table<Blog> Blogs { get; set; }
 
-        public RelationDatabase() : base(SecretsHandler.GetConnectionString<RelationDatabase>())
+        public RelationDatabase() : base(SecretsHandler.GetConnectionString<RelationDatabase>("Tests"))
         {
+            UnitTestHandler.Init(this);
         }
     }
 }

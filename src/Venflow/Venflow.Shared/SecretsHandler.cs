@@ -5,18 +5,21 @@ namespace Venflow.Shared
 {
     public static class SecretsHandler
     {
-        public static string GetConnectionString<T>() where T : class
+        public static string GetConnectionString<T>(string type) where T : class
         {
             var configuration = new ConfigurationBuilder();
 
-            if (Environment.GetEnvironmentVariable("venflow-tests-connection-string") is null)
+            if (IsDevelopmentMachine())
             {
-                return configuration.AddUserSecrets<T>().Build().GetConnectionString("PostgreSQL");
+                return configuration.AddUserSecrets<T>().Build().GetConnectionString(type);
             }
             else
             {
-                return configuration.AddEnvironmentVariables().Build()["venflow-tests-connection-string"];
+                return configuration.AddEnvironmentVariables().Build()["VENFLOW_TESTS_CONNECTION_STRING"];
             }
         }
+
+        public static bool IsDevelopmentMachine()
+            => Environment.GetEnvironmentVariable("VENFLOW_TESTS_CONNECTION_STRING") is null;
     }
 }

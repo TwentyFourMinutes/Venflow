@@ -8,8 +8,9 @@ namespace Venflow.Tests.Models
         public Table<ReverseEmail> Emails { get; set; }
         public Table<ReverseEmailContent> EmailContents { get; set; }
 
-        public ReverseRelationDatabase() : base(SecretsHandler.GetConnectionString<ReverseRelationDatabase>())
+        public ReverseRelationDatabase() : base(SecretsHandler.GetConnectionString<ReverseRelationDatabase>("Tests"))
         {
+            UnitTestHandler.Wait();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Venflow.Benchmarks.Models.Configurations
         public DbSet<Email> Emails { get; set; }
         public DbSet<EmailContent> EmailContents { get; set; }
 
-        public BenchmarkDbContext() : base(new DbContextOptionsBuilder().UseNpgsql(SecretsHandler.GetConnectionString<Startup>()).Options)
+        public BenchmarkDbContext() : base(new DbContextOptionsBuilder().UseNpgsql(SecretsHandler.GetConnectionString<Startup>("Benchmarks")).Options)
         {
 
         }
