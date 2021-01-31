@@ -35,18 +35,25 @@ namespace Venflow.Tests
                 connection.Dispose();
             }
 
-            connection = new NpgsqlConnection(_database.ConnectionString);
-            connection.Open();
+            try
+            {
+                connection = new NpgsqlConnection(_database.ConnectionString);
+                connection.Open();
 
-            command = new NpgsqlCommand(_createTablesCommand, connection);
+                command = new NpgsqlCommand(_createTablesCommand, connection);
 
-            command.ExecuteNonQuery();
+                command.ExecuteNonQuery();
 
-            command.Dispose();
+                command.Dispose();
 
-            connection.ReloadTypes();
+                connection.ReloadTypes();
 
-            connection.Close();
+                connection.Close();
+            }
+            catch
+            {
+                // We are testing in a different Framework version.
+            }
         }
 
         public static void Init(RelationDatabase database)
@@ -75,7 +82,7 @@ namespace Venflow.Tests
         }
 
         private const string _createTablesCommand =
-        @"ALTER SCHEMA public OWNER TO venflow_tests;
+@"ALTER SCHEMA public OWNER TO venflow_tests;
 
 COMMENT ON SCHEMA public IS 'standard public schema';
 
