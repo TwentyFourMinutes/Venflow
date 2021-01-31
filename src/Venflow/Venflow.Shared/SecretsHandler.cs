@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System;
+using Microsoft.Extensions.Configuration;
 
 namespace Venflow.Shared
 {
@@ -6,11 +7,16 @@ namespace Venflow.Shared
     {
         public static string GetConnectionString<T>() where T : class
         {
-            var configuration = new ConfigurationBuilder().AddUserSecrets<T>();
+            var configuration = new ConfigurationBuilder();
 
-            var config = configuration.Build();
-
-            return config.GetConnectionString("PostgreSQL");
+            if (Environment.GetEnvironmentVariable("venflow-tests-connection-string") is null)
+            {
+                return configuration.AddUserSecrets<T>().Build().GetConnectionString("PostgreSQL");
+            }
+            else
+            {
+                return configuration.AddEnvironmentVariables().Build()["venflow-tests-connection-string"];
+            }
         }
     }
 }
