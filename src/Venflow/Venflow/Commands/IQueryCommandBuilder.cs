@@ -36,7 +36,7 @@ namespace Venflow.Commands
         /// <remarks>Be aware, that once you configure a logger on a query, the global configured loggers won't be executed for this query.</remarks>
         IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> LogTo(Action<string> logger, bool includeSensitiveData);
 
-        /// <summary, TEntity>
+        /// <summary>
         /// Logs the query to the provided <paramref name="loggers"/>.
         /// </summary>
         /// <param name="loggers">The loggers which are being used for this query.</param>
