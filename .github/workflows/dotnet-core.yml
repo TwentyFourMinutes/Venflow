@@ -66,4 +66,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BRANCH: dev
         FOLDER: ./docs
+        TARGET_FOLDER: ./docs
         CLEAN: true
