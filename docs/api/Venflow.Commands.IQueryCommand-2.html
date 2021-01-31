@@ -17,7 +17,7 @@
     <meta property="og:image" content="">
     <meta property="og:image:alt" content="Venflow Logo">
     <meta name="theme-color" content="#995EA7">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
     <meta id="docfx-style:rel" content="../">
@@ -99,12 +99,6 @@
   <div class="markdown level0 summary"><p>Represents a command which performs queries and materialize the results to entities.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.iasyncdisposable.disposeasync#System_IAsyncDisposable_DisposeAsync">IAsyncDisposable.DisposeAsync()</a>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Venflow.Commands.html">Venflow.Commands</a></h6>
   <h6><strong>Assembly</strong>: Venflow.dll</h6>
   <h5 id="Venflow_Commands_IQueryCommand_2_syntax">Syntax</h5>
@@ -137,19 +131,19 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IQueryCommand_2_PrepareAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IQueryCommand%602.PrepareAsync(System.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IQueryCommand_2_PrepareAsync_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IQueryCommand%602.PrepareAsync(CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IQueryCommand.cs/#L18">View Source</a>
   </span>
   <a id="Venflow_Commands_IQueryCommand_2_PrepareAsync_" data-uid="Venflow.Commands.IQueryCommand`2.PrepareAsync*"></a>
-  <h4 id="Venflow_Commands_IQueryCommand_2_PrepareAsync_System_Threading_CancellationToken_" data-uid="Venflow.Commands.IQueryCommand`2.PrepareAsync(System.Threading.CancellationToken)">PrepareAsync(CancellationToken)</h4>
+  <h4 id="Venflow_Commands_IQueryCommand_2_PrepareAsync_CancellationToken_" data-uid="Venflow.Commands.IQueryCommand`2.PrepareAsync(CancellationToken)">PrepareAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Asynchronously prepares the current SQL command on the database.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task&lt;IQueryCommand&lt;TEntity, TReturn&gt;&gt; PrepareAsync(CancellationToken cancellationToken = default(CancellationToken))</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;IQueryCommand&lt;TEntity, TReturn&gt;&gt; PrepareAsync(CancellationToken cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -162,7 +156,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>The cancellation token, which is used to cancel the operation</p>
 </td>
@@ -179,26 +173,26 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Venflow.Commands.IQueryCommand-2.html">IQueryCommand</a>&lt;TEntity, TReturn&gt;&gt;</td>
+        <td><span class="xref">Task</span>&lt;<a class="xref" href="Venflow.Commands.IQueryCommand-2.html">IQueryCommand</a>&lt;TEntity, TReturn&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IQueryCommand_2_QueryAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IQueryCommand%602.QueryAsync(System.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IQueryCommand_2_QueryAsync_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IQueryCommand%602.QueryAsync(CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IQueryCommand.cs/#L31">View Source</a>
   </span>
   <a id="Venflow_Commands_IQueryCommand_2_QueryAsync_" data-uid="Venflow.Commands.IQueryCommand`2.QueryAsync*"></a>
-  <h4 id="Venflow_Commands_IQueryCommand_2_QueryAsync_System_Threading_CancellationToken_" data-uid="Venflow.Commands.IQueryCommand`2.QueryAsync(System.Threading.CancellationToken)">QueryAsync(CancellationToken)</h4>
+  <h4 id="Venflow_Commands_IQueryCommand_2_QueryAsync_CancellationToken_" data-uid="Venflow.Commands.IQueryCommand`2.QueryAsync(CancellationToken)">QueryAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Asynchronously performs queries and materializes the result.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task&lt;TReturn&gt; QueryAsync(CancellationToken cancellationToken = default(CancellationToken))</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;TReturn&gt; QueryAsync(CancellationToken cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -211,7 +205,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>The cancellation token, which is used to cancel the operation</p>
 </td>
@@ -228,7 +222,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;TReturn&gt;</td>
+        <td><span class="xref">Task</span>&lt;TReturn&gt;</td>
         <td><p>A task representing the asynchronous operation, with the materialized result of the query; <span class="xref">null</span> otherwise.</p>
 </td>
       </tr>
@@ -236,19 +230,19 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IQueryCommand_2_UnprepareAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IQueryCommand%602.UnprepareAsync(System.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IQueryCommand_2_UnprepareAsync_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IQueryCommand%602.UnprepareAsync(CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IQueryCommand.cs/#L23">View Source</a>
   </span>
   <a id="Venflow_Commands_IQueryCommand_2_UnprepareAsync_" data-uid="Venflow.Commands.IQueryCommand`2.UnprepareAsync*"></a>
-  <h4 id="Venflow_Commands_IQueryCommand_2_UnprepareAsync_System_Threading_CancellationToken_" data-uid="Venflow.Commands.IQueryCommand`2.UnprepareAsync(System.Threading.CancellationToken)">UnprepareAsync(CancellationToken)</h4>
+  <h4 id="Venflow_Commands_IQueryCommand_2_UnprepareAsync_CancellationToken_" data-uid="Venflow.Commands.IQueryCommand`2.UnprepareAsync(CancellationToken)">UnprepareAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Asynchronously un-prepares the current SQL command on the database.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task&lt;IQueryCommand&lt;TEntity, TReturn&gt;&gt; UnprepareAsync(CancellationToken cancellationToken = default(CancellationToken))</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;IQueryCommand&lt;TEntity, TReturn&gt;&gt; UnprepareAsync(CancellationToken cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -261,7 +255,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>The cancellation token, which is used to cancel the operation</p>
 </td>
@@ -278,7 +272,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Venflow.Commands.IQueryCommand-2.html">IQueryCommand</a>&lt;TEntity, TReturn&gt;&gt;</td>
+        <td><span class="xref">Task</span>&lt;<a class="xref" href="Venflow.Commands.IQueryCommand-2.html">IQueryCommand</a>&lt;TEntity, TReturn&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>

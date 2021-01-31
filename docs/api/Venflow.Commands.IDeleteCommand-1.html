@@ -17,7 +17,7 @@
     <meta property="og:image" content="">
     <meta property="og:image:alt" content="Venflow Logo">
     <meta name="theme-color" content="#995EA7">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
     <meta id="docfx-style:rel" content="../">
@@ -99,12 +99,6 @@
   <div class="markdown level0 summary"><p>Represents a command which performs deletions of entities.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.iasyncdisposable.disposeasync#System_IAsyncDisposable_DisposeAsync">IAsyncDisposable.DisposeAsync()</a>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Venflow.Commands.html">Venflow.Commands</a></h6>
   <h6><strong>Assembly</strong>: Venflow.dll</h6>
   <h5 id="Venflow_Commands_IDeleteCommand_1_syntax">Syntax</h5>
@@ -131,19 +125,19 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IDeleteCommand_1_DeleteAsync__0_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IDeleteCommand%601.DeleteAsync(%600%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IDeleteCommand_1_DeleteAsync__0_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IDeleteCommand%601.DeleteAsync(%600%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IDeleteCommand.cs/#L19">View Source</a>
   </span>
   <a id="Venflow_Commands_IDeleteCommand_1_DeleteAsync_" data-uid="Venflow.Commands.IDeleteCommand`1.DeleteAsync*"></a>
-  <h4 id="Venflow_Commands_IDeleteCommand_1_DeleteAsync__0_System_Threading_CancellationToken_" data-uid="Venflow.Commands.IDeleteCommand`1.DeleteAsync(`0,System.Threading.CancellationToken)">DeleteAsync(TEntity, CancellationToken)</h4>
+  <h4 id="Venflow_Commands_IDeleteCommand_1_DeleteAsync__0_CancellationToken_" data-uid="Venflow.Commands.IDeleteCommand`1.DeleteAsync(`0,CancellationToken)">DeleteAsync(TEntity, CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Asynchronously deletes a single entity.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">ValueTask&lt;int&gt; DeleteAsync(TEntity entity, CancellationToken cancellationToken = default(CancellationToken))</code></pre>
+    <pre><code class="lang-csharp hljs">ValueTask&lt;int&gt; DeleteAsync(TEntity entity, CancellationToken cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -162,7 +156,7 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>The cancellation token, which is used to cancel the operation</p>
 </td>
@@ -179,7 +173,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
+        <td><span class="xref">ValueTask</span>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
         <td><p>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</p>
 </td>
       </tr>
@@ -187,19 +181,19 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IDeleteCommand_1_DeleteAsync__0___System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IDeleteCommand%601.DeleteAsync(%600%5B%5D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IDeleteCommand_1_DeleteAsync__0___CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IDeleteCommand%601.DeleteAsync(%600%5B%5D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IDeleteCommand.cs/#L47">View Source</a>
   </span>
   <a id="Venflow_Commands_IDeleteCommand_1_DeleteAsync_" data-uid="Venflow.Commands.IDeleteCommand`1.DeleteAsync*"></a>
-  <h4 id="Venflow_Commands_IDeleteCommand_1_DeleteAsync__0___System_Threading_CancellationToken_" data-uid="Venflow.Commands.IDeleteCommand`1.DeleteAsync(`0[],System.Threading.CancellationToken)">DeleteAsync(TEntity[], CancellationToken)</h4>
+  <h4 id="Venflow_Commands_IDeleteCommand_1_DeleteAsync__0___CancellationToken_" data-uid="Venflow.Commands.IDeleteCommand`1.DeleteAsync(`0[],CancellationToken)">DeleteAsync(TEntity[], CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Asynchronously deletes a set of entity.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">ValueTask&lt;int&gt; DeleteAsync(TEntity[] entities, CancellationToken cancellationToken = default(CancellationToken))</code></pre>
+    <pre><code class="lang-csharp hljs">ValueTask&lt;int&gt; DeleteAsync(TEntity[] entities, CancellationToken cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -218,7 +212,7 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>The cancellation token, which is used to cancel the operation</p>
 </td>
@@ -235,7 +229,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
+        <td><span class="xref">ValueTask</span>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
         <td><p>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</p>
 </td>
       </tr>
@@ -243,19 +237,19 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IDeleteCommand_1_DeleteAsync_System_Collections_Generic_IEnumerable__0__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IDeleteCommand%601.DeleteAsync(System.Collections.Generic.IEnumerable%7B%600%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IDeleteCommand_1_DeleteAsync_IEnumerable__0__CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IDeleteCommand%601.DeleteAsync(IEnumerable%7B%600%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IDeleteCommand.cs/#L26">View Source</a>
   </span>
   <a id="Venflow_Commands_IDeleteCommand_1_DeleteAsync_" data-uid="Venflow.Commands.IDeleteCommand`1.DeleteAsync*"></a>
-  <h4 id="Venflow_Commands_IDeleteCommand_1_DeleteAsync_System_Collections_Generic_IEnumerable__0__System_Threading_CancellationToken_" data-uid="Venflow.Commands.IDeleteCommand`1.DeleteAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)">DeleteAsync(IEnumerable&lt;TEntity&gt;, CancellationToken)</h4>
+  <h4 id="Venflow_Commands_IDeleteCommand_1_DeleteAsync_IEnumerable__0__CancellationToken_" data-uid="Venflow.Commands.IDeleteCommand`1.DeleteAsync(IEnumerable{`0},CancellationToken)">DeleteAsync(IEnumerable&lt;TEntity&gt;, CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Asynchronously deletes a set of entity.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">ValueTask&lt;int&gt; DeleteAsync(IEnumerable&lt;TEntity&gt; entities, CancellationToken cancellationToken = default(CancellationToken))</code></pre>
+    <pre><code class="lang-csharp hljs">ValueTask&lt;int&gt; DeleteAsync(IEnumerable&lt;TEntity&gt; entities, CancellationToken cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -268,13 +262,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;TEntity&gt;</td>
+        <td><span class="xref">IEnumerable</span>&lt;TEntity&gt;</td>
         <td><span class="parametername">entities</span></td>
         <td><p>The entity instances which should be deleted.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>The cancellation token, which is used to cancel the operation</p>
 </td>
@@ -291,7 +285,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
+        <td><span class="xref">ValueTask</span>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
         <td><p>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</p>
 </td>
       </tr>
@@ -299,19 +293,19 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IDeleteCommand_1_DeleteAsync_System_Collections_Generic_IList__0__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IDeleteCommand%601.DeleteAsync(System.Collections.Generic.IList%7B%600%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IDeleteCommand_1_DeleteAsync_IList__0__CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IDeleteCommand%601.DeleteAsync(IList%7B%600%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IDeleteCommand.cs/#L33">View Source</a>
   </span>
   <a id="Venflow_Commands_IDeleteCommand_1_DeleteAsync_" data-uid="Venflow.Commands.IDeleteCommand`1.DeleteAsync*"></a>
-  <h4 id="Venflow_Commands_IDeleteCommand_1_DeleteAsync_System_Collections_Generic_IList__0__System_Threading_CancellationToken_" data-uid="Venflow.Commands.IDeleteCommand`1.DeleteAsync(System.Collections.Generic.IList{`0},System.Threading.CancellationToken)">DeleteAsync(IList&lt;TEntity&gt;, CancellationToken)</h4>
+  <h4 id="Venflow_Commands_IDeleteCommand_1_DeleteAsync_IList__0__CancellationToken_" data-uid="Venflow.Commands.IDeleteCommand`1.DeleteAsync(IList{`0},CancellationToken)">DeleteAsync(IList&lt;TEntity&gt;, CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Asynchronously deletes a set of entity.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">ValueTask&lt;int&gt; DeleteAsync(IList&lt;TEntity&gt; entities, CancellationToken cancellationToken = default(CancellationToken))</code></pre>
+    <pre><code class="lang-csharp hljs">ValueTask&lt;int&gt; DeleteAsync(IList&lt;TEntity&gt; entities, CancellationToken cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -324,13 +318,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;TEntity&gt;</td>
+        <td><span class="xref">IList</span>&lt;TEntity&gt;</td>
         <td><span class="parametername">entities</span></td>
         <td><p>The entity instances which should be deleted.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>The cancellation token, which is used to cancel the operation</p>
 </td>
@@ -347,7 +341,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
+        <td><span class="xref">ValueTask</span>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
         <td><p>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</p>
 </td>
       </tr>
@@ -355,19 +349,19 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IDeleteCommand_1_DeleteAsync_System_Collections_Generic_List__0__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IDeleteCommand%601.DeleteAsync(System.Collections.Generic.List%7B%600%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IDeleteCommand_1_DeleteAsync_List__0__CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IDeleteCommand%601.DeleteAsync(List%7B%600%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IDeleteCommand.cs/#L40">View Source</a>
   </span>
   <a id="Venflow_Commands_IDeleteCommand_1_DeleteAsync_" data-uid="Venflow.Commands.IDeleteCommand`1.DeleteAsync*"></a>
-  <h4 id="Venflow_Commands_IDeleteCommand_1_DeleteAsync_System_Collections_Generic_List__0__System_Threading_CancellationToken_" data-uid="Venflow.Commands.IDeleteCommand`1.DeleteAsync(System.Collections.Generic.List{`0},System.Threading.CancellationToken)">DeleteAsync(List&lt;TEntity&gt;, CancellationToken)</h4>
+  <h4 id="Venflow_Commands_IDeleteCommand_1_DeleteAsync_List__0__CancellationToken_" data-uid="Venflow.Commands.IDeleteCommand`1.DeleteAsync(List{`0},CancellationToken)">DeleteAsync(List&lt;TEntity&gt;, CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Asynchronously deletes a set of entity.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">ValueTask&lt;int&gt; DeleteAsync(List&lt;TEntity&gt; entities, CancellationToken cancellationToken = default(CancellationToken))</code></pre>
+    <pre><code class="lang-csharp hljs">ValueTask&lt;int&gt; DeleteAsync(List&lt;TEntity&gt; entities, CancellationToken cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -380,13 +374,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;TEntity&gt;</td>
+        <td><span class="xref">List</span>&lt;TEntity&gt;</td>
         <td><span class="parametername">entities</span></td>
         <td><p>The entity instances which should be deleted.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>The cancellation token, which is used to cancel the operation</p>
 </td>
@@ -403,7 +397,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
+        <td><span class="xref">ValueTask</span>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
         <td><p>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</p>
 </td>
       </tr>

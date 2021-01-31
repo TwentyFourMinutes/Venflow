@@ -17,7 +17,7 @@
     <meta property="og:image" content="">
     <meta property="og:image:alt" content="Venflow Logo">
     <meta name="theme-color" content="#995EA7">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
     <meta id="docfx-style:rel" content="../">
@@ -140,7 +140,7 @@
     Note that calling this method will explicitly configure this side of the relationship to use no navigation property, even if such a property exists on the entity type. If the navigation property is to be used, then it must be specified.
 </p>
 <p>
-    After calling this method, you should chain a call to <a class="xref" href="Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_IRequiredSingleRightRelationBuilder_2_WithOne_System_Linq_Expressions_Expression_System_Func__1__0___">WithOne(Expression&lt;Func&lt;TRelation, TEntity&gt;&gt;)</a> to fully configure the relationship. Calling just this method without the chained call will not produce a valid relationship.
+    After calling this method, you should chain a call to <a class="xref" href="Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_IRequiredSingleRightRelationBuilder_2_WithOne_Expression_Func__1__0___">WithOne(Expression&lt;Func&lt;TRelation, TEntity&gt;&gt;)</a> to fully configure the relationship. Calling just this method without the chained call will not produce a valid relationship.
 </p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -183,13 +183,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasMany__1_System_Linq_Expressions_Expression_System_Func__0_System_Collections_Generic_IList___0____.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder%601.HasMany%60%601(System.Linq.Expressions.Expression%7BSystem.Func%7B%600%2CSystem.Collections.Generic.IList%7B%60%600%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasMany__1_Expression_Func__0_IList___0____.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder%601.HasMany%60%601(Expression%7BFunc%7B%600%2CIList%7B%60%600%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/ILeftRelationBuilder.cs/#L57">View Source</a>
   </span>
   <a id="Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasMany_" data-uid="Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasMany*"></a>
-  <h4 id="Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasMany__1_System_Linq_Expressions_Expression_System_Func__0_System_Collections_Generic_IList___0____" data-uid="Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasMany``1(System.Linq.Expressions.Expression{System.Func{`0,System.Collections.Generic.IList{``0}}})">HasMany&lt;TRelation&gt;(Expression&lt;Func&lt;TEntity, IList&lt;TRelation&gt;&gt;&gt;)</h4>
+  <h4 id="Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasMany__1_Expression_Func__0_IList___0____" data-uid="Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasMany``1(Expression{Func{`0,IList{``0}}})">HasMany&lt;TRelation&gt;(Expression&lt;Func&lt;TEntity, IList&lt;TRelation&gt;&gt;&gt;)</h4>
   <div class="markdown level1 summary"><p>
     Configures a relationship where this entity type has a collection that contains instances of the other type in the relationship.
 </p>
@@ -217,7 +217,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.linq.expressions.expression-1">Expression</a>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TEntity, <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;TRelation&gt;&gt;&gt;</td>
+        <td><span class="xref">Expression</span>&lt;<span class="xref">Func</span>&lt;TEntity, <span class="xref">IList</span>&lt;TRelation&gt;&gt;&gt;</td>
         <td><span class="parametername">navigationProperty</span></td>
         <td></td>
       </tr>
@@ -271,7 +271,7 @@
     Note that calling this method will explicitly configure this side of the relationship to use no navigation property, even if such a property exists on the entity type. If the navigation property is to be used, then it must be specified.
 </p>
 <p>
-    After calling this method, you should chain a call to <a class="xref" href="Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_IMultiRightRelationBuilder_2_WithMany_System_Linq_Expressions_Expression_System_Func__1_System_Collections_Generic_IList__0____">WithMany(Expression&lt;Func&lt;TRelation, IList&lt;TEntity&gt;&gt;&gt;)</a> or <a class="xref" href="Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_IRequiredSingleRightRelationBuilder_2_WithOne_System_Linq_Expressions_Expression_System_Func__1__0___">WithOne(Expression&lt;Func&lt;TRelation, TEntity&gt;&gt;)</a> to fully configure the relationship. Calling just this method without the chained call will not produce a valid relationship.
+    After calling this method, you should chain a call to <a class="xref" href="Venflow.Modeling.Definitions.Builder.IMultiRightRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_IMultiRightRelationBuilder_2_WithMany_Expression_Func__1_IList__0____">WithMany(Expression&lt;Func&lt;TRelation, IList&lt;TEntity&gt;&gt;&gt;)</a> or <a class="xref" href="Venflow.Modeling.Definitions.Builder.IRequiredSingleRightRelationBuilder-2.html#Venflow_Modeling_Definitions_Builder_IRequiredSingleRightRelationBuilder_2_WithOne_Expression_Func__1__0___">WithOne(Expression&lt;Func&lt;TRelation, TEntity&gt;&gt;)</a> to fully configure the relationship. Calling just this method without the chained call will not produce a valid relationship.
 </p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -314,13 +314,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasOne__1_System_Linq_Expressions_Expression_System_Func__0___0___.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder%601.HasOne%60%601(System.Linq.Expressions.Expression%7BSystem.Func%7B%600%2C%60%600%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasOne__1_Expression_Func__0___0___.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder%601.HasOne%60%601(Expression%7BFunc%7B%600%2C%60%600%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/ILeftRelationBuilder.cs/#L27">View Source</a>
   </span>
   <a id="Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasOne_" data-uid="Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasOne*"></a>
-  <h4 id="Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasOne__1_System_Linq_Expressions_Expression_System_Func__0___0___" data-uid="Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasOne``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">HasOne&lt;TRelation&gt;(Expression&lt;Func&lt;TEntity, TRelation&gt;&gt;)</h4>
+  <h4 id="Venflow_Modeling_Definitions_Builder_ILeftRelationBuilder_1_HasOne__1_Expression_Func__0___0___" data-uid="Venflow.Modeling.Definitions.Builder.ILeftRelationBuilder`1.HasOne``1(Expression{Func{`0,``0}})">HasOne&lt;TRelation&gt;(Expression&lt;Func&lt;TEntity, TRelation&gt;&gt;)</h4>
   <div class="markdown level1 summary"><p>
     Configures a relationship where this entity type has a reference that points to a single instance of the other type in the relationship.
 </p>
@@ -348,7 +348,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.linq.expressions.expression-1">Expression</a>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TEntity, TRelation&gt;&gt;</td>
+        <td><span class="xref">Expression</span>&lt;<span class="xref">Func</span>&lt;TEntity, TRelation&gt;&gt;</td>
         <td><span class="parametername">navigationProperty</span></td>
         <td><p>A lambda expression representing the reference navigation property on this entity type that represents the relationship (post =&gt; post.Blog). If no property is specified, the relationship will be configured without a navigation property on this end.</p>
 </td>

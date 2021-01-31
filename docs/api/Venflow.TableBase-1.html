@@ -17,7 +17,7 @@
     <meta property="og:image" content="">
     <meta property="og:image:alt" content="Venflow Logo">
     <meta name="theme-color" content="#995EA7">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
     <meta id="docfx-style:rel" content="../">
@@ -105,36 +105,11 @@
     <div class="level1"><span class="xref">TableBase&lt;TEntity&gt;</span></div>
       <div class="level2"><a class="xref" href="Venflow.Table-1.html">Table&lt;TEntity&gt;</a></div>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object.equals#System_Object_Equals_System_Object_">Object.Equals(Object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object.equals#System_Object_Equals_System_Object_System_Object_">Object.Equals(Object, Object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object.gethashcode#System_Object_GetHashCode">Object.GetHashCode()</a>
-    </div>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object.gettype#System_Object_GetType">Object.GetType()</a>
-    </div>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object.memberwiseclone#System_Object_MemberwiseClone">Object.MemberwiseClone()</a>
-    </div>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object.referenceequals#System_Object_ReferenceEquals_System_Object_System_Object_">Object.ReferenceEquals(Object, Object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object.tostring#System_Object_ToString">Object.ToString()</a>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Venflow.html">Venflow</a></h6>
   <h6><strong>Assembly</strong>: Venflow.dll</h6>
   <h5 id="Venflow_TableBase_1_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class TableBase&lt;TEntity&gt;
-    where TEntity : class, new()</code></pre>
+    <pre><code class="lang-csharp hljs">public class TableBase&lt;TEntity&gt; : object where TEntity : class, new()</code></pre>
   </div>
   <h5 class="typeParameters">Type Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -156,19 +131,19 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QueryAsync__1_Venflow_Commands_IQueryCommand__0___0__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QueryAsync%60%601(Venflow.Commands.IQueryCommand%7B%600%2C%60%600%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QueryAsync__1_Venflow_Commands_IQueryCommand__0___0__CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QueryAsync%60%601(Venflow.Commands.IQueryCommand%7B%600%2C%60%600%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L38">View Source</a>
   </span>
   <a id="Venflow_TableBase_1_QueryAsync_" data-uid="Venflow.TableBase`1.QueryAsync*"></a>
-  <h4 id="Venflow_TableBase_1_QueryAsync__1_Venflow_Commands_IQueryCommand__0___0__System_Threading_CancellationToken_" data-uid="Venflow.TableBase`1.QueryAsync``1(Venflow.Commands.IQueryCommand{`0,``0},System.Threading.CancellationToken)">QueryAsync&lt;TReturn&gt;(IQueryCommand&lt;TEntity, TReturn&gt;, CancellationToken)</h4>
+  <h4 id="Venflow_TableBase_1_QueryAsync__1_Venflow_Commands_IQueryCommand__0___0__CancellationToken_" data-uid="Venflow.TableBase`1.QueryAsync``1(Venflow.Commands.IQueryCommand{`0,``0},CancellationToken)">QueryAsync&lt;TReturn&gt;(IQueryCommand&lt;TEntity, TReturn&gt;, CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Asynchronously queries one or more entities with the configured joins.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;TReturn&gt; QueryAsync&lt;TReturn&gt;(IQueryCommand&lt;TEntity, TReturn&gt; queryCommand, CancellationToken cancellationToken = default(CancellationToken))
+    <pre><code class="lang-csharp hljs">public Task&lt;TReturn&gt; QueryAsync&lt;TReturn&gt;(IQueryCommand&lt;TEntity, TReturn&gt; queryCommand, CancellationToken cancellationToken = null)
     where TReturn : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -188,7 +163,7 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>The cancellation token, which is used to cancel the operation.</p>
 </td>
@@ -205,7 +180,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;TReturn&gt;</td>
+        <td><span class="xref">Task</span>&lt;TReturn&gt;</td>
         <td><p>A task representing the asynchronous operation, with the result of the executed query.</p>
 </td>
       </tr>
@@ -226,19 +201,78 @@
       </tr>
     </tbody>
   </table>
-  <h5 id="Venflow_TableBase_1_QueryAsync__1_Venflow_Commands_IQueryCommand__0___0__System_Threading_CancellationToken__remarks">Remarks</h5>
+  <h5 id="Venflow_TableBase_1_QueryAsync__1_Venflow_Commands_IQueryCommand__0___0__CancellationToken__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>This method could represents the following SQL statement &quot;SELECT * FROM table&quot;.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QueryBatch_System_String_Npgsql_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QueryBatch(System.String%2CNpgsql.NpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QueryBatch_System_String_IList_NpgsqlParameter__.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QueryBatch(System.String%2CIList%7BNpgsqlParameter%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L105">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L134">View Source</a>
   </span>
   <a id="Venflow_TableBase_1_QueryBatch_" data-uid="Venflow.TableBase`1.QueryBatch*"></a>
-  <h4 id="Venflow_TableBase_1_QueryBatch_System_String_Npgsql_NpgsqlParameter___" data-uid="Venflow.TableBase`1.QueryBatch(System.String,Npgsql.NpgsqlParameter[])">QueryBatch(String, NpgsqlParameter[])</h4>
-  <div class="markdown level1 summary"><p>Creates a new query command, which expects a set of primary rows to be returned.<strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QueryInterpolatedSingle_System_FormattableString_System_Boolean_">QueryInterpolatedSingle(FormattableString, Boolean)</a>.</p>
+  <h4 id="Venflow_TableBase_1_QueryBatch_System_String_IList_NpgsqlParameter__" data-uid="Venflow.TableBase`1.QueryBatch(System.String,IList{NpgsqlParameter})">QueryBatch(String, IList&lt;NpgsqlParameter&gt;)</h4>
+  <div class="markdown level1 summary"><p>Creates a new query command, which expects a set of primary rows to be returned.<strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QueryInterpolatedSingle_FormattableString_System_Boolean_">QueryInterpolatedSingle(FormattableString, Boolean)</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IBaseQueryRelationBuilder&lt;TEntity, TEntity, List&lt;TEntity&gt;&gt; QueryBatch(string sql, IList&lt;NpgsqlParameter&gt; parameters)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a></td>
+        <td><span class="parametername">sql</span></td>
+        <td><p>A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">IList</span>&lt;<span class="xref">NpgsqlParameter</span>&gt;</td>
+        <td><span class="parametername">parameters</span></td>
+        <td><p>A set of <see cref="!:NpgsqlParameter"></see> which contain parameters for the <code data-dev-comment-type="paramref" class="paramref">sql</code> command.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, <span class="xref">List</span>&lt;TEntity&gt;&gt;</td>
+        <td><p>A Fluent API Builder for a query command.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_TableBase_1_QueryBatch_System_String_IList_NpgsqlParameter___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The command will be automatically disposed the underlying <see cref="!:NpgsqlCommand"></see> after the command got executed once.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QueryBatch_System_String_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QueryBatch(System.String%2CNpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L124">View Source</a>
+  </span>
+  <a id="Venflow_TableBase_1_QueryBatch_" data-uid="Venflow.TableBase`1.QueryBatch*"></a>
+  <h4 id="Venflow_TableBase_1_QueryBatch_System_String_NpgsqlParameter___" data-uid="Venflow.TableBase`1.QueryBatch(System.String,NpgsqlParameter[])">QueryBatch(String, NpgsqlParameter[])</h4>
+  <div class="markdown level1 summary"><p>Creates a new query command, which expects a set of primary rows to be returned.<strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QueryInterpolatedSingle_FormattableString_System_Boolean_">QueryInterpolatedSingle(FormattableString, Boolean)</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -262,9 +296,9 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlParameter.html">NpgsqlParameter</a>[]</td>
+        <td><span class="xref">NpgsqlParameter</span>[]</td>
         <td><span class="parametername">parameters</span></td>
-        <td><p>A set of <a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlParameter.html">NpgsqlParameter</a> which contain parameters for the <code data-dev-comment-type="paramref" class="paramref">sql</code> command.</p>
+        <td><p>A set of <see cref="!:NpgsqlParameter"></see> which contain parameters for the <code data-dev-comment-type="paramref" class="paramref">sql</code> command.</p>
 </td>
       </tr>
     </tbody>
@@ -279,25 +313,25 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;TEntity&gt;&gt;</td>
+        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, <span class="xref">List</span>&lt;TEntity&gt;&gt;</td>
         <td><p>A Fluent API Builder for a query command.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <h5 id="Venflow_TableBase_1_QueryBatch_System_String_Npgsql_NpgsqlParameter____remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>The command will be automatically disposed the underlying <a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlCommand.html">NpgsqlCommand</a> after the command got executed once.</p>
+  <h5 id="Venflow_TableBase_1_QueryBatch_System_String_NpgsqlParameter____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The command will be automatically disposed the underlying <see cref="!:NpgsqlCommand"></see> after the command got executed once.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QueryBatch_System_String_System_Boolean_.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QueryBatch(System.String%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L95">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L114">View Source</a>
   </span>
   <a id="Venflow_TableBase_1_QueryBatch_" data-uid="Venflow.TableBase`1.QueryBatch*"></a>
   <h4 id="Venflow_TableBase_1_QueryBatch_System_String_System_Boolean_" data-uid="Venflow.TableBase`1.QueryBatch(System.String,System.Boolean)">QueryBatch(String, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle_System_String_Npgsql_NpgsqlParameter___">QuerySingle(String, NpgsqlParameter[])</a> or <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QueryInterpolatedSingle_System_FormattableString_System_Boolean_">QueryInterpolatedSingle(FormattableString, Boolean)</a>.</p>
+  <div class="markdown level1 summary"><p>Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle_System_String_NpgsqlParameter___">QuerySingle(String, NpgsqlParameter[])</a> or <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QueryInterpolatedSingle_FormattableString_System_Boolean_">QueryInterpolatedSingle(FormattableString, Boolean)</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -323,7 +357,7 @@
       <tr>
         <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.boolean">Boolean</a></td>
         <td><span class="parametername">disposeCommand</span></td>
-        <td><p>Indicates whether or not to dispose the underlying <a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlCommand.html">NpgsqlCommand</a> after the command got executed once.</p>
+        <td><p>Indicates whether or not to dispose the underlying <see cref="!:NpgsqlCommand"></see> after the command got executed once.</p>
 </td>
       </tr>
     </tbody>
@@ -338,7 +372,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;TEntity&gt;&gt;</td>
+        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, <span class="xref">List</span>&lt;TEntity&gt;&gt;</td>
         <td><p>A Fluent API Builder for a query command.</p>
 </td>
       </tr>
@@ -346,14 +380,14 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QueryBatch_System_String_System_Boolean_Npgsql_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QueryBatch(System.String%2CSystem.Boolean%2CNpgsql.NpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QueryBatch_System_String_System_Boolean_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QueryBatch(System.String%2CSystem.Boolean%2CNpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L115">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L144">View Source</a>
   </span>
   <a id="Venflow_TableBase_1_QueryBatch_" data-uid="Venflow.TableBase`1.QueryBatch*"></a>
-  <h4 id="Venflow_TableBase_1_QueryBatch_System_String_System_Boolean_Npgsql_NpgsqlParameter___" data-uid="Venflow.TableBase`1.QueryBatch(System.String,System.Boolean,Npgsql.NpgsqlParameter[])">QueryBatch(String, Boolean, NpgsqlParameter[])</h4>
-  <div class="markdown level1 summary"><p>Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QueryInterpolatedSingle_System_FormattableString_System_Boolean_">QueryInterpolatedSingle(FormattableString, Boolean)</a>.</p>
+  <h4 id="Venflow_TableBase_1_QueryBatch_System_String_System_Boolean_NpgsqlParameter___" data-uid="Venflow.TableBase`1.QueryBatch(System.String,System.Boolean,NpgsqlParameter[])">QueryBatch(String, Boolean, NpgsqlParameter[])</h4>
+  <div class="markdown level1 summary"><p>Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QueryInterpolatedSingle_FormattableString_System_Boolean_">QueryInterpolatedSingle(FormattableString, Boolean)</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -379,13 +413,13 @@
       <tr>
         <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.boolean">Boolean</a></td>
         <td><span class="parametername">disposeCommand</span></td>
-        <td><p>Indicates whether or not to dispose the underlying <a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlCommand.html">NpgsqlCommand</a> after the command got executed once.</p>
+        <td><p>Indicates whether or not to dispose the underlying <see cref="!:NpgsqlCommand"></see> after the command got executed once.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlParameter.html">NpgsqlParameter</a>[]</td>
+        <td><span class="xref">NpgsqlParameter</span>[]</td>
         <td><span class="parametername">parameters</span></td>
-        <td><p>A set of <a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlParameter.html">NpgsqlParameter</a> which contain parameters for the <code data-dev-comment-type="paramref" class="paramref">sql</code> command.</p>
+        <td><p>A set of <see cref="!:NpgsqlParameter"></see> which contain parameters for the <code data-dev-comment-type="paramref" class="paramref">sql</code> command.</p>
 </td>
       </tr>
     </tbody>
@@ -400,7 +434,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;TEntity&gt;&gt;</td>
+        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, <span class="xref">List</span>&lt;TEntity&gt;&gt;</td>
         <td><p>A Fluent API Builder for a query command.</p>
 </td>
       </tr>
@@ -408,13 +442,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QueryInterpolatedBatch_System_FormattableString_System_Boolean_.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QueryInterpolatedBatch(System.FormattableString%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QueryInterpolatedBatch_FormattableString_System_Boolean_.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QueryInterpolatedBatch(FormattableString%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L124">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L153">View Source</a>
   </span>
   <a id="Venflow_TableBase_1_QueryInterpolatedBatch_" data-uid="Venflow.TableBase`1.QueryInterpolatedBatch*"></a>
-  <h4 id="Venflow_TableBase_1_QueryInterpolatedBatch_System_FormattableString_System_Boolean_" data-uid="Venflow.TableBase`1.QueryInterpolatedBatch(System.FormattableString,System.Boolean)">QueryInterpolatedBatch(FormattableString, Boolean)</h4>
+  <h4 id="Venflow_TableBase_1_QueryInterpolatedBatch_FormattableString_System_Boolean_" data-uid="Venflow.TableBase`1.QueryInterpolatedBatch(FormattableString,System.Boolean)">QueryInterpolatedBatch(FormattableString, Boolean)</h4>
   <div class="markdown level1 summary"><p>Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -433,7 +467,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.formattablestring">FormattableString</a></td>
+        <td><span class="xref">FormattableString</span></td>
         <td><span class="parametername">sql</span></td>
         <td><p>A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. <strong>You should only add parameters trough string interpolation.</strong></p>
 </td>
@@ -441,7 +475,7 @@
       <tr>
         <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.boolean">Boolean</a></td>
         <td><span class="parametername">disposeCommand</span></td>
-        <td><p>Indicates whether or not to dispose the underlying <a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlCommand.html">NpgsqlCommand</a> after the command got executed once.</p>
+        <td><p>Indicates whether or not to dispose the underlying <see cref="!:NpgsqlCommand"></see> after the command got executed once.</p>
 </td>
       </tr>
     </tbody>
@@ -456,7 +490,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;TEntity&gt;&gt;</td>
+        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, <span class="xref">List</span>&lt;TEntity&gt;&gt;</td>
         <td><p>A Fluent API Builder for a query command.</p>
 </td>
       </tr>
@@ -464,13 +498,69 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QueryInterpolatedSingle_System_FormattableString_System_Boolean_.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QueryInterpolatedSingle(System.FormattableString%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QueryInterpolatedBatch_Venflow_FormattableSqlStringBuilder_System_Boolean_.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QueryInterpolatedBatch(Venflow.FormattableSqlStringBuilder%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L86">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L162">View Source</a>
+  </span>
+  <a id="Venflow_TableBase_1_QueryInterpolatedBatch_" data-uid="Venflow.TableBase`1.QueryInterpolatedBatch*"></a>
+  <h4 id="Venflow_TableBase_1_QueryInterpolatedBatch_Venflow_FormattableSqlStringBuilder_System_Boolean_" data-uid="Venflow.TableBase`1.QueryInterpolatedBatch(Venflow.FormattableSqlStringBuilder,System.Boolean)">QueryInterpolatedBatch(FormattableSqlStringBuilder, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IBaseQueryRelationBuilder&lt;TEntity, TEntity, List&lt;TEntity&gt;&gt; QueryInterpolatedBatch(FormattableSqlStringBuilder sql, bool disposeCommand = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.FormattableSqlStringBuilder.html">FormattableSqlStringBuilder</a></td>
+        <td><span class="parametername">sql</span></td>
+        <td><p>A <a class="xref" href="Venflow.FormattableSqlStringBuilder.html">FormattableSqlStringBuilder</a> instance containing the SQL statement.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.boolean">Boolean</a></td>
+        <td><span class="parametername">disposeCommand</span></td>
+        <td><p>Indicates whether or not to dispose the underlying <see cref="!:NpgsqlCommand"></see> after the command got executed once.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, <span class="xref">List</span>&lt;TEntity&gt;&gt;</td>
+        <td><p>A Fluent API Builder for a query command.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QueryInterpolatedSingle_FormattableString_System_Boolean_.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QueryInterpolatedSingle(FormattableString%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L96">View Source</a>
   </span>
   <a id="Venflow_TableBase_1_QueryInterpolatedSingle_" data-uid="Venflow.TableBase`1.QueryInterpolatedSingle*"></a>
-  <h4 id="Venflow_TableBase_1_QueryInterpolatedSingle_System_FormattableString_System_Boolean_" data-uid="Venflow.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)">QueryInterpolatedSingle(FormattableString, Boolean)</h4>
+  <h4 id="Venflow_TableBase_1_QueryInterpolatedSingle_FormattableString_System_Boolean_" data-uid="Venflow.TableBase`1.QueryInterpolatedSingle(FormattableString,System.Boolean)">QueryInterpolatedSingle(FormattableString, Boolean)</h4>
   <div class="markdown level1 summary"><p>Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -489,7 +579,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.formattablestring">FormattableString</a></td>
+        <td><span class="xref">FormattableString</span></td>
         <td><span class="parametername">sql</span></td>
         <td><p>A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</p>
 </td>
@@ -497,7 +587,7 @@
       <tr>
         <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.boolean">Boolean</a></td>
         <td><span class="parametername">disposeCommand</span></td>
-        <td><p>Indicates whether or not to dispose the underlying <a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlCommand.html">NpgsqlCommand</a> after the command got executed once.</p>
+        <td><p>Indicates whether or not to dispose the underlying <see cref="!:NpgsqlCommand"></see> after the command got executed once.</p>
 </td>
       </tr>
     </tbody>
@@ -520,14 +610,129 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QuerySingle_System_String_Npgsql_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QuerySingle(System.String%2CNpgsql.NpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QueryInterpolatedSingle_Venflow_FormattableSqlStringBuilder_System_Boolean_.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QueryInterpolatedSingle(Venflow.FormattableSqlStringBuilder%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L105">View Source</a>
+  </span>
+  <a id="Venflow_TableBase_1_QueryInterpolatedSingle_" data-uid="Venflow.TableBase`1.QueryInterpolatedSingle*"></a>
+  <h4 id="Venflow_TableBase_1_QueryInterpolatedSingle_Venflow_FormattableSqlStringBuilder_System_Boolean_" data-uid="Venflow.TableBase`1.QueryInterpolatedSingle(Venflow.FormattableSqlStringBuilder,System.Boolean)">QueryInterpolatedSingle(FormattableSqlStringBuilder, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IBaseQueryRelationBuilder&lt;TEntity, TEntity, TEntity&gt; QueryInterpolatedSingle(FormattableSqlStringBuilder sql, bool disposeCommand = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.FormattableSqlStringBuilder.html">FormattableSqlStringBuilder</a></td>
+        <td><span class="parametername">sql</span></td>
+        <td><p>A <a class="xref" href="Venflow.FormattableSqlStringBuilder.html">FormattableSqlStringBuilder</a> instance containing the SQL statement.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.boolean">Boolean</a></td>
+        <td><span class="parametername">disposeCommand</span></td>
+        <td><p>Indicates whether or not to dispose the underlying <see cref="!:NpgsqlCommand"></see> after the command got executed once.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, TEntity&gt;</td>
+        <td><p>A Fluent API Builder for a query command.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QuerySingle_System_String_IList_NpgsqlParameter__.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QuerySingle(System.String%2CIList%7BNpgsqlParameter%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L77">View Source</a>
+  </span>
+  <a id="Venflow_TableBase_1_QuerySingle_" data-uid="Venflow.TableBase`1.QuerySingle*"></a>
+  <h4 id="Venflow_TableBase_1_QuerySingle_System_String_IList_NpgsqlParameter__" data-uid="Venflow.TableBase`1.QuerySingle(System.String,IList{NpgsqlParameter})">QuerySingle(String, IList&lt;NpgsqlParameter&gt;)</h4>
+  <div class="markdown level1 summary"><p>Creates a new query command, which expects a single returned primary row. <strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QueryInterpolatedSingle_FormattableString_System_Boolean_">QueryInterpolatedSingle(FormattableString, Boolean)</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IBaseQueryRelationBuilder&lt;TEntity, TEntity, TEntity&gt; QuerySingle(string sql, IList&lt;NpgsqlParameter&gt; parameters)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a></td>
+        <td><span class="parametername">sql</span></td>
+        <td><p>A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">IList</span>&lt;<span class="xref">NpgsqlParameter</span>&gt;</td>
+        <td><span class="parametername">parameters</span></td>
+        <td><p>A set of <see cref="!:NpgsqlParameter"></see> which contain parameters for the <code data-dev-comment-type="paramref" class="paramref">sql</code> command.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, TEntity&gt;</td>
+        <td><p>A Fluent API Builder for a query command.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_TableBase_1_QuerySingle_System_String_IList_NpgsqlParameter___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The command will be automatically disposed the underlying <see cref="!:NpgsqlCommand"></see> after the command got executed once.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QuerySingle_System_String_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QuerySingle(System.String%2CNpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L67">View Source</a>
   </span>
   <a id="Venflow_TableBase_1_QuerySingle_" data-uid="Venflow.TableBase`1.QuerySingle*"></a>
-  <h4 id="Venflow_TableBase_1_QuerySingle_System_String_Npgsql_NpgsqlParameter___" data-uid="Venflow.TableBase`1.QuerySingle(System.String,Npgsql.NpgsqlParameter[])">QuerySingle(String, NpgsqlParameter[])</h4>
-  <div class="markdown level1 summary"><p>Creates a new query command, which expects a single returned primary row. <strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QueryInterpolatedSingle_System_FormattableString_System_Boolean_">QueryInterpolatedSingle(FormattableString, Boolean)</a>.</p>
+  <h4 id="Venflow_TableBase_1_QuerySingle_System_String_NpgsqlParameter___" data-uid="Venflow.TableBase`1.QuerySingle(System.String,NpgsqlParameter[])">QuerySingle(String, NpgsqlParameter[])</h4>
+  <div class="markdown level1 summary"><p>Creates a new query command, which expects a single returned primary row. <strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QueryInterpolatedSingle_FormattableString_System_Boolean_">QueryInterpolatedSingle(FormattableString, Boolean)</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -551,9 +756,9 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlParameter.html">NpgsqlParameter</a>[]</td>
+        <td><span class="xref">NpgsqlParameter</span>[]</td>
         <td><span class="parametername">parameters</span></td>
-        <td><p>A set of <a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlParameter.html">NpgsqlParameter</a> which contain parameters for the <code data-dev-comment-type="paramref" class="paramref">sql</code> command.</p>
+        <td><p>A set of <see cref="!:NpgsqlParameter"></see> which contain parameters for the <code data-dev-comment-type="paramref" class="paramref">sql</code> command.</p>
 </td>
       </tr>
     </tbody>
@@ -574,8 +779,8 @@
       </tr>
     </tbody>
   </table>
-  <h5 id="Venflow_TableBase_1_QuerySingle_System_String_Npgsql_NpgsqlParameter____remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>The command will be automatically disposed the underlying <a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlCommand.html">NpgsqlCommand</a> after the command got executed once.</p>
+  <h5 id="Venflow_TableBase_1_QuerySingle_System_String_NpgsqlParameter____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The command will be automatically disposed the underlying <see cref="!:NpgsqlCommand"></see> after the command got executed once.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
@@ -586,7 +791,7 @@
   </span>
   <a id="Venflow_TableBase_1_QuerySingle_" data-uid="Venflow.TableBase`1.QuerySingle*"></a>
   <h4 id="Venflow_TableBase_1_QuerySingle_System_String_System_Boolean_" data-uid="Venflow.TableBase`1.QuerySingle(System.String,System.Boolean)">QuerySingle(String, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Creates a new query command, which expects a single returned primary row. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle_System_String_Npgsql_NpgsqlParameter___">QuerySingle(String, NpgsqlParameter[])</a> or <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QueryInterpolatedSingle_System_FormattableString_System_Boolean_">QueryInterpolatedSingle(FormattableString, Boolean)</a>.</p>
+  <div class="markdown level1 summary"><p>Creates a new query command, which expects a single returned primary row. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle_System_String_NpgsqlParameter___">QuerySingle(String, NpgsqlParameter[])</a> or <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QueryInterpolatedSingle_FormattableString_System_Boolean_">QueryInterpolatedSingle(FormattableString, Boolean)</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -612,7 +817,7 @@
       <tr>
         <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.boolean">Boolean</a></td>
         <td><span class="parametername">disposeCommand</span></td>
-        <td><p>Indicates whether or not to dispose the underlying <a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlCommand.html">NpgsqlCommand</a> after the command got executed once.</p>
+        <td><p>Indicates whether or not to dispose the underlying <see cref="!:NpgsqlCommand"></see> after the command got executed once.</p>
 </td>
       </tr>
     </tbody>
@@ -635,14 +840,14 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QuerySingle_System_String_System_Boolean_Npgsql_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QuerySingle(System.String%2CSystem.Boolean%2CNpgsql.NpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_TableBase_1_QuerySingle_System_String_System_Boolean_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.TableBase%601.QuerySingle(System.String%2CSystem.Boolean%2CNpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L77">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/TableBase.cs/#L87">View Source</a>
   </span>
   <a id="Venflow_TableBase_1_QuerySingle_" data-uid="Venflow.TableBase`1.QuerySingle*"></a>
-  <h4 id="Venflow_TableBase_1_QuerySingle_System_String_System_Boolean_Npgsql_NpgsqlParameter___" data-uid="Venflow.TableBase`1.QuerySingle(System.String,System.Boolean,Npgsql.NpgsqlParameter[])">QuerySingle(String, Boolean, NpgsqlParameter[])</h4>
-  <div class="markdown level1 summary"><p>Creates a new query command, which expects a single returned primary row. <strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QueryInterpolatedSingle_System_FormattableString_System_Boolean_">QueryInterpolatedSingle(FormattableString, Boolean)</a>.</p>
+  <h4 id="Venflow_TableBase_1_QuerySingle_System_String_System_Boolean_NpgsqlParameter___" data-uid="Venflow.TableBase`1.QuerySingle(System.String,System.Boolean,NpgsqlParameter[])">QuerySingle(String, Boolean, NpgsqlParameter[])</h4>
+  <div class="markdown level1 summary"><p>Creates a new query command, which expects a single returned primary row. <strong>This API does not support string interpolation!</strong> If you want to pass interpolated SQL use <a class="xref" href="Venflow.TableBase-1.html#Venflow_TableBase_1_QueryInterpolatedSingle_FormattableString_System_Boolean_">QueryInterpolatedSingle(FormattableString, Boolean)</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -668,13 +873,13 @@
       <tr>
         <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.boolean">Boolean</a></td>
         <td><span class="parametername">disposeCommand</span></td>
-        <td><p>Indicates whether or not to dispose the underlying <a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlCommand.html">NpgsqlCommand</a> after the command got executed once.</p>
+        <td><p>Indicates whether or not to dispose the underlying <see cref="!:NpgsqlCommand"></see> after the command got executed once.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlParameter.html">NpgsqlParameter</a>[]</td>
+        <td><span class="xref">NpgsqlParameter</span>[]</td>
         <td><span class="parametername">parameters</span></td>
-        <td><p>A set of <a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlParameter.html">NpgsqlParameter</a> which contain parameters for the <code data-dev-comment-type="paramref" class="paramref">sql</code> command.</p>
+        <td><p>A set of <see cref="!:NpgsqlParameter"></see> which contain parameters for the <code data-dev-comment-type="paramref" class="paramref">sql</code> command.</p>
 </td>
       </tr>
     </tbody>

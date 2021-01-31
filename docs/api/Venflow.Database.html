@@ -17,7 +17,7 @@
     <meta property="og:image" content="">
     <meta property="og:image:alt" content="Venflow Logo">
     <meta name="theme-color" content="#995EA7">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
     <meta id="docfx-style:rel" content="../">
@@ -106,32 +106,7 @@
   </div>
   <div classs="implements">
     <h5>Implements</h5>
-    <div><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.iasyncdisposable">IAsyncDisposable</a></div>
-    <div><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
-  </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object.equals#System_Object_Equals_System_Object_">Object.Equals(Object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object.equals#System_Object_Equals_System_Object_System_Object_">Object.Equals(Object, Object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object.gethashcode#System_Object_GetHashCode">Object.GetHashCode()</a>
-    </div>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object.gettype#System_Object_GetType">Object.GetType()</a>
-    </div>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object.memberwiseclone#System_Object_MemberwiseClone">Object.MemberwiseClone()</a>
-    </div>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object.referenceequals#System_Object_ReferenceEquals_System_Object_System_Object_">Object.ReferenceEquals(Object, Object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object.tostring#System_Object_ToString">Object.ToString()</a>
-    </div>
+    <div><span class="xref">IDisposable</span></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Venflow.html">Venflow</a></h6>
   <h6><strong>Assembly</strong>: Venflow.dll</h6>
@@ -182,19 +157,19 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_BeginTransactionAsync_System_Data_IsolationLevel_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.BeginTransactionAsync(System.Data.IsolationLevel%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_BeginTransactionAsync_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.BeginTransactionAsync(CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L79">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L58">View Source</a>
   </span>
   <a id="Venflow_Database_BeginTransactionAsync_" data-uid="Venflow.Database.BeginTransactionAsync*"></a>
-  <h4 id="Venflow_Database_BeginTransactionAsync_System_Data_IsolationLevel_System_Threading_CancellationToken_" data-uid="Venflow.Database.BeginTransactionAsync(System.Data.IsolationLevel,System.Threading.CancellationToken)">BeginTransactionAsync(IsolationLevel, CancellationToken)</h4>
+  <h4 id="Venflow_Database_BeginTransactionAsync_CancellationToken_" data-uid="Venflow.Database.BeginTransactionAsync(CancellationToken)">BeginTransactionAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Asynchronously begins a new transaction.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;NpgsqlTransaction&gt; BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken = default(CancellationToken))</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;NpgsqlTransaction&gt; BeginTransactionAsync(CancellationToken cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -207,13 +182,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.data.isolationlevel">IsolationLevel</a></td>
-        <td><span class="parametername">isolationLevel</span></td>
-        <td><p>The isolation level under which the transaction should run.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>The cancellation token, which is used to cancel the operation</p>
 </td>
@@ -230,7 +199,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlTransaction.html">NpgsqlTransaction</a>&gt;</td>
+        <td><span class="xref">Task</span>&lt;<span class="xref">NpgsqlTransaction</span>&gt;</td>
         <td><p>A task that represents the asynchronous operation. The task result contains the newly created transaction.</p>
 </td>
       </tr>
@@ -238,19 +207,19 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_BeginTransactionAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.BeginTransactionAsync(System.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_BeginTransactionAsync_IsolationLevel_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.BeginTransactionAsync(IsolationLevel%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L58">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L79">View Source</a>
   </span>
   <a id="Venflow_Database_BeginTransactionAsync_" data-uid="Venflow.Database.BeginTransactionAsync*"></a>
-  <h4 id="Venflow_Database_BeginTransactionAsync_System_Threading_CancellationToken_" data-uid="Venflow.Database.BeginTransactionAsync(System.Threading.CancellationToken)">BeginTransactionAsync(CancellationToken)</h4>
+  <h4 id="Venflow_Database_BeginTransactionAsync_IsolationLevel_CancellationToken_" data-uid="Venflow.Database.BeginTransactionAsync(IsolationLevel,CancellationToken)">BeginTransactionAsync(IsolationLevel, CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Asynchronously begins a new transaction.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;NpgsqlTransaction&gt; BeginTransactionAsync(CancellationToken cancellationToken = default(CancellationToken))</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;NpgsqlTransaction&gt; BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -263,7 +232,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="xref">IsolationLevel</span></td>
+        <td><span class="parametername">isolationLevel</span></td>
+        <td><p>The isolation level under which the transaction should run.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>The cancellation token, which is used to cancel the operation</p>
 </td>
@@ -280,7 +255,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlTransaction.html">NpgsqlTransaction</a>&gt;</td>
+        <td><span class="xref">Task</span>&lt;<span class="xref">NpgsqlTransaction</span>&gt;</td>
         <td><p>A task that represents the asynchronous operation. The task result contains the newly created transaction.</p>
 </td>
       </tr>
@@ -416,7 +391,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></td>
+        <td><span class="xref">ValueTask</span></td>
         <td><p>A value task representing the asynchronous operation</p>
 </td>
       </tr>
@@ -424,13 +399,137 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync_System_String_Npgsql_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync(System.String%2CNpgsql.NpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync_System_String_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync(System.String%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L101">View Source</a>
+  </span>
+  <a id="Venflow_Database_ExecuteAsync_" data-uid="Venflow.Database.ExecuteAsync*"></a>
+  <h4 id="Venflow_Database_ExecuteAsync_System_String_CancellationToken_" data-uid="Venflow.Database.ExecuteAsync(System.String,CancellationToken)">ExecuteAsync(String, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;int&gt; ExecuteAsync(string sql, CancellationToken cancellationToken = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a></td>
+        <td><span class="parametername">sql</span></td>
+        <td><p>The SQL to execute.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The cancellation token, which is used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
+        <td><p>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_Database_ExecuteAsync_System_String_CancellationToken__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method represents a <see cref="!:NpgsqlCommand.ExecuteNonQueryAsync(CancellationToken)"></see> call.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync_System_String_IList_NpgsqlParameter__CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync(System.String%2CIList%7BNpgsqlParameter%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L118">View Source</a>
+  </span>
+  <a id="Venflow_Database_ExecuteAsync_" data-uid="Venflow.Database.ExecuteAsync*"></a>
+  <h4 id="Venflow_Database_ExecuteAsync_System_String_IList_NpgsqlParameter__CancellationToken_" data-uid="Venflow.Database.ExecuteAsync(System.String,IList{NpgsqlParameter},CancellationToken)">ExecuteAsync(String, IList&lt;NpgsqlParameter&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;int&gt; ExecuteAsync(string sql, IList&lt;NpgsqlParameter&gt; parameters, CancellationToken cancellationToken = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a></td>
+        <td><span class="parametername">sql</span></td>
+        <td><p>The SQL to execute.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">IList</span>&lt;<span class="xref">NpgsqlParameter</span>&gt;</td>
+        <td><span class="parametername">parameters</span></td>
+        <td><p>The SQL Parameters which are being used for the current command.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The cancellation token, which is used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
+        <td><p>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_Database_ExecuteAsync_System_String_IList_NpgsqlParameter__CancellationToken__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method represents a <see cref="!:NpgsqlCommand.ExecuteNonQueryAsync(CancellationToken)"></see> call.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync_System_String_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync(System.String%2CNpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L139">View Source</a>
   </span>
   <a id="Venflow_Database_ExecuteAsync_" data-uid="Venflow.Database.ExecuteAsync*"></a>
-  <h4 id="Venflow_Database_ExecuteAsync_System_String_Npgsql_NpgsqlParameter___" data-uid="Venflow.Database.ExecuteAsync(System.String,Npgsql.NpgsqlParameter[])">ExecuteAsync(String, NpgsqlParameter[])</h4>
+  <h4 id="Venflow_Database_ExecuteAsync_System_String_NpgsqlParameter___" data-uid="Venflow.Database.ExecuteAsync(System.String,NpgsqlParameter[])">ExecuteAsync(String, NpgsqlParameter[])</h4>
   <div class="markdown level1 summary"><p>Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -455,7 +554,7 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlParameter.html">NpgsqlParameter</a>[]</td>
+        <td><span class="xref">NpgsqlParameter</span>[]</td>
         <td><span class="parametername">parameters</span></td>
         <td><p>The SQL Parameters which are being used for the current command.</p>
 </td>
@@ -472,30 +571,31 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
+        <td><span class="xref">Task</span>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
         <td><p>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <h5 id="Venflow_Database_ExecuteAsync_System_String_Npgsql_NpgsqlParameter____remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This method represents a <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.data.common.dbcommand.executenonqueryasync#System_Data_Common_DbCommand_ExecuteNonQueryAsync">ExecuteNonQueryAsync()</a> call.</p>
+  <h5 id="Venflow_Database_ExecuteAsync_System_String_NpgsqlParameter____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method represents a <see cref="!:System.Data.Common.DbCommand.ExecuteNonQueryAsync()"></see> call.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync_System_String_System_Collections_Generic_IList_Npgsql_NpgsqlParameter__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync(System.String%2CSystem.Collections.Generic.IList%7BNpgsql.NpgsqlParameter%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync__1_System_String_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync%60%601(System.String%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L118">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L180">View Source</a>
   </span>
   <a id="Venflow_Database_ExecuteAsync_" data-uid="Venflow.Database.ExecuteAsync*"></a>
-  <h4 id="Venflow_Database_ExecuteAsync_System_String_System_Collections_Generic_IList_Npgsql_NpgsqlParameter__System_Threading_CancellationToken_" data-uid="Venflow.Database.ExecuteAsync(System.String,System.Collections.Generic.IList{Npgsql.NpgsqlParameter},System.Threading.CancellationToken)">ExecuteAsync(String, IList&lt;NpgsqlParameter&gt;, CancellationToken)</h4>
+  <h4 id="Venflow_Database_ExecuteAsync__1_System_String_CancellationToken_" data-uid="Venflow.Database.ExecuteAsync``1(System.String,CancellationToken)">ExecuteAsync&lt;T&gt;(String, CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;int&gt; ExecuteAsync(string sql, IList&lt;NpgsqlParameter&gt; parameters, CancellationToken cancellationToken = default(CancellationToken))</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;T&gt; ExecuteAsync&lt;T&gt;(string sql, CancellationToken cancellationToken = null)
+    where T : struct</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -514,13 +614,7 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlParameter.html">NpgsqlParameter</a>&gt;</td>
-        <td><span class="parametername">parameters</span></td>
-        <td><p>The SQL Parameters which are being used for the current command.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>The cancellation token, which is used to cancel the operation.</p>
 </td>
@@ -537,30 +631,47 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
-        <td><p>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</p>
+        <td><span class="xref">Task</span>&lt;T&gt;</td>
+        <td><p>A task representing the asynchronous operation, with the value of the scalar command.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <h5 id="Venflow_Database_ExecuteAsync_System_String_System_Collections_Generic_IList_Npgsql_NpgsqlParameter__System_Threading_CancellationToken__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This method represents a <span class="xref">Npgsql.NpgsqlCommand.ExecuteNonQueryAsync(System.Threading.CancellationToken)</span> call.</p>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>The type of the scalar result.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_Database_ExecuteAsync__1_System_String_CancellationToken__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method represents a <see cref="!:NpgsqlCommand.ExecuteScalarAsync(CancellationToken)"></see> call.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync_System_String_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync(System.String%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync__1_System_String_IList_NpgsqlParameter__CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync%60%601(System.String%2CIList%7BNpgsqlParameter%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L101">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L198">View Source</a>
   </span>
   <a id="Venflow_Database_ExecuteAsync_" data-uid="Venflow.Database.ExecuteAsync*"></a>
-  <h4 id="Venflow_Database_ExecuteAsync_System_String_System_Threading_CancellationToken_" data-uid="Venflow.Database.ExecuteAsync(System.String,System.Threading.CancellationToken)">ExecuteAsync(String, CancellationToken)</h4>
+  <h4 id="Venflow_Database_ExecuteAsync__1_System_String_IList_NpgsqlParameter__CancellationToken_" data-uid="Venflow.Database.ExecuteAsync``1(System.String,IList{NpgsqlParameter},CancellationToken)">ExecuteAsync&lt;T&gt;(String, IList&lt;NpgsqlParameter&gt;, CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;int&gt; ExecuteAsync(string sql, CancellationToken cancellationToken = default(CancellationToken))</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;T&gt; ExecuteAsync&lt;T&gt;(string sql, IList&lt;NpgsqlParameter&gt; parameters, CancellationToken cancellationToken = null)
+    where T : struct</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -579,7 +690,13 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="xref">IList</span>&lt;<span class="xref">NpgsqlParameter</span>&gt;</td>
+        <td><span class="parametername">parameters</span></td>
+        <td><p>The SQL Parameters which are being used for the current command.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>The cancellation token, which is used to cancel the operation.</p>
 </td>
@@ -596,24 +713,40 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
-        <td><p>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</p>
+        <td><span class="xref">Task</span>&lt;T&gt;</td>
+        <td><p>A task representing the asynchronous operation, with the value of the scalar command.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <h5 id="Venflow_Database_ExecuteAsync_System_String_System_Threading_CancellationToken__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This method represents a <span class="xref">Npgsql.NpgsqlCommand.ExecuteNonQueryAsync(System.Threading.CancellationToken)</span> call.</p>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>The type of the scalar result.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_Database_ExecuteAsync__1_System_String_IList_NpgsqlParameter__CancellationToken__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method represents a <see cref="!:NpgsqlCommand.ExecuteScalarAsync(CancellationToken)"></see> call.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync__1_System_String_Npgsql_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync%60%601(System.String%2CNpgsql.NpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync__1_System_String_NpgsqlParameter___.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync%60%601(System.String%2CNpgsqlParameter%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L220">View Source</a>
   </span>
   <a id="Venflow_Database_ExecuteAsync_" data-uid="Venflow.Database.ExecuteAsync*"></a>
-  <h4 id="Venflow_Database_ExecuteAsync__1_System_String_Npgsql_NpgsqlParameter___" data-uid="Venflow.Database.ExecuteAsync``1(System.String,Npgsql.NpgsqlParameter[])">ExecuteAsync&lt;T&gt;(String, NpgsqlParameter[])</h4>
+  <h4 id="Venflow_Database_ExecuteAsync__1_System_String_NpgsqlParameter___" data-uid="Venflow.Database.ExecuteAsync``1(System.String,NpgsqlParameter[])">ExecuteAsync&lt;T&gt;(String, NpgsqlParameter[])</h4>
   <div class="markdown level1 summary"><p>Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -639,7 +772,7 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlParameter.html">NpgsqlParameter</a>[]</td>
+        <td><span class="xref">NpgsqlParameter</span>[]</td>
         <td><span class="parametername">parameters</span></td>
         <td><p>The SQL Parameters which are being used for the current command.</p>
 </td>
@@ -656,7 +789,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;T&gt;</td>
+        <td><span class="xref">Task</span>&lt;T&gt;</td>
         <td><p>A task representing the asynchronous operation, with the value of the scalar command.</p>
 </td>
       </tr>
@@ -678,182 +811,24 @@
       </tr>
     </tbody>
   </table>
-  <h5 id="Venflow_Database_ExecuteAsync__1_System_String_Npgsql_NpgsqlParameter____remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This method represents a <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.data.common.dbcommand.executescalarasync#System_Data_Common_DbCommand_ExecuteScalarAsync">ExecuteScalarAsync()</a> call.</p>
+  <h5 id="Venflow_Database_ExecuteAsync__1_System_String_NpgsqlParameter____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method represents a <see cref="!:System.Data.Common.DbCommand.ExecuteScalarAsync()"></see> call.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync__1_System_String_System_Collections_Generic_IList_Npgsql_NpgsqlParameter__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync%60%601(System.String%2CSystem.Collections.Generic.IList%7BNpgsql.NpgsqlParameter%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L198">View Source</a>
-  </span>
-  <a id="Venflow_Database_ExecuteAsync_" data-uid="Venflow.Database.ExecuteAsync*"></a>
-  <h4 id="Venflow_Database_ExecuteAsync__1_System_String_System_Collections_Generic_IList_Npgsql_NpgsqlParameter__System_Threading_CancellationToken_" data-uid="Venflow.Database.ExecuteAsync``1(System.String,System.Collections.Generic.IList{Npgsql.NpgsqlParameter},System.Threading.CancellationToken)">ExecuteAsync&lt;T&gt;(String, IList&lt;NpgsqlParameter&gt;, CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;T&gt; ExecuteAsync&lt;T&gt;(string sql, IList&lt;NpgsqlParameter&gt; parameters, CancellationToken cancellationToken = default(CancellationToken))
-    where T : struct</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a></td>
-        <td><span class="parametername">sql</span></td>
-        <td><p>The SQL to execute.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlParameter.html">NpgsqlParameter</a>&gt;</td>
-        <td><span class="parametername">parameters</span></td>
-        <td><p>The SQL Parameters which are being used for the current command.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td><p>The cancellation token, which is used to cancel the operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;T&gt;</td>
-        <td><p>A task representing the asynchronous operation, with the value of the scalar command.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">T</span></td>
-        <td><p>The type of the scalar result.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Venflow_Database_ExecuteAsync__1_System_String_System_Collections_Generic_IList_Npgsql_NpgsqlParameter__System_Threading_CancellationToken__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This method represents a <span class="xref">Npgsql.NpgsqlCommand.ExecuteScalarAsync(System.Threading.CancellationToken)</span> call.</p>
-</div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteAsync__1_System_String_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteAsync%60%601(System.String%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L180">View Source</a>
-  </span>
-  <a id="Venflow_Database_ExecuteAsync_" data-uid="Venflow.Database.ExecuteAsync*"></a>
-  <h4 id="Venflow_Database_ExecuteAsync__1_System_String_System_Threading_CancellationToken_" data-uid="Venflow.Database.ExecuteAsync``1(System.String,System.Threading.CancellationToken)">ExecuteAsync&lt;T&gt;(String, CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;T&gt; ExecuteAsync&lt;T&gt;(string sql, CancellationToken cancellationToken = default(CancellationToken))
-    where T : struct</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a></td>
-        <td><span class="parametername">sql</span></td>
-        <td><p>The SQL to execute.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td><p>The cancellation token, which is used to cancel the operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;T&gt;</td>
-        <td><p>A task representing the asynchronous operation, with the value of the scalar command.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">T</span></td>
-        <td><p>The type of the scalar result.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Venflow_Database_ExecuteAsync__1_System_String_System_Threading_CancellationToken__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This method represents a <span class="xref">Npgsql.NpgsqlCommand.ExecuteScalarAsync(System.Threading.CancellationToken)</span> call.</p>
-</div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteInterpolatedAsync_System_FormattableString_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteInterpolatedAsync(System.FormattableString%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteInterpolatedAsync_FormattableString_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteInterpolatedAsync(FormattableString%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L160">View Source</a>
   </span>
   <a id="Venflow_Database_ExecuteInterpolatedAsync_" data-uid="Venflow.Database.ExecuteInterpolatedAsync*"></a>
-  <h4 id="Venflow_Database_ExecuteInterpolatedAsync_System_FormattableString_System_Threading_CancellationToken_" data-uid="Venflow.Database.ExecuteInterpolatedAsync(System.FormattableString,System.Threading.CancellationToken)">ExecuteInterpolatedAsync(FormattableString, CancellationToken)</h4>
+  <h4 id="Venflow_Database_ExecuteInterpolatedAsync_FormattableString_CancellationToken_" data-uid="Venflow.Database.ExecuteInterpolatedAsync(FormattableString,CancellationToken)">ExecuteInterpolatedAsync(FormattableString, CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Asynchronously executes a command against the current Database. This method does automatically parameterize queries from an interpolated string.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;int&gt; ExecuteInterpolatedAsync(FormattableString sql, CancellationToken cancellationToken = default(CancellationToken))</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;int&gt; ExecuteInterpolatedAsync(FormattableString sql, CancellationToken cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -866,13 +841,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.formattablestring">FormattableString</a></td>
+        <td><span class="xref">FormattableString</span></td>
         <td><span class="parametername">sql</span></td>
         <td><p>The interpolated SQL to execute.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>The cancellation token, which is used to cancel the operation.</p>
 </td>
@@ -889,30 +864,30 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
+        <td><span class="xref">Task</span>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.int32">Int32</a>&gt;</td>
         <td><p>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <h5 id="Venflow_Database_ExecuteInterpolatedAsync_System_FormattableString_System_Threading_CancellationToken__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This method represents a <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.data.common.dbcommand.executenonqueryasync#System_Data_Common_DbCommand_ExecuteNonQueryAsync">ExecuteNonQueryAsync()</a> call.</p>
+  <h5 id="Venflow_Database_ExecuteInterpolatedAsync_FormattableString_CancellationToken__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method represents a <see cref="!:System.Data.Common.DbCommand.ExecuteNonQueryAsync()"></see> call.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteInterpolatedAsync__1_System_FormattableString_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteInterpolatedAsync%60%601(System.FormattableString%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Database_ExecuteInterpolatedAsync__1_FormattableString_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Database.ExecuteInterpolatedAsync%60%601(FormattableString%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Database.cs/#L242">View Source</a>
   </span>
   <a id="Venflow_Database_ExecuteInterpolatedAsync_" data-uid="Venflow.Database.ExecuteInterpolatedAsync*"></a>
-  <h4 id="Venflow_Database_ExecuteInterpolatedAsync__1_System_FormattableString_System_Threading_CancellationToken_" data-uid="Venflow.Database.ExecuteInterpolatedAsync``1(System.FormattableString,System.Threading.CancellationToken)">ExecuteInterpolatedAsync&lt;T&gt;(FormattableString, CancellationToken)</h4>
+  <h4 id="Venflow_Database_ExecuteInterpolatedAsync__1_FormattableString_CancellationToken_" data-uid="Venflow.Database.ExecuteInterpolatedAsync``1(FormattableString,CancellationToken)">ExecuteInterpolatedAsync&lt;T&gt;(FormattableString, CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Asynchronously executes a command against the current Database. This method does automatically parameterize queries from an interpolated string.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;T&gt; ExecuteInterpolatedAsync&lt;T&gt;(FormattableString sql, CancellationToken cancellationToken = default(CancellationToken))
+    <pre><code class="lang-csharp hljs">public Task&lt;T&gt; ExecuteInterpolatedAsync&lt;T&gt;(FormattableString sql, CancellationToken cancellationToken = null)
     where T : struct</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -926,13 +901,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.formattablestring">FormattableString</a></td>
+        <td><span class="xref">FormattableString</span></td>
         <td><span class="parametername">sql</span></td>
         <td><p>The interpolated SQL to execute.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>The cancellation token, which is used to cancel the operation.</p>
 </td>
@@ -949,7 +924,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;T&gt;</td>
+        <td><span class="xref">Task</span>&lt;T&gt;</td>
         <td><p>A task representing the asynchronous operation, with the value of the scalar command.</p>
 </td>
       </tr>
@@ -971,8 +946,8 @@
       </tr>
     </tbody>
   </table>
-  <h5 id="Venflow_Database_ExecuteInterpolatedAsync__1_System_FormattableString_System_Threading_CancellationToken__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This method represents a <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.data.common.dbcommand.executescalarasync#System_Data_Common_DbCommand_ExecuteScalarAsync">ExecuteScalarAsync()</a> call.</p>
+  <h5 id="Venflow_Database_ExecuteInterpolatedAsync__1_FormattableString_CancellationToken__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method represents a <see cref="!:System.Data.Common.DbCommand.ExecuteScalarAsync()"></see> call.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
@@ -1000,18 +975,15 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlConnection.html">NpgsqlConnection</a></td>
-        <td><p>the <a class="xref" href="https://www.npgsql.org/doc/api/Npgsql.NpgsqlConnection.html">NpgsqlConnection</a>.</p>
+        <td><span class="xref">NpgsqlConnection</span></td>
+        <td><p>the <see cref="!:NpgsqlConnection"></see>.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h3 id="implements">Implements</h3>
   <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.iasyncdisposable">System.IAsyncDisposable</a>
-  </div>
-  <div>
-      <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.idisposable">System.IDisposable</a>
+      <span class="xref">IDisposable</span>
   </div>
 </article>
           </div>
