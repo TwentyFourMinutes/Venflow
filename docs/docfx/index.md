@@ -55,7 +55,7 @@ Now how do I calculate this _magic number_? The formula is as following:
 ```
 compositeScore = Σ((meanTime / lowestMeanTimeOfGroup - 1) + (allocation / lowestAllocationOfGroup - 1) / 10)
 ```
-A group is considered as a list of benchmark entries which are inside the same file and have the same \*count and target framework. Now as some ORM's don't have any benchmarks entries for specific benchmark groups it will take instead take the _lowest_ mean and the _lowest_  allocation from this group. The source code of the calculation can be found [here](../../src/Venflow/Venflow.Score).
+A group is considered as a list of benchmark entries which are inside the same file and have the same count and target framework. Now as some ORM's don't have any benchmarks entries for specific benchmark groups it will instead take the _lowest_ mean and the _lowest_  allocation from this group. The source code of the calculation can be found [here](./src/Venflow/Venflow.Score).
 
 #### Disclaimerd
 
