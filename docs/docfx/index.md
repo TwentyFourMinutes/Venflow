@@ -57,7 +57,7 @@ compositeScore = Σ((meanTime / lowestMeanTimeOfGroup - 1) + (allocation / lowes
 ```
 A group is considered as a list of benchmark entries which are inside the same file and have the same count and target framework. Now as some ORM's don't have any benchmarks entries for specific benchmark groups it will instead take the _lowest_ mean and the _lowest_  allocation from this group. The source code of the calculation can be found [here](./src/Venflow/Venflow.Score).
 
-#### Disclaimer
+#### Disclaimerd
 
 The benchmarks themselves or even the calculation of the composite numbers may not be right and contain bugs. Therefor consider these results with a grain of salt. If you find any bugs inside the calculations or in the benchmarks please create an issue and I'll try to fix it ASAP.
 

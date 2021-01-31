@@ -153,7 +153,7 @@
 <p>Now how do I calculate this <em>magic number</em>? The formula is as following:</p>
 <pre><code>compositeScore = Σ((meanTime / lowestMeanTimeOfGroup - 1) + (allocation / lowestAllocationOfGroup - 1) / 10)
 </code></pre>
-<p>A group is considered as a list of benchmark entries which are inside the same file and have the same *count and target framework. Now as some ORM's don't have any benchmarks entries for specific benchmark groups it will take instead take the <em>lowest</em> mean and the <em>lowest</em>  allocation from this group. The source code of the calculation can be found <a href="../../src/Venflow/Venflow.Score">here</a>.</p>
+<p>A group is considered as a list of benchmark entries which are inside the same file and have the same count and target framework. Now as some ORM's don't have any benchmarks entries for specific benchmark groups it will instead take the <em>lowest</em> mean and the <em>lowest</em>  allocation from this group. The source code of the calculation can be found <a href="./src/Venflow/Venflow.Score">here</a>.</p>
 <h4 id="disclaimerd">Disclaimerd</h4>
 <p>The benchmarks themselves or even the calculation of the composite numbers may not be right and contain bugs. Therefor consider these results with a grain of salt. If you find any bugs inside the calculations or in the benchmarks please create an issue and I'll try to fix it ASAP.</p>
 <h2 id="is-this-package-for-you">Is this package for you?</h2>
