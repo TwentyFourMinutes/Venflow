@@ -16,8 +16,6 @@ namespace Venflow.Tests.QueryTests
 
             Assert.NotNull(customResponse);
             Assert.NotNull(customResponse.Count);
-
-            Assert.Equal(customResponse.Count, await Database.ExecuteAsync<long>(@"SELECT Count(""Id"") FROM ""People"""));
         }
     }
 
