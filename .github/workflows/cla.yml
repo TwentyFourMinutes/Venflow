@@ -9,6 +9,11 @@ jobs:
   CLAssistant:
     runs-on: ubuntu-latest
     steps:
+      - name: "Debug Log"
+        shell: bash
+        run: | 
+          echo "Comment Body:" github.event.comment.body
+          echo "Event Name:" github.event_name
       - name: "CLA Assistant"
         if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
         uses: cla-assistant/github-action@v2.0.3-alpha
