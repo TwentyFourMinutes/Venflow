@@ -9,25 +9,6 @@ jobs:
   CLAssistant:
     runs-on: ubuntu-latest
     steps:
-      - name: "Debug Log"
-        shell: bash
-        run: |
-          body="${{ github.event.comment.body }}"
-          if [[ ! $body =~ ^.*:\ .*$ ]]; then
-            echo "Bad body"
-            exit 1
-          fi
-          
-          echo $eventName
-          
-          eventName="${{ github.event_name }}"
-          if [[ ! $eventName =~ ^.*:\ .*$ ]]; then
-            echo "Bad eventName"
-            exit 1
-          fi
-          
-          echo $eventName
-          
       - name: "CLA Assistant"
         if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
         uses: cla-assistant/github-action@v2.0.3-alpha
