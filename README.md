@@ -30,7 +30,7 @@ The simplest way to do so, is by giving the project a :star: and sharing the pro
 - Creating pull requests
 - Reporting bugs
 
-For more information take a look at out [contribution guideline](https://github.com/TwentyFourMinutes/Venflow/blob/dev/CONTRIBUTING.md).
+For more information take a look at our [contribution guideline](https://github.com/TwentyFourMinutes/Venflow/blob/dev/CONTRIBUTING.md).
 
 ## Installation
 
