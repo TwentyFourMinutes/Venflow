@@ -30,6 +30,8 @@ The simplest way to do so, is by giving the project a :star: and sharing the pro
 - Creating pull requests
 - Reporting bugs
 
+For more information take a look at out [contribution guideline](https://github.com/TwentyFourMinutes/Venflow/blob/dev/CONTRIBUTING.md).
+
 ## Installation
 
 The pre-release versions of Venflow can currently be downloaded on [nuget.org](https://www.nuget.org/packages/Venflow). By now, the project should be fairly stable and safe to use.
