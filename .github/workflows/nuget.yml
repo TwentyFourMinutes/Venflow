@@ -8,7 +8,7 @@ jobs:
     name: build, pack & publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.5.5
+      - uses: actions/checkout@v2
       # Publish
       - name: publish on version change
         id: publish_nuget
