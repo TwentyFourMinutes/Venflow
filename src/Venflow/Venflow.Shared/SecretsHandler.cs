@@ -9,17 +9,17 @@ namespace Venflow.Shared
         {
             var configuration = new ConfigurationBuilder();
 
-            if (IsDevelopmentMachine())
+            if (IsDevelopmentMachine(type))
             {
                 return configuration.AddUserSecrets<T>().Build().GetConnectionString(type);
             }
             else
             {
-                return configuration.AddEnvironmentVariables().Build()["VENFLOW_TESTS_CONNECTION_STRING"];
+                return configuration.AddEnvironmentVariables().Build()[$"VENFLOW_{type.ToUpper()}_CONNECTION_STRING"];
             }
         }
 
-        public static bool IsDevelopmentMachine()
-            => Environment.GetEnvironmentVariable("VENFLOW_TESTS_CONNECTION_STRING") is null;
+        public static bool IsDevelopmentMachine(string type)
+            => Environment.GetEnvironmentVariable($"VENFLOW_{type.ToUpper()}_CONNECTION_STRING") is null;
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
 
 namespace Venflow.Benchmarks
 {
@@ -8,7 +7,6 @@ namespace Venflow.Benchmarks
         public static void Main(string[] args)
         {
             BenchmarkSwitcher.FromAssembly(typeof(Startup).Assembly).Run(args);
-            Console.ReadKey();
         }
     }
 }
