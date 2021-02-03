@@ -1,4 +1,4 @@
-name: Benechmarks
+name: Benchmarks
 
 on:
   release:

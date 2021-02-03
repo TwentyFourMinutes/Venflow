@@ -77,7 +77,6 @@ namespace Venflow.Benchmarks
 
         ~BenchmarkHandler()
         {
-            _database.ExecuteAsync("DROP DATABASE venflow_benchmarks").GetAwaiter().GetResult();
             _database.GetConnection().Close();
         }
 

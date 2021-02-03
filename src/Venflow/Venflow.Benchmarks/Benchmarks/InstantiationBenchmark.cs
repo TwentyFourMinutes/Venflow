@@ -5,11 +5,13 @@ using Venflow.Benchmarks.Models.Configurations;
 namespace Venflow.Benchmarks.Benchmarks
 {
     [MemoryDiagnoser]
-    public class InstantiationBenchmark
+    public class InstantiationBenchmark : BenchmarkBase
     {
         [GlobalSetup]
-        public async ValueTask Setup()
+        public override async Task Setup()
         {
+            await base.Setup();
+
             await InstantiateEFCoreContext();
             await InstantiateVenflowDatabase();
         }
