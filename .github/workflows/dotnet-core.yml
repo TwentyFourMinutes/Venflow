@@ -11,7 +11,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-        VENFLOW_TESTS_CONNECTION_STRING: Server=127.0.0.1;Port=5432;Database=venflow_tests;UserId=venflow_tests;Password=venflow_tests;
+        VENFLOW_TESTS_CONNECTION_STRING: 'Server=127.0.0.1;Port=5432;Database=venflow_tests;UserId=venflow_tests;Password=venflow_tests;'
 
     steps:
     - uses: actions/checkout@v2
