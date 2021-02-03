@@ -17,6 +17,8 @@ namespace Venflow.Benchmarks.Benchmarks
         {
             Database = new BenchmarkDb();
 
+            BenchmarkHandler.Init(Database);
+
             if (!_initDone)
             {
                 PostgreSqlBootstrap.Initialize();

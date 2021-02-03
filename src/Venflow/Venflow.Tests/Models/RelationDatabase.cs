@@ -14,7 +14,7 @@ namespace Venflow.Tests.Models
 
         public RelationDatabase() : base(SecretsHandler.GetConnectionString<RelationDatabase>("Tests"))
         {
-            UnitTestHandler.Init(this);
+
         }
     }
 }

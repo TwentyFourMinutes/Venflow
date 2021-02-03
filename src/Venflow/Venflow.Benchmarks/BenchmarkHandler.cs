@@ -52,7 +52,7 @@ namespace Venflow.Benchmarks
             }
             catch
             {
-                // We are testing in a different Framework version.
+                // We are running on a different Framework version.
             }
         }
 
