@@ -138,8 +138,16 @@ ALTER TABLE public.""People"" ALTER COLUMN ""Id"" ADD GENERATED ALWAYS AS IDENTI
 );
 
 ALTER TABLE ONLY public.""EmailContents""
-    ADD CONSTRAINT ""FK_Emails_EmailContents"" FOREIGN KEY(""EmailId"") REFERENCES public.""Emails""(""Id"") ON DELETE CASCADE NOT VALID;
+    ADD CONSTRAINT ""EmailContents_pkey"" PRIMARY KEY(""Id"");
 
+ALTER TABLE ONLY public.""Emails""
+    ADD CONSTRAINT ""Emails_pkey"" PRIMARY KEY(""Id"");
+
+ALTER TABLE ONLY public.""People""
+    ADD CONSTRAINT ""People_pkey"" PRIMARY KEY(""Id"");
+
+ALTER TABLE ONLY public.""EmailContents""
+    ADD CONSTRAINT ""FK_Emails_EmailContents"" FOREIGN KEY(""EmailId"") REFERENCES public.""Emails""(""Id"") ON DELETE CASCADE NOT VALID;
 
 ALTER TABLE ONLY public.""Emails""
     ADD CONSTRAINT emails_people_id_fk FOREIGN KEY(""PersonId"") REFERENCES public.""People""(""Id"") ON DELETE CASCADE;";
