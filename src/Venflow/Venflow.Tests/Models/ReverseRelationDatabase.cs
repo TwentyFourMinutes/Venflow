@@ -10,7 +10,7 @@ namespace Venflow.Tests.Models
 
         public ReverseRelationDatabase() : base(SecretsHandler.GetConnectionString<ReverseRelationDatabase>("Tests"))
         {
-            UnitTestHandler.Wait();
+            UnitTestHandler.Init(this);
         }
     }
 }

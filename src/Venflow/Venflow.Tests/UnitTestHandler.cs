@@ -1,14 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Npgsql;
 using Venflow.Shared;
-using Venflow.Tests.Models;
 
 namespace Venflow.Tests
 {
     public class UnitTestHandler
     {
         private static UnitTestHandler _current;
-        private static RelationDatabase _database;
+        private static Database _database;
 
         private static readonly object _buildLocker = new object();
         private static readonly TaskCompletionSource<bool> _waitHandle = new TaskCompletionSource<bool>();
@@ -56,7 +55,7 @@ namespace Venflow.Tests
             }
         }
 
-        public static void Init(RelationDatabase database)
+        public static void Init(Database database)
         {
             lock (_buildLocker)
             {
