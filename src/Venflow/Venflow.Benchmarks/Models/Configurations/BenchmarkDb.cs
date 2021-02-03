@@ -8,7 +8,7 @@ namespace Venflow.Benchmarks.Models.Configurations
         public Table<Email> Emails { get; set; }
         public Table<EmailContent> EmailContents { get; set; }
 
-        public BenchmarkDb() : base(SecretsHandler.GetConnectionString<Startup>("Tests"))
+        public BenchmarkDb() : base(SecretsHandler.GetConnectionString<Startup>("Benchmarks"))
         {
         }
     }
