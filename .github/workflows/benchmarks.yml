@@ -47,37 +47,22 @@ jobs:
         postgresql user: 'venflow_benchmarks'
         postgresql password: 'venflow_benchmarks'
 
-    - name: Run Query Benchmarks (.NET 5)
+    - name: Run Query Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
       run: dotnet run -c Release -f netcoreapp5.0 -- -j short -f "*query*"
-    - name: Run Query Benchmarks (.NET Core 3.1)
-      working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f netcoreapp3.1 -- -j short -f "*query*"
 
-    - name: Run Insert Benchmarks (.NET 5)
+    - name: Run Insert Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
       run: dotnet run -c Release -f netcoreapp5.0 -- -j short -f "*insert*"
-    - name: Run Insert Benchmarks (.NET Core 3.1)
-      working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f netcoreapp3.1 -- -j short -f "*insert*"
 
-    - name: Run Update Benchmarks (.NET 5)
+    - name: Run Update Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f netcoreapp5.0 -- -j short -f "*update*"
-    - name: Run Update Benchmarks (.NET Core 3.1)
-      working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f netcoreapp3.1 -- -j short -f "*update*"
+      run: dotnet run -c Release -f netcoreapp5.0 -- -j short -f "*update*
 
-    - name: Run Delete Benchmarks (.NET 5)
+    - name: Run Delete Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
       run: dotnet run -c Release -f netcoreapp5.0 -- -j short -f "*delete*"
-    - name: Run Delete Benchmarks (.NET Core 3.1)
-      working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f netcoreapp3.1 -- -j short -f "*delete*"
 
-    - name: Run Instantiation Benchmarks (.NET 5)
+    - name: Run Instantiation Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
       run: dotnet run -c Release -f netcoreapp5.0 -- -j short -f "*instantiation*"
-    - name: Run Instantiation Benchmarks (.NET Core 3.1)
-      working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f netcoreapp3.1 -- -j short -f "*instantiation*"
