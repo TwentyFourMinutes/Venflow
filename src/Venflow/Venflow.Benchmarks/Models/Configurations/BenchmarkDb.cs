@@ -10,7 +10,6 @@ namespace Venflow.Benchmarks.Models.Configurations
 
         public BenchmarkDb() : base(SecretsHandler.GetConnectionString<Startup>("Tests"))
         {
-            BenchmarkHandler.Init(this);
         }
     }
 }
