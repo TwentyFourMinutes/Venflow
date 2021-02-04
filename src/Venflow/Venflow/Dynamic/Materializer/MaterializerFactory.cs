@@ -28,9 +28,14 @@ namespace Venflow.Dynamic.Materializer
         {
             var cacheKey = new QueryCacheKey(_entity, typeof(TReturn), relationBuilderValues?.GetFlattenedRelations(), columnSchema.AsList(), changeTracking);
 
+            if (_materializerCache.TryGetValue(cacheKey, out var tempMaterializer))
+            {
+                return (Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>)tempMaterializer;
+            }
+
             lock (_materializerLock)
             {
-                if (_materializerCache.TryGetValue(cacheKey, out var tempMaterializer))
+                if (_materializerCache.TryGetValue(cacheKey, out tempMaterializer))
                 {
                     return (Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>)tempMaterializer;
                 }
