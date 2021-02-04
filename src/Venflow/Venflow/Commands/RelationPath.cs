@@ -19,7 +19,7 @@ namespace Venflow.Commands
         {
             CurrentRelation = currentRelation;
 
-            TrailingPath = new();
+            TrailingPath = new(1);
         }
 
         internal RelationPath AddToPath(EntityRelation relation, out bool isNew)

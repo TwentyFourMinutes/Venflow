@@ -17,7 +17,7 @@ namespace Venflow.Commands
         private readonly VenflowInsertCommandBuilder<TRootEntity> _commandBuilder;
         private readonly RelationBuilderValues _relationBuilder;
 
-        public InsertRelationBuilder(Entity root, Entity parent, VenflowInsertCommandBuilder<TRootEntity> commandBuilder, RelationBuilderValues relationBuilder)
+        internal InsertRelationBuilder(Entity root, Entity parent, VenflowInsertCommandBuilder<TRootEntity> commandBuilder, RelationBuilderValues relationBuilder)
         {
             _root = root;
             _parent = parent;

@@ -23,8 +23,8 @@ namespace Venflow.Commands
         {
             _entity = entity;
             _currentPath = default!;
-            _trailingPath = new();
-            FlattenedPath = new();
+            _trailingPath = new(1);
+            FlattenedPath = new(4);
         }
 
         internal EntityRelation[] GetFlattenedRelations()
@@ -39,20 +39,6 @@ namespace Venflow.Commands
             }
 
             return entityRelations;
-        }
-
-        internal Entity[] GetFlattenedEntities()
-        {
-            var flattenedPathSpan = FlattenedPath.AsSpan();
-            var entities = new Entity[flattenedPathSpan.Length];
-            var entitiesSpan = entities.AsSpan();
-
-            for (int i = flattenedPathSpan.Length - 1; i >= 0; i--)
-            {
-                entitiesSpan[i] = flattenedPathSpan[i].Entity;
-            }
-
-            return entities;
         }
 
         internal Entity BaseRelationWith<TRootEntity, TTarget>(Entity parent, Expression<Func<TRootEntity, TTarget>> propertySelector)

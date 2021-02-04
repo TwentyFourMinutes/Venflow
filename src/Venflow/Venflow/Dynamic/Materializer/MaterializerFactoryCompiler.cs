@@ -951,7 +951,8 @@ namespace Venflow.Dynamic.Materializer
             // Create result field instance
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Newobj, resultLocal.LocalType.GetConstructor(Type.EmptyTypes));
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_4);
+            _moveNextMethodIL.Emit(OpCodes.Newobj, resultLocal.LocalType.GetConstructor(new[] { typeof(int) }));
             _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
 
             // if no rows return
@@ -1072,7 +1073,8 @@ namespace Venflow.Dynamic.Materializer
             // Create result field instance
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-            _moveNextMethodIL.Emit(OpCodes.Newobj, resultLocal.LocalType.GetConstructor(Type.EmptyTypes));
+            _moveNextMethodIL.Emit(OpCodes.Ldc_I4_4);
+            _moveNextMethodIL.Emit(OpCodes.Newobj, resultLocal.LocalType.GetConstructor(new[] { typeof(int) }));
             _moveNextMethodIL.Emit(OpCodes.Stfld, resultField);
 
             // if no rows return
