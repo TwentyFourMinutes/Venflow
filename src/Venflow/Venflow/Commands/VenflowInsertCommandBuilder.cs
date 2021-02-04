@@ -19,12 +19,13 @@ namespace Venflow.Commands
         private readonly Database _database;
         private readonly Entity<TEntity> _entityConfiguration;
 
-        internal VenflowInsertCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, bool disposeCommand)
+        internal VenflowInsertCommandBuilder(Database database, Entity<TEntity> entityConfiguration, bool disposeCommand)
         {
             _database = database;
             _entityConfiguration = entityConfiguration;
-            _command = command;
             _disposeCommand = disposeCommand;
+
+            _command = new();
         }
 
         public IInsertCommand<TEntity> Build()

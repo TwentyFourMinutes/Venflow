@@ -940,9 +940,6 @@ namespace Venflow.Dynamic.Materializer
             // Start try block
             _moveNextMethodIL.BeginExceptionBlock();
 
-            // if state zero goto await unsafe
-            var awaitUnsafeEndLabel = _moveNextMethodIL.DefineLabel();
-
             _moveNextMethodIL.Emit(OpCodes.Ldloc_S, _stateLocal);
 
             var switchBuilder = new ILSwitchBuilder(_moveNextMethodIL, 1);

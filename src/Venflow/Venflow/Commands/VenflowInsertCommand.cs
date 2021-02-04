@@ -18,12 +18,16 @@ namespace Venflow.Commands
         internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, bool isFullInsert) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
         {
             _isFullInsert = isFullInsert;
+
+            underlyingCommand.Connection = database.GetConnection();
         }
 
         internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, RelationBuilderValues? relationBuilderValues, bool isFullInsert) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
         {
             _relationBuilderValues = relationBuilderValues;
             _isFullInsert = isFullInsert;
+
+            underlyingCommand.Connection = database.GetConnection();
         }
 
         async Task<int> IInsertCommand<TEntity>.InsertAsync(TEntity entity, CancellationToken cancellationToken)

@@ -354,7 +354,7 @@ namespace Venflow
         /// <returns>A Fluent API Builder for a insert command.</returns>
         /// <remarks>The command will be automatically disposed the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</remarks>
         public IBaseInsertRelationBuilder<TEntity, TEntity> Insert()
-            => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, false).Insert();
+            => new VenflowCommandBuilder<TEntity>(Database, Configuration, false).Insert();
 
         /// <summary>
         /// Creates a new insert command.
@@ -362,7 +362,7 @@ namespace Venflow
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a insert command.</returns>
         public IBaseInsertRelationBuilder<TEntity, TEntity> Insert(bool disposeCommand)
-            => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).Insert();
+            => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).Insert();
 
         /// <summary>
         /// Creates a new delete command.
@@ -370,7 +370,7 @@ namespace Venflow
         /// <returns>A Fluent API Builder for a delete command.</returns>
         /// <remarks>The command will be automatically disposed the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</remarks>
         public IDeleteCommandBuilder<TEntity> Delete()
-            => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, false).Delete();
+            => new VenflowCommandBuilder<TEntity>(Database, Configuration, false).Delete();
 
         /// <summary>
         /// Creates a new delete command.
@@ -378,14 +378,14 @@ namespace Venflow
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a delete command.</returns>
         public IDeleteCommandBuilder<TEntity> Delete(bool disposeCommand)
-            => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).Delete();
+            => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).Delete();
 
         /// <summary>
         /// Creates a new update command.
         /// </summary>
         /// <returns>A Fluent API Builder for a update command.</returns>
         public IUpdateCommandBuilder<TEntity> Update()
-            => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, false).Update();
+            => new VenflowCommandBuilder<TEntity>(Database, Configuration, false).Update();
 
         /// <summary>
         /// Creates a new update command.
@@ -393,7 +393,7 @@ namespace Venflow
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a update command.</returns>
         public IUpdateCommandBuilder<TEntity> Update(bool disposeCommand)
-            => new VenflowCommandBuilder<TEntity>(Database.GetConnection(), Database, Configuration, disposeCommand).Update();
+            => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).Update();
 
         #endregion
 

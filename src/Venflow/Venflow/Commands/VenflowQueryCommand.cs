@@ -25,6 +25,8 @@ namespace Venflow.Commands
             _isSingleResult = isSingleResult;
             _loggers = loggers;
             _shouldLog = shouldLog;
+
+            underlyingCommand.Connection = database.GetConnection();
         }
 
         async Task<TReturn> IQueryCommand<TEntity, TReturn>.QueryAsync(CancellationToken cancellationToken)

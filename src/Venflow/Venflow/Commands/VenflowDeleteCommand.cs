@@ -13,7 +13,7 @@ namespace Venflow.Commands
     {
         internal VenflowDeleteCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
         {
-
+            underlyingCommand.Connection = database.GetConnection();
         }
 
         async ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(TEntity entity, CancellationToken cancellationToken)

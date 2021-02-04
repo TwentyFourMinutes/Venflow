@@ -53,10 +53,10 @@ namespace Venflow.Commands
 
             hashCode.Add(_returnType);
 
-            var columnSchemaSpan = _columnSchema.AsSpan();
-
             if (_relations is { })
             {
+                var columnSchemaSpan = _columnSchema.AsSpan();
+
                 var joinIndex = 0;
 
                 var flattenedPathSpan = _relations.AsSpan();

@@ -30,35 +30,35 @@ namespace Venflow.Commands
         private readonly object?[]? _interploatedSqlParameters;
         private readonly List<(Action<string>, bool)> _loggers;
 
-        private VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, QueryGenerationOptions queryGenerationOptions, bool disposeCommand, bool singleResult)
+        private VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, QueryGenerationOptions queryGenerationOptions, bool disposeCommand, bool singleResult)
         {
             _database = database;
             _entityConfiguration = entityConfiguration;
             _queryGenerationOptions = queryGenerationOptions;
-            _command = command;
             _disposeCommand = disposeCommand;
             _singleResult = singleResult;
 
             _loggers = new(0);
-            _commandString = new StringBuilder();
+            _commandString = new();
+            _command = new();
         }
 
-        internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, string sql, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, command, QueryGenerationOptions.None, disposeCommand, singleResult)
+        internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, string sql, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, QueryGenerationOptions.None, disposeCommand, singleResult)
         {
             _rawSql = sql;
             _commandString.Append(_rawSql);
         }
 
-        internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, FormattableString interpolatedSql, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, command, QueryGenerationOptions.None, disposeCommand, singleResult)
+        internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, FormattableString interpolatedSql, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, QueryGenerationOptions.None, disposeCommand, singleResult)
         {
             _interploatedSqlParameters = interpolatedSql.GetArguments();
             _rawSql = interpolatedSql.Format;
             _commandString.Append(_rawSql);
         }
 
-        internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand command, string sql, IList<NpgsqlParameter> parameters, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, command, sql, disposeCommand, singleResult)
+        internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, string sql, IList<NpgsqlParameter> parameters, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, sql, disposeCommand, singleResult)
         {
-            for (int i = parameters.Count - 1; i >= 0; i--)
+            for (int i = 0; i < parameters.Count; i++)
             {
                 _command.Parameters.Add(parameters[i]);
             }
@@ -253,28 +253,28 @@ namespace Venflow.Commands
                         throw new InvalidOperationException($"Invalid state '{relationPath.Value}' for the JoinBehaviour on entity {relation.RightEntity.EntityName}");
                 }
 
-                sb.Append(relation.RightEntity.TableName);
-                sb.Append(" ON ");
+                sb.Append(relation.RightEntity.TableName)
+                  .Append(" ON ");
 
                 if (relation.ForeignKeyLocation == ForeignKeyLocation.Left)
                 {
-                    sb.Append(relation.LeftEntity.TableName);
-                    sb.Append(".\"");
-                    sb.Append(relation.ForeignKeyColumn.ColumnName);
-                    sb.Append("\" = ");
-                    sb.Append(relation.RightEntity.TableName);
-                    sb.Append(".\"");
-                    sb.Append(relation.RightEntity.GetPrimaryColumn().ColumnName);
+                    sb.Append(relation.LeftEntity.TableName)
+                      .Append(".\"")
+                      .Append(relation.ForeignKeyColumn.ColumnName)
+                      .Append("\" = ")
+                      .Append(relation.RightEntity.TableName)
+                      .Append(".\"")
+                      .Append(relation.RightEntity.GetPrimaryColumn().ColumnName);
                 }
                 else
                 {
-                    sb.Append(relation.RightEntity.TableName);
-                    sb.Append(".\"");
-                    sb.Append(relation.ForeignKeyColumn.ColumnName);
-                    sb.Append("\" = ");
-                    sb.Append(relation.LeftEntity.TableName);
-                    sb.Append(".\"");
-                    sb.Append(relation.LeftEntity.GetPrimaryColumn().ColumnName);
+                    sb.Append(relation.RightEntity.TableName)
+                      .Append(".\"")
+                      .Append(relation.ForeignKeyColumn.ColumnName)
+                      .Append("\" = ")
+                      .Append(relation.LeftEntity.TableName)
+                      .Append(".\"")
+                      .Append(relation.LeftEntity.GetPrimaryColumn().ColumnName);
                 }
 
                 sb.Append('"');
