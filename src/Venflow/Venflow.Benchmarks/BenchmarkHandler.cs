@@ -37,7 +37,7 @@ namespace Venflow.Benchmarks
 
             try
             {
-                connection = new NpgsqlConnection(_database.ConnectionString);
+                connection = _database.GetConnection();
                 connection.Open();
 
                 command = new NpgsqlCommand(_createTablesCommand, connection);
