@@ -45,12 +45,27 @@ namespace Venflow.Commands
                 SingleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<TEntity>(_relationBuilderValues, true, _isFullInsert);
             }
 
-            var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entity, cancellationToken);
+            var transaction = await Database.BeginTransactionAsync(
+#if NET5_0
+                cancellationToken
+#endif
+            );
 
-            if (DisposeCommand)
-                await this.DisposeAsync();
+            try
+            {
+                var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entity, cancellationToken);
 
-            return affectedRows;
+                await transaction.CommitAsync(cancellationToken);
+
+                return affectedRows;
+            }
+            finally
+            {
+                await transaction.DisposeAsync();
+
+                if (DisposeCommand)
+                    await this.DisposeAsync();
+            }
         }
 
         async Task<int> IInsertCommand<TEntity>.InsertAsync(IList<TEntity> entities, CancellationToken cancellationToken)
@@ -68,12 +83,27 @@ namespace Venflow.Commands
                 BatchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<IList<TEntity>>(_relationBuilderValues, false, _isFullInsert);
             }
 
-            var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entities, cancellationToken);
+            var transaction = await Database.BeginTransactionAsync(
+#if NET5_0
+                cancellationToken
+#endif
+            );
 
-            if (DisposeCommand)
-                await this.DisposeAsync();
+            try
+            {
+                var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entities, cancellationToken);
 
-            return affectedRows;
+                await transaction.CommitAsync(cancellationToken);
+
+                return affectedRows;
+            }
+            finally
+            {
+                await transaction.DisposeAsync();
+
+                if (DisposeCommand)
+                    await this.DisposeAsync();
+            }
         }
 
         public ValueTask DisposeAsync()

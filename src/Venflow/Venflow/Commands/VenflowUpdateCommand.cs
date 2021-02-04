@@ -36,10 +36,15 @@ namespace Venflow.Commands
 
             await ValidateConnectionAsync();
 
-            await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-
-            if (DisposeCommand)
-                await this.DisposeAsync();
+            try
+            {
+                await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+            }
+            finally
+            {
+                if (DisposeCommand)
+                    await this.DisposeAsync();
+            }
         }
 
         async ValueTask IUpdateCommand<TEntity>.UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
@@ -65,10 +70,25 @@ namespace Venflow.Commands
 
             await ValidateConnectionAsync();
 
-            await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+            var transaction = await Database.BeginTransactionAsync(
+#if NET5_0
+                cancellationToken
+#endif
+                );
 
-            if (DisposeCommand)
-                await this.DisposeAsync();
+            try
+            {
+                await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+            }
+            finally
+            {
+                await transaction.DisposeAsync();
+
+                if (DisposeCommand)
+                    await this.DisposeAsync();
+            }
         }
 
         async ValueTask IUpdateCommand<TEntity>.UpdateAsync(List<TEntity> entities, CancellationToken cancellationToken)
@@ -88,10 +108,25 @@ namespace Venflow.Commands
 
             await ValidateConnectionAsync();
 
-            await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+            var transaction = await Database.BeginTransactionAsync(
+#if NET5_0
+                cancellationToken
+#endif
+                );
 
-            if (DisposeCommand)
-                await this.DisposeAsync();
+            try
+            {
+                await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+            }
+            finally
+            {
+                await transaction.DisposeAsync();
+
+                if (DisposeCommand)
+                    await this.DisposeAsync();
+            }
         }
 
         async ValueTask IUpdateCommand<TEntity>.UpdateAsync(TEntity[] entities, CancellationToken cancellationToken)
@@ -111,10 +146,25 @@ namespace Venflow.Commands
 
             await ValidateConnectionAsync();
 
-            await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+            var transaction = await Database.BeginTransactionAsync(
+#if NET5_0
+                cancellationToken
+#endif
+                );
 
-            if (DisposeCommand)
-                await this.DisposeAsync();
+            try
+            {
+                await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+            }
+            finally
+            {
+                await transaction.DisposeAsync();
+
+                if (DisposeCommand)
+                    await this.DisposeAsync();
+            }
         }
 
         async ValueTask IUpdateCommand<TEntity>.UpdateAsync(IList<TEntity> entities, CancellationToken cancellationToken)
@@ -140,10 +190,25 @@ namespace Venflow.Commands
 
             await ValidateConnectionAsync();
 
-            await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+            var transaction = await Database.BeginTransactionAsync(
+#if NET5_0
+                cancellationToken
+#endif
+                );
 
-            if (DisposeCommand)
-                await this.DisposeAsync();
+            try
+            {
+                await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+            }
+            finally
+            {
+                await transaction.DisposeAsync();
+
+                if (DisposeCommand)
+                    await this.DisposeAsync();
+            }
         }
 
         private string BaseUpdate(Span<TEntity> entities)
