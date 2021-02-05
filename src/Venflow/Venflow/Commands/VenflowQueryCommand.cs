@@ -27,7 +27,7 @@ namespace Venflow.Commands
 
             underlyingCommand.Connection = database.GetConnection();
 
-            _sqlQueryCacheKey = new SqlQueryCacheKey(underlyingCommand.CommandText, trackChanges);
+            _sqlQueryCacheKey = new SqlQueryCacheKey(underlyingCommand.CommandText, trackChanges, typeof(TReturn));
         }
 
         async Task<TReturn?> IQueryCommand<TEntity, TReturn>.QueryAsync(CancellationToken cancellationToken)

@@ -18,9 +18,14 @@ namespace Venflow.Tests
             var expirationField = typeof(MaterializerFactory<TEntity>).GetField("_primaryExpirations", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var expirationCache = expirationField.GetValue(factory);
 
-            materializerCache.Clear();
-            primaryCache.Clear();
-            expirationField.FieldType.GetMethod("Clear").Invoke(expirationCache, null);
+            var materializerLock = typeof(MaterializerFactory<TEntity>).GetField("_materializerLock", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(factory);
+
+            lock (materializerLock)
+            {
+                materializerCache.Clear();
+                primaryCache.Clear();
+                expirationField.FieldType.GetMethod("Clear").Invoke(expirationCache, null);
+            }
         }
     }
 }

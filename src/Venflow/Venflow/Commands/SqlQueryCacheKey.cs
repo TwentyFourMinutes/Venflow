@@ -7,14 +7,17 @@ namespace Venflow.Commands
     {
         internal bool IsChangeTracking => _isChangeTracking;
 
+        private readonly Type _returnType;
+
         private readonly string _sql;
 
         private readonly bool _isChangeTracking;
 
-        public SqlQueryCacheKey(string sql, bool isChangeTracking)
+        public SqlQueryCacheKey(string sql, bool isChangeTracking, Type returnType)
         {
             _sql = sql;
             _isChangeTracking = isChangeTracking;
+            _returnType = returnType;
         }
 
         public bool Equals(
@@ -23,7 +26,7 @@ namespace Venflow.Commands
 #endif
             SqlQueryCacheKey y)
         {
-            return _isChangeTracking == y._isChangeTracking && _sql == y._sql;
+            return _isChangeTracking == y._isChangeTracking && _returnType == y._returnType && _sql == y._sql;
         }
 
         public new int GetHashCode()
@@ -31,6 +34,8 @@ namespace Venflow.Commands
             var hashCode = new HashCode();
 
             hashCode.Add(_sql);
+
+            hashCode.Add(_returnType);
 
             hashCode.Add(_isChangeTracking);
 
