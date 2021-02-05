@@ -94,7 +94,7 @@ namespace Venflow.Score
 
                 readmeFileContent.Remove(benchmarkStartIndex, benchmarkEndIndex - benchmarkStartIndex);
 
-                InsertMarkdownTable(readmeFileContent, benchmarkStartIndex, new[] { "ORM Name", "Composite Score\\*", " Mean Score\\*", "Allocation Score\\*" }, _orms.Values.OrderBy(x => x.AllocScore + x.BenchScore).Select((x, index) => new string[] { $"#{++index} [{x.OrmName.Name}]({x.OrmName.Link})", Math.Round(x.AllocScore + x.BenchScore, 3).ToString(), Math.Round(x.BenchScore, 3).ToString(), Math.Round(x.AllocScore, 3).ToString() }));
+                InsertMarkdownTable(readmeFileContent, benchmarkStartIndex, new[] { "ORM Name", "Composite Score\\*", "Mean Score\\*", "Allocation Score\\*" }, _orms.Values.OrderBy(x => x.AllocScore + x.BenchScore).Select((x, index) => new string[] { $"#{++index} [{x.OrmName.Name}]({x.OrmName.Link})", Math.Round(x.AllocScore + x.BenchScore, 3).ToString(), Math.Round(x.BenchScore, 3).ToString(), Math.Round(x.AllocScore, 3).ToString() }));
 
                 await File.WriteAllTextAsync(readmePath, readmeFileContent.ToString());
             }
@@ -228,9 +228,9 @@ namespace Venflow.Score
                 }
                 else
                 {
-                    stringBuilder.Insert(index, " | :-: ");
+                    stringBuilder.Insert(index, "| :-: ");
 
-                    index += 7;
+                    index += 6;
                 }
             }
 
