@@ -30,9 +30,9 @@ namespace Venflow.Commands
 #endif
             QueryCacheKey y)
         {
-            if (y._returnType != _returnType ||
-                y._isChangeTracking != _isChangeTracking ||
-                y._columnSchema.Count != _columnSchema.Count)
+            if (y._isChangeTracking != _isChangeTracking ||
+                y._columnSchema.Count != _columnSchema.Count ||
+                y._returnType != _returnType)
                 return false;
 
             var columnSchemaSpan = _columnSchema.AsSpan();

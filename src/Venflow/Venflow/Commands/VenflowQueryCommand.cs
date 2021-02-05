@@ -13,20 +13,21 @@ namespace Venflow.Commands
         internal Delegate? Materializer { get; set; }
 
         private readonly RelationBuilderValues? _relationBuilderValues;
-        private readonly bool _trackChanges;
         private readonly bool _isSingleResult;
         private readonly List<(Action<string> logger, bool includeSensitiveData)> _loggers;
         private readonly bool _shouldLog;
+        private readonly SqlQueryCacheKey _sqlQueryCacheKey;
 
         internal VenflowQueryCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, RelationBuilderValues? relationBuilderValues, bool trackChanges, bool disposeCommand, bool isSingleResult, List<(Action<string> logger, bool includeSensitiveData)> loggers, bool shouldLog) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
         {
             _relationBuilderValues = relationBuilderValues;
-            _trackChanges = trackChanges;
             _isSingleResult = isSingleResult;
             _loggers = loggers;
             _shouldLog = shouldLog;
 
             underlyingCommand.Connection = database.GetConnection();
+
+            _sqlQueryCacheKey = new SqlQueryCacheKey(underlyingCommand.CommandText, trackChanges);
         }
 
         async Task<TReturn> IQueryCommand<TEntity, TReturn>.QueryAsync(CancellationToken cancellationToken)
@@ -59,7 +60,7 @@ namespace Venflow.Commands
                 }
                 else
                 {
-                    Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer<TReturn>(_relationBuilderValues, reader.GetColumnSchema(), _trackChanges);
+                    Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer<TReturn>(_relationBuilderValues, reader, _sqlQueryCacheKey);
                 }
 
                 return await materializer(reader, cancellationToken);
