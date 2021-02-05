@@ -3,24 +3,32 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using CsvHelper;
 
 namespace Venflow.Score
 {
     public static class Startup
     {
-        private static readonly string[] _ormNames = new[] { "EFCore", "Venflow", "RepoDb", "Dapper" };
+        private static readonly (string Name, string Link)[] _ormNames = new[]
+        {
+            ("EFCore","https://github.com/dotnet/efcore"),
+            ("Venflow","https://github.com/TwentyFourMinutes/Venflow"),
+            ("RepoDb","https://github.com/mikependon/RepoDb"),
+            ("Dapper","https://github.com/StackExchange/Dapper")
+        };
 
         private static readonly Dictionary<string, Orm> _orms = new Dictionary<string, Orm>(_ormNames.Length);
 
-        public static void Main()
+        public static async Task Main(string[] args)
         {
             string rootDirectory;
 
             while (true)
             {
                 Console.WriteLine("Enter the full path to the root directory of all the .csv benchmark results.");
-                rootDirectory = Console.ReadLine();
+                rootDirectory = args.Length > 0 ? args[0] : Console.ReadLine() ?? string.Empty;
 
                 if (!Directory.Exists(rootDirectory))
                 {
@@ -34,22 +42,76 @@ namespace Venflow.Score
 
             foreach (var ormName in _ormNames)
             {
-                _orms.Add(ormName, new Orm(ormName));
+                _orms.Add(ormName.Name, new Orm(ormName));
             }
 
-            CalculateOrmResults(ReadBenchResultFiles(rootDirectory));
+            await CalculateOrmResults(ReadBenchResultFiles(rootDirectory));
 
-            var index = 0;
-
-            foreach (var orm in _orms.Values.OrderBy(x => x.AllocScore + x.BenchScore))
+            if (args.Length > 2)
             {
-                Console.WriteLine($"#{++index} {orm.OrmName} - {Math.Round(orm.AllocScore + orm.BenchScore, 3)}. Mean Score: {Math.Round(orm.BenchScore, 3)}, Allocation Score: {Math.Round(orm.AllocScore, 3) }.");
-            }
+                var benchmarkDestionationPath = args[1];
 
-            Console.ReadKey();
+                if (!Directory.Exists(benchmarkDestionationPath))
+                    throw new ArgumentException($"The directory '{benchmarkDestionationPath}' could not be found.");
+
+                var readmePath = args[2];
+
+                if (!File.Exists(readmePath))
+                    throw new ArgumentException($"The file '{readmePath}' could not be found.");
+
+                var fileExtensions = new string[] { ".csv", ".md" };
+
+                foreach (var fullFileName in Directory.EnumerateFiles(rootDirectory))
+                {
+                    if (!fileExtensions.Any(x => fullFileName.EndsWith(x)))
+                        continue;
+
+                    var fileName = Path.GetFileName(fullFileName);
+
+                    var reportIndex = fileName.IndexOf("-report");
+
+                    var benchmarkNameIndex = fileName.LastIndexOf(".", reportIndex) + 1;
+
+                    var newFileName = fileName[benchmarkNameIndex..reportIndex];
+
+                    newFileName = newFileName.TrimEnd("Benchmark").TrimEnd("Async");
+
+                    newFileName += Path.GetExtension(fileName);
+
+                    File.Copy(fullFileName, Path.Combine(benchmarkDestionationPath, newFileName), true);
+                }
+
+                var readmeFileRawContent = await File.ReadAllTextAsync(readmePath);
+
+                var readmeFileContent = new StringBuilder(readmeFileRawContent);
+
+                const string benchmarkStartMarker = "<!--Benchmark Start-->\r\n";
+                const string benchmarkEndMarker = "<!--Benchmark End-->";
+
+                var benchmarkStartIndex = readmeFileRawContent.IndexOf(benchmarkStartMarker) + benchmarkStartMarker.Length;
+
+                var benchmarkEndIndex = readmeFileRawContent.IndexOf(benchmarkEndMarker, benchmarkStartIndex);
+
+                readmeFileContent.Remove(benchmarkStartIndex, benchmarkEndIndex - benchmarkStartIndex);
+
+                InsertMarkdownTable(readmeFileContent, benchmarkStartIndex, new[] { "ORM Name", "Composite Score\\*", " Mean Score\\*", "Allocation Score\\*" }, _orms.Values.OrderBy(x => x.AllocScore + x.BenchScore).Select((x, index) => new string[] { $"#{++index} [{x.OrmName.Name}]({x.OrmName.Link})", Math.Round(x.AllocScore + x.BenchScore, 3).ToString(), Math.Round(x.BenchScore, 3).ToString(), Math.Round(x.AllocScore, 3).ToString() }));
+
+                await File.WriteAllTextAsync(readmePath, readmeFileContent.ToString());
+            }
+            else
+            {
+                var index = 0;
+
+                foreach (var orm in _orms.Values.OrderBy(x => x.AllocScore + x.BenchScore))
+                {
+                    Console.WriteLine($"#{++index} {orm.OrmName.Name} - {Math.Round(orm.AllocScore + orm.BenchScore, 3)}. Mean Score: {Math.Round(orm.BenchScore, 3)}, Allocation Score: {Math.Round(orm.AllocScore, 3) }.");
+                }
+
+                Console.ReadKey();
+            }
         }
 
-        public static IEnumerable<List<BenchResult>> ReadBenchResultFiles(string rootDirectory)
+        private static async IAsyncEnumerable<List<BenchResult>> ReadBenchResultFiles(string rootDirectory)
         {
             var benchResults = new List<BenchResult>();
             string? lastJobName = null;
@@ -59,7 +121,7 @@ namespace Venflow.Score
                 using var reader = new StreamReader(fullFileName);
                 using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
-                foreach (var benchResult in csv.GetRecords<BenchResult>())
+                await foreach (var benchResult in csv.GetRecordsAsync<BenchResult>())
                 {
                     if (lastJobName is { } &&
                        benchResult.Job != lastJobName)
@@ -78,9 +140,9 @@ namespace Venflow.Score
             }
         }
 
-        public static void CalculateOrmResults(IEnumerable<List<BenchResult>> batchBenchResults)
+        private static async Task CalculateOrmResults(IAsyncEnumerable<List<BenchResult>> batchBenchResults)
         {
-            foreach (var batchBenchResult in batchBenchResults)
+            await foreach (var batchBenchResult in batchBenchResults)
             {
                 var lowestTime = double.MaxValue;
                 var highestTime = double.MinValue;
@@ -89,10 +151,10 @@ namespace Venflow.Score
 
                 foreach (var benchResult in batchBenchResult)
                 {
-                    var benchOrmName = _ormNames.FirstOrDefault(x => benchResult.Method.IndexOf(x, StringComparison.InvariantCultureIgnoreCase) != -1);
+                    var benchOrmName = _ormNames.FirstOrDefault(x => benchResult.Method.IndexOf(x.Name, StringComparison.InvariantCultureIgnoreCase) != -1);
 
-                    if (benchOrmName is null ||
-                        !_orms.TryGetValue(benchOrmName, out var orm))
+                    if (benchOrmName.Name == default ||
+                        !_orms.TryGetValue(benchOrmName.Name, out var orm))
                     {
                         throw new InvalidOperationException($"No ORM name in method '{benchResult.Method}' found.");
                     }
@@ -125,6 +187,83 @@ namespace Venflow.Score
 
                     orm.FinishBench(lowestTime, lowestAlloc);
                 }
+            }
+        }
+
+        private static void InsertMarkdownTable(StringBuilder stringBuilder, int index, IEnumerable<string> headers, IEnumerable<IEnumerable<string>> rows)
+        {
+            int columnCount = 0;
+
+            foreach (var header in headers)
+            {
+                if (columnCount == 0)
+                {
+                    stringBuilder.Insert(index, "| ");
+
+                    index += 2;
+                }
+                else
+                {
+                    stringBuilder.Insert(index, " | ");
+
+                    index += 3;
+                }
+
+                stringBuilder.Insert(index, header);
+                index += header.Length;
+
+                columnCount++;
+            }
+
+            stringBuilder.Insert(index, " |\r\n");
+            index += 4;
+
+            for (int columnIndex = 0; columnIndex < columnCount; columnIndex++)
+            {
+                if (columnIndex == 0)
+                {
+                    stringBuilder.Insert(index, "| :- ");
+
+                    index += 5;
+                }
+                else
+                {
+                    stringBuilder.Insert(index, " | :-: ");
+
+                    index += 7;
+                }
+            }
+
+            stringBuilder.Insert(index, "|\r\n");
+            index += 3;
+
+            foreach (var row in rows)
+            {
+                columnCount = 0;
+
+                foreach (var rowCotent in row)
+                {
+                    if (columnCount == 0)
+                    {
+                        stringBuilder.Insert(index, "| ");
+
+                        index += 2;
+                    }
+                    else
+                    {
+                        stringBuilder.Insert(index, " | ");
+
+                        index += 3;
+                    }
+
+                    stringBuilder.Insert(index, rowCotent);
+                    index += rowCotent.Length;
+
+                    columnCount++;
+                }
+
+                stringBuilder.Insert(index, " |\r\n");
+                index += 4;
             }
         }
     }

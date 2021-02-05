@@ -9,12 +9,12 @@ namespace Venflow.Score
         public double BenchScore { get; private set; }
         public double AllocScore { get; private set; }
         public bool HasCurrentBench { get; private set; }
-        public string OrmName { get; }
+        public (string Name, string Link) OrmName { get; }
 
         private readonly List<double> _benchTimeScores;
         private readonly List<double> _benchAllocScores;
 
-        public Orm(string ormName)
+        public Orm((string Name, string Link) ormName)
         {
             OrmName = ormName;
 
