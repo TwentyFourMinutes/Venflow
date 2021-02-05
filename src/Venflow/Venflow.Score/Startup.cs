@@ -85,7 +85,7 @@ namespace Venflow.Score
 
                 var readmeFileContent = new StringBuilder(readmeFileRawContent);
 
-                const string benchmarkStartMarker = "<!--Benchmark Start-->\r\n";
+                string benchmarkStartMarker = "<!--Benchmark Start-->" + Environment.NewLine;
                 const string benchmarkEndMarker = "<!--Benchmark End-->";
 
                 var benchmarkStartIndex = readmeFileRawContent.IndexOf(benchmarkStartMarker) + benchmarkStartMarker.Length;
@@ -215,8 +215,8 @@ namespace Venflow.Score
                 columnCount++;
             }
 
-            stringBuilder.Insert(index, " |\r\n");
-            index += 4;
+            stringBuilder.Insert(index, " |" + Environment.NewLine);
+            index += 2 + Environment.NewLine.Length;
 
             for (int columnIndex = 0; columnIndex < columnCount; columnIndex++)
             {
@@ -234,8 +234,8 @@ namespace Venflow.Score
                 }
             }
 
-            stringBuilder.Insert(index, "|\r\n");
-            index += 3;
+            stringBuilder.Insert(index, "|" + Environment.NewLine);
+            index += 1 + Environment.NewLine.Length;
 
             foreach (var row in rows)
             {
@@ -262,8 +262,8 @@ namespace Venflow.Score
                     columnCount++;
                 }
 
-                stringBuilder.Insert(index, " |\r\n");
-                index += 4;
+                stringBuilder.Insert(index, " |" + Environment.NewLine);
+                index += 2 + Environment.NewLine.Length;
             }
         }
     }
