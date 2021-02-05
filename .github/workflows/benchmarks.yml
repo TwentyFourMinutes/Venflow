@@ -47,22 +47,32 @@ jobs:
         postgresql user: 'venflow_benchmarks'
         postgresql password: 'venflow_benchmarks'
 
-    - name: Run Query Benchmarks
-      working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*query*"
-
-    - name: Run Insert Benchmarks
-      working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*insert*"
-
-    - name: Run Update Benchmarks
-      working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*update*"
-
-    - name: Run Delete Benchmarks
-      working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*delete*"
+#    - name: Run Query Benchmarks
+#      working-directory: ./src/Venflow/Venflow.Benchmarks
+#      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*query*"
+#
+#    - name: Run Insert Benchmarks
+#      working-directory: ./src/Venflow/Venflow.Benchmarks
+#      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*insert*"
+#
+#    - name: Run Update Benchmarks
+#      working-directory: ./src/Venflow/Venflow.Benchmarks
+#      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*update*"
+#
+#    - name: Run Delete Benchmarks
+#      working-directory: ./src/Venflow/Venflow.Benchmarks
+#      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*delete*"
 
     - name: Run Instantiation Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
       run: dotnet run -c Release -f netcoreapp5.0 -- -f "*instantiation*"
+
+    - name: Run Score Calculator
+      working-directory: ./src/Venflow/Venflow.Score
+      run: dotnet run -c Release -- "../Venflow.Benchmarks/BenchmarkDotNet.Artifacts/results" "../../../benchmarks" "../../../README.md"
+    
+    - name: Commit Benchmark changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Updated Benchmarks
+        branch: dev
