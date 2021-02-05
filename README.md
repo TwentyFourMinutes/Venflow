@@ -47,14 +47,14 @@ Install-Package Venflow
 Benchmarking ORM's isn't an easy task, since there are a bunch of different factors which can alter the result in one way or another. I do not show any beautiful graphs here for the simple reason, that showing them would be pretty impractical, since there would be just too many. That is also the reason why I tried to come up with a composite number based on the benchmark results. If you still want check all the individual benchmarks, which you definitely should, the source code can be found [here](./src/Venflow/Venflow.Benchmarks) and the results as `.csv` and `.md` are over [here](./benchmarks).
 
 Lets just directly hop into the composite numbers of each tested ORM.
-
-| ORM Name                                                   | Composite Score* | Mean Score* | Allocation Score* |
+<!--Benchmark Start-->
+| ORM Name | Composite Score\* |  Mean Score\* | Allocation Score\* |
 | :--------------------------------------------------------- | :--------------: | :---------: | :---------------: |
 | #1 [Venflow](https://github.com/TwentyFourMinutes/Venflow) |      9.204       |    8.463    |       0.741       |
 | #2 [Dapper](https://github.com/StackExchange/Dapper)**     |      16.794      |   13.076    |       3.718       |
 | #3 [RepoDb](https://github.com/mikependon/RepoDb)**        |      49.494      |   43.254    |       6.240       |
 | #4 [EFCore](https://github.com/dotnet/efcore)              |     245.869      |   195.152   |      50.717       |
-
+<!--Benchmark End-->
 \* Lower is considered to be better </br>
 \*\* Do have missing benchmark entries for specific benchmark groups and therefor either might have better/worse scores.
 
