@@ -10,7 +10,7 @@ namespace Venflow.Benchmarks.Benchmarks.DeleteBenchmarks
     [SimpleJob(RuntimeMoniker.Net48)]
     [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     [SimpleJob(RuntimeMoniker.NetCoreApp50)]
-    [RPlotExporter]
+
     public class DeleteSingleAsyncBenchmark : BenchmarkBase
     {
         [GlobalSetup]

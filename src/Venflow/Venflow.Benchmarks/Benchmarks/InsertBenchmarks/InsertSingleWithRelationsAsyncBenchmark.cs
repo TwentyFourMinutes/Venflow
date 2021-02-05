@@ -11,7 +11,7 @@ namespace Venflow.Benchmarks.Benchmarks.InsertBenchmarks
     [SimpleJob(RuntimeMoniker.Net48)]
     [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     [SimpleJob(RuntimeMoniker.NetCoreApp50)]
-    [RPlotExporter]
+
     public class InsertSingleWithRelationsAsyncBenchmark : BenchmarkBase
     {
         [GlobalSetup]

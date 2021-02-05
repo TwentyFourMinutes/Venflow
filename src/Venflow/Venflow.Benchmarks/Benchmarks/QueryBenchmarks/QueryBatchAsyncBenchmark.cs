@@ -16,7 +16,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
     [SimpleJob(RuntimeMoniker.Net48)]
     [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     [SimpleJob(RuntimeMoniker.NetCoreApp50)]
-    [RPlotExporter]
+
     public class QueryBatchAsyncBenchmark : BenchmarkBase
     {
         [Params(10, 100, 1000, 10000)]

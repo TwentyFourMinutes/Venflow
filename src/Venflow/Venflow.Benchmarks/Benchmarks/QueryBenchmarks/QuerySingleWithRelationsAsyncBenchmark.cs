@@ -13,7 +13,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
     [SimpleJob(RuntimeMoniker.Net48)]
     [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     [SimpleJob(RuntimeMoniker.NetCoreApp50)]
-    [RPlotExporter]
+
     public class QuerySingleWithRelationsAsyncBenchmark : BenchmarkBase
     {
         private string sql => @"SELECT * FROM (SELECT * FROM ""People"" LIMIT 1) AS ""People"" INNER JOIN ""Emails"" ON ""Emails"".""PersonId"" = ""People"".""Id"" INNER JOIN ""EmailContents"" ON ""EmailContents"".""EmailId"" = ""Emails"".""Id""";

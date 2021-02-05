@@ -14,7 +14,7 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
     [SimpleJob(RuntimeMoniker.Net48)]
     [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     [SimpleJob(RuntimeMoniker.NetCoreApp50)]
-    [RPlotExporter]
+
     public class UpdateBatchAsyncBenchmark : BenchmarkBase
     {
         [Params(10, 100, 1000, 10000)]

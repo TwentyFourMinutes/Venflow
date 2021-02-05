@@ -14,7 +14,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
     [SimpleJob(RuntimeMoniker.Net48)]
     [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     [SimpleJob(RuntimeMoniker.NetCoreApp50)]
-    [RPlotExporter]
+
     public class QuerySingleAsyncBenchmark : BenchmarkBase
     {
         private const string sql = @"SELECT * FROM ""People"" LIMIT 1";
