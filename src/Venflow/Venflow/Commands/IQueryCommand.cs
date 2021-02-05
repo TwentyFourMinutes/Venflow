@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace Venflow.Commands
@@ -27,9 +26,6 @@ namespace Venflow.Commands
         /// </summary>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
         /// <returns>A task representing the asynchronous operation, with the materialized result of the query; <see langword="null"/> otherwise.</returns>
-#if !NET48
-        [return: MaybeNull]
-#endif
-        Task<TReturn> QueryAsync(CancellationToken cancellationToken = default);
+        Task<TReturn?> QueryAsync(CancellationToken cancellationToken = default);
     }
 }

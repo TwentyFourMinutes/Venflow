@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
@@ -34,10 +33,7 @@ namespace Venflow
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation, with the result of the executed query.</returns>
         /// <remarks>This method could represents the following SQL statement "SELECT * FROM table".</remarks>
-#if !NET48
-        [return: MaybeNull]
-#endif
-        public Task<TReturn> QueryAsync<TReturn>(IQueryCommand<TEntity, TReturn> queryCommand, CancellationToken cancellationToken = default) where TReturn : class, new()
+        public Task<TReturn?> QueryAsync<TReturn>(IQueryCommand<TEntity, TReturn> queryCommand, CancellationToken cancellationToken = default) where TReturn : class, new()
         {
             ((VenflowBaseCommand<TEntity>)queryCommand).UnderlyingCommand.Connection = Database.GetConnection();
 

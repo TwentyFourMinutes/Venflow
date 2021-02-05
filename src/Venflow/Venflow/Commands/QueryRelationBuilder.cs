@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -121,10 +120,7 @@ namespace Venflow.Commands
         public IBaseQueryRelationBuilder<TRootEntity, TRootEntity, TReturn> LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers)
             => _commandBuilder.LogTo(loggers);
 
-#if !NET48
-        [return: MaybeNull]
-#endif
-        public Task<TReturn> QueryAsync(CancellationToken cancellationToken = default)
+        public Task<TReturn?> QueryAsync(CancellationToken cancellationToken = default)
             => _commandBuilder.QueryAsync(cancellationToken);
 
         public IBaseQueryRelationBuilder<TRootEntity, TRootEntity, TReturn> AddFormatter()

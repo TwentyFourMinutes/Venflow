@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
@@ -281,10 +280,7 @@ namespace Venflow.Commands
             }
         }
 
-#if !NET48
-        [return: MaybeNull]
-#endif
-        public Task<TReturn> QueryAsync(CancellationToken cancellationToken = default)
+        public Task<TReturn?> QueryAsync(CancellationToken cancellationToken = default)
         {
             _disposeCommand = true;
 
