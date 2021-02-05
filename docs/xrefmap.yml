@@ -2478,6 +2478,38 @@ references:
   commentId: T:Venflow.VenflowConfiguration
   fullName: Venflow.VenflowConfiguration
   nameWithType: VenflowConfiguration
+- uid: Venflow.VenflowConfiguration.DynamicCacheExpirationTime
+  name: DynamicCacheExpirationTime
+  href: api/Venflow.VenflowConfiguration.html#Venflow_VenflowConfiguration_DynamicCacheExpirationTime
+  commentId: P:Venflow.VenflowConfiguration.DynamicCacheExpirationTime
+  fullName: Venflow.VenflowConfiguration.DynamicCacheExpirationTime
+  nameWithType: VenflowConfiguration.DynamicCacheExpirationTime
+- uid: Venflow.VenflowConfiguration.DynamicCacheExpirationTime*
+  name: DynamicCacheExpirationTime
+  href: api/Venflow.VenflowConfiguration.html#Venflow_VenflowConfiguration_DynamicCacheExpirationTime_
+  commentId: Overload:Venflow.VenflowConfiguration.DynamicCacheExpirationTime
+  isSpec: "True"
+  fullName: Venflow.VenflowConfiguration.DynamicCacheExpirationTime
+  nameWithType: VenflowConfiguration.DynamicCacheExpirationTime
+- uid: Venflow.VenflowConfiguration.SetDynamicCacheExpirationTime(System.Int64)
+  name: SetDynamicCacheExpirationTime(Int64)
+  href: api/Venflow.VenflowConfiguration.html#Venflow_VenflowConfiguration_SetDynamicCacheExpirationTime_System_Int64_
+  commentId: M:Venflow.VenflowConfiguration.SetDynamicCacheExpirationTime(System.Int64)
+  fullName: Venflow.VenflowConfiguration.SetDynamicCacheExpirationTime(System.Int64)
+  nameWithType: VenflowConfiguration.SetDynamicCacheExpirationTime(Int64)
+- uid: Venflow.VenflowConfiguration.SetDynamicCacheExpirationTime(TimeSpan)
+  name: SetDynamicCacheExpirationTime(TimeSpan)
+  href: api/Venflow.VenflowConfiguration.html#Venflow_VenflowConfiguration_SetDynamicCacheExpirationTime_TimeSpan_
+  commentId: M:Venflow.VenflowConfiguration.SetDynamicCacheExpirationTime(TimeSpan)
+  fullName: Venflow.VenflowConfiguration.SetDynamicCacheExpirationTime(TimeSpan)
+  nameWithType: VenflowConfiguration.SetDynamicCacheExpirationTime(TimeSpan)
+- uid: Venflow.VenflowConfiguration.SetDynamicCacheExpirationTime*
+  name: SetDynamicCacheExpirationTime
+  href: api/Venflow.VenflowConfiguration.html#Venflow_VenflowConfiguration_SetDynamicCacheExpirationTime_
+  commentId: Overload:Venflow.VenflowConfiguration.SetDynamicCacheExpirationTime
+  isSpec: "True"
+  fullName: Venflow.VenflowConfiguration.SetDynamicCacheExpirationTime
+  nameWithType: VenflowConfiguration.SetDynamicCacheExpirationTime
 - uid: Venflow.VenflowConfiguration.ShouldUseDeepValidation
   name: ShouldUseDeepValidation
   href: api/Venflow.VenflowConfiguration.html#Venflow_VenflowConfiguration_ShouldUseDeepValidation
