@@ -1,44 +1,61 @@
 ``` ini
 
-BenchmarkDotNet=v0.12.1, OS=ubuntu 18.04
-Intel Xeon CPU E5-2673 v4 2.30GHz, 1 CPU, 2 logical and 2 physical cores
-.NET Core SDK=5.0.102
-  [Host]        : .NET Core 5.0.2 (CoreCLR 5.0.220.61120, CoreFX 5.0.220.61120), X64 RyuJIT
-  .NET Core 3.1 : .NET Core 3.1.11 (CoreCLR 4.700.20.56602, CoreFX 4.700.20.56604), X64 RyuJIT
-  .NET Core 5.0 : .NET Core 5.0.2 (CoreCLR 5.0.220.61120, CoreFX 5.0.220.61120), X64 RyuJIT
+BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.508 (2004/?/20H1)
+Intel Core i7-6700HQ CPU 2.60GHz (Skylake), 1 CPU, 8 logical and 4 physical cores
+.NET Core SDK=5.0.100-rc.1.20452.10
+  [Host]        : .NET Core 5.0.0 (CoreCLR 5.0.20.45114, CoreFX 5.0.20.45114), X64 RyuJIT
+  .NET 4.8      : .NET Framework 4.8 (4.8.4220.0), X64 RyuJIT
+  .NET Core 3.1 : .NET Core 3.1.7 (CoreCLR 4.700.20.36602, CoreFX 4.700.20.37001), X64 RyuJIT
+  .NET Core 5.0 : .NET Core 5.0.0 (CoreCLR 5.0.20.45114, CoreFX 5.0.20.45114), X64 RyuJIT
 
 
 ```
-|                  Method |           Job |       Runtime | InsertCount |         Mean |        Error |       StdDev |       Median | Ratio | RatioSD |     Gen 0 |     Gen 1 |    Gen 2 |    Allocated |
-|------------------------ |-------------- |-------------- |------------ |-------------:|-------------:|-------------:|-------------:|------:|--------:|----------:|----------:|---------:|-------------:|
-|  **EfCoreInsertBatchAsync** | **.NET Core 3.1** | **.NET Core 3.1** |          **10** |   **1,822.7 μs** |     **36.35 μs** |     **45.97 μs** |   **1,835.7 μs** |  **1.00** |    **0.00** |    **3.9063** |         **-** |        **-** |    **125.22 KB** |
-| VenflowInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |          10 |     780.7 μs |     14.61 μs |     18.48 μs |     779.3 μs |  0.43 |    0.02 |         - |         - |        - |     13.49 KB |
-|  RepoDbInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |          10 |     851.9 μs |     16.96 μs |     38.97 μs |     841.5 μs |  0.47 |    0.03 |    0.9766 |         - |        - |     32.59 KB |
-|                         |               |               |             |              |              |              |              |       |         |           |           |          |              |
-|  EfCoreInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |          10 |   1,714.8 μs |     31.24 μs |     48.63 μs |   1,713.8 μs |  1.00 |    0.00 |    3.9063 |    1.9531 |        - |     104.4 KB |
-| VenflowInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |          10 |     785.4 μs |     15.36 μs |     28.46 μs |     779.8 μs |  0.46 |    0.02 |         - |         - |        - |     13.48 KB |
-|  RepoDbInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |          10 |     832.8 μs |     14.01 μs |     21.39 μs |     829.6 μs |  0.49 |    0.02 |         - |         - |        - |     23.41 KB |
-|                         |               |               |             |              |              |              |              |       |         |           |           |          |              |
-|  **EfCoreInsertBatchAsync** | **.NET Core 3.1** | **.NET Core 3.1** |         **100** |   **9,360.4 μs** |    **184.85 μs** |    **220.04 μs** |   **9,327.8 μs** |  **1.00** |    **0.00** |   **31.2500** |   **15.6250** |        **-** |   **1172.07 KB** |
-| VenflowInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |         100 |   1,424.4 μs |    128.22 μs |    374.02 μs |   1,215.1 μs |  0.15 |    0.04 |         - |         - |        - |     97.63 KB |
-|  RepoDbInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |         100 |   4,042.6 μs |     79.76 μs |    131.04 μs |   3,997.3 μs |  0.43 |    0.02 |    7.8125 |         - |        - |    291.55 KB |
-|                         |               |               |             |              |              |              |              |       |         |           |           |          |              |
-|  EfCoreInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         100 |   8,428.6 μs |    167.74 μs |    256.15 μs |   8,398.0 μs |  1.00 |    0.00 |   31.2500 |   15.6250 |        - |       960 KB |
-| VenflowInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         100 |   1,219.5 μs |     24.30 μs |     65.29 μs |   1,205.2 μs |  0.15 |    0.01 |         - |         - |        - |     97.63 KB |
-|  RepoDbInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         100 |   3,902.8 μs |     77.40 μs |     95.05 μs |   3,878.6 μs |  0.46 |    0.02 |    7.8125 |         - |        - |    200.08 KB |
-|                         |               |               |             |              |              |              |              |       |         |           |           |          |              |
-|  **EfCoreInsertBatchAsync** | **.NET Core 3.1** | **.NET Core 3.1** |        **1000** |  **74,732.7 μs** |  **1,434.28 μs** |  **1,864.97 μs** |  **75,033.4 μs** |  **1.00** |    **0.00** |  **428.5714** |  **142.8571** |        **-** |  **11612.61 KB** |
-| VenflowInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |        1000 |   5,070.0 μs |     97.83 μs |    130.59 μs |   5,055.7 μs |  0.07 |    0.00 |   31.2500 |   15.6250 |        - |    934.75 KB |
-|  RepoDbInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |        1000 |  36,849.7 μs |    727.71 μs |  1,293.50 μs |  36,526.5 μs |  0.50 |    0.02 |   71.4286 |         - |        - |   2872.12 KB |
-|                         |               |               |             |              |              |              |              |       |         |           |           |          |              |
-|  EfCoreInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        1000 |  65,402.8 μs |  1,296.14 μs |  1,639.20 μs |  65,325.4 μs |  1.00 |    0.00 |  250.0000 |  125.0000 |        - |   9487.75 KB |
-| VenflowInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        1000 |   5,010.5 μs |     98.45 μs |    124.50 μs |   5,008.2 μs |  0.08 |    0.00 |   31.2500 |   15.6250 |        - |    934.71 KB |
-|  RepoDbInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        1000 |  35,726.5 μs |    696.50 μs |  1,201.43 μs |  35,773.2 μs |  0.55 |    0.02 |   71.4286 |         - |        - |   1958.28 KB |
-|                         |               |               |             |              |              |              |              |       |         |           |           |          |              |
-|  **EfCoreInsertBatchAsync** | **.NET Core 3.1** | **.NET Core 3.1** |       **10000** | **786,901.1 μs** | **15,512.78 μs** | **15,930.48 μs** | **788,111.7 μs** |  **1.00** |    **0.00** | **4000.0000** | **2000.0000** |        **-** | **116240.99 KB** |
-| VenflowInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |       10000 |  49,154.2 μs |    971.60 μs |  1,623.33 μs |  48,910.4 μs |  0.06 |    0.00 |  444.4444 |  333.3333 | 222.2222 |   9234.36 KB |
-|  RepoDbInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |       10000 | 491,251.7 μs |  9,659.35 μs | 16,138.60 μs | 487,186.9 μs |  0.62 |    0.03 | 1000.0000 |         - |        - |  28777.92 KB |
-|                         |               |               |             |              |              |              |              |       |         |           |           |          |              |
-|  EfCoreInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       10000 | 657,067.5 μs | 11,426.50 μs | 10,129.29 μs | 657,052.5 μs |  1.00 |    0.00 | 3000.0000 | 1000.0000 |        - |  94987.05 KB |
-| VenflowInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       10000 |  45,914.7 μs |    896.27 μs |  1,032.14 μs |  45,813.4 μs |  0.07 |    0.00 |  400.0000 |  300.0000 | 200.0000 |   9235.18 KB |
-|  RepoDbInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       10000 | 457,894.9 μs |  7,487.04 μs |  9,735.26 μs | 459,226.3 μs |  0.70 |    0.02 |         - |         - |        - |  19614.55 KB |
+|                  Method |           Job |       Runtime | InsertCount |       Mean |      Error |     StdDev |     Median | Ratio | RatioSD |      Gen 0 |     Gen 1 |    Gen 2 |    Allocated |
+|------------------------ |-------------- |-------------- |------------ |-----------:|-----------:|-----------:|-----------:|------:|--------:|-----------:|----------:|---------:|-------------:|
+|  **EfCoreInsertBatchAsync** |      **.NET 4.8** |      **.NET 4.8** |          **10** |   **2.653 ms** |  **0.0525 ms** |  **0.1119 ms** |   **2.641 ms** |  **1.00** |    **0.00** |    **42.9688** |   **11.7188** |        **-** |    **143.82 KB** |
+| VenflowInsertBatchAsync |      .NET 4.8 |      .NET 4.8 |          10 |   1.146 ms |  0.0226 ms |  0.0278 ms |   1.146 ms |  0.44 |    0.02 |     3.9063 |         - |        - |      15.8 KB |
+|  RepoDbInsertBatchAsync |      .NET 4.8 |      .NET 4.8 |          10 |   1.356 ms |  0.0266 ms |  0.0222 ms |   1.363 ms |  0.52 |    0.02 |     5.8594 |         - |        - |     22.69 KB |
+|                         |               |               |             |            |            |            |            |       |         |            |           |          |              |
+|  EfCoreInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |          10 |   2.365 ms |  0.0471 ms |  0.0628 ms |   2.375 ms |  1.00 |    0.00 |    39.0625 |    7.8125 |        - |     126.7 KB |
+| VenflowInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |          10 |   1.098 ms |  0.0216 ms |  0.0222 ms |   1.094 ms |  0.46 |    0.02 |     1.9531 |         - |        - |     11.01 KB |
+|  RepoDbInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |          10 |   1.367 ms |  0.0268 ms |  0.0503 ms |   1.364 ms |  0.57 |    0.03 |     3.9063 |         - |        - |     16.95 KB |
+|                         |               |               |             |            |            |            |            |       |         |            |           |          |              |
+|  EfCoreInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |          10 |   2.260 ms |  0.0436 ms |  0.0596 ms |   2.264 ms |  1.00 |    0.00 |    31.2500 |    3.9063 |        - |    105.64 KB |
+| VenflowInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |          10 |   1.102 ms |  0.0220 ms |  0.0468 ms |   1.103 ms |  0.48 |    0.03 |          - |         - |        - |        11 KB |
+|  RepoDbInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |          10 |   1.237 ms |  0.0742 ms |  0.2187 ms |   1.118 ms |  0.65 |    0.07 |     3.9063 |         - |        - |      16.9 KB |
+|                         |               |               |             |            |            |            |            |       |         |            |           |          |              |
+|  **EfCoreInsertBatchAsync** |      **.NET 4.8** |      **.NET 4.8** |         **100** |  **12.157 ms** |  **0.2376 ms** |  **0.2641 ms** |  **12.073 ms** |  **1.00** |    **0.00** |   **265.6250** |   **78.1250** |        **-** |   **1294.08 KB** |
+| VenflowInsertBatchAsync |      .NET 4.8 |      .NET 4.8 |         100 |   1.817 ms |  0.0532 ms |  0.1510 ms |   1.817 ms |  0.15 |    0.01 |    31.2500 |         - |        - |    100.95 KB |
+|  RepoDbInsertBatchAsync |      .NET 4.8 |      .NET 4.8 |         100 |   4.394 ms |  0.0875 ms |  0.1107 ms |   4.359 ms |  0.36 |    0.01 |    54.6875 |         - |        - |    182.45 KB |
+|                         |               |               |             |            |            |            |            |       |         |            |           |          |              |
+|  EfCoreInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |         100 |  10.360 ms |  0.1605 ms |  0.1423 ms |  10.316 ms |  1.00 |    0.00 |   265.6250 |   78.1250 |        - |   1194.27 KB |
+| VenflowInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |         100 |   1.769 ms |  0.0348 ms |  0.0582 ms |   1.761 ms |  0.17 |    0.01 |    27.3438 |         - |        - |     87.36 KB |
+|  RepoDbInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |         100 |   4.371 ms |  0.0864 ms |  0.2103 ms |   4.348 ms |  0.43 |    0.01 |    39.0625 |         - |        - |    137.84 KB |
+|                         |               |               |             |            |            |            |            |       |         |            |           |          |              |
+|  EfCoreInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         100 |   9.552 ms |  0.1591 ms |  0.1489 ms |   9.467 ms |  1.00 |    0.00 |   218.7500 |   62.5000 |        - |    978.38 KB |
+| VenflowInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         100 |   1.723 ms |  0.0337 ms |  0.0315 ms |   1.717 ms |  0.18 |    0.00 |    27.3438 |         - |        - |     87.35 KB |
+|  RepoDbInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         100 |   4.533 ms |  0.0905 ms |  0.1145 ms |   4.542 ms |  0.47 |    0.02 |    39.0625 |         - |        - |    137.72 KB |
+|                         |               |               |             |            |            |            |            |       |         |            |           |          |              |
+|  **EfCoreInsertBatchAsync** |      **.NET 4.8** |      **.NET 4.8** |        **1000** |  **94.875 ms** |  **1.6235 ms** |  **1.4392 ms** |  **94.638 ms** |  **1.00** |    **0.00** |  **2000.0000** |  **833.3333** |        **-** |  **12763.36 KB** |
+| VenflowInsertBatchAsync |      .NET 4.8 |      .NET 4.8 |        1000 |   8.634 ms |  0.1716 ms |  0.2348 ms |   8.634 ms |  0.09 |    0.00 |   156.2500 |   78.1250 |        - |    967.98 KB |
+|  RepoDbInsertBatchAsync |      .NET 4.8 |      .NET 4.8 |        1000 |  37.375 ms |  0.7261 ms |  0.6792 ms |  37.113 ms |  0.39 |    0.01 |   571.4286 |         - |        - |   1776.75 KB |
+|                         |               |               |             |            |            |            |            |       |         |            |           |          |              |
+|  EfCoreInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |        1000 |  86.868 ms |  1.1325 ms |  1.0039 ms |  86.998 ms |  1.00 |    0.00 |  1800.0000 |  800.0000 |        - |  11809.35 KB |
+| VenflowInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |        1000 |   8.126 ms |  0.1543 ms |  0.1368 ms |   8.152 ms |  0.09 |    0.00 |   140.6250 |   62.5000 |        - |    853.33 KB |
+|  RepoDbInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |        1000 |  36.468 ms |  0.7281 ms |  2.1354 ms |  36.878 ms |  0.38 |    0.02 |   384.6154 |   76.9231 |        - |   1337.66 KB |
+|                         |               |               |             |            |            |            |            |       |         |            |           |          |              |
+|  EfCoreInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        1000 |  76.624 ms |  1.3681 ms |  1.3437 ms |  76.439 ms |  1.00 |    0.00 |  1428.5714 |  571.4286 |        - |   9645.99 KB |
+| VenflowInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        1000 |   8.008 ms |  0.1531 ms |  0.1937 ms |   8.032 ms |  0.10 |    0.00 |   125.0000 |   62.5000 |        - |    853.32 KB |
+|  RepoDbInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        1000 |  35.522 ms |  0.7618 ms |  2.2463 ms |  35.636 ms |  0.45 |    0.03 |   400.0000 |  133.3333 |        - |   1336.87 KB |
+|                         |               |               |             |            |            |            |            |       |         |            |           |          |              |
+|  **EfCoreInsertBatchAsync** |      **.NET 4.8** |      **.NET 4.8** |       **10000** | **938.914 ms** | **18.6815 ms** | **20.7645 ms** | **934.892 ms** |  **1.00** |    **0.00** | **21000.0000** | **7000.0000** |        **-** | **127685.58 KB** |
+| VenflowInsertBatchAsync |      .NET 4.8 |      .NET 4.8 |       10000 |  96.209 ms |  3.6724 ms | 10.7126 ms |  91.850 ms |  0.11 |    0.01 |  1500.0000 |  666.6667 | 166.6667 |  10075.13 KB |
+|  RepoDbInsertBatchAsync |      .NET 4.8 |      .NET 4.8 |       10000 | 601.179 ms | 11.8129 ms | 19.7367 ms | 595.889 ms |  0.64 |    0.02 |  5000.0000 | 1000.0000 |        - |  18050.65 KB |
+|                         |               |               |             |            |            |            |            |       |         |            |           |          |              |
+|  EfCoreInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |       10000 | 849.826 ms | 16.9767 ms | 14.1763 ms | 853.742 ms |  1.00 |    0.00 | 19000.0000 | 7000.0000 |        - | 118204.25 KB |
+| VenflowInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |       10000 |  86.719 ms |  2.7068 ms |  7.8098 ms |  83.262 ms |  0.10 |    0.01 |  1285.7143 |  571.4286 | 142.8571 |   8530.35 KB |
+|  RepoDbInsertBatchAsync | .NET Core 3.1 | .NET Core 3.1 |       10000 | 465.992 ms |  9.2702 ms | 21.2999 ms | 458.318 ms |  0.57 |    0.03 |  3000.0000 | 1000.0000 |        - |   13432.8 KB |
+|                         |               |               |             |            |            |            |            |       |         |            |           |          |              |
+|  EfCoreInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       10000 | 752.093 ms | 14.0007 ms | 13.0963 ms | 750.631 ms |  1.00 |    0.00 | 16000.0000 | 4000.0000 |        - |  96562.56 KB |
+| VenflowInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       10000 |  78.693 ms |  1.5631 ms |  2.7784 ms |  78.245 ms |  0.11 |    0.00 |  1285.7143 |  571.4286 | 142.8571 |   8531.74 KB |
+|  RepoDbInsertBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       10000 | 476.596 ms |  9.5096 ms | 23.6823 ms | 475.564 ms |  0.62 |    0.04 |  3000.0000 | 1000.0000 |        - |  13425.68 KB |

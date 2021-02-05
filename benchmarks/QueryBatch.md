@@ -1,76 +1,109 @@
 ``` ini
 
-BenchmarkDotNet=v0.12.1, OS=ubuntu 18.04
-Intel Xeon CPU E5-2673 v4 2.30GHz, 1 CPU, 2 logical and 2 physical cores
-.NET Core SDK=5.0.102
-  [Host]        : .NET Core 5.0.2 (CoreCLR 5.0.220.61120, CoreFX 5.0.220.61120), X64 RyuJIT
-  .NET Core 3.1 : .NET Core 3.1.11 (CoreCLR 4.700.20.56602, CoreFX 4.700.20.56604), X64 RyuJIT
-  .NET Core 5.0 : .NET Core 5.0.2 (CoreCLR 5.0.220.61120, CoreFX 5.0.220.61120), X64 RyuJIT
+BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.508 (2004/?/20H1)
+Intel Core i7-6700HQ CPU 2.60GHz (Skylake), 1 CPU, 8 logical and 4 physical cores
+.NET Core SDK=5.0.100-rc.1.20452.10
+  [Host]        : .NET Core 5.0.0 (CoreCLR 5.0.20.45114, CoreFX 5.0.20.45114), X64 RyuJIT
+  .NET 4.8      : .NET Framework 4.8 (4.8.4220.0), X64 RyuJIT
+  .NET Core 3.1 : .NET Core 3.1.7 (CoreCLR 4.700.20.36602, CoreFX 4.700.20.37001), X64 RyuJIT
+  .NET Core 5.0 : .NET Core 5.0.0 (CoreCLR 5.0.20.45114, CoreFX 5.0.20.45114), X64 RyuJIT
 
 
 ```
-|                                   Method |           Job |       Runtime | QueryCount |        Mean |     Error |      StdDev |      Median | Ratio | RatioSD |    Gen 0 |   Gen 1 |   Gen 2 |  Allocated |
-|----------------------------------------- |-------------- |-------------- |----------- |------------:|----------:|------------:|------------:|------:|--------:|---------:|--------:|--------:|-----------:|
-|                    **EfCoreQueryBatchAsync** | **.NET Core 3.1** | **.NET Core 3.1** |         **10** |    **427.9 μs** |   **8.54 μs** |     **7.57 μs** |    **427.1 μs** |  **1.00** |    **0.00** |        **-** |       **-** |       **-** |   **12.38 KB** |
-|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |         10 |    439.4 μs |   8.11 μs |    12.63 μs |    440.5 μs |  1.03 |    0.04 |        - |       - |       - |   15.42 KB |
-| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |         10 |    464.6 μs |   8.98 μs |    10.69 μs |    466.7 μs |  1.09 |    0.03 |        - |       - |       - |   18.96 KB |
-|                   VenflowQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |         10 |    245.0 μs |   4.86 μs |     9.92 μs |    242.7 μs |  0.58 |    0.03 |        - |       - |       - |     4.9 KB |
-|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |         10 |    245.4 μs |   4.89 μs |     8.16 μs |    245.9 μs |  0.58 |    0.02 |        - |       - |       - |     4.5 KB |
-|                    RepoDbQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |         10 |    255.3 μs |   5.10 μs |    11.72 μs |    252.1 μs |  0.60 |    0.03 |        - |       - |       - |    5.53 KB |
-|                    DapperQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |         10 |    251.3 μs |   5.01 μs |     8.90 μs |    252.1 μs |  0.58 |    0.03 |        - |       - |       - |    4.73 KB |
-|                                          |               |               |            |             |           |             |             |       |         |          |         |         |            |
-|                    EfCoreQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         10 |    427.8 μs |   8.49 μs |    19.50 μs |    427.5 μs |  1.00 |    0.00 |        - |       - |       - |   11.37 KB |
-|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |         10 |    436.7 μs |   8.72 μs |    12.51 μs |    436.0 μs |  1.00 |    0.06 |        - |       - |       - |   13.44 KB |
-| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |         10 |    439.2 μs |   8.75 μs |    20.45 μs |    440.1 μs |  1.03 |    0.07 |        - |       - |       - |   14.63 KB |
-|                   VenflowQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         10 |    249.2 μs |   4.88 μs |    11.20 μs |    248.4 μs |  0.58 |    0.04 |        - |       - |       - |    4.78 KB |
-|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |         10 |    246.9 μs |   4.80 μs |    12.05 μs |    246.2 μs |  0.58 |    0.03 |        - |       - |       - |    4.31 KB |
-|                    RepoDbQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         10 |    261.4 μs |   5.23 μs |    14.57 μs |    260.6 μs |  0.62 |    0.04 |        - |       - |       - |    5.53 KB |
-|                    DapperQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         10 |    254.3 μs |   5.06 μs |    10.22 μs |    251.7 μs |  0.59 |    0.04 |        - |       - |       - |    4.72 KB |
-|                                          |               |               |            |             |           |             |             |       |         |          |         |         |            |
-|                    **EfCoreQueryBatchAsync** | **.NET Core 3.1** | **.NET Core 3.1** |        **100** |    **474.8 μs** |   **9.46 μs** |    **18.46 μs** |    **473.5 μs** |  **1.00** |    **0.00** |   **0.9766** |       **-** |       **-** |   **38.81 KB** |
-|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |        100 |    498.2 μs |   9.87 μs |    11.75 μs |    497.1 μs |  1.04 |    0.05 |   1.4648 |       - |       - |   46.78 KB |
-| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |        100 |    528.9 μs |  10.33 μs |    11.48 μs |    530.7 μs |  1.11 |    0.06 |   0.9766 |       - |       - |   49.65 KB |
-|                   VenflowQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |        100 |    306.2 μs |   5.89 μs |     4.92 μs |    305.8 μs |  0.64 |    0.03 |   0.4883 |       - |       - |   20.08 KB |
-|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |        100 |    301.9 μs |   5.91 μs |    11.95 μs |    300.2 μs |  0.64 |    0.04 |   0.4883 |       - |       - |   16.16 KB |
-|                    RepoDbQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |        100 |    338.7 μs |  10.37 μs |    30.42 μs |    332.6 μs |  0.68 |    0.05 |   0.4883 |       - |       - |    17.2 KB |
-|                    DapperQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |        100 |    475.5 μs |   9.46 μs |    23.21 μs |    471.8 μs |  1.00 |    0.07 |        - |       - |       - |   21.33 KB |
-|                                          |               |               |            |             |           |             |             |       |         |          |         |         |            |
-|                    EfCoreQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        100 |    553.4 μs |  11.05 μs |    19.93 μs |    554.6 μs |  1.00 |    0.00 |   0.9766 |       - |       - |   37.99 KB |
-|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |        100 |    586.9 μs |  11.54 μs |    16.92 μs |    587.8 μs |  1.05 |    0.04 |   0.9766 |       - |       - |   44.47 KB |
-| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |        100 |    576.0 μs |  11.45 μs |    16.42 μs |    574.3 μs |  1.03 |    0.05 |   0.9766 |       - |       - |   45.98 KB |
-|                   VenflowQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        100 |    366.5 μs |   7.24 μs |    16.49 μs |    367.0 μs |  0.66 |    0.04 |   0.4883 |       - |       - |   20.03 KB |
-|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |        100 |    372.4 μs |   7.41 μs |    16.43 μs |    368.1 μs |  0.68 |    0.04 |   0.4883 |       - |       - |   16.12 KB |
-|                    RepoDbQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        100 |    384.6 μs |   7.47 μs |    13.66 μs |    380.9 μs |  0.70 |    0.04 |   0.4883 |       - |       - |    17.2 KB |
-|                    DapperQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        100 |    452.8 μs |   8.65 μs |     9.61 μs |    454.7 μs |  0.81 |    0.04 |   0.4883 |       - |       - |   21.33 KB |
-|                                          |               |               |            |             |           |             |             |       |         |          |         |         |            |
-|                    **EfCoreQueryBatchAsync** | **.NET Core 3.1** | **.NET Core 3.1** |       **1000** |  **1,466.0 μs** |  **28.83 μs** |    **35.41 μs** |  **1,460.2 μs** |  **1.00** |    **0.00** |  **11.7188** |       **-** |       **-** |  **299.28 KB** |
-|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |       1000 |  1,657.4 μs |  32.94 μs |    75.69 μs |  1,658.2 μs |  1.10 |    0.06 |  13.6719 |  3.9063 |       - |  355.81 KB |
-| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |       1000 |  1,709.2 μs |  33.13 μs |    35.45 μs |  1,700.2 μs |  1.16 |    0.04 |  13.6719 |  3.9063 |       - |  360.04 KB |
-|                   VenflowQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |       1000 |  1,081.8 μs |  20.67 μs |    28.29 μs |  1,079.1 μs |  0.74 |    0.03 |   5.8594 |  1.9531 |       - |  168.05 KB |
-|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |       1000 |    999.7 μs |  19.71 μs |    23.47 μs |    988.3 μs |  0.68 |    0.02 |   3.9063 |       - |       - |  128.99 KB |
-|                    RepoDbQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |       1000 |  1,054.1 μs |  20.68 μs |    24.61 μs |  1,054.0 μs |  0.72 |    0.02 |   3.9063 |       - |       - |  130.05 KB |
-|                    DapperQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |       1000 |  1,580.0 μs |  29.72 μs |    30.52 μs |  1,580.1 μs |  1.08 |    0.04 |   5.8594 |  1.9531 |       - |  183.06 KB |
-|                                          |               |               |            |             |           |             |             |       |         |          |         |         |            |
-|                    EfCoreQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       1000 |  1,300.9 μs |  24.03 μs |    47.99 μs |  1,293.7 μs |  1.00 |    0.00 |   9.7656 |       - |       - |   298.3 KB |
-|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |       1000 |  1,767.0 μs |  41.16 μs |   120.07 μs |  1,736.8 μs |  1.33 |    0.11 |  13.6719 |  3.9063 |       - |  354.17 KB |
-| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |       1000 |  1,723.0 μs |  34.38 μs |    79.68 μs |  1,718.5 μs |  1.32 |    0.07 |  13.6719 |  3.9063 |       - |  355.68 KB |
-|                   VenflowQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       1000 |  1,063.6 μs |  20.36 μs |    47.18 μs |  1,053.5 μs |  0.82 |    0.05 |   5.8594 |  1.9531 |       - |     168 KB |
-|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |       1000 |    988.4 μs |  19.37 μs |    36.39 μs |    982.0 μs |  0.76 |    0.04 |   3.9063 |       - |       - |  128.95 KB |
-|                    RepoDbQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       1000 |    922.5 μs |  17.73 μs |    22.42 μs |    916.0 μs |  0.71 |    0.03 |   3.9063 |       - |       - |  130.03 KB |
-|                    DapperQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       1000 |  1,375.8 μs |  25.89 μs |    40.31 μs |  1,370.6 μs |  1.05 |    0.05 |   5.8594 |  1.9531 |       - |  183.05 KB |
-|                                          |               |               |            |             |           |             |             |       |         |          |         |         |            |
-|                    **EfCoreQueryBatchAsync** | **.NET Core 3.1** | **.NET Core 3.1** |      **10000** |  **8,804.5 μs** | **174.84 μs** |   **227.35 μs** |  **8,762.6 μs** |  **1.00** |    **0.00** | **125.0000** | **31.2500** | **15.6250** | **3003.42 KB** |
-|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |      10000 | 14,119.4 μs | 276.36 μs |   387.42 μs | 14,271.4 μs |  1.60 |    0.06 | 156.2500 | 78.1250 | 31.2500 | 3552.77 KB |
-| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |      10000 | 14,164.1 μs | 282.78 μs |   367.70 μs | 14,139.2 μs |  1.61 |    0.06 | 156.2500 | 78.1250 | 31.2500 | 3555.68 KB |
-|                   VenflowQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |      10000 |  8,661.4 μs | 164.51 μs |   168.94 μs |  8,645.0 μs |  0.98 |    0.04 |  78.1250 | 46.8750 | 15.6250 | 1747.19 KB |
-|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |      10000 |  7,146.8 μs |  89.71 μs |    70.04 μs |  7,160.8 μs |  0.81 |    0.03 |  70.3125 | 46.8750 | 23.4375 | 1356.62 KB |
-|                    RepoDbQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |      10000 |  7,453.5 μs | 130.78 μs |   128.44 μs |  7,446.4 μs |  0.84 |    0.02 |  70.3125 | 46.8750 | 23.4375 | 1357.61 KB |
-|                    DapperQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |      10000 | 14,031.3 μs | 279.54 μs |   261.49 μs | 14,099.5 μs |  1.59 |    0.05 |  78.1250 | 46.8750 | 15.6250 | 1900.53 KB |
-|                                          |               |               |            |             |           |             |             |       |         |          |         |         |            |
-|                    EfCoreQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |      10000 | 10,699.9 μs | 207.49 μs |   213.07 μs | 10,712.6 μs |  1.00 |    0.00 | 125.0000 | 31.2500 | 15.6250 | 3002.49 KB |
-|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |      10000 | 19,153.4 μs | 381.34 μs | 1,124.40 μs | 18,764.7 μs |  1.76 |    0.11 | 125.0000 | 31.2500 |       - | 3550.57 KB |
-| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |      10000 | 18,812.8 μs | 470.38 μs | 1,386.92 μs | 18,911.6 μs |  1.77 |    0.11 | 125.0000 | 31.2500 |       - | 3551.91 KB |
-|                   VenflowQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |      10000 | 10,171.7 μs | 202.36 μs |   529.54 μs | 10,114.9 μs |  0.96 |    0.05 |  78.1250 | 46.8750 | 15.6250 | 1747.12 KB |
-|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |      10000 | 10,580.9 μs | 211.47 μs |   592.98 μs | 10,475.2 μs |  0.99 |    0.05 |  62.5000 | 46.8750 | 15.6250 | 1356.86 KB |
-|                    RepoDbQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |      10000 | 10,736.7 μs | 211.50 μs |   502.66 μs | 10,670.0 μs |  0.99 |    0.06 |  62.5000 | 46.8750 | 15.6250 | 1358.08 KB |
-|                    DapperQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |      10000 | 16,329.6 μs | 405.44 μs | 1,182.69 μs | 16,290.5 μs |  1.58 |    0.09 |  62.5000 | 31.2500 |       - | 1900.47 KB |
+|                                   Method |           Job |       Runtime | QueryCount |        Mean |     Error |    StdDev |      Median | Ratio | RatioSD |     Gen 0 |    Gen 1 |   Gen 2 |  Allocated |
+|----------------------------------------- |-------------- |-------------- |----------- |------------:|----------:|----------:|------------:|------:|--------:|----------:|---------:|--------:|-----------:|
+|                    **EfCoreQueryBatchAsync** |      **.NET 4.8** |      **.NET 4.8** |         **10** |    **364.3 μs** |   **7.26 μs** |  **10.86 μs** |    **366.0 μs** |  **1.00** |    **0.00** |    **6.3477** |        **-** |       **-** |    **19.6 KB** |
+|    EfCoreQueryBatchNoChangeTrackingAsync |      .NET 4.8 |      .NET 4.8 |         10 |    378.1 μs |   7.40 μs |  13.53 μs |    379.8 μs |  1.04 |    0.05 |    6.8359 |        - |       - |   22.02 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync |      .NET 4.8 |      .NET 4.8 |         10 |    398.8 μs |   7.89 μs |  15.02 μs |    400.9 μs |  1.10 |    0.06 |    7.8125 |        - |       - |   25.18 KB |
+|                   VenflowQueryBatchAsync |      .NET 4.8 |      .NET 4.8 |         10 |    209.0 μs |   4.11 μs |   6.40 μs |    211.0 μs |  0.57 |    0.03 |    2.9297 |        - |       - |    9.68 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync |      .NET 4.8 |      .NET 4.8 |         10 |    206.2 μs |   3.69 μs |   5.96 μs |    206.0 μs |  0.57 |    0.02 |    2.9297 |        - |       - |    9.26 KB |
+|                    RepoDbQueryBatchAsync |      .NET 4.8 |      .NET 4.8 |         10 |    212.4 μs |   4.23 μs |   7.42 μs |    212.6 μs |  0.58 |    0.03 |    2.6855 |        - |       - |    8.99 KB |
+|                    DapperQueryBatchAsync |      .NET 4.8 |      .NET 4.8 |         10 |    215.7 μs |   4.12 μs |   4.05 μs |    215.2 μs |  0.59 |    0.02 |    3.1738 |        - |       - |   10.42 KB |
+|                                          |               |               |            |             |           |           |             |       |         |           |          |         |            |
+|                    EfCoreQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |         10 |    312.2 μs |   6.18 μs |  15.17 μs |    315.5 μs |  1.00 |    0.00 |    3.9063 |        - |       - |   12.02 KB |
+|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |         10 |    300.6 μs |   5.88 μs |   8.61 μs |    302.3 μs |  0.99 |    0.07 |    4.3945 |        - |       - |   14.55 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |         10 |    357.1 μs |   7.13 μs |  16.24 μs |    360.0 μs |  1.15 |    0.07 |    5.8594 |        - |       - |   17.91 KB |
+|                   VenflowQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |         10 |    174.2 μs |   1.94 μs |   1.62 μs |    174.3 μs |  0.61 |    0.03 |    1.7090 |        - |       - |     5.7 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |         10 |    180.3 μs |   3.58 μs |   8.08 μs |    177.2 μs |  0.58 |    0.04 |    1.7090 |        - |       - |     5.3 KB |
+|                    RepoDbQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |         10 |    177.2 μs |   3.49 μs |   3.09 μs |    177.1 μs |  0.61 |    0.03 |    1.4648 |        - |       - |    4.89 KB |
+|                    DapperQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |         10 |    174.1 μs |   2.71 μs |   2.26 μs |    174.9 μs |  0.61 |    0.03 |    1.9531 |        - |       - |    6.28 KB |
+|                                          |               |               |            |             |           |           |             |       |         |           |          |         |            |
+|                    EfCoreQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         10 |    279.9 μs |   5.58 μs |  11.39 μs |    280.8 μs |  1.00 |    0.00 |    3.4180 |        - |       - |   10.85 KB |
+|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |         10 |    311.8 μs |   6.23 μs |  15.39 μs |    315.5 μs |  1.11 |    0.08 |    3.9063 |        - |       - |   12.58 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |         10 |    297.1 μs |   5.91 μs |  11.81 μs |    298.9 μs |  1.06 |    0.06 |    4.3945 |        - |       - |   14.33 KB |
+|                   VenflowQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         10 |    186.6 μs |   3.64 μs |   4.33 μs |    186.6 μs |  0.67 |    0.04 |    1.7090 |        - |       - |    5.64 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |         10 |    172.9 μs |   2.35 μs |   2.19 μs |    172.8 μs |  0.62 |    0.03 |    1.7090 |        - |       - |    5.25 KB |
+|                    RepoDbQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         10 |    185.2 μs |   3.67 μs |   6.72 μs |    185.9 μs |  0.66 |    0.04 |    1.4648 |        - |       - |    4.88 KB |
+|                    DapperQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         10 |    176.3 μs |   3.52 μs |   5.04 μs |    175.4 μs |  0.63 |    0.03 |    1.9531 |        - |       - |    6.26 KB |
+|                                          |               |               |            |             |           |           |             |       |         |           |          |         |            |
+|                    **EfCoreQueryBatchAsync** |      **.NET 4.8** |      **.NET 4.8** |        **100** |    **468.1 μs** |   **8.74 μs** |   **7.30 μs** |    **469.1 μs** |  **1.00** |    **0.00** |   **16.6016** |        **-** |       **-** |   **51.16 KB** |
+|    EfCoreQueryBatchNoChangeTrackingAsync |      .NET 4.8 |      .NET 4.8 |        100 |    493.2 μs |   6.75 μs |   5.98 μs |    493.7 μs |  1.05 |    0.02 |   18.5547 |        - |       - |   58.46 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync |      .NET 4.8 |      .NET 4.8 |        100 |    541.4 μs |  10.58 μs |  16.47 μs |    542.8 μs |  1.17 |    0.03 |   19.5313 |        - |       - |   62.06 KB |
+|                   VenflowQueryBatchAsync |      .NET 4.8 |      .NET 4.8 |        100 |    299.8 μs |   5.99 μs |  12.76 μs |    302.4 μs |  0.64 |    0.03 |    9.2773 |        - |       - |   29.14 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync |      .NET 4.8 |      .NET 4.8 |        100 |    296.3 μs |   5.80 μs |  10.01 μs |    297.9 μs |  0.63 |    0.02 |    7.8125 |        - |       - |   25.24 KB |
+|                    RepoDbQueryBatchAsync |      .NET 4.8 |      .NET 4.8 |        100 |    303.5 μs |   6.01 μs |   7.15 μs |    305.3 μs |  0.65 |    0.02 |    7.8125 |        - |       - |   24.97 KB |
+|                    DapperQueryBatchAsync |      .NET 4.8 |      .NET 4.8 |        100 |    462.0 μs |   9.11 μs |  13.07 μs |    463.7 μs |  0.98 |    0.03 |   17.0898 |        - |       - |   52.51 KB |
+|                                          |               |               |            |             |           |           |             |       |         |           |          |         |            |
+|                    EfCoreQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |        100 |    409.7 μs |   8.16 μs |  14.92 μs |    406.2 μs |  1.00 |    0.00 |   12.2070 |        - |       - |   38.45 KB |
+|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |        100 |    431.8 μs |   8.77 μs |  25.85 μs |    423.0 μs |  1.04 |    0.07 |   15.6250 |        - |       - |   48.49 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |        100 |    463.9 μs |   9.21 μs |  25.83 μs |    473.4 μs |  1.08 |    0.07 |   15.6250 |        - |       - |   49.27 KB |
+|                   VenflowQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |        100 |    230.0 μs |   4.59 μs |   5.97 μs |    230.0 μs |  0.56 |    0.03 |    6.3477 |        - |       - |   20.88 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |        100 |    223.7 μs |   4.46 μs |   4.96 μs |    224.6 μs |  0.54 |    0.03 |    5.3711 |        - |       - |   16.97 KB |
+|                    RepoDbQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |        100 |    271.2 μs |   7.06 μs |  20.81 μs |    276.1 μs |  0.63 |    0.06 |    5.3711 |        - |       - |   16.55 KB |
+|                    DapperQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |        100 |    315.2 μs |   8.90 μs |  26.24 μs |    325.2 μs |  0.73 |    0.07 |   12.6953 |        - |       - |   39.73 KB |
+|                                          |               |               |            |             |           |           |             |       |         |           |          |         |            |
+|                    EfCoreQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        100 |    405.0 μs |   8.07 μs |  17.72 μs |    406.4 μs |  1.00 |    0.00 |   12.2070 |        - |       - |   37.28 KB |
+|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |        100 |    422.2 μs |   8.37 μs |  24.15 μs |    432.1 μs |  1.02 |    0.09 |   14.1602 |        - |       - |   43.93 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |        100 |    396.0 μs |   7.91 μs |  15.79 μs |    391.3 μs |  0.98 |    0.07 |   14.6484 |        - |       - |   45.68 KB |
+|                   VenflowQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        100 |    248.5 μs |   9.26 μs |  27.29 μs |    247.5 μs |  0.61 |    0.07 |    6.3477 |        - |       - |   20.82 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |        100 |    218.4 μs |   3.68 μs |   3.44 μs |    217.8 μs |  0.55 |    0.04 |    5.3711 |        - |       - |   16.91 KB |
+|                    RepoDbQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        100 |    224.6 μs |   4.16 μs |   3.69 μs |    224.0 μs |  0.57 |    0.05 |    5.3711 |        - |       - |   16.54 KB |
+|                    DapperQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        100 |    273.7 μs |   5.47 μs |   9.72 μs |    270.6 μs |  0.67 |    0.04 |   12.6953 |        - |       - |   39.72 KB |
+|                                          |               |               |            |             |           |           |             |       |         |           |          |         |            |
+|                    **EfCoreQueryBatchAsync** |      **.NET 4.8** |      **.NET 4.8** |       **1000** |  **1,458.6 μs** |  **17.16 μs** |  **15.21 μs** |  **1,458.0 μs** |  **1.00** |    **0.00** |  **119.1406** |        **-** |       **-** |  **369.79 KB** |
+|    EfCoreQueryBatchNoChangeTrackingAsync |      .NET 4.8 |      .NET 4.8 |       1000 |  1,709.9 μs |  20.36 μs |  19.04 μs |  1,710.4 μs |  1.17 |    0.02 |  126.9531 |  37.1094 |       - |  426.52 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync |      .NET 4.8 |      .NET 4.8 |       1000 |  1,737.1 μs |  24.25 μs |  22.68 μs |  1,731.8 μs |  1.19 |    0.02 |  128.9063 |  39.0625 |       - |  429.28 KB |
+|                   VenflowQueryBatchAsync |      .NET 4.8 |      .NET 4.8 |       1000 |  1,086.7 μs |  18.14 μs |  16.96 μs |  1,079.3 μs |  0.75 |    0.02 |   56.6406 |  15.6250 |       - |  225.29 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync |      .NET 4.8 |      .NET 4.8 |       1000 |  1,029.4 μs |  13.20 μs |  12.34 μs |  1,029.2 μs |  0.71 |    0.01 |   60.5469 |        - |       - |  186.08 KB |
+|                    RepoDbQueryBatchAsync |      .NET 4.8 |      .NET 4.8 |       1000 |  1,082.2 μs |  20.98 μs |  19.62 μs |  1,078.8 μs |  0.74 |    0.01 |   54.6875 |  15.6250 |       - |   185.7 KB |
+|                    DapperQueryBatchAsync |      .NET 4.8 |      .NET 4.8 |       1000 |  1,984.5 μs |  33.97 μs |  31.78 μs |  1,979.4 μs |  1.36 |    0.03 |  140.6250 |  39.0625 |       - |  469.34 KB |
+|                                          |               |               |            |             |           |           |             |       |         |           |          |         |            |
+|                    EfCoreQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |       1000 |    969.0 μs |  18.22 μs |  24.33 μs |    973.0 μs |  1.00 |    0.00 |   97.6563 |        - |       - |  299.08 KB |
+|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |       1000 |  1,178.0 μs |  23.23 μs |  40.06 μs |  1,178.9 μs |  1.21 |    0.05 |  103.5156 |  33.2031 |       - |  356.28 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |       1000 |  1,155.1 μs |  17.05 μs |  17.51 μs |  1,158.4 μs |  1.19 |    0.04 |  107.4219 |  35.1563 |       - |  359.33 KB |
+|                   VenflowQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |       1000 |    680.2 μs |  13.44 μs |  29.50 μs |    684.5 μs |  0.69 |    0.04 |   43.9453 |  14.6484 |       - |  169.14 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |       1000 |    638.2 μs |  12.74 μs |  28.23 μs |    640.1 μs |  0.66 |    0.03 |   39.0625 |  12.6953 |       - |   130.1 KB |
+|                    RepoDbQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |       1000 |    652.3 μs |  14.65 μs |  43.20 μs |    650.1 μs |  0.67 |    0.04 |   38.0859 |  12.6953 |       - |  129.66 KB |
+|                    DapperQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |       1000 |  1,125.1 μs |  21.56 μs |  23.97 μs |  1,119.2 μs |  1.16 |    0.04 |  113.2813 |  37.1094 |       - |   370.3 KB |
+|                                          |               |               |            |             |           |           |             |       |         |           |          |         |            |
+|                    EfCoreQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       1000 |    917.5 μs |  18.12 μs |  23.56 μs |    909.4 μs |  1.00 |    0.00 |   96.6797 |        - |       - |  298.05 KB |
+|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |       1000 |  1,072.6 μs |  17.78 μs |  14.84 μs |  1,076.3 μs |  1.17 |    0.04 |  113.2813 |  37.1094 |       - |  353.92 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |       1000 |  1,100.4 μs |  21.68 μs |  37.39 μs |  1,087.2 μs |  1.19 |    0.04 |  107.4219 |  35.1563 |       - |  355.68 KB |
+|                   VenflowQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       1000 |    640.9 μs |  12.78 μs |  33.68 μs |    629.2 μs |  0.70 |    0.04 |   45.8984 |  11.7188 |       - |  169.16 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |       1000 |    573.1 μs |  11.37 μs |  15.17 μs |    571.9 μs |  0.63 |    0.02 |   38.0859 |  12.6953 |       - |   130.1 KB |
+|                    RepoDbQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       1000 |    600.9 μs |  11.60 μs |  14.67 μs |    598.6 μs |  0.66 |    0.02 |   38.0859 |  12.6953 |       - |  129.72 KB |
+|                    DapperQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       1000 |  1,027.7 μs |  19.67 μs |  24.88 μs |  1,025.5 μs |  1.12 |    0.04 |  113.2813 |  37.1094 |       - |  370.29 KB |
+|                                          |               |               |            |             |           |           |             |       |         |           |          |         |            |
+|                    **EfCoreQueryBatchAsync** |      **.NET 4.8** |      **.NET 4.8** |      **10000** | **10,343.5 μs** |  **96.41 μs** |  **90.18 μs** | **10,363.1 μs** |  **1.00** |    **0.00** | **1140.6250** |        **-** |       **-** | **3650.48 KB** |
+|    EfCoreQueryBatchNoChangeTrackingAsync |      .NET 4.8 |      .NET 4.8 |      10000 | 17,554.8 μs | 329.77 μs | 366.54 μs | 17,462.0 μs |  1.70 |    0.04 |  781.2500 | 281.2500 | 93.7500 | 4270.58 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync |      .NET 4.8 |      .NET 4.8 |      10000 | 17,249.1 μs | 340.10 μs | 334.02 μs | 17,340.8 μs |  1.67 |    0.03 |  781.2500 | 281.2500 | 93.7500 | 4281.13 KB |
+|                   VenflowQueryBatchAsync |      .NET 4.8 |      .NET 4.8 |      10000 | 13,488.8 μs | 267.42 μs | 347.72 μs | 13,403.0 μs |  1.30 |    0.03 |  406.2500 | 187.5000 | 62.5000 | 2351.65 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync |      .NET 4.8 |      .NET 4.8 |      10000 | 11,227.3 μs | 162.25 μs | 151.77 μs | 11,266.3 μs |  1.09 |    0.02 |  328.1250 | 125.0000 | 46.8750 | 1958.82 KB |
+|                    RepoDbQueryBatchAsync |      .NET 4.8 |      .NET 4.8 |      10000 | 11,891.7 μs | 153.59 μs | 143.67 μs | 11,826.1 μs |  1.15 |    0.01 |  328.1250 | 125.0000 | 46.8750 | 1958.57 KB |
+|                    DapperQueryBatchAsync |      .NET 4.8 |      .NET 4.8 |      10000 | 22,006.6 μs | 403.92 μs | 377.83 μs | 22,081.7 μs |  2.13 |    0.04 |  843.7500 | 281.2500 | 93.7500 | 4826.35 KB |
+|                                          |               |               |            |             |           |           |             |       |         |           |          |         |            |
+|                    EfCoreQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |      10000 |  5,540.0 μs | 103.10 μs | 105.88 μs |  5,513.1 μs |  1.00 |    0.00 |  945.3125 |  15.6250 |  7.8125 | 3006.53 KB |
+|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |      10000 | 11,959.6 μs | 225.61 μs | 268.57 μs | 11,956.2 μs |  2.15 |    0.05 |  640.6250 | 218.7500 | 78.1250 | 3554.95 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |      10000 | 11,633.6 μs | 217.85 μs | 223.72 μs | 11,647.6 μs |  2.10 |    0.07 |  656.2500 | 234.3750 | 93.7500 | 3559.81 KB |
+|                   VenflowQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |      10000 |  7,342.4 μs | 140.29 μs | 144.07 μs |  7,349.3 μs |  1.33 |    0.03 |  289.0625 | 132.8125 | 46.8750 | 1750.92 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 |      10000 |  6,070.6 μs | 120.56 μs | 123.81 μs |  6,048.9 μs |  1.10 |    0.03 |  226.5625 | 117.1875 | 39.0625 | 1361.08 KB |
+|                    RepoDbQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |      10000 |  6,204.6 μs | 118.61 μs | 145.66 μs |  6,231.8 μs |  1.12 |    0.03 |  226.5625 | 117.1875 | 39.0625 | 1360.05 KB |
+|                    DapperQueryBatchAsync | .NET Core 3.1 | .NET Core 3.1 |      10000 | 13,251.7 μs | 196.56 μs | 183.86 μs | 13,266.7 μs |  2.39 |    0.06 |  687.5000 | 250.0000 | 93.7500 | 3775.66 KB |
+|                                          |               |               |            |             |           |           |             |       |         |           |          |         |            |
+|                    EfCoreQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |      10000 |  5,221.3 μs | 100.45 μs | 130.61 μs |  5,216.7 μs |  1.00 |    0.00 |  945.3125 |  15.6250 |  7.8125 |  3004.9 KB |
+|    EfCoreQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |      10000 | 10,593.8 μs | 204.71 μs | 318.71 μs | 10,554.4 μs |  2.03 |    0.09 |  609.3750 | 203.1250 | 62.5000 | 3553.28 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |      10000 | 10,471.3 μs | 205.46 μs | 252.33 μs | 10,418.9 μs |  2.00 |    0.06 |  640.6250 | 234.3750 | 93.7500 | 3555.12 KB |
+|                   VenflowQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |      10000 |  6,051.2 μs | 116.63 μs | 119.77 μs |  6,015.7 μs |  1.15 |    0.05 |  289.0625 | 132.8125 | 46.8750 |  1753.5 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 |      10000 |  5,278.3 μs |  98.97 μs | 110.01 μs |  5,285.1 μs |  1.01 |    0.03 |  210.9375 |  93.7500 | 31.2500 | 1366.58 KB |
+|                    RepoDbQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |      10000 |  5,374.5 μs |  98.92 μs | 144.99 μs |  5,379.3 μs |  1.03 |    0.03 |  210.9375 |  93.7500 | 31.2500 | 1362.24 KB |
+|                    DapperQueryBatchAsync | .NET Core 5.0 | .NET Core 5.0 |      10000 | 11,748.1 μs | 228.81 μs | 305.45 μs | 11,777.6 μs |  2.25 |    0.09 |  671.8750 | 234.3750 | 78.1250 | 3775.46 KB |
