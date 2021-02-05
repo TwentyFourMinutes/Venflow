@@ -1,34 +1,26 @@
 ``` ini
 
-BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.508 (2004/?/20H1)
-Intel Core i7-6700HQ CPU 2.60GHz (Skylake), 1 CPU, 8 logical and 4 physical cores
-.NET Core SDK=5.0.100-rc.1.20452.10
-  [Host]        : .NET Core 5.0.0 (CoreCLR 5.0.20.45114, CoreFX 5.0.20.45114), X64 RyuJIT
-  .NET 4.8      : .NET Framework 4.8 (4.8.4220.0), X64 RyuJIT
-  .NET Core 3.1 : .NET Core 3.1.7 (CoreCLR 4.700.20.36602, CoreFX 4.700.20.37001), X64 RyuJIT
-  .NET Core 5.0 : .NET Core 5.0.0 (CoreCLR 5.0.20.45114, CoreFX 5.0.20.45114), X64 RyuJIT
+BenchmarkDotNet=v0.12.1, OS=ubuntu 18.04
+Intel Xeon CPU E5-2673 v4 2.30GHz, 1 CPU, 2 logical and 2 physical cores
+.NET Core SDK=5.0.102
+  [Host]        : .NET Core 5.0.2 (CoreCLR 5.0.220.61120, CoreFX 5.0.220.61120), X64 RyuJIT
+  .NET Core 3.1 : .NET Core 3.1.11 (CoreCLR 4.700.20.56602, CoreFX 4.700.20.56604), X64 RyuJIT
+  .NET Core 5.0 : .NET Core 5.0.2 (CoreCLR 5.0.220.61120, CoreFX 5.0.220.61120), X64 RyuJIT
 
 
 ```
-|                                  Method |           Job |       Runtime |     Mean |     Error |    StdDev | Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
-|---------------------------------------- |-------------- |-------------- |---------:|----------:|----------:|------:|--------:|-------:|------:|------:|----------:|
-|                  EfCoreQuerySingleAsync |      .NET 4.8 |      .NET 4.8 | 6.506 ms | 0.1265 ms | 0.1184 ms |  1.00 |    0.00 | 7.8125 |     - |     - |  35.88 KB |
-|  EfCoreQuerySingleNoChangeTrackingAsync |      .NET 4.8 |      .NET 4.8 | 6.495 ms | 0.1055 ms | 0.0987 ms |  1.00 |    0.03 | 7.8125 |     - |     - |  40.75 KB |
-|                 VenflowQuerySingleAsync |      .NET 4.8 |      .NET 4.8 | 6.195 ms | 0.1197 ms | 0.1061 ms |  0.95 |    0.02 |      - |     - |     - |  17.13 KB |
-| VenflowQuerySingleNoChangeTrackingAsync |      .NET 4.8 |      .NET 4.8 | 6.271 ms | 0.1161 ms | 0.1086 ms |  0.96 |    0.02 |      - |     - |     - |     17 KB |
-|       RecommendedDapperQuerySingleAsync |      .NET 4.8 |      .NET 4.8 | 6.213 ms | 0.1192 ms | 0.1325 ms |  0.96 |    0.03 |      - |     - |     - |  12.69 KB |
-|            CustomDapperQuerySingleAsync |      .NET 4.8 |      .NET 4.8 | 6.222 ms | 0.1237 ms | 0.1424 ms |  0.96 |    0.03 |      - |     - |     - |  12.19 KB |
-|                                         |               |               |          |           |           |       |         |        |       |       |           |
-|                  EfCoreQuerySingleAsync | .NET Core 3.1 | .NET Core 3.1 | 6.392 ms | 0.1184 ms | 0.1108 ms |  1.00 |    0.00 | 7.8125 |     - |     - |  28.39 KB |
-|  EfCoreQuerySingleNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 | 6.398 ms | 0.1216 ms | 0.1137 ms |  1.00 |    0.03 | 7.8125 |     - |     - |  32.52 KB |
-|                 VenflowQuerySingleAsync | .NET Core 3.1 | .NET Core 3.1 | 6.181 ms | 0.1173 ms | 0.1097 ms |  0.97 |    0.03 |      - |     - |     - |  12.55 KB |
-| VenflowQuerySingleNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 | 6.155 ms | 0.1063 ms | 0.0994 ms |  0.96 |    0.02 |      - |     - |     - |  12.51 KB |
-|       RecommendedDapperQuerySingleAsync | .NET Core 3.1 | .NET Core 3.1 | 6.127 ms | 0.0824 ms | 0.0731 ms |  0.96 |    0.02 |      - |     - |     - |   9.12 KB |
-|            CustomDapperQuerySingleAsync | .NET Core 3.1 | .NET Core 3.1 | 6.119 ms | 0.0938 ms | 0.0831 ms |  0.96 |    0.02 |      - |     - |     - |   8.59 KB |
-|                                         |               |               |          |           |           |       |         |        |       |       |           |
-|                  EfCoreQuerySingleAsync | .NET Core 5.0 | .NET Core 5.0 | 6.374 ms | 0.0924 ms | 0.0864 ms |  1.00 |    0.00 |      - |     - |     - |  15.49 KB |
-|  EfCoreQuerySingleNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 | 6.422 ms | 0.0841 ms | 0.0702 ms |  1.01 |    0.02 |      - |     - |     - |  21.81 KB |
-|                 VenflowQuerySingleAsync | .NET Core 5.0 | .NET Core 5.0 | 6.200 ms | 0.1225 ms | 0.1146 ms |  0.97 |    0.03 |      - |     - |     - |  11.11 KB |
-| VenflowQuerySingleNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 | 6.223 ms | 0.1109 ms | 0.1277 ms |  0.98 |    0.02 |      - |     - |     - |  11.07 KB |
-|       RecommendedDapperQuerySingleAsync | .NET Core 5.0 | .NET Core 5.0 | 6.530 ms | 0.1305 ms | 0.2999 ms |  0.99 |    0.04 |      - |     - |     - |   9.13 KB |
-|            CustomDapperQuerySingleAsync | .NET Core 5.0 | .NET Core 5.0 | 6.525 ms | 0.1270 ms | 0.1560 ms |  1.02 |    0.02 |      - |     - |     - |   8.59 KB |
+|                                  Method |           Job |       Runtime |     Mean |     Error |    StdDev |   Median | Ratio | RatioSD | Gen 0 | Gen 1 | Gen 2 | Allocated |
+|---------------------------------------- |-------------- |-------------- |---------:|----------:|----------:|---------:|------:|--------:|------:|------:|------:|----------:|
+|                  EfCoreQuerySingleAsync | .NET Core 3.1 | .NET Core 3.1 | 7.353 ms | 0.1433 ms | 0.1864 ms | 7.380 ms |  1.00 |    0.00 |     - |     - |     - |  29.68 KB |
+|  EfCoreQuerySingleNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 | 6.781 ms | 0.1329 ms | 0.1906 ms | 6.755 ms |  0.92 |    0.03 |     - |     - |     - |  32.98 KB |
+|                 VenflowQuerySingleAsync | .NET Core 3.1 | .NET Core 3.1 | 5.925 ms | 0.1411 ms | 0.4161 ms | 5.699 ms |  0.88 |    0.04 |     - |     - |     - |   8.87 KB |
+| VenflowQuerySingleNoChangeTrackingAsync | .NET Core 3.1 | .NET Core 3.1 | 5.629 ms | 0.1018 ms | 0.1524 ms | 5.570 ms |  0.77 |    0.03 |     - |     - |     - |   8.83 KB |
+|       RecommendedDapperQuerySingleAsync | .NET Core 3.1 | .NET Core 3.1 | 6.047 ms | 0.1190 ms | 0.1113 ms | 6.054 ms |  0.83 |    0.02 |     - |     - |     - |   7.77 KB |
+|            CustomDapperQuerySingleAsync | .NET Core 3.1 | .NET Core 3.1 | 5.625 ms | 0.1043 ms | 0.1624 ms | 5.558 ms |  0.77 |    0.03 |     - |     - |     - |   7.23 KB |
+|                                         |               |               |          |           |           |          |       |         |       |       |       |           |
+|                  EfCoreQuerySingleAsync | .NET Core 5.0 | .NET Core 5.0 | 6.281 ms | 0.0994 ms | 0.0882 ms | 6.315 ms |  1.00 |    0.00 |     - |     - |     - |  16.48 KB |
+|  EfCoreQuerySingleNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 | 5.936 ms | 0.1183 ms | 0.1876 ms | 5.879 ms |  0.96 |    0.04 |     - |     - |     - |  23.37 KB |
+|                 VenflowQuerySingleAsync | .NET Core 5.0 | .NET Core 5.0 | 6.116 ms | 0.0961 ms | 0.0802 ms | 6.124 ms |  0.97 |    0.02 |     - |     - |     - |   8.52 KB |
+| VenflowQuerySingleNoChangeTrackingAsync | .NET Core 5.0 | .NET Core 5.0 | 5.592 ms | 0.1067 ms | 0.1228 ms | 5.580 ms |  0.89 |    0.02 |     - |     - |     - |   8.48 KB |
+|       RecommendedDapperQuerySingleAsync | .NET Core 5.0 | .NET Core 5.0 | 5.977 ms | 0.0513 ms | 0.0455 ms | 5.967 ms |  0.95 |    0.02 |     - |     - |     - |   7.79 KB |
+|            CustomDapperQuerySingleAsync | .NET Core 5.0 | .NET Core 5.0 | 5.714 ms | 0.1141 ms | 0.2382 ms | 5.620 ms |  0.96 |    0.03 |     - |     - |     - |   7.25 KB |
