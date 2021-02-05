@@ -47,21 +47,21 @@ jobs:
         postgresql user: 'venflow_benchmarks'
         postgresql password: 'venflow_benchmarks'
 
-#    - name: Run Query Benchmarks
-#      working-directory: ./src/Venflow/Venflow.Benchmarks
-#      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*query*"
-#
-#    - name: Run Insert Benchmarks
-#      working-directory: ./src/Venflow/Venflow.Benchmarks
-#      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*insert*"
-#
-#    - name: Run Update Benchmarks
-#      working-directory: ./src/Venflow/Venflow.Benchmarks
-#      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*update*"
-#
-#    - name: Run Delete Benchmarks
-#      working-directory: ./src/Venflow/Venflow.Benchmarks
-#      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*delete*"
+    - name: Run Query Benchmarks
+      working-directory: ./src/Venflow/Venflow.Benchmarks
+      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*query*"
+
+    - name: Run Insert Benchmarks
+      working-directory: ./src/Venflow/Venflow.Benchmarks
+      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*insert*"
+
+    - name: Run Update Benchmarks
+      working-directory: ./src/Venflow/Venflow.Benchmarks
+      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*update*"
+
+    - name: Run Delete Benchmarks
+      working-directory: ./src/Venflow/Venflow.Benchmarks
+      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*delete*"
 
     - name: Run Instantiation Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
