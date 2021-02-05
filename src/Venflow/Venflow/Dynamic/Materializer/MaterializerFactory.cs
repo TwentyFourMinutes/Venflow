@@ -30,7 +30,6 @@ namespace Venflow.Dynamic.Materializer
 
         private readonly Dictionary<SqlQueryCacheKey, (Delegate Value, LinkedListNode<ExpirationEntry> ExpirationNode)> _primaryMaterializerCache;
         private readonly LinkedList<ExpirationEntry> _primaryExpirations;
-        private readonly long _entryExpirationTime = 60 * 5;
 
         private readonly object _materializerLock;
 
@@ -58,14 +57,14 @@ namespace Venflow.Dynamic.Materializer
 
                     var expirationEntry = materializerEntry.ExpirationNode.Value;
 
-                    expirationEntry.TimeStamp = timeStamp + _entryExpirationTime;
+                    expirationEntry.TimeStamp = timeStamp + VenflowConfiguration.DynamicCacheExpirationTime;
 
                     _primaryExpirations.Remove(expirationEntry);
                     _primaryExpirations.AddLast(expirationEntry);
                 }
                 else
                 {
-                    var expirationNode = _primaryExpirations.AddLast(new ExpirationEntry(timeStamp + _entryExpirationTime, cacheKey));
+                    var expirationNode = _primaryExpirations.AddLast(new ExpirationEntry(timeStamp + VenflowConfiguration.DynamicCacheExpirationTime, cacheKey));
 
                     materializer = GetOrCreateMaterializer<TReturn>(relationBuilderValues, reader.GetColumnSchema(), cacheKey.IsChangeTracking);
 

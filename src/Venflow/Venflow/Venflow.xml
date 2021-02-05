@@ -1738,10 +1738,30 @@
             Contains methods to globally set the configuration of Venflow.
             </summary>
         </member>
+        <member name="P:Venflow.VenflowConfiguration.DynamicCacheExpirationTime">
+            <summary>
+            Determines the expiration duration time of the underlying SQL Materializer Cache in seconds, defaults to 5 minutes.
+            </summary>
+            <remarks>
+            Venflow uses the SQL used in queries to map a materializer to this specific query. This is faster, than using the returned columns and used relations as a cache key. If a query with the executed SQL won't be called again within the next <see cref="P:Venflow.VenflowConfiguration.DynamicCacheExpirationTime"/>, it will be removed from the cache. However do note, that the materializer itself will not be removed from the cache.
+            </remarks>
+        </member>
         <member name="P:Venflow.VenflowConfiguration.ShouldUseDeepValidation">
             <summary>
             Determines whether or not Venflow will perform more extensive validation through out its usage. This setting will be set to <see langword="true"></see> automatically, if you are in DEBUG, otherwise <see langword="false"></see>.
             </summary>
+        </member>
+        <member name="M:Venflow.VenflowConfiguration.SetDynamicCacheExpirationTime(System.TimeSpan)">
+            <summary>
+            Sets the value of the <see cref="P:Venflow.VenflowConfiguration.DynamicCacheExpirationTime"/> property.
+            </summary>
+            <param name="timeSpan">The expiration duration time.</param>
+        </member>
+        <member name="M:Venflow.VenflowConfiguration.SetDynamicCacheExpirationTime(System.Int64)">
+            <summary>
+            Sets the value of the <see cref="P:Venflow.VenflowConfiguration.DynamicCacheExpirationTime"/> property.
+            </summary>
+            <param name="expirationTime">The expiration duration time in seconds.</param>
         </member>
         <member name="M:Venflow.VenflowConfiguration.UseDeepValidation(System.Boolean)">
             <summary>
