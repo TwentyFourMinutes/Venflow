@@ -887,15 +887,6 @@ references:
   fullName.vb: Venflow.Commands.IUpdateCommand(Of TEntity).UpdateAsync(TEntity, CancellationToken)
   nameWithType: IUpdateCommand<TEntity>.UpdateAsync(TEntity, CancellationToken)
   nameWithType.vb: IUpdateCommand(Of TEntity).UpdateAsync(TEntity, CancellationToken)
-- uid: Venflow.Commands.IUpdateCommand`1.UpdateAsync(`0[],CancellationToken)
-  name: UpdateAsync(TEntity[], CancellationToken)
-  href: api/Venflow.Commands.IUpdateCommand-1.html#Venflow_Commands_IUpdateCommand_1_UpdateAsync__0___CancellationToken_
-  commentId: M:Venflow.Commands.IUpdateCommand`1.UpdateAsync(`0[],CancellationToken)
-  name.vb: UpdateAsync(TEntity(), CancellationToken)
-  fullName: Venflow.Commands.IUpdateCommand<TEntity>.UpdateAsync(TEntity[], CancellationToken)
-  fullName.vb: Venflow.Commands.IUpdateCommand(Of TEntity).UpdateAsync(TEntity(), CancellationToken)
-  nameWithType: IUpdateCommand<TEntity>.UpdateAsync(TEntity[], CancellationToken)
-  nameWithType.vb: IUpdateCommand(Of TEntity).UpdateAsync(TEntity(), CancellationToken)
 - uid: Venflow.Commands.IUpdateCommand`1.UpdateAsync(IEnumerable{`0},CancellationToken)
   name: UpdateAsync(IEnumerable<TEntity>, CancellationToken)
   href: api/Venflow.Commands.IUpdateCommand-1.html#Venflow_Commands_IUpdateCommand_1_UpdateAsync_IEnumerable__0__CancellationToken_
@@ -914,15 +905,6 @@ references:
   fullName.vb: Venflow.Commands.IUpdateCommand(Of TEntity).UpdateAsync(IList(Of TEntity), CancellationToken)
   nameWithType: IUpdateCommand<TEntity>.UpdateAsync(IList<TEntity>, CancellationToken)
   nameWithType.vb: IUpdateCommand(Of TEntity).UpdateAsync(IList(Of TEntity), CancellationToken)
-- uid: Venflow.Commands.IUpdateCommand`1.UpdateAsync(List{`0},CancellationToken)
-  name: UpdateAsync(List<TEntity>, CancellationToken)
-  href: api/Venflow.Commands.IUpdateCommand-1.html#Venflow_Commands_IUpdateCommand_1_UpdateAsync_List__0__CancellationToken_
-  commentId: M:Venflow.Commands.IUpdateCommand`1.UpdateAsync(List{`0},CancellationToken)
-  name.vb: UpdateAsync(List(Of TEntity), CancellationToken)
-  fullName: Venflow.Commands.IUpdateCommand<TEntity>.UpdateAsync(List<TEntity>, CancellationToken)
-  fullName.vb: Venflow.Commands.IUpdateCommand(Of TEntity).UpdateAsync(List(Of TEntity), CancellationToken)
-  nameWithType: IUpdateCommand<TEntity>.UpdateAsync(List<TEntity>, CancellationToken)
-  nameWithType.vb: IUpdateCommand(Of TEntity).UpdateAsync(List(Of TEntity), CancellationToken)
 - uid: Venflow.Commands.IUpdateCommand`1.UpdateAsync*
   name: UpdateAsync
   href: api/Venflow.Commands.IUpdateCommand-1.html#Venflow_Commands_IUpdateCommand_1_UpdateAsync_
