@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -36,12 +36,26 @@ namespace Venflow.Commands
 
             await ValidateConnectionAsync();
 
+            var transaction = await Database.BeginTransactionAsync(
+#if NET5_0
+                cancellationToken
+#endif
+                );
+
             try
             {
                 await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
             }
             finally
             {
+                await transaction.DisposeAsync();
+
                 if (DisposeCommand)
                     await this.DisposeAsync();
             }
@@ -82,6 +96,12 @@ namespace Venflow.Commands
 
                 await transaction.CommitAsync(cancellationToken);
             }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+
+                throw;
+            }
             finally
             {
                 await transaction.DisposeAsync();
@@ -120,6 +140,12 @@ namespace Venflow.Commands
 
                 await transaction.CommitAsync(cancellationToken);
             }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+
+                throw;
+            }
             finally
             {
                 await transaction.DisposeAsync();
@@ -157,6 +183,12 @@ namespace Venflow.Commands
                 await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+
+                throw;
             }
             finally
             {
@@ -201,6 +233,12 @@ namespace Venflow.Commands
                 await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+
+                throw;
             }
             finally
             {

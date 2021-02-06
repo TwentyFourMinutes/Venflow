@@ -40,12 +40,33 @@ namespace Venflow.Commands
 
             await ValidateConnectionAsync();
 
-            var affectedRows = await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+            var transaction = await Database.BeginTransactionAsync(
+#if NET5_0
+                cancellationToken
+#endif
+            );
 
-            if (DisposeCommand)
-                this.DisposeAsync();
+            try
+            {
+                var affectedRows = await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
 
-            return affectedRows;
+                await transaction.CommitAsync(cancellationToken);
+
+                return affectedRows;
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+
+                throw;
+            }
+            finally
+            {
+                await transaction.DisposeAsync();
+
+                if (DisposeCommand)
+                    await this.DisposeAsync();
+            }
         }
 
         async ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
@@ -82,12 +103,30 @@ namespace Venflow.Commands
 
             await ValidateConnectionAsync();
 
+            var transaction = await Database.BeginTransactionAsync(
+#if NET5_0
+                cancellationToken
+#endif
+            );
+
             try
             {
-                return await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+                var affectedRows = await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+
+                return affectedRows;
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+
+                throw;
             }
             finally
             {
+                await transaction.DisposeAsync();
+
                 if (DisposeCommand)
                     await this.DisposeAsync();
             }
@@ -140,6 +179,12 @@ namespace Venflow.Commands
 
                 return affectedRows;
             }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+
+                throw;
+            }
             finally
             {
                 await transaction.DisposeAsync();
@@ -173,6 +218,12 @@ namespace Venflow.Commands
 
                 return affectedRows;
             }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+
+                throw;
+            }
             finally
             {
                 await transaction.DisposeAsync();
@@ -205,6 +256,12 @@ namespace Venflow.Commands
                 await transaction.CommitAsync(cancellationToken);
 
                 return affectedRows;
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+
+                throw;
             }
             finally
             {

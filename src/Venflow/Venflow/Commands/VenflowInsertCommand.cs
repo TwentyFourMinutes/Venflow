@@ -59,6 +59,12 @@ namespace Venflow.Commands
 
                 return affectedRows;
             }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+
+                throw;
+            }
             finally
             {
                 await transaction.DisposeAsync();
@@ -96,6 +102,12 @@ namespace Venflow.Commands
                 await transaction.CommitAsync(cancellationToken);
 
                 return affectedRows;
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+
+                throw;
             }
             finally
             {
