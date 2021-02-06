@@ -758,7 +758,7 @@
             </summary>
             <typeparam name="T">The type of the scalar result.</typeparam>
             <param name="sql">The SQL to execute.</param>
-            <pcancel the operation.</param>
+            <param name="cancellationToken">The cancellation token, which is used to cancel the operation.</param>
             <returns>A task representing the asynchronous operation, with the value of the scalar command.</returns>
             <remarks>This method represents a <see cref="M:Npgsql.NpgsqlCommand.ExecuteScalarAsync(System.Threading.CancellationToken)"/> call.</remarks>
         </member>
@@ -1761,11 +1761,6 @@
         <member name="T:System.Runtime.CompilerServices.NullableContextAttribute">
             <summary>
             <strong>Do not use this attribute, it is reserved for the compiler.</strong>
-            </summary>
-        </member>
-    </members>
-</doc>
-g>
             </summary>
         </member>
     </members>
