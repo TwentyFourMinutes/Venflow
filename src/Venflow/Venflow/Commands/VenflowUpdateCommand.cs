@@ -111,7 +111,7 @@ namespace Venflow.Commands
             finally
             {
                 if (index >= 10 &&
-                    !UnderlyingCommand.IsPrepared)
+                    UnderlyingCommand.IsPrepared)
                 {
                     await UnderlyingCommand.UnprepareAsync();
                 }
@@ -172,7 +172,7 @@ namespace Venflow.Commands
             finally
             {
                 if (entities.Count >= 10 &&
-                    !UnderlyingCommand.IsPrepared)
+                    UnderlyingCommand.IsPrepared)
                 {
                     await UnderlyingCommand.UnprepareAsync();
                 }
