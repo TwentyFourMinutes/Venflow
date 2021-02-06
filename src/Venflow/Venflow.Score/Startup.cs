@@ -45,8 +45,6 @@ namespace Venflow.Score
                 _orms.Add(ormName.Name, new Orm(ormName));
             }
 
-            await CalculateOrmResults(ReadBenchResultFiles(rootDirectory));
-
             if (args.Length > 2)
             {
                 var benchmarkDestionationPath = args[1];
@@ -81,6 +79,8 @@ namespace Venflow.Score
                     File.Copy(fullFileName, Path.Combine(benchmarkDestionationPath, newFileName), true);
                 }
 
+                await CalculateOrmResults(ReadBenchResultFiles(benchmarkDestionationPath));
+
                 var readmeFileRawContent = await File.ReadAllTextAsync(readmePath);
 
                 var readmeFileContent = new StringBuilder(readmeFileRawContent);
@@ -100,6 +100,8 @@ namespace Venflow.Score
             }
             else
             {
+                await CalculateOrmResults(ReadBenchResultFiles(rootDirectory));
+
                 var index = 0;
 
                 foreach (var orm in _orms.Values.OrderBy(x => x.AllocScore + x.BenchScore))
