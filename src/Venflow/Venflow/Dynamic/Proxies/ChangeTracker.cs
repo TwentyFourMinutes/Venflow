@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Venflow.Dynamic.Proxies
+﻿namespace Venflow.Dynamic.Proxies
 {
     internal class ChangeTracker<TEntity> where TEntity : class, new()
     {
@@ -36,9 +34,9 @@ namespace Venflow.Dynamic.Proxies
             }
         }
 
-        internal Span<byte> GetColumns()
+        internal byte[] GetColumns()
         {
-            return _changedColumns.AsSpan();
+            return _changedColumns;
         }
     }
 }

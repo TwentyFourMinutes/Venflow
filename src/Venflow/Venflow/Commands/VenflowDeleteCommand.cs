@@ -101,6 +101,12 @@ namespace Venflow.Commands
 
             UnderlyingCommand.CommandText = commandString.ToString();
 
+            if (index >= 15 &&
+                !UnderlyingCommand.IsPrepared)
+            {
+                await UnderlyingCommand.PrepareAsync();
+            }
+
             await ValidateConnectionAsync();
 
             var transaction = await Database.BeginTransactionAsync(
@@ -125,6 +131,12 @@ namespace Venflow.Commands
             }
             finally
             {
+                if (index >= 15 &&
+                    !UnderlyingCommand.IsPrepared)
+                {
+                    await UnderlyingCommand.UnprepareAsync();
+                }
+
                 await transaction.DisposeAsync();
 
                 if (DisposeCommand)
@@ -165,6 +177,12 @@ namespace Venflow.Commands
 
             UnderlyingCommand.CommandText = commandString.ToString();
 
+            if (entities.Count >= 15 &&
+                !UnderlyingCommand.IsPrepared)
+            {
+                await UnderlyingCommand.PrepareAsync();
+            }
+
             var transaction = await Database.BeginTransactionAsync(
 #if NET5_0
                 cancellationToken
@@ -187,6 +205,12 @@ namespace Venflow.Commands
             }
             finally
             {
+                if (entities.Count >= 15 &&
+                    !UnderlyingCommand.IsPrepared)
+                {
+                    await UnderlyingCommand.UnprepareAsync();
+                }
+
                 await transaction.DisposeAsync();
 
                 if (DisposeCommand)
@@ -204,6 +228,12 @@ namespace Venflow.Commands
 
             UnderlyingCommand.CommandText = DeleteBase(entities.AsSpan());
 
+            if (entities.Count >= 15 &&
+                !UnderlyingCommand.IsPrepared)
+            {
+                await UnderlyingCommand.PrepareAsync();
+            }
+
             var transaction = await Database.BeginTransactionAsync(
 #if NET5_0
                 cancellationToken
@@ -226,6 +256,12 @@ namespace Venflow.Commands
             }
             finally
             {
+                if (entities.Count >= 15 &&
+                    !UnderlyingCommand.IsPrepared)
+                {
+                    await UnderlyingCommand.UnprepareAsync();
+                }
+
                 await transaction.DisposeAsync();
 
                 if (DisposeCommand)
@@ -243,6 +279,12 @@ namespace Venflow.Commands
 
             UnderlyingCommand.CommandText = DeleteBase(entities.AsSpan());
 
+            if (entities.Length >= 15 &&
+                !UnderlyingCommand.IsPrepared)
+            {
+                await UnderlyingCommand.PrepareAsync();
+            }
+
             var transaction = await Database.BeginTransactionAsync(
 #if NET5_0
                 cancellationToken
@@ -265,6 +307,12 @@ namespace Venflow.Commands
             }
             finally
             {
+                if (entities.Length >= 15 &&
+                    !UnderlyingCommand.IsPrepared)
+                {
+                    await UnderlyingCommand.UnprepareAsync();
+                }
+
                 await transaction.DisposeAsync();
 
                 if (DisposeCommand)

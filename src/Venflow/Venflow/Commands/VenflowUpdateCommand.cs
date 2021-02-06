@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -82,49 +82,11 @@ namespace Venflow.Commands
 
             UnderlyingCommand.CommandText = commandString.ToString();
 
-            await ValidateConnectionAsync();
-
-            var transaction = await Database.BeginTransactionAsync(
-#if NET5_0
-                cancellationToken
-#endif
-                );
-
-            try
+            if (index >= 10 &&
+                !UnderlyingCommand.IsPrepared)
             {
-                await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-
-                await transaction.CommitAsync(cancellationToken);
+                await UnderlyingCommand.PrepareAsync();
             }
-            catch
-            {
-                await transaction.RollbackAsync(cancellationToken);
-
-                throw;
-            }
-            finally
-            {
-                await transaction.DisposeAsync();
-
-                if (DisposeCommand)
-                    await this.DisposeAsync();
-            }
-        }
-
-        async ValueTask IUpdateCommand<TEntity>.UpdateAsync(List<TEntity> entities, CancellationToken cancellationToken)
-        {
-            if (entities is null ||
-                entities.Count == 0)
-                return;
-
-            var commandString = BaseUpdate(entities.AsSpan());
-
-            if (commandString.Length == 0)
-            {
-                return;
-            }
-
-            UnderlyingCommand.CommandText = commandString;
 
             await ValidateConnectionAsync();
 
@@ -148,50 +110,12 @@ namespace Venflow.Commands
             }
             finally
             {
-                await transaction.DisposeAsync();
+                if (index >= 10 &&
+                    !UnderlyingCommand.IsPrepared)
+                {
+                    await UnderlyingCommand.UnprepareAsync();
+                }
 
-                if (DisposeCommand)
-                    await this.DisposeAsync();
-            }
-        }
-
-        async ValueTask IUpdateCommand<TEntity>.UpdateAsync(TEntity[] entities, CancellationToken cancellationToken)
-        {
-            if (entities is null ||
-                entities.Length == 0)
-                return;
-
-            var commandString = BaseUpdate(entities);
-
-            if (commandString.Length == 0)
-            {
-                return;
-            }
-
-            UnderlyingCommand.CommandText = commandString;
-
-            await ValidateConnectionAsync();
-
-            var transaction = await Database.BeginTransactionAsync(
-#if NET5_0
-                cancellationToken
-#endif
-                );
-
-            try
-            {
-                await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-
-                await transaction.CommitAsync(cancellationToken);
-            }
-            catch
-            {
-                await transaction.RollbackAsync(cancellationToken);
-
-                throw;
-            }
-            finally
-            {
                 await transaction.DisposeAsync();
 
                 if (DisposeCommand)
@@ -207,8 +131,7 @@ namespace Venflow.Commands
 
             var commandString = new StringBuilder();
 
-
-            for (int i = entities.Count - 1; i >= 0; i--)
+            for (int i = 0; i < entities.Count; i++)
             {
                 BaseUpdate(entities[i], i, commandString);
             }
@@ -219,6 +142,12 @@ namespace Venflow.Commands
             }
 
             UnderlyingCommand.CommandText = commandString.ToString();
+
+            if (entities.Count >= 10 &&
+                !UnderlyingCommand.IsPrepared)
+            {
+                await UnderlyingCommand.PrepareAsync();
+            }
 
             await ValidateConnectionAsync();
 
@@ -242,23 +171,17 @@ namespace Venflow.Commands
             }
             finally
             {
+                if (entities.Count >= 10 &&
+                    !UnderlyingCommand.IsPrepared)
+                {
+                    await UnderlyingCommand.UnprepareAsync();
+                }
+
                 await transaction.DisposeAsync();
 
                 if (DisposeCommand)
                     await this.DisposeAsync();
             }
-        }
-
-        private string BaseUpdate(Span<TEntity> entities)
-        {
-            var stringBuilder = new StringBuilder();
-
-            for (int i = entities.Length - 1; i >= 0;)
-            {
-                BaseUpdate(entities[i], i--, stringBuilder);
-            }
-
-            return stringBuilder.ToString();
         }
 
 #if NET5_0
@@ -283,7 +206,7 @@ namespace Venflow.Commands
                              .Append(EntityConfiguration.TableName)
                              .Append(" SET ");
 
-                var columns = proxy.ChangeTracker.GetColumns()!;
+                var columns = proxy.ChangeTracker.GetColumns().AsSpan();
 
                 var entityColumns = EntityConfiguration.Columns.Values.AsSpan();
 
