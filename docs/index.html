@@ -112,6 +112,7 @@
 <h2 id="comparison">Comparison</h2>
 <p>Benchmarking ORM's isn't an easy task, since there are a bunch of different factors which can alter the result in one way or another. I do not show any beautiful graphs here for the simple reason, that showing them would be pretty impractical, since there would be just too many. That is also the reason why I tried to come up with a composite number based on the benchmark results. If you still want check all the individual benchmarks, which you definitely should, the source code can be found <a href="../../src/Venflow/Venflow.Benchmarks">here</a> and the results as <code>.csv</code> and <code>.md</code> are over <a href="../../benchmarks">here</a>.</p>
 <p>Lets just directly hop into the composite numbers of each tested ORM.</p>
+<!--Benchmark Start-->
 <table>
 <thead>
 <tr>
@@ -124,30 +125,31 @@
 <tbody>
 <tr>
 <td style="text-align: left;">#1 <a href="https://github.com/TwentyFourMinutes/Venflow">Venflow</a></td>
-<td style="text-align: center;">9.204</td>
-<td style="text-align: center;">8.463</td>
-<td style="text-align: center;">0.741</td>
+<td style="text-align: center;">2.374</td>
+<td style="text-align: center;">1.994</td>
+<td style="text-align: center;">0.381</td>
 </tr>
 <tr>
-<td style="text-align: left;">#2 <a href="https://github.com/StackExchange/Dapper">Dapper</a>**</td>
-<td style="text-align: center;">16.794</td>
-<td style="text-align: center;">13.076</td>
-<td style="text-align: center;">3.718</td>
+<td style="text-align: left;">#2 <a href="https://github.com/StackExchange/Dapper">Dapper</a></td>
+<td style="text-align: center;">6.547</td>
+<td style="text-align: center;">6.171</td>
+<td style="text-align: center;">0.376</td>
 </tr>
 <tr>
-<td style="text-align: left;">#3 <a href="https://github.com/mikependon/RepoDb">RepoDb</a>**</td>
-<td style="text-align: center;">49.494</td>
-<td style="text-align: center;">43.254</td>
-<td style="text-align: center;">6.240</td>
+<td style="text-align: left;">#3 <a href="https://github.com/mikependon/RepoDb">RepoDb</a></td>
+<td style="text-align: center;">62.006</td>
+<td style="text-align: center;">57.928</td>
+<td style="text-align: center;">4.078</td>
 </tr>
 <tr>
 <td style="text-align: left;">#4 <a href="https://github.com/dotnet/efcore">EFCore</a></td>
-<td style="text-align: center;">245.869</td>
-<td style="text-align: center;">195.152</td>
-<td style="text-align: center;">50.717</td>
+<td style="text-align: center;">219.079</td>
+<td style="text-align: center;">188.615</td>
+<td style="text-align: center;">30.464</td>
 </tr>
 </tbody>
 </table>
+<!--Benchmark End-->
 <p>* Lower is considered to be better <br>
 ** Do have missing benchmark entries for specific benchmark groups and therefor either might have better/worse scores.</p>
 <p>Now how do I calculate this <em>magic number</em>? The formula is as following:</p>
