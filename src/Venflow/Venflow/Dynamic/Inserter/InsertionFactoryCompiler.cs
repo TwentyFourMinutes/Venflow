@@ -66,6 +66,8 @@ namespace Venflow.Dynamic.Inserter
                 _stateMachineTypeBuilder = _inserterTypeBuilder.DefineNestedType("StateMachine", TypeAttributes.NestedPrivate | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, typeof(ValueType), new[] { typeof(IAsyncStateMachine) });
 
                 _moveNextMethod = _stateMachineTypeBuilder.DefineMethod("MoveNext", MethodAttributes.Private | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual);
+                _moveNextMethod.InitLocals = false;
+
                 _moveNextMethodIL = _moveNextMethod.GetILGenerator();
 
                 _methodBuilderField = _stateMachineTypeBuilder.DefineField("_builder", typeof(AsyncTaskMethodBuilder<int>), FieldAttributes.Public);
@@ -105,6 +107,8 @@ namespace Venflow.Dynamic.Inserter
                 _stateMachineTypeBuilder.DefineMethodOverride(_moveNextMethod, typeof(IAsyncStateMachine).GetMethod("MoveNext"));
 
                 var setStateMachineMethod = _stateMachineTypeBuilder.DefineMethod("SetStateMachine", MethodAttributes.Private | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual, null, new[] { typeof(IAsyncStateMachine) });
+                setStateMachineMethod.InitLocals = false;
+
                 var setStateMachineMethodIL = setStateMachineMethod.GetILGenerator();
 
                 setStateMachineMethodIL.Emit(OpCodes.Ldarg_0);
@@ -116,7 +120,7 @@ namespace Venflow.Dynamic.Inserter
                 _stateMachineTypeBuilder.DefineMethodOverride(setStateMachineMethod, typeof(IAsyncStateMachine).GetMethod("SetStateMachine"));
 
                 var materializeMethod = _inserterTypeBuilder.DefineMethod("InsertAsync", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Static, typeof(Task<int>), new[] { typeof(NpgsqlConnection), _insertType, _cancellationTokenField.FieldType });
-
+                materializeMethod.InitLocals = false;
                 materializeMethod.SetCustomAttribute(new CustomAttributeBuilder(typeof(AsyncStateMachineAttribute).GetConstructor(new[] { typeof(Type) }), new[] { _stateMachineTypeBuilder }));
 
                 var materializeMethodIL = materializeMethod.GetILGenerator();
@@ -158,7 +162,7 @@ namespace Venflow.Dynamic.Inserter
             }
             else
             {
-                var insertMethod = new DynamicMethod("InsertAsync", typeof(Task<int>), new[] { typeof(NpgsqlConnection), typeof(TInsert), typeof(CancellationToken) }, TypeFactory.DynamicModule);
+                var insertMethod = TypeFactory.GetDynamicMethod("InsertAsync", typeof(Task<int>), new[] { typeof(NpgsqlConnection), typeof(TInsert), typeof(CancellationToken) });
 
                 CreateSingleNoRelationNoDbKeysInserter(insertMethod.GetILGenerator());
 

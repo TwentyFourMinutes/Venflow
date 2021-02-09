@@ -68,7 +68,11 @@ namespace Venflow.Dynamic
 
         internal static DynamicMethod GetDynamicMethod(string methodName, Type? returnType, Type[]? parameters, bool skipVisiblity = true)
         {
-            return new DynamicMethod(methodName + "_" + Interlocked.Increment(ref _typeNumberIdentifier), returnType, parameters, DynamicModule, skipVisiblity);
+            var method = new DynamicMethod(methodName + "_" + Interlocked.Increment(ref _typeNumberIdentifier), returnType, parameters, DynamicModule, skipVisiblity);
+
+            method.InitLocals = false;
+
+            return method;
         }
 
         private static string GetTypeName(NamespaceType namespaceType, string typeName)

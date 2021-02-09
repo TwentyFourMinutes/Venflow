@@ -52,6 +52,7 @@ namespace Venflow.Dynamic.Materializer
             _moveNextMethod = _stateMachineTypeBuilder.DefineMethod("MoveNext",
                  MethodAttributes.Private | MethodAttributes.Final | MethodAttributes.HideBySig |
                  MethodAttributes.NewSlot | MethodAttributes.Virtual);
+            _moveNextMethod.InitLocals = false;
 
             _moveNextMethodIL = _moveNextMethod.GetILGenerator();
 
@@ -105,6 +106,8 @@ namespace Venflow.Dynamic.Materializer
             var setStateMachineMethod = _stateMachineTypeBuilder.DefineMethod("SetStateMachine",
                 MethodAttributes.Private | MethodAttributes.Final | MethodAttributes.HideBySig |
                 MethodAttributes.NewSlot | MethodAttributes.Virtual, null, new[] { typeof(IAsyncStateMachine) });
+            setStateMachineMethod.InitLocals = false;
+
             var setStateMachineMethodIL = setStateMachineMethod.GetILGenerator();
 
             setStateMachineMethodIL.Emit(OpCodes.Ldarg_0);
@@ -118,6 +121,7 @@ namespace Venflow.Dynamic.Materializer
             var materializeMethod = _materializerTypeBuilder.DefineMethod("MaterializeAsync",
                 MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Static, typeof(Task<>).MakeGenericType(_returnType),
                 new[] { _dataReaderType, _cancellationTokenField.FieldType });
+            materializeMethod.InitLocals = false;
 
             materializeMethod.SetCustomAttribute(new CustomAttributeBuilder(
                 typeof(AsyncStateMachineAttribute).GetConstructor(new[] { typeof(Type) }),
@@ -157,7 +161,6 @@ namespace Venflow.Dynamic.Materializer
             var materializerType = _materializerTypeBuilder.CreateType();
 
             return (Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>)materializerType.GetMethod("MaterializeAsync").CreateDelegate(typeof(Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>));
-
         }
 
         private void CreateSingleNoRelationMaterializer(List<(EntityColumn, int)> dbColumns, bool changeTracking)

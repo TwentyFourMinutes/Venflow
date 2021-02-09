@@ -20,7 +20,7 @@ namespace Venflow.Dynamic
             {
                 var genericType = typeof(TType[]);
 
-                var method = new DynamicMethod("GetUnderlyingArray", genericType, new[] { typeof(List<TType>) }, typeof(List<TType>), true);
+                var method = TypeFactory.GetDynamicMethod("GetUnderlyingArray", genericType, new[] { typeof(List<TType>) });
 
                 var ilGenerator = method.GetILGenerator();
 
@@ -71,7 +71,7 @@ namespace Venflow.Dynamic
 
         private static Func<ReadOnlyCollection<NpgsqlDbColumn>, List<NpgsqlDbColumn>> GetUnderlyingReadOnlyCollectionListGetter()
         {
-            var method = new DynamicMethod("GetUnderlyingList", typeof(List<NpgsqlDbColumn>), new[] { typeof(ReadOnlyCollection<NpgsqlDbColumn>) }, typeof(ReadOnlyCollection<NpgsqlDbColumn>));
+            var method = TypeFactory.GetDynamicMethod("GetUnderlyingList", typeof(List<NpgsqlDbColumn>), new[] { typeof(ReadOnlyCollection<NpgsqlDbColumn>) });
 
             var ilGenerator = method.GetILGenerator();
 

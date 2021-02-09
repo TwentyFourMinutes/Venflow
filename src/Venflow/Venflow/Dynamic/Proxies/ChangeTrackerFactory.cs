@@ -35,6 +35,8 @@ namespace Venflow.Dynamic.Proxies
             var changeTrackerPropertyGet = proxyTypeBuilder.DefineMethod("get_ChangeTracker", MethodAttributes.Public | MethodAttributes.SpecialName |
                                                                                               MethodAttributes.NewSlot | MethodAttributes.HideBySig |
                                                                                               MethodAttributes.Virtual | MethodAttributes.Final, _changeTrackerType, Type.EmptyTypes);
+            changeTrackerPropertyGet.InitLocals = false;
+
             var changeTrackerPropertyGetIL = changeTrackerPropertyGet.GetILGenerator();
 
             changeTrackerPropertyGetIL.Emit(OpCodes.Ldarg_0);
@@ -55,6 +57,8 @@ namespace Venflow.Dynamic.Proxies
                 // Create Property set property method
                 var propertySet = proxyTypeBuilder.DefineMethod("set_" + property.Value.PropertyInfo.Name, MethodAttributes.Public | MethodAttributes.SpecialName |
                                                                                                            MethodAttributes.Virtual | MethodAttributes.HideBySig, null, new[] { property.Value.PropertyInfo.PropertyType });
+                propertySet.InitLocals = false;
+
                 var propertySetIL = propertySet.GetILGenerator();
 
                 propertySetIL.Emit(OpCodes.Ldarg_0);

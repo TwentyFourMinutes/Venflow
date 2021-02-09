@@ -191,7 +191,7 @@ namespace Venflow.Dynamic.Materializer
                 var materializer = new MaterializerFactoryCompiler(_entity).CreateMaterializer<TReturn>(entities, changeTracking);
 
 #if NET48
-                    _materializerCache.Add(cacheKey, materializer);
+                _materializerCache.Add(cacheKey, materializer);
 #else
                 _materializerCache.TryAdd(cacheKey, materializer);
 #endif
