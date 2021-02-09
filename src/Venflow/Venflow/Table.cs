@@ -400,6 +400,15 @@ namespace Venflow
         #region ChangeTracking
 
         /// <summary>
+        /// Constructs a new proxied instance of the <typeparamref name="TEntity"/> entity.
+        /// </summary>
+        /// <returns>A <typeparamref name="TEntity"/> instance which will be change tracked.</returns>
+        /// <remarks>Any property which should be change tracked on an entity has to be marked virtual.</remarks>
+        /// <exception cref="InvalidOperationException">Thrown when the provided entity does not contain any virtual properties.</exception>
+        public TEntity GetProxiedEntity()
+            => Configuration.GetProxiedEntity();
+
+        /// <summary>
         /// Starts tracking the provided <typeparamref name="TEntity"/>.
         /// </summary>
         /// <param name="entity">A <typeparamref name="TEntity"/> instance which will be change tracked.</param>

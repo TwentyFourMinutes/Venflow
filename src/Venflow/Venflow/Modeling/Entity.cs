@@ -29,6 +29,16 @@ namespace Venflow.Modeling
             InsertionFactory = new InsertionFactory<TEntity>(this);
         }
 
+        internal TEntity GetProxiedEntity(bool trackChanges = false)
+        {
+            if (ChangeTrackerFactory is null)
+            {
+                throw new InvalidOperationException($"The entity {EntityType.Name} doesn't contain any properties which are marked as virtual. Therefor no proxy entity exists.");
+            }
+
+            return ChangeTrackerFactory.Invoke(new ChangeTracker<TEntity>(Columns.ChangeTrackedCount, trackChanges));
+        }
+
         internal TEntity ApplyChangeTracking(TEntity entity)
         {
             if (ChangeTrackerApplier is null)
