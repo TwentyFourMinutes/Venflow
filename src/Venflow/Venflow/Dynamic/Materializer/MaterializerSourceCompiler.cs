@@ -78,8 +78,12 @@ namespace Venflow.Dynamic.Materializer
 
             if (relation.RelationType == RelationType.ManyToOne)
             {
-                if (relation.RightNavigationProperty.CanWrite)
+                if (!relation.IsRightNavigationPropertyInitialized &&
+                    (relation.RightNavigationProperty.CanWrite ||
+                    relation.RightNavigationProperty.GetBackingField() is not null))
+                {
                     rightQueryHolder.InitializeNavigations.Add(relation.Sibiling);
+                }
 
                 leftQueryHolder.ForeignAssignedRelations.Add((relation, rightQueryHolder));
 
@@ -108,8 +112,12 @@ namespace Venflow.Dynamic.Materializer
             {
                 if (relation.RelationType == RelationType.OneToMany)
                 {
-                    if (relation.LeftNavigationProperty.CanWrite)
+                    if (!relation.IsLeftNavigationPropertyInitialized &&
+                        (relation.LeftNavigationProperty.CanWrite ||
+                        relation.LeftNavigationProperty.GetBackingField() is not null))
+                    {
                         leftQueryHolder.InitializeNavigations.Add(relation);
+                    }
 
                     rightQueryHolder.ForeignAssignedRelations.Add((relation.Sibiling, leftQueryHolder));
 

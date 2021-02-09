@@ -50,7 +50,7 @@ namespace Venflow.Dynamic.Retriever
         {
             var stringType = typeof(string);
 
-            il.Emit(OpCodes.Ldstr, "@" + property.Name);
+            il.Emit(OpCodes.Ldstr, "@p" + property.Name);
             il.Emit(OpCodes.Ldarg_1);
             il.Emit(OpCodes.Call, stringType.GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new[] { stringType, stringType }, null));
             il.Emit(OpCodes.Ldarg_0);
@@ -63,7 +63,6 @@ namespace Venflow.Dynamic.Retriever
                 il.Emit(OpCodes.Ldc_I8, long.MinValue);
                 il.Emit(OpCodes.Add);
             }
-
 
             il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underylingType).GetConstructor(new[] { stringType, underylingType }));
             il.Emit(OpCodes.Ret);
@@ -89,7 +88,7 @@ namespace Venflow.Dynamic.Retriever
             il.Emit(OpCodes.Brtrue_S, defaultRetrieverLabel);
 
             // Nullable retriever
-            il.Emit(OpCodes.Ldstr, "@" + property.Name);
+            il.Emit(OpCodes.Ldstr, "@p" + property.Name);
             il.Emit(OpCodes.Ldarg_1);
             il.Emit(OpCodes.Call, stringConcatMethod);
             il.Emit(OpCodes.Ldsfld, dbNullType.GetField("Value"));
@@ -99,7 +98,7 @@ namespace Venflow.Dynamic.Retriever
             // Default retriever
             il.MarkLabel(defaultRetrieverLabel);
 
-            il.Emit(OpCodes.Ldstr, "@" + property.Name);
+            il.Emit(OpCodes.Ldstr, "@p" + property.Name);
             il.Emit(OpCodes.Ldarg_1);
             il.Emit(OpCodes.Call, stringConcatMethod);
             il.Emit(OpCodes.Ldarg_0);

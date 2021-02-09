@@ -13,8 +13,12 @@ namespace Venflow.Modeling.Definitions
         internal EntityBuilder LeftEntityBuilder { get; }
         internal PropertyInfo? LeftNavigationProperty { get; }
 
+        internal bool IsLeftNavigationPropertyInitialized { get; set; }
+
         internal string RightEntityName { get; }
         internal PropertyInfo? RightNavigationProperty { get; }
+
+        internal bool IsRightNavigationPropertyInitialized { get; set; }
 
         internal string ForeignKeyColumnName { get; set; }
 
