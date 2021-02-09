@@ -59,6 +59,9 @@ namespace Venflow.Score
             {
                 case "KB":
                     break;
+                case "B":
+                    size /= 1024;
+                    break;
                 default:
                     throw new InvalidOperationException($"The size format {splittedVal[1]} is invalid.");
             }
