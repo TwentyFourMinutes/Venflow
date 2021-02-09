@@ -2041,6 +2041,23 @@ references:
   fullName.vb: Venflow.Table(Of TEntity).DeleteAsync
   nameWithType: Table<TEntity>.DeleteAsync
   nameWithType.vb: Table(Of TEntity).DeleteAsync
+- uid: Venflow.Table`1.GetProxiedEntity
+  name: GetProxiedEntity()
+  href: api/Venflow.Table-1.html#Venflow_Table_1_GetProxiedEntity
+  commentId: M:Venflow.Table`1.GetProxiedEntity
+  fullName: Venflow.Table<TEntity>.GetProxiedEntity()
+  fullName.vb: Venflow.Table(Of TEntity).GetProxiedEntity()
+  nameWithType: Table<TEntity>.GetProxiedEntity()
+  nameWithType.vb: Table(Of TEntity).GetProxiedEntity()
+- uid: Venflow.Table`1.GetProxiedEntity*
+  name: GetProxiedEntity
+  href: api/Venflow.Table-1.html#Venflow_Table_1_GetProxiedEntity_
+  commentId: Overload:Venflow.Table`1.GetProxiedEntity
+  isSpec: "True"
+  fullName: Venflow.Table<TEntity>.GetProxiedEntity
+  fullName.vb: Venflow.Table(Of TEntity).GetProxiedEntity
+  nameWithType: Table<TEntity>.GetProxiedEntity
+  nameWithType.vb: Table(Of TEntity).GetProxiedEntity
 - uid: Venflow.Table`1.Insert
   name: Insert()
   href: api/Venflow.Table-1.html#Venflow_Table_1_Insert
