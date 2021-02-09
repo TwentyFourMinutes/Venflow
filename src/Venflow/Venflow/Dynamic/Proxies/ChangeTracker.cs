@@ -16,7 +16,7 @@
             _changedColumns = null!;
         }
 
-        internal void MakeDirty(byte propertyIndex)
+        internal void MakeDirty(byte propertyIndex, byte columnIndex)
         {
             lock (this)
             {
@@ -30,7 +30,7 @@
                     IsDirty = true;
                 }
 
-                _changedColumns[propertyIndex] = (byte)(propertyIndex + 1);
+                _changedColumns[propertyIndex] = (byte)(columnIndex + 1);
             }
         }
 

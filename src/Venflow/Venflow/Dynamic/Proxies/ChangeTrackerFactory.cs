@@ -45,6 +45,8 @@ namespace Venflow.Dynamic.Proxies
             var changeTrackerProperty = proxyTypeBuilder.DefineProperty("ChangeTracker", PropertyAttributes.HasDefault, _changeTrackerType, Type.EmptyTypes);
             changeTrackerProperty.SetGetMethod(changeTrackerPropertyGet);
 
+            var propertyIndex = 0;
+
             // Create All Entity properties
             foreach (var property in trackingProperties)
             {
@@ -60,7 +62,8 @@ namespace Venflow.Dynamic.Proxies
                 propertySetIL.Emit(OpCodes.Call, baseSetter);
                 propertySetIL.Emit(OpCodes.Ldarg_0);
                 propertySetIL.Emit(OpCodes.Call, changeTrackerPropertyGet);
-                propertySetIL.Emit(OpCodes.Ldc_I4_S, property.Key);
+                propertySetIL.Emit(OpCodes.Ldc_I4_S, (byte)propertyIndex++);
+                propertySetIL.Emit(OpCodes.Ldc_I4_S, (byte)property.Key);
                 propertySetIL.Emit(OpCodes.Callvirt, changeTrackerMakeDirtyMethod);
                 propertySetIL.Emit(OpCodes.Ret);
 
@@ -71,6 +74,8 @@ namespace Venflow.Dynamic.Proxies
             var constructor = proxyTypeBuilder.DefineConstructor(MethodAttributes.Assembly | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, CallingConventions.Standard, new[] { _changeTrackerType });
             var constructorIL = constructor.GetILGenerator();
 
+            constructorIL.Emit(OpCodes.Ldarg_0);
+            constructorIL.Emit(OpCodes.Call, _entityType.GetConstructor(Type.EmptyTypes));
             constructorIL.Emit(OpCodes.Ldarg_0);
             constructorIL.Emit(OpCodes.Ldarg_1);
             constructorIL.Emit(OpCodes.Stfld, changeTrackerField);
@@ -89,32 +94,47 @@ namespace Venflow.Dynamic.Proxies
             return Expression.Lambda<Func<ChangeTracker<TEntity>, TEntity>>(Expression.Convert(proxyInstance, _entityType), changeTrackerParameter).Compile();
         }
 
-        internal Func<ChangeTracker<TEntity>, TEntity, TEntity> GetProxyApplyingFactory(EntityColumnCollection<TEntity> columns)
+        internal Func<ChangeTracker<TEntity>, TEntity, TEntity> GetProxyApplyingFactory()
         {
-            var changeTrackerParameter = Expression.Parameter(_changeTrackerType, "changeTracker");
-            var entityParameter = Expression.Parameter(_entityType, "entity");
+            var method = TypeFactory.GetDynamicMethod(_entityType.Name + "ProxyApplier", typeof(TEntity), new[] { _changeTrackerType, typeof(TEntity) });
+            var ilGenerator = method.GetILGenerator();
 
-            var bindings = new MemberBinding[columns.Count];
+            ilGenerator.Emit(OpCodes.Ldarg_0);
+            ilGenerator.Emit(OpCodes.Newobj, ProxyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { _changeTrackerType }, null));
 
-            int index = 0;
+            var properties = _entityType.GetProperties(BindingFlags.Public | BindingFlags.Instance).AsSpan();
 
-            for (int i = columns.Count - 1; i >= 0; i--)
+            for (int propertyIndex = 0; propertyIndex < properties.Length; propertyIndex++)
             {
-                var column = columns[i];
+                var property = properties[propertyIndex];
 
-                bindings[index++] = Expression.Bind(ProxyType.GetProperty(column.PropertyInfo.Name), Expression.Property(entityParameter, column.PropertyInfo.Name));
+                var backingField = property.GetBackingField();
+
+                ilGenerator.Emit(OpCodes.Dup);
+                ilGenerator.Emit(OpCodes.Ldarg_1);
+
+                if (!property.CanWrite &&
+                    backingField is not null)
+                {
+                    ilGenerator.Emit(OpCodes.Ldfld, backingField);
+                    ilGenerator.Emit(OpCodes.Stfld, backingField);
+                }
+                else
+                {
+                    var proxyProperty = ProxyType.GetProperty(property.Name, BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly) ?? property;
+
+                    ilGenerator.Emit(OpCodes.Callvirt, property.GetGetMethod());
+
+                    ilGenerator.Emit(OpCodes.Callvirt, proxyProperty.GetSetMethod(true));
+                }
             }
 
-            var proxyVariable = Expression.Variable(ProxyType, "proxy");
+            ilGenerator.Emit(OpCodes.Ldarg_0);
+            ilGenerator.Emit(OpCodes.Ldc_I4_1);
+            ilGenerator.Emit(OpCodes.Callvirt, _changeTrackerType.GetProperty("TrackChanges", BindingFlags.NonPublic | BindingFlags.Instance).GetSetMethod(true));
+            ilGenerator.Emit(OpCodes.Ret);
 
-            var proxyInstance = Expression.New(ProxyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { _changeTrackerType }, null), changeTrackerParameter);
-
-            var block = Expression.Block(_entityType, new[] { proxyVariable },
-                                         Expression.Assign(proxyVariable, Expression.MemberInit(proxyInstance, bindings)),
-                                         Expression.Assign(Expression.Property(Expression.Property(proxyVariable, "ChangeTracker"), _changeTrackerType.GetProperty("TrackChanges", BindingFlags.NonPublic | BindingFlags.Instance)), Expression.Constant(true)),
-                                         Expression.Convert(proxyVariable, _entityType));
-
-            return Expression.Lambda<Func<ChangeTracker<TEntity>, TEntity, TEntity>>(block, changeTrackerParameter, entityParameter).Compile();
+            return (Func<ChangeTracker<TEntity>, TEntity, TEntity>)method.CreateDelegate(typeof(Func<ChangeTracker<TEntity>, TEntity, TEntity>));
         }
     }
 }
