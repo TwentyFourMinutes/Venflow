@@ -109,6 +109,8 @@ namespace Venflow.Modeling
 
                 var entityType = property.PropertyType.GetGenericArguments()[0];
 
+                TypeFactory.AddEntityAssembly(entityType.Assembly.GetName().Name!);
+
                 if (configurations.TryGetValue(entityType, out var configuration))
                 {
                     var entityConfiguration = (IEntityConfiguration)Activator.CreateInstance(configuration)!;

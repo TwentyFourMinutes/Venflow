@@ -459,7 +459,8 @@ namespace Venflow.Dynamic.Materializer
 
                 _moveNextMethodIL.Emit(OpCodes.Dup);
                 _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(List<>).MakeGenericType(new[] { initializeNavigation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0] }).GetConstructor(Type.EmptyTypes));
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, initializeNavigation.LeftNavigationProperty.GetSetMethod());
+
+                WritePropertyAssigner(_moveNextMethodIL, initializeNavigation.LeftNavigationProperty);
             }
 
             // return result
@@ -551,7 +552,8 @@ namespace Venflow.Dynamic.Materializer
 
                     _moveNextMethodIL.Emit(OpCodes.Dup);
                     _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(List<>).MakeGenericType(new[] { initializeNavigation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0] }).GetConstructor(Type.EmptyTypes));
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, initializeNavigation.LeftNavigationProperty.GetSetMethod());
+
+                    WritePropertyAssigner(_moveNextMethodIL, initializeNavigation.LeftNavigationProperty);
                 }
 
                 _moveNextMethodIL.Emit(OpCodes.Stfld, lastEntityField);
@@ -716,7 +718,7 @@ namespace Venflow.Dynamic.Materializer
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, resultField);
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
+                        WritePropertyAssigner(_moveNextMethodIL, relation.LeftNavigationProperty);
                     }
                 }
 
@@ -858,7 +860,7 @@ namespace Venflow.Dynamic.Materializer
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
+                        WritePropertyAssigner(_moveNextMethodIL, relation.LeftNavigationProperty);
                     }
 
                     _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
@@ -1255,7 +1257,8 @@ namespace Venflow.Dynamic.Materializer
 
                     _moveNextMethodIL.Emit(OpCodes.Dup);
                     _moveNextMethodIL.Emit(OpCodes.Newobj, typeof(List<>).MakeGenericType(new[] { initializeNavigation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0] }).GetConstructor(Type.EmptyTypes));
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, initializeNavigation.LeftNavigationProperty.GetSetMethod());
+
+                    WritePropertyAssigner(_moveNextMethodIL, initializeNavigation.LeftNavigationProperty);
                 }
 
                 _moveNextMethodIL.Emit(OpCodes.Stfld, lastEntityField);
@@ -1499,7 +1502,7 @@ namespace Venflow.Dynamic.Materializer
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, lastLeftEntity);
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, lastRightEntity);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetSetMethod());
+                        WritePropertyAssigner(_moveNextMethodIL, relation.LeftNavigationProperty);
                     }
 
                     _moveNextMethodIL.MarkLabel(afterLateAssignmentLabel);
@@ -1573,7 +1576,7 @@ namespace Venflow.Dynamic.Materializer
 
                 changeTrackerLocal = _moveNextMethodIL.DeclareLocal(changeTrackerType);
 
-                _moveNextMethodIL.Emit(OpCodes.Ldc_I4, entity.GetColumnCount());
+                _moveNextMethodIL.Emit(OpCodes.Ldc_I4, entity.GetChangeTrackingCount());
                 _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
                 _moveNextMethodIL.Emit(OpCodes.Newobj, changeTrackerType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(int), typeof(bool) }, null));
                 _moveNextMethodIL.Emit(OpCodes.Stloc_S, changeTrackerLocal);
@@ -1596,7 +1599,8 @@ namespace Venflow.Dynamic.Materializer
 
                 _moveNextMethodIL.Emit(OpCodes.Dup);
                 _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod());
+
+                WritePropertyAssigner(_moveNextMethodIL, column);
             }
 
             for (; columnIteratorIndex < dbColumns.Count; columnIteratorIndex++)
@@ -1615,7 +1619,8 @@ namespace Venflow.Dynamic.Materializer
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I4, columnIndex);
 
                 WriteColumnMaterializer(_moveNextMethodIL, column);
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod());
+
+                WritePropertyAssigner(_moveNextMethodIL, column);
             }
 
             if (changeTracking)
@@ -1766,6 +1771,22 @@ namespace Venflow.Dynamic.Materializer
                     _moveNextMethodIL.Emit(OpCodes.Sub);
                 }
             }
+        }
+
+        private void WritePropertyAssigner(ILGenerator ilGenerator, EntityColumn column)
+        {
+            if (column.IsReadOnly)
+                ilGenerator.Emit(OpCodes.Stfld, column.PropertyInfo.GetBackingField());
+            else
+                ilGenerator.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod(true));
+        }
+
+        private void WritePropertyAssigner(ILGenerator ilGenerator, PropertyInfo property)
+        {
+            if (property.CanWrite)
+                ilGenerator.Emit(OpCodes.Callvirt, property.GetSetMethod(true));
+            else
+                ilGenerator.Emit(OpCodes.Stfld, property.GetBackingField());
         }
     }
 }

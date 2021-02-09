@@ -7,7 +7,7 @@ namespace Venflow.Modeling
     internal class PostgreEnumEntityColumn<TEntity> : EntityColumn<TEntity>, IPostgreEnumEntityColumn
         where TEntity : class, new()
     {
-        internal PostgreEnumEntityColumn(PropertyInfo propertyInfo, string columnName, Func<TEntity, string, NpgsqlParameter> valueRetriever) : base(propertyInfo, columnName, valueRetriever, false)
+        internal PostgreEnumEntityColumn(PropertyInfo propertyInfo, string columnName, Func<TEntity, string, NpgsqlParameter> valueRetriever, bool isReadOnly) : base(propertyInfo, columnName, valueRetriever, false, isReadOnly)
         {
 
         }

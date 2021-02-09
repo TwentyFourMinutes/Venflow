@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Venflow.Dynamic
@@ -12,6 +14,8 @@ namespace Venflow.Dynamic
         private static readonly AssemblyName _assemblyName;
         private static readonly AssemblyBuilder _assemblyBuilder;
         private static readonly ModuleBuilder _dynamicModule;
+
+        private static readonly HashSet<string> _knownEntityAssemblies;
 
         private static readonly string[] _namespaceNames;
 
@@ -25,10 +29,26 @@ namespace Venflow.Dynamic
             _dynamicModule = _assemblyBuilder.DefineDynamicModule(_assemblyName.Name + ".dll");
 
 #if NET5_0
-            _dynamicModule.SetCustomAttribute(new CustomAttributeBuilder(typeof(System.Runtime.CompilerServices.SkipLocalsInitAttribute).GetConstructor(Type.EmptyTypes), Array.Empty<object>()));
+            _dynamicModule.SetCustomAttribute(new CustomAttributeBuilder(typeof(SkipLocalsInitAttribute).GetConstructor(Type.EmptyTypes), Array.Empty<object>()));
 #endif
 
             _namespaceNames = new[] { "Venflow.Dynamic.Proxies.", "Venflow.Dynamic.Materializer.", "Venflow.Dynamic.Inserter." };
+
+            _knownEntityAssemblies = new(1);
+        }
+
+        internal static void AddEntityAssembly(string assemblyName)
+        {
+            if (!_knownEntityAssemblies.Add(assemblyName))
+                return;
+
+            var ignoresAccessChecksTo = new CustomAttributeBuilder
+            (
+                typeof(IgnoresAccessChecksToAttribute).GetConstructor(new Type[] { typeof(string) }),
+                new object[] { assemblyName }
+            );
+
+            _assemblyBuilder.SetCustomAttribute(ignoresAccessChecksTo);
         }
 
         internal static TypeBuilder GetNewProxyBuilder(string typeName, TypeAttributes typeAttributes, Type? parent = null, Type[]? interfaces = null)

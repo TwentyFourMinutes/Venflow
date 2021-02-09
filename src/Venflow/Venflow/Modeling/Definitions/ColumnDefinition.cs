@@ -6,6 +6,7 @@ namespace Venflow.Modeling.Definitions
     internal class ColumnDefinition<TEntity> where TEntity : class, new()
     {
         internal string Name { get; set; }
+        internal bool IsReadOnly { get; set; }
 
         internal Action<TEntity, NpgsqlDataReader>? ValueWriter { get; set; }
 

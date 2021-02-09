@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using Venflow.Enums;
@@ -187,6 +187,9 @@ namespace Venflow.Modeling.Definitions
             for (; index < columns.Count; index++)
             {
                 var column = columns[index];
+
+                if (column.IsReadOnly && index > 0)
+                    continue;
 
                 sb.Append('"')
                   .Append(column.ColumnName)

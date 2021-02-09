@@ -233,8 +233,10 @@ namespace Venflow.Dynamic.Inserter
 
             var stringBuilder = new StringBuilder();
 
-            var columnCount = _rootEntity.GetColumnCount();
+            var totalColumnCount = _rootEntity.GetColumnCount();
+            var columnCount = totalColumnCount - _rootEntity.GetReadOnlyCount();
             var columnOffset = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0;
+            var lastNonReadOnlyIndex = _rootEntity.GetLastNonReadOnlyColumnsIndex();
 
             stringBuilder.Append("INSERT INTO ")
                          .Append(_rootEntity.TableName)
@@ -317,9 +319,12 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(char) }));
             _moveNextMethodIL.Emit(OpCodes.Pop);
 
-            for (int k = columnOffset; k < columnCount; k++)
+            for (int k = columnOffset; k <= lastNonReadOnlyIndex; k++)
             {
                 var column = _rootEntity.GetColumn(k);
+
+                if (column.IsReadOnly)
+                    continue;
 
                 // Write placeholder to the command builder => (@Name(n)),
                 _moveNextMethodIL.Emit(OpCodes.Ldloc, commandBuilderLocal);
@@ -335,7 +340,7 @@ namespace Venflow.Dynamic.Inserter
                 // Write placeholder to the command builder => (@Name(n)),
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameter).GetProperty("ParameterName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
-                _moveNextMethodIL.Emit(OpCodes.Ldstr, columnCount == k + 1 ? "), " : ", ");
+                _moveNextMethodIL.Emit(OpCodes.Ldstr, lastNonReadOnlyIndex == k ? "), " : ", ");
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
                 _moveNextMethodIL.Emit(OpCodes.Pop);
             }
@@ -497,7 +502,8 @@ namespace Venflow.Dynamic.Inserter
                 _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
                 _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("GetFieldValue").MakeGenericMethod(_rootEntity.GetPrimaryColumn().PropertyInfo.PropertyType));
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
+
+                WritePropertyAssigner(_moveNextMethodIL, _rootEntity.GetPrimaryColumn());
 
                 // loop iterator increment
                 var tempIteratorLocal = _moveNextMethodIL.DeclareLocal(_intType);
@@ -744,8 +750,10 @@ namespace Venflow.Dynamic.Inserter
 
                 var skipPrimaryKey = entity.HasDbGeneratedPrimaryKey;
 
-                var columnCount = entity.GetColumnCount();
+                var totalColumnCount = entity.GetColumnCount();
+                var columnCount = totalColumnCount - entity.GetReadOnlyCount();
                 var columnOffset = skipPrimaryKey ? entity.GetRegularColumnOffset() : 0;
+                var lastNonReadOnlyIndex = entity.GetLastNonReadOnlyColumnsIndex();
 
                 stringBuilder.Append("INSERT INTO ")
                              .Append(entity.TableName)
@@ -840,7 +848,7 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                    WritePropertyAssigner(_moveNextMethodIL, relation.ForeignKeyColumn);
 
                     _moveNextMethodIL.MarkLabel(afterBodyLabel);
                 }
@@ -852,9 +860,12 @@ namespace Venflow.Dynamic.Inserter
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(char) }));
                 _moveNextMethodIL.Emit(OpCodes.Pop);
 
-                for (int k = columnOffset; k < columnCount; k++)
+                for (int k = columnOffset; k <= lastNonReadOnlyIndex; k++)
                 {
                     var column = entity.GetColumn(k);
+
+                    if (column.IsReadOnly)
+                        continue;
 
                     // Write placeholder to the command builder => (@Name(n)),
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -872,7 +883,7 @@ namespace Venflow.Dynamic.Inserter
                     // Write placeholder to the command builder => (@Name(n)),
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameter).GetProperty("ParameterName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
-                    _moveNextMethodIL.Emit(OpCodes.Ldstr, columnCount == k + 1 ? "), " : ", ");
+                    _moveNextMethodIL.Emit(OpCodes.Ldstr, lastNonReadOnlyIndex == k ? "), " : ", ");
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
                     _moveNextMethodIL.Emit(OpCodes.Pop);
                 }
@@ -1043,7 +1054,7 @@ namespace Venflow.Dynamic.Inserter
                         // assign the returned id to the current entity
                         _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
                         _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, entity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
+                        WritePropertyAssigner(_moveNextMethodIL, entity.GetPrimaryColumn());
 
                         LocalBuilder? innerIteratorLocal = default;
 
@@ -1090,7 +1101,7 @@ namespace Venflow.Dynamic.Inserter
                                 // assign entity primary key to foreign key on navigation entity
                                 _moveNextMethodIL.Emit(OpCodes.Ldloc, foreignEntityLocal);
                                 _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                                WritePropertyAssigner(_moveNextMethodIL, relation.ForeignKeyColumn);
 
                                 _moveNextMethodIL.MarkLabel(afterNullCheckBodyLabel);
 
@@ -1115,7 +1126,7 @@ namespace Venflow.Dynamic.Inserter
                                 _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
                                 _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
                                 _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                                WritePropertyAssigner(_moveNextMethodIL, relation.ForeignKeyColumn);
                             }
                             _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
                         }
@@ -1132,7 +1143,7 @@ namespace Venflow.Dynamic.Inserter
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
                         _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("GetFieldValue").MakeGenericMethod(entity.GetPrimaryColumn().PropertyInfo.PropertyType));
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, entity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
+                        WritePropertyAssigner(_moveNextMethodIL, entity.GetPrimaryColumn());
                     }
 
                     // loop iterator increment
@@ -1335,11 +1346,15 @@ namespace Venflow.Dynamic.Inserter
                       .Append(skipPrimaryKey ? _rootEntity.NonPrimaryColumnListString : _rootEntity.ColumnListString)
                       .Append(") VALUES (");
 
-            var colCount = _rootEntity.GetColumnCount();
+            var columnOffset = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0;
+            var lastNonReadOnlyIndex = _rootEntity.GetLastNonReadOnlyColumnsIndex();
 
-            for (int columnIndex = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0; columnIndex < colCount; columnIndex++)
+            for (int columnIndex = columnOffset; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
             {
                 var column = _rootEntity.GetColumn(columnIndex);
+
+                if (column.IsReadOnly)
+                    continue;
 
                 sqlBuilder.Append('@')
                           .Append(column.ColumnName)
@@ -1365,9 +1380,12 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Newobj, commandType.GetConstructor(new[] { typeof(string), _connectionField.FieldType }));
 
             // Assign parameters to command
-            for (int columnIndex = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0; columnIndex < colCount; columnIndex++)
+            for (int columnIndex = columnOffset; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
             {
                 var column = _rootEntity.GetColumn(columnIndex);
+
+                if (column.IsReadOnly)
+                    continue;
 
                 _moveNextMethodIL.Emit(OpCodes.Dup);
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, commandType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
@@ -1392,7 +1410,8 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
             _moveNextMethodIL.Emit(OpCodes.Ldloc, objectResultLocal);
             _moveNextMethodIL.Emit(OpCodes.Unbox_Any, _rootEntity.GetPrimaryColumn().PropertyInfo.PropertyType);
-            _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
+
+            WritePropertyAssigner(_moveNextMethodIL, _rootEntity.GetPrimaryColumn());
 
             // return 1
 
@@ -1528,8 +1547,10 @@ namespace Venflow.Dynamic.Inserter
 
                 var skipPrimaryKey = entity.HasDbGeneratedPrimaryKey;
 
-                var columnCount = entity.GetColumnCount();
+                var totalColumnCount = entity.GetColumnCount();
+                var columnCount = totalColumnCount - entity.GetReadOnlyCount();
                 var columnOffset = skipPrimaryKey ? entity.GetRegularColumnOffset() : 0;
+                var lastNonReadOnlyIndex = entity.GetLastNonReadOnlyColumnsIndex();
 
                 stringBuilder.Append("INSERT INTO ")
                              .Append(entity.TableName)
@@ -1539,13 +1560,14 @@ namespace Venflow.Dynamic.Inserter
 
                 if (entity == _rootEntity)
                 {
-                    var colCount = _rootEntity.GetColumnCount();
-
                     stringBuilder.Append('(');
 
-                    for (int columnIndex = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0; columnIndex < colCount; columnIndex++)
+                    for (int columnIndex = columnOffset; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
                     {
                         var column = _rootEntity.GetColumn(columnIndex);
+
+                        if (column.IsReadOnly)
+                            continue;
 
                         stringBuilder.Append('@')
                                      .Append(column.ColumnName)
@@ -1605,15 +1627,18 @@ namespace Venflow.Dynamic.Inserter
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                        WritePropertyAssigner(_moveNextMethodIL, relation.ForeignKeyColumn);
 
                         _moveNextMethodIL.MarkLabel(afterBodyLabel);
                     }
 
                     // Assign parameters to command
-                    for (int columnIndex = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0; columnIndex < colCount; columnIndex++)
+                    for (int columnIndex = columnOffset; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
                     {
                         var column = _rootEntity.GetColumn(columnIndex);
+
+                        if (column.IsReadOnly)
+                            continue;
 
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, npgsqlCommandField);
@@ -1642,7 +1667,8 @@ namespace Venflow.Dynamic.Inserter
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
                         _moveNextMethodIL.Emit(OpCodes.Ldloc, objectResultLocal);
                         _moveNextMethodIL.Emit(OpCodes.Unbox_Any, _rootEntity.GetPrimaryColumn().PropertyInfo.PropertyType);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
+
+                        WritePropertyAssigner(_moveNextMethodIL, _rootEntity.GetPrimaryColumn());
                     }
                     else
                     {
@@ -1711,7 +1737,7 @@ namespace Venflow.Dynamic.Inserter
                                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                                 _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
                                 _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
-                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                                WritePropertyAssigner(_moveNextMethodIL, relation.ForeignKeyColumn);
 
                                 _moveNextMethodIL.MarkLabel(afterNullCheckBodyLabel);
 
@@ -1739,7 +1765,7 @@ namespace Venflow.Dynamic.Inserter
                                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                                 _moveNextMethodIL.Emit(OpCodes.Ldfld, _rootEntityInsertField);
                                 _moveNextMethodIL.Emit(OpCodes.Callvirt, _rootEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
-                                _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                                WritePropertyAssigner(_moveNextMethodIL, relation.ForeignKeyColumn);
                             }
 
                             _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
@@ -1861,7 +1887,7 @@ namespace Venflow.Dynamic.Inserter
                         _moveNextMethodIL.Emit(OpCodes.Ldloc, iteratorElementLocal);
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.RightEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                        WritePropertyAssigner(_moveNextMethodIL, relation.ForeignKeyColumn);
 
                         _moveNextMethodIL.MarkLabel(afterBodyLabel);
                     }
@@ -1873,9 +1899,12 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(char) }));
                     _moveNextMethodIL.Emit(OpCodes.Pop);
 
-                    for (int k = columnOffset; k < columnCount; k++)
+                    for (int k = columnOffset; k <= lastNonReadOnlyIndex; k++)
                     {
                         var column = entity.GetColumn(k);
+
+                        if (column.IsReadOnly)
+                            continue;
 
                         // Write placeholder to the command builder => (@Name(n)),
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -1893,7 +1922,7 @@ namespace Venflow.Dynamic.Inserter
                         // Write placeholder to the command builder => (@Name(n)),
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameter).GetProperty("ParameterName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
-                        _moveNextMethodIL.Emit(OpCodes.Ldstr, columnCount == k + 1 ? "), " : ", ");
+                        _moveNextMethodIL.Emit(OpCodes.Ldstr, lastNonReadOnlyIndex == k ? "), " : ", ");
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
                         _moveNextMethodIL.Emit(OpCodes.Pop);
                     }
@@ -2003,7 +2032,7 @@ namespace Venflow.Dynamic.Inserter
 
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, counterField);
-                        _moveNextMethodIL.Emit(OpCodes.Ldc_I4, ushort.MaxValue / totalColumns);
+                        _moveNextMethodIL.Emit(OpCodes.Ldc_I4, ushort.MaxValue / columnCount);
                         _moveNextMethodIL.Emit(OpCodes.Bne_Un, afterIfBody);
 
                         // Assign 0 to the counter
@@ -2064,7 +2093,8 @@ namespace Venflow.Dynamic.Inserter
                             // assign the returned id to the current entity
                             _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
                             _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                            _moveNextMethodIL.Emit(OpCodes.Callvirt, entity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
+
+                            WritePropertyAssigner(_moveNextMethodIL, entity.GetPrimaryColumn());
 
                             LocalBuilder? innerIteratorLocal = default;
 
@@ -2111,7 +2141,7 @@ namespace Venflow.Dynamic.Inserter
                                     // assign entity primary key to foreign key on navigation entity
                                     _moveNextMethodIL.Emit(OpCodes.Ldloc, foreignEntityLocal);
                                     _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                                    WritePropertyAssigner(_moveNextMethodIL, relation.ForeignKeyColumn);
 
                                     _moveNextMethodIL.MarkLabel(afterNullCheckBodyLabel);
 
@@ -2135,7 +2165,7 @@ namespace Venflow.Dynamic.Inserter
                                     _moveNextMethodIL.Emit(OpCodes.Ldloc, entityLocal);
                                     _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.LeftNavigationProperty.GetGetMethod());
                                     _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
-                                    _moveNextMethodIL.Emit(OpCodes.Callvirt, relation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                                    WritePropertyAssigner(_moveNextMethodIL, relation.ForeignKeyColumn);
                                 }
 
                                 _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
@@ -2153,7 +2183,7 @@ namespace Venflow.Dynamic.Inserter
                             _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
                             _moveNextMethodIL.Emit(OpCodes.Ldc_I4_0);
                             _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("GetFieldValue").MakeGenericMethod(entity.GetPrimaryColumn().PropertyInfo.PropertyType));
-                            _moveNextMethodIL.Emit(OpCodes.Callvirt, entity.GetPrimaryColumn().PropertyInfo.GetSetMethod());
+                            WritePropertyAssigner(_moveNextMethodIL, entity.GetPrimaryColumn());
                         }
 
                         // loop iterator increment
@@ -2294,11 +2324,14 @@ namespace Venflow.Dynamic.Inserter
                       .Append(_rootEntity.ColumnListString)
                       .Append(") VALUES (");
 
-            var colCount = _rootEntity.GetColumnCount();
+            var lastNonReadOnlyIndex = _rootEntity.GetLastNonReadOnlyColumnsIndex();
 
-            for (int columnIndex = 0; columnIndex < colCount; columnIndex++)
+            for (int columnIndex = 0; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
             {
                 var column = _rootEntity.GetColumn(columnIndex);
+
+                if (column.IsReadOnly)
+                    continue;
 
                 sqlBuilder.Append('@')
                           .Append(column.ColumnName)
@@ -2319,9 +2352,12 @@ namespace Venflow.Dynamic.Inserter
             iLGenerator.Emit(OpCodes.Newobj, commandType.GetConstructor(new[] { typeof(string), typeof(NpgsqlConnection) }));
 
             // Assign parameters to command
-            for (int columnIndex = 0; columnIndex < colCount; columnIndex++)
+            for (int columnIndex = 0; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
             {
                 var column = _rootEntity.GetColumn(columnIndex);
+
+                if (column.IsReadOnly)
+                    continue;
 
                 iLGenerator.Emit(OpCodes.Dup);
                 iLGenerator.Emit(OpCodes.Callvirt, commandType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
@@ -2336,6 +2372,14 @@ namespace Venflow.Dynamic.Inserter
 
             // End of method
             iLGenerator.Emit(OpCodes.Ret);
+        }
+
+        private void WritePropertyAssigner(ILGenerator ilGenerator, EntityColumn column)
+        {
+            if (column.IsReadOnly)
+                ilGenerator.Emit(OpCodes.Stfld, column.PropertyInfo.GetBackingField());
+            else
+                ilGenerator.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod(true));
         }
 
         private void WriteNpgsqlParameterFromColumn(ILGenerator ilGenerator, object entityVariable, EntityColumn column, LocalBuilder? iteratorLocal = default)
@@ -2649,14 +2693,14 @@ namespace Venflow.Dynamic.Inserter
                         _ilGenerator.Emit(OpCodes.Ldloc, leftEntityLocal);
                         _ilGenerator.Emit(OpCodes.Ldloc, lastEntityLocal);
                         _ilGenerator.Emit(OpCodes.Callvirt, lastEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
-                        _ilGenerator.Emit(OpCodes.Callvirt, entityHolder.DirectAssignedRelation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                        WritePropertyAssigner(_ilGenerator, entityHolder.DirectAssignedRelation.ForeignKeyColumn);
                     }
                     else
                     {
                         _ilGenerator.Emit(OpCodes.Ldloc, lastEntityLocal);
                         _ilGenerator.Emit(OpCodes.Ldloc, leftEntityLocal);
                         _ilGenerator.Emit(OpCodes.Callvirt, entity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
-                        _ilGenerator.Emit(OpCodes.Callvirt, entityHolder.DirectAssignedRelation.ForeignKeyColumn.PropertyInfo.GetSetMethod());
+                        WritePropertyAssigner(_ilGenerator, entityHolder.DirectAssignedRelation.ForeignKeyColumn);
                     }
                 }
 
@@ -2751,7 +2795,13 @@ namespace Venflow.Dynamic.Inserter
                 }
 
                 _ilGenerator.MarkLabel(afterSplitLabel);
-
+            }
+            private void WritePropertyAssigner(ILGenerator ilGenerator, EntityColumn column)
+            {
+                if (column.IsReadOnly)
+                    ilGenerator.Emit(OpCodes.Stfld, column.PropertyInfo.GetBackingField());
+                else
+                    ilGenerator.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod(true));
             }
         }
     }

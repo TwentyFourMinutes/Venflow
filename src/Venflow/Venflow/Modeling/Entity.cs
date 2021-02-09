@@ -46,7 +46,7 @@ namespace Venflow.Modeling
                 throw new InvalidOperationException($"The entity {EntityType.Name} doesn't contain any properties which are marked as virtual. Therefor no proxy entity exists.");
             }
 
-            return ChangeTrackerApplier.Invoke(new ChangeTracker<TEntity>(Columns.Count, false), entity);
+            return ChangeTrackerApplier.Invoke(new ChangeTracker<TEntity>(Columns.ChangeTrackedCount, false), entity);
         }
 
         internal override EntityColumn GetPrimaryColumn()
@@ -81,14 +81,19 @@ namespace Venflow.Modeling
         }
 
         internal override int GetColumnCount()
-        {
-            return Columns.Count;
-        }
+            => Columns.Count;
+
+        internal override int GetChangeTrackingCount()
+            => Columns.ChangeTrackedCount;
+
+        internal override int GetReadOnlyCount()
+            => Columns.ReadOnlyCount;
 
         internal override int GetRegularColumnOffset()
-        {
-            return Columns.RegularColumnsOffset;
-        }
+            => Columns.RegularColumnsOffset;
+
+        internal override int GetLastNonReadOnlyColumnsIndex()
+            => Columns.LastNonReadOnlyColumnsIndex;
     }
 
     internal abstract class Entity
@@ -123,7 +128,10 @@ namespace Venflow.Modeling
 
         internal abstract EntityColumn GetPrimaryColumn();
         internal abstract int GetColumnCount();
+        internal abstract int GetChangeTrackingCount();
+        internal abstract int GetReadOnlyCount();
         internal abstract int GetRegularColumnOffset();
+        internal abstract int GetLastNonReadOnlyColumnsIndex();
         internal abstract EntityColumn GetColumn(int index);
         internal abstract EntityColumn GetColumn(string columnName);
         internal abstract bool TryGetColumn(string columnName, out EntityColumn? entityColumn);

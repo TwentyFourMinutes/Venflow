@@ -253,7 +253,13 @@ namespace Venflow.Modeling.Definitions.Builder
             {
                 var property = propertiesSpan[i];
 
-                if (property.CanWrite && property.SetMethod!.IsPublic && !_ignoredColumns.Contains(property.Name) && !Attribute.IsDefined(property, notMappedAttributeType))
+                var hasPropertySetter = property.GetSetMethod() is not null;
+                var hasPropertyBackingField = property.GetBackingField() is not null;
+
+                if (((property.CanWrite && property.SetMethod!.IsPublic) ||
+                    (!hasPropertySetter && hasPropertyBackingField)) &&
+                    !_ignoredColumns.Contains(property.Name) &&
+                    !Attribute.IsDefined(property, notMappedAttributeType))
                 {
                     if (IsRegularEntity &&
                         (Attribute.IsDefined(property, primaryKeyAttributeType) ||
@@ -275,6 +281,8 @@ namespace Venflow.Modeling.Definitions.Builder
 
             // Important column specifications
             var regularColumnsOffset = 0;
+            var lastNonReadOnlyColumnsIndex = 1;
+            var readOnlyCount = 0;
 
             for (int i = filteredPropertiesSpan.Length - 1, columnIndex = 0; i >= 0; i--, columnIndex++)
             {
@@ -283,6 +291,10 @@ namespace Venflow.Modeling.Definitions.Builder
                 var hasCustomDefinition = false;
 
                 bool isPropertyTypeNullableReferenceType = property.IsNullableReferenceType(EntityInNullableContext, DefaultPropNullability);
+
+                var setMethod = property.GetSetMethod();
+                var isReadOnly = setMethod is null;
+                var expectsChangeTracking = !isReadOnly && setMethod.IsVirtual && !setMethod.IsFinal;
 
                 // Handle custom columns
 
@@ -299,35 +311,44 @@ namespace Venflow.Modeling.Definitions.Builder
                                 throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
                             }
 
-                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, false), primaryDefintion.IsServerSideGenerated);
+                            if (isReadOnly &&
+                                !primaryDefintion.IsServerSideGenerated)
+                            {
+                                throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as read-only. This is not allowed on non database generated primary key.");
+                            }
+
+                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, false), primaryDefintion.IsServerSideGenerated, isReadOnly);
 
                             columns.Insert(0, primaryColumn);
 
                             regularColumnsOffset++;
 
-                            var setMethod = property.GetSetMethod();
-
-                            if (setMethod.IsVirtual && !setMethod.IsFinal)
+                            if (expectsChangeTracking)
                             {
                                 changeTrackingColumns.Add(columnIndex, primaryColumn);
                             }
-
                             nameToColumn.Add(definition.Name, primaryColumn);
 
                             hasCustomDefinition = true;
+
                             break;
                         case PostgreEnumColumnDefenition<TEntity> enumDefinition:
 
-                            var enumColumn = new PostgreEnumEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, true));
+                            var enumColumn = new PostgreEnumEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, true), isReadOnly);
 
                             columns.Add(enumColumn);
 
                             setMethod = property.GetSetMethod();
 
-                            if (setMethod.IsVirtual && !setMethod.IsFinal)
+                            if (expectsChangeTracking)
                             {
                                 changeTrackingColumns.Add(columnIndex, enumColumn);
                             }
+
+                            if (!isReadOnly)
+                                lastNonReadOnlyColumnsIndex = columnIndex;
+                            else
+                                readOnlyCount++;
 
                             nameToColumn.Add(definition.Name, enumColumn);
 
@@ -344,16 +365,13 @@ namespace Venflow.Modeling.Definitions.Builder
                         throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
                     }
 
-                    primaryColumn = new PrimaryEntityColumn<TEntity>(property, annotedPrimaryKey.Name, _valueRetrieverFactory.GenerateRetriever(property, false), true);
+                    primaryColumn = new PrimaryEntityColumn<TEntity>(property, annotedPrimaryKey.Name, _valueRetrieverFactory.GenerateRetriever(property, false), true, isReadOnly);
 
                     columns.Insert(0, primaryColumn);
 
                     regularColumnsOffset++;
 
-                    var setMethod = property.GetSetMethod();
-
-                    if (setMethod.IsVirtual &&
-                        !setMethod.IsFinal)
+                    if (expectsChangeTracking)
                     {
                         changeTrackingColumns.Add(columnIndex, primaryColumn);
                     }
@@ -384,20 +402,20 @@ namespace Venflow.Modeling.Definitions.Builder
                         columnName = property.Name;
                     }
 
-                    var column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(property, false), isPropertyTypeNullableReferenceType);
+                    var column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(property, false), isPropertyTypeNullableReferenceType, isReadOnly);
 
                     columns.Add(column);
 
                     if (IsRegularEntity &&
+                        expectsChangeTracking)
                     {
-                        var setMethod = property.GetSetMethod();
-
-                        if (setMethod.IsVirtual &&
-                            !setMethod.IsFinal)
-                        {
-                            changeTrackingColumns.Add(columnIndex, column);
-                        }
+                        changeTrackingColumns.Add(columnIndex, column);
                     }
+
+                    if (!isReadOnly)
+                        lastNonReadOnlyColumnsIndex = columnIndex;
+                    else
+                        readOnlyCount++;
 
                     nameToColumn.Add(columnName, column);
                 }
@@ -411,22 +429,30 @@ namespace Venflow.Modeling.Definitions.Builder
 
             if (columns.Count == 0)
             {
-                throw new InvalidOperationException($"The entity '{Type.Name}' doesn't contain any columns/mapped properties. A entity needs at least one column/mapped property.");
+                throw new InvalidOperationException($"The entity '{Type.Name}' doesn't contain any columns/mapped properties. An entity needs at least one column/mapped property.");
             }
 
             if (regularColumnsOffset == columns.Count)
             {
-                throw new InvalidOperationException($"The entity '{Type.Name}' doesn't contain any non-primary/non-database generated columns/mapped properties. A entity needs at least one non-primary/non-database generated column/mapped property.");
+                throw new InvalidOperationException($"The entity '{Type.Name}' doesn't contain any non-primary/non-database generated columns/mapped properties. An entity needs at least one non-primary/non-database generated column/mapped property.");
+            }
+
+            if (lastNonReadOnlyColumnsIndex == columns.Count + 1)
+            {
+                throw new InvalidOperationException($"The entity '{Type.Name}' doesn't contain any non-read-only properties. An entity needs at least one non-read-only property.");
             }
 
             if (changeTrackingColumns.Count != 0)
             {
+                if (Type.GetConstructor(Type.EmptyTypes) is null)
+                    throw new InvalidOperationException($"The entity '{Type.Name}' contains virtual properties. However the entity doesn't contain a public parameterless constructor and therefore can't create a proxy.");
+
                 ChangeTrackerFactory = new ChangeTrackerFactory<TEntity>(Type);
 
                 ChangeTrackerFactory.GenerateEntityProxy(changeTrackingColumns);
             }
 
-            return new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn, regularColumnsOffset);
+            return new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn, regularColumnsOffset, lastNonReadOnlyColumnsIndex, readOnlyCount, changeTrackingColumns.Count);
         }
     }
 

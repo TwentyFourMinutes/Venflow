@@ -1569,6 +1569,14 @@
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
             <returns>A Fluent API Builder for a update command.</returns>
         </member>
+        <member name="M:Venflow.Table`1.GetProxiedEntity">
+            <summary>
+            Constructs a new proxied instance of the <typeparamref name="TEntity"/> entity.
+            </summary>
+            <returns>A <typeparamref name="TEntity"/> instance which will be change tracked.</returns>
+            <remarks>Any property which should be change tracked on an entity has to be marked virtual.</remarks>
+            <exception cref="T:System.InvalidOperationException">Thrown when the provided entity does not contain any virtual properties.</exception>
+        </member>
         <member name="M:Venflow.Table`1.TrackChanges(`0@)">
             <summary>
             Starts tracking the provided <typeparamref name="TEntity"/>.
@@ -1752,6 +1760,11 @@
             Changes the value of the <see cref="P:Venflow.VenflowConfiguration.ShouldUseDeepValidation"/> property.
             </summary>
             <param name="validation">Determines if Venflow should use deep validation or not.</param>
+        </member>
+        <member name="T:System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute">
+            <summary>
+            <strong>Do not use this attribute, if you are not absolutely sure what it does.</strong>
+            </summary>
         </member>
         <member name="T:System.Runtime.CompilerServices.NullableAttribute">
             <summary>
