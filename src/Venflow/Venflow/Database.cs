@@ -276,7 +276,7 @@ namespace Venflow
 
                 var entityBuilder = new EntityBuilder<TEntity>(string.Empty);
 
-                entityBuilder.IsCustomEntity = false;
+                entityBuilder.IsRegularEntity = false;
 
                 var entityFactory = new EntityFactory<TEntity>(entityBuilder);
 

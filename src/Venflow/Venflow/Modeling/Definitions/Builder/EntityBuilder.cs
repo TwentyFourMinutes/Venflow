@@ -18,7 +18,7 @@ namespace Venflow.Modeling.Definitions.Builder
 {
     internal class EntityBuilder<TEntity> : EntityBuilder, IEntityBuilder<TEntity> where TEntity : class, new()
     {
-        internal bool IsCustomEntity { get; set; }
+        internal bool IsRegularEntity { get; set; }
 
         internal override Type Type { get; }
 
@@ -40,7 +40,7 @@ namespace Venflow.Modeling.Definitions.Builder
             ColumnDefinitions = new Dictionary<string, ColumnDefinition<TEntity>>();
             _ignoredColumns = new HashSet<string>();
             _valueRetrieverFactory = new ValueRetrieverFactory<TEntity>(Type);
-            IsCustomEntity = true;
+            IsRegularEntity = true;
 
             // Check if the entity has a NullableContextAttribute which means that it is in a null-able environment.
             var nullableContextAttribute = Type.GetCustomAttribute<NullableContextAttribute>();
@@ -227,7 +227,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
             Type? primaryKeyAttributeType = default;
 
-            if (IsCustomEntity)
+            if (IsRegularEntity)
             {
                 primaryKeyAttributeType = typeof(KeyAttribute);
             }
@@ -238,7 +238,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                 if (property.CanWrite && property.SetMethod!.IsPublic && !_ignoredColumns.Contains(property.Name) && !Attribute.IsDefined(property, notMappedAttributeType))
                 {
-                    if (IsCustomEntity &&
+                    if (IsRegularEntity &&
                         (Attribute.IsDefined(property, primaryKeyAttributeType) ||
                         property.Name == "Id"))
                     {
@@ -271,7 +271,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                 ColumnDefinition<TEntity>? definition = default;
 
-                if (IsCustomEntity && ColumnDefinitions.TryGetValue(property.Name, out definition))
+                if (IsRegularEntity && ColumnDefinitions.TryGetValue(property.Name, out definition))
                 {
                     switch (definition)
                     {
@@ -318,7 +318,7 @@ namespace Venflow.Modeling.Definitions.Builder
                             break;
                     }
                 }
-                else if (IsCustomEntity &&
+                else if (IsRegularEntity &&
                          annotedPrimaryKey == property)
                 {
                     if (EntityInNullableContext &&
@@ -350,7 +350,7 @@ namespace Venflow.Modeling.Definitions.Builder
                 {
                     string columnName;
 
-                    if (IsCustomEntity &&
+                    if (IsRegularEntity &&
                         definition is not null)
                     {
                         columnName = definition.Name;
@@ -371,7 +371,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                     columns.Add(column);
 
-                    if (IsCustomEntity)
+                    if (IsRegularEntity &&
                     {
                         var setMethod = property.GetSetMethod();
 
@@ -387,7 +387,7 @@ namespace Venflow.Modeling.Definitions.Builder
             }
 
             if (primaryColumn is null
-                && IsCustomEntity)
+                && IsRegularEntity)
             {
                 throw new InvalidOperationException($"The EntityBuilder couldn't find the primary key on the entity '{Type.Name}', it isn't named 'Id', the KeyAttribute wasn't set nor was any property in the configuration defined as the primary key.");
             }
