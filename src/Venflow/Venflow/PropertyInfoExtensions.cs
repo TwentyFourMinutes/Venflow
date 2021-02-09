@@ -39,10 +39,17 @@ namespace Venflow
             if (!property.CanRead || !property.GetGetMethod(nonPublic: true).IsDefined(typeof(CompilerGeneratedAttribute), inherit: true))
                 return null;
             var backingField = property.DeclaringType.GetField($"<{property.Name}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            backingField ??= property.DeclaringType.GetField($"_{char.ToLowerInvariant(property.Name[0])}{property.Name.Substring(1)}", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            backingField ??= property.DeclaringType.GetField($"{char.ToLowerInvariant(property.Name[0])}{property.Name.Substring(1)}", BindingFlags.Instance | BindingFlags.NonPublic);
+
             if (backingField == null)
                 return null;
+
             if (!backingField.IsDefined(typeof(CompilerGeneratedAttribute), inherit: true))
                 return null;
+
             return backingField;
         }
     }
