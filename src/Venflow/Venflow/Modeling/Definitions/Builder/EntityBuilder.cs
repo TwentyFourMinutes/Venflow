@@ -23,7 +23,7 @@ namespace Venflow.Modeling.Definitions.Builder
         internal override Type Type { get; }
 
         internal ChangeTrackerFactory<TEntity>? ChangeTrackerFactory { get; private set; }
-        internal string? TableName { get; private set; }
+        internal string TableName { get; private set; }
         internal IDictionary<string, ColumnDefinition<TEntity>> ColumnDefinitions { get; }
 
         internal bool EntityInNullableContext { get; }
@@ -60,6 +60,11 @@ namespace Venflow.Modeling.Definitions.Builder
 
         IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapToTable(string tableName)
         {
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                throw new ArgumentException($"The table name '{tableName}' is invalid.", nameof(tableName));
+            }
+
             TableName = tableName;
 
             return this;
@@ -184,6 +189,12 @@ namespace Venflow.Modeling.Definitions.Builder
 
             IgnoreProperty(property.Name);
 
+            if (!property.CanWrite &&
+                property.GetBackingField() is null)
+            {
+                throw new InvalidOperationException($"The foreign property '{property.Name}' on the entity '{property.ReflectedType.Name}' doesn't implement a setter, nor does it match the common backing field pattern ('<{property.Name}>k__BackingField', '{char.ToLowerInvariant(property.Name[0])}{property.Name.Substring(1)}' or  '_{char.ToLowerInvariant(property.Name[0])}{property.Name.Substring(1)}').");
+            }
+
             return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.Many, property, this);
         }
 
@@ -197,6 +208,12 @@ namespace Venflow.Modeling.Definitions.Builder
             var property = navigationProperty.ValidatePropertySelector();
 
             IgnoreProperty(property.Name);
+
+            if (!property.CanWrite &&
+                property.GetBackingField() is null)
+            {
+                throw new InvalidOperationException($"The foreign property '{property.Name}' on the entity '{property.ReflectedType.Name}' doesn't implement a setter, nor does it match the common backing field pattern ('<{property.Name}>k__BackingField', '{char.ToLowerInvariant(property.Name[0])}{property.Name.Substring(1)}' or  '_{char.ToLowerInvariant(property.Name[0])}{property.Name.Substring(1)}').");
+            }
 
             return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.One, property, this);
         }

@@ -28,9 +28,14 @@ namespace Venflow.Modeling.Definitions.Builder
 
             _rightNavigationProperty = navigationProperty.ValidatePropertySelector(false);
 
+            if (!_rightNavigationProperty.CanWrite &&
+                _rightNavigationProperty.GetBackingField() is null)
+            {
+                throw new InvalidOperationException($"The foreign property '{_rightNavigationProperty.Name}' on the entity '{_rightNavigationProperty.ReflectedType.Name}' doesn't implement a setter, nor does it match the common backing field pattern ('<{_rightNavigationProperty.Name}>k__BackingField', '{char.ToLowerInvariant(_leftNavigationProperty.Name[0])}{_leftNavigationProperty.Name.Substring(1)}' or  '_{char.ToLowerInvariant(_leftNavigationProperty.Name[0])}{_leftNavigationProperty.Name.Substring(1)}').");
+            }
+
             return this;
         }
-
 
         IForeignKeyRelationBuilder<TEntity, TRelation> INotRequiredMultiRightRelationBuilder<TEntity, TRelation>.WithMany()
         {
@@ -44,6 +49,12 @@ namespace Venflow.Modeling.Definitions.Builder
             _leftRelationType = RelationPartType.One;
 
             _rightNavigationProperty = navigationProperty.ValidatePropertySelector();
+
+            if (!_rightNavigationProperty.CanWrite &&
+                _rightNavigationProperty.GetBackingField() is null)
+            {
+                throw new InvalidOperationException($"The foreign property '{_rightNavigationProperty.Name}' on the entity '{_rightNavigationProperty.ReflectedType.Name}' doesn't implement a setter, nor does it match the common backing field pattern ('<{_rightNavigationProperty.Name}>k__BackingField', '{char.ToLowerInvariant(_leftNavigationProperty.Name[0])}{_leftNavigationProperty.Name.Substring(1)}' or  '_{char.ToLowerInvariant(_leftNavigationProperty.Name[0])}{_leftNavigationProperty.Name.Substring(1)}').");
+            }
 
             return this;
         }
