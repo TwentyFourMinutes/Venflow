@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
@@ -33,7 +33,7 @@ namespace Venflow.Dynamic
 
         internal static TypeBuilder GetNewProxyBuilder(string typeName, TypeAttributes typeAttributes, Type? parent = null, Type[]? interfaces = null)
         {
-            return _dynamicModule.DefineType(GetTypeName(NamespaceType.Proxies, typeName), typeAttributes, parent, interfaces);
+            return _dynamicModule.DefineType(GetTypeName(NamespaceType.Proxies, typeName + "_" + Interlocked.Increment(ref _typeNumberIdentifier)), typeAttributes, parent, interfaces);
         }
 
         internal static TypeBuilder GetNewMaterializerBuilder(string typeName, TypeAttributes typeAttributes, Type? parent = null, Type[]? interfaces = null)
@@ -44,6 +44,11 @@ namespace Venflow.Dynamic
         internal static TypeBuilder GetNewInserterBuilder(string typeName, TypeAttributes typeAttributes, Type? parent = null, Type[]? interfaces = null)
         {
             return _dynamicModule.DefineType(GetTypeName(NamespaceType.Inserter, typeName + "_" + Interlocked.Increment(ref _typeNumberIdentifier)), typeAttributes, parent, interfaces);
+        }
+
+        internal static DynamicMethod GetDynamicMethod(string methodName, Type? returnType, Type[]? parameters, bool skipVisiblity = true)
+        {
+            return new DynamicMethod(methodName + "_" + Interlocked.Increment(ref _typeNumberIdentifier), returnType, parameters, DynamicModule, skipVisiblity);
         }
 
         private static string GetTypeName(NamespaceType namespaceType, string typeName)
