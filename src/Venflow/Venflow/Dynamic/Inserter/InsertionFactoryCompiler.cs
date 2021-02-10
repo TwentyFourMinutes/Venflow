@@ -372,8 +372,7 @@ namespace Venflow.Dynamic.Inserter
             if (skipPrimaryKey)
             {
                 // Append " RETURNING \"PrimaryKey\""
-                _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderLocal);
+                _moveNextMethodIL.Emit(OpCodes.Ldloc, commandBuilderLocal);
                 _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING \"" + _rootEntity.GetPrimaryColumn().ColumnName + "\";");
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
                 _moveNextMethodIL.Emit(OpCodes.Pop);
