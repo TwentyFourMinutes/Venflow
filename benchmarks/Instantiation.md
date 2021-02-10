@@ -11,7 +11,7 @@ Intel Xeon Platinum 8171M CPU 2.60GHz, 1 CPU, 2 logical and 2 physical cores
 ```
 |                     Method |           Job |       Runtime |     Mean |    Error |   StdDev |  Gen 0 |  Gen 1 | Gen 2 | Allocated |
 |--------------------------- |-------------- |-------------- |---------:|---------:|---------:|-------:|-------:|------:|----------:|
-|   InstantiateEFCoreContext | .NET Core 3.1 | .NET Core 3.1 | 83.67 μs | 1.664 μs | 1.981 μs | 2.0752 | 0.1221 |     - |  39.12 KB |
-| InstantiateVenflowDatabase | .NET Core 3.1 | .NET Core 3.1 | 78.47 μs | 1.540 μs | 1.891 μs | 1.9531 | 0.1221 |     - |   37.1 KB |
-|   InstantiateEFCoreContext | .NET Core 5.0 | .NET Core 5.0 | 81.84 μs | 1.613 μs | 2.824 μs | 2.4414 | 0.1221 |     - |   45.2 KB |
-| InstantiateVenflowDatabase | .NET Core 5.0 | .NET Core 5.0 | 71.71 μs | 1.418 μs | 3.202 μs | 1.9531 | 0.1221 |     - |  37.13 KB |
+|   InstantiateEFCoreContext | .NET Core 3.1 | .NET Core 3.1 | 89.64 μs | 1.750 μs | 2.083 μs | 2.0752 | 0.1221 |     - |  39.12 KB |
+| InstantiateVenflowDatabase | .NET Core 3.1 | .NET Core 3.1 | 83.98 μs | 1.656 μs | 1.468 μs | 1.9531 | 0.1221 |     - |   37.1 KB |
+|   InstantiateEFCoreContext | .NET Core 5.0 | .NET Core 5.0 | 88.28 μs | 1.526 μs | 1.427 μs | 2.4414 | 0.1221 |     - |   45.2 KB |
+| InstantiateVenflowDatabase | .NET Core 5.0 | .NET Core 5.0 | 74.67 μs | 0.783 μs | 0.732 μs | 1.9531 | 0.1221 |     - |  37.13 KB |

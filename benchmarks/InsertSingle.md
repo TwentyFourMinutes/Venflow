@@ -9,12 +9,12 @@ Intel Xeon Platinum 8171M CPU 2.60GHz, 1 CPU, 2 logical and 2 physical cores
 
 
 ```
-|                   Method |           Job |       Runtime |       Mean |    Error |   StdDev | Ratio | RatioSD | Gen 0 | Gen 1 | Gen 2 | Allocated |
-|------------------------- |-------------- |-------------- |-----------:|---------:|---------:|------:|--------:|------:|------:|------:|----------:|
-|  EFCoreInsertSingleAsync | .NET Core 3.1 | .NET Core 3.1 | 1,036.6 μs | 18.09 μs | 24.15 μs |  1.00 |    0.00 |     - |     - |     - |  19.61 KB |
-| VenflowInsertSingleAsync | .NET Core 3.1 | .NET Core 3.1 |   716.4 μs | 11.75 μs |  9.81 μs |  0.69 |    0.02 |     - |     - |     - |   5.09 KB |
-|  RepoDbInsertSingleAsync | .NET Core 3.1 | .NET Core 3.1 |   564.0 μs | 11.22 μs | 24.85 μs |  0.54 |    0.02 |     - |     - |     - |   4.32 KB |
-|                          |               |               |            |          |          |       |         |       |       |       |           |
-|  EFCoreInsertSingleAsync | .NET Core 5.0 | .NET Core 5.0 | 1,079.4 μs | 21.28 μs | 49.32 μs |  1.00 |    0.00 |     - |     - |     - |  18.22 KB |
-| VenflowInsertSingleAsync | .NET Core 5.0 | .NET Core 5.0 |   748.1 μs | 14.73 μs | 23.36 μs |  0.70 |    0.04 |     - |     - |     - |   5.04 KB |
-|  RepoDbInsertSingleAsync | .NET Core 5.0 | .NET Core 5.0 |   590.6 μs | 12.06 μs | 35.37 μs |  0.55 |    0.04 |     - |     - |     - |    4.3 KB |
+|                   Method |           Job |       Runtime |     Mean |    Error |   StdDev | Ratio | RatioSD | Gen 0 | Gen 1 | Gen 2 | Allocated |
+|------------------------- |-------------- |-------------- |---------:|---------:|---------:|------:|--------:|------:|------:|------:|----------:|
+|  EFCoreInsertSingleAsync | .NET Core 3.1 | .NET Core 3.1 | 804.9 μs | 11.02 μs |  9.77 μs |  1.00 |    0.00 |     - |     - |     - |  19.62 KB |
+| VenflowInsertSingleAsync | .NET Core 3.1 | .NET Core 3.1 | 557.4 μs |  8.26 μs |  7.72 μs |  0.69 |    0.01 |     - |     - |     - |   5.09 KB |
+|  RepoDbInsertSingleAsync | .NET Core 3.1 | .NET Core 3.1 | 410.1 μs |  8.17 μs | 19.26 μs |  0.53 |    0.02 |     - |     - |     - |   4.32 KB |
+|                          |               |               |          |          |          |       |         |       |       |       |           |
+|  EFCoreInsertSingleAsync | .NET Core 5.0 | .NET Core 5.0 | 871.5 μs | 17.19 μs | 31.00 μs |  1.00 |    0.00 |     - |     - |     - |  18.22 KB |
+| VenflowInsertSingleAsync | .NET Core 5.0 | .NET Core 5.0 | 573.5 μs |  8.53 μs |  7.98 μs |  0.65 |    0.02 |     - |     - |     - |   5.07 KB |
+|  RepoDbInsertSingleAsync | .NET Core 5.0 | .NET Core 5.0 | 411.5 μs |  8.20 μs | 23.26 μs |  0.48 |    0.02 |     - |     - |     - |    4.3 KB |
