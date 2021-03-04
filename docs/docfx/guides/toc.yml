@@ -36,3 +36,5 @@
       topicUid: Guides.Advanced.Validation
     - name: Logging
       topicUid: Guides.Advanced.Logging
+    - name: Query Command Caching
+      topicUid: Guides.Advanced.CommandQueryCache
