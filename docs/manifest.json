@@ -640,6 +640,18 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "guides/advanced/query_command_cache.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/advanced/query_command_cache.html",
+          "hash": "GK8XFZ3ozg0d4JXTAPcKtA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "guides/advanced/validation.md",
       "output": {
         ".html": {
@@ -740,7 +752,7 @@
       "output": {
         ".html": {
           "relative_path": "guides/operations/query.html",
-          "hash": "cfXL44LA5b3Yg5Dxh0st9Q=="
+          "hash": "nqra3QIe+n/4fy7euEQL6Q=="
         }
       },
       "is_incremental": false,
@@ -776,7 +788,7 @@
       "output": {
         ".html": {
           "relative_path": "guides/toc.html",
-          "hash": "WrDM3UotwRp5NTUtoIClOQ=="
+          "hash": "V4zYCpsdB5//0+91ojw1Xg=="
         }
       },
       "is_incremental": false,
@@ -846,7 +858,7 @@
         "ConceptualDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 18,
+          "total_file_count": 19,
           "skipped_file_count": 0
         },
         "ManagedReferenceDocumentProcessor": {

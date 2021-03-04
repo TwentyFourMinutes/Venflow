@@ -4,6 +4,9 @@ references:
 - uid: API.Docs
   name: The API Docs of Venflow
   href: api/index.html
+- uid: Guides.Advanced.CommandQueryCache
+  name: Caching Command Queries
+  href: guides/advanced/query_command_cache.html
 - uid: Guides.Advanced.Enums
   name: Enums with Venflow
   href: guides/advanced/enums.html
