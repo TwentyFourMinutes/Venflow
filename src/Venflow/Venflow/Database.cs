@@ -294,7 +294,7 @@ namespace Venflow
         /// <returns>the <see cref="NpgsqlConnection"/>.</returns>
         public NpgsqlConnection GetConnection()
         {
-            if (_connection is { })
+            if (_connection is not null)
                 return _connection;
 
             return _connection = new NpgsqlConnection(ConnectionString);
@@ -379,7 +379,7 @@ namespace Venflow
         /// <returns>A value task representing the asynchronous operation</returns>
         public ValueTask DisposeAsync()
         {
-            if (_connection is { })
+            if (_connection is not null)
             {
                 return _connection.DisposeAsync();
             }
@@ -393,7 +393,7 @@ namespace Venflow
         /// <remarks>If you are in an asynchronous context you should consider using <see cref="DisposeAsync"/> instead.</remarks>
         public void Dispose()
         {
-            if (_connection is { })
+            if (_connection is not null)
             {
                 _connection.Dispose();
             }

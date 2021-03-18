@@ -33,7 +33,7 @@ namespace Venflow.Dynamic.Inserter
 
             var index = 0;
 
-            for (var entry = _entities.First; entry is { }; entry = entry.Next)
+            for (var entry = _entities.First; entry is not null; entry = entry.Next)
             {
                 entities[index++] = entry.Value;
             }
@@ -65,7 +65,7 @@ namespace Venflow.Dynamic.Inserter
             _reachableEntities.Add(entityHolder);
 
 
-            if (rootPath is { })
+            if (rootPath is not null)
             {
                 for (int i = rootPath.TrailingPath.Count - 1; i >= 0; i--)
                 {
@@ -102,7 +102,7 @@ namespace Venflow.Dynamic.Inserter
         {
             var entityHolder = new EntityRelationHolder(relationPath.Entity);
 
-            if (toAssign is { })
+            if (toAssign is not null)
             {
                 entityHolder.DirectAssignedRelation = toAssign;
             }
@@ -142,7 +142,7 @@ namespace Venflow.Dynamic.Inserter
         {
             var entityHolder = new EntityRelationHolder(entity);
 
-            if (toAssign is { })
+            if (toAssign is not null)
             {
                 entityHolder.DirectAssignedRelation = toAssign;
             }
@@ -199,7 +199,7 @@ namespace Venflow.Dynamic.Inserter
                     var entityHolder = _reachableEntities[entityIndex];
                     var entity = entityHolder.Entity;
 
-                    if (entity.Relations is { })
+                    if (entity.Relations is not null)
                     {
                         var noDirectDependencies = true;
 

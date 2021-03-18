@@ -55,13 +55,13 @@ namespace Venflow.Modeling.Definitions
                     throw new InvalidOperationException($"The entity '{relation.RightEntityName}' is being used in a relation on '{relation.LeftEntityBuilder.Type.Name}', but doesn't contain a 'Table<{relation.RightEntityName}>' entry in the Database.");
                 }
 
-                if (relation.RightNavigationProperty is { })
+                if (relation.RightNavigationProperty is not null)
                 {
                     foreignEntity.IgnoreProperty(relation.RightNavigationProperty.Name);
                 }
 
                 if (relation.RelationType == RelationType.OneToMany &&
-                    relation.LeftNavigationProperty is { })
+                    relation.LeftNavigationProperty is not null)
                 {
                     entityInstance ??= Activator.CreateInstance(relation.LeftEntityBuilder.Type);
 
@@ -76,7 +76,7 @@ namespace Venflow.Modeling.Definitions
                     relation.IsLeftNavigationPropertyInitialized = backingValue is not null;
                 }
                 else if (relation.RelationType == RelationType.ManyToOne &&
-                        relation.RightNavigationProperty is { })
+                        relation.RightNavigationProperty is not null)
                 {
                     var foreignEntityInstance = Activator.CreateInstance(foreignEntity.Type);
 
@@ -131,7 +131,7 @@ namespace Venflow.Modeling.Definitions
                 }
 
                 if (relation.RelationType == RelationType.OneToMany &&
-                    relation.LeftNavigationProperty is { })
+                    relation.LeftNavigationProperty is not null)
                 {
                     if (!typeof(ICollection<>).MakeGenericType(relation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0]).IsAssignableFrom(relation.LeftNavigationProperty.PropertyType))
                     {
@@ -145,7 +145,7 @@ namespace Venflow.Modeling.Definitions
 
                 var entityRelation = new EntityRelation(relation.RelationId, _entity, relation.LeftNavigationProperty, relation.IsLeftNavigationPropertyInitialized, relation.LeftNavigationProperty?.IsNullableReferenceType(_entity.IsInNullableContext, _entity.DefaultPropNullability) ?? false, relationEntity, relation.RightNavigationProperty, relation.IsRightNavigationPropertyInitialized, relation.RightNavigationProperty?.IsNullableReferenceType(_entity.IsInNullableContext, _entity.DefaultPropNullability) ?? false, keyColumn, relation.RelationType, relation.ForeignKeyLocation);
 
-                if (entityRelation.RightEntity.Relations is { } &&
+                if (entityRelation.RightEntity.Relations is not null &&
                     entityRelation.RightEntity.Relations.TryGetValue(relation.RelationId, out var sibilingRelation))
                 {
                     entityRelation.Sibiling = sibilingRelation;
@@ -156,7 +156,7 @@ namespace Venflow.Modeling.Definitions
 
                 relationIdToColumn.Add(relation.RelationId, entityRelation);
 
-                if (entityRelation.LeftNavigationProperty is { })
+                if (entityRelation.LeftNavigationProperty is not null)
                 {
 #if !NET48
                     if (!relationNameToColumn.TryAdd(entityRelation.LeftNavigationProperty.Name, entityRelation))

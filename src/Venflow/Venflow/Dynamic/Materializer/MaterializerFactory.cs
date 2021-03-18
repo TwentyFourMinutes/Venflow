@@ -104,7 +104,7 @@ namespace Venflow.Dynamic.Materializer
             {
                 QueryEntityHolder[] generatedEntities;
 
-                if (relationBuilderValues is { })
+                if (relationBuilderValues is not null)
                 {
                     var sourceCompiler = new MaterializerSourceCompiler(relationBuilderValues);
 
@@ -142,7 +142,7 @@ namespace Venflow.Dynamic.Materializer
 
                         entities.Add((nextJoin, columns));
 
-                        if (relationBuilderValues is { }
+                        if (relationBuilderValues is not null &&
                             && joinIndex < generatedEntities.Length)
                         {
                             nextJoin = generatedEntities[joinIndex];
@@ -172,7 +172,7 @@ namespace Venflow.Dynamic.Materializer
                     columns.Add((entityColumn, column.ColumnOrdinal.Value));
                 }
 
-                if (relationBuilderValues is { })
+                if (relationBuilderValues is not null)
                 {
                     if (relationBuilderValues.FlattenedPath.Count + 1 > entities.Count)
                     {

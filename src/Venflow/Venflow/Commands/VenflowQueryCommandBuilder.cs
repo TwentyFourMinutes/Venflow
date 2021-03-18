@@ -103,7 +103,7 @@ namespace Venflow.Commands
             if (_interploatedSqlParameters is null)
             {
                 if ((_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0 &&
-                    _relationBuilderValues is { })
+                    _relationBuilderValues is not null)
                 {
                     var joinBuilder = new StringBuilder();
 

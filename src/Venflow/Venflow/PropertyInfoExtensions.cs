@@ -13,7 +13,7 @@ namespace Venflow
                 {
                     var nullableAttribute = property.GetCustomAttribute<NullableAttribute>();
 
-                    if (nullableAttribute is { })
+                    if (nullableAttribute is not null)
                     {
                         // Flag == 1 prop is not null-able if not otherwise specified. Flag == 2 reversed.
                         return nullableAttribute.NullableFlags[0] == 2;

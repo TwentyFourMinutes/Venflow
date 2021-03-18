@@ -125,7 +125,7 @@ namespace Venflow.Score
 
                 await foreach (var benchResult in csv.GetRecordsAsync<BenchResult>())
                 {
-                    if (lastJobName is { } &&
+                    if (lastJobName is not null &&
                        benchResult.Job != lastJobName)
                     {
                         yield return benchResults;

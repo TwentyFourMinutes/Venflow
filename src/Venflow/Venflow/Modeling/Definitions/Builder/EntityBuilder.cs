@@ -45,7 +45,7 @@ namespace Venflow.Modeling.Definitions.Builder
             // Check if the entity has a NullableContextAttribute which means that it is in a null-able environment.
             var nullableContextAttribute = Type.GetCustomAttribute<NullableContextAttribute>();
 
-            if (nullableContextAttribute is { })
+            if (nullableContextAttribute is not null)
             {
                 // Flag == 1 All props are not null-able if not otherwise specified. Flag == 2 reversed.
                 DefaultPropNullability = nullableContextAttribute.Flag == 2;
@@ -145,7 +145,7 @@ namespace Venflow.Modeling.Definitions.Builder
             {
                 var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
 
-                name = underlyingType is { } ? underlyingType.Name : property.PropertyType.Name;
+                name = underlyingType is not null ? underlyingType.Name : property.PropertyType.Name;
 
                 var nameBuilder = new StringBuilder(name.Length * 2 - 1);
 

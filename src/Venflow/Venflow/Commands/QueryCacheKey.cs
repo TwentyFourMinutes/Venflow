@@ -53,7 +53,7 @@ namespace Venflow.Commands
 
             hashCode.Add(_returnType);
 
-            if (_relations is { })
+            if (_relations is not null)
             {
                 var columnSchemaSpan = _columnSchema.AsSpan();
 

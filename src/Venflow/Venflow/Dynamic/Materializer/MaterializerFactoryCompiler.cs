@@ -82,7 +82,7 @@ namespace Venflow.Dynamic.Materializer
             {
                 if (entities.Count == 1)
                 {
-                    CreateSingleNoRelationMaterializer(entities[0].Item2, changeTracking && _rootEntity.ProxyEntityType is { });
+                    CreateSingleNoRelationMaterializer(entities[0].Item2, changeTracking && _rootEntity.ProxyEntityType is not null);
                 }
                 else
                 {
@@ -93,7 +93,7 @@ namespace Venflow.Dynamic.Materializer
             {
                 if (entities.Count == 1)
                 {
-                    CreateBatchNoRelationMaterializer(entities[0].Item2, changeTracking && _rootEntity.ProxyEntityType is { });
+                    CreateBatchNoRelationMaterializer(entities[0].Item2, changeTracking && _rootEntity.ProxyEntityType is not null);
                 }
                 else
                 {
@@ -454,7 +454,7 @@ namespace Venflow.Dynamic.Materializer
 
             _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
 
-            CreateEntity(primaryEntity, primaryEntityHolder.Item2, changeTracking && primaryEntity.ProxyEntityType is { });
+            CreateEntity(primaryEntity, primaryEntityHolder.Item2, changeTracking && primaryEntity.ProxyEntityType is not null);
 
             for (int i = primaryEntityHolder.Item1.InitializeNavigations.Count - 1; i >= 0; i--)
             {
@@ -547,7 +547,7 @@ namespace Venflow.Dynamic.Materializer
                 // Instantiate the entity
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
 
-                CreateEntity(entity, entityHolder.Item2, changeTracking && entity.ProxyEntityType is { }, primaryKeyLocal);
+                CreateEntity(entity, entityHolder.Item2, changeTracking && entity.ProxyEntityType is not null, primaryKeyLocal);
 
                 for (int i = entityHolder.Item1.InitializeNavigations.Count - 1; i >= 0; i--)
                 {
@@ -1252,7 +1252,7 @@ namespace Venflow.Dynamic.Materializer
                 // Instantiate the entity
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
 
-                CreateEntity(entity, entityHolder.Item2, changeTracking && entity.ProxyEntityType is { }, primaryKeyLocal);
+                CreateEntity(entity, entityHolder.Item2, changeTracking && entity.ProxyEntityType is not null, primaryKeyLocal);
 
                 for (int i = entityHolder.Item1.InitializeNavigations.Count - 1; i >= 0; i--)
                 {
@@ -1594,7 +1594,7 @@ namespace Venflow.Dynamic.Materializer
 
             var columnIteratorIndex = 0;
 
-            if (primaryKeyLocal is { })
+            if (primaryKeyLocal is not null)
             {
                 columnIteratorIndex = entity.GetRegularColumnOffset();
 
@@ -1638,7 +1638,7 @@ namespace Venflow.Dynamic.Materializer
         {
             var customInEqualityMethod = type.GetMethod("op_Inequality");
 
-            if (customInEqualityMethod is { })
+            if (customInEqualityMethod is not null)
             {
                 _moveNextMethodIL.Emit(OpCodes.Call, customInEqualityMethod);
                 _moveNextMethodIL.Emit(OpCodes.Brfalse, branchTo);
@@ -1665,7 +1665,7 @@ namespace Venflow.Dynamic.Materializer
                 {
                     var underlyingType = Nullable.GetUnderlyingType(column.PropertyInfo.PropertyType);
 
-                    if (underlyingType is { })
+                    if (underlyingType is not null)
                     {
                         if (underlyingType.IsEnum)
                         {

@@ -24,13 +24,13 @@ namespace Venflow.Dynamic.Retriever
 
             var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
 
-            if (underlyingType is { } &&
+            if (underlyingType is not null &&
                 underlyingType.IsEnum &&
                 !isPostgreEnum)
             {
                 WriteNullableRetriever(retrieverMethodIL, property, Enum.GetUnderlyingType(underlyingType));
             }
-            else if (underlyingType is { })
+            else if (underlyingType is not null)
             {
                 WriteNullableRetriever(retrieverMethodIL, property, underlyingType);
             }

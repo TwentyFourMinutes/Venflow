@@ -54,7 +54,7 @@ namespace Venflow.Commands
 
                 Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> materializer;
 
-                if (Materializer is { })
+                if (Materializer is not null)
                 {
                     materializer = (Materializer as Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>)!;
                 }

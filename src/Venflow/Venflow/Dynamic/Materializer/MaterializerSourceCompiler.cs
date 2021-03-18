@@ -25,7 +25,7 @@ namespace Venflow.Dynamic.Materializer
 
             var index = 0;
 
-            for (var entry = _entities.First; entry is { }; entry = entry.Next)
+            for (var entry = _entities.First; entry is not null; entry = entry.Next)
             {
                 entities[index++] = entry.Value;
             }
@@ -69,7 +69,7 @@ namespace Venflow.Dynamic.Materializer
                 else if ((relationPath.Value == JoinBehaviour.FullJoin ||
                         relationPath.Value == JoinBehaviour.RightJoin) &&
                         !relation.IsLeftNavigationPropertyNullable &&
-                        relation.LeftNavigationProperty is { })
+                        relation.LeftNavigationProperty is not null)
                 {
                     throw new InvalidOperationException($"The join you configured 'Join...(x => x.{relation.RightNavigationProperty.Name})' from the entity '{relation.RightEntity.EntityName}' to the entity '{relation.LeftEntity.EntityName}' is configured as a RightJoin, however the property '{relation.LeftNavigationProperty.Name}' on the entity '{relation.LeftEntity.EntityName}' isn't marked as null-able!");
                 }
@@ -108,7 +108,7 @@ namespace Venflow.Dynamic.Materializer
                 }
             }
 
-            if (relation.LeftNavigationProperty is { })
+            if (relation.LeftNavigationProperty is not null)
             {
                 if (relation.RelationType == RelationType.OneToMany)
                 {

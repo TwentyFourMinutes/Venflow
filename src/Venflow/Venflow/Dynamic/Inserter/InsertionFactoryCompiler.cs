@@ -579,7 +579,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
 
-            if (dataReaderField is { })
+            if (dataReaderField is not null)
             {
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldnull);
@@ -602,7 +602,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
 
-            if (dataReaderField is { })
+            if (dataReaderField is not null)
             {
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldnull);
@@ -1236,7 +1236,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
 
-            if (dataReaderField is { })
+            if (dataReaderField is not null)
             {
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldnull);
@@ -1266,7 +1266,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Ldc_I4_S, (sbyte)-2);
             _moveNextMethodIL.Emit(OpCodes.Stfld, _stateField);
 
-            if (dataReaderField is { })
+            if (dataReaderField is not null)
             {
                 _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                 _moveNextMethodIL.Emit(OpCodes.Ldnull);
@@ -2389,7 +2389,7 @@ namespace Venflow.Dynamic.Inserter
 
             var stringType = typeof(string);
 
-            if (underlyingType is { })
+            if (underlyingType is not null)
             {
                 var dbNullType = typeof(DBNull);
 
@@ -2399,7 +2399,7 @@ namespace Venflow.Dynamic.Inserter
                 var afterHasValueLabel = ilGenerator.DefineLabel();
 
                 // Check if property has value
-                if (fb is { })
+                if (fb is not null)
                 {
                     ilGenerator.Emit(OpCodes.Ldarg_0);
                     ilGenerator.Emit(OpCodes.Ldfld, fb);
@@ -2418,7 +2418,7 @@ namespace Venflow.Dynamic.Inserter
                 // Nullable retriever
                 ilGenerator.Emit(OpCodes.Ldstr, "@" + column.ColumnName);
 
-                if (iteratorLocal is { })
+                if (iteratorLocal is not null)
                 {
                     ilGenerator.Emit(OpCodes.Ldloca, iteratorLocal);
                     ilGenerator.Emit(OpCodes.Call, iteratorLocal.LocalType.GetMethod("ToString", Type.EmptyTypes));
@@ -2434,14 +2434,14 @@ namespace Venflow.Dynamic.Inserter
 
                 ilGenerator.Emit(OpCodes.Ldstr, "@" + column.ColumnName);
 
-                if (iteratorLocal is { })
+                if (iteratorLocal is not null)
                 {
                     ilGenerator.Emit(OpCodes.Ldloca, iteratorLocal);
                     ilGenerator.Emit(OpCodes.Call, iteratorLocal.LocalType.GetMethod("ToString", Type.EmptyTypes));
                     ilGenerator.Emit(OpCodes.Call, stringType.GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new[] { stringType, stringType }, null));
                 }
 
-                if (fb is { })
+                if (fb is not null)
                 {
                     ilGenerator.Emit(OpCodes.Ldarg_0);
                     ilGenerator.Emit(OpCodes.Ldfld, fb);
@@ -2477,14 +2477,14 @@ namespace Venflow.Dynamic.Inserter
             {
                 ilGenerator.Emit(OpCodes.Ldstr, "@" + column.ColumnName);
 
-                if (iteratorLocal is { })
+                if (iteratorLocal is not null)
                 {
                     ilGenerator.Emit(OpCodes.Ldloca, iteratorLocal);
                     ilGenerator.Emit(OpCodes.Call, iteratorLocal.LocalType.GetMethod("ToString", Type.EmptyTypes));
                     ilGenerator.Emit(OpCodes.Call, stringType.GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new[] { stringType, stringType }, null));
                 }
 
-                if (fb is { })
+                if (fb is not null)
                 {
                     ilGenerator.Emit(OpCodes.Ldarg_0);
                     ilGenerator.Emit(OpCodes.Ldfld, fb);
@@ -2676,9 +2676,9 @@ namespace Venflow.Dynamic.Inserter
                 _ilGenerator.Emit(OpCodes.Ldloc, _firstTimeLocal);
                 _ilGenerator.Emit(OpCodes.Brfalse, afterSplitLabel);
 
-                if (lastEntity is { } &&
+                if (lastEntity is not null &&
                     _entityHolders.TryGetValue(_reachableEntities.HasId(entity, out _), out var entityHolder) &&
-                    entityHolder.DirectAssignedRelation is { })
+                    entityHolder.DirectAssignedRelation is not null)
                 {
                     if (entityHolder.DirectAssignedRelation.ForeignKeyLocation == ForeignKeyLocation.Left)
                     {

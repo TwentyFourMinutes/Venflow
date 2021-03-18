@@ -30,7 +30,7 @@ namespace Venflow.Commands
 
         public IInsertCommand<TEntity> Build()
         {
-            if (_relationBuilderValues is { })
+            if (_relationBuilderValues is not null)
             {
                 return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _command, _disposeCommand, _relationBuilderValues, _isFullInsert);
             }

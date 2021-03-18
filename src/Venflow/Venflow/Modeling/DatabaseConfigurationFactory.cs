@@ -75,7 +75,10 @@ namespace Venflow.Modeling
                 {
                     var assemblyType = assemblyTypesSpan[typeIndex];
 
-                    if (assemblyType.IsNotPublic || assemblyType.BaseType is null || !assemblyType.BaseType.IsGenericType || assemblyType.BaseType.GetGenericTypeDefinition() != configurationType)
+                    if (assemblyType.IsNotPublic ||
+                        assemblyType.BaseType is null ||
+                        !assemblyType.BaseType.IsGenericType ||
+                        assemblyType.BaseType.GetGenericTypeDefinition() != configurationType)
                         continue;
 
                     var entityType = assemblyType.BaseType.GetGenericArguments()[0];
