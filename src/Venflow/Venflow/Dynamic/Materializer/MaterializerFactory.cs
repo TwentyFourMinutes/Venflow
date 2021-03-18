@@ -66,7 +66,7 @@ namespace Venflow.Dynamic.Materializer
                 {
                     var expirationNode = _primaryExpirations.AddLast(new ExpirationEntry(timeStamp + VenflowConfiguration.DynamicCacheExpirationTime, cacheKey));
 
-                    materializer = GetOrCreateMaterializer<TReturn>(relationBuilderValues, reader.GetColumnSchema(), cacheKey.IsChangeTracking);
+                    materializer = GetOrCreateDefaultMaterializer<TReturn>(relationBuilderValues, reader.GetColumnSchema(), cacheKey.IsChangeTracking);
 
                     _primaryMaterializerCache.Add(cacheKey, (materializer, expirationNode));
                 }
@@ -92,7 +92,7 @@ namespace Venflow.Dynamic.Materializer
             }
         }
 
-        private Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> GetOrCreateMaterializer<TReturn>(RelationBuilderValues? relationBuilderValues, ReadOnlyCollection<NpgsqlDbColumn> columnSchema, bool changeTracking) where TReturn : class, new()
+        private Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> GetOrCreateDefaultMaterializer<TReturn>(RelationBuilderValues? relationBuilderValues, ReadOnlyCollection<NpgsqlDbColumn> columnSchema, bool changeTracking) where TReturn : class, new()
         {
             var cacheKey = new QueryCacheKey(_entity, typeof(TReturn), relationBuilderValues?.GetFlattenedRelations(), columnSchema.AsList(), changeTracking);
 
@@ -143,7 +143,7 @@ namespace Venflow.Dynamic.Materializer
                         entities.Add((nextJoin, columns));
 
                         if (relationBuilderValues is not null &&
-                            && joinIndex < generatedEntities.Length)
+                            joinIndex < generatedEntities.Length)
                         {
                             nextJoin = generatedEntities[joinIndex];
                             nextJoinPKName = nextJoin.Entity.GetPrimaryColumn().ColumnName;
