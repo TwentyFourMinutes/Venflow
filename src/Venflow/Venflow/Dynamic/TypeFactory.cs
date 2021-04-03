@@ -28,7 +28,7 @@ namespace Venflow.Dynamic
             _assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(_assemblyName, AssemblyBuilderAccess.Run);
             _dynamicModule = _assemblyBuilder.DefineDynamicModule(_assemblyName.Name + ".dll");
 
-#if NET5_0
+#if NET5_0_OR_GREATER
             _dynamicModule.SetCustomAttribute(new CustomAttributeBuilder(typeof(SkipLocalsInitAttribute).GetConstructor(Type.EmptyTypes), Array.Empty<object>()));
 #endif
 

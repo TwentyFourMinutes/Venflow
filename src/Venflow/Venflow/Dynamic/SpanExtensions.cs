@@ -10,7 +10,7 @@ namespace Venflow.Dynamic
 {
     internal static class SpanExtensions
     {
-#if !NET5_0
+#if !NET5_0_OR_GREATER
 
         private static class SpanMethodCache<TType>
         {
@@ -48,7 +48,7 @@ namespace Venflow.Dynamic
 
         internal static Span<T> AsSpan<T>(this List<T> list)
         {
-#if NET5_0
+#if NET5_0_OR_GREATER
 
             return CollectionsMarshal.AsSpan(list);
 

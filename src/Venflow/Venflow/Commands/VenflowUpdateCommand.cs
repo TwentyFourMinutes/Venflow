@@ -37,7 +37,7 @@ namespace Venflow.Commands
             await ValidateConnectionAsync();
 
             var transaction = await Database.BeginTransactionAsync(
-#if NET5_0
+#if NET5_0_OR_GREATER
                 cancellationToken
 #endif
                 );
@@ -74,6 +74,7 @@ namespace Venflow.Commands
             {
                 BaseUpdate(entity, index++, commandString);
             }
+
             if (index == 0 ||
                 commandString.Length == 0)
             {
@@ -91,7 +92,7 @@ namespace Venflow.Commands
             await ValidateConnectionAsync();
 
             var transaction = await Database.BeginTransactionAsync(
-#if NET5_0
+#if NET5_0_OR_GREATER
                 cancellationToken
 #endif
                 );
@@ -152,7 +153,7 @@ namespace Venflow.Commands
             await ValidateConnectionAsync();
 
             var transaction = await Database.BeginTransactionAsync(
-#if NET5_0
+#if NET5_0_OR_GREATER
                 cancellationToken
 #endif
                 );
@@ -184,7 +185,7 @@ namespace Venflow.Commands
             }
         }
 
-#if NET5_0
+#if NET5_0_OR_GREATER
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
 #endif
         private void BaseUpdate(TEntity entity, int index, StringBuilder commandString)

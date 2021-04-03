@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Fody;
 
-#if NET5_0
+#if NET5_0_OR_GREATER
 [module: SkipLocalsInit]
 #endif
 

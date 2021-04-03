@@ -138,7 +138,7 @@ namespace Venflow
             HandleParameter(value);
         }
 
-#if NET5_0
+#if NET5_0_OR_GREATER
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 #else
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

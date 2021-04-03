@@ -41,7 +41,7 @@ namespace Venflow.Commands
             await ValidateConnectionAsync();
 
             var transaction = await Database.BeginTransactionAsync(
-#if NET5_0
+#if NET5_0_OR_GREATER
                 cancellationToken
 #endif
             );
@@ -104,7 +104,7 @@ namespace Venflow.Commands
             await ValidateConnectionAsync();
 
             var transaction = await Database.BeginTransactionAsync(
-#if NET5_0
+#if NET5_0_OR_GREATER
                 cancellationToken
 #endif
             );
@@ -166,7 +166,7 @@ namespace Venflow.Commands
             UnderlyingCommand.CommandText = commandString.ToString();
 
             var transaction = await Database.BeginTransactionAsync(
-#if NET5_0
+#if NET5_0_OR_GREATER
                 cancellationToken
 #endif
             );
@@ -205,7 +205,7 @@ namespace Venflow.Commands
             UnderlyingCommand.CommandText = DeleteBase(entities.AsSpan());
 
             var transaction = await Database.BeginTransactionAsync(
-#if NET5_0
+#if NET5_0_OR_GREATER
                 cancellationToken
 #endif
             );
@@ -244,7 +244,7 @@ namespace Venflow.Commands
             UnderlyingCommand.CommandText = DeleteBase(entities.AsSpan());
 
             var transaction = await Database.BeginTransactionAsync(
-#if NET5_0
+#if NET5_0_OR_GREATER
                 cancellationToken
 #endif
             );

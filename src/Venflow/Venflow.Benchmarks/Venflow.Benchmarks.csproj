@@ -23,12 +23,12 @@
     <PackageReference Include="RepoDb.PostgreSql" Version="1.1.2" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' != 'netcoreapp5.0'">
+  <ItemGroup Condition="'$(TargetFramework)' != 'netcoreapp5.0' AND '$(TargetFramework)' != 'net6.0'">
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.6" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp5.0'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp5.0' OR '$(TargetFramework)' != 'net6.0'">
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.2" />
       <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
   </ItemGroup>

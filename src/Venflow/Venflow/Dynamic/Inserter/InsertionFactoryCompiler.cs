@@ -1124,6 +1124,7 @@ namespace Venflow.Dynamic.Inserter
                                 _moveNextMethodIL.Emit(OpCodes.Ldloc, primaryKeyLocal);
                                 WritePropertyAssigner(_moveNextMethodIL, relation.ForeignKeyColumn);
                             }
+
                             _moveNextMethodIL.MarkLabel(afterOuterNullCheckBodyLabel);
                         }
                     }
