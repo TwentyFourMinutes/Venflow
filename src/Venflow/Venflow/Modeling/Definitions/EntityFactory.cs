@@ -131,16 +131,10 @@ namespace Venflow.Modeling.Definitions
                 }
 
                 if (relation.RelationType == RelationType.OneToMany &&
-                    relation.LeftNavigationProperty is not null)
+                    relation.LeftNavigationProperty is not null &&
+                    !typeof(IList<>).MakeGenericType(relation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0]).IsAssignableFrom(relation.LeftNavigationProperty.PropertyType))
                 {
-                    if (!typeof(ICollection<>).MakeGenericType(relation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0]).IsAssignableFrom(relation.LeftNavigationProperty.PropertyType))
-                    {
-                        throw new InvalidOperationException($"The entity '{relation.LeftEntityBuilder.Type.Name}' defines the navigation property '{relation.LeftNavigationProperty.Name}' of type '{relation.LeftNavigationProperty.PropertyType.Name}', however Venflow requires the assigned instance to implement ICollection<T>.");
-                    }
-                    else if (!typeof(IList<>).MakeGenericType(relation.LeftNavigationProperty.PropertyType.GetGenericArguments()[0]).IsAssignableFrom(relation.LeftNavigationProperty.PropertyType))
-                    {
-                        throw new InvalidOperationException($"The entity '{relation.LeftEntityBuilder.Type.Name}' defines the navigation property '{relation.LeftNavigationProperty.Name}' of type '{relation.LeftNavigationProperty.PropertyType.Name}', however Venflow requires the assigned instance to implement IList<T>.");
-                    }
+                    throw new InvalidOperationException($"The entity '{relation.LeftEntityBuilder.Type.Name}' defines the navigation property '{relation.LeftNavigationProperty.Name}' of type '{relation.LeftNavigationProperty.PropertyType.Name}', however Venflow requires the assigned instance to implement IList<T>.");
                 }
 
                 var entityRelation = new EntityRelation(relation.RelationId, _entity, relation.LeftNavigationProperty, relation.IsLeftNavigationPropertyInitialized, relation.LeftNavigationProperty?.IsNullableReferenceType(_entity.IsInNullableContext, _entity.DefaultPropNullability) ?? false, relationEntity, relation.RightNavigationProperty, relation.IsRightNavigationPropertyInitialized, relation.RightNavigationProperty?.IsNullableReferenceType(_entity.IsInNullableContext, _entity.DefaultPropNullability) ?? false, keyColumn, relation.RelationType, relation.ForeignKeyLocation);
