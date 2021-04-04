@@ -8,7 +8,7 @@ namespace Venflow.Commands
     /// Represents a command builder to configure the deletion.
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity which will be deleted.</typeparam>
-    public interface IDeleteCommandBuilder<TEntity> : ISpecficVenflowCommandBuilder<IDeleteCommand<TEntity>> where TEntity : class, new()
+    public interface IDeleteCommandBuilder<TEntity> : ISpecficVenflowCommandBuilder<IDeleteCommand<TEntity>, IDeleteCommandBuilder<TEntity>> where TEntity : class, new()
     {
         /// <summary>
         /// Asynchronously deletes a single entity.

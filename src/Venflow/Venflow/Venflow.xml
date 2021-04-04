@@ -377,31 +377,6 @@
             <param name="trackChanges">Determines if change tracking should be applied.</param>
             <returns>An object that can be used to further configure the operation.</returns>
         </member>
-        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.Log(System.Boolean)">
-            <summary>
-            Determines whether or not to log the query to the provided loggers.
-            </summary>
-            <param name="shouldLog">Determines if this query should be logged. This is helpful, if you configured the default logging behavior to be <see langword="true"/>.</param>
-            <returns>An object that can be used to further configure the operation.</returns>
-            <remarks>You can configure the loggers in the <see cref="M:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)"/> method with the <see cref="M:Venflow.DatabaseOptionsBuilder.LogTo(System.Action{System.String},System.Boolean)"/> methods.</remarks>
-        </member>
-        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.Action{System.String},System.Boolean)">
-            <summary>
-            Logs the query to the provided <paramref name="logger"/>.
-            </summary>
-            <param name="logger">The logger which is being used for this query.</param>
-            <param name="includeSensitiveData">Determines whether or not to show populated parameters in this query.</param>
-            <returns>An object that can be used to further configure the operation.</returns>
-            <remarks>Be aware, that once you configure a logger on a query, the global configured loggers won't be executed for this query.</remarks>
-        </member>
-        <member name="M:Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.ValueTuple{System.Action{System.String},System.Boolean}[])">
-            <summary>
-            Logs the query to the provided <paramref name="loggers"/>.
-            </summary>
-            <param name="loggers">The loggers which are being used for this query.</param>
-            <returns>An object that can be used to further configure the operation.</returns>
-            <remarks>Be aware, that once you configure one or more loggers on a query, the global configured loggers won't be executed for this query.</remarks>
-        </member>
         <member name="M:Venflow.Commands.IQueryCommandBuilder`2.QueryAsync(System.Threading.CancellationToken)">
             <summary>
             Asynchronously performs queries and materializes the result.
@@ -525,17 +500,43 @@
             <returns>An object that can be used to further configure the operation.</returns>
             <remarks>You are not forced to use these methods! It is just a more explicit way of defining your joins. Additionally Venflow will perform more validation in the background, if you choose to use these methods.</remarks>
         </member>
-        <member name="T:Venflow.Commands.ISpecficVenflowCommandBuilder`1">
+        <member name="T:Venflow.Commands.ISpecficVenflowCommandBuilder`2">
             <summary>
             Represents a generic command builder for all CRUD operations to finalize the configuration.
             </summary>
             <typeparam name="TCommand">The type of the command which is being configured.</typeparam>
+            <typeparam name="TLogResult">The type of the command which is being configured after configuring the loggers.</typeparam>
         </member>
-        <member name="M:Venflow.Commands.ISpecficVenflowCommandBuilder`1.Build">
+        <member name="M:Venflow.Commands.ISpecficVenflowCommandBuilder`2.Build">
             <summary>
             Finalizes the ongoing configuration process and builds the command.
             </summary>
             <returns>The built command.</returns>
+        </member>
+        <member name="M:Venflow.Commands.ISpecficVenflowCommandBuilder`2.Log(System.Boolean)">
+            <summary>
+            Determines whether or not to log the command to the provided loggers.
+            </summary>
+            <param name="shouldLog">Determines if this command should be logged. This is helpful, if you configured the default logging behavior to be <see langword="true"/>.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>You can configure the loggers in the <see cref="M:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)"/> method with the <see cref="M:Venflow.DatabaseOptionsBuilder.LogTo(System.Action{System.String},System.Boolean)"/> methods.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo(System.Action{System.String},System.Boolean)">
+            <summary>
+            Logs the command to the provided <paramref name="logger"/>.
+            </summary>
+            <param name="logger">The logger which is being used for this command.</param>
+            <param name="includeSensitiveData">Determines whether or not to show populated parameters in this command.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>Be aware, that once you configure a logger on a command, the global configured loggers won't be executed for this command.</remarks>
+        </member>
+        <member name="M:Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo(System.ValueTuple{System.Action{System.String},System.Boolean}[])">
+            <summary>
+            Logs the command to the provided <paramref name="loggers"/>.
+            </summary>
+            <param name="loggers">The loggers which are being used for this command.</param>
+            <returns>An object that can be used to further configure the operation.</returns>
+            <remarks>Be aware, that once you configure one or more loggers on a command, the global configured loggers won't be executed for this command.</remarks>
         </member>
         <member name="T:Venflow.Commands.IUpdateCommand`1">
             <summary>

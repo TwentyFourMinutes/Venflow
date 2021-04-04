@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
@@ -14,16 +13,12 @@ namespace Venflow.Commands
 
         private readonly RelationBuilderValues? _relationBuilderValues;
         private readonly bool _isSingleResult;
-        private readonly List<(Action<string> logger, bool includeSensitiveData)> _loggers;
-        private readonly bool _shouldLog;
         private readonly SqlQueryCacheKey _sqlQueryCacheKey;
 
-        internal VenflowQueryCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, RelationBuilderValues? relationBuilderValues, bool trackChanges, bool disposeCommand, bool isSingleResult, List<(Action<string> logger, bool includeSensitiveData)> loggers, bool shouldLog) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
+        internal VenflowQueryCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, RelationBuilderValues? relationBuilderValues, bool trackChanges, bool disposeCommand, bool isSingleResult, List<(Action<string> logger, bool includeSensitiveData)> loggers, bool shouldLog) : base(database, entityConfiguration, underlyingCommand, disposeCommand, loggers, shouldLog)
         {
             _relationBuilderValues = relationBuilderValues;
             _isSingleResult = isSingleResult;
-            _loggers = loggers;
-            _shouldLog = shouldLog;
 
             underlyingCommand.Connection = database.GetConnection();
 
@@ -34,23 +29,11 @@ namespace Venflow.Commands
         {
             await ValidateConnectionAsync();
 
-            if (_shouldLog)
-            {
-                if (_loggers.Count == 0)
-                {
-                    Database.ExecuteLoggers(UnderlyingCommand);
-                }
-                else
-                {
-                    Database.ExecuteLoggers(_loggers, UnderlyingCommand);
-                }
-            }
-
             var reader = default(NpgsqlDataReader);
 
             try
             {
-                reader = await UnderlyingCommand.ExecuteReaderAsync(_isSingleResult ? CommandBehavior.SingleRow : CommandBehavior.Default, cancellationToken);
+                reader = await UnderlyingCommand.ExecuteReaderAsync(_isSingleResult ? System.Data.CommandBehavior.SingleRow : System.Data.CommandBehavior.Default, cancellationToken);
 
                 Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> materializer;
 
@@ -63,7 +46,17 @@ namespace Venflow.Commands
                     Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer<TReturn>(_relationBuilderValues, reader, _sqlQueryCacheKey);
                 }
 
-                return await materializer(reader, cancellationToken);
+                var result = await materializer(reader, cancellationToken);
+
+                Log(_isSingleResult ? Venflow.Enums.CommandType.QuerySingle : Venflow.Enums.CommandType.QueryBatch, null);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log(_isSingleResult ? Venflow.Enums.CommandType.QuerySingle : Venflow.Enums.CommandType.QueryBatch, ex);
+
+                throw ex;
             }
             finally
             {

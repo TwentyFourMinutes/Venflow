@@ -12,7 +12,9 @@ using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
-    internal class VenflowQueryCommandBuilder<TEntity, TReturn> : IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> where TEntity : class, new() where TReturn : class, new()
+    internal class VenflowQueryCommandBuilder<TEntity, TReturn> : IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>
+        where TEntity : class, new()
+        where TReturn : class, new()
     {
         private bool _trackChanges;
         private QueryGenerationOptions _queryGenerationOptions;
@@ -210,17 +212,7 @@ namespace Venflow.Commands
                 _command.CommandText = argumentedSql.ToString();
             }
 
-            bool shouldLog;
-
-            if (_shouldForceLog.HasValue)
-            {
-                shouldLog = _shouldForceLog.Value;
-            }
-            else
-            {
-                shouldLog = _database.DefaultLoggingBehavior == LoggingBehavior.Always ||
-                            _loggers.Count != 0;
-            }
+            var shouldLog = _shouldForceLog ?? _database.DefaultLoggingBehavior == LoggingBehavior.Always || _loggers.Count != 0;
 
             return new VenflowQueryCommand<TEntity, TReturn>(_database, _entityConfiguration, _command, _relationBuilderValues, _trackChanges, _disposeCommand, _singleResult && _relationBuilderValues is null, _loggers, shouldLog);
         }

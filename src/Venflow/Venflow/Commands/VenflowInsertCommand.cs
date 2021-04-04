@@ -15,14 +15,14 @@ namespace Venflow.Commands
         private readonly RelationBuilderValues? _relationBuilderValues;
         private readonly bool _isFullInsert;
 
-        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, bool isFullInsert) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
+        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, bool isFullInsert, List<(Action<string> logger, bool includeSensitiveData)> loggers, bool shouldLog) : base(database, entityConfiguration, underlyingCommand, disposeCommand, loggers, shouldLog)
         {
             _isFullInsert = isFullInsert;
 
             underlyingCommand.Connection = database.GetConnection();
         }
 
-        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, RelationBuilderValues? relationBuilderValues, bool isFullInsert) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
+        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, RelationBuilderValues? relationBuilderValues, bool isFullInsert, List<(Action<string> logger, bool includeSensitiveData)> loggers, bool shouldLog) : base(database, entityConfiguration, underlyingCommand, disposeCommand, loggers, shouldLog)
         {
             _relationBuilderValues = relationBuilderValues;
             _isFullInsert = isFullInsert;

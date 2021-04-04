@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using Npgsql;
 using Venflow.Dynamic;
 using Venflow.Dynamic.Proxies;
+using Venflow.Enums;
 using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
     internal class VenflowUpdateCommand<TEntity> : VenflowBaseCommand<TEntity>, IUpdateCommand<TEntity> where TEntity : class, new()
     {
-        internal VenflowUpdateCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand) : base(database, entityConfiguration, underlyingCommand, disposeCommand)
+        internal VenflowUpdateCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, List<(Action<string> logger, bool includeSensitiveData)> loggers, bool shouldLog) : base(database, entityConfiguration, underlyingCommand, disposeCommand, loggers, shouldLog)
         {
             underlyingCommand.Connection = database.GetConnection();
         }
@@ -47,10 +48,16 @@ namespace Venflow.Commands
                 await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
+
+                Log(CommandType.UpdateSingle, null);
             }
-            catch
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
+
+                Log(CommandType.UpdateSingle, ex);
+
+                throw ex;
             }
             finally
             {
@@ -102,12 +109,16 @@ namespace Venflow.Commands
                 await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
+
+                Log(CommandType.UpdateBatch, null);
             }
-            catch
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
 
-                throw;
+                Log(CommandType.UpdateBatch, ex);
+
+                throw ex;
             }
             finally
             {
@@ -163,12 +174,16 @@ namespace Venflow.Commands
                 await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
+
+                Log(CommandType.UpdateBatch, null);
             }
-            catch
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
 
-                throw;
+                Log(CommandType.UpdateBatch, ex);
+
+                throw ex;
             }
             finally
             {

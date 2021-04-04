@@ -7,7 +7,6 @@ using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
-
     internal class InsertRelationBuilder<TRelationEntity, TRootEntity> : IInsertRelationBuilder<TRelationEntity, TRootEntity>
         where TRelationEntity : class, new()
         where TRootEntity : class, new()
@@ -49,8 +48,17 @@ namespace Venflow.Commands
             where TToEntity : class, new()
             => new InsertRelationBuilder<TToEntity, TRootEntity>(_root, _relationBuilder.BaseAndWith(_parent, propertySelector), _commandBuilder, _relationBuilder);
 
-        IInsertCommand<TRootEntity> ISpecficVenflowCommandBuilder<IInsertCommand<TRootEntity>>.Build()
+        IInsertCommand<TRootEntity> ISpecficVenflowCommandBuilder<IInsertCommand<TRootEntity>, IBaseInsertRelationBuilder<TRootEntity, TRootEntity>>.Build()
             => _commandBuilder.Build();
+
+        public IBaseInsertRelationBuilder<TRootEntity, TRootEntity> Log(bool shouldLog = true)
+            => _commandBuilder.Log(shouldLog);
+
+        public IBaseInsertRelationBuilder<TRootEntity, TRootEntity> LogTo(Action<string> logger, bool includeSensitiveData)
+            => _commandBuilder.LogTo(logger, includeSensitiveData);
+
+        public IBaseInsertRelationBuilder<TRootEntity, TRootEntity> LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers)
+            => _commandBuilder.LogTo(loggers);
 
         Task<int> IInsertCommandBuilder<TRootEntity>.InsertAsync(TRootEntity entity, CancellationToken cancellationToken)
              => _commandBuilder.InsertAsync(entity, cancellationToken);

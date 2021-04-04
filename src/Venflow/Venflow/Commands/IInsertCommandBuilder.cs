@@ -8,7 +8,7 @@ namespace Venflow.Commands
     /// Represents a command builder to configure the insertion.
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity which will be inserted.</typeparam>
-    public interface IInsertCommandBuilder<TEntity> : ISpecficVenflowCommandBuilder<IInsertCommand<TEntity>>
+    public interface IInsertCommandBuilder<TEntity> : ISpecficVenflowCommandBuilder<IInsertCommand<TEntity>, IBaseInsertRelationBuilder<TEntity, TEntity>>
         where TEntity : class, new()
     {
         /// <summary>
