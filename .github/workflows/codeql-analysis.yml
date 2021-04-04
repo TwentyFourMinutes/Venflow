@@ -52,7 +52,7 @@ jobs:
     - name: Manual build
       working-directory: ./src/Venflow/Venflow
       run:  | 
-        dotnet build -c Release
+        dotnet build -c Release -f net5.0
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
