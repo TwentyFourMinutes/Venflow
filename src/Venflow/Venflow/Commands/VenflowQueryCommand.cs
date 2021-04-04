@@ -48,15 +48,13 @@ namespace Venflow.Commands
 
                 var result = await materializer(reader, cancellationToken);
 
-                Log(_isSingleResult ? Venflow.Enums.CommandType.QuerySingle : Venflow.Enums.CommandType.QueryBatch, null);
+                Log(_isSingleResult ? Venflow.Enums.CommandType.QuerySingle : Venflow.Enums.CommandType.QueryBatch);
 
                 return result;
             }
             catch (Exception ex)
             {
                 Log(_isSingleResult ? Venflow.Enums.CommandType.QuerySingle : Venflow.Enums.CommandType.QueryBatch, ex);
-
-                throw ex;
             }
             finally
             {

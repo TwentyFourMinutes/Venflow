@@ -52,13 +52,15 @@ namespace Venflow.Commands
 
                 await transaction.CommitAsync(cancellationToken);
 
+                Log(Enums.CommandType.DeleteSingle);
+
                 return affectedRows;
             }
-            catch
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
 
-                throw;
+                Log(Enums.CommandType.DeleteSingle, ex);
             }
             finally
             {
@@ -115,13 +117,15 @@ namespace Venflow.Commands
 
                 await transaction.CommitAsync(cancellationToken);
 
+                Log(Enums.CommandType.DeleteBatch);
+
                 return affectedRows;
             }
-            catch
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
 
-                throw;
+                Log(Enums.CommandType.DeleteBatch, ex);
             }
             finally
             {
@@ -177,13 +181,15 @@ namespace Venflow.Commands
 
                 await transaction.CommitAsync(cancellationToken);
 
+                Log(Enums.CommandType.DeleteBatch);
+
                 return affectedRows;
             }
-            catch
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
 
-                throw;
+                Log(Enums.CommandType.DeleteBatch, ex);
             }
             finally
             {
@@ -216,13 +222,15 @@ namespace Venflow.Commands
 
                 await transaction.CommitAsync(cancellationToken);
 
+                Log(Enums.CommandType.DeleteBatch);
+
                 return affectedRows;
             }
-            catch
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
 
-                throw;
+                Log(Enums.CommandType.DeleteBatch, ex);
             }
             finally
             {
@@ -255,13 +263,15 @@ namespace Venflow.Commands
 
                 await transaction.CommitAsync(cancellationToken);
 
+                Log(Enums.CommandType.DeleteBatch);
+
                 return affectedRows;
             }
-            catch
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
 
-                throw;
+                Log(Enums.CommandType.DeleteBatch, ex);
             }
             finally
             {

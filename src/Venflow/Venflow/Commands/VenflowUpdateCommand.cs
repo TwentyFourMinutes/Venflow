@@ -49,15 +49,13 @@ namespace Venflow.Commands
 
                 await transaction.CommitAsync(cancellationToken);
 
-                Log(CommandType.UpdateSingle, null);
+                Log(CommandType.UpdateSingle);
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
 
                 Log(CommandType.UpdateSingle, ex);
-
-                throw ex;
             }
             finally
             {
@@ -110,15 +108,13 @@ namespace Venflow.Commands
 
                 await transaction.CommitAsync(cancellationToken);
 
-                Log(CommandType.UpdateBatch, null);
+                Log(CommandType.UpdateBatch);
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
 
                 Log(CommandType.UpdateBatch, ex);
-
-                throw ex;
             }
             finally
             {
@@ -175,15 +171,13 @@ namespace Venflow.Commands
 
                 await transaction.CommitAsync(cancellationToken);
 
-                Log(CommandType.UpdateBatch, null);
+                Log(CommandType.UpdateBatch);
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
 
                 Log(CommandType.UpdateBatch, ex);
-
-                throw ex;
             }
             finally
             {

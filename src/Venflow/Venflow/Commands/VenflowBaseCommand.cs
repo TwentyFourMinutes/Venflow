@@ -28,18 +28,23 @@ namespace Venflow.Commands
             _shouldLog = shouldLog;
         }
 
-        protected void Log(Venflow.Enums.CommandType commandType, Exception? exception)
+        protected void Log(Venflow.Enums.CommandType commandType, Exception? exception = default)
         {
             if (_shouldLog)
             {
                 if (_loggers.Count == 0)
                 {
-                    Database.ExecuteLoggers(UnderlyingCommand);
+                    Database.ExecuteLoggers(UnderlyingCommand, commandType, exception);
                 }
                 else
                 {
-                    Database.ExecuteLoggers(_loggers, UnderlyingCommand);
+                    Database.ExecuteLoggers(_loggers, UnderlyingCommand, commandType, exception);
                 }
+            }
+
+            if (VenflowConfiguration.ThrowLoggedExceptions)
+            {
+                throw exception;
             }
         }
 

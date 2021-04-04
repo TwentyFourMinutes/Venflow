@@ -18,6 +18,11 @@ namespace Venflow
         public static long DynamicCacheExpirationTime { get; private set; } = 60 * 5;
 
         /// <summary>
+        /// Determines whether or not Venflow will propagate exceptions to the caller of a command, if the exception is being logged. Defaults to <see cref="true"/>.
+        /// </summary>
+        public static bool ThrowLoggedExceptions { get; set; } = true
+
+        /// <summary>
         /// Determines whether or not Venflow will perform more extensive validation through out its usage. This setting will be set to <see langword="true"></see> automatically, if you are in DEBUG, otherwise <see langword="false"></see>.
         /// </summary>
         public static bool ShouldUseDeepValidation { get; private set; }
