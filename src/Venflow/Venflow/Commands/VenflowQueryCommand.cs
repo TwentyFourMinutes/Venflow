@@ -52,9 +52,9 @@ namespace Venflow.Commands
 
                 return result;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (Log(_isSingleResult ? Venflow.Enums.CommandType.QuerySingle : Venflow.Enums.CommandType.QueryBatch, ex))
             {
-                Log(_isSingleResult ? Venflow.Enums.CommandType.QuerySingle : Venflow.Enums.CommandType.QueryBatch, ex);
+                return default;
             }
             finally
             {

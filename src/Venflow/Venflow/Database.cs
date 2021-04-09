@@ -300,10 +300,10 @@ namespace Venflow
             return _connection = new NpgsqlConnection(ConnectionString);
         }
 
-        internal void ExecuteLoggers(NpgsqlCommand command, CommandType commandType, Exception? exception)
-            => ExecuteLoggers(_loggers, command);
+        internal void ExecuteLoggers(NpgsqlCommand command, Venflow.Enums.CommandType commandType, Exception? exception)
+            => ExecuteLoggers(_loggers, command, commandType, exception);
 
-        internal void ExecuteLoggers(IReadOnlyList<(Action<string> logger, bool includeSensitiveData)> loggers, NpgsqlCommand command, CommandType commandType, Exception? exception)
+        internal void ExecuteLoggers(IReadOnlyList<(Action<string> logger, bool includeSensitiveData)> loggers, NpgsqlCommand command, Venflow.Enums.CommandType commandType, Exception? exception)
         {
             for (int loggerIndex = 0; loggerIndex < loggers.Count; loggerIndex++)
             {

@@ -28,7 +28,7 @@ namespace Venflow.Commands
             _shouldLog = shouldLog;
         }
 
-        protected void Log(Venflow.Enums.CommandType commandType, Exception? exception = default)
+        protected bool Log(Venflow.Enums.CommandType commandType, Exception? exception = default)
         {
             if (_shouldLog)
             {
@@ -40,12 +40,12 @@ namespace Venflow.Commands
                 {
                     Database.ExecuteLoggers(_loggers, UnderlyingCommand, commandType, exception);
                 }
+
+                if (VenflowConfiguration.ThrowLoggedExceptions)
+                    throw exception;
             }
 
-            if (VenflowConfiguration.ThrowLoggedExceptions)
-            {
-                throw exception;
-            }
+            return true;
         }
 
         protected ValueTask ValidateConnectionAsync()

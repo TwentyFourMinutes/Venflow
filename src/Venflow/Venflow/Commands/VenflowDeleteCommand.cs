@@ -61,6 +61,8 @@ namespace Venflow.Commands
                 await transaction.RollbackAsync(cancellationToken);
 
                 Log(Enums.CommandType.DeleteSingle, ex);
+
+                return default;
             }
             finally
             {
@@ -126,6 +128,8 @@ namespace Venflow.Commands
                 await transaction.RollbackAsync(cancellationToken);
 
                 Log(Enums.CommandType.DeleteBatch, ex);
+
+                return default;
             }
             finally
             {
@@ -190,6 +194,8 @@ namespace Venflow.Commands
                 await transaction.RollbackAsync(cancellationToken);
 
                 Log(Enums.CommandType.DeleteBatch, ex);
+
+                return default;
             }
             finally
             {
@@ -231,6 +237,8 @@ namespace Venflow.Commands
                 await transaction.RollbackAsync(cancellationToken);
 
                 Log(Enums.CommandType.DeleteBatch, ex);
+
+                return default;
             }
             finally
             {
@@ -272,6 +280,8 @@ namespace Venflow.Commands
                 await transaction.RollbackAsync(cancellationToken);
 
                 Log(Enums.CommandType.DeleteBatch, ex);
+
+                return default;
             }
             finally
             {

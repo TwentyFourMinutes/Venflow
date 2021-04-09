@@ -34,7 +34,7 @@ namespace Venflow.Commands
 
         public IInsertCommand<TEntity> Build()
         {
-            var shouldLog = _shouldForceLog ?? _database.DefaultLoggingBehavior == LoggingBehavior.Always || _loggers.Count != 0; _loggers.Count != 0;
+            var shouldLog = _shouldForceLog ?? _database.DefaultLoggingBehavior == LoggingBehavior.Always || _loggers.Count != 0;
 
             if (_relationBuilderValues is not null)
             {
