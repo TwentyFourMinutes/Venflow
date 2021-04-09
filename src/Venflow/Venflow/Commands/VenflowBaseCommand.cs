@@ -14,10 +14,10 @@ namespace Venflow.Commands
         internal Entity<TEntity> EntityConfiguration { get; }
         internal NpgsqlCommand UnderlyingCommand { get; }
 
-        private readonly List<(Action<string> logger, bool includeSensitiveData)> _loggers;
+        private readonly List<LoggerCallback> _loggers;
         private readonly bool _shouldLog;
 
-        protected VenflowBaseCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, List<(Action<string> logger, bool includeSensitiveData)> loggers, bool shouldLog)
+        protected VenflowBaseCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, List<LoggerCallback> loggers, bool shouldLog)
         {
             Database = database;
             EntityConfiguration = entityConfiguration;

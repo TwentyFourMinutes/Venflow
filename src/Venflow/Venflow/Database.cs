@@ -37,7 +37,7 @@ namespace Venflow
 
         private NpgsqlConnection? _connection;
 
-        private IReadOnlyList<(Action<string> logger, bool includeSensitiveData)> _loggers;
+        private IReadOnlyList<LoggerCallback> _loggers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Database"/> class using the specified <paramref name="connectionString"/>.
@@ -303,20 +303,11 @@ namespace Venflow
         internal void ExecuteLoggers(NpgsqlCommand command, Venflow.Enums.CommandType commandType, Exception? exception)
             => ExecuteLoggers(_loggers, command, commandType, exception);
 
-        internal void ExecuteLoggers(IReadOnlyList<(Action<string> logger, bool includeSensitiveData)> loggers, NpgsqlCommand command, Venflow.Enums.CommandType commandType, Exception? exception)
+        internal void ExecuteLoggers(IReadOnlyList<LoggerCallback> loggers, NpgsqlCommand command, Venflow.Enums.CommandType commandType, Exception? exception)
         {
             for (int loggerIndex = 0; loggerIndex < loggers.Count; loggerIndex++)
             {
-                var loggingProvider = loggers[loggerIndex];
-
-                if (loggingProvider.includeSensitiveData)
-                {
-                    loggingProvider.logger.Invoke(command.GetUnParameterizedCommandText());
-                }
-                else
-                {
-                    loggingProvider.logger.Invoke(command.CommandText);
-                }
+                loggers[loggerIndex].Invoke(command, commandType, exception);
             }
         }
 

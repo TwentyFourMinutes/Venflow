@@ -54,10 +54,10 @@ namespace Venflow.Commands
         public IBaseInsertRelationBuilder<TRootEntity, TRootEntity> Log(bool shouldLog = true)
             => _commandBuilder.Log(shouldLog);
 
-        public IBaseInsertRelationBuilder<TRootEntity, TRootEntity> LogTo(Action<string> logger, bool includeSensitiveData)
-            => _commandBuilder.LogTo(logger, includeSensitiveData);
+        public IBaseInsertRelationBuilder<TRootEntity, TRootEntity> LogTo(LoggerCallback logger)
+            => _commandBuilder.LogTo(logger);
 
-        public IBaseInsertRelationBuilder<TRootEntity, TRootEntity> LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers)
+        public IBaseInsertRelationBuilder<TRootEntity, TRootEntity> LogTo(params LoggerCallback[] loggers)
             => _commandBuilder.LogTo(loggers);
 
         Task<int> IInsertCommandBuilder<TRootEntity>.InsertAsync(TRootEntity entity, CancellationToken cancellationToken)

@@ -114,10 +114,10 @@ namespace Venflow.Commands
         public IBaseQueryRelationBuilder<TRootEntity, TRootEntity, TReturn> Log(bool shouldLog = true)
             => _commandBuilder.Log(shouldLog);
 
-        public IBaseQueryRelationBuilder<TRootEntity, TRootEntity, TReturn> LogTo(Action<string> logger, bool includeSensitiveData)
-            => _commandBuilder.LogTo(logger, includeSensitiveData);
+        public IBaseQueryRelationBuilder<TRootEntity, TRootEntity, TReturn> LogTo(LoggerCallback logger)
+            => _commandBuilder.LogTo(logger);
 
-        public IBaseQueryRelationBuilder<TRootEntity, TRootEntity, TReturn> LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers)
+        public IBaseQueryRelationBuilder<TRootEntity, TRootEntity, TReturn> LogTo(params LoggerCallback[] loggers)
             => _commandBuilder.LogTo(loggers);
 
         public Task<TReturn?> QueryAsync(CancellationToken cancellationToken = default)

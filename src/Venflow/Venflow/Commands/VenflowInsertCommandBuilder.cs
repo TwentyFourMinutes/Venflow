@@ -20,7 +20,7 @@ namespace Venflow.Commands
         private readonly NpgsqlCommand _command;
         private readonly Database _database;
         private readonly Entity<TEntity> _entityConfiguration;
-        private readonly List<(Action<string>, bool)> _loggers;
+        private readonly List<LoggerCallback> _loggers;
 
         internal VenflowInsertCommandBuilder(Database database, Entity<TEntity> entityConfiguration, bool disposeCommand)
         {
@@ -93,14 +93,14 @@ namespace Venflow.Commands
             return this;
         }
 
-        public IBaseInsertRelationBuilder<TEntity, TEntity> LogTo(Action<string> logger, bool includeSensitiveData)
+        public IBaseInsertRelationBuilder<TEntity, TEntity> LogTo(LoggerCallback logger)
         {
-            _loggers.Add((logger, includeSensitiveData));
+            _loggers.Add(logger);
 
             return this;
         }
 
-        public IBaseInsertRelationBuilder<TEntity, TEntity> LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers)
+        public IBaseInsertRelationBuilder<TEntity, TEntity> LogTo(params LoggerCallback[] loggers)
         {
             _loggers.AddRange(loggers);
 

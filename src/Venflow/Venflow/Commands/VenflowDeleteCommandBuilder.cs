@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
@@ -17,7 +16,7 @@ namespace Venflow.Commands
         private readonly NpgsqlCommand _command;
         private readonly Database _database;
         private readonly Entity<TEntity> _entityConfiguration;
-        private readonly List<(Action<string>, bool)> _loggers;
+        private readonly List<LoggerCallback> _loggers;
 
         internal VenflowDeleteCommandBuilder(Database database, Entity<TEntity> entityConfiguration, bool disposeCommand)
         {
@@ -78,14 +77,14 @@ namespace Venflow.Commands
             return this;
         }
 
-        public IDeleteCommandBuilder<TEntity> LogTo(Action<string> logger, bool includeSensitiveData)
+        public IDeleteCommandBuilder<TEntity> LogTo(LoggerCallback logger)
         {
-            _loggers.Add((logger, includeSensitiveData));
+            _loggers.Add(logger);
 
             return this;
         }
 
-        public IDeleteCommandBuilder<TEntity> LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers)
+        public IDeleteCommandBuilder<TEntity> LogTo(params LoggerCallback[] loggers)
         {
             _loggers.AddRange(loggers);
 

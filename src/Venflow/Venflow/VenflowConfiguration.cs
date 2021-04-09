@@ -18,7 +18,7 @@ namespace Venflow
         public static long DynamicCacheExpirationTime { get; private set; } = 60 * 5;
 
         /// <summary>
-        /// Determines whether or not Venflow will propagate exceptions to the caller of a command, if the exception is being logged. Defaults to <see cref="true"/>.
+        /// Determines whether or not Venflow will propagate exceptions to the caller of a command, if the exception is being logged. Defaults to <see langword="true"/>.
         /// </summary>
         public static bool ThrowLoggedExceptions { get; set; } = true;
 

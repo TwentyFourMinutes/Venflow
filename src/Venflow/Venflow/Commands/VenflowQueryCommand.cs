@@ -15,7 +15,7 @@ namespace Venflow.Commands
         private readonly bool _isSingleResult;
         private readonly SqlQueryCacheKey _sqlQueryCacheKey;
 
-        internal VenflowQueryCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, RelationBuilderValues? relationBuilderValues, bool trackChanges, bool disposeCommand, bool isSingleResult, List<(Action<string> logger, bool includeSensitiveData)> loggers, bool shouldLog) : base(database, entityConfiguration, underlyingCommand, disposeCommand, loggers, shouldLog)
+        internal VenflowQueryCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, RelationBuilderValues? relationBuilderValues, bool trackChanges, bool disposeCommand, bool isSingleResult, List<LoggerCallback> loggers, bool shouldLog) : base(database, entityConfiguration, underlyingCommand, disposeCommand, loggers, shouldLog)
         {
             _relationBuilderValues = relationBuilderValues;
             _isSingleResult = isSingleResult;

@@ -29,10 +29,9 @@ namespace Venflow.Commands
         /// Logs the command to the provided <paramref name="logger"/>.
         /// </summary>
         /// <param name="logger">The logger which is being used for this command.</param>
-        /// <param name="includeSensitiveData">Determines whether or not to show populated parameters in this command.</param>
         /// <returns>An object that can be used to further configure the operation.</returns>
         /// <remarks>Be aware, that once you configure a logger on a command, the global configured loggers won't be executed for this command.</remarks>
-        TLogResult LogTo(Action<string> logger, bool includeSensitiveData);
+        TLogResult LogTo(LoggerCallback logger);
 
         /// <summary>
         /// Logs the command to the provided <paramref name="loggers"/>.
@@ -40,6 +39,6 @@ namespace Venflow.Commands
         /// <param name="loggers">The loggers which are being used for this command.</param>
         /// <returns>An object that can be used to further configure the operation.</returns>
         /// <remarks>Be aware, that once you configure one or more loggers on a command, the global configured loggers won't be executed for this command.</remarks>
-        TLogResult LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers);
+        TLogResult LogTo(params LoggerCallback[] loggers);
     }
 }

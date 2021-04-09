@@ -29,7 +29,7 @@ namespace Venflow.Commands
         private readonly Database _database;
         private readonly Entity<TEntity> _entityConfiguration;
         private readonly object?[]? _interploatedSqlParameters;
-        private readonly List<(Action<string>, bool)> _loggers;
+        private readonly List<LoggerCallback> _loggers;
 
         private VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, QueryGenerationOptions queryGenerationOptions, bool disposeCommand, bool singleResult)
         {
@@ -79,14 +79,14 @@ namespace Venflow.Commands
             return this;
         }
 
-        public IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> LogTo(Action<string> logger, bool includeSensitiveData)
+        public IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> LogTo(LoggerCallback logger)
         {
-            _loggers.Add((logger, includeSensitiveData));
+            _loggers.Add(logger);
 
             return this;
         }
 
-        public IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> LogTo(params (Action<string> logger, bool includeSensitiveData)[] loggers)
+        public IBaseQueryRelationBuilder<TEntity, TEntity, TReturn> LogTo(params LoggerCallback[] loggers)
         {
             _loggers.AddRange(loggers);
 

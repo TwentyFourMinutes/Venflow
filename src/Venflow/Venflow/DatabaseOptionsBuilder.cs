@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Npgsql;
 using Venflow.Enums;
 using Venflow.Modeling.Definitions;
 
 namespace Venflow
 {
+    public delegate void LoggerCallback(NpgsqlCommand command, CommandType commandType, Exception? exception);
+
     /// <summary>
     /// Provides an option builder to further configure a <see cref="Database"/> instance.
     /// </summary>
@@ -17,7 +20,7 @@ namespace Venflow
         public LoggingBehavior DefaultLoggingBehavior { get; set; }
 
         private readonly List<Assembly> _configurationAssemblies;
-        private readonly List<(Action<string>, bool)> _loggers;
+        private readonly List<LoggerCallback> _loggers;
         private readonly Assembly _databaseAssembly;
 
         internal DatabaseOptionsBuilder(Assembly databaseAssembly)
@@ -68,10 +71,9 @@ namespace Venflow
         }
 
         /// <summary>
-        /// Adds a logger, which allows for logging of executed SQL commands.
+        /// Adds a logger, which allows for logging of executed commands.
         /// </summary>
-        /// <param name="logger">The logger action which is being used to log SQL commands.</param>
-        /// <param name="includeSensitiveData">Determines whether or not to show populated parameters in the commands. <strong>Be aware, that the parameters get injected by the client and the SQL is likely not the exact same as the one executed by the server.</strong></param>
+        /// <param name="loggerCallback">A callback which is being used to log commands.</param>
         /// <returns>An object that can be used to configure the current <see cref="Database"/>.</returns>
         /// <remarks>This currently only includes the following API's:
         /// <list type="bullet">
@@ -81,9 +83,9 @@ namespace Venflow
         /// </list>
         /// Also consider configuring the <see cref="DefaultLoggingBehavior"/> property.
         /// </remarks>
-        public DatabaseOptionsBuilder LogTo(Action<string> logger, bool includeSensitiveData = false)
+        public DatabaseOptionsBuilder LogTo(LoggerCallback loggerCallback)
         {
-            _loggers.Add((logger, includeSensitiveData));
+            _loggers.Add(loggerCallback);
 
             return this;
         }
@@ -102,11 +104,11 @@ namespace Venflow
     internal class DatabaseOptions
     {
         internal IReadOnlyList<Assembly> ConfigurationAssemblies { get; }
-        internal IReadOnlyList<(Action<string>, bool)> Loggers { get; }
+        internal IReadOnlyList<LoggerCallback> Loggers { get; }
 
         internal LoggingBehavior DefaultLoggingBehavior { get; }
 
-        internal DatabaseOptions(List<Assembly> configurationAssemblies, IReadOnlyList<(Action<string>, bool)> loggers, LoggingBehavior defaultLoggingBehavior)
+        internal DatabaseOptions(List<Assembly> configurationAssemblies, IReadOnlyList<LoggerCallback> loggers, LoggingBehavior defaultLoggingBehavior)
         {
             ConfigurationAssemblies = configurationAssemblies;
             Loggers = loggers;
