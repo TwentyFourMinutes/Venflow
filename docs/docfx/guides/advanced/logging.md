@@ -36,7 +36,7 @@ public class BlogDatabase : Database
 
 ## Setup the logging provider in a more specific manner
 
-You don't always want the ORM to log every single SQL statement ever to be executed, in this case Venflow allows to individually override the logging behaviour on a command basis by calling [`LogTo`](xref:Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.Boolean) ) on the method chain. In the example down below, all globally defined loggers will be overridden by the loggers configured on the command.
+You don't always want the ORM to log every single SQL statement ever to be executed, in this case Venflow allows to individually override the logging behaviour on a command basis by calling [`LogTo`](xref:Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo(System.Boolean) ) on the method chain. In the example down below, all globally defined loggers will be overridden by the loggers configured on the command.
 
 ```cs
 FormattableString sql = $@"SELECT * FROM ""Blogs"" WHERE ""Id"" = {someId} LIMIT 1";
@@ -47,5 +47,5 @@ var blog = await database.Blogs.QueryInterpolatedSingle(sql)
                                .QueryAsync();
 ```
 
-However, lets assume you wouldn't want to configure the logger on a command basis, but would rather cherry pick the commands. In that case you would need to set the  [`DatabaseOptionsBuilder.DefaultLoggingBehavior`](xref:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior) to [`DefaultLoggingBehavior.Never`](xref:Venflow.Enums.LoggingBehavior.Never) in the same method you configured the global logger. Then you would want to call [`LogTo`](xref:Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.Boolean) ) on all commands you would want to be logged.
+However, lets assume you wouldn't want to configure the logger on a command basis, but would rather cherry pick the commands. In that case you would need to set the  [`DatabaseOptionsBuilder.DefaultLoggingBehavior`](xref:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior) to [`DefaultLoggingBehavior.Never`](xref:Venflow.Enums.LoggingBehavior.Never) in the same method you configured the global logger. Then you would want to call [`LogTo`](xref:Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo(System.Boolean) ) on all commands you would want to be logged.
 
