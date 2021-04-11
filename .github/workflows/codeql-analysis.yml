@@ -37,6 +37,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Setup .NET 6.0
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.100-preview.2.21155.3
+
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
@@ -52,7 +57,7 @@ jobs:
     - name: Manual build
       working-directory: ./src/Venflow/Venflow
       run:  | 
-        dotnet build -c Release -f net5.0
+        dotnet build -c Release -f net6.0
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
