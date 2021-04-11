@@ -17,7 +17,7 @@
     <meta property="og:image" content="">
     <meta property="og:image:alt" content="Venflow Logo">
     <meta name="theme-color" content="#995EA7">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.56.7.0">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
     <meta id="docfx-style:rel" content="../">
@@ -117,7 +117,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior.md&amp;value=---%0Auid%3A%20Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseOptionsBuilder.cs/#L17">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseOptionsBuilder.cs/#L20">View Source</a>
   </span>
   <a id="Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior_" data-uid="Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior*"></a>
   <h4 id="Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior" data-uid="Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior">DefaultLoggingBehavior</h4>
@@ -147,19 +147,74 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseOptionsBuilder_AddConfigurations_Assembly_.md&amp;value=---%0Auid%3A%20Venflow.DatabaseOptionsBuilder.AddConfigurations(Assembly)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseOptionsBuilder_LogTo_Venflow_LoggerCallback_.md&amp;value=---%0Auid%3A%20Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseOptionsBuilder.cs/#L50">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseOptionsBuilder.cs/#L89">View Source</a>
   </span>
-  <a id="Venflow_DatabaseOptionsBuilder_AddConfigurations_" data-uid="Venflow.DatabaseOptionsBuilder.AddConfigurations*"></a>
-  <h4 id="Venflow_DatabaseOptionsBuilder_AddConfigurations_Assembly_" data-uid="Venflow.DatabaseOptionsBuilder.AddConfigurations(Assembly)">AddConfigurations(Assembly)</h4>
+  <a id="Venflow_DatabaseOptionsBuilder_LogTo_" data-uid="Venflow.DatabaseOptionsBuilder.LogTo*"></a>
+  <h4 id="Venflow_DatabaseOptionsBuilder_LogTo_Venflow_LoggerCallback_" data-uid="Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)">LogTo(LoggerCallback)</h4>
+  <div class="markdown level1 summary"><p>Adds a logger, which allows for logging of executed commands.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DatabaseOptionsBuilder LogTo(LoggerCallback loggerCallback)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.LoggerCallback.html">LoggerCallback</a></td>
+        <td><span class="parametername">loggerCallback</span></td>
+        <td><p>A callback which is being used to log commands.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.DatabaseOptionsBuilder.html">DatabaseOptionsBuilder</a></td>
+        <td><p>An object that can be used to configure the current <a class="xref" href="Venflow.Database.html">Database</a> instance.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_DatabaseOptionsBuilder_LogTo_Venflow_LoggerCallback__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This currently only includes the following API's:</p>
+<ul><li></li><li></li><li></li></ul>
+Also consider configuring the <a class="xref" href="Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior">DefaultLoggingBehavior</a> property.
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseOptionsBuilder_UseConfigurations_Assembly_.md&amp;value=---%0Auid%3A%20Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseOptionsBuilder.cs/#L56">View Source</a>
+  </span>
+  <a id="Venflow_DatabaseOptionsBuilder_UseConfigurations_" data-uid="Venflow.DatabaseOptionsBuilder.UseConfigurations*"></a>
+  <h4 id="Venflow_DatabaseOptionsBuilder_UseConfigurations_Assembly_" data-uid="Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly)">UseConfigurations(Assembly)</h4>
   <div class="markdown level1 summary"><p>Adds the assembly to the <a class="xref" href="Venflow.Modeling.Definitions.EntityConfiguration-1.html">EntityConfiguration&lt;TEntity&gt;</a> lookup list.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public DatabaseOptionsBuilder AddConfigurations(Assembly assembly)</code></pre>
+    <pre><code class="lang-csharp hljs">public DatabaseOptionsBuilder UseConfigurations(Assembly assembly)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -190,29 +245,29 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Venflow.DatabaseOptionsBuilder.html">DatabaseOptionsBuilder</a></td>
-        <td><p>An object that can be used to configure the current <a class="xref" href="Venflow.Database.html">Database</a>.</p>
+        <td><p>An object that can be used to configure the current <a class="xref" href="Venflow.Database.html">Database</a> instance.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <h5 id="Venflow_DatabaseOptionsBuilder_AddConfigurations_Assembly__remarks">Remarks</h5>
+  <h5 id="Venflow_DatabaseOptionsBuilder_UseConfigurations_Assembly__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>If you add a custom configuration location, the assembly of the database type will not be automatically included.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseOptionsBuilder_AddConfigurations_Assembly___.md&amp;value=---%0Auid%3A%20Venflow.DatabaseOptionsBuilder.AddConfigurations(Assembly%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseOptionsBuilder_UseConfigurations_Assembly___.md&amp;value=---%0Auid%3A%20Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseOptionsBuilder.cs/#L63">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseOptionsBuilder.cs/#L69">View Source</a>
   </span>
-  <a id="Venflow_DatabaseOptionsBuilder_AddConfigurations_" data-uid="Venflow.DatabaseOptionsBuilder.AddConfigurations*"></a>
-  <h4 id="Venflow_DatabaseOptionsBuilder_AddConfigurations_Assembly___" data-uid="Venflow.DatabaseOptionsBuilder.AddConfigurations(Assembly[])">AddConfigurations(Assembly[])</h4>
+  <a id="Venflow_DatabaseOptionsBuilder_UseConfigurations_" data-uid="Venflow.DatabaseOptionsBuilder.UseConfigurations*"></a>
+  <h4 id="Venflow_DatabaseOptionsBuilder_UseConfigurations_Assembly___" data-uid="Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly[])">UseConfigurations(Assembly[])</h4>
   <div class="markdown level1 summary"><p>Adds the assemblies to the <a class="xref" href="Venflow.Modeling.Definitions.EntityConfiguration-1.html">EntityConfiguration&lt;TEntity&gt;</a> lookup list.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public DatabaseOptionsBuilder AddConfigurations(params Assembly[] assemblies)</code></pre>
+    <pre><code class="lang-csharp hljs">public DatabaseOptionsBuilder UseConfigurations(params Assembly[] assemblies)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -243,29 +298,29 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Venflow.DatabaseOptionsBuilder.html">DatabaseOptionsBuilder</a></td>
-        <td><p>An object that can be used to configure the current <a class="xref" href="Venflow.Database.html">Database</a>.</p>
+        <td><p>An object that can be used to configure the current <a class="xref" href="Venflow.Database.html">Database</a> instance.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <h5 id="Venflow_DatabaseOptionsBuilder_AddConfigurations_Assembly____remarks">Remarks</h5>
+  <h5 id="Venflow_DatabaseOptionsBuilder_UseConfigurations_Assembly____remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>If you add a custom configuration location, the assembly of the database type will not be automatically included.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseOptionsBuilder_AddConfigurations__1.md&amp;value=---%0Auid%3A%20Venflow.DatabaseOptionsBuilder.AddConfigurations%60%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseOptionsBuilder_UseConfigurations__1.md&amp;value=---%0Auid%3A%20Venflow.DatabaseOptionsBuilder.UseConfigurations%60%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseOptionsBuilder.cs/#L37">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseOptionsBuilder.cs/#L43">View Source</a>
   </span>
-  <a id="Venflow_DatabaseOptionsBuilder_AddConfigurations_" data-uid="Venflow.DatabaseOptionsBuilder.AddConfigurations*"></a>
-  <h4 id="Venflow_DatabaseOptionsBuilder_AddConfigurations__1" data-uid="Venflow.DatabaseOptionsBuilder.AddConfigurations``1">AddConfigurations&lt;T&gt;()</h4>
+  <a id="Venflow_DatabaseOptionsBuilder_UseConfigurations_" data-uid="Venflow.DatabaseOptionsBuilder.UseConfigurations*"></a>
+  <h4 id="Venflow_DatabaseOptionsBuilder_UseConfigurations__1" data-uid="Venflow.DatabaseOptionsBuilder.UseConfigurations``1">UseConfigurations&lt;T&gt;()</h4>
   <div class="markdown level1 summary"><p>Adds the assembly of the type <code data-dev-comment-type="typeparamref" class="typeparamref">T</code> to the <a class="xref" href="Venflow.Modeling.Definitions.EntityConfiguration-1.html">EntityConfiguration&lt;TEntity&gt;</a> lookup list.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public DatabaseOptionsBuilder AddConfigurations&lt;T&gt;()</code></pre>
+    <pre><code class="lang-csharp hljs">public DatabaseOptionsBuilder UseConfigurations&lt;T&gt;()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -278,7 +333,7 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Venflow.DatabaseOptionsBuilder.html">DatabaseOptionsBuilder</a></td>
-        <td><p>An object that can be used to configure the current <a class="xref" href="Venflow.Database.html">Database</a>.</p>
+        <td><p>An object that can be used to configure the current <a class="xref" href="Venflow.Database.html">Database</a> instance.</p>
 </td>
       </tr>
     </tbody>
@@ -299,69 +354,8 @@
       </tr>
     </tbody>
   </table>
-  <h5 id="Venflow_DatabaseOptionsBuilder_AddConfigurations__1_remarks">Remarks</h5>
+  <h5 id="Venflow_DatabaseOptionsBuilder_UseConfigurations__1_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>If you add a custom configuration location, the assembly of the database type will not be automatically included.</p>
-</div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseOptionsBuilder_LogTo_Action_System_String__System_Boolean_.md&amp;value=---%0Auid%3A%20Venflow.DatabaseOptionsBuilder.LogTo(Action%7BSystem.String%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseOptionsBuilder.cs/#L84">View Source</a>
-  </span>
-  <a id="Venflow_DatabaseOptionsBuilder_LogTo_" data-uid="Venflow.DatabaseOptionsBuilder.LogTo*"></a>
-  <h4 id="Venflow_DatabaseOptionsBuilder_LogTo_Action_System_String__System_Boolean_" data-uid="Venflow.DatabaseOptionsBuilder.LogTo(Action{System.String},System.Boolean)">LogTo(Action&lt;String&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Adds a logger, which allows for logging of executed SQL commands.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public DatabaseOptionsBuilder LogTo(Action&lt;string&gt; logger, bool includeSensitiveData = false)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Action</span>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a>&gt;</td>
-        <td><span class="parametername">logger</span></td>
-        <td><p>The logger action which is being used to log SQL commands.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.boolean">Boolean</a></td>
-        <td><span class="parametername">includeSensitiveData</span></td>
-        <td><p>Determines whether or not to show populated parameters in the commands. <strong>Be aware, that the parameters get injected by the client and the SQL is likely not the exact same as the one executed by the server.</strong></p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Venflow.DatabaseOptionsBuilder.html">DatabaseOptionsBuilder</a></td>
-        <td><p>An object that can be used to configure the current <a class="xref" href="Venflow.Database.html">Database</a>.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Venflow_DatabaseOptionsBuilder_LogTo_Action_System_String__System_Boolean__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This currently only includes the following API's:</p>
-<ul><li></li><li></li><li></li></ul>
-Also consider configuring the <a class="xref" href="Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior">DefaultLoggingBehavior</a> property.
 </div>
 </article>
           </div>
@@ -382,7 +376,7 @@ Also consider configuring the <a class="xref" href="Venflow.DatabaseOptionsBuild
                     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseOptionsBuilder.md&amp;value=---%0Auid%3A%20Venflow.DatabaseOptionsBuilder%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseOptionsBuilder.cs/#L12" class="contribution-link">View Source</a>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseOptionsBuilder.cs/#L15" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

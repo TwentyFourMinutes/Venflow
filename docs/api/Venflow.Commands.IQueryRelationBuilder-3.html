@@ -17,7 +17,7 @@
     <meta property="og:image" content="">
     <meta property="og:image:alt" content="Venflow Logo">
     <meta name="theme-color" content="#995EA7">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.56.7.0">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
     <meta id="docfx-style:rel" content="../">
@@ -144,26 +144,26 @@
       <a class="xref" href="Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_TrackChanges_System_Boolean_">IQueryCommandBuilder&lt;TRootEntity, TReturn&gt;.TrackChanges(Boolean)</a>
     </div>
     <div>
-      <a class="xref" href="Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_Log_System_Boolean_">IQueryCommandBuilder&lt;TRootEntity, TReturn&gt;.Log(Boolean)</a>
-    </div>
-    <div>
-      <a class="xref" href="Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_Action_System_String__System_Boolean_">IQueryCommandBuilder&lt;TRootEntity, TReturn&gt;.LogTo(Action&lt;String&gt;, Boolean)</a>
-    </div>
-    <div>
-      <a class="xref" href="Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_ValueTuple_Action_System_String__System_Boolean____">IQueryCommandBuilder&lt;TRootEntity, TReturn&gt;.LogTo(ValueTuple&lt;Action&lt;String&gt;, Boolean&gt;[])</a>
-    </div>
-    <div>
       <a class="xref" href="Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_QueryAsync_CancellationToken_">IQueryCommandBuilder&lt;TRootEntity, TReturn&gt;.QueryAsync(CancellationToken)</a>
     </div>
     <div>
-      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-1.html#Venflow_Commands_ISpecficVenflowCommandBuilder_1_Build">ISpecficVenflowCommandBuilder&lt;IQueryCommand&lt;TRootEntity, TReturn&gt;&gt;.Build()</a>
+      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_Build">ISpecficVenflowCommandBuilder&lt;IQueryCommand&lt;TRootEntity, TReturn&gt;, IBaseQueryRelationBuilder&lt;TRootEntity, TRootEntity, TReturn&gt;&gt;.Build()</a>
+    </div>
+    <div>
+      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_Log_System_Boolean_">ISpecficVenflowCommandBuilder&lt;IQueryCommand&lt;TRootEntity, TReturn&gt;, IBaseQueryRelationBuilder&lt;TRootEntity, TRootEntity, TReturn&gt;&gt;.Log(Boolean)</a>
+    </div>
+    <div>
+      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_LogTo_Venflow_LoggerCallback_">ISpecficVenflowCommandBuilder&lt;IQueryCommand&lt;TRootEntity, TReturn&gt;, IBaseQueryRelationBuilder&lt;TRootEntity, TRootEntity, TReturn&gt;&gt;.LogTo(LoggerCallback)</a>
+    </div>
+    <div>
+      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_LogTo_Venflow_LoggerCallback___">ISpecficVenflowCommandBuilder&lt;IQueryCommand&lt;TRootEntity, TReturn&gt;, IBaseQueryRelationBuilder&lt;TRootEntity, TRootEntity, TReturn&gt;&gt;.LogTo(LoggerCallback[])</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Venflow.Commands.html">Venflow.Commands</a></h6>
   <h6><strong>Assembly</strong>: Venflow.dll</h6>
   <h5 id="Venflow_Commands_IQueryRelationBuilder_3_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface IQueryRelationBuilder&lt;TRelationEntity, TRootEntity, TReturn&gt; : IBaseQueryRelationBuilder&lt;TRelationEntity, TRootEntity, TReturn&gt;, IPreCommandBuilder&lt;TRootEntity, TReturn&gt;, IQueryCommandBuilder&lt;TRootEntity, TReturn&gt;, ISpecficVenflowCommandBuilder&lt;IQueryCommand&lt;TRootEntity, TReturn&gt;&gt; where TRelationEntity : class, new()
+    <pre><code class="lang-csharp hljs">public interface IQueryRelationBuilder&lt;TRelationEntity, TRootEntity, TReturn&gt; : IBaseQueryRelationBuilder&lt;TRelationEntity, TRootEntity, TReturn&gt;, IPreCommandBuilder&lt;TRootEntity, TReturn&gt;, IQueryCommandBuilder&lt;TRootEntity, TReturn&gt;, ISpecficVenflowCommandBuilder&lt;IQueryCommand&lt;TRootEntity, TReturn&gt;, IBaseQueryRelationBuilder&lt;TRootEntity, TRootEntity, TReturn&gt;&gt; where TRelationEntity : class, new()
     where TRootEntity : class, new()
     where TReturn : class, new()</code></pre>
   </div>

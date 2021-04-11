@@ -17,7 +17,7 @@
     <meta property="og:image" content="">
     <meta property="og:image:alt" content="Venflow Logo">
     <meta name="theme-color" content="#995EA7">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.56.7.0">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
     <meta id="docfx-style:rel" content="../">
@@ -108,14 +108,23 @@
       <a class="xref" href="Venflow.Commands.IInsertCommandBuilder-1.html#Venflow_Commands_IInsertCommandBuilder_1_InsertAsync_IList__0__CancellationToken_">IInsertCommandBuilder&lt;TRootEntity&gt;.InsertAsync(IList&lt;TRootEntity&gt;, CancellationToken)</a>
     </div>
     <div>
-      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-1.html#Venflow_Commands_ISpecficVenflowCommandBuilder_1_Build">ISpecficVenflowCommandBuilder&lt;IInsertCommand&lt;TRootEntity&gt;&gt;.Build()</a>
+      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_Build">ISpecficVenflowCommandBuilder&lt;IInsertCommand&lt;TRootEntity&gt;, IBaseInsertRelationBuilder&lt;TRootEntity, TRootEntity&gt;&gt;.Build()</a>
+    </div>
+    <div>
+      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_Log_System_Boolean_">ISpecficVenflowCommandBuilder&lt;IInsertCommand&lt;TRootEntity&gt;, IBaseInsertRelationBuilder&lt;TRootEntity, TRootEntity&gt;&gt;.Log(Boolean)</a>
+    </div>
+    <div>
+      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_LogTo_Venflow_LoggerCallback_">ISpecficVenflowCommandBuilder&lt;IInsertCommand&lt;TRootEntity&gt;, IBaseInsertRelationBuilder&lt;TRootEntity, TRootEntity&gt;&gt;.LogTo(LoggerCallback)</a>
+    </div>
+    <div>
+      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_LogTo_Venflow_LoggerCallback___">ISpecficVenflowCommandBuilder&lt;IInsertCommand&lt;TRootEntity&gt;, IBaseInsertRelationBuilder&lt;TRootEntity, TRootEntity&gt;&gt;.LogTo(LoggerCallback[])</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Venflow.Commands.html">Venflow.Commands</a></h6>
   <h6><strong>Assembly</strong>: Venflow.dll</h6>
   <h5 id="Venflow_Commands_IBaseInsertRelationBuilder_2_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface IBaseInsertRelationBuilder&lt;TRelationEntity, TRootEntity&gt; : IInsertCommandBuilder&lt;TRootEntity&gt;, ISpecficVenflowCommandBuilder&lt;IInsertCommand&lt;TRootEntity&gt;&gt; where TRelationEntity : class, new()
+    <pre><code class="lang-csharp hljs">public interface IBaseInsertRelationBuilder&lt;TRelationEntity, TRootEntity&gt; : IInsertCommandBuilder&lt;TRootEntity&gt;, ISpecficVenflowCommandBuilder&lt;IInsertCommand&lt;TRootEntity&gt;, IBaseInsertRelationBuilder&lt;TRootEntity, TRootEntity&gt;&gt; where TRelationEntity : class, new()
     where TRootEntity : class, new()</code></pre>
   </div>
   <h5 class="typeParameters">Type Parameters</h5>

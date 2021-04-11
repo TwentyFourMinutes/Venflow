@@ -17,7 +17,7 @@
     <meta property="og:image" content="">
     <meta property="og:image:alt" content="Venflow Logo">
     <meta name="theme-color" content="#995EA7">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.56.7.0">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
     <meta id="docfx-style:rel" content="../">
@@ -102,14 +102,23 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-1.html#Venflow_Commands_ISpecficVenflowCommandBuilder_1_Build">ISpecficVenflowCommandBuilder&lt;IQueryCommand&lt;TEntity, TReturn&gt;&gt;.Build()</a>
+      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_Build">ISpecficVenflowCommandBuilder&lt;IQueryCommand&lt;TEntity, TReturn&gt;, IBaseQueryRelationBuilder&lt;TEntity, TEntity, TReturn&gt;&gt;.Build()</a>
+    </div>
+    <div>
+      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_Log_System_Boolean_">ISpecficVenflowCommandBuilder&lt;IQueryCommand&lt;TEntity, TReturn&gt;, IBaseQueryRelationBuilder&lt;TEntity, TEntity, TReturn&gt;&gt;.Log(Boolean)</a>
+    </div>
+    <div>
+      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_LogTo_Venflow_LoggerCallback_">ISpecficVenflowCommandBuilder&lt;IQueryCommand&lt;TEntity, TReturn&gt;, IBaseQueryRelationBuilder&lt;TEntity, TEntity, TReturn&gt;&gt;.LogTo(LoggerCallback)</a>
+    </div>
+    <div>
+      <a class="xref" href="Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_LogTo_Venflow_LoggerCallback___">ISpecficVenflowCommandBuilder&lt;IQueryCommand&lt;TEntity, TReturn&gt;, IBaseQueryRelationBuilder&lt;TEntity, TEntity, TReturn&gt;&gt;.LogTo(LoggerCallback[])</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Venflow.Commands.html">Venflow.Commands</a></h6>
   <h6><strong>Assembly</strong>: Venflow.dll</h6>
   <h5 id="Venflow_Commands_IQueryCommandBuilder_2_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface IQueryCommandBuilder&lt;TEntity, TReturn&gt; : ISpecficVenflowCommandBuilder&lt;IQueryCommand&lt;TEntity, TReturn&gt;&gt; where TEntity : class, new()
+    <pre><code class="lang-csharp hljs">public interface IQueryCommandBuilder&lt;TEntity, TReturn&gt; : ISpecficVenflowCommandBuilder&lt;IQueryCommand&lt;TEntity, TReturn&gt;, IBaseQueryRelationBuilder&lt;TEntity, TEntity, TReturn&gt;&gt; where TEntity : class, new()
     where TReturn : class, new()</code></pre>
   </div>
   <h5 class="typeParameters">Type Parameters</h5>
@@ -137,175 +146,10 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IQueryCommandBuilder_2_Log_System_Boolean_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IQueryCommandBuilder%602.Log(System.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IQueryCommandBuilder.cs/#L27">View Source</a>
-  </span>
-  <a id="Venflow_Commands_IQueryCommandBuilder_2_Log_" data-uid="Venflow.Commands.IQueryCommandBuilder`2.Log*"></a>
-  <h4 id="Venflow_Commands_IQueryCommandBuilder_2_Log_System_Boolean_" data-uid="Venflow.Commands.IQueryCommandBuilder`2.Log(System.Boolean)">Log(Boolean)</h4>
-  <div class="markdown level1 summary"><p>Determines whether or not to log the query to the provided loggers.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IBaseQueryRelationBuilder&lt;TEntity, TEntity, TReturn&gt; Log(bool shouldLog = true)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.boolean">Boolean</a></td>
-        <td><span class="parametername">shouldLog</span></td>
-        <td><p>Determines if this query should be logged. This is helpful, if you configured the default logging behavior to be <span class="xref">true</span>.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, TReturn&gt;</td>
-        <td><p>An object that can be used to further configure the operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Venflow_Commands_IQueryCommandBuilder_2_Log_System_Boolean__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>You can configure the loggers in the <a class="xref" href="Venflow.Database.html#Venflow_Database_Configure_Venflow_DatabaseOptionsBuilder_">Configure(DatabaseOptionsBuilder)</a> method with the <a class="xref" href="Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_LogTo_Action_System_String__System_Boolean_">LogTo(Action&lt;String&gt;, Boolean)</a> methods.</p>
-</div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IQueryCommandBuilder_2_LogTo_Action_System_String__System_Boolean_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IQueryCommandBuilder%602.LogTo(Action%7BSystem.String%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IQueryCommandBuilder.cs/#L36">View Source</a>
-  </span>
-  <a id="Venflow_Commands_IQueryCommandBuilder_2_LogTo_" data-uid="Venflow.Commands.IQueryCommandBuilder`2.LogTo*"></a>
-  <h4 id="Venflow_Commands_IQueryCommandBuilder_2_LogTo_Action_System_String__System_Boolean_" data-uid="Venflow.Commands.IQueryCommandBuilder`2.LogTo(Action{System.String},System.Boolean)">LogTo(Action&lt;String&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Logs the query to the provided <code data-dev-comment-type="paramref" class="paramref">logger</code>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IBaseQueryRelationBuilder&lt;TEntity, TEntity, TReturn&gt; LogTo(Action&lt;string&gt; logger, bool includeSensitiveData)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Action</span>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a>&gt;</td>
-        <td><span class="parametername">logger</span></td>
-        <td><p>The logger which is being used for this query.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.boolean">Boolean</a></td>
-        <td><span class="parametername">includeSensitiveData</span></td>
-        <td><p>Determines whether or not to show populated parameters in this query.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, TReturn&gt;</td>
-        <td><p>An object that can be used to further configure the operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Venflow_Commands_IQueryCommandBuilder_2_LogTo_Action_System_String__System_Boolean__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Be aware, that once you configure a logger on a query, the global configured loggers won't be executed for this query.</p>
-</div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_ValueTuple_Action_System_String__System_Boolean____.md&amp;value=---%0Auid%3A%20Venflow.Commands.IQueryCommandBuilder%602.LogTo(System.ValueTuple%7BAction%7BSystem.String%7D%2CSystem.Boolean%7D%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IQueryCommandBuilder.cs/#L44">View Source</a>
-  </span>
-  <a id="Venflow_Commands_IQueryCommandBuilder_2_LogTo_" data-uid="Venflow.Commands.IQueryCommandBuilder`2.LogTo*"></a>
-  <h4 id="Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_ValueTuple_Action_System_String__System_Boolean____" data-uid="Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.ValueTuple{Action{System.String},System.Boolean}[])">LogTo((Action&lt;String&gt; logger, Boolean includeSensitiveData)[])</h4>
-  <div class="markdown level1 summary"><p>Logs the query to the provided <code data-dev-comment-type="paramref" class="paramref">loggers</code>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IBaseQueryRelationBuilder&lt;TEntity, TEntity, TReturn&gt; LogTo(params (Action&lt;string&gt; logger, bool includeSensitiveData)[] loggers)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.valuetuple-2">ValueTuple</a>&lt;<span class="xref">Action</span>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a>&gt;, <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.boolean">Boolean</a>&gt;[]</td>
-        <td><span class="parametername">loggers</span></td>
-        <td><p>The loggers which are being used for this query.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Venflow.Commands.IBaseQueryRelationBuilder-3.html">IBaseQueryRelationBuilder</a>&lt;TEntity, TEntity, TReturn&gt;</td>
-        <td><p>An object that can be used to further configure the operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_ValueTuple_Action_System_String__System_Boolean_____remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Be aware, that once you configure one or more loggers on a query, the global configured loggers won't be executed for this query.</p>
-</div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IQueryCommandBuilder_2_QueryAsync_CancellationToken_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IQueryCommandBuilder%602.QueryAsync(CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IQueryCommandBuilder.cs/#L51">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IQueryCommandBuilder.cs/#L27">View Source</a>
   </span>
   <a id="Venflow_Commands_IQueryCommandBuilder_2_QueryAsync_" data-uid="Venflow.Commands.IQueryCommandBuilder`2.QueryAsync*"></a>
   <h4 id="Venflow_Commands_IQueryCommandBuilder_2_QueryAsync_CancellationToken_" data-uid="Venflow.Commands.IQueryCommandBuilder`2.QueryAsync(CancellationToken)">QueryAsync(CancellationToken)</h4>
@@ -355,7 +199,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IQueryCommandBuilder_2_TrackChanges_System_Boolean_.md&amp;value=---%0Auid%3A%20Venflow.Commands.IQueryCommandBuilder%602.TrackChanges(System.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IQueryCommandBuilder.cs/#L19">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IQueryCommandBuilder.cs/#L20">View Source</a>
   </span>
   <a id="Venflow_Commands_IQueryCommandBuilder_2_TrackChanges_" data-uid="Venflow.Commands.IQueryCommandBuilder`2.TrackChanges*"></a>
   <h4 id="Venflow_Commands_IQueryCommandBuilder_2_TrackChanges_System_Boolean_" data-uid="Venflow.Commands.IQueryCommandBuilder`2.TrackChanges(System.Boolean)">TrackChanges(Boolean)</h4>
@@ -419,7 +263,7 @@
                     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Commands_IQueryCommandBuilder_2.md&amp;value=---%0Auid%3A%20Venflow.Commands.IQueryCommandBuilder%602%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IQueryCommandBuilder.cs/#L12" class="contribution-link">View Source</a>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Commands/IQueryCommandBuilder.cs/#L11" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

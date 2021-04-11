@@ -616,50 +616,6 @@ references:
   fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn)
   nameWithType: IQueryCommandBuilder<TEntity, TReturn>
   nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn)
-- uid: Venflow.Commands.IQueryCommandBuilder`2.Log(System.Boolean)
-  name: Log(Boolean)
-  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_Log_System_Boolean_
-  commentId: M:Venflow.Commands.IQueryCommandBuilder`2.Log(System.Boolean)
-  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.Log(System.Boolean)
-  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).Log(System.Boolean)
-  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.Log(Boolean)
-  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).Log(Boolean)
-- uid: Venflow.Commands.IQueryCommandBuilder`2.Log*
-  name: Log
-  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_Log_
-  commentId: Overload:Venflow.Commands.IQueryCommandBuilder`2.Log
-  isSpec: "True"
-  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.Log
-  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).Log
-  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.Log
-  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).Log
-- uid: Venflow.Commands.IQueryCommandBuilder`2.LogTo(Action{System.String},System.Boolean)
-  name: LogTo(Action<String>, Boolean)
-  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_Action_System_String__System_Boolean_
-  commentId: M:Venflow.Commands.IQueryCommandBuilder`2.LogTo(Action{System.String},System.Boolean)
-  name.vb: LogTo(Action(Of String), Boolean)
-  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.LogTo(Action<System.String>, System.Boolean)
-  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).LogTo(Action(Of System.String), System.Boolean)
-  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.LogTo(Action<String>, Boolean)
-  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).LogTo(Action(Of String), Boolean)
-- uid: Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.ValueTuple{Action{System.String},System.Boolean}[])
-  name: LogTo((Action<String> logger, Boolean includeSensitiveData)[])
-  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_System_ValueTuple_Action_System_String__System_Boolean____
-  commentId: M:Venflow.Commands.IQueryCommandBuilder`2.LogTo(System.ValueTuple{Action{System.String},System.Boolean}[])
-  name.vb: LogTo((logger As Action(Of String), includeSensitiveData As Boolean)())
-  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.LogTo(System.ValueTuple<Action<System.String>, System.Boolean>[])
-  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).LogTo(System.ValueTuple(Of Action(Of System.String), System.Boolean)())
-  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.LogTo((Action<String> logger, Boolean includeSensitiveData)[])
-  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).LogTo((logger As Action(Of String), includeSensitiveData As Boolean)())
-- uid: Venflow.Commands.IQueryCommandBuilder`2.LogTo*
-  name: LogTo
-  href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_LogTo_
-  commentId: Overload:Venflow.Commands.IQueryCommandBuilder`2.LogTo
-  isSpec: "True"
-  fullName: Venflow.Commands.IQueryCommandBuilder<TEntity, TReturn>.LogTo
-  fullName.vb: Venflow.Commands.IQueryCommandBuilder(Of TEntity, TReturn).LogTo
-  nameWithType: IQueryCommandBuilder<TEntity, TReturn>.LogTo
-  nameWithType.vb: IQueryCommandBuilder(Of TEntity, TReturn).LogTo
 - uid: Venflow.Commands.IQueryCommandBuilder`2.QueryAsync(CancellationToken)
   name: QueryAsync(CancellationToken)
   href: api/Venflow.Commands.IQueryCommandBuilder-2.html#Venflow_Commands_IQueryCommandBuilder_2_QueryAsync_CancellationToken_
@@ -847,32 +803,75 @@ references:
   fullName.vb: Venflow.Commands.IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, List(Of TToEntity))), Venflow.Enums.JoinBehaviour)
   nameWithType: IQueryRelationBuilder<TRelationEntity, TRootEntity, TReturn>.ThenWith<TToEntity>(Expression<Func<TRelationEntity, List<TToEntity>>>, JoinBehaviour)
   nameWithType.vb: IQueryRelationBuilder(Of TRelationEntity, TRootEntity, TReturn).ThenWith(Of TToEntity)(Expression(Of Func(Of TRelationEntity, List(Of TToEntity))), JoinBehaviour)
-- uid: Venflow.Commands.ISpecficVenflowCommandBuilder`1
-  name: ISpecficVenflowCommandBuilder<TCommand>
-  href: api/Venflow.Commands.ISpecficVenflowCommandBuilder-1.html
-  commentId: T:Venflow.Commands.ISpecficVenflowCommandBuilder`1
-  name.vb: ISpecficVenflowCommandBuilder(Of TCommand)
-  fullName: Venflow.Commands.ISpecficVenflowCommandBuilder<TCommand>
-  fullName.vb: Venflow.Commands.ISpecficVenflowCommandBuilder(Of TCommand)
-  nameWithType: ISpecficVenflowCommandBuilder<TCommand>
-  nameWithType.vb: ISpecficVenflowCommandBuilder(Of TCommand)
-- uid: Venflow.Commands.ISpecficVenflowCommandBuilder`1.Build
+- uid: Venflow.Commands.ISpecficVenflowCommandBuilder`2
+  name: ISpecficVenflowCommandBuilder<TCommand, TLogResult>
+  href: api/Venflow.Commands.ISpecficVenflowCommandBuilder-2.html
+  commentId: T:Venflow.Commands.ISpecficVenflowCommandBuilder`2
+  name.vb: ISpecficVenflowCommandBuilder(Of TCommand, TLogResult)
+  fullName: Venflow.Commands.ISpecficVenflowCommandBuilder<TCommand, TLogResult>
+  fullName.vb: Venflow.Commands.ISpecficVenflowCommandBuilder(Of TCommand, TLogResult)
+  nameWithType: ISpecficVenflowCommandBuilder<TCommand, TLogResult>
+  nameWithType.vb: ISpecficVenflowCommandBuilder(Of TCommand, TLogResult)
+- uid: Venflow.Commands.ISpecficVenflowCommandBuilder`2.Build
   name: Build()
-  href: api/Venflow.Commands.ISpecficVenflowCommandBuilder-1.html#Venflow_Commands_ISpecficVenflowCommandBuilder_1_Build
-  commentId: M:Venflow.Commands.ISpecficVenflowCommandBuilder`1.Build
-  fullName: Venflow.Commands.ISpecficVenflowCommandBuilder<TCommand>.Build()
-  fullName.vb: Venflow.Commands.ISpecficVenflowCommandBuilder(Of TCommand).Build()
-  nameWithType: ISpecficVenflowCommandBuilder<TCommand>.Build()
-  nameWithType.vb: ISpecficVenflowCommandBuilder(Of TCommand).Build()
-- uid: Venflow.Commands.ISpecficVenflowCommandBuilder`1.Build*
+  href: api/Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_Build
+  commentId: M:Venflow.Commands.ISpecficVenflowCommandBuilder`2.Build
+  fullName: Venflow.Commands.ISpecficVenflowCommandBuilder<TCommand, TLogResult>.Build()
+  fullName.vb: Venflow.Commands.ISpecficVenflowCommandBuilder(Of TCommand, TLogResult).Build()
+  nameWithType: ISpecficVenflowCommandBuilder<TCommand, TLogResult>.Build()
+  nameWithType.vb: ISpecficVenflowCommandBuilder(Of TCommand, TLogResult).Build()
+- uid: Venflow.Commands.ISpecficVenflowCommandBuilder`2.Build*
   name: Build
-  href: api/Venflow.Commands.ISpecficVenflowCommandBuilder-1.html#Venflow_Commands_ISpecficVenflowCommandBuilder_1_Build_
-  commentId: Overload:Venflow.Commands.ISpecficVenflowCommandBuilder`1.Build
+  href: api/Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_Build_
+  commentId: Overload:Venflow.Commands.ISpecficVenflowCommandBuilder`2.Build
   isSpec: "True"
-  fullName: Venflow.Commands.ISpecficVenflowCommandBuilder<TCommand>.Build
-  fullName.vb: Venflow.Commands.ISpecficVenflowCommandBuilder(Of TCommand).Build
-  nameWithType: ISpecficVenflowCommandBuilder<TCommand>.Build
-  nameWithType.vb: ISpecficVenflowCommandBuilder(Of TCommand).Build
+  fullName: Venflow.Commands.ISpecficVenflowCommandBuilder<TCommand, TLogResult>.Build
+  fullName.vb: Venflow.Commands.ISpecficVenflowCommandBuilder(Of TCommand, TLogResult).Build
+  nameWithType: ISpecficVenflowCommandBuilder<TCommand, TLogResult>.Build
+  nameWithType.vb: ISpecficVenflowCommandBuilder(Of TCommand, TLogResult).Build
+- uid: Venflow.Commands.ISpecficVenflowCommandBuilder`2.Log(System.Boolean)
+  name: Log(Boolean)
+  href: api/Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_Log_System_Boolean_
+  commentId: M:Venflow.Commands.ISpecficVenflowCommandBuilder`2.Log(System.Boolean)
+  fullName: Venflow.Commands.ISpecficVenflowCommandBuilder<TCommand, TLogResult>.Log(System.Boolean)
+  fullName.vb: Venflow.Commands.ISpecficVenflowCommandBuilder(Of TCommand, TLogResult).Log(System.Boolean)
+  nameWithType: ISpecficVenflowCommandBuilder<TCommand, TLogResult>.Log(Boolean)
+  nameWithType.vb: ISpecficVenflowCommandBuilder(Of TCommand, TLogResult).Log(Boolean)
+- uid: Venflow.Commands.ISpecficVenflowCommandBuilder`2.Log*
+  name: Log
+  href: api/Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_Log_
+  commentId: Overload:Venflow.Commands.ISpecficVenflowCommandBuilder`2.Log
+  isSpec: "True"
+  fullName: Venflow.Commands.ISpecficVenflowCommandBuilder<TCommand, TLogResult>.Log
+  fullName.vb: Venflow.Commands.ISpecficVenflowCommandBuilder(Of TCommand, TLogResult).Log
+  nameWithType: ISpecficVenflowCommandBuilder<TCommand, TLogResult>.Log
+  nameWithType.vb: ISpecficVenflowCommandBuilder(Of TCommand, TLogResult).Log
+- uid: Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo(Venflow.LoggerCallback)
+  name: LogTo(LoggerCallback)
+  href: api/Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_LogTo_Venflow_LoggerCallback_
+  commentId: M:Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo(Venflow.LoggerCallback)
+  fullName: Venflow.Commands.ISpecficVenflowCommandBuilder<TCommand, TLogResult>.LogTo(Venflow.LoggerCallback)
+  fullName.vb: Venflow.Commands.ISpecficVenflowCommandBuilder(Of TCommand, TLogResult).LogTo(Venflow.LoggerCallback)
+  nameWithType: ISpecficVenflowCommandBuilder<TCommand, TLogResult>.LogTo(LoggerCallback)
+  nameWithType.vb: ISpecficVenflowCommandBuilder(Of TCommand, TLogResult).LogTo(LoggerCallback)
+- uid: Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo(Venflow.LoggerCallback[])
+  name: LogTo(LoggerCallback[])
+  href: api/Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_LogTo_Venflow_LoggerCallback___
+  commentId: M:Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo(Venflow.LoggerCallback[])
+  name.vb: LogTo(LoggerCallback())
+  fullName: Venflow.Commands.ISpecficVenflowCommandBuilder<TCommand, TLogResult>.LogTo(Venflow.LoggerCallback[])
+  fullName.vb: Venflow.Commands.ISpecficVenflowCommandBuilder(Of TCommand, TLogResult).LogTo(Venflow.LoggerCallback())
+  nameWithType: ISpecficVenflowCommandBuilder<TCommand, TLogResult>.LogTo(LoggerCallback[])
+  nameWithType.vb: ISpecficVenflowCommandBuilder(Of TCommand, TLogResult).LogTo(LoggerCallback())
+- uid: Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo*
+  name: LogTo
+  href: api/Venflow.Commands.ISpecficVenflowCommandBuilder-2.html#Venflow_Commands_ISpecficVenflowCommandBuilder_2_LogTo_
+  commentId: Overload:Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo
+  isSpec: "True"
+  fullName: Venflow.Commands.ISpecficVenflowCommandBuilder<TCommand, TLogResult>.LogTo
+  fullName.vb: Venflow.Commands.ISpecficVenflowCommandBuilder(Of TCommand, TLogResult).LogTo
+  nameWithType: ISpecficVenflowCommandBuilder<TCommand, TLogResult>.LogTo
+  nameWithType.vb: ISpecficVenflowCommandBuilder(Of TCommand, TLogResult).LogTo
 - uid: Venflow.Commands.IUpdateCommand`1
   name: IUpdateCommand<TEntity>
   href: api/Venflow.Commands.IUpdateCommand-1.html
@@ -1326,37 +1325,6 @@ references:
   commentId: T:Venflow.DatabaseOptionsBuilder
   fullName: Venflow.DatabaseOptionsBuilder
   nameWithType: DatabaseOptionsBuilder
-- uid: Venflow.DatabaseOptionsBuilder.AddConfigurations(Assembly)
-  name: AddConfigurations(Assembly)
-  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_AddConfigurations_Assembly_
-  commentId: M:Venflow.DatabaseOptionsBuilder.AddConfigurations(Assembly)
-  fullName: Venflow.DatabaseOptionsBuilder.AddConfigurations(Assembly)
-  nameWithType: DatabaseOptionsBuilder.AddConfigurations(Assembly)
-- uid: Venflow.DatabaseOptionsBuilder.AddConfigurations(Assembly[])
-  name: AddConfigurations(Assembly[])
-  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_AddConfigurations_Assembly___
-  commentId: M:Venflow.DatabaseOptionsBuilder.AddConfigurations(Assembly[])
-  name.vb: AddConfigurations(Assembly())
-  fullName: Venflow.DatabaseOptionsBuilder.AddConfigurations(Assembly[])
-  fullName.vb: Venflow.DatabaseOptionsBuilder.AddConfigurations(Assembly())
-  nameWithType: DatabaseOptionsBuilder.AddConfigurations(Assembly[])
-  nameWithType.vb: DatabaseOptionsBuilder.AddConfigurations(Assembly())
-- uid: Venflow.DatabaseOptionsBuilder.AddConfigurations*
-  name: AddConfigurations
-  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_AddConfigurations_
-  commentId: Overload:Venflow.DatabaseOptionsBuilder.AddConfigurations
-  isSpec: "True"
-  fullName: Venflow.DatabaseOptionsBuilder.AddConfigurations
-  nameWithType: DatabaseOptionsBuilder.AddConfigurations
-- uid: Venflow.DatabaseOptionsBuilder.AddConfigurations``1
-  name: AddConfigurations<T>()
-  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_AddConfigurations__1
-  commentId: M:Venflow.DatabaseOptionsBuilder.AddConfigurations``1
-  name.vb: AddConfigurations(Of T)()
-  fullName: Venflow.DatabaseOptionsBuilder.AddConfigurations<T>()
-  fullName.vb: Venflow.DatabaseOptionsBuilder.AddConfigurations(Of T)()
-  nameWithType: DatabaseOptionsBuilder.AddConfigurations<T>()
-  nameWithType.vb: DatabaseOptionsBuilder.AddConfigurations(Of T)()
 - uid: Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior
   name: DefaultLoggingBehavior
   href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior
@@ -1370,15 +1338,12 @@ references:
   isSpec: "True"
   fullName: Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior
   nameWithType: DatabaseOptionsBuilder.DefaultLoggingBehavior
-- uid: Venflow.DatabaseOptionsBuilder.LogTo(Action{System.String},System.Boolean)
-  name: LogTo(Action<String>, Boolean)
-  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_LogTo_Action_System_String__System_Boolean_
-  commentId: M:Venflow.DatabaseOptionsBuilder.LogTo(Action{System.String},System.Boolean)
-  name.vb: LogTo(Action(Of String), Boolean)
-  fullName: Venflow.DatabaseOptionsBuilder.LogTo(Action<System.String>, System.Boolean)
-  fullName.vb: Venflow.DatabaseOptionsBuilder.LogTo(Action(Of System.String), System.Boolean)
-  nameWithType: DatabaseOptionsBuilder.LogTo(Action<String>, Boolean)
-  nameWithType.vb: DatabaseOptionsBuilder.LogTo(Action(Of String), Boolean)
+- uid: Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)
+  name: LogTo(LoggerCallback)
+  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_LogTo_Venflow_LoggerCallback_
+  commentId: M:Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)
+  fullName: Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)
+  nameWithType: DatabaseOptionsBuilder.LogTo(LoggerCallback)
 - uid: Venflow.DatabaseOptionsBuilder.LogTo*
   name: LogTo
   href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_LogTo_
@@ -1386,12 +1351,121 @@ references:
   isSpec: "True"
   fullName: Venflow.DatabaseOptionsBuilder.LogTo
   nameWithType: DatabaseOptionsBuilder.LogTo
+- uid: Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly)
+  name: UseConfigurations(Assembly)
+  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_UseConfigurations_Assembly_
+  commentId: M:Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly)
+  fullName: Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly)
+  nameWithType: DatabaseOptionsBuilder.UseConfigurations(Assembly)
+- uid: Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly[])
+  name: UseConfigurations(Assembly[])
+  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_UseConfigurations_Assembly___
+  commentId: M:Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly[])
+  name.vb: UseConfigurations(Assembly())
+  fullName: Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly[])
+  fullName.vb: Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly())
+  nameWithType: DatabaseOptionsBuilder.UseConfigurations(Assembly[])
+  nameWithType.vb: DatabaseOptionsBuilder.UseConfigurations(Assembly())
+- uid: Venflow.DatabaseOptionsBuilder.UseConfigurations*
+  name: UseConfigurations
+  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_UseConfigurations_
+  commentId: Overload:Venflow.DatabaseOptionsBuilder.UseConfigurations
+  isSpec: "True"
+  fullName: Venflow.DatabaseOptionsBuilder.UseConfigurations
+  nameWithType: DatabaseOptionsBuilder.UseConfigurations
+- uid: Venflow.DatabaseOptionsBuilder.UseConfigurations``1
+  name: UseConfigurations<T>()
+  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_UseConfigurations__1
+  commentId: M:Venflow.DatabaseOptionsBuilder.UseConfigurations``1
+  name.vb: UseConfigurations(Of T)()
+  fullName: Venflow.DatabaseOptionsBuilder.UseConfigurations<T>()
+  fullName.vb: Venflow.DatabaseOptionsBuilder.UseConfigurations(Of T)()
+  nameWithType: DatabaseOptionsBuilder.UseConfigurations<T>()
+  nameWithType.vb: DatabaseOptionsBuilder.UseConfigurations(Of T)()
 - uid: Venflow.Enums
   name: Venflow.Enums
   href: api/Venflow.Enums.html
   commentId: N:Venflow.Enums
   fullName: Venflow.Enums
   nameWithType: Venflow.Enums
+- uid: Venflow.Enums.CommandType
+  name: CommandType
+  href: api/Venflow.Enums.CommandType.html
+  commentId: T:Venflow.Enums.CommandType
+  fullName: Venflow.Enums.CommandType
+  nameWithType: CommandType
+- uid: Venflow.Enums.CommandType.Delete
+  name: Delete
+  href: api/Venflow.Enums.CommandType.html#Venflow_Enums_CommandType_Delete
+  commentId: F:Venflow.Enums.CommandType.Delete
+  fullName: Venflow.Enums.CommandType.Delete
+  nameWithType: CommandType.Delete
+- uid: Venflow.Enums.CommandType.DeleteBatch
+  name: DeleteBatch
+  href: api/Venflow.Enums.CommandType.html#Venflow_Enums_CommandType_DeleteBatch
+  commentId: F:Venflow.Enums.CommandType.DeleteBatch
+  fullName: Venflow.Enums.CommandType.DeleteBatch
+  nameWithType: CommandType.DeleteBatch
+- uid: Venflow.Enums.CommandType.DeleteSingle
+  name: DeleteSingle
+  href: api/Venflow.Enums.CommandType.html#Venflow_Enums_CommandType_DeleteSingle
+  commentId: F:Venflow.Enums.CommandType.DeleteSingle
+  fullName: Venflow.Enums.CommandType.DeleteSingle
+  nameWithType: CommandType.DeleteSingle
+- uid: Venflow.Enums.CommandType.Insert
+  name: Insert
+  href: api/Venflow.Enums.CommandType.html#Venflow_Enums_CommandType_Insert
+  commentId: F:Venflow.Enums.CommandType.Insert
+  fullName: Venflow.Enums.CommandType.Insert
+  nameWithType: CommandType.Insert
+- uid: Venflow.Enums.CommandType.InsertBatch
+  name: InsertBatch
+  href: api/Venflow.Enums.CommandType.html#Venflow_Enums_CommandType_InsertBatch
+  commentId: F:Venflow.Enums.CommandType.InsertBatch
+  fullName: Venflow.Enums.CommandType.InsertBatch
+  nameWithType: CommandType.InsertBatch
+- uid: Venflow.Enums.CommandType.InsertSingle
+  name: InsertSingle
+  href: api/Venflow.Enums.CommandType.html#Venflow_Enums_CommandType_InsertSingle
+  commentId: F:Venflow.Enums.CommandType.InsertSingle
+  fullName: Venflow.Enums.CommandType.InsertSingle
+  nameWithType: CommandType.InsertSingle
+- uid: Venflow.Enums.CommandType.Query
+  name: Query
+  href: api/Venflow.Enums.CommandType.html#Venflow_Enums_CommandType_Query
+  commentId: F:Venflow.Enums.CommandType.Query
+  fullName: Venflow.Enums.CommandType.Query
+  nameWithType: CommandType.Query
+- uid: Venflow.Enums.CommandType.QueryBatch
+  name: QueryBatch
+  href: api/Venflow.Enums.CommandType.html#Venflow_Enums_CommandType_QueryBatch
+  commentId: F:Venflow.Enums.CommandType.QueryBatch
+  fullName: Venflow.Enums.CommandType.QueryBatch
+  nameWithType: CommandType.QueryBatch
+- uid: Venflow.Enums.CommandType.QuerySingle
+  name: QuerySingle
+  href: api/Venflow.Enums.CommandType.html#Venflow_Enums_CommandType_QuerySingle
+  commentId: F:Venflow.Enums.CommandType.QuerySingle
+  fullName: Venflow.Enums.CommandType.QuerySingle
+  nameWithType: CommandType.QuerySingle
+- uid: Venflow.Enums.CommandType.Update
+  name: Update
+  href: api/Venflow.Enums.CommandType.html#Venflow_Enums_CommandType_Update
+  commentId: F:Venflow.Enums.CommandType.Update
+  fullName: Venflow.Enums.CommandType.Update
+  nameWithType: CommandType.Update
+- uid: Venflow.Enums.CommandType.UpdateBatch
+  name: UpdateBatch
+  href: api/Venflow.Enums.CommandType.html#Venflow_Enums_CommandType_UpdateBatch
+  commentId: F:Venflow.Enums.CommandType.UpdateBatch
+  fullName: Venflow.Enums.CommandType.UpdateBatch
+  nameWithType: CommandType.UpdateBatch
+- uid: Venflow.Enums.CommandType.UpdateSingle
+  name: UpdateSingle
+  href: api/Venflow.Enums.CommandType.html#Venflow_Enums_CommandType_UpdateSingle
+  commentId: F:Venflow.Enums.CommandType.UpdateSingle
+  fullName: Venflow.Enums.CommandType.UpdateSingle
+  nameWithType: CommandType.UpdateSingle
 - uid: Venflow.Enums.ForeignTruncateOptions
   name: ForeignTruncateOptions
   href: api/Venflow.Enums.ForeignTruncateOptions.html
@@ -1615,6 +1689,12 @@ references:
   isSpec: "True"
   fullName: Venflow.IParameterTypeHandler.Handle
   nameWithType: IParameterTypeHandler.Handle
+- uid: Venflow.LoggerCallback
+  name: LoggerCallback
+  href: api/Venflow.LoggerCallback.html
+  commentId: T:Venflow.LoggerCallback
+  fullName: Venflow.LoggerCallback
+  nameWithType: LoggerCallback
 - uid: Venflow.Modeling.Definitions
   name: Venflow.Modeling.Definitions
   href: api/Venflow.Modeling.Definitions.html
@@ -2525,6 +2605,19 @@ references:
   isSpec: "True"
   fullName: Venflow.VenflowConfiguration.ShouldUseDeepValidation
   nameWithType: VenflowConfiguration.ShouldUseDeepValidation
+- uid: Venflow.VenflowConfiguration.ThrowLoggedExceptions
+  name: ThrowLoggedExceptions
+  href: api/Venflow.VenflowConfiguration.html#Venflow_VenflowConfiguration_ThrowLoggedExceptions
+  commentId: P:Venflow.VenflowConfiguration.ThrowLoggedExceptions
+  fullName: Venflow.VenflowConfiguration.ThrowLoggedExceptions
+  nameWithType: VenflowConfiguration.ThrowLoggedExceptions
+- uid: Venflow.VenflowConfiguration.ThrowLoggedExceptions*
+  name: ThrowLoggedExceptions
+  href: api/Venflow.VenflowConfiguration.html#Venflow_VenflowConfiguration_ThrowLoggedExceptions_
+  commentId: Overload:Venflow.VenflowConfiguration.ThrowLoggedExceptions
+  isSpec: "True"
+  fullName: Venflow.VenflowConfiguration.ThrowLoggedExceptions
+  nameWithType: VenflowConfiguration.ThrowLoggedExceptions
 - uid: Venflow.VenflowConfiguration.UseDeepValidation(System.Boolean)
   name: UseDeepValidation(Boolean)
   href: api/Venflow.VenflowConfiguration.html#Venflow_VenflowConfiguration_UseDeepValidation_System_Boolean_
