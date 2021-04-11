@@ -34,12 +34,12 @@ namespace Venflow.Tests.QueryTests
 
             var hasLogHit = false;
 
-            var queriedPerson = await Database.People.QueryInterpolatedSingle(@$"SELECT * FROM ""People"" WHERE ""People"".""Id"" = {person.Id}").LogTo(e =>
+            var queriedPerson = await Database.People.QueryInterpolatedSingle(@$"SELECT * FROM ""People"" WHERE ""People"".""Id"" = {person.Id}").LogTo((cmd, _, _) =>
             {
                 hasLogHit = true;
 
-                Assert.DoesNotContain("@p1", e);
-            }, true).QueryAsync();
+                Assert.DoesNotContain("@p1", cmd.GetUnParameterizedCommandText());
+            }).QueryAsync();
 
             Assert.True(hasLogHit);
 

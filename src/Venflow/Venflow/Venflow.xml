@@ -839,7 +839,7 @@
             Adds the assembly of the type <typeparamref name="T"/> to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
             </summary>
             <typeparam name="T">The type of which the assembly should be added to the lookup list.</typeparam>
-            <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/>.</returns>
+            <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/> instance.</returns>
             <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
         </member>
         <member name="M:Venflow.DatabaseOptionsBuilder.UseConfigurations(System.Reflection.Assembly)">
@@ -847,7 +847,7 @@
             Adds the assembly to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
             </summary>
             <param name="assembly">The assembly which should be added to the lookup list.</param>
-            <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/>.</returns>
+            <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/> instance.</returns>
             <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
         </member>
         <member name="M:Venflow.DatabaseOptionsBuilder.UseConfigurations(System.Reflection.Assembly[])">
@@ -855,7 +855,7 @@
             Adds the assemblies to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
             </summary>
             <param name="assemblies">The assemblies which should be added to the lookup list.</param>
-            <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/>.</returns>
+            <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/> instance.</returns>
             <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
         </member>
         <member name="M:Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)">
@@ -863,7 +863,7 @@
             Adds a logger, which allows for logging of executed commands.
             </summary>
             <param name="loggerCallback">A callback which is being used to log commands.</param>
-            <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/>.</returns>
+            <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/> instance.</returns>
             <remarks>This currently only includes the following API's:
             <list type="bullet">
                 <item>QuerySingle</item>
@@ -1051,10 +1051,29 @@
             <param name="val">The value of the parameter.</param>
             <returns>The <see cref="T:Npgsql.NpgsqlParameter"/> containing the name and the value.</returns>
         </member>
-        <member name="M:Venflow.Key`2.op_Explicit(Venflow.Key{`0,`1}@)~`1">
+        <member name="T:Venflow.Key`2">
+            <summary>
+            This is used to create strongly-typed ids.
+            </summary>
+            <typeparam name="T">They type of entity the key sits in.</typeparam>
+            <typeparam name="TKey">The type of the key.</typeparam>
+            <remarks>You can also create more specific implementations of this type, by creating a <i>struct</i> implementing <see cref="T:Venflow.IKey`2"/>.</remarks>
+        </member>
+        <member name="P:Venflow.Key`2.Venflow#IKey{T,TKey}#Value">
+            <summary>
+            The underlying value representing the <see cref="T:Venflow.Key`2"/>.
+            </summary>
+        </member>
+        <member name="M:Venflow.Key`2.#ctor(`1)">
+            <summary>
+            Instantiates a new <see cref="T:Venflow.Key`2"/> instance withe the provided value.
+            </summary>
+            <param name="value">The value which should represent the new <see cref="T:Venflow.Key`2"/> instance.</param>
+        </member>
+        <member name="M:Venflow.Key`2.op_Implicit(Venflow.Key{`0,`1}@)~`1">
             <inheritdoc/>
         </member>
-        <member name="M:Venflow.Key`2.op_Explicit(`1@)~Venflow.Key{`0,`1}">
+        <member name="M:Venflow.Key`2.op_Implicit(`1@)~Venflow.Key{`0,`1}">
             <inheritdoc/>
         </member>
         <member name="M:Venflow.Key`2.op_Equality(Venflow.Key{`0,`1}@,Venflow.Key{`0,`1}@)">
@@ -1074,6 +1093,19 @@
         </member>
         <member name="M:Venflow.Key`2.ToString">
             <inheritdoc/>
+        </member>
+        <member name="T:Venflow.IKey`2">
+            <summary>
+            This interface should be implemented by <i>structs</i>, to create strongly-typed ids.
+            </summary>
+            <typeparam name="T">They type of entity the key sits in.</typeparam>
+            <typeparam name="TKey">The type of the key.</typeparam>
+            <remarks>See <see cref="T:Venflow.Key`2"/>for a possible implementation.</remarks>
+        </member>
+        <member name="T:Venflow.IKey">
+            <summary>
+            <strong>Do not use this interface, if you are not absolutely sure what it does.</strong>
+            </summary>
         </member>
         <member name="T:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1">
             <summary>
