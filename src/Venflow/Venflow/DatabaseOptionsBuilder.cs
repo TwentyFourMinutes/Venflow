@@ -19,16 +19,19 @@ namespace Venflow
         /// </summary>
         public LoggingBehavior DefaultLoggingBehavior { get; set; }
 
+        internal Type EffectiveDatabaseType { get; }
+
         private readonly List<Assembly> _configurationAssemblies;
         private readonly List<LoggerCallback> _loggers;
         private readonly Assembly _databaseAssembly;
 
-        internal DatabaseOptionsBuilder(Assembly databaseAssembly)
+        internal DatabaseOptionsBuilder(Type effectiveDatabaseType)
         {
             _configurationAssemblies = new(1);
             _loggers = new(0);
 
-            _databaseAssembly = databaseAssembly;
+            _databaseAssembly = effectiveDatabaseType.Assembly;
+            EffectiveDatabaseType = effectiveDatabaseType;
         }
 
         /// <summary>
@@ -37,7 +40,7 @@ namespace Venflow
         /// <typeparam name="T">The type of which the assembly should be added to the lookup list.</typeparam>
         /// <returns>An object that can be used to configure the current <see cref="Database"/>.</returns>
         /// <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
-        public DatabaseOptionsBuilder AddConfigurations<T>()
+        public DatabaseOptionsBuilder UseConfigurations<T>()
         {
             _configurationAssemblies.Add(typeof(T).Assembly);
 
@@ -50,7 +53,7 @@ namespace Venflow
         /// <param name="assembly">The assembly which should be added to the lookup list.</param>
         /// <returns>An object that can be used to configure the current <see cref="Database"/>.</returns>
         /// <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
-        public DatabaseOptionsBuilder AddConfigurations(Assembly assembly)
+        public DatabaseOptionsBuilder UseConfigurations(Assembly assembly)
         {
             _configurationAssemblies.Add(assembly);
 
@@ -63,7 +66,7 @@ namespace Venflow
         /// <param name="assemblies">The assemblies which should be added to the lookup list.</param>
         /// <returns>An object that can be used to configure the current <see cref="Database"/>.</returns>
         /// <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
-        public DatabaseOptionsBuilder AddConfigurations(params Assembly[] assemblies)
+        public DatabaseOptionsBuilder UseConfigurations(params Assembly[] assemblies)
         {
             _configurationAssemblies.AddRange(assemblies);
 

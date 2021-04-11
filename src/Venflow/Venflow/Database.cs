@@ -323,7 +323,7 @@ namespace Venflow
                     {
                         var dbConfigurator = new DatabaseConfigurationFactory();
 
-                        var optionsBuilder = new DatabaseOptionsBuilder(type.Assembly);
+                        var optionsBuilder = new DatabaseOptionsBuilder(type);
 
                         Configure(optionsBuilder);
 
