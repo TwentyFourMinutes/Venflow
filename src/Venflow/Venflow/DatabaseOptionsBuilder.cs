@@ -78,12 +78,7 @@ namespace Venflow
         /// </summary>
         /// <param name="loggerCallback">A callback which is being used to log commands.</param>
         /// <returns>An object that can be used to configure the current <see cref="Database"/> instance.</returns>
-        /// <remarks>This currently only includes the following API's:
-        /// <list type="bullet">
-        ///     <item>QuerySingle</item>
-        ///     <item>QueryBatch</item>
-        ///     <item>QueryAsync</item>
-        /// </list>
+        /// <remarks>
         /// Also consider configuring the <see cref="DefaultLoggingBehavior"/> property.
         /// </remarks>
         public DatabaseOptionsBuilder LogTo(LoggerCallback loggerCallback)

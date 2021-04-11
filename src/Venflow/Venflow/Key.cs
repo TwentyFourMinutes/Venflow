@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace Venflow
 {
@@ -13,9 +14,6 @@ namespace Venflow
     {
         private TKey _value;
 
-        /// <summary>
-        /// The underlying value representing the <see cref="Key{T, TKey}"/>.
-        /// </summary>
         TKey IKey<T, TKey>.Value { get => _value; set => _value = value; }
 
         /// <summary>
@@ -86,16 +84,20 @@ namespace Venflow
     /// </summary>
     /// <typeparam name="T">They type of entity the key sits in.</typeparam>
     /// <typeparam name="TKey">The type of the key.</typeparam>
-    /// <remarks>See <see cref="Key{T, TKey}"/>for a possible implementation.</remarks>
+    /// <remarks>See <see cref="Key{T, TKey}"/>for a pos    sible implementation.</remarks>
     public interface IKey<T, TKey> : IKey
         where TKey : struct
     {
+        /// <summary>
+        /// The underlying value representing the <see cref="Key{T, TKey}"/>.
+        /// </summary>
         public TKey Value { get; internal set; }
     }
 
     /// <summary>
     /// <strong>Do not use this interface, if you are not absolutely sure what it does.</strong>
     /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public interface IKey
     {
 

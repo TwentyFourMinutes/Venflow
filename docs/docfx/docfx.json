@@ -3,8 +3,14 @@
     {
       "src": [
         {
+		  "src": "../../src/Venflow/",
           "files": [ "**/**.csproj" ],
-          "src": "../../src/Venflow/Venflow"
+		  "exclude": [
+            "**/Venflow.Benchmarks/**",
+            "**/Venflow.Score/**",
+			"**/Venflow.Shared/**",
+			"**/Venflow.Tests/**"
+          ]
         }
       ],
       "dest": "api",

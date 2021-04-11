@@ -1,3 +1,6 @@
 apiRules:
 - exclude:
-    uidRegex: '^System\.Runtime\.CompilerServices\.[^.]+$'
+    hasAttribute:
+      uid: System.ComponentModel.EditorBrowsableAttribute
+      ctorArguments:
+      - System.ComponentModel.EditorBrowsableState.Never

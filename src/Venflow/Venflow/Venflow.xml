@@ -519,7 +519,7 @@
             </summary>
             <param name="shouldLog">Determines if this command should be logged. This is helpful, if you configured the default logging behavior to be <see langword="true"/>.</param>
             <returns>An object that can be used to further configure the operation.</returns>
-            <remarks>You can configure the loggers in the <see cref="M:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)"/> method with the <see cref="!:DatabaseOptionsBuilder.LogTo(Action&lt;string&gt;, bool)"/> methods.</remarks>
+            <remarks>You can configure the loggers in the <see cref="M:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)"/> method with the <see cref="M:Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)"/> methods.</remarks>
         </member>
         <member name="M:Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo(Venflow.LoggerCallback)">
             <summary>
@@ -864,12 +864,7 @@
             </summary>
             <param name="loggerCallback">A callback which is being used to log commands.</param>
             <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/> instance.</returns>
-            <remarks>This currently only includes the following API's:
-            <list type="bullet">
-                <item>QuerySingle</item>
-                <item>QueryBatch</item>
-                <item>QueryAsync</item>
-            </list>
+            <remarks>
             Also consider configuring the <see cref="P:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior"/> property.
             </remarks>
         </member>
@@ -1059,11 +1054,6 @@
             <typeparam name="TKey">The type of the key.</typeparam>
             <remarks>You can also create more specific implementations of this type, by creating a <i>struct</i> implementing <see cref="T:Venflow.IKey`2"/>.</remarks>
         </member>
-        <member name="P:Venflow.Key`2.Venflow#IKey{T,TKey}#Value">
-            <summary>
-            The underlying value representing the <see cref="T:Venflow.Key`2"/>.
-            </summary>
-        </member>
         <member name="M:Venflow.Key`2.#ctor(`1)">
             <summary>
             Instantiates a new <see cref="T:Venflow.Key`2"/> instance withe the provided value.
@@ -1100,7 +1090,12 @@
             </summary>
             <typeparam name="T">They type of entity the key sits in.</typeparam>
             <typeparam name="TKey">The type of the key.</typeparam>
-            <remarks>See <see cref="T:Venflow.Key`2"/>for a possible implementation.</remarks>
+            <remarks>See <see cref="T:Venflow.Key`2"/>for a pos    sible implementation.</remarks>
+        </member>
+        <member name="P:Venflow.IKey`2.Value">
+            <summary>
+            The underlying value representing the <see cref="T:Venflow.Key`2"/>.
+            </summary>
         </member>
         <member name="T:Venflow.IKey">
             <summary>

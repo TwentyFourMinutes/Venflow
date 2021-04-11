@@ -1,8 +1,11 @@
-﻿namespace System.Runtime.CompilerServices
+﻿using System.ComponentModel;
+
+namespace System.Runtime.CompilerServices
 {
     /// <summary>
     /// <strong>Do not use this attribute, it is reserved for the compiler.</strong>
     /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Event | AttributeTargets.Parameter | AttributeTargets.ReturnValue | AttributeTargets.GenericParameter, AllowMultiple = false, Inherited = false)]
     public sealed class NullableAttribute : Attribute
     {
