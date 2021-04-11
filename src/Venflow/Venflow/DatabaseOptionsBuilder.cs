@@ -38,7 +38,7 @@ namespace Venflow
         /// Adds the assembly of the type <typeparamref name="T"/> to the <see cref="EntityConfiguration{TEntity}"/> lookup list.
         /// </summary>
         /// <typeparam name="T">The type of which the assembly should be added to the lookup list.</typeparam>
-        /// <returns>An object that can be used to configure the current <see cref="Database"/>.</returns>
+        /// <returns>An object that can be used to configure the current <see cref="Database"/> instance.</returns>
         /// <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
         public DatabaseOptionsBuilder UseConfigurations<T>()
         {
@@ -51,7 +51,7 @@ namespace Venflow
         /// Adds the assembly to the <see cref="EntityConfiguration{TEntity}"/> lookup list.
         /// </summary>
         /// <param name="assembly">The assembly which should be added to the lookup list.</param>
-        /// <returns>An object that can be used to configure the current <see cref="Database"/>.</returns>
+        /// <returns>An object that can be used to configure the current <see cref="Database"/> instance.</returns>
         /// <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
         public DatabaseOptionsBuilder UseConfigurations(Assembly assembly)
         {
@@ -64,7 +64,7 @@ namespace Venflow
         /// Adds the assemblies to the <see cref="EntityConfiguration{TEntity}"/> lookup list.
         /// </summary>
         /// <param name="assemblies">The assemblies which should be added to the lookup list.</param>
-        /// <returns>An object that can be used to configure the current <see cref="Database"/>.</returns>
+        /// <returns>An object that can be used to configure the current <see cref="Database"/> instance.</returns>
         /// <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
         public DatabaseOptionsBuilder UseConfigurations(params Assembly[] assemblies)
         {
@@ -77,7 +77,7 @@ namespace Venflow
         /// Adds a logger, which allows for logging of executed commands.
         /// </summary>
         /// <param name="loggerCallback">A callback which is being used to log commands.</param>
-        /// <returns>An object that can be used to configure the current <see cref="Database"/>.</returns>
+        /// <returns>An object that can be used to configure the current <see cref="Database"/> instance.</returns>
         /// <remarks>This currently only includes the following API's:
         /// <list type="bullet">
         ///     <item>QuerySingle</item>
