@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Score", "Venflow.Sc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Execution", "Venflow.Execution\Venflow.Execution.csproj", "{E9FBA152-B3BE-46D9-97C7-4D1C6B4411A0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{665796E7-E527-43D5-B095-6000D6C0FF60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venflow.Extensions.Logging", "Venflow.Extensions.Logging\Venflow.Extensions.Logging.csproj", "{9D79B81A-BBDE-437F-954C-259BB8AA9336}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,9 +43,17 @@ Global
 		{F33684D5-806D-4040-9F19-32EDE6648F3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9FBA152-B3BE-46D9-97C7-4D1C6B4411A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E9FBA152-B3BE-46D9-97C7-4D1C6B4411A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D79B81A-BBDE-437F-954C-259BB8AA9336}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D79B81A-BBDE-437F-954C-259BB8AA9336}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D79B81A-BBDE-437F-954C-259BB8AA9336}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D79B81A-BBDE-437F-954C-259BB8AA9336}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B16B88AB-3D5E-4A8B-B11C-75F89EFABAEF} = {665796E7-E527-43D5-B095-6000D6C0FF60}
+		{9D79B81A-BBDE-437F-954C-259BB8AA9336} = {665796E7-E527-43D5-B095-6000D6C0FF60}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {020D29CB-7D63-45D4-8F95-7C89DC06E6E6}
