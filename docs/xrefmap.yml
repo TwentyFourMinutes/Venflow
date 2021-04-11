@@ -1633,6 +1633,38 @@ references:
   isSpec: "True"
   fullName: Venflow.FormattableSqlStringBuilder.AppendLine
   nameWithType: FormattableSqlStringBuilder.AppendLine
+- uid: Venflow.IKey
+  name: IKey
+  href: api/Venflow.IKey.html
+  commentId: T:Venflow.IKey
+  fullName: Venflow.IKey
+  nameWithType: IKey
+- uid: Venflow.IKey`2
+  name: IKey<T, TKey>
+  href: api/Venflow.IKey-2.html
+  commentId: T:Venflow.IKey`2
+  name.vb: IKey(Of T, TKey)
+  fullName: Venflow.IKey<T, TKey>
+  fullName.vb: Venflow.IKey(Of T, TKey)
+  nameWithType: IKey<T, TKey>
+  nameWithType.vb: IKey(Of T, TKey)
+- uid: Venflow.IKey`2.Value
+  name: Value
+  href: api/Venflow.IKey-2.html#Venflow_IKey_2_Value
+  commentId: P:Venflow.IKey`2.Value
+  fullName: Venflow.IKey<T, TKey>.Value
+  fullName.vb: Venflow.IKey(Of T, TKey).Value
+  nameWithType: IKey<T, TKey>.Value
+  nameWithType.vb: IKey(Of T, TKey).Value
+- uid: Venflow.IKey`2.Value*
+  name: Value
+  href: api/Venflow.IKey-2.html#Venflow_IKey_2_Value_
+  commentId: Overload:Venflow.IKey`2.Value
+  isSpec: "True"
+  fullName: Venflow.IKey<T, TKey>.Value
+  fullName.vb: Venflow.IKey(Of T, TKey).Value
+  nameWithType: IKey<T, TKey>.Value
+  nameWithType.vb: IKey(Of T, TKey).Value
 - uid: Venflow.InvalidEntityRelationException
   name: InvalidEntityRelationException
   href: api/Venflow.InvalidEntityRelationException.html
@@ -1689,6 +1721,176 @@ references:
   isSpec: "True"
   fullName: Venflow.IParameterTypeHandler.Handle
   nameWithType: IParameterTypeHandler.Handle
+- uid: Venflow.Key`2
+  name: Key<T, TKey>
+  href: api/Venflow.Key-2.html
+  commentId: T:Venflow.Key`2
+  name.vb: Key(Of T, TKey)
+  fullName: Venflow.Key<T, TKey>
+  fullName.vb: Venflow.Key(Of T, TKey)
+  nameWithType: Key<T, TKey>
+  nameWithType.vb: Key(Of T, TKey)
+- uid: Venflow.Key`2.#ctor(`1)
+  name: Key(TKey)
+  href: api/Venflow.Key-2.html#Venflow_Key_2__ctor__1_
+  commentId: M:Venflow.Key`2.#ctor(`1)
+  fullName: Venflow.Key<T, TKey>.Key(TKey)
+  fullName.vb: Venflow.Key(Of T, TKey).Key(TKey)
+  nameWithType: Key<T, TKey>.Key(TKey)
+  nameWithType.vb: Key(Of T, TKey).Key(TKey)
+- uid: Venflow.Key`2.#ctor*
+  name: Key
+  href: api/Venflow.Key-2.html#Venflow_Key_2__ctor_
+  commentId: Overload:Venflow.Key`2.#ctor
+  isSpec: "True"
+  fullName: Venflow.Key<T, TKey>.Key
+  fullName.vb: Venflow.Key(Of T, TKey).Key
+  nameWithType: Key<T, TKey>.Key
+  nameWithType.vb: Key(Of T, TKey).Key
+- uid: Venflow.Key`2.Equals(System.Nullable{System.Object})
+  name: Equals(Nullable<Object>)
+  href: api/Venflow.Key-2.html#Venflow_Key_2_Equals_System_Nullable_System_Object__
+  commentId: M:Venflow.Key`2.Equals(System.Nullable{System.Object})
+  name.vb: Equals(Nullable(Of Object))
+  fullName: Venflow.Key<T, TKey>.Equals(System.Nullable<System.Object>)
+  fullName.vb: Venflow.Key(Of T, TKey).Equals(System.Nullable(Of System.Object))
+  nameWithType: Key<T, TKey>.Equals(Nullable<Object>)
+  nameWithType.vb: Key(Of T, TKey).Equals(Nullable(Of Object))
+- uid: Venflow.Key`2.Equals(Venflow.Key{`0,`1})
+  name: Equals(Key<T, TKey>)
+  href: api/Venflow.Key-2.html#Venflow_Key_2_Equals_Venflow_Key__0__1__
+  commentId: M:Venflow.Key`2.Equals(Venflow.Key{`0,`1})
+  name.vb: Equals(Key(Of T, TKey))
+  fullName: Venflow.Key<T, TKey>.Equals(Venflow.Key<T, TKey>)
+  fullName.vb: Venflow.Key(Of T, TKey).Equals(Venflow.Key(Of T, TKey))
+  nameWithType: Key<T, TKey>.Equals(Key<T, TKey>)
+  nameWithType.vb: Key(Of T, TKey).Equals(Key(Of T, TKey))
+- uid: Venflow.Key`2.Equals*
+  name: Equals
+  href: api/Venflow.Key-2.html#Venflow_Key_2_Equals_
+  commentId: Overload:Venflow.Key`2.Equals
+  isSpec: "True"
+  fullName: Venflow.Key<T, TKey>.Equals
+  fullName.vb: Venflow.Key(Of T, TKey).Equals
+  nameWithType: Key<T, TKey>.Equals
+  nameWithType.vb: Key(Of T, TKey).Equals
+- uid: Venflow.Key`2.GetHashCode
+  name: GetHashCode()
+  href: api/Venflow.Key-2.html#Venflow_Key_2_GetHashCode
+  commentId: M:Venflow.Key`2.GetHashCode
+  fullName: Venflow.Key<T, TKey>.GetHashCode()
+  fullName.vb: Venflow.Key(Of T, TKey).GetHashCode()
+  nameWithType: Key<T, TKey>.GetHashCode()
+  nameWithType.vb: Key(Of T, TKey).GetHashCode()
+- uid: Venflow.Key`2.GetHashCode*
+  name: GetHashCode
+  href: api/Venflow.Key-2.html#Venflow_Key_2_GetHashCode_
+  commentId: Overload:Venflow.Key`2.GetHashCode
+  isSpec: "True"
+  fullName: Venflow.Key<T, TKey>.GetHashCode
+  fullName.vb: Venflow.Key(Of T, TKey).GetHashCode
+  nameWithType: Key<T, TKey>.GetHashCode
+  nameWithType.vb: Key(Of T, TKey).GetHashCode
+- uid: Venflow.Key`2.op_Equality(Venflow.Key{`0,`1}@,Venflow.Key{`0,`1}@)
+  name: Equality(Key<T, TKey>, Key<T, TKey>)
+  href: api/Venflow.Key-2.html#Venflow_Key_2_op_Equality_Venflow_Key__0__1___Venflow_Key__0__1___
+  commentId: M:Venflow.Key`2.op_Equality(Venflow.Key{`0,`1}@,Venflow.Key{`0,`1}@)
+  name.vb: Equality(ByRef Key(Of T, TKey), ByRef Key(Of T, TKey))
+  fullName: Venflow.Key<T, TKey>.Equality(Venflow.Key<T, TKey>, Venflow.Key<T, TKey>)
+  fullName.vb: Venflow.Key(Of T, TKey).Equality(ByRef Venflow.Key(Of T, TKey), ByRef Venflow.Key(Of T, TKey))
+  nameWithType: Key<T, TKey>.Equality(Key<T, TKey>, Key<T, TKey>)
+  nameWithType.vb: Key(Of T, TKey).Equality(ByRef Key(Of T, TKey), ByRef Key(Of T, TKey))
+- uid: Venflow.Key`2.op_Equality*
+  name: Equality
+  href: api/Venflow.Key-2.html#Venflow_Key_2_op_Equality_
+  commentId: Overload:Venflow.Key`2.op_Equality
+  isSpec: "True"
+  fullName: Venflow.Key<T, TKey>.Equality
+  fullName.vb: Venflow.Key(Of T, TKey).Equality
+  nameWithType: Key<T, TKey>.Equality
+  nameWithType.vb: Key(Of T, TKey).Equality
+- uid: Venflow.Key`2.op_Implicit(`1@)~Venflow.Key{`0,`1}
+  name: Implicit(TKey to Key<T, TKey>)
+  href: api/Venflow.Key-2.html#Venflow_Key_2_op_Implicit__1___Venflow_Key__0__1_
+  commentId: M:Venflow.Key`2.op_Implicit(`1@)~Venflow.Key{`0,`1}
+  name.vb: Widening(ByRef TKey to Key(Of T, TKey))
+  fullName: Venflow.Key<T, TKey>.Implicit(TKey to Venflow.Key<T, TKey>)
+  fullName.vb: Venflow.Key(Of T, TKey).Widening(ByRef TKey to Venflow.Key(Of T, TKey))
+  nameWithType: Key<T, TKey>.Implicit(TKey to Key<T, TKey>)
+  nameWithType.vb: Key(Of T, TKey).Widening(ByRef TKey to Key(Of T, TKey))
+- uid: Venflow.Key`2.op_Implicit(Venflow.Key{`0,`1}@)~`1
+  name: Implicit(Key<T, TKey> to TKey)
+  href: api/Venflow.Key-2.html#Venflow_Key_2_op_Implicit_Venflow_Key__0__1_____1
+  commentId: M:Venflow.Key`2.op_Implicit(Venflow.Key{`0,`1}@)~`1
+  name.vb: Widening(ByRef Key(Of T, TKey) to TKey)
+  fullName: Venflow.Key<T, TKey>.Implicit(Venflow.Key<T, TKey> to TKey)
+  fullName.vb: Venflow.Key(Of T, TKey).Widening(ByRef Venflow.Key(Of T, TKey) to TKey)
+  nameWithType: Key<T, TKey>.Implicit(Key<T, TKey> to TKey)
+  nameWithType.vb: Key(Of T, TKey).Widening(ByRef Key(Of T, TKey) to TKey)
+- uid: Venflow.Key`2.op_Implicit*
+  name: Implicit
+  href: api/Venflow.Key-2.html#Venflow_Key_2_op_Implicit_
+  commentId: Overload:Venflow.Key`2.op_Implicit
+  isSpec: "True"
+  name.vb: Widening
+  fullName: Venflow.Key<T, TKey>.Implicit
+  fullName.vb: Venflow.Key(Of T, TKey).Widening
+  nameWithType: Key<T, TKey>.Implicit
+  nameWithType.vb: Key(Of T, TKey).Widening
+- uid: Venflow.Key`2.op_Inequality(Venflow.Key{`0,`1}@,Venflow.Key{`0,`1}@)
+  name: Inequality(Key<T, TKey>, Key<T, TKey>)
+  href: api/Venflow.Key-2.html#Venflow_Key_2_op_Inequality_Venflow_Key__0__1___Venflow_Key__0__1___
+  commentId: M:Venflow.Key`2.op_Inequality(Venflow.Key{`0,`1}@,Venflow.Key{`0,`1}@)
+  name.vb: Inequality(ByRef Key(Of T, TKey), ByRef Key(Of T, TKey))
+  fullName: Venflow.Key<T, TKey>.Inequality(Venflow.Key<T, TKey>, Venflow.Key<T, TKey>)
+  fullName.vb: Venflow.Key(Of T, TKey).Inequality(ByRef Venflow.Key(Of T, TKey), ByRef Venflow.Key(Of T, TKey))
+  nameWithType: Key<T, TKey>.Inequality(Key<T, TKey>, Key<T, TKey>)
+  nameWithType.vb: Key(Of T, TKey).Inequality(ByRef Key(Of T, TKey), ByRef Key(Of T, TKey))
+- uid: Venflow.Key`2.op_Inequality*
+  name: Inequality
+  href: api/Venflow.Key-2.html#Venflow_Key_2_op_Inequality_
+  commentId: Overload:Venflow.Key`2.op_Inequality
+  isSpec: "True"
+  fullName: Venflow.Key<T, TKey>.Inequality
+  fullName.vb: Venflow.Key(Of T, TKey).Inequality
+  nameWithType: Key<T, TKey>.Inequality
+  nameWithType.vb: Key(Of T, TKey).Inequality
+- uid: Venflow.Key`2.ToString
+  name: ToString()
+  href: api/Venflow.Key-2.html#Venflow_Key_2_ToString
+  commentId: M:Venflow.Key`2.ToString
+  fullName: Venflow.Key<T, TKey>.ToString()
+  fullName.vb: Venflow.Key(Of T, TKey).ToString()
+  nameWithType: Key<T, TKey>.ToString()
+  nameWithType.vb: Key(Of T, TKey).ToString()
+- uid: Venflow.Key`2.ToString*
+  name: ToString
+  href: api/Venflow.Key-2.html#Venflow_Key_2_ToString_
+  commentId: Overload:Venflow.Key`2.ToString
+  isSpec: "True"
+  fullName: Venflow.Key<T, TKey>.ToString
+  fullName.vb: Venflow.Key(Of T, TKey).ToString
+  nameWithType: Key<T, TKey>.ToString
+  nameWithType.vb: Key(Of T, TKey).ToString
+- uid: Venflow.Key`2.Venflow#IKey{T,TKey}#Value
+  name: IKey<T, TKey>.Value
+  href: api/Venflow.Key-2.html#Venflow_Key_2_Venflow_IKey_T_TKey__Value
+  commentId: P:Venflow.Key`2.Venflow#IKey{T,TKey}#Value
+  name.vb: Venflow.IKey<T,TKey>.Value
+  fullName: Venflow.Key<T, TKey>.Venflow.IKey<T, TKey>.Value
+  fullName.vb: Venflow.Key(Of T, TKey).Venflow.IKey<T,TKey>.Value
+  nameWithType: Key<T, TKey>.IKey<T, TKey>.Value
+  nameWithType.vb: Key(Of T, TKey).Venflow.IKey<T,TKey>.Value
+- uid: Venflow.Key`2.Venflow#IKey{T,TKey}#Value*
+  name: IKey<T, TKey>.Value
+  href: api/Venflow.Key-2.html#Venflow_Key_2_Venflow_IKey_T_TKey__Value_
+  commentId: Overload:Venflow.Key`2.Venflow#IKey{T,TKey}#Value
+  isSpec: "True"
+  name.vb: Venflow.IKey<T,TKey>.Value
+  fullName: Venflow.Key<T, TKey>.Venflow.IKey<T, TKey>.Value
+  fullName.vb: Venflow.Key(Of T, TKey).Venflow.IKey<T,TKey>.Value
+  nameWithType: Key<T, TKey>.IKey<T, TKey>.Value
+  nameWithType.vb: Key(Of T, TKey).Venflow.IKey<T,TKey>.Value
 - uid: Venflow.LoggerCallback
   name: LoggerCallback
   href: api/Venflow.LoggerCallback.html
