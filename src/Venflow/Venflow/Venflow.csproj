@@ -2,44 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net5.0;netcoreapp3.1;net48;netstandard2.1</TargetFrameworks>
-    <LangVersion>preview</LangVersion>
-    <Nullable>enable</Nullable>
-    <AnalysisLevel>preview</AnalysisLevel>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-
-    <Title>Venflow</Title>
-    <Authors>Twenty</Authors>
-    <Company>Twenty</Company>
-    <Version>1.0.0.0-rc5</Version>
-    <Language>en</Language>
-    <PackageIcon>icon.png</PackageIcon>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Description>A brand new, lightweight and fast ORM, build for PostgreSQL.</Description>
-    <RepositoryUrl>https://github.com/TwentyFourMinutes/Venflow</RepositoryUrl>
-    <PackageTags>Venflow ORM ORM-Framework O/RM Data Postgres SQL PostgreSQL</PackageTags>
-    <Copyright>Copyright ©2021 Twenty</Copyright>
-    <DocumentationFile>Venflow.xml</DocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageOutputPath>bin\Package</PackageOutputPath>
-    <AssemblyOriginatorKeyFile>../../../Venflow.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net5.0' Or '$(TargetFramework)' == 'net6.0'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="../../../images/icon.png" Pack="true" PackagePath="" />
-    <None Include="../../../LICENSE" Pack="true" PackagePath="" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.0-beta-20204-02" PrivateAssets="All" />
