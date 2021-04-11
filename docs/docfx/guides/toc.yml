@@ -36,5 +36,7 @@
       topicUid: Guides.Advanced.Validation
     - name: Logging
       topicUid: Guides.Advanced.Logging
+    - name: Microsoft.Extensions.Logging
+      topicUid: Guides.Advanced.Logging.Extensions
     - name: Query Command Caching
       topicUid: Guides.Advanced.CommandQueryCache

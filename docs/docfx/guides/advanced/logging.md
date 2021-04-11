@@ -5,14 +5,14 @@ title: Logging with Venflow
 
 # Logging with Venflow
 
-Logging in general is a very important topic, especially in a scenario like this, in which the ORM partially creates SQL. At the current state Venflow supports logging only in a few specific cases. As of now this only covers all Query operations including [`QuerySingle`](xref:Venflow.TableBase`1.QuerySingle(System.String,System.Boolean)) and  [`QueryBatch`](xref:Venflow.TableBase`1.QueryBatch(System.String,System.Boolean))  as well as their interpolation counterparts. 
+Logging in general is a very important topic, especially in a scenario like this, in which the ORM partially creates SQL. At the current state, Venflow only supports logging executed commands, rather than the logging of internal events.
 
 ## Setup the logging provider
 
-You configure your logging provider on a [`Database`](xref:Venflow.Database) basis, by overriding the [`Configure`](xref:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)) method. For this example, lets use the database which you already know from the [Setup Guide](../getting_started/setup.md). By using the provided [`DatabaseOptionsBuilder`](xref:Venflow.DatabaseOptionsBuilder), you can call the [`LogTo`](xref:Venflow.DatabaseOptionsBuilder.LogTo(System.Action{System.String},System.Boolean)) method on it. It accepts two parameters, the logging action itself as well as an optional Boolean to tell whether or not to log sensitive data to this logger. However it is important to note that Venflow, at least at the current state, only logs the executed SQL statements and nothing else.
+You configure your logging provider on a [`Database`](xref:Venflow.Database) basis, by overriding the [`Configure`](xref:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)) method. For this example, lets use the database which you already know from the [Setup Guide](../getting_started/setup.md). By using the provided [`DatabaseOptionsBuilder`](xref:Venflow.DatabaseOptionsBuilder), you can call the [`LogTo`](xref:Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)) method on it. The delegate defines three parameters, the executed [`NpgsqlCommand`](xref:Npgsql.NpgsqlCommand), the  [`CommandType`](xref:Venflow.Enums.CommandType) executed as well as the exception if any occurred. However it is important to note that Venflow, at least at the current state, only logs the executed commands and nothing else.
 
 > [!NOTE] 
-> The sensitive data logging is a bit special since it populates the parameters on the client, rather than the server. This means, that the _populated_ SQL might not always be 100% accurate. It internally uses the [`NpgsqlCommandExtensions.GetUnParameterizedCommandText`](xref:Venflow.NpgsqlCommandExtensions.SetInterpolatedCommandText(Npgsql.NpgsqlCommand,System.FormattableString)) extension method to do that. However it also got some other caveats, you can get more information by further inspecting the API reference.
+> The sensitive data logging is a bit special, since it populates the parameters on the client, rather than on the server. This means, that the _populated_ SQL might not always be 100% accurate. To get the the sensitive data call the [`NpgsqlCommandExtensions.GetUnParameterizedCommandText`](xref:Venflow.NpgsqlCommandExtensions.SetInterpolatedCommandText(Npgsql.NpgsqlCommand,System.FormattableString)) extension method on the provided [`NpgsqlCommand`](xref:Npgsql.NpgsqlCommand) instance. However, it also got some other caveats, you can get more information by further inspecting the API reference.
 
 
 ```cs
@@ -29,7 +29,7 @@ public class BlogDatabase : Database
     protected override void Configure(DatabaseOptionsBuilder optionsBuilder)
     {
         // You can also configure multiple loggers.
-        optionsBuilder.LogTo(message => { Console.WriteLine(message); });
+        optionsBuilder.LogTo((command, type, exception) => Console.WriteLine(command.CommandText));
     }
 }
 ```
@@ -42,7 +42,8 @@ You don't always want the ORM to log every single SQL statement ever to be execu
 FormattableString sql = $@"SELECT * FROM ""Blogs"" WHERE ""Id"" = {someId} LIMIT 1";
 
 var blog = await database.Blogs.QueryInterpolatedSingle(sql)
-                               .LogTo(Console.WriteLine)   // You can also configure multiple loggers.
+    						   // You can also configure multiple loggers.
+                               .LogTo((command, type, exception) => Console.WriteLine(command.CommandText))
                                .QueryAsync();
 ```
 
