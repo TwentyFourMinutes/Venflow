@@ -14,6 +14,54 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.html",
+          "hash": "DNjk90SX+krNiabU1EoI1w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Runtime.CompilerServices.NullableAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Runtime.CompilerServices.NullableAttribute.html",
+          "hash": "KHI1NCSHTsi64+aaaeWPyg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Runtime.CompilerServices.NullableContextAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Runtime.CompilerServices.NullableContextAttribute.html",
+          "hash": "QQULGlg9S348dHtNmb68qQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/System.Runtime.CompilerServices.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/System.Runtime.CompilerServices.html",
+          "hash": "kFKLSZKpn7+RvWwz16XHzA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Venflow.Commands.IBaseInsertRelationBuilder-2.yml",
       "output": {
         ".html": {
@@ -150,7 +198,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Commands.ISpecficVenflowCommandBuilder-2.html",
-          "hash": "pV9rbEWVHAc3DQzWJ/+Ieg=="
+          "hash": "dvsfrFQs2yksHSfU1Yu0iQ=="
         }
       },
       "is_incremental": false,
@@ -234,7 +282,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.DatabaseOptionsBuilder.html",
-          "hash": "BF1O2LGT2BFikix72ieRkQ=="
+          "hash": "Fl/HAYBr9QiDpcPMYMRpbQ=="
         }
       },
       "is_incremental": false,
@@ -314,6 +362,30 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.html",
+          "hash": "i753nB3zEDB6dQ4JGdA4eg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Extensions.Logging.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Extensions.Logging.html",
+          "hash": "ekEf76Cw2WqrY/m9qhUdIg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Venflow.FormattableSqlStringBuilder.yml",
       "output": {
         ".html": {
@@ -330,7 +402,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.IKey-2.html",
-          "hash": "aiHkKLqZ89Y1xULJSpyJ3A=="
+          "hash": "K5zbQuNh9UGSdk9YYG9soA=="
         }
       },
       "is_incremental": false,
@@ -342,7 +414,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.IKey.html",
-          "hash": "N/MqAkUEmDI18BbmpUbFVw=="
+          "hash": "jKLZQyjzNuQN0qC3v3HBXA=="
         }
       },
       "is_incremental": false,
@@ -378,7 +450,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Key-2.html",
-          "hash": "fRjKZrz2vGQlcA3NXVpPug=="
+          "hash": "C01E0PRt4mfLk50u6Vvzkw=="
         }
       },
       "is_incremental": false,
@@ -618,7 +690,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "c8RiQR51xVmBrUBGavrYIQ=="
+          "hash": "7XZLgEwX7MZkuKsFShCRVA=="
         }
       },
       "is_incremental": false,
@@ -668,7 +740,22 @@
       "output": {
         ".html": {
           "relative_path": "guides/advanced/logging.html",
-          "hash": "tuuz0eGusCJYEAGGjCaXrg=="
+          "hash": "eKtpUE+MS5HSxRSI9Xro3g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "guides/advanced/logging_extensions.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/advanced/logging_extensions.html",
+          "hash": "nf1sxOgSDp/GHEerxYHlHg=="
         }
       },
       "is_incremental": false,
@@ -848,7 +935,7 @@
       "output": {
         ".html": {
           "relative_path": "guides/toc.html",
-          "hash": "V4zYCpsdB5//0+91ojw1Xg=="
+          "hash": "x+jl+RDbPo4zc8rYzOG5zQ=="
         }
       },
       "is_incremental": false,
@@ -918,13 +1005,13 @@
         "ConceptualDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 19,
+          "total_file_count": 20,
           "skipped_file_count": 0
         },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 49,
+          "total_file_count": 55,
           "skipped_file_count": 0
         },
         "ResourceDocumentProcessor": {

@@ -16,6 +16,9 @@ references:
 - uid: Guides.Advanced.Logging
   name: Logging with Venflow
   href: guides/advanced/logging.html
+- uid: Guides.Advanced.Logging.Extensions
+  name: Logging with Venflow and Microsoft.Extensions.Logging
+  href: guides/advanced/logging_extensions.html
 - uid: Guides.Advanced.Nullables
   name: Nullables with Venflow
   href: guides/advanced/nullables.html
@@ -55,6 +58,103 @@ references:
 - uid: Guides.Operations.Update
   name: Update with Venflow
   href: guides/operations/update.html
+- uid: System.Runtime.CompilerServices
+  name: System.Runtime.CompilerServices
+  href: api/System.Runtime.CompilerServices.html
+  commentId: N:System.Runtime.CompilerServices
+  fullName: System.Runtime.CompilerServices
+  nameWithType: System.Runtime.CompilerServices
+- uid: System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute
+  name: IgnoresAccessChecksToAttribute
+  href: api/System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.html
+  commentId: T:System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute
+  fullName: System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute
+  nameWithType: IgnoresAccessChecksToAttribute
+- uid: System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.#ctor(System.String)
+  name: IgnoresAccessChecksToAttribute(String)
+  href: api/System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.html#System_Runtime_CompilerServices_IgnoresAccessChecksToAttribute__ctor_System_String_
+  commentId: M:System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.#ctor(System.String)
+  fullName: System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.IgnoresAccessChecksToAttribute(System.String)
+  nameWithType: IgnoresAccessChecksToAttribute.IgnoresAccessChecksToAttribute(String)
+- uid: System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.#ctor*
+  name: IgnoresAccessChecksToAttribute
+  href: api/System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.html#System_Runtime_CompilerServices_IgnoresAccessChecksToAttribute__ctor_
+  commentId: Overload:System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.#ctor
+  isSpec: "True"
+  fullName: System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.IgnoresAccessChecksToAttribute
+  nameWithType: IgnoresAccessChecksToAttribute.IgnoresAccessChecksToAttribute
+- uid: System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.AssemblyName
+  name: AssemblyName
+  href: api/System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.html#System_Runtime_CompilerServices_IgnoresAccessChecksToAttribute_AssemblyName
+  commentId: P:System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.AssemblyName
+  fullName: System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.AssemblyName
+  nameWithType: IgnoresAccessChecksToAttribute.AssemblyName
+- uid: System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.AssemblyName*
+  name: AssemblyName
+  href: api/System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.html#System_Runtime_CompilerServices_IgnoresAccessChecksToAttribute_AssemblyName_
+  commentId: Overload:System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.AssemblyName
+  isSpec: "True"
+  fullName: System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.AssemblyName
+  nameWithType: IgnoresAccessChecksToAttribute.AssemblyName
+- uid: System.Runtime.CompilerServices.NullableAttribute
+  name: NullableAttribute
+  href: api/System.Runtime.CompilerServices.NullableAttribute.html
+  commentId: T:System.Runtime.CompilerServices.NullableAttribute
+  fullName: System.Runtime.CompilerServices.NullableAttribute
+  nameWithType: NullableAttribute
+- uid: System.Runtime.CompilerServices.NullableAttribute.#ctor(System.Byte)
+  name: NullableAttribute(Byte)
+  href: api/System.Runtime.CompilerServices.NullableAttribute.html#System_Runtime_CompilerServices_NullableAttribute__ctor_System_Byte_
+  commentId: M:System.Runtime.CompilerServices.NullableAttribute.#ctor(System.Byte)
+  fullName: System.Runtime.CompilerServices.NullableAttribute.NullableAttribute(System.Byte)
+  nameWithType: NullableAttribute.NullableAttribute(Byte)
+- uid: System.Runtime.CompilerServices.NullableAttribute.#ctor(System.Byte[])
+  name: NullableAttribute(Byte[])
+  href: api/System.Runtime.CompilerServices.NullableAttribute.html#System_Runtime_CompilerServices_NullableAttribute__ctor_System_Byte___
+  commentId: M:System.Runtime.CompilerServices.NullableAttribute.#ctor(System.Byte[])
+  name.vb: NullableAttribute(Byte())
+  fullName: System.Runtime.CompilerServices.NullableAttribute.NullableAttribute(System.Byte[])
+  fullName.vb: System.Runtime.CompilerServices.NullableAttribute.NullableAttribute(System.Byte())
+  nameWithType: NullableAttribute.NullableAttribute(Byte[])
+  nameWithType.vb: NullableAttribute.NullableAttribute(Byte())
+- uid: System.Runtime.CompilerServices.NullableAttribute.#ctor*
+  name: NullableAttribute
+  href: api/System.Runtime.CompilerServices.NullableAttribute.html#System_Runtime_CompilerServices_NullableAttribute__ctor_
+  commentId: Overload:System.Runtime.CompilerServices.NullableAttribute.#ctor
+  isSpec: "True"
+  fullName: System.Runtime.CompilerServices.NullableAttribute.NullableAttribute
+  nameWithType: NullableAttribute.NullableAttribute
+- uid: System.Runtime.CompilerServices.NullableAttribute.NullableFlags
+  name: NullableFlags
+  href: api/System.Runtime.CompilerServices.NullableAttribute.html#System_Runtime_CompilerServices_NullableAttribute_NullableFlags
+  commentId: F:System.Runtime.CompilerServices.NullableAttribute.NullableFlags
+  fullName: System.Runtime.CompilerServices.NullableAttribute.NullableFlags
+  nameWithType: NullableAttribute.NullableFlags
+- uid: System.Runtime.CompilerServices.NullableContextAttribute
+  name: NullableContextAttribute
+  href: api/System.Runtime.CompilerServices.NullableContextAttribute.html
+  commentId: T:System.Runtime.CompilerServices.NullableContextAttribute
+  fullName: System.Runtime.CompilerServices.NullableContextAttribute
+  nameWithType: NullableContextAttribute
+- uid: System.Runtime.CompilerServices.NullableContextAttribute.#ctor(System.Byte)
+  name: NullableContextAttribute(Byte)
+  href: api/System.Runtime.CompilerServices.NullableContextAttribute.html#System_Runtime_CompilerServices_NullableContextAttribute__ctor_System_Byte_
+  commentId: M:System.Runtime.CompilerServices.NullableContextAttribute.#ctor(System.Byte)
+  fullName: System.Runtime.CompilerServices.NullableContextAttribute.NullableContextAttribute(System.Byte)
+  nameWithType: NullableContextAttribute.NullableContextAttribute(Byte)
+- uid: System.Runtime.CompilerServices.NullableContextAttribute.#ctor*
+  name: NullableContextAttribute
+  href: api/System.Runtime.CompilerServices.NullableContextAttribute.html#System_Runtime_CompilerServices_NullableContextAttribute__ctor_
+  commentId: Overload:System.Runtime.CompilerServices.NullableContextAttribute.#ctor
+  isSpec: "True"
+  fullName: System.Runtime.CompilerServices.NullableContextAttribute.NullableContextAttribute
+  nameWithType: NullableContextAttribute.NullableContextAttribute
+- uid: System.Runtime.CompilerServices.NullableContextAttribute.Flag
+  name: Flag
+  href: api/System.Runtime.CompilerServices.NullableContextAttribute.html#System_Runtime_CompilerServices_NullableContextAttribute_Flag
+  commentId: F:System.Runtime.CompilerServices.NullableContextAttribute.Flag
+  fullName: System.Runtime.CompilerServices.NullableContextAttribute.Flag
+  nameWithType: NullableContextAttribute.Flag
 - uid: Venflow
   name: Venflow
   href: api/Venflow.html
@@ -1562,6 +1662,31 @@ references:
   commentId: F:Venflow.Enums.LoggingBehavior.Never
   fullName: Venflow.Enums.LoggingBehavior.Never
   nameWithType: LoggingBehavior.Never
+- uid: Venflow.Extensions.Logging
+  name: Venflow.Extensions.Logging
+  href: api/Venflow.Extensions.Logging.html
+  commentId: N:Venflow.Extensions.Logging
+  fullName: Venflow.Extensions.Logging
+  nameWithType: Venflow.Extensions.Logging
+- uid: Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions
+  name: DatabaseOptionsBuilderExtensions
+  href: api/Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.html
+  commentId: T:Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions
+  fullName: Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions
+  nameWithType: DatabaseOptionsBuilderExtensions
+- uid: Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory(Venflow.DatabaseOptionsBuilder,ILoggerFactory,System.Boolean)
+  name: UseLoggerFactory(DatabaseOptionsBuilder, ILoggerFactory, Boolean)
+  href: api/Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.html#Venflow_Extensions_Logging_DatabaseOptionsBuilderExtensions_UseLoggerFactory_Venflow_DatabaseOptionsBuilder_ILoggerFactory_System_Boolean_
+  commentId: M:Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory(Venflow.DatabaseOptionsBuilder,ILoggerFactory,System.Boolean)
+  fullName: Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory(Venflow.DatabaseOptionsBuilder, ILoggerFactory, System.Boolean)
+  nameWithType: DatabaseOptionsBuilderExtensions.UseLoggerFactory(DatabaseOptionsBuilder, ILoggerFactory, Boolean)
+- uid: Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory*
+  name: UseLoggerFactory
+  href: api/Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.html#Venflow_Extensions_Logging_DatabaseOptionsBuilderExtensions_UseLoggerFactory_
+  commentId: Overload:Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory
+  isSpec: "True"
+  fullName: Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory
+  nameWithType: DatabaseOptionsBuilderExtensions.UseLoggerFactory
 - uid: Venflow.FormattableSqlStringBuilder
   name: FormattableSqlStringBuilder
   href: api/Venflow.FormattableSqlStringBuilder.html
