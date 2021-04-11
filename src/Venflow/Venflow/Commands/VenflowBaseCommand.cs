@@ -40,11 +40,11 @@ namespace Venflow.Commands
                 {
                     Database.ExecuteLoggers(_loggers, UnderlyingCommand, commandType, exception);
                 }
-
-                if (VenflowConfiguration.ThrowLoggedExceptions &&
-                    exception is not null)
-                    throw exception;
             }
+
+            if (VenflowConfiguration.ThrowLoggedExceptions &&
+                exception is not null)
+                throw exception;
 
             return true;
         }
