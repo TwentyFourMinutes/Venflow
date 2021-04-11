@@ -10,12 +10,27 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         
-      - name: publish on version change
-        id: publish_nuget
+      - name: Publish Venflow on version change
+        id: publish_venflow_nuget
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
-          PROJECT_FILE_PATH: src/Venflow/Venflow/Venflow.csproj    
+          PROJECT_FILE_PATH: src/Venflow/Venflow/Venflow.csproj
+          VERSION_FILE_PATH: src/Venflow/Directory.Build.props
           PACKAGE_NAME: Venflow
+          VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
+          TAG_COMMIT: true
+          TAG_FORMAT: v*
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+          NUGET_SOURCE: https://api.nuget.org
+          INCLUDE_SYMBOLS: true
+          
+      - name: Publish Venflow.Extensions.Logging on version change
+        id: publish_venflow_extensions_logging_nuget
+        uses: brandedoutcast/publish-nuget@v2.5.5
+        with:
+          PROJECT_FILE_PATH: src/Venflow/Venflow.Extensions.Logging/Venflow.Extensions.Logging.csproj
+          VERSION_FILE_PATH: src/Venflow/Directory.Build.props
+          PACKAGE_NAME: Venflow.Extensions.Logging
           VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
           TAG_COMMIT: true
           TAG_FORMAT: v*
