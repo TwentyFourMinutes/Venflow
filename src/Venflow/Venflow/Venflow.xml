@@ -519,18 +519,17 @@
             </summary>
             <param name="shouldLog">Determines if this command should be logged. This is helpful, if you configured the default logging behavior to be <see langword="true"/>.</param>
             <returns>An object that can be used to further configure the operation.</returns>
-            <remarks>You can configure the loggers in the <see cref="M:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)"/> method with the <see cref="M:Venflow.DatabaseOptionsBuilder.LogTo(System.Action{System.String},System.Boolean)"/> methods.</remarks>
+            <remarks>You can configure the loggers in the <see cref="M:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)"/> method with the <see cref="!:DatabaseOptionsBuilder.LogTo(Action&lt;string&gt;, bool)"/> methods.</remarks>
         </member>
-        <member name="M:Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo(System.Action{System.String},System.Boolean)">
+        <member name="M:Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo(Venflow.LoggerCallback)">
             <summary>
             Logs the command to the provided <paramref name="logger"/>.
             </summary>
             <param name="logger">The logger which is being used for this command.</param>
-            <param name="includeSensitiveData">Determines whether or not to show populated parameters in this command.</param>
             <returns>An object that can be used to further configure the operation.</returns>
             <remarks>Be aware, that once you configure a logger on a command, the global configured loggers won't be executed for this command.</remarks>
         </member>
-        <member name="M:Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo(System.ValueTuple{System.Action{System.String},System.Boolean}[])">
+        <member name="M:Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo(Venflow.LoggerCallback[])">
             <summary>
             Logs the command to the provided <paramref name="loggers"/>.
             </summary>
@@ -835,7 +834,7 @@
             Gets or sets the default LoggingBehavior on commands for this <see cref="T:Venflow.Database"/>. The default is <see cref="F:Venflow.Enums.LoggingBehavior.Always"/>, if any loggers are defined.
             </summary>
         </member>
-        <member name="M:Venflow.DatabaseOptionsBuilder.AddConfigurations``1">
+        <member name="M:Venflow.DatabaseOptionsBuilder.UseConfigurations``1">
             <summary>
             Adds the assembly of the type <typeparamref name="T"/> to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
             </summary>
@@ -843,7 +842,7 @@
             <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/>.</returns>
             <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
         </member>
-        <member name="M:Venflow.DatabaseOptionsBuilder.AddConfigurations(System.Reflection.Assembly)">
+        <member name="M:Venflow.DatabaseOptionsBuilder.UseConfigurations(System.Reflection.Assembly)">
             <summary>
             Adds the assembly to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
             </summary>
@@ -851,7 +850,7 @@
             <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/>.</returns>
             <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
         </member>
-        <member name="M:Venflow.DatabaseOptionsBuilder.AddConfigurations(System.Reflection.Assembly[])">
+        <member name="M:Venflow.DatabaseOptionsBuilder.UseConfigurations(System.Reflection.Assembly[])">
             <summary>
             Adds the assemblies to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
             </summary>
@@ -859,12 +858,11 @@
             <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/>.</returns>
             <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
         </member>
-        <member name="M:Venflow.DatabaseOptionsBuilder.LogTo(System.Action{System.String},System.Boolean)">
+        <member name="M:Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)">
             <summary>
-            Adds a logger, which allows for logging of executed SQL commands.
+            Adds a logger, which allows for logging of executed commands.
             </summary>
-            <param name="logger">The logger action which is being used to log SQL commands.</param>
-            <param name="includeSensitiveData">Determines whether or not to show populated parameters in the commands. <strong>Be aware, that the parameters get injected by the client and the SQL is likely not the exact same as the one executed by the server.</strong></param>
+            <param name="loggerCallback">A callback which is being used to log commands.</param>
             <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/>.</returns>
             <remarks>This currently only includes the following API's:
             <list type="bullet">
@@ -1052,6 +1050,30 @@
             <param name="name">The name of the parameter.</param>
             <param name="val">The value of the parameter.</param>
             <returns>The <see cref="T:Npgsql.NpgsqlParameter"/> containing the name and the value.</returns>
+        </member>
+        <member name="M:Venflow.Key`2.op_Explicit(Venflow.Key{`0,`1}@)~`1">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Key`2.op_Explicit(`1@)~Venflow.Key{`0,`1}">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Key`2.op_Equality(Venflow.Key{`0,`1}@,Venflow.Key{`0,`1}@)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Key`2.op_Inequality(Venflow.Key{`0,`1}@,Venflow.Key{`0,`1}@)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Key`2.Equals(Venflow.Key{`0,`1})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Key`2.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Key`2.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Key`2.ToString">
+            <inheritdoc/>
         </member>
         <member name="T:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1">
             <summary>
@@ -1738,6 +1760,11 @@
             <remarks>
             Venflow uses the SQL used in queries to map a materializer to this specific query. This is faster, than using the returned columns and used relations as a cache key. If a query with the executed SQL won't be called again within the next <see cref="P:Venflow.VenflowConfiguration.DynamicCacheExpirationTime"/>, it will be removed from the cache. However do note, that the materializer itself will not be removed from the cache.
             </remarks>
+        </member>
+        <member name="P:Venflow.VenflowConfiguration.ThrowLoggedExceptions">
+            <summary>
+            Determines whether or not Venflow will propagate exceptions to the caller of a command, if the exception is being logged. Defaults to <see langword="true"/>.
+            </summary>
         </member>
         <member name="P:Venflow.VenflowConfiguration.ShouldUseDeepValidation">
             <summary>
