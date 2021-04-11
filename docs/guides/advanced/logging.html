@@ -117,7 +117,7 @@
 }
 </code></pre>
 <h2 id="setup-the-logging-provider-in-a-more-specific-manner">Setup the logging provider in a more specific manner</h2>
-<p>You don't always want the ORM to log every single SQL statement ever to be executed, in this case Venflow allows to individually override the logging behaviour on a command basis by calling <a href="xref:Venflow.Commands.IQueryCommandBuilder%602.LogTo(System.Boolean)"><code>LogTo</code></a> on the method chain. In the example down below, all globally defined loggers will be overridden by the loggers configured on the command.</p>
+<p>You don't always want the ORM to log every single SQL statement ever to be executed, in this case Venflow allows to individually override the logging behaviour on a command basis by calling <a href="xref:Venflow.Commands.ISpecficVenflowCommandBuilder%602.LogTo(System.Boolean)"><code>LogTo</code></a> on the method chain. In the example down below, all globally defined loggers will be overridden by the loggers configured on the command.</p>
 <pre><code class="lang-cs">FormattableString sql = $@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; WHERE &quot;&quot;Id&quot;&quot; = {someId} LIMIT 1&quot;;
 
 var blog = await database.Blogs.QueryInterpolatedSingle(sql)
@@ -125,7 +125,7 @@ var blog = await database.Blogs.QueryInterpolatedSingle(sql)
                                .LogTo((command, type, exception) =&gt; Console.WriteLine(command.CommandText))
                                .QueryAsync();
 </code></pre>
-<p>However, lets assume you wouldn't want to configure the logger on a command basis, but would rather cherry pick the commands. In that case you would need to set the  <a class="xref" href="../../api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior"><code>DatabaseOptionsBuilder.DefaultLoggingBehavior</code></a> to <a class="xref" href="../../api/Venflow.Enums.LoggingBehavior.html#Venflow_Enums_LoggingBehavior_Never"><code>DefaultLoggingBehavior.Never</code></a> in the same method you configured the global logger. Then you would want to call <a href="xref:Venflow.Commands.IQueryCommandBuilder%602.LogTo(System.Boolean)"><code>LogTo</code></a> on all commands you would want to be logged.</p>
+<p>However, lets assume you wouldn't want to configure the logger on a command basis, but would rather cherry pick the commands. In that case you would need to set the  <a class="xref" href="../../api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior"><code>DatabaseOptionsBuilder.DefaultLoggingBehavior</code></a> to <a class="xref" href="../../api/Venflow.Enums.LoggingBehavior.html#Venflow_Enums_LoggingBehavior_Never"><code>DefaultLoggingBehavior.Never</code></a> in the same method you configured the global logger. Then you would want to call <a href="xref:Venflow.Commands.ISpecficVenflowCommandBuilder%602.LogTo(System.Boolean)"><code>LogTo</code></a> on all commands you would want to be logged.</p>
 </article>
           </div>
           
