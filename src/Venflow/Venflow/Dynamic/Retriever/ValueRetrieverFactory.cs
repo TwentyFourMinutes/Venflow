@@ -46,7 +46,7 @@ namespace Venflow.Dynamic.Retriever
 #endif
         }
 
-        private void WriteDefaultRetriever(ILGenerator il, PropertyInfo property, Type underylingType)
+        private void WriteDefaultRetriever(ILGenerator il, PropertyInfo property, Type underlyingType)
         {
             var stringType = typeof(string);
 
@@ -56,15 +56,29 @@ namespace Venflow.Dynamic.Retriever
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Callvirt, property.GetGetMethod());
 
-            if (underylingType == typeof(ulong))
+            if (typeof(IKey).IsAssignableFrom(underlyingType))
             {
-                underylingType = typeof(long);
+                var underlyingStronglyTypedIdType = underlyingType.GetInterface(typeof(IKey<,>).Name).GetGenericArguments()[1];
+
+                var keyLocal = il.DeclareLocal(underlyingStronglyTypedIdType);
+
+                il.Emit(OpCodes.Stloc, keyLocal);
+                il.Emit(OpCodes.Ldloca, keyLocal);
+
+                il.Emit(OpCodes.Call, underlyingType.GetCastMethod(underlyingType, underlyingStronglyTypedIdType));
+
+                underlyingType = underlyingStronglyTypedIdType;
+            }
+
+            if (underlyingType == typeof(ulong))
+            {
+                underlyingType = typeof(long);
 
                 il.Emit(OpCodes.Ldc_I8, long.MinValue);
                 il.Emit(OpCodes.Add);
             }
 
-            il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underylingType).GetConstructor(new[] { stringType, underylingType }));
+            il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underlyingType).GetConstructor(new[] { stringType, underlyingType }));
             il.Emit(OpCodes.Ret);
         }
 
@@ -106,6 +120,20 @@ namespace Venflow.Dynamic.Retriever
             il.Emit(OpCodes.Stloc_S, propertyLocal);
             il.Emit(OpCodes.Ldloca_S, propertyLocal);
             il.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("Value").GetGetMethod());
+
+            if (typeof(IKey).IsAssignableFrom(underlyingType))
+            {
+                var underlyingStronglyTypedIdType = underlyingType.GetInterface(typeof(IKey<,>).Name).GetGenericArguments()[1];
+
+                var keyLocal = il.DeclareLocal(underlyingStronglyTypedIdType);
+
+                il.Emit(OpCodes.Stloc, keyLocal);
+                il.Emit(OpCodes.Ldloca, keyLocal);
+
+                il.Emit(OpCodes.Call, underlyingType.GetCastMethod(underlyingType, underlyingStronglyTypedIdType));
+
+                underlyingType = underlyingStronglyTypedIdType;
+            }
 
             if (underlyingType == typeof(ulong))
             {

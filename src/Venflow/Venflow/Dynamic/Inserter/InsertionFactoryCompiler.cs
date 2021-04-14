@@ -2457,17 +2457,31 @@ namespace Venflow.Dynamic.Inserter
                 ilGenerator.Emit(OpCodes.Ldloca, propertyLocal);
                 ilGenerator.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("Value").GetGetMethod());
 
+                if (underlyingType.IsEnum &&
+                    column is not IPostgreEnumEntityColumn)
+                {
+                    underlyingType = Enum.GetUnderlyingType(underlyingType);
+                }
+                else if (typeof(IKey).IsAssignableFrom(underlyingType))
+                {
+                    var keyLocal = ilGenerator.DeclareLocal(underlyingType);
+
+                    var underlyingStronglyTypedKeyType = underlyingType.GetInterface(typeof(IKey<,>).Name).GetGenericArguments()[1];
+
+                    ilGenerator.Emit(OpCodes.Stloc, keyLocal);
+                    ilGenerator.Emit(OpCodes.Ldloca, keyLocal);
+
+                    ilGenerator.Emit(OpCodes.Call, underlyingType.GetCastMethod(underlyingType, underlyingStronglyTypedKeyType));
+
+                    underlyingType = underlyingStronglyTypedKeyType;
+                }
+
                 if (underlyingType == typeof(ulong))
                 {
                     underlyingType = typeof(long);
 
                     ilGenerator.Emit(OpCodes.Ldc_I8, long.MinValue);
                     ilGenerator.Emit(OpCodes.Add);
-                }
-                else if (underlyingType.IsEnum &&
-                    column is not IPostgreEnumEntityColumn)
-                {
-                    underlyingType = Enum.GetUnderlyingType(underlyingType);
                 }
 
                 ilGenerator.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underlyingType).GetConstructor(new[] { stringType, underlyingType }));
@@ -2499,21 +2513,38 @@ namespace Venflow.Dynamic.Inserter
 
                 Type npgsqlType;
 
+                var isUlong = column.PropertyInfo.PropertyType == typeof(ulong);
+
                 if (column.PropertyInfo.PropertyType.IsEnum &&
                     column is not IPostgreEnumEntityColumn)
                 {
                     npgsqlType = Enum.GetUnderlyingType(column.PropertyInfo.PropertyType);
                 }
-                else if (column.PropertyInfo.PropertyType == typeof(ulong))
+                else if (typeof(IKey).IsAssignableFrom(column.PropertyInfo.PropertyType))
+                {
+                    var keyLocal = ilGenerator.DeclareLocal(column.PropertyInfo.PropertyType);
+
+                    npgsqlType = column.PropertyInfo.PropertyType.GetInterface(typeof(IKey<,>).Name).GetGenericArguments()[1];
+
+                    ilGenerator.Emit(OpCodes.Stloc, keyLocal);
+                    ilGenerator.Emit(OpCodes.Ldloca, keyLocal);
+
+                    ilGenerator.Emit(OpCodes.Call, column.PropertyInfo.PropertyType.GetCastMethod(column.PropertyInfo.PropertyType, npgsqlType));
+
+                    if (npgsqlType == typeof(ulong))
+                        isUlong = true;
+                }
+                else
+                {
+                    npgsqlType = column.PropertyInfo.PropertyType;
+                }
+
+                if (isUlong)
                 {
                     npgsqlType = typeof(long);
 
                     ilGenerator.Emit(OpCodes.Ldc_I8, long.MinValue);
                     ilGenerator.Emit(OpCodes.Add);
-                }
-                else
-                {
-                    npgsqlType = column.PropertyInfo.PropertyType;
                 }
 
                 ilGenerator.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(npgsqlType).GetConstructor(new[] { stringType, npgsqlType }));

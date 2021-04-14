@@ -6,6 +6,12 @@ namespace Venflow.Tests.Models
     {
         public Guid Id { get; set; }
 
+        public virtual Key<UncommonType, Guid> GuidKey { get; set; }
+        public virtual Key<UncommonType, Guid>? NGuidKey { get; set; }
+
+        public virtual Key<UncommonType, ulong> CLRUInt64Key { get; set; }
+        public virtual Key<UncommonType, ulong>? NCLRUInt64Key { get; set; }
+
         public virtual Guid CLRGuid { get; set; }
         public virtual Guid? NCLRGuid { get; set; }
 

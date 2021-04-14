@@ -4,5 +4,20 @@
         <name>Venflow.Extensions.Logging</name>
     </assembly>
     <members>
+        <member name="T:Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions">
+            <summary>
+            Providing extensions method for the <see cref="T:Venflow.DatabaseOptionsBuilder"/> class.
+            </summary>
+        </member>
+        <member name="M:Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory(Venflow.DatabaseOptionsBuilder,Microsoft.Extensions.Logging.ILoggerFactory,System.Boolean)">
+            <summary>
+            Adds a <see cref="T:Microsoft.Extensions.Logging.ILoggerFactory"/>, which allows for logging of executed commands.
+            </summary>
+            <param name="options">The options to which the <see cref="T:Microsoft.Extensions.Logging.ILoggerFactory"/> should be registered.</param>
+            <param name="loggerFactory">The <see cref="T:Microsoft.Extensions.Logging.ILoggerFactory"/> which should be registered</param>
+            <param name="formatSensitiveInformation">Determines whether or not the formatter should include the parameters values.</param>
+            <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/> instance.</returns>
+            <remarks>Also consider configuring the <see cref="P:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior"/> property.</remarks>
+        </member>
     </members>
 </doc>

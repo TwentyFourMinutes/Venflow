@@ -155,6 +155,10 @@ ALTER TABLE public.""People"" ALTER COLUMN ""Id"" ADD GENERATED ALWAYS AS IDENTI
 
 CREATE TABLE public.""UncommonTypes"" (
     ""Id"" uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    ""GuidKey"" uuid NOT NULL,
+    ""NGuidKey"" uuid,
+    ""CLRUInt64Key"" bigint NOT NULL,
+    ""NCLRUInt64Key"" bigint,
     ""CLRGuid"" uuid NOT NULL,
     ""NCLRGuid"" uuid,
     ""CLREnum"" integer NOT NULL,

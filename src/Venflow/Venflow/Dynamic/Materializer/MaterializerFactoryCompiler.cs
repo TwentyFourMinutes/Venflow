@@ -1667,73 +1667,88 @@ namespace Venflow.Dynamic.Materializer
 
                     if (underlyingType is not null)
                     {
+                        var isUlong = typeof(ulong) == underlyingType;
+                        var isStronglyTypedKey = !isUlong && typeof(IKey).IsAssignableFrom(underlyingType);
+
+                        var baseType = default(Type);
+
                         if (underlyingType.IsEnum)
                         {
-                            var underlyingNumericalType = Enum.GetUnderlyingType(underlyingType);
-                            var nullableUnderlyingEnumType = typeof(Nullable<>).MakeGenericType(underlyingNumericalType);
-
-                            var nullableUnderylyingEnumLocal = iLGenerator.DeclareLocal(nullableUnderlyingEnumType);
-                            var enumLocal = iLGenerator.DeclareLocal(column.PropertyInfo.PropertyType);
-
-                            var afterHasNoValueLabel = iLGenerator.DefineLabel();
-                            var assignLabel = iLGenerator.DefineLabel();
-
-                            valueRetriever = valueRetriever.MakeGenericMethod(nullableUnderlyingEnumType);
-
-                            iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
-                            iLGenerator.Emit(OpCodes.Stloc_S, nullableUnderylyingEnumLocal);
-
-                            iLGenerator.Emit(OpCodes.Ldloca_S, nullableUnderylyingEnumLocal);
-                            iLGenerator.Emit(OpCodes.Call, nullableUnderlyingEnumType.GetProperty("HasValue").GetGetMethod());
-                            iLGenerator.Emit(OpCodes.Brtrue, afterHasNoValueLabel);
-
-                            iLGenerator.Emit(OpCodes.Ldloca_S, enumLocal);
-                            iLGenerator.Emit(OpCodes.Initobj, column.PropertyInfo.PropertyType);
-                            iLGenerator.Emit(OpCodes.Ldloc_S, enumLocal);
-                            iLGenerator.Emit(OpCodes.Br, assignLabel);
-
-                            iLGenerator.MarkLabel(afterHasNoValueLabel);
-
-                            iLGenerator.Emit(OpCodes.Ldloca_S, nullableUnderylyingEnumLocal);
-                            iLGenerator.Emit(OpCodes.Call, nullableUnderlyingEnumType.GetProperty("Value").GetGetMethod());
-
-                            iLGenerator.Emit(OpCodes.Newobj, column.PropertyInfo.PropertyType.GetConstructor(new[] { underlyingType }));
-
-                            iLGenerator.MarkLabel(assignLabel);
-
-                            return;
+                            baseType = typeof(Nullable<>).MakeGenericType(Enum.GetUnderlyingType(underlyingType));
                         }
-                        else if (underlyingType == typeof(ulong))
+                        else if (isUlong)
                         {
-                            var nullableLongType = typeof(long?);
+                            baseType = typeof(long?);
+                        }
+                        else if (isStronglyTypedKey)
+                        {
+                            var stronglyTypedKeyType = underlyingType.GetInterface(typeof(IKey<,>).Name).GetGenericArguments()[1];
 
-                            var nullableLongLocal = iLGenerator.DeclareLocal(nullableLongType);
-                            var nullableUlongLocal = iLGenerator.DeclareLocal(column.PropertyInfo.PropertyType);
+                            baseType = stronglyTypedKeyType == typeof(ulong) ? typeof(long?) : typeof(Nullable<>).MakeGenericType(stronglyTypedKeyType);
+                        }
+
+                        if (baseType is not null)
+                        {
+                            valueRetriever = valueRetriever.MakeGenericMethod(baseType);
+
+                            var baseLocal = iLGenerator.DeclareLocal(baseType);
+                            var outputLocal = iLGenerator.DeclareLocal(column.PropertyInfo.PropertyType);
 
                             var afterHasNoValueLabel = iLGenerator.DefineLabel();
                             var assignLabel = iLGenerator.DefineLabel();
 
-                            valueRetriever = valueRetriever.MakeGenericMethod(nullableLongType);
-
                             iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
-                            iLGenerator.Emit(OpCodes.Stloc_S, nullableLongLocal);
+                            iLGenerator.Emit(OpCodes.Stloc_S, baseLocal);
 
-                            iLGenerator.Emit(OpCodes.Ldloca_S, nullableLongLocal);
-                            iLGenerator.Emit(OpCodes.Call, nullableLongType.GetProperty("HasValue").GetGetMethod());
+                            iLGenerator.Emit(OpCodes.Ldloca_S, baseLocal);
+                            iLGenerator.Emit(OpCodes.Call, baseLocal.LocalType.GetProperty("HasValue").GetGetMethod());
                             iLGenerator.Emit(OpCodes.Brtrue, afterHasNoValueLabel);
 
-                            iLGenerator.Emit(OpCodes.Ldloca_S, nullableUlongLocal);
+                            iLGenerator.Emit(OpCodes.Ldloca_S, outputLocal);
                             iLGenerator.Emit(OpCodes.Initobj, column.PropertyInfo.PropertyType);
-                            iLGenerator.Emit(OpCodes.Ldloc_S, nullableUlongLocal);
+                            iLGenerator.Emit(OpCodes.Ldloc_S, outputLocal);
                             iLGenerator.Emit(OpCodes.Br, assignLabel);
 
                             iLGenerator.MarkLabel(afterHasNoValueLabel);
 
-                            iLGenerator.Emit(OpCodes.Ldloca_S, nullableLongLocal);
-                            iLGenerator.Emit(OpCodes.Call, nullableLongType.GetProperty("Value").GetGetMethod());
+                            iLGenerator.Emit(OpCodes.Ldloca_S, baseLocal);
+                            iLGenerator.Emit(OpCodes.Call, baseType.GetProperty("Value").GetGetMethod());
 
-                            iLGenerator.Emit(OpCodes.Ldc_I8, long.MinValue);
-                            iLGenerator.Emit(OpCodes.Sub);
+                            if (isStronglyTypedKey)
+                            {
+                                var underlyingStronglyTypedKeyType = underlyingType.GetInterface(typeof(IKey<,>).Name).GetGenericArguments()[1];
+
+                                var longType = typeof(long);
+                                var uLongType = typeof(ulong);
+                                var keyType = underlyingType;
+
+
+
+                                if (underlyingStronglyTypedKeyType == uLongType)
+                                {
+                                    _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
+                                    _moveNextMethodIL.Emit(OpCodes.Sub);
+
+                                    underlyingType = longType;
+                                }
+
+                                var keyLocal = iLGenerator.DeclareLocal(underlyingType);
+
+                                iLGenerator.Emit(OpCodes.Stloc, keyLocal);
+                                iLGenerator.Emit(OpCodes.Ldloca, keyLocal);
+
+                                if (underlyingStronglyTypedKeyType == uLongType)
+                                {
+                                    underlyingType = keyType;
+                                }
+
+                                iLGenerator.Emit(OpCodes.Call, underlyingType.GetCastMethod(underlyingStronglyTypedKeyType, underlyingType));
+                            }
+                            else if (isUlong)
+                            {
+                                iLGenerator.Emit(OpCodes.Ldc_I8, long.MinValue);
+                                iLGenerator.Emit(OpCodes.Sub);
+                            }
 
                             iLGenerator.Emit(OpCodes.Newobj, column.PropertyInfo.PropertyType.GetConstructor(new[] { underlyingType }));
 
@@ -1757,22 +1772,54 @@ namespace Venflow.Dynamic.Materializer
 
                 var type = column.PropertyInfo.PropertyType;
 
-                var isUlong = type == typeof(ulong);
-
-                if (isUlong)
+                if (type == typeof(ulong))
                 {
                     type = typeof(long);
-                }
 
-                valueRetriever = valueRetriever.MakeGenericMethod(type);
+                    valueRetriever = valueRetriever.MakeGenericMethod(type);
 
-                iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
+                    iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
 
-                if (isUlong)
-                {
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
                     _moveNextMethodIL.Emit(OpCodes.Sub);
                 }
+                else if (typeof(IKey).IsAssignableFrom(type))
+                {
+                    var underlyingType = type.GetInterface(typeof(IKey<,>).Name).GetGenericArguments()[1];
+
+                    var longType = typeof(long);
+                    var uLongType = typeof(ulong);
+
+                    if (underlyingType == uLongType)
+                    {
+                        underlyingType = longType;
+                    }
+
+                    valueRetriever = valueRetriever.MakeGenericMethod(underlyingType);
+                    iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
+
+                    if (underlyingType == longType)
+                    {
+                        _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
+                        _moveNextMethodIL.Emit(OpCodes.Sub);
+
+                        underlyingType = uLongType;
+                    }
+
+                    var keyLocal = iLGenerator.DeclareLocal(underlyingType);
+
+                    iLGenerator.Emit(OpCodes.Stloc, keyLocal);
+                    iLGenerator.Emit(OpCodes.Ldloca, keyLocal);
+
+                    iLGenerator.Emit(OpCodes.Call, type.GetCastMethod(underlyingType, type));
+                }
+                else
+                {
+                    valueRetriever = valueRetriever.MakeGenericMethod(type);
+
+                    iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
+                }
+
             }
         }
 
