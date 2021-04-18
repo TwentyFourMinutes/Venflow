@@ -54,23 +54,23 @@ jobs:
 
     - name: Run Query Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*query*"
+      run: dotnet run -c Release -f net5.0 -- -f "*query*"
 
     - name: Run Insert Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*insert*"
+      run: dotnet run -c Release -f net5.0 -- -f "*insert*"
 
     - name: Run Update Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*update*"
+      run: dotnet run -c Release -f net5.0 -- -f "*update*"
 
     - name: Run Delete Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*delete*"
+      run: dotnet run -c Release -f net5.0 -- -f "*delete*"
 
     - name: Run Instantiation Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f netcoreapp5.0 -- -f "*instantiation*"
+      run: dotnet run -c Release -f net5.0 -- -f "*instantiation*"
 
     - name: Run Score Calculator
       working-directory: ./src/Venflow/Venflow.Score
