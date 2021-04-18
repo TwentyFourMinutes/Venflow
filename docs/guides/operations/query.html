@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Query with Venflow | Venflow Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Query with Venflow | Venflow Documentation ">
+    
+    <meta property="og:locale" content="en-us">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Venflow Docs">
+    <meta property="og:image" content="">
+    <meta property="og:image:alt" content="Venflow Logo">
+    <meta name="theme-color" content="#995EA7">
+    <meta name="generator" content="docfx 2.56.7.0">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    <meta id="docfx-style:rel" content="../../">
+    <link rel="preload" href="../../styles/search-worker.js" as="script">
+    <link rel="preload" href="../../fonts/glyphicons-halflings-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.minify.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/master.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <link rel="stylesheet" href="../../styles/material.css">
+    <link rel="stylesheet" href="../../styles/theme-switcher.css">
+    <link href="https://cdn.rawgit.com/noelboss/featherlight/1.7.6/release/featherlight.min.css" type="text/css" rel="stylesheet">
+    
+    <meta property="docfx:rel" content="../../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../venflow.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Guides.Operations.Query">
+<h1 id="query-data-with-venflow">Query Data with Venflow</h1>
+
+<div class="WARNING">
+<h5>Warning</h5>
+<p>Be carful while dealing with raw SQL and ensure that you never pass user modified SQL to any of the methods. Instead use parameterized  overloads or the <code>Interpolated</code> siblings.</p>
+</div>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>The primary key always has to be the first column of a given table returned by an SQL Query.</p>
+</div>
+<h2 id="query-data-without-relations">Query data without relations</h2>
+<p>Your <code>Database</code> class exposes <code>Table&lt;T&gt;</code> properties which expose query operations. In Venflow queries are based on hand-written SQL. In this case we query the first 10 blogs in the database.</p>
+<pre><code class="lang-cs">await using var database = new BlogDatabase(); // You should register this in a Transient/Scoped your IOC Container.
+
+// You can re-use this in different BlogDatabase instances through the database.Blogs.QueryAsync() method
+// If you intend to reuse the query below you need to pass the QueryBatch method false for the disposeCommand,
+// otherwise the underyling command will be disposed after the first use.
+var query = database.Blogs.QueryBatch(@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; LIMIT 10&quot;).Build(); 
+
+var blogs = await query.QueryAsync(); // You can also inline this with the line above.
+</code></pre>
+<p>Additionally if you do not intend to reuse the the command instance you can omit the <code>Build</code> method call and directly call <code>QueryAsync</code>.</p>
+<p>Also, if you instead only wanted to query the first result, you can use the <code>QuerySingle</code> API.</p>
+<pre><code class="lang-cs">var blog = await database.Blogs.QuerySingle(@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; LIMIT 1&quot;).QueryAsync();
+</code></pre>
+<h2 id="query-data-with-relations">Query data with relations</h2>
+<p>In this case we want to get the first 5 blogs with all of their posts. If you want to perform a join, the builder exposes the <code>JoinWith</code> and the <code>ThenWith</code> method to perform nested joins.</p>
+<pre><code class="lang-cs">const string sql = 
+@&quot;SELECT * FROM 
+(
+	SELECT * FROM &quot;&quot;Blogs&quot;&quot;
+	LIMIT 5
+) AS &quot;&quot;Blogs&quot;&quot; 
+JOIN &quot;&quot;Posts&quot;&quot; ON &quot;&quot;Posts&quot;&quot;.&quot;&quot;BlogId&quot;&quot; = &quot;&quot;Blogs&quot;&quot;.&quot;&quot;Id&quot;&quot;&quot;;
+
+var query = await database.Blogs.QueryBatch(sql).JoinWith(x =&gt; x.Posts).QueryAsync();
+</code></pre>
+<p>If you instead only wanted to query the first blog with all of its posts, you can again use the <code>QuerySingle</code> API.</p>
+<pre><code class="lang-cs">var blogs = await database.Blogs.QuerySingle().JoinWith(x =&gt; x.Posts).QueryAsync();
+</code></pre>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>When joining with multiple relations, ensure that the order of joins configured with Venflow, are equal to the order of joins in the SQL.</p>
+</div>
+<h2 id="queries-with-parameters">Queries with parameters</h2>
+<p>Most of the times your query contains some sort of parameters. With Venflow you have two options, either by using the raw <code>NpgsqlParameter</code> class and the matching <code>QuerySingle</code>/<code>QueryBatch</code> overloads or the Interpolated SQL methods. You can learn more about string interpolation in <a href="../advanced/interpolation.html">this guide</a>.</p>
+<p>In this example, we try to query the first blog with the id <code>5</code> with all of its posts.</p>
+<pre><code class="lang-cs">FormattableString sql =
+$@&quot;SELECT * FROM 
+(
+	SELECT * FROM &quot;&quot;Blogs&quot;&quot;
+	WHERE &quot;&quot;Id&quot;&quot; = {5}
+	LIMIT 1
+) AS &quot;&quot;Blogs&quot;&quot; 
+JOIN &quot;&quot;Posts&quot;&quot; ON &quot;&quot;Posts&quot;&quot;.&quot;&quot;BlogId&quot;&quot; = &quot;&quot;Blogs&quot;&quot;.&quot;&quot;Id&quot;&quot;&quot;;
+
+var blogs = await database.Blogs.QueryInterpolatedSingle(sql).JoinWith(x =&gt; x.Posts).QueryAsync();
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Most of the methods in Venflow which accept raw SQL do have a sibling method called <code>*Interpolated*</code>.</p>
+</div>
+<h2 id="query-partial-data">Query partial data</h2>
+<p>The beautiful thing about Venflow is that you can only query for partial data, which means that a query doesn't necessarily  has to return all column. There are only two thing you need to be aware of:</p>
+<ul>
+<li>The primary key always needs to be returned</li>
+<li>Assuming you have two tables, table A and table B, which you are joining together. Table A isn't allowed to contain a column (other than the primary key) to have the same name as the primary key of table B. Otherwise Venflow won't be able to know when to spilt the SQL result.</li>
+</ul>
+<p>A simple example of that would be something like the following, where we just query the name and the primary key of all blogs.</p>
+<pre><code class="lang-cs">const string sql = @&quot;SELECT &quot;&quot;Id&quot;&quot;, &quot;&quot;Name&quot;&quot; FROM &quot;&quot;Blogs&quot;&quot;&quot;;
+
+var blogs = await database.Blogs.QueryBatch(sql).QueryAsync();
+</code></pre>
+<h2 id="queries-which-dont-return-entities">Queries which don't return entities</h2>
+<p>In Venflow you have the option to construct queries which don't necessarily return a row of a table, in this case you can use the <code>Custom&lt;T&gt;</code> method on your <code>Database</code> class.</p>
+<p>In the following example we want to return the amount of rows in the Blogs table.</p>
+<pre><code class="lang-cs">public class CountReturn
+{
+    public int Count { get; set; }
+}
+
+await database.Custom&lt;CountReturn&gt;().QuerySingle(@&quot;SELECT COUNT(*) FROM &quot;&quot;Blogs&quot;&quot;&quot;).QueryAsync();
+</code></pre>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>This API does not support any of the usual methods available on regular entities, such as change tracking or joins.</p>
+</div>
+<h2 id="dynamic-sql-queries">Dynamic SQL queries</h2>
+<p>There might be situations in which you need to dynamically generate SQL with parameters, in which case the common <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.text.stringbuilder"><code>StringBuilder</code></a> isn't sufficient enough. Venflow provides you with the <a class="xref" href="../../api/Venflow.FormattableSqlStringBuilder.html"><code>FormattableSqlStringBuilder</code></a> class which acts like a  <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.text.stringbuilder"><code>StringBuilder</code></a>, however it provides methods, which allow for interpolated SQL. Lets take a look at this with a more practical example.</p>
+<pre><code class="lang-cs">public Task&lt;List&lt;Blogs&gt;&gt; GetBlogsAsync(string[]? names)
+{
+    var stringBuilder = new FormattableSqlStringBuilder();
+	
+    stringBuilder.Append(@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot;&quot;);
+    
+    if(names is not null &amp;&amp;
+	   names.Length &gt; 0)
+    {
+        stringBuilder.Append(@&quot; WHERE &quot;&quot;Name&quot;&quot; IN (&quot;);
+        stringBuilder.AppendParameter(names);
+        stringBuilder.AppendInterpolated(@$&quot;) AND LENGTH(&quot;&quot;Name&quot;&quot;) &gt; {5}&quot;);
+    }
+    
+    return database.Blogs.QueryInterpolatedBatch(stringBuilder).QueryAsync();
+}
+</code></pre>
+<p>Obviously the query shown above is not too useful, however if names would be provided, it would only query those and additionally they would need to be longer than 5 characters.</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="theme-switch-field">
+                <p>Theme</p>
+                <select id="theme-switcher">
+                  <option value="dark">Dark
+                  <option value="gray">Gray
+                  <option value="light">Light
+                </select>
+              </div>
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/docs/docfx/guides/operations/query.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <span>Copyright © 2021 Twenty</span>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+    <script type="text/javascript" src="../../styles/styleswitcher.js"></script>  </body>
+</html>
