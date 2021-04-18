@@ -19,8 +19,8 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
     <PackageReference Include="Dapper" Version="2.0.78" />
-    <PackageReference Include="RepoDb" Version="1.12.6" />
-    <PackageReference Include="RepoDb.PostgreSql" Version="1.1.2" />
+    <PackageReference Include="RepoDb" Version="1.12.8-beta4" />
+    <PackageReference Include="RepoDb.PostgreSql" Version="1.1.4-beta1" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net5.0' AND '$(TargetFramework)' != 'net6.0'">
@@ -29,8 +29,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net5.0' OR '$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.2" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.0-preview3" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.0-preview.3.21201.4" />
   </ItemGroup>
 
   <ItemGroup>
