@@ -10,6 +10,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         
+      - name: Setup .NET 6.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.100-preview.3.21202.5
+        
       - name: Publish Venflow on version change
         id: publish_venflow_nuget
         uses: brandedoutcast/publish-nuget@v2.5.5
@@ -31,6 +36,20 @@ jobs:
           PROJECT_FILE_PATH: src/Venflow/Venflow.Extensions.Logging/Venflow.Extensions.Logging.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
           PACKAGE_NAME: Venflow.Extensions.Logging
+          VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
+          TAG_COMMIT: true
+          TAG_FORMAT: v*
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+          NUGET_SOURCE: https://api.nuget.org
+          INCLUDE_SYMBOLS: true
+          
+      - name: Publish Venflow.Keys on version change
+        id: publish_venflow_keys_nuget
+        uses: brandedoutcast/publish-nuget@v2.5.5
+        with:
+          PROJECT_FILE_PATH: src/Venflow/Venflow.Keys/Venflow.Keys.csproj
+          VERSION_FILE_PATH: src/Venflow/Directory.Build.props
+          PACKAGE_NAME: Venflow.Keys
           VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
           TAG_COMMIT: true
           TAG_FORMAT: v*
