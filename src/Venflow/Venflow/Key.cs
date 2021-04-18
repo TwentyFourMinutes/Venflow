@@ -14,7 +14,7 @@ namespace Venflow
     {
         private TKey _value;
 
-        TKey IKey<T, TKey>.Value { get => _value; set => _value = value; }
+        TKey IKey<T, TKey>.Value { get => _value; }
 
         /// <summary>
         /// Instantiates a new <see cref="Key{T, TKey}"/> instance withe the provided value.
@@ -84,14 +84,13 @@ namespace Venflow
     /// </summary>
     /// <typeparam name="T">They type of entity the key sits in.</typeparam>
     /// <typeparam name="TKey">The type of the key.</typeparam>
-    /// <remarks>See <see cref="Key{T, TKey}"/>for a pos    sible implementation.</remarks>
+    /// <remarks>See <see cref="Key{T, TKey}"/>for a possible implementation.</remarks>
     public interface IKey<T, TKey> : IKey
-        where TKey : struct
     {
         /// <summary>
         /// The underlying value representing the <see cref="Key{T, TKey}"/>.
         /// </summary>
-        public TKey Value { get; internal set; }
+        public TKey Value { get; }
     }
 
     /// <summary>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Venflow.Keys</name>
+    </assembly>
+    <members>
+        <member name="T:Venflow.Keys.KeyGenerator">
+            <summary>
+            A Source Generator that will generate a strongly typed id implementation.
+            </summary>
+        </member>
+        <member name="M:Venflow.Keys.KeyGenerator.Initialize(Microsoft.CodeAnalysis.GeneratorInitializationContext)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Keys.KeyGenerator.Execute(Microsoft.CodeAnalysis.GeneratorExecutionContext)">
+            <inheritdoc/>
+        </member>
+    </members>
+</doc>

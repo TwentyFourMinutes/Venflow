@@ -9,6 +9,7 @@
             "**/Venflow.Benchmarks/**",
             "**/Venflow.Score/**",
 			"**/Venflow.Shared/**",
+			"**/Venflow.Keys/**",
 			"**/Venflow.Tests/**"
           ]
         }
