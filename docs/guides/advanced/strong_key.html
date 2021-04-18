@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Strongly-typed Ids with Venflow | Venflow Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Strongly-typed Ids with Venflow | Venflow Documentation ">
+    
+    <meta property="og:locale" content="en-us">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Venflow Docs">
+    <meta property="og:image" content="">
+    <meta property="og:image:alt" content="Venflow Logo">
+    <meta name="theme-color" content="#995EA7">
+    <meta name="generator" content="docfx 2.56.7.0">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    <meta id="docfx-style:rel" content="../../">
+    <link rel="preload" href="../../styles/search-worker.js" as="script">
+    <link rel="preload" href="../../fonts/glyphicons-halflings-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.minify.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/master.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <link rel="stylesheet" href="../../styles/material.css">
+    <link rel="stylesheet" href="../../styles/theme-switcher.css">
+    <link href="https://cdn.rawgit.com/noelboss/featherlight/1.7.6/release/featherlight.min.css" type="text/css" rel="stylesheet">
+    
+    <meta property="docfx:rel" content="../../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../venflow.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Guides.Advanced.StrongKeys">
+<h1 id="strongly-typed-ids-with-venflow">Strongly-typed Ids with Venflow</h1>
+
+<p>Usually when interacting with any SQL database ids are quite common, especially when you have to write the SQL on your own. One might now ask themselves, why there even would be a need for strongly-typed ids, lets look at the example below.</p>
+<pre><code class="lang-cs">var blogId = 10;
+var postId = 14;
+
+var post = GetPostByBlog(postId, blogId);
+
+public Post GetPostByBlog(int blogId, int postId)
+{
+    // Omitted for brevity 
+}
+</code></pre>
+<p>This code will compile just fine, however as you might have spotted, the <code>postId</code> and <code>blogId</code> are in the wrong order and therefore might not give us the expected result. This can be a real nightmare to fix as it is rather hard to spot in a large codebase with a lot of different entities. Luckily Venflow directly provides you with a build in solution called strongly-typed ids, through the <a class="xref" href="../../api/Venflow.Key-2.html"><code>Key&lt;T,TKey&gt;</code></a> API. Lets look at a full implementation.</p>
+<pre><code class="lang-cs">public class Blog
+{
+    public Key&lt;Blog, int&gt; Id { get; set; } // Using Key instead of int
+    public string Name { get; set; }
+    
+    public IList&lt;Post&gt; Posts { get; }
+    
+    public Blog()
+    {
+        Posts = new List&lt;Post&gt;();
+    }
+}
+
+public class Post
+{
+    public Key&lt;Post, int&gt; Id { get; set; } // Using Key instead of int
+    public string Title { get; set; }
+    public string Content { get; set; }
+    
+    public Key&lt;Blog, int&gt; BlogId { get; set; } // Using Key instead of int
+    public Blog Blog { get; set; }
+}
+</code></pre>
+<p>Not only do primary-keys benefit from this, but also all the columns/properties which take any kind of id, such as foreign-keys. Not only do we now have type-safety, but also close to zero effort, since equality operators as well as implicit cast operators are predefined. Lets take the example from before and see what changes.</p>
+<pre><code class="lang-cs">Key&lt;Blog, int&gt; blogId = 10;
+Key&lt;Post, int&gt; postId = 14;
+
+var post = GetPostByBlog(postId, blogId);
+
+public Post GetPostByBlog(Key&lt;Blog, int&gt; blogId, Key&lt;Post, int&gt; postId)
+{
+    // Omitted for brevity 
+}
+</code></pre>
+<p>This will no longer compile, due to the fact, that the  <code>Key&lt;Post, int&gt;</code> stored in <code>postId</code> can not be implicitly converted to the
+<code>Key&lt;Blog, int&gt;</code> parameter defined in the by the <code>GetPostByBlog</code> method.</p>
+<h2 id="reducing-the-boilerplate">Reducing the boilerplate</h2>
+<p>This is already an improvement, but it is somewhat annoying to always specify the type the key belongs to as well as the type of the key. In most databases you will most likely end up with the same type of id for all of your tables. Therefor it is rather unnecessary to specify it every time in code. Venflow provides you with an extensions package called <a href="https://www.nuget.org/packages/Venflow.Keys/"><code>Venflow.Keys</code></a>, which includes a Source Generator to create a strongly-typed id with a fixed type for us. However, do note that Source Generators are only available through C#9. Once the package is installed we will be able to do the following.</p>
+<pre><code class="lang-cs">[Venflow.Keys.GeneratedKey(typeof(int))]
+public partial struct Key&lt;T&gt; { }
+</code></pre>
+<p>From now on you would be able to create all your strongly-typed ids as shown below.</p>
+<pre><code class="lang-cs">public class Post
+{
+    public Key&lt;Post&gt; Id { get; set; } // Using Key&lt;T&gt; instead of Key&lt;T, TKey&gt;
+    public string Title { get; set; }
+    public string Content { get; set; }
+    
+    public Key&lt;Blog&gt; BlogId { get; set; } // Using Key&lt;T&gt; instead of Key&lt;T, TKey&gt;
+    public Blog Blog { get; set; }
+}
+</code></pre>
+<p>If required you could also create multiple strongly-typed ids with a fixed types, by naming them differently, for example <code>IntKey&lt;T&gt;</code> or <code>GuidKey&lt;T&gt;</code>.</p>
+<h2 id="support-for-json-and-aspnet-core">Support for JSON and ASP.Net Core</h2>
+<p>It is indeed possible to support both, but native support by Venflow, will most likely arrive in the next release.</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="theme-switch-field">
+                <p>Theme</p>
+                <select id="theme-switcher">
+                  <option value="dark">Dark
+                  <option value="gray">Gray
+                  <option value="light">Light
+                </select>
+              </div>
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/docs/docfx/guides/advanced/strong_key.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <span>Copyright © 2021 Twenty</span>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+    <script type="text/javascript" src="../../styles/styleswitcher.js"></script>  </body>
+</html>
