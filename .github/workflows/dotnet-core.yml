@@ -70,7 +70,7 @@ jobs:
     - name: Build Documentation
       uses: nikeee/docfx-action@v1.0.0
       with:
-        args: /github/workspace/docs/docfx/docfx.json --property TargetFramework=netcoreapp3.1
+        args: /github/workspace/docs/docfx/docfx.json --property TargetFramework=net5.0
     - name: Deploy Documentation to Github Pages
       uses: JamesIves/github-pages-deploy-action@3.7.1
       with:
