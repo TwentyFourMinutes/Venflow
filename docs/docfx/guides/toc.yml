@@ -38,5 +38,7 @@
       topicUid: Guides.Advanced.Logging
     - name: Microsoft.Extensions.Logging
       topicUid: Guides.Advanced.Logging.Extensions
+    - name: Strongly-typed Ids
+      topicUid: Guides.Advanced.StrongKeys
     - name: Query Command Caching
       topicUid: Guides.Advanced.CommandQueryCache

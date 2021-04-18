@@ -48,3 +48,29 @@ This will query all blogs with the ids `1`, `2` and `3`. The above written SQL s
 `"SELECT * FROM ""Blogs"" WHERE ""Id"" IN (1, 2, 3)"` 
 
 Of course the numbers usually would be parametrized, however for the sake of this example it contains the values directly.  
+
+## Dynamic SQL
+
+There might be situations in which you need to dynamically generate SQL with parameters, in which case the common [`StringBuilder`](xref:System.Text.StringBuilder) isn't sufficient enough. Venflow provides you with the [`FormattableSqlStringBuilder`](xref:Venflow.FormattableSqlStringBuilder) class which acts like a  [`StringBuilder`](xref:System.Text.StringBuilder), however it provides methods, which allow for interpolated SQL. Lets take a look at this with a more practical example.
+
+```cs
+public Task<List<Blogs>> GetBlogsAsync(string[]? names)
+{
+    var stringBuilder = new FormattableSqlStringBuilder();
+	
+    stringBuilder.Append(@"SELECT * FROM ""Blogs""");
+    
+    if(names is not null &&
+	   names.Length > 0)
+    {
+        stringBuilder.Append(@" WHERE ""Name"" IN (");
+        stringBuilder.AppendParameter(names);
+        stringBuilder.AppendInterpolated(@$") AND LENGTH(""Name"") > {5}");
+    }
+    
+    return database.Blogs.QueryInterpolatedBatch(stringBuilder).QueryAsync();
+}
+```
+
+Obviously the query shown above is not too useful, however if names would be provided, it would only query those and additionally they would need to be longer than 5 characters.
+
