@@ -3,11 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <LangVersion>preview</LangVersion>
-    <Description>Adds support for generated strongly-typed keys to Venflow.</Description>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
     <IsRoslynComponent>true</IsRoslynComponent>
   </PropertyGroup>
 

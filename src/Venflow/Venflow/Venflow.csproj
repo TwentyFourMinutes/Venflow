@@ -27,4 +27,8 @@
     <PackageReference Include="System.ComponentModel.Annotations" Version="6.0.0-preview.3.21201.4" />
     <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Venflow.Generators\bin\$(Configuration)\netstandard2.0\Venflow.Generators.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
 </Project>

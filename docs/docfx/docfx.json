@@ -9,7 +9,7 @@
             "**/Venflow.Benchmarks/**",
             "**/Venflow.Score/**",
 			"**/Venflow.Shared/**",
-			"**/Venflow.Keys/**",
+			"**/Venflow.Generators/**",
 			"**/Venflow.Tests/**"
           ]
         }
@@ -78,8 +78,8 @@
 	"xref": [
 	  "https://www.npgsql.org/xrefmap.yml"
 	],
-	"xrefService": [ 
-	  "https://xref.docs.microsoft.com/query?uid={uid}" 
+	"xrefService": [
+	  "https://xref.docs.microsoft.com/query?uid={uid}"
 	],
     "markdownEngineName": "markdig",
     "noLangKeyword": false,

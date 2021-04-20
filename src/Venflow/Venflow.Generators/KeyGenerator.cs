@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-namespace Venflow.Keys
+namespace Venflow.Keys.Generated
 {
     /// <summary>
     /// A Source Generator that will generate a strongly typed id implementation.
