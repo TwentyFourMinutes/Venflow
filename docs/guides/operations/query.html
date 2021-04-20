@@ -177,26 +177,6 @@ await database.Custom&lt;CountReturn&gt;().QuerySingle(@&quot;SELECT COUNT(*) FR
 <h5>Warning</h5>
 <p>This API does not support any of the usual methods available on regular entities, such as change tracking or joins.</p>
 </div>
-<h2 id="dynamic-sql-queries">Dynamic SQL queries</h2>
-<p>There might be situations in which you need to dynamically generate SQL with parameters, in which case the common <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.text.stringbuilder"><code>StringBuilder</code></a> isn't sufficient enough. Venflow provides you with the <a class="xref" href="../../api/Venflow.FormattableSqlStringBuilder.html"><code>FormattableSqlStringBuilder</code></a> class which acts like a  <a class="xref" href="https://docs.microsoft.com/dotnet/api/system.text.stringbuilder"><code>StringBuilder</code></a>, however it provides methods, which allow for interpolated SQL. Lets take a look at this with a more practical example.</p>
-<pre><code class="lang-cs">public Task&lt;List&lt;Blogs&gt;&gt; GetBlogsAsync(string[]? names)
-{
-    var stringBuilder = new FormattableSqlStringBuilder();
-	
-    stringBuilder.Append(@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot;&quot;);
-    
-    if(names is not null &amp;&amp;
-	   names.Length &gt; 0)
-    {
-        stringBuilder.Append(@&quot; WHERE &quot;&quot;Name&quot;&quot; IN (&quot;);
-        stringBuilder.AppendParameter(names);
-        stringBuilder.AppendInterpolated(@$&quot;) AND LENGTH(&quot;&quot;Name&quot;&quot;) &gt; {5}&quot;);
-    }
-    
-    return database.Blogs.QueryInterpolatedBatch(stringBuilder).QueryAsync();
-}
-</code></pre>
-<p>Obviously the query shown above is not too useful, however if names would be provided, it would only query those and additionally they would need to be longer than 5 characters.</p>
 </article>
           </div>
           

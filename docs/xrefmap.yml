@@ -25,6 +25,9 @@ references:
 - uid: Guides.Advanced.Preparation
   name: Statement Preparation with Venflow
   href: guides/advanced/prepared_statements.html
+- uid: Guides.Advanced.StrongKeys
+  name: Strongly-typed Ids with Venflow
+  href: guides/advanced/strong_key.html
 - uid: Guides.Advanced.Validation
   name: Validation with Venflow
   href: guides/advanced/validation.html
