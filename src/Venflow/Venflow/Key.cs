@@ -9,10 +9,10 @@ namespace Venflow
     /// <typeparam name="T">They type of entity the key sits in.</typeparam>
     /// <typeparam name="TKey">The type of the key.</typeparam>
     /// <remarks>You can also create more specific implementations of this type, by creating a <i>struct</i> implementing <see cref="IKey{T, TKey}"/>.</remarks>
-    public struct Key<T, TKey> : IKey<T, TKey>, IEquatable<Key<T, TKey>>
+    public readonly struct Key<T, TKey> : IKey<T, TKey>, IEquatable<Key<T, TKey>>
             where TKey : struct, IEquatable<TKey>
     {
-        private TKey _value;
+        private readonly TKey _value;
 
         TKey IKey<T, TKey>.Value { get => _value; }
 
