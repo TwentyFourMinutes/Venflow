@@ -2,7 +2,6 @@
 
 namespace Venflow.Dynamic.IL
 {
-
     internal struct ILInst : IILBaseInst
     {
         private readonly OpCode _opCode;
@@ -12,7 +11,7 @@ namespace Venflow.Dynamic.IL
             _opCode = opCode;
         }
 
-        public void WriteIL(ILGenerator ilGenerator)
+        void IILBaseInst.WriteIL(ILGenerator ilGenerator)
         {
             ilGenerator.Emit(_opCode);
         }

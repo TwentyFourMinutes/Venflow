@@ -3,7 +3,6 @@ using System.Reflection.Emit;
 
 namespace Venflow.Dynamic.IL
 {
-
     internal struct ILFieldInfo : IILBaseInst
     {
         private readonly OpCode _opCode;
@@ -15,7 +14,7 @@ namespace Venflow.Dynamic.IL
             _value = value;
         }
 
-        public void WriteIL(ILGenerator ilGenerator)
+        void IILBaseInst.WriteIL(ILGenerator ilGenerator)
         {
             ilGenerator.Emit(_opCode, _value);
         }

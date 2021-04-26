@@ -33,74 +33,12 @@ namespace Venflow.Dynamic.IL
             _ilInstructions[_index++] = new ILInst(opCode);
         }
 
-        internal void Emit(OpCode opCode, sbyte value)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILSbyteInst(opCode, value);
-        }
-
-        internal void Emit(OpCode opCode, int value)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILIntInst(opCode, value);
-        }
-
-        internal void Emit(OpCode opCode, string value)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILString(opCode, value);
-        }
-
-        internal void Emit(OpCode opCode, MethodInfo method)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILMethodInfo(opCode, method);
-        }
 
         internal void Emit(OpCode opCode, FieldInfo field)
         {
             EnsureCapacity();
 
             _ilInstructions[_index++] = new ILFieldInfo(opCode, field);
-        }
-
-        internal void Emit(OpCode opCode, LocalBuilder local)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILLocalBuilder(opCode, local);
-        }
-
-        internal void Emit(OpCode opCode, ConstructorInfo constructor)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILConstructorInfo(opCode, constructor);
-        }
-
-        internal void Emit(OpCode opCode, Label label)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILLabel(opCode, label);
-        }
-
-
-        internal void MarkLabel(Label label)
-        {
-            EnsureCapacity();
-
-            _ilInstructions[_index++] = new ILMarkLabel(label);
-        }
-
-        internal void EmitWriteLine(string value)
-        {
-            Emit(OpCodes.Ldstr, value);
-            Emit(OpCodes.Call, typeof(Console).GetMethod("WriteLine", new[] { typeof(string) }));
         }
 
         internal void WriteIL(ILGenerator ilGenerator)

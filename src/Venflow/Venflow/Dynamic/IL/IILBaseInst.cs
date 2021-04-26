@@ -4,6 +4,6 @@ namespace Venflow.Dynamic.IL
 {
     internal interface IILBaseInst
     {
-        public void WriteIL(ILGenerator ilGenerator);
+        void WriteIL(ILGenerator ilGenerator);
     }
 }
