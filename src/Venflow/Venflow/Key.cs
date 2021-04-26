@@ -6,15 +6,15 @@ namespace Venflow
     /// <summary>
     /// This is used to create strongly-typed ids.
     /// </summary>
-    /// <typeparam name="T">They type of entity the key sits in.</typeparam>
+    /// <typeparam name="TEntity">They type of entity the key sits in.</typeparam>
     /// <typeparam name="TKey">The type of the key.</typeparam>
     /// <remarks>You can also create more specific implementations of this type, by creating a <i>struct</i> implementing <see cref="IKey{T, TKey}"/>.</remarks>
-    public readonly struct Key<T, TKey> : IKey<T, TKey>, IEquatable<Key<T, TKey>>
+    public readonly struct Key<TEntity, TKey> : IKey<TEntity, TKey>, IEquatable<Key<TEntity, TKey>>
             where TKey : struct, IEquatable<TKey>
     {
         private readonly TKey _value;
 
-        TKey IKey<T, TKey>.Value { get => _value; }
+        TKey IKey<TEntity, TKey>.Value { get => _value; }
 
         /// <summary>
         /// Instantiates a new <see cref="Key{T, TKey}"/> instance withe the provided value.
@@ -26,31 +26,31 @@ namespace Venflow
         }
 
         ///<inheritdoc/>
-        public static implicit operator TKey(in Key<T, TKey> key)
+        public static implicit operator TKey(in Key<TEntity, TKey> key)
         {
             return key._value;
         }
 
         ///<inheritdoc/>
-        public static implicit operator Key<T, TKey>(in TKey value)
+        public static implicit operator Key<TEntity, TKey>(in TKey value)
         {
-            return new Key<T, TKey>(value);
+            return new Key<TEntity, TKey>(value);
         }
 
         ///<inheritdoc/>
-        public static bool operator ==(in Key<T, TKey> a, in Key<T, TKey> b)
+        public static bool operator ==(in Key<TEntity, TKey> a, in Key<TEntity, TKey> b)
         {
             return a.Equals(b);
         }
 
         ///<inheritdoc/>
-        public static bool operator !=(in Key<T, TKey> a, in Key<T, TKey> b)
+        public static bool operator !=(in Key<TEntity, TKey> a, in Key<TEntity, TKey> b)
         {
             return !a.Equals(b);
         }
 
         ///<inheritdoc/>
-        public bool Equals(Key<T, TKey> other)
+        public bool Equals(Key<TEntity, TKey> other)
         {
             return other._value.Equals(this._value);
         }
@@ -58,7 +58,7 @@ namespace Venflow
         ///<inheritdoc/>
         public override bool Equals(object? obj)
         {
-            if (obj is not Key<T, TKey> key)
+            if (obj is not Key<TEntity, TKey> key)
             {
                 return false;
             }
@@ -82,15 +82,15 @@ namespace Venflow
     /// <summary>
     /// This interface should be implemented by <i>structs</i>, to create strongly-typed ids.
     /// </summary>
-    /// <typeparam name="T">They type of entity the key sits in.</typeparam>
+    /// <typeparam name="TEntity">They type of entity the key sits in.</typeparam>
     /// <typeparam name="TKey">The type of the key.</typeparam>
     /// <remarks>See <see cref="Key{T, TKey}"/>for a possible implementation.</remarks>
-    public interface IKey<T, TKey> : IKey
+    public interface IKey<TEntity, TKey> : IKey
     {
         /// <summary>
         /// The underlying value representing the <see cref="Key{T, TKey}"/>.
         /// </summary>
-        public TKey Value { get; }
+        TKey Value { get; }
     }
 
     /// <summary>

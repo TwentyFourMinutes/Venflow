@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-namespace Venflow.Keys.Generated
+namespace Venflow.Generated
 {
     /// <summary>
     /// A Source Generator that will generate a strongly typed id implementation.
@@ -21,13 +21,13 @@ namespace Venflow.Keys.Generated
         {
             context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
 
-            Debug.WriteLine("Strongly-Typed-Id-Generator: Initialized code generator.");
+            Debug.WriteLine("Key-Generator: Initialized code generator.");
         }
 
         /// <inheritdoc/>
         public void Execute(GeneratorExecutionContext context)
         {
-            Debug.WriteLine("Strongly-Typed-Id-Generator: Executing code generator.");
+            Debug.WriteLine("Key-Generator: Executing code generator.");
 
             var baseKeyType = context.Compilation.GetTypeByMetadataName("Venflow.IKey`2");
 
@@ -37,7 +37,7 @@ namespace Venflow.Keys.Generated
             const string attributeText = @"using System;
 using System.Reflection;
 
-namespace Venflow.Keys
+namespace Venflow
 {
     [AttributeUsage(AttributeTargets.Struct, Inherited = false, AllowMultiple = false)]
     public sealed class GeneratedKeyAttribute : Attribute
@@ -55,13 +55,19 @@ namespace Venflow.Keys
 
             var options = (context.Compilation as CSharpCompilation).SyntaxTrees[0].Options as CSharpParseOptions;
             var compilation = context.Compilation.AddSyntaxTrees(CSharpSyntaxTree.ParseText(SourceText.From(attributeText, Encoding.UTF8), options));
-            var attributeSymbol = compilation.GetTypeByMetadataName("Venflow.Keys.GeneratedKeyAttribute");
+            var attributeSymbol = compilation.GetTypeByMetadataName("Venflow.GeneratedKeyAttribute");
+
+            var comparableInterfaceType = compilation.GetTypeByMetadataName("System.IComparable");
+            var convertibleInterfaceType = compilation.GetTypeByMetadataName("System.IConvertible");
+
+            var specialTypeMembers = comparableInterfaceType.GetMembers().Union(convertibleInterfaceType.GetMembers()).OfType<IMethodSymbol>().ToArray();
 
             foreach (var declarationSyntax in ((SyntaxReceiver)context.SyntaxReceiver!).Candidates)
             {
                 var semanticModel = compilation.GetSemanticModel(declarationSyntax.SyntaxTree);
 
                 var underlyingKeyFullName = default(string);
+                var underlyingKeyType = default(ITypeSymbol);
 
                 foreach (var attributeSyntax in declarationSyntax.AttributeLists.SelectMany(x => x.Attributes))
                 {
@@ -72,12 +78,15 @@ namespace Venflow.Keys
                         attributeSyntax.ArgumentList.Arguments[0].Expression is not TypeOfExpressionSyntax typeOfExpression)
                         continue;
 
-                    underlyingKeyFullName = semanticModel.GetTypeInfo(typeOfExpression.Type, context.CancellationToken).Type.ToString();
+                    underlyingKeyType = semanticModel.GetTypeInfo(typeOfExpression.Type, context.CancellationToken).Type;
+
+                    underlyingKeyFullName = underlyingKeyType.ToString();
 
                     break;
                 }
 
-                if (underlyingKeyFullName is null)
+                if (underlyingKeyFullName is null ||
+                    underlyingKeyType is null)
                     break;
 
                 var baseStruct = semanticModel.GetDeclaredSymbol(declarationSyntax);
@@ -86,6 +95,76 @@ namespace Venflow.Keys
                 var typeArgumentName = baseStruct.TypeArguments[0].Name;
                 var baseStructName = baseStruct.Name + "<" + typeArgumentName + ">";
                 var baseStructXmlName = $"{baseStruct.Name}{{{typeArgumentName}}}";
+
+                var parseTextBuilder = new StringBuilder();
+
+                var underlyingKeyMembers = underlyingKeyType.GetMembers();
+
+                if (underlyingKeyMembers.Length > 0)
+                {
+                    var comparableGenericType = underlyingKeyType.AllInterfaces.FirstOrDefault(x => x.ContainingNamespace + "." + x.MetadataName == "System.IComparable`1");
+
+                    IEnumerable<ISymbol> tempSpecialTypeMembers;
+
+                    if (comparableGenericType is null)
+                    {
+                        tempSpecialTypeMembers = specialTypeMembers;
+                    }
+                    else
+                    {
+                        tempSpecialTypeMembers = specialTypeMembers.Union(comparableGenericType.GetMembers());
+                    }
+
+                    foreach (var specialTypeMember in tempSpecialTypeMembers)
+                    {
+                        var methodImplementation = underlyingKeyType.FindImplementationForInterfaceMember(specialTypeMember);
+
+                        if (methodImplementation is not IMethodSymbol methodSymbol)
+                            continue;
+
+                        AppendMethodText(methodSymbol);
+                    }
+
+                    foreach (var underlyingKeyMember in underlyingKeyMembers)
+                    {
+                        if (underlyingKeyMember is not IMethodSymbol methodSymbol ||
+                            methodSymbol.DeclaredAccessibility != Accessibility.Public)
+                            continue;
+
+                        if (!methodSymbol.IsStatic ||
+                            methodSymbol.Name is not "Parse" and not "TryParse" and not "ParseExact" and not "TryParseExact" ||
+                            methodSymbol.ReturnType is null ||
+                            methodSymbol.ReturnType.ContainingNamespace != underlyingKeyType.ContainingNamespace ||
+                            (methodSymbol.ReturnType.Name != underlyingKeyType.Name &&
+                            methodSymbol.ReturnType.ContainingNamespace + "." + methodSymbol.ReturnType.Name != typeof(bool).FullName))
+                        {
+                            continue;
+                        }
+
+                        AppendMethodText(methodSymbol);
+                    }
+
+                    void AppendMethodText(IMethodSymbol methodSymbol)
+                    {
+                        var methodName = methodSymbol.MethodKind == MethodKind.ExplicitInterfaceImplementation ? methodSymbol.Name.Substring(methodSymbol.Name.LastIndexOf(".") + 1, methodSymbol.Name.Length - methodSymbol.Name.LastIndexOf(".") - 1) : methodSymbol.Name;
+                        var interfaceName = methodSymbol.MethodKind == MethodKind.ExplicitInterfaceImplementation ? methodSymbol.Name.Substring(0, methodSymbol.Name.LastIndexOf(".")) : string.Empty;
+
+                        parseTextBuilder.Append(
+$@"        /// <summary>
+        /// Wraps around the <see cref=""{underlyingKeyType.Name}.{methodName}({string.Join(", ", methodSymbol.Parameters.Select(x => (x.RefKind == RefKind.Out ? "out " : string.Empty) + x.Type.ToString().Replace('<', '{').Replace('>', '}')))})""/> method.
+        /// </summary>
+        {(methodSymbol.MethodKind == MethodKind.ExplicitInterfaceImplementation ? string.Empty : "public ")}{(methodSymbol.IsStatic ? "static " : string.Empty)}{methodSymbol.ReturnType.Name} {methodSymbol.Name}({string.Join(", ", methodSymbol.Parameters.Select(x => (x.RefKind == RefKind.Out ? "out " : string.Empty) + x.Type.ToString() + " " + x.Name + (x.HasExplicitDefaultValue ? " = " + (x.ExplicitDefaultValue is null ? "default" : (x.Type.TypeKind == TypeKind.Enum ? x.Type.GetMembers().OfType<IFieldSymbol>().FirstOrDefault(y => int.Equals(y.ConstantValue, x.ExplicitDefaultValue)).ToString() : x.ExplicitDefaultValue)) : string.Empty)))})
+        {{
+            return {(interfaceName != string.Empty ? "((" + interfaceName + ")" : string.Empty)}{(methodSymbol.IsStatic ? underlyingKeyType.Name : "_value")}{(interfaceName != string.Empty ? ")" : string.Empty)}.{methodName}({string.Join(", ", methodSymbol.Parameters.Select(x => (x.RefKind == RefKind.Out ? "out " : string.Empty) + x.Name))});
+        }}
+
+");
+                    }
+                }
+
+                var implementedInterfacesText = string.Join(", ", new[] { "System.IComparable", "System.IComparable`1", "System.IConvertible" }.Where(x => underlyingKeyType.Interfaces.Any(y => y.ContainingNamespace + "." + y.MetadataName == x)).Select(x => x.Replace("`1", "<" + underlyingKeyFullName + ">")));
+
+                implementedInterfacesText = implementedInterfacesText == string.Empty ? string.Empty : ", " + implementedInterfacesText;
 
                 var keyText = @$"using System;
 using Venflow;
@@ -96,7 +175,7 @@ namespace {namespaceText}
     /// This is used to create strongly-typed ids.
     /// </summary>
     /// <typeparam name=""{typeArgumentName}"">They type of entity the key sits in.</typeparam>
-    public readonly partial struct {baseStructName} : IKey<{typeArgumentName}, {underlyingKeyFullName}>, IEquatable<{baseStructName}>
+    public readonly partial struct {baseStructName} : IKey<{typeArgumentName}, {underlyingKeyFullName}>, IEquatable<{baseStructName}>{implementedInterfacesText}
     {{
         private readonly {underlyingKeyFullName} _value;
 
@@ -111,7 +190,7 @@ namespace {namespaceText}
             _value = value;
         }}
 
-        ///<inheritdoc/>
+{parseTextBuilder}        ///<inheritdoc/>
         public static implicit operator {underlyingKeyFullName}(in {baseStructName} key)
         {{
             return key._value;
@@ -166,10 +245,10 @@ namespace {namespaceText}
     }}
 }}
 ";
-                context.AddSource(baseStruct.Name + "_generated", SourceText.From(keyText, Encoding.UTF8));
+                context.AddSource(baseStruct.ContainingNamespace.ToString().Replace('.', '_') + "_" + baseStruct.MetadataName.Replace('`', '_') + "_generated", SourceText.From(keyText, Encoding.UTF8));
             }
 
-            Debug.WriteLine("Strongly-Typed-Id-Generator: Executed code generator.");
+            Debug.WriteLine("Key-Generator: Executed code generator.");
         }
 
         private class SyntaxReceiver : ISyntaxReceiver

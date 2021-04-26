@@ -1050,7 +1050,7 @@
             <summary>
             This is used to create strongly-typed ids.
             </summary>
-            <typeparam name="T">They type of entity the key sits in.</typeparam>
+            <typeparam name="TEntity">They type of entity the key sits in.</typeparam>
             <typeparam name="TKey">The type of the key.</typeparam>
             <remarks>You can also create more specific implementations of this type, by creating a <i>struct</i> implementing <see cref="T:Venflow.IKey`2"/>.</remarks>
         </member>
@@ -1088,7 +1088,7 @@
             <summary>
             This interface should be implemented by <i>structs</i>, to create strongly-typed ids.
             </summary>
-            <typeparam name="T">They type of entity the key sits in.</typeparam>
+            <typeparam name="TEntity">They type of entity the key sits in.</typeparam>
             <typeparam name="TKey">The type of the key.</typeparam>
             <remarks>See <see cref="T:Venflow.Key`2"/>for a possible implementation.</remarks>
         </member>
