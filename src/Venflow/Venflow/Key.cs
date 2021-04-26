@@ -85,6 +85,7 @@ namespace Venflow
     /// <typeparam name="TEntity">They type of entity the key sits in.</typeparam>
     /// <typeparam name="TKey">The type of the key.</typeparam>
     /// <remarks>See <see cref="Key{T, TKey}"/>for a possible implementation.</remarks>
+    [TypeConverter(typeof(KeyConverter))]
     public interface IKey<TEntity, TKey> : IKey
     {
         /// <summary>
