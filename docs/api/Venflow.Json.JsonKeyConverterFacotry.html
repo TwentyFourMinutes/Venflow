@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Interface IKey&lt;TEntity, TKey&gt;
+    <title>Class JsonKeyConverterFacotry
    | Venflow Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta property="og:title" content="Interface IKey&lt;TEntity, TKey&gt;
+    <meta property="og:title" content="Class JsonKeyConverterFacotry
    | Venflow Documentation ">
     
     <meta property="og:locale" content="en-us">
@@ -91,63 +91,60 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Venflow.IKey`2">
+            <article class="content wrap" id="_content" data-uid="Venflow.Json.JsonKeyConverterFacotry">
   
   
-  <h1 id="Venflow_IKey_2" data-uid="Venflow.IKey`2" class="text-break">Interface IKey&lt;TEntity, TKey&gt;
+  <h1 id="Venflow_Json_JsonKeyConverterFacotry" data-uid="Venflow.Json.JsonKeyConverterFacotry" class="text-break">Class JsonKeyConverterFacotry
   </h1>
-  <div class="markdown level0 summary"><p>This interface should be implemented by <em>structs</em>, to create strongly-typed ids.</p>
+  <div class="markdown level0 summary"><p>A <see cref="!:JsonConverter"></see> to parse <a class="xref" href="Venflow.IKey-2.html">IKey&lt;TEntity, TKey&gt;</a> instances.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Venflow.html">Venflow</a></h6>
-  <h6><strong>Assembly</strong>: Venflow.dll</h6>
-  <h5 id="Venflow_IKey_2_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface IKey&lt;TEntity, TKey&gt; : IKey</code></pre>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object">Object</a></div>
+    <div class="level1"><span class="xref">JsonKeyConverterFacotry</span></div>
   </div>
-  <h5 class="typeParameters">Type Parameters</h5>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Venflow.Json.html">Venflow.Json</a></h6>
+  <h6><strong>Assembly</strong>: Venflow.dll</h6>
+  <h5 id="Venflow_Json_JsonKeyConverterFacotry_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class JsonKeyConverterFacotry : JsonConverterFactory</code></pre>
+  </div>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Json_JsonKeyConverterFacotry_CanConvert_Type_.md&amp;value=---%0Auid%3A%20Venflow.Json.JsonKeyConverterFacotry.CanConvert(Type)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/JsonKeyConverter.cs/#L15">View Source</a>
+  </span>
+  <a id="Venflow_Json_JsonKeyConverterFacotry_CanConvert_" data-uid="Venflow.Json.JsonKeyConverterFacotry.CanConvert*"></a>
+  <h4 id="Venflow_Json_JsonKeyConverterFacotry_CanConvert_Type_" data-uid="Venflow.Json.JsonKeyConverterFacotry.CanConvert(Type)">CanConvert(Type)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool CanConvert(Type typeToConvert)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>
+        <th>Type</th>
         <th>Name</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><span class="parametername">TEntity</span></td>
-        <td><p>They type of entity the key sits in.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="parametername">TKey</span></td>
-        <td><p>The type of the key.</p>
-</td>
+        <td><span class="xref">Type</span></td>
+        <td><span class="parametername">typeToConvert</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
-  <h5 id="Venflow_IKey_2_remarks"><strong>Remarks</strong></h5>
-  <div class="markdown level0 remarks"><p>See <a class="xref" href="Venflow.Key-2.html">Key&lt;TEntity, TKey&gt;</a>for a possible implementation.</p>
-</div>
-  <h3 id="properties">Properties
-  </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_IKey_2_Value.md&amp;value=---%0Auid%3A%20Venflow.IKey%602.Value%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Key.cs/#L94">View Source</a>
-  </span>
-  <a id="Venflow_IKey_2_Value_" data-uid="Venflow.IKey`2.Value*"></a>
-  <h4 id="Venflow_IKey_2_Value" data-uid="Venflow.IKey`2.Value">Value</h4>
-  <div class="markdown level1 summary"><p>The underlying value representing the <a class="xref" href="Venflow.Key-2.html">Key&lt;TEntity, TKey&gt;</a>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">TKey Value { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
+  <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>
@@ -157,7 +154,59 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">TKey</span></td>
+        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.boolean">Boolean</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Json_JsonKeyConverterFacotry_CreateConverter_Type_JsonSerializerOptions_.md&amp;value=---%0Auid%3A%20Venflow.Json.JsonKeyConverterFacotry.CreateConverter(Type%2CJsonSerializerOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/JsonKeyConverter.cs/#L18">View Source</a>
+  </span>
+  <a id="Venflow_Json_JsonKeyConverterFacotry_CreateConverter_" data-uid="Venflow.Json.JsonKeyConverterFacotry.CreateConverter*"></a>
+  <h4 id="Venflow_Json_JsonKeyConverterFacotry_CreateConverter_Type_JsonSerializerOptions_" data-uid="Venflow.Json.JsonKeyConverterFacotry.CreateConverter(Type,JsonSerializerOptions)">CreateConverter(Type, JsonSerializerOptions)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Type</span></td>
+        <td><span class="parametername">typeToConvert</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">JsonSerializerOptions</span></td>
+        <td><span class="parametername">options</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">JsonConverter</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -178,10 +227,10 @@
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_IKey_2.md&amp;value=---%0Auid%3A%20Venflow.IKey%602%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Json_JsonKeyConverterFacotry.md&amp;value=---%0Auid%3A%20Venflow.Json.JsonKeyConverterFacotry%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Key.cs/#L88" class="contribution-link">View Source</a>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/JsonKeyConverter.cs/#L11" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

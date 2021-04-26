@@ -189,6 +189,16 @@
     "title": "Interface IParameterTypeHandler | Venflow Documentation",
     "keywords": "Interface IParameterTypeHandler A parameter type handler which can be used with the method. Namespace : Venflow Assembly : Venflow.dll Syntax public interface IParameterTypeHandler Methods | Improve this Doc View Source Handle(String, Object) Is used to convert the given value and name to an . Declaration NpgsqlParameter Handle(string name, object val) Parameters Type Name Description String name The name of the parameter. Object val The value of the parameter. Returns Type Description NpgsqlParameter The containing the name and the value."
   },
+  "api/Venflow.Json.html": {
+    "href": "api/Venflow.Json.html",
+    "title": "Namespace Venflow.Json | Venflow Documentation",
+    "keywords": "Namespace Venflow.Json Classes JsonKeyConverterFacotry A to parse IKey<TEntity, TKey> instances."
+  },
+  "api/Venflow.Json.JsonKeyConverterFacotry.html": {
+    "href": "api/Venflow.Json.JsonKeyConverterFacotry.html",
+    "title": "Class JsonKeyConverterFacotry | Venflow Documentation",
+    "keywords": "Class JsonKeyConverterFacotry A to parse IKey<TEntity, TKey> instances. Inheritance Object JsonKeyConverterFacotry Namespace : Venflow.Json Assembly : Venflow.dll Syntax public class JsonKeyConverterFacotry : JsonConverterFactory Methods | Improve this Doc View Source CanConvert(Type) Declaration public override bool CanConvert(Type typeToConvert) Parameters Type Name Description Type typeToConvert Returns Type Description Boolean | Improve this Doc View Source CreateConverter(Type, JsonSerializerOptions) Declaration public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options) Parameters Type Name Description Type typeToConvert JsonSerializerOptions options Returns Type Description JsonConverter"
+  },
   "api/Venflow.Key-2.html": {
     "href": "api/Venflow.Key-2.html",
     "title": "Struct Key<TEntity, TKey> | Venflow Documentation",
@@ -248,6 +258,16 @@
     "href": "api/Venflow.Modeling.Definitions.html",
     "title": "Namespace Venflow.Modeling.Definitions | Venflow Documentation",
     "keywords": "Namespace Venflow.Modeling.Definitions Classes EntityConfiguration<TEntity> Allows configuration for an entity type. Inherit from this class and override the Configure(IEntityBuilder<TEntity>) method to configure the entity TEntity ."
+  },
+  "api/Venflow.NewtonsoftJson.html": {
+    "href": "api/Venflow.NewtonsoftJson.html",
+    "title": "Namespace Venflow.NewtonsoftJson | Venflow Documentation",
+    "keywords": "Namespace Venflow.NewtonsoftJson Classes NewtonsoftJsonKeyConverter A to parse IKey<TEntity, TKey> instances."
+  },
+  "api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html": {
+    "href": "api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html",
+    "title": "Class NewtonsoftJsonKeyConverter | Venflow Documentation",
+    "keywords": "Class NewtonsoftJsonKeyConverter A to parse IKey<TEntity, TKey> instances. Inheritance Object NewtonsoftJsonKeyConverter Namespace : Venflow.NewtonsoftJson Assembly : Venflow.NewtonsoftJson.dll Syntax public class NewtonsoftJsonKeyConverter : JsonConverter Methods | Improve this Doc View Source CanConvert(Type) Declaration public override bool CanConvert(Type objectType) Parameters Type Name Description Type objectType Returns Type Description Boolean | Improve this Doc View Source ReadJson(JsonReader, Type, Object, JsonSerializer) Declaration public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) Parameters Type Name Description JsonReader reader Type objectType Object existingValue JsonSerializer serializer Returns Type Description Object | Improve this Doc View Source WriteJson(JsonWriter, Object, JsonSerializer) Declaration public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) Parameters Type Name Description JsonWriter writer Object value JsonSerializer serializer"
   },
   "api/Venflow.NpgsqlCommandExtensions.html": {
     "href": "api/Venflow.NpgsqlCommandExtensions.html",

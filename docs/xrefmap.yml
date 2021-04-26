@@ -1849,6 +1849,44 @@ references:
   isSpec: "True"
   fullName: Venflow.IParameterTypeHandler.Handle
   nameWithType: IParameterTypeHandler.Handle
+- uid: Venflow.Json
+  name: Venflow.Json
+  href: api/Venflow.Json.html
+  commentId: N:Venflow.Json
+  fullName: Venflow.Json
+  nameWithType: Venflow.Json
+- uid: Venflow.Json.JsonKeyConverterFacotry
+  name: JsonKeyConverterFacotry
+  href: api/Venflow.Json.JsonKeyConverterFacotry.html
+  commentId: T:Venflow.Json.JsonKeyConverterFacotry
+  fullName: Venflow.Json.JsonKeyConverterFacotry
+  nameWithType: JsonKeyConverterFacotry
+- uid: Venflow.Json.JsonKeyConverterFacotry.CanConvert(Type)
+  name: CanConvert(Type)
+  href: api/Venflow.Json.JsonKeyConverterFacotry.html#Venflow_Json_JsonKeyConverterFacotry_CanConvert_Type_
+  commentId: M:Venflow.Json.JsonKeyConverterFacotry.CanConvert(Type)
+  fullName: Venflow.Json.JsonKeyConverterFacotry.CanConvert(Type)
+  nameWithType: JsonKeyConverterFacotry.CanConvert(Type)
+- uid: Venflow.Json.JsonKeyConverterFacotry.CanConvert*
+  name: CanConvert
+  href: api/Venflow.Json.JsonKeyConverterFacotry.html#Venflow_Json_JsonKeyConverterFacotry_CanConvert_
+  commentId: Overload:Venflow.Json.JsonKeyConverterFacotry.CanConvert
+  isSpec: "True"
+  fullName: Venflow.Json.JsonKeyConverterFacotry.CanConvert
+  nameWithType: JsonKeyConverterFacotry.CanConvert
+- uid: Venflow.Json.JsonKeyConverterFacotry.CreateConverter(Type,JsonSerializerOptions)
+  name: CreateConverter(Type, JsonSerializerOptions)
+  href: api/Venflow.Json.JsonKeyConverterFacotry.html#Venflow_Json_JsonKeyConverterFacotry_CreateConverter_Type_JsonSerializerOptions_
+  commentId: M:Venflow.Json.JsonKeyConverterFacotry.CreateConverter(Type,JsonSerializerOptions)
+  fullName: Venflow.Json.JsonKeyConverterFacotry.CreateConverter(Type, JsonSerializerOptions)
+  nameWithType: JsonKeyConverterFacotry.CreateConverter(Type, JsonSerializerOptions)
+- uid: Venflow.Json.JsonKeyConverterFacotry.CreateConverter*
+  name: CreateConverter
+  href: api/Venflow.Json.JsonKeyConverterFacotry.html#Venflow_Json_JsonKeyConverterFacotry_CreateConverter_
+  commentId: Overload:Venflow.Json.JsonKeyConverterFacotry.CreateConverter
+  isSpec: "True"
+  fullName: Venflow.Json.JsonKeyConverterFacotry.CreateConverter
+  nameWithType: JsonKeyConverterFacotry.CreateConverter
 - uid: Venflow.Key`2
   name: Key<TEntity, TKey>
   href: api/Venflow.Key-2.html
@@ -2278,6 +2316,57 @@ references:
   fullName.vb: Venflow.Modeling.Definitions.EntityConfiguration(Of TEntity).Configure
   nameWithType: EntityConfiguration<TEntity>.Configure
   nameWithType.vb: EntityConfiguration(Of TEntity).Configure
+- uid: Venflow.NewtonsoftJson
+  name: Venflow.NewtonsoftJson
+  href: api/Venflow.NewtonsoftJson.html
+  commentId: N:Venflow.NewtonsoftJson
+  fullName: Venflow.NewtonsoftJson
+  nameWithType: Venflow.NewtonsoftJson
+- uid: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter
+  name: NewtonsoftJsonKeyConverter
+  href: api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html
+  commentId: T:Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter
+  fullName: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter
+  nameWithType: NewtonsoftJsonKeyConverter
+- uid: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.CanConvert(Type)
+  name: CanConvert(Type)
+  href: api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html#Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_CanConvert_Type_
+  commentId: M:Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.CanConvert(Type)
+  fullName: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.CanConvert(Type)
+  nameWithType: NewtonsoftJsonKeyConverter.CanConvert(Type)
+- uid: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.CanConvert*
+  name: CanConvert
+  href: api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html#Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_CanConvert_
+  commentId: Overload:Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.CanConvert
+  isSpec: "True"
+  fullName: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.CanConvert
+  nameWithType: NewtonsoftJsonKeyConverter.CanConvert
+- uid: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson(JsonReader,Type,System.Object,JsonSerializer)
+  name: ReadJson(JsonReader, Type, Object, JsonSerializer)
+  href: api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html#Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_ReadJson_JsonReader_Type_System_Object_JsonSerializer_
+  commentId: M:Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson(JsonReader,Type,System.Object,JsonSerializer)
+  fullName: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson(JsonReader, Type, System.Object, JsonSerializer)
+  nameWithType: NewtonsoftJsonKeyConverter.ReadJson(JsonReader, Type, Object, JsonSerializer)
+- uid: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson*
+  name: ReadJson
+  href: api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html#Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_ReadJson_
+  commentId: Overload:Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson
+  isSpec: "True"
+  fullName: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson
+  nameWithType: NewtonsoftJsonKeyConverter.ReadJson
+- uid: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson(JsonWriter,System.Object,JsonSerializer)
+  name: WriteJson(JsonWriter, Object, JsonSerializer)
+  href: api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html#Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_WriteJson_JsonWriter_System_Object_JsonSerializer_
+  commentId: M:Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson(JsonWriter,System.Object,JsonSerializer)
+  fullName: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson(JsonWriter, System.Object, JsonSerializer)
+  nameWithType: NewtonsoftJsonKeyConverter.WriteJson(JsonWriter, Object, JsonSerializer)
+- uid: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson*
+  name: WriteJson
+  href: api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html#Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_WriteJson_
+  commentId: Overload:Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson
+  isSpec: "True"
+  fullName: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson
+  nameWithType: NewtonsoftJsonKeyConverter.WriteJson
 - uid: Venflow.NpgsqlCommandExtensions
   name: NpgsqlCommandExtensions
   href: api/Venflow.NpgsqlCommandExtensions.html
