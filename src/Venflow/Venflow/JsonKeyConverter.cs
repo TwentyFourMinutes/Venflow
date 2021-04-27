@@ -12,9 +12,11 @@ namespace Venflow.Json
     {
         private static readonly ConcurrentDictionary<Type, JsonConverter> _jsonConverters = new();
 
+        /// <inheritdoc/>
         public override bool CanConvert(Type typeToConvert)
             => typeof(IKey).IsAssignableFrom(typeToConvert);
 
+        /// <inheritdoc/>
         public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
             => _jsonConverters.GetOrAdd(typeToConvert, CreateJsonConverter);
 
