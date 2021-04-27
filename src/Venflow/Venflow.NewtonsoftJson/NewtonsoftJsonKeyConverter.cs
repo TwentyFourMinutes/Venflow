@@ -11,11 +11,13 @@ namespace Venflow.NewtonsoftJson
     {
         private static readonly ConcurrentDictionary<Type, JsonConverter> _jsonConverters = new();
 
+        /// <inheritdoc>/>
         public override bool CanConvert(Type objectType)
         {
             return typeof(IKey).IsAssignableFrom(objectType);
         }
 
+        /// <inheritdoc>/>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var converter = GetConverter(objectType);
@@ -23,6 +25,7 @@ namespace Venflow.NewtonsoftJson
             return converter.ReadJson(reader, objectType, existingValue, serializer);
         }
 
+        /// <inheritdoc>/>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             if (value is null)

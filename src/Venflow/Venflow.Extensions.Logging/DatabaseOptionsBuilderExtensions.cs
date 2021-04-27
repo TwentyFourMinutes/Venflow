@@ -3,7 +3,7 @@
 namespace Venflow.Extensions.Logging
 {
     /// <summary>
-    /// Providing extensions method for the <see cref="DatabaseOptionsBuilder"/> class.
+    /// Providing extensions method for the <see cref=" DatabaseOptionsBuilder{TDatabase}"/> class.
     /// </summary>
     public static class DatabaseOptionsBuilderExtensions
     {
@@ -15,9 +15,10 @@ namespace Venflow.Extensions.Logging
         /// <param name="formatSensitiveInformation">Determines whether or not the formatter should include the parameters values.</param>
         /// <returns>An object that can be used to configure the current <see cref="Database"/> instance.</returns>
         /// <remarks>Also consider configuring the <see cref="DatabaseOptionsBuilder.DefaultLoggingBehavior"/> property.</remarks>
-        public static DatabaseOptionsBuilder UseLoggerFactory(this DatabaseOptionsBuilder options, ILoggerFactory loggerFactory, bool formatSensitiveInformation = false)
+        public static DatabaseOptionsBuilder UseLoggerFactory<TDatabase>(this DatabaseOptionsBuilder<TDatabase> options, ILoggerFactory loggerFactory, bool formatSensitiveInformation = false)
+            where TDatabase : Database
         {
-            var logger = loggerFactory.CreateLogger(options.EffectiveDatabaseType);
+            var logger = loggerFactory.CreateLogger(typeof(Database));
 
             options.LogTo((command, commandType, exception) => logger.Log(exception is null ? LogLevel.Debug : LogLevel.Error, new EventId((int)commandType, null), command, exception,
                 (state, exception) =>

@@ -519,7 +519,7 @@
             </summary>
             <param name="shouldLog">Determines if this command should be logged. This is helpful, if you configured the default logging behavior to be <see langword="true"/>.</param>
             <returns>An object that can be used to further configure the operation.</returns>
-            <remarks>You can configure the loggers in the <see cref="M:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)"/> method with the <see cref="M:Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)"/> methods.</remarks>
+            <remarks>You can configure the loggers in the <see cref="!:Database.Configure(DatabaseOptionsBuilder)"/> method with the <see cref="M:Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)"/> methods.</remarks>
         </member>
         <member name="M:Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo(Venflow.LoggerCallback)">
             <summary>
@@ -700,14 +700,20 @@
             </summary>
             <param name="connectionString">The connection string to your PostgreSQL Database.</param>
         </member>
-        <member name="M:Venflow.Database.BeginTransactionAsync(System.Threading.CancellationToken)">
+        <member name="M:Venflow.Database.#ctor(Venflow.DatabaseOptionsBuilder)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Venflow.Database"/> class using the specified <paramref name="optionsBuilder"/>.
+            </summary>
+            <param name="optionsBuilder">The options builder containing all the necessary information for the <see cref="T:Venflow.Database"/> instance.</param>
+        </member>
+        <member name="M:Venflow.Database.BeginTransactionAsync">
             <summary>
             Asynchronously begins a new transaction.
             </summary>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
             <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
         </member>
-        <member name="M:Venflow.Database.BeginTransactionAsync(System.Data.IsolationLevel,System.Threading.CancellationToken)">
+        <member name="M:Venflow.Database.BeginTransactionAsync(System.Data.IsolationLevel)">
             <summary>
             Asynchronously begins a new transaction.
             </summary>
@@ -806,7 +812,7 @@
             </summary>
             <returns>the <see cref="T:Npgsql.NpgsqlConnection"/>.</returns>
         </member>
-        <member name="M:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)">
+        <member name="M:Venflow.Database.Configure(Venflow.DatabaseConfigurationOptionsBuilder)">
             <summary>
             Allows for further configuration of the <see cref="T:Venflow.Database"/>.
             </summary>
@@ -824,17 +830,12 @@
             </summary>
             <remarks>If you are in an asynchronous context you should consider using <see cref="M:Venflow.Database.DisposeAsync"/> instead.</remarks>
         </member>
-        <member name="T:Venflow.DatabaseOptionsBuilder">
+        <member name="T:Venflow.DatabaseConfigurationOptionsBuilder">
             <summary>
-            Provides an option builder to further configure a <see cref="T:Venflow.Database"/> instance.
+            Provides an option builder to further <i>statically</i> configure a <see cref="T:Venflow.Database"/> instance.
             </summary>
         </member>
-        <member name="P:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior">
-            <summary>
-            Gets or sets the default LoggingBehavior on commands for this <see cref="T:Venflow.Database"/>. The default is <see cref="F:Venflow.Enums.LoggingBehavior.Always"/>, if any loggers are defined.
-            </summary>
-        </member>
-        <member name="M:Venflow.DatabaseOptionsBuilder.UseConfigurations``1">
+        <member name="M:Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations``1">
             <summary>
             Adds the assembly of the type <typeparamref name="T"/> to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
             </summary>
@@ -842,7 +843,7 @@
             <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/> instance.</returns>
             <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
         </member>
-        <member name="M:Venflow.DatabaseOptionsBuilder.UseConfigurations(System.Reflection.Assembly)">
+        <member name="M:Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(System.Reflection.Assembly)">
             <summary>
             Adds the assembly to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
             </summary>
@@ -850,13 +851,36 @@
             <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/> instance.</returns>
             <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
         </member>
-        <member name="M:Venflow.DatabaseOptionsBuilder.UseConfigurations(System.Reflection.Assembly[])">
+        <member name="M:Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(System.Reflection.Assembly[])">
             <summary>
             Adds the assemblies to the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> lookup list.
             </summary>
             <param name="assemblies">The assemblies which should be added to the lookup list.</param>
             <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/> instance.</returns>
             <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
+        </member>
+        <member name="T:Venflow.LoggerCallback">
+            <summary>
+            Represent a method that will handle all Logs produced by a <see cref="T:Venflow.Database"/> instance.
+            </summary>
+            <param name="command">The command which produced the log.</param>
+            <param name="commandType">The command type which produced the log.</param>
+            <param name="exception">The exception occurred while trying to execute the command, if any occurred.</param>
+        </member>
+        <member name="T:Venflow.DatabaseOptionsBuilder">
+            <summary>
+            Provides an option builder to further <i>dynamically</i> configure a <see cref="T:Venflow.Database"/> instance.
+            </summary>
+        </member>
+        <member name="P:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior">
+            <summary>
+            Gets or sets the default LoggingBehavior on commands for this <see cref="T:Venflow.Database"/>. The default is <see cref="F:Venflow.Enums.LoggingBehavior.Always"/>, if any loggers are defined.
+            </summary>
+        </member>
+        <member name="P:Venflow.DatabaseOptionsBuilder.ConnectionString">
+            <summary>
+            Gets or sets the connection string which will be used in all <see cref="T:Venflow.Database"/> instances using the current <see cref="T:Venflow.DatabaseOptionsBuilder"/> instance.
+            </summary>
         </member>
         <member name="M:Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)">
             <summary>
@@ -866,6 +890,17 @@
             <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/> instance.</returns>
             <remarks>
             Also consider configuring the <see cref="P:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior"/> property.
+            </remarks>
+        </member>
+        <member name="M:Venflow.DatabaseOptionsBuilder.LogTo(System.Action{System.String},System.Boolean)">
+            <summary>
+            Adds a logger, which allows for logging of executed commands.
+            </summary>
+            <param name="loggerCallback">A callback which is being used to log commands.</param>
+            <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/> instance.</returns>
+            <remarks>
+            Also consider configuring the <see cref="P:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior"/> property.
+            Be aware that this method should be used in cases which require quick logging. This API wraps the <paramref name="loggerCallback"/> again and calls <see cref="M:Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)"/>.
             </remarks>
         </member>
         <member name="T:Venflow.Enums.ForeignTruncateOptions">
@@ -1045,6 +1080,11 @@
             <param name="name">The name of the parameter.</param>
             <param name="val">The value of the parameter.</param>
             <returns>The <see cref="T:Npgsql.NpgsqlParameter"/> containing the name and the value.</returns>
+        </member>
+        <member name="T:Venflow.Json.JsonKeyConverterFacotry">
+            <summary>
+            A <see cref="T:System.Text.Json.Serialization.JsonConverter"/> to parse <see cref="T:Venflow.IKey`2"/> instances.
+            </summary>
         </member>
         <member name="T:Venflow.Key`2">
             <summary>
@@ -1829,6 +1869,11 @@
         <member name="T:System.Runtime.CompilerServices.NullableContextAttribute">
             <summary>
             <strong>Do not use this attribute, it is reserved for the compiler.</strong>
+            </summary>
+        </member>
+    </members>
+</doc>
+g>
             </summary>
         </member>
     </members>
