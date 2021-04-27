@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
+using Newtonsoft.Json;
 
 namespace Venflow.NewtonsoftJson
 {
@@ -23,7 +23,7 @@ namespace Venflow.NewtonsoftJson
             return converter.ReadJson(reader, objectType, existingValue, serializer);
         }
 
-        public override void WriteJson(JsonWriter writer, object value,JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             if (value is null)
             {
