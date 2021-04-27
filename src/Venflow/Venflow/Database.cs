@@ -31,13 +31,13 @@ namespace Venflow
     public abstract class Database : IAsyncDisposable, IDisposable
     {
         internal IReadOnlyDictionary<string, Entity> Entities { get; private set; }
-        internal LoggingBehavior DefaultLoggingBehavior { get; private set; }
+        internal LoggingBehavior DefaultLoggingBehavior { get; }
 
         internal string ConnectionString { get; }
 
         private NpgsqlConnection? _connection;
 
-        private IReadOnlyList<LoggerCallback> _loggers;
+        private readonly IReadOnlyList<LoggerCallback> _loggers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Database"/> class using the specified <paramref name="connectionString"/>.
@@ -46,6 +46,19 @@ namespace Venflow
         protected Database(string connectionString)
         {
             ConnectionString = connectionString;
+
+            Build();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Database"/> class using the specified <paramref name="optionsBuilder"/>.
+        /// </summary>
+        /// <param name="optionsBuilder">The options builder containing all the necessary information for the <see cref="Database"/> instance.</param>
+        protected Database(DatabaseOptionsBuilder optionsBuilder)
+        {
+            ConnectionString = optionsBuilder.ConnectionString;
+            DefaultLoggingBehavior = optionsBuilder.DefaultLoggingBehavior;
+            _loggers = optionsBuilder.Loggers;
 
             Build();
         }
@@ -323,11 +336,11 @@ namespace Venflow
                     {
                         var dbConfigurator = new DatabaseConfigurationFactory();
 
-                        var optionsBuilder = new DatabaseOptionsBuilder(type);
+                        var configurationOptionsBuilder = new DatabaseConfigurationOptionsBuilder(type);
 
-                        Configure(optionsBuilder);
+                        Configure(configurationOptionsBuilder);
 
-                        configuration = dbConfigurator.BuildConfiguration(type, optionsBuilder.Build());
+                        configuration = dbConfigurator.BuildConfiguration(type, configurationOptionsBuilder);
 
                         DatabaseConfigurationCache.DatabaseConfigurations.TryAdd(type, configuration);
                     }
@@ -335,8 +348,6 @@ namespace Venflow
             }
 
             Entities = configuration.Entities;
-            _loggers = configuration.Loggers;
-            DefaultLoggingBehavior = configuration.DefaultLoggingBehavior;
 
             configuration.InstantiateDatabase(this);
         }
@@ -362,7 +373,7 @@ namespace Venflow
         /// Allows for further configuration of the <see cref="Database"/>.
         /// </summary>
         /// <param name="optionsBuilder">A builder instance used to further configure the <see cref="Database"/>.</param>
-        protected virtual void Configure(DatabaseOptionsBuilder optionsBuilder) { }
+        protected virtual void Configure(DatabaseConfigurationOptionsBuilder optionsBuilder) { }
 
         /// <summary>
         /// Releases the allocated resources for this context. Also closes the underlying connection, if open.

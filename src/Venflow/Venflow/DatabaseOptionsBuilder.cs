@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Text;
 using Npgsql;
 using Venflow.Enums;
-using Venflow.Modeling.Definitions;
 
 namespace Venflow
 {
+    /// <summary>
+    /// Represent a method that will handle all Logs produced by a <see cref="Database"/> instance.
+    /// </summary>
+    /// <param name="command">The command which produced the log.</param>
+    /// <param name="commandType">The command type which produced the log.</param>
+    /// <param name="exception">The exception occurred while trying to execute the command, if any occurred.</param>
     public delegate void LoggerCallback(NpgsqlCommand command, CommandType commandType, Exception? exception);
 
     /// <summary>
-    /// Provides an option builder to further configure a <see cref="Database"/> instance.
+    /// Provides an option builder to further <i>dynamically</i> configure a <see cref="Database"/> instance.
     /// </summary>
     public class DatabaseOptionsBuilder
     {
@@ -19,58 +24,16 @@ namespace Venflow
         /// </summary>
         public LoggingBehavior DefaultLoggingBehavior { get; set; }
 
-        internal Type EffectiveDatabaseType { get; }
-
-        private readonly List<Assembly> _configurationAssemblies;
-        private readonly List<LoggerCallback> _loggers;
-        private readonly Assembly _databaseAssembly;
-
-        internal DatabaseOptionsBuilder(Type effectiveDatabaseType)
-        {
-            _configurationAssemblies = new(1);
-            _loggers = new(0);
-
-            _databaseAssembly = effectiveDatabaseType.Assembly;
-            EffectiveDatabaseType = effectiveDatabaseType;
-        }
-
         /// <summary>
-        /// Adds the assembly of the type <typeparamref name="T"/> to the <see cref="EntityConfiguration{TEntity}"/> lookup list.
+        /// Gets or sets the connection string which will be used in all <see cref="Database"/> instances using the current <see cref="DatabaseOptionsBuilder"/> instance.
         /// </summary>
-        /// <typeparam name="T">The type of which the assembly should be added to the lookup list.</typeparam>
-        /// <returns>An object that can be used to configure the current <see cref="Database"/> instance.</returns>
-        /// <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
-        public DatabaseOptionsBuilder UseConfigurations<T>()
+        public string ConnectionString { get; set; }
+
+        internal List<LoggerCallback> Loggers { get; }
+
+        internal DatabaseOptionsBuilder()
         {
-            _configurationAssemblies.Add(typeof(T).Assembly);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Adds the assembly to the <see cref="EntityConfiguration{TEntity}"/> lookup list.
-        /// </summary>
-        /// <param name="assembly">The assembly which should be added to the lookup list.</param>
-        /// <returns>An object that can be used to configure the current <see cref="Database"/> instance.</returns>
-        /// <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
-        public DatabaseOptionsBuilder UseConfigurations(Assembly assembly)
-        {
-            _configurationAssemblies.Add(assembly);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Adds the assemblies to the <see cref="EntityConfiguration{TEntity}"/> lookup list.
-        /// </summary>
-        /// <param name="assemblies">The assemblies which should be added to the lookup list.</param>
-        /// <returns>An object that can be used to configure the current <see cref="Database"/> instance.</returns>
-        /// <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
-        public DatabaseOptionsBuilder UseConfigurations(params Assembly[] assemblies)
-        {
-            _configurationAssemblies.AddRange(assemblies);
-
-            return this;
+            Loggers = new(0);
         }
 
         /// <summary>
@@ -83,34 +46,50 @@ namespace Venflow
         /// </remarks>
         public DatabaseOptionsBuilder LogTo(LoggerCallback loggerCallback)
         {
-            _loggers.Add(loggerCallback);
+            Loggers.Add(loggerCallback);
 
             return this;
         }
 
-        internal DatabaseOptions Build()
+        /// <summary>
+        /// Adds a logger, which allows for logging of executed commands.
+        /// </summary>
+        /// <param name="loggerCallback">A callback which is being used to log commands.</param>
+        /// <param name="logSensitveData">Determines whether or not to log parameterized commands.</param>
+        /// <returns>An object that can be used to configure the current <see cref="Database"/> instance.</returns>
+        /// <remarks>
+        /// Also consider configuring the <see cref="DefaultLoggingBehavior"/> property.
+        /// Be aware that this method should be used in cases which require quick logging. This API wraps the <paramref name="loggerCallback"/> again and calls <see cref="LogTo(LoggerCallback)"/>.
+        /// </remarks>
+        public DatabaseOptionsBuilder LogTo(Action<string> loggerCallback, bool logSensitveData = false)
         {
-            if (_configurationAssemblies.Count == 0)
+            Loggers.Add((command, type, exception) =>
             {
-                _configurationAssemblies.Add(_databaseAssembly);
-            }
+                var sb = new StringBuilder();
 
-            return new DatabaseOptions(_configurationAssemblies, _loggers, _loggers.Count == 0 ? LoggingBehavior.Never : DefaultLoggingBehavior);
-        }
-    }
+                sb.Append("Type: ")
+                  .Append(type)
+                  .Append(": ");
 
-    internal class DatabaseOptions
-    {
-        internal IReadOnlyList<Assembly> ConfigurationAssemblies { get; }
-        internal IReadOnlyList<LoggerCallback> Loggers { get; }
+                if (logSensitveData)
+                {
+                    sb.AppendLine(command.GetUnParameterizedCommandText());
+                }
+                else
+                {
+                    sb.AppendLine(command.CommandText);
+                }
 
-        internal LoggingBehavior DefaultLoggingBehavior { get; }
+                if (exception is not null)
+                {
+                    sb.Append("Exception: ")
+                      .Append(exception);
+                }
 
-        internal DatabaseOptions(List<Assembly> configurationAssemblies, IReadOnlyList<LoggerCallback> loggers, LoggingBehavior defaultLoggingBehavior)
-        {
-            ConfigurationAssemblies = configurationAssemblies;
-            Loggers = loggers;
-            DefaultLoggingBehavior = defaultLoggingBehavior;
+                loggerCallback.Invoke(sb.ToString());
+            });
+
+            return this;
         }
     }
 }
