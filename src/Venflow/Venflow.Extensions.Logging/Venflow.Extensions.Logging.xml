@@ -6,10 +6,10 @@
     <members>
         <member name="T:Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions">
             <summary>
-            Providing extensions method for the <see cref="T:Venflow.DatabaseOptionsBuilder"/> class.
+            Providing extensions method for the <see cref="T:Venflow.DatabaseOptionsBuilder`1"/> class.
             </summary>
         </member>
-        <member name="M:Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory(Venflow.DatabaseOptionsBuilder,Microsoft.Extensions.Logging.ILoggerFactory,System.Boolean)">
+        <member name="M:Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory``1(Venflow.DatabaseOptionsBuilder{``0},Microsoft.Extensions.Logging.ILoggerFactory,System.Boolean)">
             <summary>
             Adds a <see cref="T:Microsoft.Extensions.Logging.ILoggerFactory"/>, which allows for logging of executed commands.
             </summary>
