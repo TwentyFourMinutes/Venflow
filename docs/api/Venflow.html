@@ -103,8 +103,11 @@
       <h4><a class="xref" href="Venflow.Database.html">Database</a></h4>
       <section><p>A <a class="xref" href="Venflow.Database.html">Database</a> instance represents a session with the database and can be used to perform CRUD operations with your tables and entities.</p>
 </section>
-      <h4><a class="xref" href="Venflow.DatabaseOptionsBuilder.html">DatabaseOptionsBuilder</a></h4>
-      <section><p>Provides an option builder to further configure a <a class="xref" href="Venflow.Database.html">Database</a> instance.</p>
+      <h4><a class="xref" href="Venflow.DatabaseConfigurationOptionsBuilder.html">DatabaseConfigurationOptionsBuilder</a></h4>
+      <section><p>Provides an option builder to further <em>statically</em> configure a <a class="xref" href="Venflow.Database.html">Database</a> instance.</p>
+</section>
+      <h4><a class="xref" href="Venflow.DatabaseOptionsBuilder-1.html">DatabaseOptionsBuilder&lt;TDatabase&gt;</a></h4>
+      <section><p>Provides an option builder to further <em>dynamically</em> configure a <a class="xref" href="Venflow.Database.html">Database</a> instance.</p>
 </section>
       <h4><a class="xref" href="Venflow.FormattableSqlStringBuilder.html">FormattableSqlStringBuilder</a></h4>
       <section><p>Allows for a safe string interpolated SQL concatenation.</p>
@@ -149,7 +152,8 @@
     <h3 id="delegates">Delegates
   </h3>
       <h4><a class="xref" href="Venflow.LoggerCallback.html">LoggerCallback</a></h4>
-      <section></section>
+      <section><p>Represent a method that will handle all Logs produced by a <a class="xref" href="Venflow.Database.html">Database</a> instance.</p>
+</section>
 </article>
           </div>
           

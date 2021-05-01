@@ -96,7 +96,7 @@
   
   <h1 id="Venflow_Extensions_Logging_DatabaseOptionsBuilderExtensions" data-uid="Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions" class="text-break">Class DatabaseOptionsBuilderExtensions
   </h1>
-  <div class="markdown level0 summary"><p>Providing extensions method for the <a class="xref" href="Venflow.DatabaseOptionsBuilder.html">DatabaseOptionsBuilder</a> class.</p>
+  <div class="markdown level0 summary"><p>Providing extensions method for the <a class="xref" href="Venflow.DatabaseOptionsBuilder-1.html">DatabaseOptionsBuilder&lt;TDatabase&gt;</a> class.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -114,19 +114,20 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Extensions_Logging_DatabaseOptionsBuilderExtensions_UseLoggerFactory_Venflow_DatabaseOptionsBuilder_ILoggerFactory_System_Boolean_.md&amp;value=---%0Auid%3A%20Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory(Venflow.DatabaseOptionsBuilder%2CILoggerFactory%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Extensions_Logging_DatabaseOptionsBuilderExtensions_UseLoggerFactory__1_Venflow_DatabaseOptionsBuilder___0__ILoggerFactory_System_Boolean_.md&amp;value=---%0Auid%3A%20Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory%60%601(Venflow.DatabaseOptionsBuilder%7B%60%600%7D%2CILoggerFactory%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow.Extensions.Logging/DatabaseOptionsBuilderExtensions.cs/#L18">View Source</a>
   </span>
   <a id="Venflow_Extensions_Logging_DatabaseOptionsBuilderExtensions_UseLoggerFactory_" data-uid="Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory*"></a>
-  <h4 id="Venflow_Extensions_Logging_DatabaseOptionsBuilderExtensions_UseLoggerFactory_Venflow_DatabaseOptionsBuilder_ILoggerFactory_System_Boolean_" data-uid="Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory(Venflow.DatabaseOptionsBuilder,ILoggerFactory,System.Boolean)">UseLoggerFactory(DatabaseOptionsBuilder, ILoggerFactory, Boolean)</h4>
+  <h4 id="Venflow_Extensions_Logging_DatabaseOptionsBuilderExtensions_UseLoggerFactory__1_Venflow_DatabaseOptionsBuilder___0__ILoggerFactory_System_Boolean_" data-uid="Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory``1(Venflow.DatabaseOptionsBuilder{``0},ILoggerFactory,System.Boolean)">UseLoggerFactory&lt;TDatabase&gt;(DatabaseOptionsBuilder&lt;TDatabase&gt;, ILoggerFactory, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds a <see cref="!:ILoggerFactory"></see>, which allows for logging of executed commands.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static DatabaseOptionsBuilder UseLoggerFactory(this DatabaseOptionsBuilder options, ILoggerFactory loggerFactory, bool formatSensitiveInformation = false)</code></pre>
+    <pre><code class="lang-csharp hljs">public static DatabaseOptionsBuilder UseLoggerFactory&lt;TDatabase&gt;(this DatabaseOptionsBuilder&lt;TDatabase&gt; options, ILoggerFactory loggerFactory, bool formatSensitiveInformation = false)
+    where TDatabase : Database</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -139,7 +140,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.DatabaseOptionsBuilder.html">DatabaseOptionsBuilder</a></td>
+        <td><a class="xref" href="Venflow.DatabaseOptionsBuilder-1.html">DatabaseOptionsBuilder</a>&lt;TDatabase&gt;</td>
         <td><span class="parametername">options</span></td>
         <td><p>The options to which the <see cref="!:ILoggerFactory"></see> should be registered.</p>
 </td>
@@ -168,14 +169,29 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.DatabaseOptionsBuilder.html">DatabaseOptionsBuilder</a></td>
+        <td><span class="xref">DatabaseOptionsBuilder</span></td>
         <td><p>An object that can be used to configure the current <a class="xref" href="Venflow.Database.html">Database</a> instance.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <h5 id="Venflow_Extensions_Logging_DatabaseOptionsBuilderExtensions_UseLoggerFactory_Venflow_DatabaseOptionsBuilder_ILoggerFactory_System_Boolean__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Also consider configuring the <a class="xref" href="Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior">DefaultLoggingBehavior</a> property.</p>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TDatabase</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_Extensions_Logging_DatabaseOptionsBuilderExtensions_UseLoggerFactory__1_Venflow_DatabaseOptionsBuilder___0__ILoggerFactory_System_Boolean__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Also consider configuring the <span class="xref">DatabaseOptionsBuilder.DefaultLoggingBehavior</span> property.</p>
 </div>
 </article>
           </div>

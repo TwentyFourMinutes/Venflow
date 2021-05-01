@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class NewtonsoftJsonKeyConverter
+    <title>Class DatabaseOptionsBuilder&lt;TDatabase&gt;
    | Venflow Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta property="og:title" content="Class NewtonsoftJsonKeyConverter
+    <meta property="og:title" content="Class DatabaseOptionsBuilder&lt;TDatabase&gt;
    | Venflow Documentation ">
     
     <meta property="og:locale" content="en-us">
@@ -91,41 +91,67 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter">
+            <article class="content wrap" id="_content" data-uid="Venflow.DatabaseOptionsBuilder`1">
   
   
-  <h1 id="Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter" data-uid="Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter" class="text-break">Class NewtonsoftJsonKeyConverter
+  <h1 id="Venflow_DatabaseOptionsBuilder_1" data-uid="Venflow.DatabaseOptionsBuilder`1" class="text-break">Class DatabaseOptionsBuilder&lt;TDatabase&gt;
   </h1>
-  <div class="markdown level0 summary"><p>A <see cref="!:JsonConverter"></see> to parse <a class="xref" href="Venflow.IKey-2.html">IKey&lt;TEntity, TKey&gt;</a> instances.</p>
+  <div class="markdown level0 summary"><p>Provides an option builder to further <em>dynamically</em> configure a <a class="xref" href="Venflow.Database.html">Database</a> instance.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object">Object</a></div>
-    <div class="level1"><span class="xref">NewtonsoftJsonKeyConverter</span></div>
+    <div class="level1"><span class="xref">DatabaseOptionsBuilder</span></div>
+    <div class="level2"><span class="xref">DatabaseOptionsBuilder&lt;TDatabase&gt;</span></div>
   </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Venflow.NewtonsoftJson.html">Venflow.NewtonsoftJson</a></h6>
-  <h6><strong>Assembly</strong>: Venflow.NewtonsoftJson.dll</h6>
-  <h5 id="Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_syntax">Syntax</h5>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">DatabaseOptionsBuilder.DefaultLoggingBehavior</span>
+    </div>
+    <div>
+      <span class="xref">DatabaseOptionsBuilder.ConnectionString</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Venflow.html">Venflow</a></h6>
+  <h6><strong>Assembly</strong>: Venflow.dll</h6>
+  <h5 id="Venflow_DatabaseOptionsBuilder_1_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class NewtonsoftJsonKeyConverter : JsonConverter</code></pre>
+    <pre><code class="lang-csharp hljs">public class DatabaseOptionsBuilder&lt;TDatabase&gt; : DatabaseOptionsBuilder where TDatabase : Database</code></pre>
   </div>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TDatabase</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="methods">Methods
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_CanConvert_Type_.md&amp;value=---%0Auid%3A%20Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.CanConvert(Type)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseOptionsBuilder_1_LogTo_Action_System_String__System_Boolean_.md&amp;value=---%0Auid%3A%20Venflow.DatabaseOptionsBuilder%601.LogTo(Action%7BSystem.String%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow.NewtonsoftJson/NewtonsoftJsonKeyConverter.cs/#L15">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseOptionsBuilder.cs/#L48">View Source</a>
   </span>
-  <a id="Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_CanConvert_" data-uid="Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.CanConvert*"></a>
-  <h4 id="Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_CanConvert_Type_" data-uid="Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.CanConvert(Type)">CanConvert(Type)</h4>
-  <div class="markdown level1 summary"></div>
+  <a id="Venflow_DatabaseOptionsBuilder_1_LogTo_" data-uid="Venflow.DatabaseOptionsBuilder`1.LogTo*"></a>
+  <h4 id="Venflow_DatabaseOptionsBuilder_1_LogTo_Action_System_String__System_Boolean_" data-uid="Venflow.DatabaseOptionsBuilder`1.LogTo(Action{System.String},System.Boolean)">LogTo(Action&lt;String&gt;, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Adds a logger, which allows for logging of executed commands.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override bool CanConvert(Type objectType)</code></pre>
+    <pre><code class="lang-csharp hljs">public DatabaseOptionsBuilder&lt;TDatabase&gt; LogTo(Action&lt;string&gt; loggerCallback, bool logSensitveData = false)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -138,71 +164,16 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Type</span></td>
-        <td><span class="parametername">objectType</span></td>
-        <td></td>
+        <td><span class="xref">Action</span>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a>&gt;</td>
+        <td><span class="parametername">loggerCallback</span></td>
+        <td><p>A callback which is being used to log commands.</p>
+</td>
       </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
       <tr>
         <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.boolean">Boolean</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_ReadJson_JsonReader_Type_System_Object_JsonSerializer_.md&amp;value=---%0Auid%3A%20Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson(JsonReader%2CType%2CSystem.Object%2CJsonSerializer)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow.NewtonsoftJson/NewtonsoftJsonKeyConverter.cs/#L21">View Source</a>
-  </span>
-  <a id="Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_ReadJson_" data-uid="Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson*"></a>
-  <h4 id="Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_ReadJson_JsonReader_Type_System_Object_JsonSerializer_" data-uid="Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson(JsonReader,Type,System.Object,JsonSerializer)">ReadJson(JsonReader, Type, Object, JsonSerializer)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">JsonReader</span></td>
-        <td><span class="parametername">reader</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">Type</span></td>
-        <td><span class="parametername">objectType</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object">Object</a></td>
-        <td><span class="parametername">existingValue</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">JsonSerializer</span></td>
-        <td><span class="parametername">serializer</span></td>
-        <td></td>
+        <td><span class="parametername">logSensitveData</span></td>
+        <td><p>Determines whether or not to log parameterized commands.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -216,25 +187,31 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object">Object</a></td>
-        <td></td>
+        <td><a class="xref" href="Venflow.DatabaseOptionsBuilder-1.html">DatabaseOptionsBuilder</a>&lt;TDatabase&gt;</td>
+        <td><p>An object that can be used to configure the current <a class="xref" href="Venflow.Database.html">Database</a> instance.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="Venflow_DatabaseOptionsBuilder_1_LogTo_Action_System_String__System_Boolean__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Also consider configuring the <span class="xref">DatabaseOptionsBuilder.DefaultLoggingBehavior</span> property.
+Be aware that this method should be used in cases which require quick logging. This API wraps the <code data-dev-comment-type="paramref" class="paramref">loggerCallback</code> again and calls <a class="xref" href="Venflow.DatabaseOptionsBuilder-1.html#Venflow_DatabaseOptionsBuilder_1_LogTo_Venflow_LoggerCallback_">LogTo(LoggerCallback)</a>.</p>
+</div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_WriteJson_JsonWriter_System_Object_JsonSerializer_.md&amp;value=---%0Auid%3A%20Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson(JsonWriter%2CSystem.Object%2CJsonSerializer)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseOptionsBuilder_1_LogTo_Venflow_LoggerCallback_.md&amp;value=---%0Auid%3A%20Venflow.DatabaseOptionsBuilder%601.LogTo(Venflow.LoggerCallback)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow.NewtonsoftJson/NewtonsoftJsonKeyConverter.cs/#L29">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseOptionsBuilder.cs/#L31">View Source</a>
   </span>
-  <a id="Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_WriteJson_" data-uid="Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson*"></a>
-  <h4 id="Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_WriteJson_JsonWriter_System_Object_JsonSerializer_" data-uid="Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson(JsonWriter,System.Object,JsonSerializer)">WriteJson(JsonWriter, Object, JsonSerializer)</h4>
-  <div class="markdown level1 summary"></div>
+  <a id="Venflow_DatabaseOptionsBuilder_1_LogTo_" data-uid="Venflow.DatabaseOptionsBuilder`1.LogTo*"></a>
+  <h4 id="Venflow_DatabaseOptionsBuilder_1_LogTo_Venflow_LoggerCallback_" data-uid="Venflow.DatabaseOptionsBuilder`1.LogTo(Venflow.LoggerCallback)">LogTo(LoggerCallback)</h4>
+  <div class="markdown level1 summary"><p>Adds a logger, which allows for logging of executed commands.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)</code></pre>
+    <pre><code class="lang-csharp hljs">public DatabaseOptionsBuilder&lt;TDatabase&gt; LogTo(LoggerCallback loggerCallback)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -247,22 +224,32 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">JsonWriter</span></td>
-        <td><span class="parametername">writer</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object">Object</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">JsonSerializer</span></td>
-        <td><span class="parametername">serializer</span></td>
-        <td></td>
+        <td><a class="xref" href="Venflow.LoggerCallback.html">LoggerCallback</a></td>
+        <td><span class="parametername">loggerCallback</span></td>
+        <td><p>A callback which is being used to log commands.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.DatabaseOptionsBuilder-1.html">DatabaseOptionsBuilder</a>&lt;TDatabase&gt;</td>
+        <td><p>An object that can be used to configure the current <a class="xref" href="Venflow.Database.html">Database</a> instance.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Venflow_DatabaseOptionsBuilder_1_LogTo_Venflow_LoggerCallback__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Also consider configuring the <span class="xref">DatabaseOptionsBuilder.DefaultLoggingBehavior</span> property.</p>
+</div>
 </article>
           </div>
           
@@ -279,10 +266,10 @@
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter.md&amp;value=---%0Auid%3A%20Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseOptionsBuilder_1.md&amp;value=---%0Auid%3A%20Venflow.DatabaseOptionsBuilder%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow.NewtonsoftJson/NewtonsoftJsonKeyConverter.cs/#L10" class="contribution-link">View Source</a>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseOptionsBuilder.cs/#L20" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

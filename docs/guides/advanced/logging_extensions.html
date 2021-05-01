@@ -93,7 +93,7 @@
 <h1 id="logging-with-venflow-and-microsoftextensionslogging">Logging with Venflow and Microsoft.Extensions.Logging</h1>
 
 <p>Venflow has out of the box support for <a href="https://www.nuget.org/packages/Microsoft.Extensions.Logging"><code>Microsoft.Extensions.Logging</code></a>, however it needs an add-in package called <a href="https://www.nuget.org/packages/Venflow.Extensions.Logging"><code>Venflow.Extensions.Logging</code></a> which can be downloaded through the NuGet Package Manager.</p>
-<p>After installing you will be able to use the extensions method <a href="xref:Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory(Venflow.DatabaseOptionsBuilder,Microsoft.Extensions.Logging.ILoggerFactory,System.Boolean)"><code>UseLoggerFactory</code></a> on your <a class="xref" href="../../api/Venflow.DatabaseOptionsBuilder.html"><code>DatabaseOptionsBuilder</code></a> instance as shown in the example below. The Boolean parameter specifies whether or not to include sensitive information in the formatted log.</p>
+<p>After installing you will be able to use the extensions method <a href="xref:Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory(Venflow.DatabaseOptionsBuilder,Microsoft.Extensions.Logging.ILoggerFactory,System.Boolean)"><code>UseLoggerFactory</code></a> on your <a href="xref:Venflow.DatabaseOptionsBuilder"><code>DatabaseOptionsBuilder</code></a> instance as shown in the example below. The Boolean parameter specifies whether or not to include sensitive information in the formatted log.</p>
 <pre><code class="lang-cs">public class BlogDatabase : Database
 {
     // Omitted for brevity.

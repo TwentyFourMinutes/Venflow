@@ -1242,6 +1242,12 @@ references:
   commentId: T:Venflow.Database
   fullName: Venflow.Database
   nameWithType: Database
+- uid: Venflow.Database.#ctor(DatabaseOptionsBuilder)
+  name: Database(DatabaseOptionsBuilder)
+  href: api/Venflow.Database.html#Venflow_Database__ctor_DatabaseOptionsBuilder_
+  commentId: M:Venflow.Database.#ctor(DatabaseOptionsBuilder)
+  fullName: Venflow.Database.Database(DatabaseOptionsBuilder)
+  nameWithType: Database.Database(DatabaseOptionsBuilder)
 - uid: Venflow.Database.#ctor(System.String)
   name: Database(String)
   href: api/Venflow.Database.html#Venflow_Database__ctor_System_String_
@@ -1274,12 +1280,12 @@ references:
   isSpec: "True"
   fullName: Venflow.Database.BeginTransactionAsync
   nameWithType: Database.BeginTransactionAsync
-- uid: Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)
-  name: Configure(DatabaseOptionsBuilder)
-  href: api/Venflow.Database.html#Venflow_Database_Configure_Venflow_DatabaseOptionsBuilder_
-  commentId: M:Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)
-  fullName: Venflow.Database.Configure(Venflow.DatabaseOptionsBuilder)
-  nameWithType: Database.Configure(DatabaseOptionsBuilder)
+- uid: Venflow.Database.Configure(Venflow.DatabaseConfigurationOptionsBuilder)
+  name: Configure(DatabaseConfigurationOptionsBuilder)
+  href: api/Venflow.Database.html#Venflow_Database_Configure_Venflow_DatabaseConfigurationOptionsBuilder_
+  commentId: M:Venflow.Database.Configure(Venflow.DatabaseConfigurationOptionsBuilder)
+  fullName: Venflow.Database.Configure(Venflow.DatabaseConfigurationOptionsBuilder)
+  nameWithType: Database.Configure(DatabaseConfigurationOptionsBuilder)
 - uid: Venflow.Database.Configure*
   name: Configure
   href: api/Venflow.Database.html#Venflow_Database_Configure_
@@ -1422,69 +1428,78 @@ references:
   isSpec: "True"
   fullName: Venflow.Database.GetConnection
   nameWithType: Database.GetConnection
-- uid: Venflow.DatabaseOptionsBuilder
-  name: DatabaseOptionsBuilder
-  href: api/Venflow.DatabaseOptionsBuilder.html
-  commentId: T:Venflow.DatabaseOptionsBuilder
-  fullName: Venflow.DatabaseOptionsBuilder
-  nameWithType: DatabaseOptionsBuilder
-- uid: Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior
-  name: DefaultLoggingBehavior
-  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior
-  commentId: P:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior
-  fullName: Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior
-  nameWithType: DatabaseOptionsBuilder.DefaultLoggingBehavior
-- uid: Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior*
-  name: DefaultLoggingBehavior
-  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_DefaultLoggingBehavior_
-  commentId: Overload:Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior
-  isSpec: "True"
-  fullName: Venflow.DatabaseOptionsBuilder.DefaultLoggingBehavior
-  nameWithType: DatabaseOptionsBuilder.DefaultLoggingBehavior
-- uid: Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)
-  name: LogTo(LoggerCallback)
-  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_LogTo_Venflow_LoggerCallback_
-  commentId: M:Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)
-  fullName: Venflow.DatabaseOptionsBuilder.LogTo(Venflow.LoggerCallback)
-  nameWithType: DatabaseOptionsBuilder.LogTo(LoggerCallback)
-- uid: Venflow.DatabaseOptionsBuilder.LogTo*
-  name: LogTo
-  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_LogTo_
-  commentId: Overload:Venflow.DatabaseOptionsBuilder.LogTo
-  isSpec: "True"
-  fullName: Venflow.DatabaseOptionsBuilder.LogTo
-  nameWithType: DatabaseOptionsBuilder.LogTo
-- uid: Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly)
+- uid: Venflow.DatabaseConfigurationOptionsBuilder
+  name: DatabaseConfigurationOptionsBuilder
+  href: api/Venflow.DatabaseConfigurationOptionsBuilder.html
+  commentId: T:Venflow.DatabaseConfigurationOptionsBuilder
+  fullName: Venflow.DatabaseConfigurationOptionsBuilder
+  nameWithType: DatabaseConfigurationOptionsBuilder
+- uid: Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly)
   name: UseConfigurations(Assembly)
-  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_UseConfigurations_Assembly_
-  commentId: M:Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly)
-  fullName: Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly)
-  nameWithType: DatabaseOptionsBuilder.UseConfigurations(Assembly)
-- uid: Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly[])
+  href: api/Venflow.DatabaseConfigurationOptionsBuilder.html#Venflow_DatabaseConfigurationOptionsBuilder_UseConfigurations_Assembly_
+  commentId: M:Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly)
+  fullName: Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly)
+  nameWithType: DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly)
+- uid: Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly[])
   name: UseConfigurations(Assembly[])
-  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_UseConfigurations_Assembly___
-  commentId: M:Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly[])
+  href: api/Venflow.DatabaseConfigurationOptionsBuilder.html#Venflow_DatabaseConfigurationOptionsBuilder_UseConfigurations_Assembly___
+  commentId: M:Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly[])
   name.vb: UseConfigurations(Assembly())
-  fullName: Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly[])
-  fullName.vb: Venflow.DatabaseOptionsBuilder.UseConfigurations(Assembly())
-  nameWithType: DatabaseOptionsBuilder.UseConfigurations(Assembly[])
-  nameWithType.vb: DatabaseOptionsBuilder.UseConfigurations(Assembly())
-- uid: Venflow.DatabaseOptionsBuilder.UseConfigurations*
+  fullName: Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly[])
+  fullName.vb: Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly())
+  nameWithType: DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly[])
+  nameWithType.vb: DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly())
+- uid: Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations*
   name: UseConfigurations
-  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_UseConfigurations_
-  commentId: Overload:Venflow.DatabaseOptionsBuilder.UseConfigurations
+  href: api/Venflow.DatabaseConfigurationOptionsBuilder.html#Venflow_DatabaseConfigurationOptionsBuilder_UseConfigurations_
+  commentId: Overload:Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations
   isSpec: "True"
-  fullName: Venflow.DatabaseOptionsBuilder.UseConfigurations
-  nameWithType: DatabaseOptionsBuilder.UseConfigurations
-- uid: Venflow.DatabaseOptionsBuilder.UseConfigurations``1
+  fullName: Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations
+  nameWithType: DatabaseConfigurationOptionsBuilder.UseConfigurations
+- uid: Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations``1
   name: UseConfigurations<T>()
-  href: api/Venflow.DatabaseOptionsBuilder.html#Venflow_DatabaseOptionsBuilder_UseConfigurations__1
-  commentId: M:Venflow.DatabaseOptionsBuilder.UseConfigurations``1
+  href: api/Venflow.DatabaseConfigurationOptionsBuilder.html#Venflow_DatabaseConfigurationOptionsBuilder_UseConfigurations__1
+  commentId: M:Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations``1
   name.vb: UseConfigurations(Of T)()
-  fullName: Venflow.DatabaseOptionsBuilder.UseConfigurations<T>()
-  fullName.vb: Venflow.DatabaseOptionsBuilder.UseConfigurations(Of T)()
-  nameWithType: DatabaseOptionsBuilder.UseConfigurations<T>()
-  nameWithType.vb: DatabaseOptionsBuilder.UseConfigurations(Of T)()
+  fullName: Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations<T>()
+  fullName.vb: Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(Of T)()
+  nameWithType: DatabaseConfigurationOptionsBuilder.UseConfigurations<T>()
+  nameWithType.vb: DatabaseConfigurationOptionsBuilder.UseConfigurations(Of T)()
+- uid: Venflow.DatabaseOptionsBuilder`1
+  name: DatabaseOptionsBuilder<TDatabase>
+  href: api/Venflow.DatabaseOptionsBuilder-1.html
+  commentId: T:Venflow.DatabaseOptionsBuilder`1
+  name.vb: DatabaseOptionsBuilder(Of TDatabase)
+  fullName: Venflow.DatabaseOptionsBuilder<TDatabase>
+  fullName.vb: Venflow.DatabaseOptionsBuilder(Of TDatabase)
+  nameWithType: DatabaseOptionsBuilder<TDatabase>
+  nameWithType.vb: DatabaseOptionsBuilder(Of TDatabase)
+- uid: Venflow.DatabaseOptionsBuilder`1.LogTo(Action{System.String},System.Boolean)
+  name: LogTo(Action<String>, Boolean)
+  href: api/Venflow.DatabaseOptionsBuilder-1.html#Venflow_DatabaseOptionsBuilder_1_LogTo_Action_System_String__System_Boolean_
+  commentId: M:Venflow.DatabaseOptionsBuilder`1.LogTo(Action{System.String},System.Boolean)
+  name.vb: LogTo(Action(Of String), Boolean)
+  fullName: Venflow.DatabaseOptionsBuilder<TDatabase>.LogTo(Action<System.String>, System.Boolean)
+  fullName.vb: Venflow.DatabaseOptionsBuilder(Of TDatabase).LogTo(Action(Of System.String), System.Boolean)
+  nameWithType: DatabaseOptionsBuilder<TDatabase>.LogTo(Action<String>, Boolean)
+  nameWithType.vb: DatabaseOptionsBuilder(Of TDatabase).LogTo(Action(Of String), Boolean)
+- uid: Venflow.DatabaseOptionsBuilder`1.LogTo(Venflow.LoggerCallback)
+  name: LogTo(LoggerCallback)
+  href: api/Venflow.DatabaseOptionsBuilder-1.html#Venflow_DatabaseOptionsBuilder_1_LogTo_Venflow_LoggerCallback_
+  commentId: M:Venflow.DatabaseOptionsBuilder`1.LogTo(Venflow.LoggerCallback)
+  fullName: Venflow.DatabaseOptionsBuilder<TDatabase>.LogTo(Venflow.LoggerCallback)
+  fullName.vb: Venflow.DatabaseOptionsBuilder(Of TDatabase).LogTo(Venflow.LoggerCallback)
+  nameWithType: DatabaseOptionsBuilder<TDatabase>.LogTo(LoggerCallback)
+  nameWithType.vb: DatabaseOptionsBuilder(Of TDatabase).LogTo(LoggerCallback)
+- uid: Venflow.DatabaseOptionsBuilder`1.LogTo*
+  name: LogTo
+  href: api/Venflow.DatabaseOptionsBuilder-1.html#Venflow_DatabaseOptionsBuilder_1_LogTo_
+  commentId: Overload:Venflow.DatabaseOptionsBuilder`1.LogTo
+  isSpec: "True"
+  fullName: Venflow.DatabaseOptionsBuilder<TDatabase>.LogTo
+  fullName.vb: Venflow.DatabaseOptionsBuilder(Of TDatabase).LogTo
+  nameWithType: DatabaseOptionsBuilder<TDatabase>.LogTo
+  nameWithType.vb: DatabaseOptionsBuilder(Of TDatabase).LogTo
 - uid: Venflow.Enums
   name: Venflow.Enums
   href: api/Venflow.Enums.html
@@ -1677,12 +1692,6 @@ references:
   commentId: T:Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions
   fullName: Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions
   nameWithType: DatabaseOptionsBuilderExtensions
-- uid: Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory(Venflow.DatabaseOptionsBuilder,ILoggerFactory,System.Boolean)
-  name: UseLoggerFactory(DatabaseOptionsBuilder, ILoggerFactory, Boolean)
-  href: api/Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.html#Venflow_Extensions_Logging_DatabaseOptionsBuilderExtensions_UseLoggerFactory_Venflow_DatabaseOptionsBuilder_ILoggerFactory_System_Boolean_
-  commentId: M:Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory(Venflow.DatabaseOptionsBuilder,ILoggerFactory,System.Boolean)
-  fullName: Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory(Venflow.DatabaseOptionsBuilder, ILoggerFactory, System.Boolean)
-  nameWithType: DatabaseOptionsBuilderExtensions.UseLoggerFactory(DatabaseOptionsBuilder, ILoggerFactory, Boolean)
 - uid: Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory*
   name: UseLoggerFactory
   href: api/Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.html#Venflow_Extensions_Logging_DatabaseOptionsBuilderExtensions_UseLoggerFactory_
@@ -1690,6 +1699,15 @@ references:
   isSpec: "True"
   fullName: Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory
   nameWithType: DatabaseOptionsBuilderExtensions.UseLoggerFactory
+- uid: Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory``1(Venflow.DatabaseOptionsBuilder{``0},ILoggerFactory,System.Boolean)
+  name: UseLoggerFactory<TDatabase>(DatabaseOptionsBuilder<TDatabase>, ILoggerFactory, Boolean)
+  href: api/Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.html#Venflow_Extensions_Logging_DatabaseOptionsBuilderExtensions_UseLoggerFactory__1_Venflow_DatabaseOptionsBuilder___0__ILoggerFactory_System_Boolean_
+  commentId: M:Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory``1(Venflow.DatabaseOptionsBuilder{``0},ILoggerFactory,System.Boolean)
+  name.vb: UseLoggerFactory(Of TDatabase)(DatabaseOptionsBuilder(Of TDatabase), ILoggerFactory, Boolean)
+  fullName: Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory<TDatabase>(Venflow.DatabaseOptionsBuilder<TDatabase>, ILoggerFactory, System.Boolean)
+  fullName.vb: Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.UseLoggerFactory(Of TDatabase)(Venflow.DatabaseOptionsBuilder(Of TDatabase), ILoggerFactory, System.Boolean)
+  nameWithType: DatabaseOptionsBuilderExtensions.UseLoggerFactory<TDatabase>(DatabaseOptionsBuilder<TDatabase>, ILoggerFactory, Boolean)
+  nameWithType.vb: DatabaseOptionsBuilderExtensions.UseLoggerFactory(Of TDatabase)(DatabaseOptionsBuilder(Of TDatabase), ILoggerFactory, Boolean)
 - uid: Venflow.FormattableSqlStringBuilder
   name: FormattableSqlStringBuilder
   href: api/Venflow.FormattableSqlStringBuilder.html
