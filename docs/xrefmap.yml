@@ -2359,12 +2359,15 @@ references:
   isSpec: "True"
   fullName: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.CanConvert
   nameWithType: NewtonsoftJsonKeyConverter.CanConvert
-- uid: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson(JsonReader,Type,System.Object,JsonSerializer)
-  name: ReadJson(JsonReader, Type, Object, JsonSerializer)
-  href: api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html#Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_ReadJson_JsonReader_Type_System_Object_JsonSerializer_
-  commentId: M:Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson(JsonReader,Type,System.Object,JsonSerializer)
-  fullName: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson(JsonReader, Type, System.Object, JsonSerializer)
-  nameWithType: NewtonsoftJsonKeyConverter.ReadJson(JsonReader, Type, Object, JsonSerializer)
+- uid: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson(JsonReader,Type,System.Nullable{System.Object},JsonSerializer)
+  name: ReadJson(JsonReader, Type, Nullable<Object>, JsonSerializer)
+  href: api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html#Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_ReadJson_JsonReader_Type_System_Nullable_System_Object__JsonSerializer_
+  commentId: M:Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson(JsonReader,Type,System.Nullable{System.Object},JsonSerializer)
+  name.vb: ReadJson(JsonReader, Type, Nullable(Of Object), JsonSerializer)
+  fullName: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson(JsonReader, Type, System.Nullable<System.Object>, JsonSerializer)
+  fullName.vb: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson(JsonReader, Type, System.Nullable(Of System.Object), JsonSerializer)
+  nameWithType: NewtonsoftJsonKeyConverter.ReadJson(JsonReader, Type, Nullable<Object>, JsonSerializer)
+  nameWithType.vb: NewtonsoftJsonKeyConverter.ReadJson(JsonReader, Type, Nullable(Of Object), JsonSerializer)
 - uid: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson*
   name: ReadJson
   href: api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html#Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_ReadJson_
@@ -2372,12 +2375,15 @@ references:
   isSpec: "True"
   fullName: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson
   nameWithType: NewtonsoftJsonKeyConverter.ReadJson
-- uid: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson(JsonWriter,System.Object,JsonSerializer)
-  name: WriteJson(JsonWriter, Object, JsonSerializer)
-  href: api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html#Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_WriteJson_JsonWriter_System_Object_JsonSerializer_
-  commentId: M:Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson(JsonWriter,System.Object,JsonSerializer)
-  fullName: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson(JsonWriter, System.Object, JsonSerializer)
-  nameWithType: NewtonsoftJsonKeyConverter.WriteJson(JsonWriter, Object, JsonSerializer)
+- uid: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson(JsonWriter,System.Nullable{System.Object},JsonSerializer)
+  name: WriteJson(JsonWriter, Nullable<Object>, JsonSerializer)
+  href: api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html#Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_WriteJson_JsonWriter_System_Nullable_System_Object__JsonSerializer_
+  commentId: M:Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson(JsonWriter,System.Nullable{System.Object},JsonSerializer)
+  name.vb: WriteJson(JsonWriter, Nullable(Of Object), JsonSerializer)
+  fullName: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson(JsonWriter, System.Nullable<System.Object>, JsonSerializer)
+  fullName.vb: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson(JsonWriter, System.Nullable(Of System.Object), JsonSerializer)
+  nameWithType: NewtonsoftJsonKeyConverter.WriteJson(JsonWriter, Nullable<Object>, JsonSerializer)
+  nameWithType.vb: NewtonsoftJsonKeyConverter.WriteJson(JsonWriter, Nullable(Of Object), JsonSerializer)
 - uid: Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson*
   name: WriteJson
   href: api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html#Venflow_NewtonsoftJson_NewtonsoftJsonKeyConverter_WriteJson_
