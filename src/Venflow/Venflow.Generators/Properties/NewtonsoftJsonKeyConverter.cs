@@ -4,11 +4,11 @@ using System.Collections.Concurrent;
 namespace Venflow.NewtonsoftJson
 {
     /// <summary>
-    /// A <see cref="JsonConverter"/> to parse <see cref="IKey{TEntity, TKey}"/> instances.
+    /// A <see cref="Newtonsoft.Json.JsonConverter"/> to parse <see cref="IKey{TEntity, TKey}"/> instances.
     /// </summary>
-    public class NewtonsoftJsonKeyConverter : JsonConverter
+    public class NewtonsoftJsonKeyConverter : Newtonsoft.Json.JsonConverter
     {
-        private static readonly ConcurrentDictionary<Type, JsonConverter> _jsonConverters = new();
+        private static readonly ConcurrentDictionary<Type, Newtonsoft.Json.JsonConverter> _jsonConverters = new();
 
         /// <inheritdoc/>
         public override bool CanConvert(Type objectType)
@@ -17,7 +17,7 @@ namespace Venflow.NewtonsoftJson
         }
 
         /// <inheritdoc/>
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object? ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, object? existingValue, Newtonsoft.Json.JsonSerializer serializer)
         {
             var converter = GetConverter(objectType);
 
@@ -25,7 +25,7 @@ namespace Venflow.NewtonsoftJson
         }
 
         /// <inheritdoc/>
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object? value, Newtonsoft.Json.JsonSerializer serializer)
         {
             if (value is null)
             {
@@ -38,12 +38,12 @@ namespace Venflow.NewtonsoftJson
             }
         }
 
-        private static JsonConverter GetConverter(Type keyType)
+        private static Newtonsoft.Json.JsonConverter GetConverter(Type keyType)
         {
             return _jsonConverters.GetOrAdd(keyType, CreateConverter);
         }
 
-        private static JsonConverter CreateConverter(Type keyType)
+        private static Newtonsoft.Json.JsonConverter CreateConverter(Type keyType)
         {
             var keyInterface = keyType.GetInterface("Venflow.IKey`2");
 
@@ -52,17 +52,17 @@ namespace Venflow.NewtonsoftJson
 
             var parameters = keyInterface.GetGenericArguments();
 
-            return (JsonConverter)Activator.CreateInstance(typeof(NewtonsoftJsonKeyConverter<,,>).MakeGenericType(keyType, parameters[0], parameters[1]));
+            return (Newtonsoft.Json.JsonConverter)Activator.CreateInstance(typeof(NewtonsoftJsonKeyConverter<,,>).MakeGenericType(keyType, parameters[0], parameters[1]));
         }
     }
 
-    internal class NewtonsoftJsonKeyConverter<TKey, TEntity, TKeyValue> : JsonConverter<TKey>
+    internal class NewtonsoftJsonKeyConverter<TKey, TEntity, TKeyValue> : Newtonsoft.Json.JsonConverter<TKey>
         where TKey : struct
         where TKeyValue : struct
     {
-        public override TKey ReadJson(JsonReader reader, Type objectType, TKey existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override TKey ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, TKey existingValue, bool hasExistingValue, Newtonsoft.Json.JsonSerializer serializer)
         {
-            if (reader.TokenType is JsonToken.Null)
+            if (reader.TokenType is Newtonsoft.Json.JsonToken.Null)
                 return default;
 
             var value = serializer.Deserialize<TKeyValue>(reader);
@@ -71,7 +71,7 @@ namespace Venflow.NewtonsoftJson
             return (TKey)factory(value);
         }
 
-        public override void WriteJson(JsonWriter writer, TKey value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, TKey value, Newtonsoft.Json.JsonSerializer serializer)
         {
             writer.WriteValue(((IKey<TEntity, TKeyValue>)value).Value);
         }
