@@ -16,7 +16,7 @@ namespace Venflow
 
         internal DatabaseConfigurationOptionsBuilder(Type effectiveDatabaseType)
         {
-            ConfigurationAssemblies = new(1);
+            ConfigurationAssemblies = new(1) { effectiveDatabaseType.Assembly };
 
             EffectiveDatabaseType = effectiveDatabaseType;
         }
