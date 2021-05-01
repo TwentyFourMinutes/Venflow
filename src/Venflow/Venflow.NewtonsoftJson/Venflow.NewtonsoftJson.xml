@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Venflow.NewtonsoftJson</name>
+    </assembly>
+    <members>
+        <member name="T:Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter">
+            <summary>
+            A <see cref="T:Newtonsoft.Json.JsonConverter"/> to parse <see cref="T:Venflow.IKey`2"/> instances.
+            </summary>
+        </member>
+        <member name="M:Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.CanConvert(System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <inheritdoc/>
+        </member>
+    </members>
+</doc>
