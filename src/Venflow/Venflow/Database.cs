@@ -46,6 +46,7 @@ namespace Venflow
         protected Database(string connectionString)
         {
             ConnectionString = connectionString;
+            _loggers = Array.Empty<LoggerCallback>();
 
             Build();
         }
