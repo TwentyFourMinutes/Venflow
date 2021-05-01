@@ -4,15 +4,15 @@
         <name>Venflow.Generators</name>
     </assembly>
     <members>
-        <member name="T:Venflow.Generated.KeyGenerator">
+        <member name="T:Venflow.Generators.KeyGenerator">
             <summary>
             A Source Generator that will generate a strongly typed id implementation.
             </summary>
         </member>
-        <member name="M:Venflow.Generated.KeyGenerator.Initialize(Microsoft.CodeAnalysis.GeneratorInitializationContext)">
+        <member name="M:Venflow.Generators.KeyGenerator.Initialize(Microsoft.CodeAnalysis.GeneratorInitializationContext)">
             <inheritdoc/>
         </member>
-        <member name="M:Venflow.Generated.KeyGenerator.Execute(Microsoft.CodeAnalysis.GeneratorExecutionContext)">
+        <member name="M:Venflow.Generators.KeyGenerator.Execute(Microsoft.CodeAnalysis.GeneratorExecutionContext)">
             <inheritdoc/>
         </member>
     </members>

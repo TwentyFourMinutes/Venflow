@@ -1,14 +1,15 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 
-namespace Venflow.Generated
+namespace Venflow.Generators
 {
     /// <summary>
     /// A Source Generator that will generate a strongly typed id implementation.
@@ -29,32 +30,19 @@ namespace Venflow.Generated
         {
             Debug.WriteLine("Key-Generator: Executing code generator.");
 
-            var baseKeyType = context.Compilation.GetTypeByMetadataName("Venflow.IKey`2");
+            var references = context.Compilation.References.ToArray();
 
-            if (baseKeyType is null)
-                throw new InvalidOperationException("The type 'Venflow.IKey`2' could not be found. Ensure that the 'Venflow' package is referenced.");
+            if (!context.Compilation.ContainsAssembly(references, Assemblies.Venflow))
+                throw new InvalidOperationException("The assembly 'Venflow' could not be found. Ensure that the 'Venflow' package is referenced.");
 
-            const string attributeText = @"using System;
-using System.Reflection;
+            if (context.Compilation.ContainsAssembly(references, Assemblies.NewtonsoftJson) &&
+                !context.Compilation.ContainsAssembly(references, Assemblies.VenflowNewtonsoftJson))
+            {
+                context.AddResourceSource("NewtonsoftJsonKeyConverter");
+            }
 
-namespace Venflow
-{
-    [AttributeUsage(AttributeTargets.Struct, Inherited = false, AllowMultiple = false)]
-    public sealed class GeneratedKeyAttribute : Attribute
-    {
-        private Type _keyType;
+            var compilation = context.AddResourceSource("GeneratedKeyAttribute", true);
 
-        public GeneratedKeyAttribute(Type keyType)
-        {
-            _keyType = keyType;
-        }
-    }
-}";
-
-            context.AddSource("GeneratedKeyAttribute", SourceText.From(attributeText, Encoding.UTF8));
-
-            var options = (context.Compilation as CSharpCompilation).SyntaxTrees[0].Options as CSharpParseOptions;
-            var compilation = context.Compilation.AddSyntaxTrees(CSharpSyntaxTree.ParseText(SourceText.From(attributeText, Encoding.UTF8), options));
             var attributeSymbol = compilation.GetTypeByMetadataName("Venflow.GeneratedKeyAttribute");
 
             var comparableInterfaceType = compilation.GetTypeByMetadataName("System.IComparable");
