@@ -8,8 +8,7 @@ namespace Venflow.Generators
 
         internal static readonly AssemblyTokenInfo Venflow = new AssemblyTokenInfo("Venflow", _venflowToken);
         internal static readonly AssemblyTokenInfo VenflowNewtonsoftJson = new AssemblyTokenInfo("Venflow.NewtonsoftJson", _venflowToken);
-        internal static readonly AssemblyTokenInfo NewtonsoftJson = new AssemblyTokenInfo("Newtonsoft.Json", new byte[] { 48, 173, 79, 230, 178, 168, 174, 237 });
-
+        internal static readonly AssemblyTokenInfo NewtonsoftJson = new AssemblyTokenInfo("Newtonsoft.Json", new byte[] { 48, 173, 79, 230, 178, 166, 174, 237 });
     }
 
     internal class AssemblyTokenInfo
