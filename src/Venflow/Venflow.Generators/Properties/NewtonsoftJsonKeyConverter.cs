@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Concurrent;
 
-namespace Venflow.NewtonsoftJson
+namespace Venflow.Json
 {
     /// <summary>
-    /// A <see cref="Newtonsoft.Json.JsonConverter"/> to parse <see cref="IKey{TEntity, TKey}"/> instances.
+    /// A <see cref="Newtonsoft.Json.JsonConverter"/> to parse <see cref="Venflow.IKey{TEntity, TKey}"/> instances.
     /// </summary>
     public class NewtonsoftJsonKeyConverter : Newtonsoft.Json.JsonConverter
     {
@@ -13,7 +13,7 @@ namespace Venflow.NewtonsoftJson
         /// <inheritdoc/>
         public override bool CanConvert(Type objectType)
         {
-            return typeof(IKey).IsAssignableFrom(objectType);
+            return typeof(Venflow.IKey).IsAssignableFrom(objectType);
         }
 
         /// <inheritdoc/>
@@ -71,9 +71,9 @@ namespace Venflow.NewtonsoftJson
             return (TKey)factory(value);
         }
 
-        public override void WriteJson(JsonWriter writer, TKey value, Newtonsoft.Json.JsonSerializer serializer)
+        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, TKey value, Newtonsoft.Json.JsonSerializer serializer)
         {
-            writer.WriteValue(((IKey<TEntity, TKeyValue>)value).Value);
+            writer.WriteValue(((Venflow.IKey<TEntity, TKeyValue>)value).Value);
         }
     }
 }

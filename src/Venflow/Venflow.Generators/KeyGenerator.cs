@@ -35,7 +35,9 @@ namespace Venflow.Generators
             if (!context.Compilation.ContainsAssembly(references, Assemblies.Venflow))
                 throw new InvalidOperationException("The assembly 'Venflow' could not be found. Ensure that the 'Venflow' package is referenced.");
 
-            if (context.Compilation.ContainsAssembly(references, Assemblies.NewtonsoftJson) &&
+            var hasNewtonsoftReference = context.Compilation.ContainsAssembly(references, Assemblies.NewtonsoftJson);
+
+            if (hasNewtonsoftReference &&
                 !context.Compilation.ContainsAssembly(references, Assemblies.VenflowNewtonsoftJson))
             {
                 context.AddResourceSource("NewtonsoftJsonKeyConverter");
@@ -75,7 +77,7 @@ namespace Venflow.Generators
 
                 if (underlyingKeyFullName is null ||
                     underlyingKeyType is null)
-                    break;
+                    continue;
 
                 var baseStruct = semanticModel.GetDeclaredSymbol(declarationSyntax);
 
@@ -162,7 +164,8 @@ namespace {namespaceText}
     /// <summary>
     /// This is used to create strongly-typed ids.
     /// </summary>
-    /// <typeparam name=""{typeArgumentName}"">They type of entity the key sits in.</typeparam>
+    /// <typeparam name=""{typeArgumentName}"">They type of entity the key sits in.</typeparam>{(hasNewtonsoftReference ? Environment.NewLine + $"    [Newtonsoft.Json.JsonConverter(typeof(Venflow.Json.NewtonsoftJsonKeyConverter))]" : string.Empty)}
+    [System.Text.Json.Serialization.JsonConverter(typeof(Venflow.Json.JsonKeyConverterFactory))]
     public readonly partial struct {baseStructName} : IKey<{typeArgumentName}, {underlyingKeyFullName}>, IEquatable<{baseStructName}>{implementedInterfacesText}
     {{
         private readonly {underlyingKeyFullName} _value;

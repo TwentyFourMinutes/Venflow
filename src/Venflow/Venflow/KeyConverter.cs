@@ -2,33 +2,50 @@
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Globalization;
+using System.Reflection;
 using System.Reflection.Emit;
 using Venflow.Dynamic;
 
 namespace Venflow
 {
-    internal class KeyConverter : TypeConverter
+    /// <summary>
+    /// Provides a way of converting <see cref="Key{TEntity, TKey}"/> to strings and vice versa.
+    /// </summary>
+    public class KeyConverter : TypeConverter
     {
         private static readonly ConcurrentDictionary<Type, TypeConverter> _typeConverters = new();
         private static readonly ConcurrentDictionary<Type, Delegate> _keyFactories = new();
 
         private readonly TypeConverter _underlyingConverter;
 
+
+        /// <summary>
+        /// Creates a new instance of a <see cref="KeyConverter"/> with the given key type.
+        /// </summary>
+        /// <param name="keyType">The type of the key to which the <see cref="KeyConverter"/> should bind to.</param>
         public KeyConverter(Type keyType)
         {
             _underlyingConverter = _typeConverters.GetOrAdd(keyType, CreateTypeConverter);
         }
 
+        /// <inheritdoc/>
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
             => _underlyingConverter.CanConvertFrom(context, sourceType);
+
+        /// <inheritdoc/>
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
             => _underlyingConverter.CanConvertTo(context, destinationType);
+
+        /// <inheritdoc/>
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
             => _underlyingConverter.ConvertFrom(context, culture, value);
+
+        /// <inheritdoc/>
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
             => _underlyingConverter.ConvertTo(context, culture, value, destinationType);
 
-        internal static Func<TValue, object> GetOrCreateKeyFactory<TValue>(Type keyType)
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static Func<TValue, object> GetOrCreateKeyFactory<TValue>(Type keyType)
             => (Func<TValue, object>)_keyFactories.GetOrAdd(keyType, CreateKeyFactory<TValue>);
 
         private static TypeConverter CreateTypeConverter(Type keyType)
@@ -40,7 +57,9 @@ namespace Venflow
 
             var parameters = keyInterface.GetGenericArguments();
 
-            return (TypeConverter)Activator.CreateInstance(typeof(KeyConverter<,>).MakeGenericType(parameters[0], parameters[1]), keyType)!;
+            var ctor = typeof(KeyConverter<,>).MakeGenericType(parameters[0], parameters[1]).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(Type) }, null);
+
+            return (TypeConverter)ctor.Invoke(new[] { keyType });
         }
 
         private static Func<TValue, object> CreateKeyFactory<TValue>(Type keyType)

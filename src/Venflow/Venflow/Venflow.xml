@@ -1152,15 +1152,15 @@
             <param name="val">The value of the parameter.</param>
             <returns>The <see cref="T:Npgsql.NpgsqlParameter"/> containing the name and the value.</returns>
         </member>
-        <member name="T:Venflow.Json.JsonKeyConverterFacotry">
+        <member name="T:Venflow.Json.JsonKeyConverterFactory">
             <summary>
             A <see cref="T:System.Text.Json.Serialization.JsonConverter"/> to parse <see cref="T:Venflow.IKey`2"/> instances.
             </summary>
         </member>
-        <member name="M:Venflow.Json.JsonKeyConverterFacotry.CanConvert(System.Type)">
+        <member name="M:Venflow.Json.JsonKeyConverterFactory.CanConvert(System.Type)">
             <inheritdoc/>
         </member>
-        <member name="M:Venflow.Json.JsonKeyConverterFacotry.CreateConverter(System.Type,System.Text.Json.JsonSerializerOptions)">
+        <member name="M:Venflow.Json.JsonKeyConverterFactory.CreateConverter(System.Type,System.Text.Json.JsonSerializerOptions)">
             <inheritdoc/>
         </member>
         <member name="T:Venflow.Key`2">
@@ -1218,6 +1218,29 @@
             <summary>
             <strong>Do not use this interface, if you are not absolutely sure what it does.</strong>
             </summary>
+        </member>
+        <member name="T:Venflow.KeyConverter">
+            <summary>
+            Provides a way of converting <see cref="T:Venflow.Key`2"/> to strings and vice versa.
+            </summary>
+        </member>
+        <member name="M:Venflow.KeyConverter.#ctor(System.Type)">
+            <summary>
+            Creates a new instance of a <see cref="T:Venflow.KeyConverter"/> with the given key type.
+            </summary>
+            <param name="keyType">The type of the key to which the <see cref="T:Venflow.KeyConverter"/> should bind to.</param>
+        </member>
+        <member name="M:Venflow.KeyConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.KeyConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.KeyConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.KeyConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object,System.Type)">
+            <inheritdoc/>
         </member>
         <member name="T:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1">
             <summary>

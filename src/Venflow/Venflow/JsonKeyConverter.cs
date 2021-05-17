@@ -8,7 +8,7 @@ namespace Venflow.Json
     /// <summary>
     /// A <see cref="JsonConverter"/> to parse <see cref="IKey{TEntity, TKey}"/> instances.
     /// </summary>
-    public class JsonKeyConverterFacotry : JsonConverterFactory
+    public class JsonKeyConverterFactory : JsonConverterFactory
     {
         private static readonly ConcurrentDictionary<Type, JsonConverter> _jsonConverters = new();
 

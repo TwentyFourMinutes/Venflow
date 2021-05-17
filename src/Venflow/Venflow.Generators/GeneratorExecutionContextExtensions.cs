@@ -14,7 +14,7 @@ namespace Venflow.Generators
 
             using var stream = assembly.GetManifestResourceStream("Venflow.Generators.Properties." + fileName + ".cs");
 
-            var sourceText = SourceText.From(stream, Encoding.UTF8);
+            var sourceText = SourceText.From(stream, Encoding.UTF8, canBeEmbedded: true);
 
             context.AddSource(fileName, sourceText);
 
