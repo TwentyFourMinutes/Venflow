@@ -84,7 +84,7 @@ public class BlogConfiguration : EntityConfiguration<Blog>
 ```
 
 > [!NOTE] 
-> Most of the configurations have to be configured with the `EntityConfiguration<T>` class, however there are a few exceptions to this rule.
+> Most of the configurations have to be configured with the `IEntityConfiguration<T>` interface, however there are a few exceptions to this rule.
 >
 > - Primary Keys get automatically mapped if they are named `Id` or decorated with the `KeyAttribute`.
 > - A property can also be ignored with the `NotMappedAttribute`.

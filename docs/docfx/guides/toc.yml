@@ -40,5 +40,7 @@
       topicUid: Guides.Advanced.Logging.Extensions
     - name: Strongly-typed Ids
       topicUid: Guides.Advanced.StrongKeys
+    - name: Asp.Net Core
+      topicUid: Guides.Advanced.AspNetCore
     - name: Query Command Caching
       topicUid: Guides.Advanced.CommandQueryCache

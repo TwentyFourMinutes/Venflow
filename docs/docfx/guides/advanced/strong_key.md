@@ -65,10 +65,10 @@ This will no longer compile, due to the fact, that the  `Key<Post, int>` stored 
 
 ## Reducing the boilerplate
 
-This is already an improvement, but it is somewhat annoying to always specify the type the key belongs to as well as the type of the key. In most databases you will most likely end up with the same type of id for all of your tables. Therefor it is rather unnecessary to specify it every time in code. Venflow provides you with an extensions package called [`Venflow.Keys`](https://www.nuget.org/packages/Venflow.Keys/), which includes a Source Generator to create a strongly-typed id with a fixed type for us. However, do note that Source Generators are only available through C#9. Once the package is installed we will be able to do the following.
+This is already an improvement, but it is somewhat annoying to always specify the type the key belongs to as well as the type of the key. In most databases you will most likely end up with the same type of id for all of your tables. Therefor it is rather unnecessary to specify it every time in code. Venflow provides you with a Source Generator to create a strongly-typed id with a fixed type for us. However, do note that Source Generators are only available through C#9.
 
 ```cs
-[Venflow.Keys.GeneratedKey(typeof(int))]
+[Venflow.GeneratedKey(typeof(int))]
 public partial struct Key<T> { }
 ```
 
@@ -88,6 +88,47 @@ public class Post
 
 If required you could also create multiple strongly-typed ids with a fixed types, by naming them differently, for example `IntKey<T>` or `GuidKey<T>`.
 
-## Support for JSON and ASP.Net Core
+> [!NOTE] 
+If you want to use Strongly-typed id's without referencing the whole ORM, you can install Venflow.Keys from NuGet.
 
-It is indeed possible to support both, but native support by Venflow, will most likely arrive in the next release. 
+## Support for JSON
+
+Venflow natively supports `System.Text.Json` and `Newtonsoft.Json`, however if you do want to use `Newtonsoft.Json` you will need to additionally add `Venflow.NewtonsoftJson`.  
+
+### System.Text.Json
+
+You will need to tell the serializer and de-serializer how to handle the new type, you can do this by adding the following line to your `JsonOptions`.
+
+```cs
+var options = new JsonOptions();
+
+options.Converters.Add(new JsonKeyConverterFactory());
+```
+
+### Newtonsoft.Json
+
+You will need to tell the serializer and de-serializer how to handle the new type, you can do this by adding the following line to your `JsonSerializerSettings`.
+
+```cs
+var settings = new JsonSerializerSettings();
+
+settings.Converters.Add(new NewtonsoftJsonKeyConverter());
+```
+
+## Support for Asp.Net Core
+
+Venflow natively supports `System.Text.Json` with Asp.Net Core through the `Venflow.AspNetCore` NuGet package. In your `Startup.cs` file you can add the code below in your `ConfigureServices` method.
+
+```cs
+servics.AddVenflowJson();
+```
+
+### Newtonsoft.Json
+
+At the moment you still have to write your own implementation for `Newtonsoft.Json`, an example can be found below.
+```cs
+servics.AddNewtonsoftJson(options =>
+        {
+            options.SerializerSettings.Converters.Add(new NewtonsoftJsonKeyConverter());
+        });
+```
