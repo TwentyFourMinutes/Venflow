@@ -4,5 +4,51 @@
         <name>Venflow.AspNetCore</name>
     </assembly>
     <members>
+        <member name="T:Venflow.AspNetCore.VenflowServiceCollectionExtensions">
+            <summary>
+            Provides a set of useful extension methods for the <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> interface.
+            </summary>
+        </member>
+        <member name="M:Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Venflow.DatabaseOptionsBuilder{``0}},Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+            Registers the <typeparamref name="TDatabase"/> as a service in the <paramref name="services"/>.
+            </summary>
+            <typeparam name="TDatabase">The type of the database to be registered.</typeparam>
+            <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> to which the database will be registered.</param>
+            <param name="optionsAction">Allows to configure a <see cref="T:Venflow.DatabaseOptionsBuilder`1"/> for the database. Note, that the specified <typeparamref name="TDatabase"/> needs to have a public constructor with a <see cref="T:Venflow.DatabaseOptionsBuilder`1"/> parameter, which it passes to the base constructor.</param>
+            <param name="databaseLifetime">The liftetime with which to register the <typeparamref name="TDatabase"/> service in the container.</param>
+            <returns>The same service collection so that multiple calls can be chained.</returns>
+        </member>
+        <member name="M:Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{System.IServiceProvider,Venflow.DatabaseOptionsBuilder{``0}},Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+            Registers the <typeparamref name="TDatabase"/> as a service in the <paramref name="services"/>.
+            </summary>
+            <typeparam name="TDatabase">The type of the database to be registered.</typeparam>
+            <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> to which the database will be registered.</param>
+            <param name="optionsAction">Allows to configure a <see cref="T:Venflow.DatabaseOptionsBuilder`1"/> for the database. Note, that the specified <typeparamref name="TDatabase"/> needs to have a public constructor with a <see cref="T:Venflow.DatabaseOptionsBuilder`1"/> parameter, which it passes to the base constructor.</param>
+            <param name="databaseLifetime">The liftetime with which to register the <typeparamref name="TDatabase"/> service in the container.</param>
+            <returns>The same service collection so that multiple calls can be chained.</returns>
+        </member>
+        <member name="M:Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{System.IServiceProvider,Venflow.DatabaseOptionsBuilder{``0}},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+            Registers the <typeparamref name="TDatabase"/> as a service in the <paramref name="services"/>.
+            </summary>
+            <typeparam name="TDatabase">The type of the database to be registered.</typeparam>
+            <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> to which the database will be registered.</param>
+            <param name="optionsAction">Allows to configure a <see cref="T:Venflow.DatabaseOptionsBuilder`1"/> for the database. Note, that the specified <typeparamref name="TDatabase"/> needs to have a public constructor with a <see cref="T:Venflow.DatabaseOptionsBuilder`1"/> parameter, which it passes to the base constructor.</param>
+            <param name="databaseLifetime">The liftetime with which to register the <typeparamref name="TDatabase"/> service in the container.</param>
+            <param name="optionsLifetime">The liftetime with which to register the <see cref="T:Venflow.DatabaseOptionsBuilder`1"/> service in the container.</param>
+            <returns>The same service collection so that multiple calls can be chained.</returns>
+        </member>
+        <member name="M:Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddVenflowJson(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Adds support for Venflows build in strongly-typed id to System.Text.Json.
+            </summary>
+            <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> to which the handler will be registered.</param>
+            <returns>The same service collection so that multiple calls can be chained.</returns>
+            <remarks>
+            If you are using Newtonsoft.Json, please use Venflow.NewtonsoftJson
+            </remarks>
+        </member>
     </members>
 </doc>
