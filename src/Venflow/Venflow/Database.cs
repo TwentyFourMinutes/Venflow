@@ -82,7 +82,7 @@ namespace Venflow
             await ValidateConnectionAsync();
 
 #if NET48
-            return !HasActiveTransaction ? _activeTransaction : _activeTransaction = new DatabaseTransaction(_connection.BeginTransaction());
+            return !HasActiveTransaction ? _activeTransaction : _activeTransaction = new DatabaseTransaction(await GetConnection().BeginTransaction());
 #else
             return !HasActiveTransaction ? _activeTransaction : _activeTransaction = new DatabaseTransaction(await GetConnection().BeginTransactionAsync(cancellationToken));
 #endif
@@ -104,7 +104,7 @@ namespace Venflow
             await ValidateConnectionAsync();
 
 #if NET48
-            return !HasActiveTransaction ? _activeTransaction : _activeTransaction = new DatabaseTransaction(_connection.BeginTransaction(isolationLevel));
+            return !HasActiveTransaction ? _activeTransaction : _activeTransaction = new DatabaseTransaction(await GetConnection().BeginTransaction(isolationLevel));
 #else
             return !HasActiveTransaction ? _activeTransaction : _activeTransaction = new DatabaseTransaction(await GetConnection().BeginTransactionAsync(isolationLevel, cancellationToken));
 #endif
@@ -116,13 +116,13 @@ namespace Venflow
 #endif
             )
         {
-            if (!HasActiveTransaction)
+            if (HasActiveTransaction)
             {
                 return _activeTransaction;
             }
 
 #if NET48
-            return _activeTransaction = new DatabaseTransaction(_connection.BeginTransaction());
+            return _activeTransaction = new DatabaseTransaction(await GetConnection().BeginTransaction());
 #else
             return _activeTransaction = new DatabaseTransaction(await GetConnection().BeginTransactionAsync(cancellationToken));
 #endif
