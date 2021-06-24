@@ -4,6 +4,9 @@ references:
 - uid: API.Docs
   name: The API Docs of Venflow
   href: api/index.html
+- uid: Guides.Advanced.AspNetCore
+  name: Asp.Net Core with Venflow
+  href: guides/advanced/aspnetcore.html
 - uid: Guides.Advanced.CommandQueryCache
   name: Caching Command Queries
   href: guides/advanced/query_command_cache.html
@@ -164,6 +167,65 @@ references:
   commentId: N:Venflow
   fullName: Venflow
   nameWithType: Venflow
+- uid: Venflow.AspNetCore
+  name: Venflow.AspNetCore
+  href: api/Venflow.AspNetCore.html
+  commentId: N:Venflow.AspNetCore
+  fullName: Venflow.AspNetCore
+  nameWithType: Venflow.AspNetCore
+- uid: Venflow.AspNetCore.VenflowServiceCollectionExtensions
+  name: VenflowServiceCollectionExtensions
+  href: api/Venflow.AspNetCore.VenflowServiceCollectionExtensions.html
+  commentId: T:Venflow.AspNetCore.VenflowServiceCollectionExtensions
+  fullName: Venflow.AspNetCore.VenflowServiceCollectionExtensions
+  nameWithType: VenflowServiceCollectionExtensions
+- uid: Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase*
+  name: AddDatabase
+  href: api/Venflow.AspNetCore.VenflowServiceCollectionExtensions.html#Venflow_AspNetCore_VenflowServiceCollectionExtensions_AddDatabase_
+  commentId: Overload:Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase
+  isSpec: "True"
+  fullName: Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase
+  nameWithType: VenflowServiceCollectionExtensions.AddDatabase
+- uid: Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase``1(IServiceCollection,System.Nullable{Action{IServiceProvider,Venflow.DatabaseOptionsBuilder{``0}}},ServiceLifetime)
+  name: AddDatabase<TDatabase>(IServiceCollection, Nullable<Action<IServiceProvider, DatabaseOptionsBuilder<TDatabase>>>, ServiceLifetime)
+  href: api/Venflow.AspNetCore.VenflowServiceCollectionExtensions.html#Venflow_AspNetCore_VenflowServiceCollectionExtensions_AddDatabase__1_IServiceCollection_System_Nullable_Action_IServiceProvider_Venflow_DatabaseOptionsBuilder___0____ServiceLifetime_
+  commentId: M:Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase``1(IServiceCollection,System.Nullable{Action{IServiceProvider,Venflow.DatabaseOptionsBuilder{``0}}},ServiceLifetime)
+  name.vb: AddDatabase(Of TDatabase)(IServiceCollection, Nullable(Of Action(Of IServiceProvider, DatabaseOptionsBuilder(Of TDatabase))), ServiceLifetime)
+  fullName: Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase<TDatabase>(IServiceCollection, System.Nullable<Action<IServiceProvider, Venflow.DatabaseOptionsBuilder<TDatabase>>>, ServiceLifetime)
+  fullName.vb: Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase(Of TDatabase)(IServiceCollection, System.Nullable(Of Action(Of IServiceProvider, Venflow.DatabaseOptionsBuilder(Of TDatabase))), ServiceLifetime)
+  nameWithType: VenflowServiceCollectionExtensions.AddDatabase<TDatabase>(IServiceCollection, Nullable<Action<IServiceProvider, DatabaseOptionsBuilder<TDatabase>>>, ServiceLifetime)
+  nameWithType.vb: VenflowServiceCollectionExtensions.AddDatabase(Of TDatabase)(IServiceCollection, Nullable(Of Action(Of IServiceProvider, DatabaseOptionsBuilder(Of TDatabase))), ServiceLifetime)
+- uid: Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase``1(IServiceCollection,System.Nullable{Action{IServiceProvider,Venflow.DatabaseOptionsBuilder{``0}}},ServiceLifetime,ServiceLifetime)
+  name: AddDatabase<TDatabase>(IServiceCollection, Nullable<Action<IServiceProvider, DatabaseOptionsBuilder<TDatabase>>>, ServiceLifetime, ServiceLifetime)
+  href: api/Venflow.AspNetCore.VenflowServiceCollectionExtensions.html#Venflow_AspNetCore_VenflowServiceCollectionExtensions_AddDatabase__1_IServiceCollection_System_Nullable_Action_IServiceProvider_Venflow_DatabaseOptionsBuilder___0____ServiceLifetime_ServiceLifetime_
+  commentId: M:Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase``1(IServiceCollection,System.Nullable{Action{IServiceProvider,Venflow.DatabaseOptionsBuilder{``0}}},ServiceLifetime,ServiceLifetime)
+  name.vb: AddDatabase(Of TDatabase)(IServiceCollection, Nullable(Of Action(Of IServiceProvider, DatabaseOptionsBuilder(Of TDatabase))), ServiceLifetime, ServiceLifetime)
+  fullName: Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase<TDatabase>(IServiceCollection, System.Nullable<Action<IServiceProvider, Venflow.DatabaseOptionsBuilder<TDatabase>>>, ServiceLifetime, ServiceLifetime)
+  fullName.vb: Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase(Of TDatabase)(IServiceCollection, System.Nullable(Of Action(Of IServiceProvider, Venflow.DatabaseOptionsBuilder(Of TDatabase))), ServiceLifetime, ServiceLifetime)
+  nameWithType: VenflowServiceCollectionExtensions.AddDatabase<TDatabase>(IServiceCollection, Nullable<Action<IServiceProvider, DatabaseOptionsBuilder<TDatabase>>>, ServiceLifetime, ServiceLifetime)
+  nameWithType.vb: VenflowServiceCollectionExtensions.AddDatabase(Of TDatabase)(IServiceCollection, Nullable(Of Action(Of IServiceProvider, DatabaseOptionsBuilder(Of TDatabase))), ServiceLifetime, ServiceLifetime)
+- uid: Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase``1(IServiceCollection,System.Nullable{Action{Venflow.DatabaseOptionsBuilder{``0}}},ServiceLifetime)
+  name: AddDatabase<TDatabase>(IServiceCollection, Nullable<Action<DatabaseOptionsBuilder<TDatabase>>>, ServiceLifetime)
+  href: api/Venflow.AspNetCore.VenflowServiceCollectionExtensions.html#Venflow_AspNetCore_VenflowServiceCollectionExtensions_AddDatabase__1_IServiceCollection_System_Nullable_Action_Venflow_DatabaseOptionsBuilder___0____ServiceLifetime_
+  commentId: M:Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase``1(IServiceCollection,System.Nullable{Action{Venflow.DatabaseOptionsBuilder{``0}}},ServiceLifetime)
+  name.vb: AddDatabase(Of TDatabase)(IServiceCollection, Nullable(Of Action(Of DatabaseOptionsBuilder(Of TDatabase))), ServiceLifetime)
+  fullName: Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase<TDatabase>(IServiceCollection, System.Nullable<Action<Venflow.DatabaseOptionsBuilder<TDatabase>>>, ServiceLifetime)
+  fullName.vb: Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddDatabase(Of TDatabase)(IServiceCollection, System.Nullable(Of Action(Of Venflow.DatabaseOptionsBuilder(Of TDatabase))), ServiceLifetime)
+  nameWithType: VenflowServiceCollectionExtensions.AddDatabase<TDatabase>(IServiceCollection, Nullable<Action<DatabaseOptionsBuilder<TDatabase>>>, ServiceLifetime)
+  nameWithType.vb: VenflowServiceCollectionExtensions.AddDatabase(Of TDatabase)(IServiceCollection, Nullable(Of Action(Of DatabaseOptionsBuilder(Of TDatabase))), ServiceLifetime)
+- uid: Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddVenflowJson(IServiceCollection)
+  name: AddVenflowJson(IServiceCollection)
+  href: api/Venflow.AspNetCore.VenflowServiceCollectionExtensions.html#Venflow_AspNetCore_VenflowServiceCollectionExtensions_AddVenflowJson_IServiceCollection_
+  commentId: M:Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddVenflowJson(IServiceCollection)
+  fullName: Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddVenflowJson(IServiceCollection)
+  nameWithType: VenflowServiceCollectionExtensions.AddVenflowJson(IServiceCollection)
+- uid: Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddVenflowJson*
+  name: AddVenflowJson
+  href: api/Venflow.AspNetCore.VenflowServiceCollectionExtensions.html#Venflow_AspNetCore_VenflowServiceCollectionExtensions_AddVenflowJson_
+  commentId: Overload:Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddVenflowJson
+  isSpec: "True"
+  fullName: Venflow.AspNetCore.VenflowServiceCollectionExtensions.AddVenflowJson
+  nameWithType: VenflowServiceCollectionExtensions.AddVenflowJson
 - uid: Venflow.Commands
   name: Venflow.Commands
   href: api/Venflow.Commands.html
@@ -1873,38 +1935,38 @@ references:
   commentId: N:Venflow.Json
   fullName: Venflow.Json
   nameWithType: Venflow.Json
-- uid: Venflow.Json.JsonKeyConverterFacotry
-  name: JsonKeyConverterFacotry
-  href: api/Venflow.Json.JsonKeyConverterFacotry.html
-  commentId: T:Venflow.Json.JsonKeyConverterFacotry
-  fullName: Venflow.Json.JsonKeyConverterFacotry
-  nameWithType: JsonKeyConverterFacotry
-- uid: Venflow.Json.JsonKeyConverterFacotry.CanConvert(Type)
+- uid: Venflow.Json.JsonKeyConverterFactory
+  name: JsonKeyConverterFactory
+  href: api/Venflow.Json.JsonKeyConverterFactory.html
+  commentId: T:Venflow.Json.JsonKeyConverterFactory
+  fullName: Venflow.Json.JsonKeyConverterFactory
+  nameWithType: JsonKeyConverterFactory
+- uid: Venflow.Json.JsonKeyConverterFactory.CanConvert(Type)
   name: CanConvert(Type)
-  href: api/Venflow.Json.JsonKeyConverterFacotry.html#Venflow_Json_JsonKeyConverterFacotry_CanConvert_Type_
-  commentId: M:Venflow.Json.JsonKeyConverterFacotry.CanConvert(Type)
-  fullName: Venflow.Json.JsonKeyConverterFacotry.CanConvert(Type)
-  nameWithType: JsonKeyConverterFacotry.CanConvert(Type)
-- uid: Venflow.Json.JsonKeyConverterFacotry.CanConvert*
+  href: api/Venflow.Json.JsonKeyConverterFactory.html#Venflow_Json_JsonKeyConverterFactory_CanConvert_Type_
+  commentId: M:Venflow.Json.JsonKeyConverterFactory.CanConvert(Type)
+  fullName: Venflow.Json.JsonKeyConverterFactory.CanConvert(Type)
+  nameWithType: JsonKeyConverterFactory.CanConvert(Type)
+- uid: Venflow.Json.JsonKeyConverterFactory.CanConvert*
   name: CanConvert
-  href: api/Venflow.Json.JsonKeyConverterFacotry.html#Venflow_Json_JsonKeyConverterFacotry_CanConvert_
-  commentId: Overload:Venflow.Json.JsonKeyConverterFacotry.CanConvert
+  href: api/Venflow.Json.JsonKeyConverterFactory.html#Venflow_Json_JsonKeyConverterFactory_CanConvert_
+  commentId: Overload:Venflow.Json.JsonKeyConverterFactory.CanConvert
   isSpec: "True"
-  fullName: Venflow.Json.JsonKeyConverterFacotry.CanConvert
-  nameWithType: JsonKeyConverterFacotry.CanConvert
-- uid: Venflow.Json.JsonKeyConverterFacotry.CreateConverter(Type,JsonSerializerOptions)
+  fullName: Venflow.Json.JsonKeyConverterFactory.CanConvert
+  nameWithType: JsonKeyConverterFactory.CanConvert
+- uid: Venflow.Json.JsonKeyConverterFactory.CreateConverter(Type,JsonSerializerOptions)
   name: CreateConverter(Type, JsonSerializerOptions)
-  href: api/Venflow.Json.JsonKeyConverterFacotry.html#Venflow_Json_JsonKeyConverterFacotry_CreateConverter_Type_JsonSerializerOptions_
-  commentId: M:Venflow.Json.JsonKeyConverterFacotry.CreateConverter(Type,JsonSerializerOptions)
-  fullName: Venflow.Json.JsonKeyConverterFacotry.CreateConverter(Type, JsonSerializerOptions)
-  nameWithType: JsonKeyConverterFacotry.CreateConverter(Type, JsonSerializerOptions)
-- uid: Venflow.Json.JsonKeyConverterFacotry.CreateConverter*
+  href: api/Venflow.Json.JsonKeyConverterFactory.html#Venflow_Json_JsonKeyConverterFactory_CreateConverter_Type_JsonSerializerOptions_
+  commentId: M:Venflow.Json.JsonKeyConverterFactory.CreateConverter(Type,JsonSerializerOptions)
+  fullName: Venflow.Json.JsonKeyConverterFactory.CreateConverter(Type, JsonSerializerOptions)
+  nameWithType: JsonKeyConverterFactory.CreateConverter(Type, JsonSerializerOptions)
+- uid: Venflow.Json.JsonKeyConverterFactory.CreateConverter*
   name: CreateConverter
-  href: api/Venflow.Json.JsonKeyConverterFacotry.html#Venflow_Json_JsonKeyConverterFacotry_CreateConverter_
-  commentId: Overload:Venflow.Json.JsonKeyConverterFacotry.CreateConverter
+  href: api/Venflow.Json.JsonKeyConverterFactory.html#Venflow_Json_JsonKeyConverterFactory_CreateConverter_
+  commentId: Overload:Venflow.Json.JsonKeyConverterFactory.CreateConverter
   isSpec: "True"
-  fullName: Venflow.Json.JsonKeyConverterFacotry.CreateConverter
-  nameWithType: JsonKeyConverterFacotry.CreateConverter
+  fullName: Venflow.Json.JsonKeyConverterFactory.CreateConverter
+  nameWithType: JsonKeyConverterFactory.CreateConverter
 - uid: Venflow.Key`2
   name: Key<TEntity, TKey>
   href: api/Venflow.Key-2.html
@@ -2075,6 +2137,102 @@ references:
   fullName.vb: Venflow.Key(Of TEntity, TKey).Venflow.IKey<TEntity,TKey>.Value
   nameWithType: Key<TEntity, TKey>.IKey<TEntity, TKey>.Value
   nameWithType.vb: Key(Of TEntity, TKey).Venflow.IKey<TEntity,TKey>.Value
+- uid: Venflow.KeyConverter
+  name: KeyConverter
+  href: api/Venflow.KeyConverter.html
+  commentId: T:Venflow.KeyConverter
+  fullName: Venflow.KeyConverter
+  nameWithType: KeyConverter
+- uid: Venflow.KeyConverter.#ctor(Type)
+  name: KeyConverter(Type)
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter__ctor_Type_
+  commentId: M:Venflow.KeyConverter.#ctor(Type)
+  fullName: Venflow.KeyConverter.KeyConverter(Type)
+  nameWithType: KeyConverter.KeyConverter(Type)
+- uid: Venflow.KeyConverter.#ctor*
+  name: KeyConverter
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter__ctor_
+  commentId: Overload:Venflow.KeyConverter.#ctor
+  isSpec: "True"
+  fullName: Venflow.KeyConverter.KeyConverter
+  nameWithType: KeyConverter.KeyConverter
+- uid: Venflow.KeyConverter.CanConvertFrom(ITypeDescriptorContext,Type)
+  name: CanConvertFrom(ITypeDescriptorContext, Type)
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_CanConvertFrom_ITypeDescriptorContext_Type_
+  commentId: M:Venflow.KeyConverter.CanConvertFrom(ITypeDescriptorContext,Type)
+  fullName: Venflow.KeyConverter.CanConvertFrom(ITypeDescriptorContext, Type)
+  nameWithType: KeyConverter.CanConvertFrom(ITypeDescriptorContext, Type)
+- uid: Venflow.KeyConverter.CanConvertFrom*
+  name: CanConvertFrom
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_CanConvertFrom_
+  commentId: Overload:Venflow.KeyConverter.CanConvertFrom
+  isSpec: "True"
+  fullName: Venflow.KeyConverter.CanConvertFrom
+  nameWithType: KeyConverter.CanConvertFrom
+- uid: Venflow.KeyConverter.CanConvertTo(ITypeDescriptorContext,Type)
+  name: CanConvertTo(ITypeDescriptorContext, Type)
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_CanConvertTo_ITypeDescriptorContext_Type_
+  commentId: M:Venflow.KeyConverter.CanConvertTo(ITypeDescriptorContext,Type)
+  fullName: Venflow.KeyConverter.CanConvertTo(ITypeDescriptorContext, Type)
+  nameWithType: KeyConverter.CanConvertTo(ITypeDescriptorContext, Type)
+- uid: Venflow.KeyConverter.CanConvertTo*
+  name: CanConvertTo
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_CanConvertTo_
+  commentId: Overload:Venflow.KeyConverter.CanConvertTo
+  isSpec: "True"
+  fullName: Venflow.KeyConverter.CanConvertTo
+  nameWithType: KeyConverter.CanConvertTo
+- uid: Venflow.KeyConverter.ConvertFrom(ITypeDescriptorContext,CultureInfo,System.Object)
+  name: ConvertFrom(ITypeDescriptorContext, CultureInfo, Object)
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_ConvertFrom_ITypeDescriptorContext_CultureInfo_System_Object_
+  commentId: M:Venflow.KeyConverter.ConvertFrom(ITypeDescriptorContext,CultureInfo,System.Object)
+  fullName: Venflow.KeyConverter.ConvertFrom(ITypeDescriptorContext, CultureInfo, System.Object)
+  nameWithType: KeyConverter.ConvertFrom(ITypeDescriptorContext, CultureInfo, Object)
+- uid: Venflow.KeyConverter.ConvertFrom*
+  name: ConvertFrom
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_ConvertFrom_
+  commentId: Overload:Venflow.KeyConverter.ConvertFrom
+  isSpec: "True"
+  fullName: Venflow.KeyConverter.ConvertFrom
+  nameWithType: KeyConverter.ConvertFrom
+- uid: Venflow.KeyConverter.ConvertTo(ITypeDescriptorContext,CultureInfo,System.Object,Type)
+  name: ConvertTo(ITypeDescriptorContext, CultureInfo, Object, Type)
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_ConvertTo_ITypeDescriptorContext_CultureInfo_System_Object_Type_
+  commentId: M:Venflow.KeyConverter.ConvertTo(ITypeDescriptorContext,CultureInfo,System.Object,Type)
+  fullName: Venflow.KeyConverter.ConvertTo(ITypeDescriptorContext, CultureInfo, System.Object, Type)
+  nameWithType: KeyConverter.ConvertTo(ITypeDescriptorContext, CultureInfo, Object, Type)
+- uid: Venflow.KeyConverter.ConvertTo*
+  name: ConvertTo
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_ConvertTo_
+  commentId: Overload:Venflow.KeyConverter.ConvertTo
+  isSpec: "True"
+  fullName: Venflow.KeyConverter.ConvertTo
+  nameWithType: KeyConverter.ConvertTo
+- uid: Venflow.KeyConverter.GetOrCreateKeyFactory*
+  name: GetOrCreateKeyFactory
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_GetOrCreateKeyFactory_
+  commentId: Overload:Venflow.KeyConverter.GetOrCreateKeyFactory
+  isSpec: "True"
+  fullName: Venflow.KeyConverter.GetOrCreateKeyFactory
+  nameWithType: KeyConverter.GetOrCreateKeyFactory
+- uid: Venflow.KeyConverter.GetOrCreateKeyFactory``1(Type)
+  name: GetOrCreateKeyFactory<TValue>(Type)
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_GetOrCreateKeyFactory__1_Type_
+  commentId: M:Venflow.KeyConverter.GetOrCreateKeyFactory``1(Type)
+  name.vb: GetOrCreateKeyFactory(Of TValue)(Type)
+  fullName: Venflow.KeyConverter.GetOrCreateKeyFactory<TValue>(Type)
+  fullName.vb: Venflow.KeyConverter.GetOrCreateKeyFactory(Of TValue)(Type)
+  nameWithType: KeyConverter.GetOrCreateKeyFactory<TValue>(Type)
+  nameWithType.vb: KeyConverter.GetOrCreateKeyFactory(Of TValue)(Type)
+- uid: Venflow.KeyConverter.GetOrCreateKeyFactory``2(Type)
+  name: GetOrCreateKeyFactory<TKeyType, TValue>(Type)
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_GetOrCreateKeyFactory__2_Type_
+  commentId: M:Venflow.KeyConverter.GetOrCreateKeyFactory``2(Type)
+  name.vb: GetOrCreateKeyFactory(Of TKeyType, TValue)(Type)
+  fullName: Venflow.KeyConverter.GetOrCreateKeyFactory<TKeyType, TValue>(Type)
+  fullName.vb: Venflow.KeyConverter.GetOrCreateKeyFactory(Of TKeyType, TValue)(Type)
+  nameWithType: KeyConverter.GetOrCreateKeyFactory<TKeyType, TValue>(Type)
+  nameWithType.vb: KeyConverter.GetOrCreateKeyFactory(Of TKeyType, TValue)(Type)
 - uid: Venflow.LoggerCallback
   name: LoggerCallback
   href: api/Venflow.LoggerCallback.html

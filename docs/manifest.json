@@ -62,6 +62,30 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.AspNetCore.VenflowServiceCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.AspNetCore.VenflowServiceCollectionExtensions.html",
+          "hash": "kLcbRTIr1emIrNL4efaytQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.AspNetCore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.AspNetCore.html",
+          "hash": "XsL7QBVkx1XW7LoBkAANhw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Venflow.Commands.IBaseInsertRelationBuilder-2.yml",
       "output": {
         ".html": {
@@ -414,7 +438,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.IKey-2.html",
-          "hash": "clrYcczKwz/G42gEnoSw8w=="
+          "hash": "ewpZ9TglmWlqOxD4s3TjNw=="
         }
       },
       "is_incremental": false,
@@ -426,7 +450,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.IKey.html",
-          "hash": "jKLZQyjzNuQN0qC3v3HBXA=="
+          "hash": "1HJ5ogtRKrUnwKkz8jb4sQ=="
         }
       },
       "is_incremental": false,
@@ -458,11 +482,11 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Venflow.Json.JsonKeyConverterFacotry.yml",
+      "source_relative_path": "api/Venflow.Json.JsonKeyConverterFactory.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Venflow.Json.JsonKeyConverterFacotry.html",
-          "hash": "vrMbC7nuFQUndTEVkojAuQ=="
+          "relative_path": "api/Venflow.Json.JsonKeyConverterFactory.html",
+          "hash": "YNzh0vfoVx1vR3ZNmtdwPg=="
         }
       },
       "is_incremental": false,
@@ -474,7 +498,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Json.html",
-          "hash": "k+HagwDSUwT2GJgEnyn9Bw=="
+          "hash": "elQxoqJfOirHMbFg1UE5JA=="
         }
       },
       "is_incremental": false,
@@ -486,7 +510,19 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Key-2.html",
-          "hash": "ui1ncjtBuM53gmkESEwOOg=="
+          "hash": "siJtwK6wkpie8UhdS5xp9g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.KeyConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.KeyConverter.html",
+          "hash": "OuXbfMjpDDcApItz28gj4w=="
         }
       },
       "is_incremental": false,
@@ -726,7 +762,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.html",
-          "hash": "xAFVV6/XQFzzeILRoH5ZOA=="
+          "hash": "hHStbWrsteOv/Bw+812U9A=="
         }
       },
       "is_incremental": false,
@@ -750,7 +786,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "dcC95nNBYM7mSSNTRFw4uw=="
+          "hash": "8PBwCX+gdqnnk804BBDWng=="
         }
       },
       "is_incremental": false,
@@ -762,6 +798,18 @@
       "output": {
         "resource": {
           "relative_path": "favicon.ico"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/advanced/aspnetcore.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/advanced/aspnetcore.html",
+          "hash": "K8ixGwz+ufewGWLlE/SNsA=="
         }
       },
       "is_incremental": false,
@@ -863,7 +911,7 @@
       "output": {
         ".html": {
           "relative_path": "guides/advanced/strong_key.html",
-          "hash": "G1nrpQYWKp7Es3X9HOknHg=="
+          "hash": "PKzwfl6/dKWWwbzNXV1HZw=="
         }
       },
       "is_incremental": false,
@@ -899,7 +947,7 @@
       "output": {
         ".html": {
           "relative_path": "guides/getting_started/setup.html",
-          "hash": "8+nxFAP41OKtXQvop7bqHw=="
+          "hash": "Di+QP2TdHjp61ingJo58Cw=="
         }
       },
       "is_incremental": false,
@@ -1007,7 +1055,7 @@
       "output": {
         ".html": {
           "relative_path": "guides/toc.html",
-          "hash": "ahHAR/wF20o+BMEvmYWg+Q=="
+          "hash": "ruryBmeKDtVCgyhi10EZbQ=="
         }
       },
       "is_incremental": false,
@@ -1077,13 +1125,13 @@
         "ConceptualDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 21,
+          "total_file_count": 22,
           "skipped_file_count": 0
         },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 60,
+          "total_file_count": 63,
           "skipped_file_count": 0
         },
         "ResourceDocumentProcessor": {
