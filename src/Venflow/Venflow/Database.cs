@@ -72,6 +72,7 @@ namespace Venflow
         /// </summary>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
+        /// <remarks>Be aware, that this method will not create a new transaction on every call. It will only create a new one, if the old one is disposed or not available.</remarks>
         public async ValueTask<IDatabaseTransaction> BeginTransactionAsync(
 #if !NET48
             CancellationToken cancellationToken = default
@@ -93,6 +94,7 @@ namespace Venflow
         /// <param name="isolationLevel">The isolation level under which the transaction should run.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
+        /// <remarks>Be aware, that this method will not create a new transaction on every call. It will only create a new one, if the old one is disposed or not available.</remarks>
         public async ValueTask<IDatabaseTransaction> BeginTransactionAsync(IsolationLevel isolationLevel
 #if !NET48
             , CancellationToken cancellationToken = default
@@ -408,6 +410,9 @@ namespace Venflow
                 return _connection.DisposeAsync();
             }
 
+            if (HasActiveTransaction)
+                throw new InvalidOperationException("This database has an open transaction which never has been disposed.");
+
             return new ValueTask();
         }
 
@@ -421,6 +426,9 @@ namespace Venflow
             {
                 _connection.Dispose();
             }
+
+            if (HasActiveTransaction)
+                throw new InvalidOperationException("This database has an open transaction which never has been disposed.");
         }
     }
 }
