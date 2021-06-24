@@ -60,7 +60,7 @@ namespace Venflow.Commands
 
             UnderlyingCommand.CommandText = commandString.ToString();
 
-            return new ValueTask(ExecuteBase(CommandType.UpdateBatch, entities.Count >= 10 && UnderlyingCommand.IsPrepared, cancellationToken));
+            return new ValueTask(ExecuteBase(CommandType.UpdateBatch, index >= 10 && UnderlyingCommand.IsPrepared, cancellationToken));
         }
 
         ValueTask IUpdateCommand<TEntity>.UpdateAsync(IList<TEntity> entities, CancellationToken cancellationToken)

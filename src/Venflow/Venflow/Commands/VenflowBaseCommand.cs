@@ -70,7 +70,7 @@ namespace Venflow.Commands
 
         protected ValueTask<IDatabaseTransaction> GetTransactionAsync(
 #if !NET48
-            , CancellationToken cancellationToken = default
+            CancellationToken cancellationToken = default
 #endif
             )
         {

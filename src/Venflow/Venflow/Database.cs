@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Transactions;
 using Npgsql;
 using NpgsqlTypes;
 using Venflow.Enums;
 using Venflow.Modeling;
 using Venflow.Modeling.Definitions;
 using Venflow.Modeling.Definitions.Builder;
+using IsolationLevel = System.Data.IsolationLevel;
 
 namespace Venflow
 {
@@ -110,9 +110,9 @@ namespace Venflow
 #endif
         }
 
-        internal async ValueTask<DatabaseTransaction> GetOrCreateTransactionAsync(
+        internal async ValueTask<IDatabaseTransaction> GetOrCreateTransactionAsync(
 #if !NET48
-            , CancellationToken cancellationToken = default
+            CancellationToken cancellationToken = default
 #endif
             )
         {

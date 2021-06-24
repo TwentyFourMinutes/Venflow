@@ -712,6 +712,7 @@
             </summary>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
             <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
+            <remarks>Be aware, that this method will not create a new transaction on every call. It will only create a new one, if the old one is disposed or not available.</remarks>
         </member>
         <member name="M:Venflow.Database.BeginTransactionAsync(System.Data.IsolationLevel,System.Threading.CancellationToken)">
             <summary>
@@ -720,6 +721,7 @@
             <param name="isolationLevel">The isolation level under which the transaction should run.</param>
             <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
             <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
+            <remarks>Be aware, that this method will not create a new transaction on every call. It will only create a new one, if the old one is disposed or not available.</remarks>
         </member>
         <member name="M:Venflow.Database.ExecuteAsync(System.String,System.Threading.CancellationToken)">
             <summary>
@@ -908,6 +910,83 @@
             <summary>
             Gets or sets the connection string which will be used in all <see cref="T:Venflow.Database"/> instances using the current <see cref="T:Venflow.DatabaseOptionsBuilder`1"/> instance.
             </summary>
+        </member>
+        <member name="T:Venflow.IDatabaseTransaction">
+            <summary>
+            Represents a transaction to be made with a database.
+            </summary>
+        </member>
+        <member name="M:Venflow.IDatabaseTransaction.Commit">
+            <summary>
+            Commits the database transaction.
+            </summary>
+        </member>
+        <member name="M:Venflow.IDatabaseTransaction.CommitAsync(System.Threading.CancellationToken)">
+            <summary>
+            Commits the database transaction.
+            </summary>
+            <param name="cancellationToken">An optional token to cancel the asynchronous operation.</param>
+        </member>
+        <member name="M:Venflow.IDatabaseTransaction.Rollback">
+            <summary>
+            Rolls back a transaction from a pending state.
+            </summary>
+        </member>
+        <member name="M:Venflow.IDatabaseTransaction.RollbackAsync(System.Threading.CancellationToken)">
+            <summary>
+            Rolls back a transaction from a pending state.
+            </summary>
+            <param name="cancellationToken">An optional token to cancel the asynchronous operation.</param>
+        </member>
+        <member name="M:Venflow.IDatabaseTransaction.Save(System.String)">
+            <summary>
+            Creates a transaction save point.
+            </summary>
+            <param name="name">The name of the savepoint.</param>
+            <remarks>This method does not cause a database roundtrip to be made. The savepoint creation statement will instead be sent along with the next command.</remarks>
+        </member>
+        <member name="M:Venflow.IDatabaseTransaction.SaveAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Creates a transaction save point.
+            </summary>
+            <param name="name">The name of the savepoint.</param>
+            <param name="cancellationToken">An optional token to cancel the asynchronous operation.</param>
+            <remarks>This method does not cause a database roundtrip to be made, and will therefore always complete synchronously. The savepoint creation statement will instead be sent along with the next command.</remarks>
+        </member>
+        <member name="M:Venflow.IDatabaseTransaction.Rollback(System.String)">
+            <summary>
+            Rolls back a transaction from a pending savepoint state.
+            </summary>
+            <param name="name">The name of the savepoint.</param>
+        </member>
+        <member name="M:Venflow.IDatabaseTransaction.RollbackAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Rolls back a transaction from a pending savepoint state.
+            </summary>
+            <param name="name">The name of the savepoint.</param>
+            <param name="cancellationToken">An optional token to cancel the asynchronous operation.</param>
+        </member>
+        <member name="M:Venflow.IDatabaseTransaction.Release(System.String)">
+            <summary>
+            Releases a transaction from a pending savepoint state.
+            </summary>
+            <param name="name">The name of the savepoint.</param>
+        </member>
+        <member name="M:Venflow.IDatabaseTransaction.ReleaseAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Releases a transaction from a pending savepoint state.
+            </summary>
+            <param name="name">The name of the savepoint.</param>
+            <param name="cancellationToken">An optional token to cancel the asynchronous operation.</param>
+        </member>
+        <member name="M:Venflow.IDatabaseTransaction.GetNpgsqlTransaction">
+            <summary>
+            Will return the underlying <see cref="T:Npgsql.NpgsqlTransaction"/>.
+            </summary>
+            <returns>The underlying <see cref="T:Npgsql.NpgsqlTransaction"/></returns>
+            <remarks>
+            Please do note, that if you call any of the Dispose methods on the <see cref="T:Npgsql.NpgsqlTransaction"/> instead of the <see cref="T:Venflow.IDatabaseTransaction"/> ones, Venflow will never know about it being disposed. Therefore, always call one of the Dispose methods on the <see cref="T:Venflow.IDatabaseTransaction"/> itself.
+            </remarks>
         </member>
         <member name="T:Venflow.Enums.CommandType">
             <summary>

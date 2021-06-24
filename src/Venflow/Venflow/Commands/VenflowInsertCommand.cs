@@ -73,6 +73,8 @@ namespace Venflow.Commands
                     await transaction.RollbackAsync(TransactionName, cancellationToken);
 
                 Log(Enums.CommandType.InsertSingle, ex);
+
+                return default;
             }
             finally
             {
@@ -129,6 +131,8 @@ namespace Venflow.Commands
                     await transaction.RollbackAsync(TransactionName, cancellationToken);
 
                 Log(Enums.CommandType.InsertBatch, ex);
+
+                return default;
             }
             finally
             {
