@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>Venflow extension to add conversion support for Newtonsoft.Json. This package is only needed, if C#9 Source Generators are not used.</Description>
+    <Description>Venflow extension to add conversion support for Newtonsoft.Json.</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
