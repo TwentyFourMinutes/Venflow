@@ -15,8 +15,8 @@ jobs:
         with:
           dotnet-version: 6.0.100-preview.5.21302.13
 
-      - name: build Venflow.Keys
-        working-directory: ./src/Venflow/Venflow.Keys
+      - name: build Venflow.Generators
+        working-directory: ./src/Venflow/Venflow.Generators
         run: dotnet build -c Release
         
       - name: Publish Venflow.Keys on version change

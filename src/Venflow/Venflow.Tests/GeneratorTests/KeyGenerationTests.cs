@@ -62,7 +62,7 @@ namespace MyCode
             var loadedAssemblies = new List<Assembly>(AppDomain.CurrentDomain.GetAssemblies());
             var effectiveReferences = new List<Assembly>();
 
-            foreach (var assembly in references.Union(new[] { typeof(Binder).Assembly, typeof(IConvertible).Assembly }))
+            foreach (var assembly in references.Union(new[] { typeof(Binder).Assembly, typeof(IConvertible).Assembly, Assembly.Load(new AssemblyName("netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51")) }))
             {
                 var referencedAssemblies = assembly.GetReferencedAssemblies();
 
