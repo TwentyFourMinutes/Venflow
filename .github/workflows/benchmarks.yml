@@ -24,7 +24,7 @@ jobs:
     - name: Setup .NET 6.0
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.100-preview.3.21202.5
+        dotnet-version: 6.0.0-preview.5.21301.5
         
     - name: Setup .NET 5.0
       uses: actions/setup-dotnet@v1
