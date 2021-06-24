@@ -327,6 +327,7 @@ namespace Venflow.Modeling.Definitions.Builder
                             {
                                 changeTrackingColumns.Add(columnIndex, primaryColumn);
                             }
+
                             nameToColumn.Add(definition.Name, primaryColumn);
 
                             hasCustomDefinition = true;

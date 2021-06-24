@@ -1,18 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Venflow extension to add conversion support for Newtonsoft.Json. This package is only needed, if C#9 Source Generators are not used.</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Venflow" Version="$(Version)" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Venflow\Venflow.csproj" />
+    <ProjectReference Include="..\Venflow.Keys\Venflow.Keys.csproj" />
   </ItemGroup>
 
 </Project>

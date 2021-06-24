@@ -32,16 +32,10 @@ namespace Venflow.Generators
 
             var references = context.Compilation.References.ToArray();
 
-            if (!context.Compilation.ContainsAssembly(references, Assemblies.Venflow))
+            if (!context.Compilation.ContainsAssembly(references, Assemblies.VenflowKeys))
                 throw new InvalidOperationException("The assembly 'Venflow' could not be found. Ensure that the 'Venflow' package is referenced.");
 
-            var hasNewtonsoftReference = context.Compilation.ContainsAssembly(references, Assemblies.NewtonsoftJson);
-
-            if (hasNewtonsoftReference &&
-                !context.Compilation.ContainsAssembly(references, Assemblies.VenflowNewtonsoftJson))
-            {
-                context.AddResourceSource("NewtonsoftJsonKeyConverter");
-            }
+            var hasVenflowNewtonsoftReference = context.Compilation.ContainsAssembly(references, Assemblies.VenflowNewtonsoftJson);
 
             var compilation = context.AddResourceSource("GeneratedKeyAttribute", true);
 
@@ -164,8 +158,8 @@ namespace {namespaceText}
     /// <summary>
     /// This is used to create strongly-typed ids.
     /// </summary>
-    /// <typeparam name=""{typeArgumentName}"">They type of entity the key sits in.</typeparam>{(hasNewtonsoftReference ? Environment.NewLine + $"    [Newtonsoft.Json.JsonConverter(typeof(Venflow.Json.NewtonsoftJsonKeyConverter))]" : string.Empty)}
-    [System.Text.Json.Serialization.JsonConverter(typeof(Venflow.Json.JsonKeyConverterFactory))]
+    /// <typeparam name=""{typeArgumentName}"">They type of entity the key sits in.</typeparam>{(hasVenflowNewtonsoftReference ? Environment.NewLine + $"    [Newtonsoft.Json.JsonConverterAttribute(typeof(Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter))]" : string.Empty)}
+    [System.Text.Json.Serialization.JsonConverterAttribute(typeof(Venflow.Json.JsonKeyConverterFactory))]
     public readonly partial struct {baseStructName} : IKey<{typeArgumentName}, {underlyingKeyFullName}>, IEquatable<{baseStructName}>{implementedInterfacesText}
     {{
         private readonly {underlyingKeyFullName} _value;

@@ -1819,7 +1819,6 @@ namespace Venflow.Dynamic.Materializer
 
                     iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
                 }
-
             }
         }
 

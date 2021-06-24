@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 using Venflow.Json;
 
 namespace Venflow
@@ -10,7 +11,7 @@ namespace Venflow
     /// <typeparam name="TEntity">They type of entity the key sits in.</typeparam>
     /// <typeparam name="TKey">The type of the key.</typeparam>
     /// <remarks>You can also create more specific implementations of this type, by creating a <i>struct</i> implementing <see cref="IKey{T, TKey}"/>.</remarks>
-    [System.Text.Json.Serialization.JsonConverter(typeof(JsonKeyConverterFactory))]
+    [JsonConverter(typeof(JsonKeyConverterFactory))]
     public readonly struct Key<TEntity, TKey> : IKey<TEntity, TKey>, IEquatable<Key<TEntity, TKey>>
             where TKey : struct, IEquatable<TKey>
     {
@@ -75,7 +76,7 @@ namespace Venflow
         }
 
         ///<inheritdoc/>
-        public override string ToString()
+        public override string? ToString()
         {
             return _value.ToString();
         }

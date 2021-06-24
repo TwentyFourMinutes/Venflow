@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
@@ -31,7 +32,7 @@ namespace MyCode
 
     [GeneratedKey(typeof({underlyingKeyType.FullName}))]
     public partial struct Key<T> {{ }}
-}}", typeof(Database).Assembly);
+}}", typeof(IKey).Assembly, typeof(System.Text.Json.JsonSerializer).Assembly, typeof(Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter).Assembly);
 
             var generator = new KeyGenerator();
 
@@ -58,9 +59,35 @@ namespace MyCode
 
         private static Compilation CreateCompilation(string source, params Assembly[] references)
         {
-            var tempReferences = references.Union(new[] { typeof(Binder).GetTypeInfo().Assembly }).Select(x => MetadataReference.CreateFromFile(x.Location));
+            var loadedAssemblies = new List<Assembly>(AppDomain.CurrentDomain.GetAssemblies());
+            var effectiveReferences = new List<Assembly>();
 
-            return CSharpCompilation.Create("compilation", new[] { CSharpSyntaxTree.ParseText(source) }, tempReferences, new CSharpCompilationOptions(OutputKind.ConsoleApplication, nullableContextOptions: NullableContextOptions.Enable));
+            foreach (var assembly in references.Union(new[] { typeof(Binder).Assembly, typeof(IConvertible).Assembly }))
+            {
+                var referencedAssemblies = assembly.GetReferencedAssemblies();
+
+                effectiveReferences.Add(assembly);
+
+                foreach (var referencedAssemblyName in referencedAssemblies)
+                {
+                    var referencedAssembly = loadedAssemblies.FirstOrDefault(x => x.FullName == referencedAssemblyName.FullName);
+
+                    if (referencedAssembly is null)
+                    {
+                        referencedAssembly = Assembly.Load(referencedAssemblyName);
+
+                        loadedAssemblies.Add(referencedAssembly);
+
+                        effectiveReferences.Add(referencedAssembly);
+                    }
+                    else if (!effectiveReferences.Any(x => x.FullName == referencedAssembly.FullName))
+                    {
+                        effectiveReferences.Add(referencedAssembly);
+                    }
+                }
+            }
+
+            return CSharpCompilation.Create("compilation", new[] { CSharpSyntaxTree.ParseText(source) }, effectiveReferences.Select(x => MetadataReference.CreateFromFile(x.Location)), new CSharpCompilationOptions(OutputKind.ConsoleApplication, nullableContextOptions: NullableContextOptions.Enable));
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Venflow.Json
     }
 
     internal class JsonKeyConverter<TKey, TEntity, TKeyValue> : JsonConverter<TKey>
-        where TKey : struct
+        where TKey : struct, IKey<TKey, TEntity>
         where TKeyValue : struct
     {
         public override TKey Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -44,9 +44,9 @@ namespace Venflow.Json
 
             var value = JsonSerializer.Deserialize<TKeyValue>(ref reader, options);
 
-            var factory = KeyConverter.GetOrCreateKeyFactory<TKeyValue>(typeToConvert);
+            var factory = KeyConverter.GetOrCreateKeyFactory<TKey, TKeyValue>(typeToConvert);
 
-            return (TKey)factory(value);
+            return factory(value);
         }
 
         public override void Write(Utf8JsonWriter writer, TKey value, JsonSerializerOptions options)

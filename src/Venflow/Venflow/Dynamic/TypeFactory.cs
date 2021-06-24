@@ -44,8 +44,7 @@ namespace Venflow.Dynamic
 
             var ignoresAccessChecksTo = new CustomAttributeBuilder
             (
-                typeof(IgnoresAccessChecksToAttribute).GetConstructor(new Type[] { typeof(string) }),
-                new object[] { assemblyName }
+                typeof(IgnoresAccessChecksToAttribute).GetConstructor(new Type[] { typeof(string) }), new object[] { assemblyName }
             );
 
             _assemblyBuilder.SetCustomAttribute(ignoresAccessChecksTo);

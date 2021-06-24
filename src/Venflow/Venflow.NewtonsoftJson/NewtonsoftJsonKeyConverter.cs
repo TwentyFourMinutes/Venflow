@@ -58,7 +58,7 @@ namespace Venflow.NewtonsoftJson
     }
 
     internal class NewtonsoftJsonKeyConverter<TKey, TEntity, TKeyValue> : JsonConverter<TKey>
-        where TKey : struct
+        where TKey : struct, IKey<TKey, TEntity>
         where TKeyValue : struct
     {
         public override TKey ReadJson(JsonReader reader, Type objectType, TKey existingValue, bool hasExistingValue, JsonSerializer serializer)
@@ -67,9 +67,9 @@ namespace Venflow.NewtonsoftJson
                 return default;
 
             var value = serializer.Deserialize<TKeyValue>(reader);
-            var factory = KeyConverter.GetOrCreateKeyFactory<TKeyValue>(objectType);
+            var factory = KeyConverter.GetOrCreateKeyFactory<TKey, TKeyValue>(objectType);
 
-            return (TKey)factory(value);
+            return factory(value);
         }
 
         public override void WriteJson(JsonWriter writer, TKey value, JsonSerializer serializer)

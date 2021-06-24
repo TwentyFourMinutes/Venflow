@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
 using System.Reflection.Emit;
-using Venflow.Dynamic;
+using System.Threading;
 
 namespace Venflow
 {
@@ -13,6 +13,8 @@ namespace Venflow
     /// </summary>
     public class KeyConverter : TypeConverter
     {
+        private static int _typeNumberIdentifier = 0;
+
         private static readonly ConcurrentDictionary<Type, TypeConverter> _typeConverters = new();
         private static readonly ConcurrentDictionary<Type, Delegate> _keyFactories = new();
 
@@ -48,6 +50,10 @@ namespace Venflow
         public static Func<TValue, object> GetOrCreateKeyFactory<TValue>(Type keyType)
             => (Func<TValue, object>)_keyFactories.GetOrAdd(keyType, CreateKeyFactory<TValue>);
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static Func<TValue, TKeyType> GetOrCreateKeyFactory<TKeyType, TValue>(Type keyType) where TKeyType : struct, IKey
+            => (Func<TValue, TKeyType>)_keyFactories.GetOrAdd(keyType, CreateKeyFactory<TKeyType, TValue>);
+
         private static TypeConverter CreateTypeConverter(Type keyType)
         {
             var keyInterface = keyType.GetInterface("Venflow.IKey`2");
@@ -63,7 +69,23 @@ namespace Venflow
         }
 
         private static Func<TValue, object> CreateKeyFactory<TValue>(Type keyType)
+            => CreateKeyFactory<object, TValue>(keyType);
+
+        private static Func<TValue, TKeyType> CreateKeyFactory<TKeyType, TValue>(Type? keyType = null)
         {
+            bool isFullGeneric;
+
+            if (keyType is null)
+            {
+                isFullGeneric = true;
+
+                keyType = typeof(TKeyType);
+            }
+            else
+            {
+                isFullGeneric = false;
+            }
+
             if (!typeof(IKey).IsAssignableFrom(keyType))
                 throw new ArgumentException($"Type '{keyType}' is not a key type.", nameof(keyType));
 
@@ -72,15 +94,20 @@ namespace Venflow
             if (ctor is null)
                 throw new ArgumentException($"Type '{keyType}' doesn't have a constructor with one parameter of type '{typeof(TValue)}'.", nameof(keyType));
 
-            var method = TypeFactory.GetDynamicMethod(keyType.Name + "Instantiater", typeof(object), new[] { typeof(TValue) });
+            var method = new DynamicMethod(keyType.Name + "Instantiater" + "_" + Interlocked.Increment(ref _typeNumberIdentifier), typeof(TKeyType), new[] { typeof(TValue) }, true);
             var ilGenerator = method.GetILGenerator();
 
             ilGenerator.Emit(OpCodes.Ldarg_0);
             ilGenerator.Emit(OpCodes.Newobj, ctor);
-            ilGenerator.Emit(OpCodes.Box, keyType);
+
+            if (!isFullGeneric)
+            {
+                ilGenerator.Emit(OpCodes.Box, keyType);
+            }
+
             ilGenerator.Emit(OpCodes.Ret);
 
-            return (Func<TValue, object>)method.CreateDelegate(typeof(Func<TValue, object>));
+            return (Func<TValue, TKeyType>)method.CreateDelegate(typeof(Func<TValue, TKeyType>));
         }
     }
 
