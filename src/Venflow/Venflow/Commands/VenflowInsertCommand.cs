@@ -45,29 +45,41 @@ namespace Venflow.Commands
                 SingleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<TEntity>(_relationBuilderValues, true, _isFullInsert);
             }
 
-            var transaction = await Database.BeginTransactionAsync(
-#if NET5_0_OR_GREATER
+            var transaction = await GetTransactionAsync(
+#if !NET48
                 cancellationToken
 #endif
             );
 
             try
             {
+                if (!ShouldAutoCommit)
+                    await transaction.SaveAsync(TransactionName, cancellationToken);
+
                 var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entity, cancellationToken);
 
-                await transaction.CommitAsync(cancellationToken);
+                if (ShouldAutoCommit)
+                    await transaction.CommitAsync(cancellationToken);
+
+                Log(Enums.CommandType.InsertSingle);
 
                 return affectedRows;
             }
-            catch
+            catch (Exception ex)
             {
-                await transaction.RollbackAsync(cancellationToken);
+                if (ShouldAutoCommit)
+                    await transaction.RollbackAsync(cancellationToken);
+                else
+                    await transaction.RollbackAsync(TransactionName, cancellationToken);
 
-                throw;
+                Log(Enums.CommandType.InsertSingle, ex);
             }
             finally
             {
-                await transaction.DisposeAsync();
+                if (ShouldAutoCommit)
+                    await transaction.DisposeAsync();
+                else
+                    await transaction.ReleaseAsync(TransactionName, cancellationToken);
 
                 if (DisposeCommand)
                     await this.DisposeAsync();
@@ -89,29 +101,41 @@ namespace Venflow.Commands
                 BatchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<IList<TEntity>>(_relationBuilderValues, false, _isFullInsert);
             }
 
-            var transaction = await Database.BeginTransactionAsync(
-#if NET5_0_OR_GREATER
+            var transaction = await GetTransactionAsync(
+#if !NET48
                 cancellationToken
 #endif
             );
 
             try
             {
+                if (!ShouldAutoCommit)
+                    await transaction.SaveAsync(TransactionName, cancellationToken);
+
                 var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entities, cancellationToken);
 
-                await transaction.CommitAsync(cancellationToken);
+                if (ShouldAutoCommit)
+                    await transaction.CommitAsync(cancellationToken);
+
+                Log(Enums.CommandType.InsertBatch);
 
                 return affectedRows;
             }
-            catch
+            catch (Exception ex)
             {
-                await transaction.RollbackAsync(cancellationToken);
+                if (ShouldAutoCommit)
+                    await transaction.RollbackAsync(cancellationToken);
+                else
+                    await transaction.RollbackAsync(TransactionName, cancellationToken);
 
-                throw;
+                Log(Enums.CommandType.InsertBatch, ex);
             }
             finally
             {
-                await transaction.DisposeAsync();
+                if (ShouldAutoCommit)
+                    await transaction.DisposeAsync();
+                else
+                    await transaction.ReleaseAsync(TransactionName, cancellationToken);
 
                 if (DisposeCommand)
                     await this.DisposeAsync();

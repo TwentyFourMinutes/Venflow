@@ -19,10 +19,10 @@ namespace Venflow.Commands
             underlyingCommand.Connection = database.GetConnection();
         }
 
-        async ValueTask IUpdateCommand<TEntity>.UpdateAsync(TEntity entity, CancellationToken cancellationToken)
+        ValueTask IUpdateCommand<TEntity>.UpdateAsync(TEntity entity, CancellationToken cancellationToken)
         {
             if (entity is null)
-                return;
+                return new ValueTask();
 
             var commandString = new StringBuilder();
 
@@ -30,46 +30,18 @@ namespace Venflow.Commands
 
             if (commandString.Length == 0)
             {
-                return;
+                return new ValueTask();
             }
 
             UnderlyingCommand.CommandText = commandString.ToString();
 
-            await ValidateConnectionAsync();
-
-            var transaction = await Database.BeginTransactionAsync(
-#if NET5_0_OR_GREATER
-                cancellationToken
-#endif
-                );
-
-            try
-            {
-                await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-
-                await transaction.CommitAsync(cancellationToken);
-
-                Log(CommandType.UpdateSingle);
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync(cancellationToken);
-
-                Log(CommandType.UpdateSingle, ex);
-            }
-            finally
-            {
-                await transaction.DisposeAsync();
-
-                if (DisposeCommand)
-                    await this.DisposeAsync();
-            }
+            return new ValueTask(ExecuteBase(CommandType.UpdateSingle, false, cancellationToken));
         }
 
-        async ValueTask IUpdateCommand<TEntity>.UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
+        ValueTask IUpdateCommand<TEntity>.UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
         {
             if (entities is null)
-                return;
+                return new ValueTask();
 
             var commandString = new StringBuilder();
 
@@ -83,59 +55,19 @@ namespace Venflow.Commands
             if (index == 0 ||
                 commandString.Length == 0)
             {
-                return;
+                return new ValueTask();
             }
 
             UnderlyingCommand.CommandText = commandString.ToString();
 
-            if (index >= 10 &&
-                !UnderlyingCommand.IsPrepared)
-            {
-                await UnderlyingCommand.PrepareAsync();
-            }
-
-            await ValidateConnectionAsync();
-
-            var transaction = await Database.BeginTransactionAsync(
-#if NET5_0_OR_GREATER
-                cancellationToken
-#endif
-                );
-
-            try
-            {
-                await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-
-                await transaction.CommitAsync(cancellationToken);
-
-                Log(CommandType.UpdateBatch);
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync(cancellationToken);
-
-                Log(CommandType.UpdateBatch, ex);
-            }
-            finally
-            {
-                if (index >= 10 &&
-                    UnderlyingCommand.IsPrepared)
-                {
-                    await UnderlyingCommand.UnprepareAsync();
-                }
-
-                await transaction.DisposeAsync();
-
-                if (DisposeCommand)
-                    await this.DisposeAsync();
-            }
+            return new ValueTask(ExecuteBase(CommandType.UpdateBatch, entities.Count >= 10 && UnderlyingCommand.IsPrepared, cancellationToken));
         }
 
-        async ValueTask IUpdateCommand<TEntity>.UpdateAsync(IList<TEntity> entities, CancellationToken cancellationToken)
+        ValueTask IUpdateCommand<TEntity>.UpdateAsync(IList<TEntity> entities, CancellationToken cancellationToken)
         {
             if (entities is null ||
                 entities.Count == 0)
-                return;
+                return new ValueTask();
 
             var commandString = new StringBuilder();
 
@@ -146,48 +78,61 @@ namespace Venflow.Commands
 
             if (commandString.Length == 0)
             {
-                return;
+                return new ValueTask();
             }
 
             UnderlyingCommand.CommandText = commandString.ToString();
 
-            if (entities.Count >= 10 &&
-                !UnderlyingCommand.IsPrepared)
-            {
-                await UnderlyingCommand.PrepareAsync();
-            }
+            return new ValueTask(ExecuteBase(CommandType.UpdateBatch, entities.Count >= 10 && UnderlyingCommand.IsPrepared, cancellationToken));
+        }
 
+        private async Task ExecuteBase(Enums.CommandType commandType, bool shouldPrepare, CancellationToken cancellationToken)
+        {
             await ValidateConnectionAsync();
 
-            var transaction = await Database.BeginTransactionAsync(
-#if NET5_0_OR_GREATER
+            var transaction = await GetTransactionAsync(
+#if !NET48
                 cancellationToken
 #endif
-                );
+            );
+
+            if (shouldPrepare)
+            {
+                await UnderlyingCommand.PrepareAsync(cancellationToken);
+            }
 
             try
             {
+                if (!ShouldAutoCommit)
+                    await transaction.SaveAsync(TransactionName, cancellationToken);
+
                 await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
 
-                await transaction.CommitAsync(cancellationToken);
+                if (ShouldAutoCommit)
+                    await transaction.CommitAsync(cancellationToken);
 
-                Log(CommandType.UpdateBatch);
+                Log(commandType);
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync(cancellationToken);
+                if (ShouldAutoCommit)
+                    await transaction.RollbackAsync(cancellationToken);
+                else
+                    await transaction.RollbackAsync(TransactionName, cancellationToken);
 
-                Log(CommandType.UpdateBatch, ex);
+                Log(commandType, ex);
             }
             finally
             {
-                if (entities.Count >= 10 &&
-                    UnderlyingCommand.IsPrepared)
-                {
-                    await UnderlyingCommand.UnprepareAsync();
-                }
+                if (ShouldAutoCommit)
+                    await transaction.DisposeAsync();
+                else
+                    await transaction.ReleaseAsync(TransactionName, cancellationToken);
 
-                await transaction.DisposeAsync();
+                if (shouldPrepare)
+                {
+                    await UnderlyingCommand.UnprepareAsync(cancellationToken);
+                }
 
                 if (DisposeCommand)
                     await this.DisposeAsync();

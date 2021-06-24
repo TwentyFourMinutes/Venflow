@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using Npgsql;
 using NpgsqlTypes;
 using Venflow.Enums;
@@ -32,10 +33,12 @@ namespace Venflow
     {
         internal IReadOnlyDictionary<string, Entity> Entities { get; private set; }
         internal LoggingBehavior DefaultLoggingBehavior { get; }
+        internal bool HasActiveTransaction => _activeTransaction is not null && !_activeTransaction.IsDisposed;
 
         internal string ConnectionString { get; }
 
         private NpgsqlConnection? _connection;
+        private DatabaseTransaction? _activeTransaction;
 
         private readonly IReadOnlyList<LoggerCallback> _loggers;
 
@@ -69,7 +72,7 @@ namespace Venflow
         /// </summary>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
-        public async Task<NpgsqlTransaction> BeginTransactionAsync(
+        public async ValueTask<IDatabaseTransaction> BeginTransactionAsync(
 #if !NET48
             CancellationToken cancellationToken = default
 #endif
@@ -78,9 +81,9 @@ namespace Venflow
             await ValidateConnectionAsync();
 
 #if NET48
-            return _connection.BeginTransaction();
+            return !HasActiveTransaction ? _activeTransaction : _activeTransaction = new DatabaseTransaction(_connection.BeginTransaction());
 #else
-            return await GetConnection().BeginTransactionAsync(cancellationToken);
+            return !HasActiveTransaction ? _activeTransaction : _activeTransaction = new DatabaseTransaction(await GetConnection().BeginTransactionAsync(cancellationToken));
 #endif
         }
 
@@ -90,7 +93,7 @@ namespace Venflow
         /// <param name="isolationLevel">The isolation level under which the transaction should run.</param>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
-        public async Task<NpgsqlTransaction> BeginTransactionAsync(IsolationLevel isolationLevel
+        public async ValueTask<IDatabaseTransaction> BeginTransactionAsync(IsolationLevel isolationLevel
 #if !NET48
             , CancellationToken cancellationToken = default
 #endif
@@ -99,9 +102,27 @@ namespace Venflow
             await ValidateConnectionAsync();
 
 #if NET48
-            return _connection.BeginTransaction(isolationLevel);
+            return !HasActiveTransaction ? _activeTransaction : _activeTransaction = new DatabaseTransaction(_connection.BeginTransaction(isolationLevel));
 #else
-            return await GetConnection().BeginTransactionAsync(isolationLevel, cancellationToken);
+            return !HasActiveTransaction ? _activeTransaction : _activeTransaction = new DatabaseTransaction(await GetConnection().BeginTransactionAsync(isolationLevel, cancellationToken));
+#endif
+        }
+
+        internal async ValueTask<DatabaseTransaction> GetOrCreateTransactionAsync(
+#if !NET48
+            , CancellationToken cancellationToken = default
+#endif
+            )
+        {
+            if (!HasActiveTransaction)
+            {
+                return _activeTransaction;
+            }
+
+#if NET48
+            return _activeTransaction = new DatabaseTransaction(_connection.BeginTransaction());
+#else
+            return _activeTransaction = new DatabaseTransaction(await GetConnection().BeginTransactionAsync(cancellationToken));
 #endif
         }
 

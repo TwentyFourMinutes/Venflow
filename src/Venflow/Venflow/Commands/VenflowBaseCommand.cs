@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
 using Venflow.Modeling;
@@ -13,6 +14,9 @@ namespace Venflow.Commands
         internal Database Database { get; }
         internal Entity<TEntity> EntityConfiguration { get; }
         internal NpgsqlCommand UnderlyingCommand { get; }
+
+        protected bool ShouldAutoCommit = true;
+        protected const string TransactionName = "_VenflowSavepoint";
 
         private readonly List<LoggerCallback> _loggers;
         private readonly bool _shouldLog;
@@ -28,7 +32,7 @@ namespace Venflow.Commands
             _shouldLog = shouldLog;
         }
 
-        protected bool Log(Venflow.Enums.CommandType commandType, Exception? exception = default)
+        protected bool Log(Enums.CommandType commandType, Exception? exception = default)
         {
             if (_shouldLog)
             {
@@ -62,6 +66,21 @@ namespace Venflow.Commands
             {
                 throw new InvalidOperationException($"The current connection state is invalid. Expected: '{System.Data.ConnectionState.Open}' or '{System.Data.ConnectionState.Closed}'. Actual: '{UnderlyingCommand.Connection.State}'.");
             }
+        }
+
+        protected ValueTask<IDatabaseTransaction> GetTransactionAsync(
+#if !NET48
+            , CancellationToken cancellationToken = default
+#endif
+            )
+        {
+            ShouldAutoCommit = !Database.HasActiveTransaction;
+
+#if NET48
+            return Database.GetOrCreateTransactionAsync();
+#else
+            return Database.GetOrCreateTransactionAsync(cancellationToken);
+#endif
         }
     }
 }

@@ -16,10 +16,10 @@ namespace Venflow.Commands
             underlyingCommand.Connection = database.GetConnection();
         }
 
-        async ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(TEntity entity, CancellationToken cancellationToken)
+        ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(TEntity entity, CancellationToken cancellationToken)
         {
             if (entity is null)
-                return 0;
+                return new ValueTask<int>(0);
 
             var commandString = new StringBuilder();
 
@@ -38,42 +38,10 @@ namespace Venflow.Commands
 
             UnderlyingCommand.CommandText = commandString.ToString();
 
-            await ValidateConnectionAsync();
-
-            var transaction = await Database.BeginTransactionAsync(
-#if NET5_0_OR_GREATER
-                cancellationToken
-#endif
-            );
-
-            try
-            {
-                var affectedRows = await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-
-                await transaction.CommitAsync(cancellationToken);
-
-                Log(Enums.CommandType.DeleteSingle);
-
-                return affectedRows;
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync(cancellationToken);
-
-                Log(Enums.CommandType.DeleteSingle, ex);
-
-                return default;
-            }
-            finally
-            {
-                await transaction.DisposeAsync();
-
-                if (DisposeCommand)
-                    await this.DisposeAsync();
-            }
+            return new ValueTask<int>(ExecuteBase(Enums.CommandType.DeleteSingle, cancellationToken));
         }
 
-        async ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
+        ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
         {
             var commandString = new StringBuilder();
 
@@ -98,55 +66,21 @@ namespace Venflow.Commands
             }
 
             if (index == 0)
-                return 0;
+                new ValueTask<int>(0);
 
             commandString.Length -= 2;
             commandString.Append(");");
 
             UnderlyingCommand.CommandText = commandString.ToString();
 
-            await ValidateConnectionAsync();
-
-            var transaction = await Database.BeginTransactionAsync(
-#if NET5_0_OR_GREATER
-                cancellationToken
-#endif
-            );
-
-            try
-            {
-                var affectedRows = await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-
-                await transaction.CommitAsync(cancellationToken);
-
-                Log(Enums.CommandType.DeleteBatch);
-
-                return affectedRows;
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync(cancellationToken);
-
-                Log(Enums.CommandType.DeleteBatch, ex);
-
-                return default;
-            }
-            finally
-            {
-                await transaction.DisposeAsync();
-
-                if (DisposeCommand)
-                    await this.DisposeAsync();
-            }
+            return new ValueTask<int>(ExecuteBase(Enums.CommandType.DeleteBatch, cancellationToken));
         }
 
-        async ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(IList<TEntity> entities, CancellationToken cancellationToken)
+        ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(IList<TEntity> entities, CancellationToken cancellationToken)
         {
             if (entities is null ||
                 entities.Count == 0)
-                return 0;
-
-            await ValidateConnectionAsync();
+                new ValueTask<int>(0);
 
             var commandString = new StringBuilder();
 
@@ -173,123 +107,29 @@ namespace Venflow.Commands
 
             UnderlyingCommand.CommandText = commandString.ToString();
 
-            var transaction = await Database.BeginTransactionAsync(
-#if NET5_0_OR_GREATER
-                cancellationToken
-#endif
-            );
-
-            try
-            {
-                var affectedRows = await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-
-                await transaction.CommitAsync(cancellationToken);
-
-                Log(Enums.CommandType.DeleteBatch);
-
-                return affectedRows;
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync(cancellationToken);
-
-                Log(Enums.CommandType.DeleteBatch, ex);
-
-                return default;
-            }
-            finally
-            {
-                await transaction.DisposeAsync();
-
-                if (DisposeCommand)
-                    await this.DisposeAsync();
-            }
+            return new ValueTask<int>(ExecuteBase(Enums.CommandType.DeleteBatch, cancellationToken));
         }
 
-        async ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(List<TEntity> entities, CancellationToken cancellationToken)
+        ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(List<TEntity> entities, CancellationToken cancellationToken)
         {
             if (entities is null ||
                 entities.Count == 0)
-                return 0;
-
-            await ValidateConnectionAsync();
+                new ValueTask<int>(0);
 
             UnderlyingCommand.CommandText = DeleteBase(entities.AsSpan());
 
-            var transaction = await Database.BeginTransactionAsync(
-#if NET5_0_OR_GREATER
-                cancellationToken
-#endif
-            );
-
-            try
-            {
-                var affectedRows = await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-
-                await transaction.CommitAsync(cancellationToken);
-
-                Log(Enums.CommandType.DeleteBatch);
-
-                return affectedRows;
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync(cancellationToken);
-
-                Log(Enums.CommandType.DeleteBatch, ex);
-
-                return default;
-            }
-            finally
-            {
-                await transaction.DisposeAsync();
-
-                if (DisposeCommand)
-                    await this.DisposeAsync();
-            }
+            return new ValueTask<int>(ExecuteBase(Enums.CommandType.DeleteBatch, cancellationToken));
         }
 
-        async ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(TEntity[] entities, CancellationToken cancellationToken)
+        ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(TEntity[] entities, CancellationToken cancellationToken)
         {
             if (entities is null ||
                 entities.Length == 0)
-                return 0;
-
-            await ValidateConnectionAsync();
+                new ValueTask<int>(0);
 
             UnderlyingCommand.CommandText = DeleteBase(entities.AsSpan());
 
-            var transaction = await Database.BeginTransactionAsync(
-#if NET5_0_OR_GREATER
-                cancellationToken
-#endif
-            );
-
-            try
-            {
-                var affectedRows = await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
-
-                await transaction.CommitAsync(cancellationToken);
-
-                Log(Enums.CommandType.DeleteBatch);
-
-                return affectedRows;
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync(cancellationToken);
-
-                Log(Enums.CommandType.DeleteBatch, ex);
-
-                return default;
-            }
-            finally
-            {
-                await transaction.DisposeAsync();
-
-                if (DisposeCommand)
-                    await this.DisposeAsync();
-            }
+            return new ValueTask<int>(ExecuteBase(Enums.CommandType.DeleteBatch, cancellationToken));
         }
 
         private string DeleteBase(Span<TEntity> entities)
@@ -318,6 +158,53 @@ namespace Venflow.Commands
             commandString.Append(");");
 
             return commandString.ToString();
+        }
+
+        private async Task<int> ExecuteBase(Enums.CommandType commandType, CancellationToken cancellationToken)
+        {
+            await ValidateConnectionAsync();
+
+            var transaction = await GetTransactionAsync(
+#if !NET48
+                cancellationToken
+#endif
+            );
+
+            try
+            {
+                if (!ShouldAutoCommit)
+                    await transaction.SaveAsync(TransactionName, cancellationToken);
+
+                var affectedRows = await UnderlyingCommand.ExecuteNonQueryAsync(cancellationToken);
+
+                if (ShouldAutoCommit)
+                    await transaction.CommitAsync(cancellationToken);
+
+                Log(commandType);
+
+                return affectedRows;
+            }
+            catch (Exception ex)
+            {
+                if (ShouldAutoCommit)
+                    await transaction.RollbackAsync(cancellationToken);
+                else
+                    await transaction.RollbackAsync(TransactionName, cancellationToken);
+
+                Log(commandType, ex);
+
+                return default;
+            }
+            finally
+            {
+                if (ShouldAutoCommit)
+                    await transaction.DisposeAsync();
+                else
+                    await transaction.ReleaseAsync(TransactionName, cancellationToken);
+
+                if (DisposeCommand)
+                    await this.DisposeAsync();
+            }
         }
 
         public ValueTask DisposeAsync()
