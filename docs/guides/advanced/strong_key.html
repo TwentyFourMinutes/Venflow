@@ -141,8 +141,8 @@ public Post GetPostByBlog(Key&lt;Blog, int&gt; blogId, Key&lt;Post, int&gt; post
 <p>This will no longer compile, due to the fact, that the  <code>Key&lt;Post, int&gt;</code> stored in <code>postId</code> can not be implicitly converted to the
 <code>Key&lt;Blog, int&gt;</code> parameter defined in the by the <code>GetPostByBlog</code> method.</p>
 <h2 id="reducing-the-boilerplate">Reducing the boilerplate</h2>
-<p>This is already an improvement, but it is somewhat annoying to always specify the type the key belongs to as well as the type of the key. In most databases you will most likely end up with the same type of id for all of your tables. Therefor it is rather unnecessary to specify it every time in code. Venflow provides you with an extensions package called <a href="https://www.nuget.org/packages/Venflow.Keys/"><code>Venflow.Keys</code></a>, which includes a Source Generator to create a strongly-typed id with a fixed type for us. However, do note that Source Generators are only available through C#9. Once the package is installed we will be able to do the following.</p>
-<pre><code class="lang-cs">[Venflow.Keys.GeneratedKey(typeof(int))]
+<p>This is already an improvement, but it is somewhat annoying to always specify the type the key belongs to as well as the type of the key. In most databases you will most likely end up with the same type of id for all of your tables. Therefor it is rather unnecessary to specify it every time in code. Venflow provides you with a Source Generator to create a strongly-typed id with a fixed type for us. However, do note that Source Generators are only available through C#9.</p>
+<pre><code class="lang-cs">[Venflow.GeneratedKey(typeof(int))]
 public partial struct Key&lt;T&gt; { }
 </code></pre>
 <p>From now on you would be able to create all your strongly-typed ids as shown below.</p>
@@ -157,8 +157,35 @@ public partial struct Key&lt;T&gt; { }
 }
 </code></pre>
 <p>If required you could also create multiple strongly-typed ids with a fixed types, by naming them differently, for example <code>IntKey&lt;T&gt;</code> or <code>GuidKey&lt;T&gt;</code>.</p>
-<h2 id="support-for-json-and-aspnet-core">Support for JSON and ASP.Net Core</h2>
-<p>It is indeed possible to support both, but native support by Venflow, will most likely arrive in the next release.</p>
+<div class="NOTE">
+<h5>Note</h5>
+</div>
+<p>If you want to use Strongly-typed id's without referencing the whole ORM, you can install Venflow.Keys from NuGet.</p>
+<h2 id="support-for-json">Support for JSON</h2>
+<p>Venflow natively supports <code>System.Text.Json</code> and <code>Newtonsoft.Json</code>, however if you do want to use <code>Newtonsoft.Json</code> you will need to additionally add <code>Venflow.NewtonsoftJson</code>.</p>
+<h3 id="systemtextjson">System.Text.Json</h3>
+<p>You will need to tell the serializer and de-serializer how to handle the new type, you can do this by adding the following line to your <code>JsonOptions</code>.</p>
+<pre><code class="lang-cs">var options = new JsonOptions();
+
+options.Converters.Add(new JsonKeyConverterFactory());
+</code></pre>
+<h3 id="newtonsoftjson">Newtonsoft.Json</h3>
+<p>You will need to tell the serializer and de-serializer how to handle the new type, you can do this by adding the following line to your <code>JsonSerializerSettings</code>.</p>
+<pre><code class="lang-cs">var settings = new JsonSerializerSettings();
+
+settings.Converters.Add(new NewtonsoftJsonKeyConverter());
+</code></pre>
+<h2 id="support-for-aspnet-core">Support for Asp.Net Core</h2>
+<p>Venflow natively supports <code>System.Text.Json</code> with Asp.Net Core through the <code>Venflow.AspNetCore</code> NuGet package. In your <code>Startup.cs</code> file you can add the code below in your <code>ConfigureServices</code> method.</p>
+<pre><code class="lang-cs">servics.AddVenflowJson();
+</code></pre>
+<h3 id="newtonsoftjson-1">Newtonsoft.Json</h3>
+<p>At the moment you still have to write your own implementation for <code>Newtonsoft.Json</code>, an example can be found below.</p>
+<pre><code class="lang-cs">servics.AddNewtonsoftJson(options =&gt;
+        {
+            options.SerializerSettings.Converters.Add(new NewtonsoftJsonKeyConverter());
+        });
+</code></pre>
 </article>
           </div>
           
