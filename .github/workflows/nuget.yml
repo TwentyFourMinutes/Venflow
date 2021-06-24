@@ -16,7 +16,7 @@ jobs:
           dotnet-version: 6.0.100-preview.5.21302.13
         
       - name: Publish Venflow.Keys on version change
-        id: publish_venflow_extensions_logging_nuget
+        id: publish_venflow_keys_nuget
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/Venflow/Venflow.Keys/Venflow.Keys.csproj
@@ -58,7 +58,7 @@ jobs:
           INCLUDE_SYMBOLS: true
 
       - name: Publish Venflow.AspNetCore on version change
-        id: publish_venflow_extensions_logging_nuget
+        id: publish_venflow_aspnetcore_nuget
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/Venflow/Venflow.AspNetCore/Venflow.AspNetCore.csproj
@@ -72,7 +72,7 @@ jobs:
           INCLUDE_SYMBOLS: true
 
       - name: Publish Venflow.NewtonsoftJson on version change
-        id: publish_venflow_extensions_logging_nuget
+        id: publish_venflow_newtonsoftjson_nuget
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/Venflow/Venflow.NewtonsoftJson/Venflow.NewtonsoftJson.csproj
