@@ -15,6 +15,6 @@ namespace Venflow.Tests.Models
         [NotMapped]
         public string Stuff { get; set; }
 
-        public List<Email> Emails { get; set; }
+        public IList<Email> Emails { get; set; }
     }
 }
