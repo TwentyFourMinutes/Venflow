@@ -1841,6 +1841,141 @@ references:
   isSpec: "True"
   fullName: Venflow.FormattableSqlStringBuilder.AppendLine
   nameWithType: FormattableSqlStringBuilder.AppendLine
+- uid: Venflow.IDatabaseTransaction
+  name: IDatabaseTransaction
+  href: api/Venflow.IDatabaseTransaction.html
+  commentId: T:Venflow.IDatabaseTransaction
+  fullName: Venflow.IDatabaseTransaction
+  nameWithType: IDatabaseTransaction
+- uid: Venflow.IDatabaseTransaction.Commit
+  name: Commit()
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_Commit
+  commentId: M:Venflow.IDatabaseTransaction.Commit
+  fullName: Venflow.IDatabaseTransaction.Commit()
+  nameWithType: IDatabaseTransaction.Commit()
+- uid: Venflow.IDatabaseTransaction.Commit*
+  name: Commit
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_Commit_
+  commentId: Overload:Venflow.IDatabaseTransaction.Commit
+  isSpec: "True"
+  fullName: Venflow.IDatabaseTransaction.Commit
+  nameWithType: IDatabaseTransaction.Commit
+- uid: Venflow.IDatabaseTransaction.CommitAsync(CancellationToken)
+  name: CommitAsync(CancellationToken)
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_CommitAsync_CancellationToken_
+  commentId: M:Venflow.IDatabaseTransaction.CommitAsync(CancellationToken)
+  fullName: Venflow.IDatabaseTransaction.CommitAsync(CancellationToken)
+  nameWithType: IDatabaseTransaction.CommitAsync(CancellationToken)
+- uid: Venflow.IDatabaseTransaction.CommitAsync*
+  name: CommitAsync
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_CommitAsync_
+  commentId: Overload:Venflow.IDatabaseTransaction.CommitAsync
+  isSpec: "True"
+  fullName: Venflow.IDatabaseTransaction.CommitAsync
+  nameWithType: IDatabaseTransaction.CommitAsync
+- uid: Venflow.IDatabaseTransaction.GetNpgsqlTransaction
+  name: GetNpgsqlTransaction()
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_GetNpgsqlTransaction
+  commentId: M:Venflow.IDatabaseTransaction.GetNpgsqlTransaction
+  fullName: Venflow.IDatabaseTransaction.GetNpgsqlTransaction()
+  nameWithType: IDatabaseTransaction.GetNpgsqlTransaction()
+- uid: Venflow.IDatabaseTransaction.GetNpgsqlTransaction*
+  name: GetNpgsqlTransaction
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_GetNpgsqlTransaction_
+  commentId: Overload:Venflow.IDatabaseTransaction.GetNpgsqlTransaction
+  isSpec: "True"
+  fullName: Venflow.IDatabaseTransaction.GetNpgsqlTransaction
+  nameWithType: IDatabaseTransaction.GetNpgsqlTransaction
+- uid: Venflow.IDatabaseTransaction.Release(System.String)
+  name: Release(String)
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_Release_System_String_
+  commentId: M:Venflow.IDatabaseTransaction.Release(System.String)
+  fullName: Venflow.IDatabaseTransaction.Release(System.String)
+  nameWithType: IDatabaseTransaction.Release(String)
+- uid: Venflow.IDatabaseTransaction.Release*
+  name: Release
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_Release_
+  commentId: Overload:Venflow.IDatabaseTransaction.Release
+  isSpec: "True"
+  fullName: Venflow.IDatabaseTransaction.Release
+  nameWithType: IDatabaseTransaction.Release
+- uid: Venflow.IDatabaseTransaction.ReleaseAsync(System.String,CancellationToken)
+  name: ReleaseAsync(String, CancellationToken)
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_ReleaseAsync_System_String_CancellationToken_
+  commentId: M:Venflow.IDatabaseTransaction.ReleaseAsync(System.String,CancellationToken)
+  fullName: Venflow.IDatabaseTransaction.ReleaseAsync(System.String, CancellationToken)
+  nameWithType: IDatabaseTransaction.ReleaseAsync(String, CancellationToken)
+- uid: Venflow.IDatabaseTransaction.ReleaseAsync*
+  name: ReleaseAsync
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_ReleaseAsync_
+  commentId: Overload:Venflow.IDatabaseTransaction.ReleaseAsync
+  isSpec: "True"
+  fullName: Venflow.IDatabaseTransaction.ReleaseAsync
+  nameWithType: IDatabaseTransaction.ReleaseAsync
+- uid: Venflow.IDatabaseTransaction.Rollback
+  name: Rollback()
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_Rollback
+  commentId: M:Venflow.IDatabaseTransaction.Rollback
+  fullName: Venflow.IDatabaseTransaction.Rollback()
+  nameWithType: IDatabaseTransaction.Rollback()
+- uid: Venflow.IDatabaseTransaction.Rollback(System.String)
+  name: Rollback(String)
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_Rollback_System_String_
+  commentId: M:Venflow.IDatabaseTransaction.Rollback(System.String)
+  fullName: Venflow.IDatabaseTransaction.Rollback(System.String)
+  nameWithType: IDatabaseTransaction.Rollback(String)
+- uid: Venflow.IDatabaseTransaction.Rollback*
+  name: Rollback
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_Rollback_
+  commentId: Overload:Venflow.IDatabaseTransaction.Rollback
+  isSpec: "True"
+  fullName: Venflow.IDatabaseTransaction.Rollback
+  nameWithType: IDatabaseTransaction.Rollback
+- uid: Venflow.IDatabaseTransaction.RollbackAsync(CancellationToken)
+  name: RollbackAsync(CancellationToken)
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_RollbackAsync_CancellationToken_
+  commentId: M:Venflow.IDatabaseTransaction.RollbackAsync(CancellationToken)
+  fullName: Venflow.IDatabaseTransaction.RollbackAsync(CancellationToken)
+  nameWithType: IDatabaseTransaction.RollbackAsync(CancellationToken)
+- uid: Venflow.IDatabaseTransaction.RollbackAsync(System.String,CancellationToken)
+  name: RollbackAsync(String, CancellationToken)
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_RollbackAsync_System_String_CancellationToken_
+  commentId: M:Venflow.IDatabaseTransaction.RollbackAsync(System.String,CancellationToken)
+  fullName: Venflow.IDatabaseTransaction.RollbackAsync(System.String, CancellationToken)
+  nameWithType: IDatabaseTransaction.RollbackAsync(String, CancellationToken)
+- uid: Venflow.IDatabaseTransaction.RollbackAsync*
+  name: RollbackAsync
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_RollbackAsync_
+  commentId: Overload:Venflow.IDatabaseTransaction.RollbackAsync
+  isSpec: "True"
+  fullName: Venflow.IDatabaseTransaction.RollbackAsync
+  nameWithType: IDatabaseTransaction.RollbackAsync
+- uid: Venflow.IDatabaseTransaction.Save(System.String)
+  name: Save(String)
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_Save_System_String_
+  commentId: M:Venflow.IDatabaseTransaction.Save(System.String)
+  fullName: Venflow.IDatabaseTransaction.Save(System.String)
+  nameWithType: IDatabaseTransaction.Save(String)
+- uid: Venflow.IDatabaseTransaction.Save*
+  name: Save
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_Save_
+  commentId: Overload:Venflow.IDatabaseTransaction.Save
+  isSpec: "True"
+  fullName: Venflow.IDatabaseTransaction.Save
+  nameWithType: IDatabaseTransaction.Save
+- uid: Venflow.IDatabaseTransaction.SaveAsync(System.String,CancellationToken)
+  name: SaveAsync(String, CancellationToken)
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_SaveAsync_System_String_CancellationToken_
+  commentId: M:Venflow.IDatabaseTransaction.SaveAsync(System.String,CancellationToken)
+  fullName: Venflow.IDatabaseTransaction.SaveAsync(System.String, CancellationToken)
+  nameWithType: IDatabaseTransaction.SaveAsync(String, CancellationToken)
+- uid: Venflow.IDatabaseTransaction.SaveAsync*
+  name: SaveAsync
+  href: api/Venflow.IDatabaseTransaction.html#Venflow_IDatabaseTransaction_SaveAsync_
+  commentId: Overload:Venflow.IDatabaseTransaction.SaveAsync
+  isSpec: "True"
+  fullName: Venflow.IDatabaseTransaction.SaveAsync
+  nameWithType: IDatabaseTransaction.SaveAsync
 - uid: Venflow.IKey
   name: IKey
   href: api/Venflow.IKey.html
