@@ -60,7 +60,7 @@ namespace Venflow
         {
             IsDisposed = true;
 
-            return new ValueTask(_npgsqlTransaction.CommitAsync());
+            return _npgsqlTransaction.DisposeAsync();
         }
     }
 
