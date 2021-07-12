@@ -25,16 +25,6 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.100-preview.5.21302.13
-        
-    - name: Setup .NET 5.0
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.102
-
-    - name: Setup .NET 3.1
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.405
 
     - name: Install dependencies
       run: dotnet restore
@@ -52,30 +42,34 @@ jobs:
         postgresql user: 'venflow_benchmarks'
         postgresql password: 'venflow_benchmarks'
 
+    - name: Clear old scores
+      working-directory: ./src/Venflow/Venflow.Benchmarks/BenchmarkDotNet.Artifacts/results
+      run: rm -r
+
     - name: Run Query Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f net5.0 -- -f "*query*"
+      run: dotnet run -c Release -f net6.0 -- -f "*query*"
 
     - name: Run Insert Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f net5.0 -- -f "*insert*"
+      run: dotnet run -c Release -f net6.0 -- -f "*insert*"
 
     - name: Run Update Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f net5.0 -- -f "*update*"
+      run: dotnet run -c Release -f net6.0 -- -f "*update*"
 
     - name: Run Delete Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f net5.0 -- -f "*delete*"
+      run: dotnet run -c Release -f net6.0 -- -f "*delete*"
 
     - name: Run Instantiation Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
-      run: dotnet run -c Release -f net5.0 -- -f "*instantiation*"
+      run: dotnet run -c Release -f net6.0 -- -f "*instantiation*"
 
     - name: Run Score Calculator
       working-directory: ./src/Venflow/Venflow.Score
       run: dotnet run -c Release -- "../Venflow.Benchmarks/BenchmarkDotNet.Artifacts/results" "../../../benchmarks" "../../../README.md"
-    
+
     - name: Commit Benchmark changes
       uses: stefanzweifel/git-auto-commit-action@v4.8.0
       with:

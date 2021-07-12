@@ -11,9 +11,7 @@ using Venflow.Benchmarks.Models;
 namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
 {
     [MemoryDiagnoser]
-    [SimpleJob(RuntimeMoniker.Net48)]
-    [SimpleJob(RuntimeMoniker.NetCoreApp31)]
-    [SimpleJob(RuntimeMoniker.NetCoreApp50)]
+    [SimpleJob(RuntimeMoniker.Net60)]
 
     public class UpdateBatchAsyncBenchmark : BenchmarkBase
     {
