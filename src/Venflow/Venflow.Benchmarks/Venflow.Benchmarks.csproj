@@ -13,7 +13,7 @@
     <PackageReference Include="Dapper" Version="2.0.90" />
     <PackageReference Include="RepoDb" Version="1.12.8-beta4" />
     <PackageReference Include="RepoDb.PostgreSql" Version="1.1.4-beta1" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.7" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.0-preview5" />
   </ItemGroup>
 
   <ItemGroup>
