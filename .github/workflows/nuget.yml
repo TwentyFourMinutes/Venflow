@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        
+
       - name: Setup .NET 6.0
         uses: actions/setup-dotnet@v1
         with:
@@ -18,7 +18,7 @@ jobs:
       - name: build Venflow.Generators
         working-directory: ./src/Venflow/Venflow.Generators
         run: dotnet build -c Release
-        
+
       - name: Publish Venflow.Keys on version change
         id: publish_venflow_keys_nuget
         uses: brandedoutcast/publish-nuget@v2.5.5
@@ -46,7 +46,7 @@ jobs:
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
           NUGET_SOURCE: https://api.nuget.org
           INCLUDE_SYMBOLS: true
-          
+
       - name: Publish Venflow.Extensions.Logging on version change
         id: publish_venflow_extensions_logging_nuget
         uses: brandedoutcast/publish-nuget@v2.5.5
