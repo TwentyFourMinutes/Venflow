@@ -13,14 +13,14 @@ namespace Venflow.Dynamic.Inserter
         private readonly Entity<TEntity> _entity;
 
         private readonly Dictionary<InsertCacheKey, Delegate> _inserterCache;
-        private readonly object _inserstionLock;
+        private readonly object _insertionLock;
 
         internal InsertionFactory(Entity<TEntity> entity)
         {
             _entity = entity;
 
             _inserterCache = new(InsertCacheKeyComparer.Default);
-            _inserstionLock = new();
+            _insertionLock = new();
         }
 
         internal Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>> GetOrCreateInserter<TInsert>(RelationBuilderValues relationBuilderValues, bool isSingleInsert, bool isFullInsert) where TInsert : class
@@ -32,7 +32,7 @@ namespace Venflow.Dynamic.Inserter
                 return (tempInserter as Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>)!;
             }
 
-            lock (_inserstionLock)
+            lock (_insertionLock)
             {
                 if (_inserterCache.TryGetValue(cacheKey, out tempInserter))
                 {
