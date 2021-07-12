@@ -19,7 +19,7 @@ namespace Venflow.Commands
         ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(TEntity entity, CancellationToken cancellationToken)
         {
             if (entity is null)
-                return new ValueTask<int>(0);
+                return default;
 
             var commandString = new StringBuilder();
 
@@ -66,7 +66,7 @@ namespace Venflow.Commands
             }
 
             if (index == 0)
-                new ValueTask<int>(0);
+                return default;
 
             commandString.Length -= 2;
             commandString.Append(");");
@@ -80,7 +80,7 @@ namespace Venflow.Commands
         {
             if (entities is null ||
                 entities.Count == 0)
-                new ValueTask<int>(0);
+                return default;
 
             var commandString = new StringBuilder();
 
@@ -114,7 +114,7 @@ namespace Venflow.Commands
         {
             if (entities is null ||
                 entities.Count == 0)
-                new ValueTask<int>(0);
+                return default;
 
             UnderlyingCommand.CommandText = DeleteBase(entities.AsSpan());
 
@@ -125,7 +125,7 @@ namespace Venflow.Commands
         {
             if (entities is null ||
                 entities.Length == 0)
-                new ValueTask<int>(0);
+                return default;
 
             UnderlyingCommand.CommandText = DeleteBase(entities.AsSpan());
 

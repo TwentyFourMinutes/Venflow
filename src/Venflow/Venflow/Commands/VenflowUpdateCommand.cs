@@ -22,7 +22,7 @@ namespace Venflow.Commands
         ValueTask IUpdateCommand<TEntity>.UpdateAsync(TEntity entity, CancellationToken cancellationToken)
         {
             if (entity is null)
-                return new ValueTask();
+                return default;
 
             var commandString = new StringBuilder();
 
@@ -41,7 +41,7 @@ namespace Venflow.Commands
         ValueTask IUpdateCommand<TEntity>.UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
         {
             if (entities is null)
-                return new ValueTask();
+                return default;
 
             var commandString = new StringBuilder();
 
@@ -67,7 +67,7 @@ namespace Venflow.Commands
         {
             if (entities is null ||
                 entities.Count == 0)
-                return new ValueTask();
+                return default;
 
             var commandString = new StringBuilder();
 
