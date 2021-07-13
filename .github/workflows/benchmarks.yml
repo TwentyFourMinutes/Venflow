@@ -75,3 +75,4 @@ jobs:
       with:
         commit_message: Updated Benchmarks
         branch: dev
+        push_options: '--force'
