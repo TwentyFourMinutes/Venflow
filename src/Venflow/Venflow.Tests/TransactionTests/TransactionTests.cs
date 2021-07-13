@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Npgsql;
@@ -24,71 +22,31 @@ namespace Venflow.Tests.TransactionTests
         {
             await using var transaction = await Database.BeginTransactionAsync();
 
-            await Assert.ThrowsAsync<NotImplementedException>(() => Database.People.InsertAsync(new Person { Emails = new ThrowingEmailList() }));
+            var person = new Person { Name = "RollbackPerson" };
+
+            await Database.People.InsertAsync(person);
+
+            var throwingPerson = new Person { Emails = new Email[] { new ThrowingEmail() } };
+
+            await Assert.ThrowsAsync<NotImplementedException>(() => Database.People.InsertAsync(throwingPerson));
+
+            Assert.Null(await Database.People.QueryInterpolatedSingle(@$"SELECT * FROM ""People"" WHERE ""Id"" = {throwingPerson.Id}").QueryAsync());
 
             var transactionType = transaction.GetType();
             var npgsqlTransactionType = typeof(NpgsqlTransaction);
 
             Assert.False((bool)transactionType.GetProperty("IsDisposed", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(transaction));
             Assert.False((bool)npgsqlTransactionType.GetProperty("IsCompleted", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(transaction.GetNpgsqlTransaction()));
+
+            await transaction.CommitAsync();
+
+            Assert.Null(await Database.People.QueryInterpolatedSingle(@$"SELECT * FROM ""People"" WHERE ""Id"" = {throwingPerson.Id}").QueryAsync());
+            Assert.NotNull(await Database.People.QueryInterpolatedSingle(@$"SELECT * FROM ""People"" WHERE ""Id"" = {person.Id}").QueryAsync());
         }
 
-        private class ThrowingEmailList : IList<Email>
+        private class ThrowingEmail : Email
         {
-            public Email this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-            public int Count => throw new NotImplementedException();
-            public bool IsReadOnly => throw new NotImplementedException();
-
-            public void Add(Email item)
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public void Clear()
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public bool Contains(Email item)
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public void CopyTo(Email[] array, int arrayIndex)
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public IEnumerator<Email> GetEnumerator()
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public int IndexOf(Email item)
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public void Insert(int index, Email item)
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public bool Remove(Email item)
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public void RemoveAt(int index)
-            {
-                throw new System.NotImplementedException();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                throw new System.NotImplementedException();
-            }
+            public override string Address { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         }
     }
 }

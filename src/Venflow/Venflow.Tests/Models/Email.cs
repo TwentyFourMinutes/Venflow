@@ -6,7 +6,7 @@ namespace Venflow.Tests.Models
     {
         public int Id { get; set; }
 
-        public string Address { get; set; }
+        public virtual string Address { get; set; }
 
         public int PersonId { get; set; }
 
