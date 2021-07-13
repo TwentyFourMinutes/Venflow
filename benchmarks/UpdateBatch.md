@@ -1,44 +1,28 @@
 ``` ini
 
-BenchmarkDotNet=v0.12.1, OS=ubuntu 18.04
-Intel Xeon Platinum 8171M CPU 2.60GHz, 1 CPU, 2 logical and 2 physical cores
-.NET Core SDK=5.0.102
-  [Host]        : .NET Core 5.0.2 (CoreCLR 5.0.220.61120, CoreFX 5.0.220.61120), X64 RyuJIT
-  .NET Core 3.1 : .NET Core 3.1.11 (CoreCLR 4.700.20.56602, CoreFX 4.700.20.56604), X64 RyuJIT
-  .NET Core 5.0 : .NET Core 5.0.2 (CoreCLR 5.0.220.61120, CoreFX 5.0.220.61120), X64 RyuJIT
+BenchmarkDotNet=v0.13.0, OS=ubuntu 20.04
+Intel Xeon CPU E5-2673 v4 2.30GHz, 1 CPU, 2 logical and 2 physical cores
+.NET SDK=6.0.100-preview.5.21302.13
+  [Host]   : .NET 6.0.0 (6.0.21.30105), X64 RyuJIT
+  .NET 6.0 : .NET 6.0.0 (6.0.21.30105), X64 RyuJIT
 
+Job=.NET 6.0  Runtime=.NET 6.0  
 
 ```
-|                  Method |           Job |       Runtime | UpdateCount |         Mean |        Error |       StdDev | Ratio | RatioSD |     Gen 0 |     Gen 1 |   Gen 2 |    Allocated |
-|------------------------ |-------------- |-------------- |------------ |-------------:|-------------:|-------------:|------:|--------:|----------:|----------:|--------:|-------------:|
-|  **EFCoreUpdateBatchAsync** | **.NET Core 3.1** | **.NET Core 3.1** |          **10** |   **1,669.6 μs** |     **28.42 μs** |     **31.58 μs** |  **1.00** |    **0.00** |    **3.9063** |         **-** |       **-** |     **94.91 KB** |
-| VenflowUpdateBatchAsync | .NET Core 3.1 | .NET Core 3.1 |          10 |   1,218.4 μs |     17.78 μs |     15.76 μs |  0.73 |    0.02 |         - |         - |       - |     25.48 KB |
-|  RepoDbUpdateBatchAsync | .NET Core 3.1 | .NET Core 3.1 |          10 |     692.8 μs |     13.26 μs |     15.79 μs |  0.41 |    0.01 |    0.9766 |         - |       - |     19.96 KB |
-|                         |               |               |             |              |              |              |       |         |           |           |         |              |
-|  EFCoreUpdateBatchAsync | .NET Core 5.0 | .NET Core 5.0 |          10 |   1,565.9 μs |     30.18 μs |     33.55 μs |  1.00 |    0.00 |    3.9063 |         - |       - |     77.39 KB |
-| VenflowUpdateBatchAsync | .NET Core 5.0 | .NET Core 5.0 |          10 |   1,215.1 μs |     23.65 μs |     29.04 μs |  0.77 |    0.03 |         - |         - |       - |      25.3 KB |
-|  RepoDbUpdateBatchAsync | .NET Core 5.0 | .NET Core 5.0 |          10 |     710.4 μs |     13.21 μs |     11.71 μs |  0.45 |    0.01 |    0.9766 |         - |       - |     19.94 KB |
-|                         |               |               |             |              |              |              |       |         |           |           |         |              |
-|  **EFCoreUpdateBatchAsync** | **.NET Core 3.1** | **.NET Core 3.1** |         **100** |   **8,691.4 μs** |    **144.60 μs** |    **128.18 μs** |  **1.00** |    **0.00** |   **46.8750** |   **15.6250** |       **-** |    **945.28 KB** |
-| VenflowUpdateBatchAsync | .NET Core 3.1 | .NET Core 3.1 |         100 |   2,976.9 μs |     58.33 μs |     54.56 μs |  0.34 |    0.01 |    7.8125 |         - |       - |    206.89 KB |
-|  RepoDbUpdateBatchAsync | .NET Core 3.1 | .NET Core 3.1 |         100 |   4,291.0 μs |     57.30 μs |     53.60 μs |  0.49 |    0.01 |    7.8125 |         - |       - |    155.73 KB |
-|                         |               |               |             |              |              |              |       |         |           |           |         |              |
-|  EFCoreUpdateBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         100 |   7,396.7 μs |    118.65 μs |    110.99 μs |  1.00 |    0.00 |   31.2500 |    7.8125 |       - |     672.2 KB |
-| VenflowUpdateBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         100 |   3,525.3 μs |     44.35 μs |     41.48 μs |  0.48 |    0.01 |    7.8125 |         - |       - |    206.83 KB |
-|  RepoDbUpdateBatchAsync | .NET Core 5.0 | .NET Core 5.0 |         100 |   3,793.2 μs |     57.91 μs |     54.17 μs |  0.51 |    0.01 |    7.8125 |         - |       - |    153.82 KB |
-|                         |               |               |             |              |              |              |       |         |           |           |         |              |
-|  **EFCoreUpdateBatchAsync** | **.NET Core 3.1** | **.NET Core 3.1** |        **1000** |  **83,077.0 μs** |    **999.78 μs** |    **780.56 μs** |  **1.00** |    **0.00** |  **500.0000** |  **166.6667** |       **-** |  **10267.41 KB** |
-| VenflowUpdateBatchAsync | .NET Core 3.1 | .NET Core 3.1 |        1000 |  18,073.9 μs |    361.18 μs |    456.77 μs |  0.22 |    0.01 |  125.0000 |   93.7500 | 62.5000 |   1976.82 KB |
-|  RepoDbUpdateBatchAsync | .NET Core 3.1 | .NET Core 3.1 |        1000 |  34,100.7 μs |    391.43 μs |    366.14 μs |  0.41 |    0.01 |   66.6667 |         - |       - |    1511.4 KB |
-|                         |               |               |             |              |              |              |       |         |           |           |         |              |
-|  EFCoreUpdateBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        1000 |  62,401.7 μs |  1,038.96 μs |    971.85 μs |  1.00 |    0.00 |  250.0000 |  125.0000 |       - |   6621.43 KB |
-| VenflowUpdateBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        1000 |  17,221.4 μs |    272.79 μs |    241.82 μs |  0.28 |    0.01 |  125.0000 |   93.7500 | 62.5000 |   1969.01 KB |
-|  RepoDbUpdateBatchAsync | .NET Core 5.0 | .NET Core 5.0 |        1000 |  32,715.1 μs |    646.85 μs |  1,080.74 μs |  0.52 |    0.02 |   66.6667 |         - |       - |   1495.64 KB |
-|                         |               |               |             |              |              |              |       |         |           |           |         |              |
-|  **EFCoreUpdateBatchAsync** | **.NET Core 3.1** | **.NET Core 3.1** |       **10000** | **932,501.5 μs** | **18,392.03 μs** | **17,203.92 μs** |  **1.00** |    **0.00** | **6000.0000** | **2000.0000** |       **-** | **114826.74 KB** |
-| VenflowUpdateBatchAsync | .NET Core 3.1 | .NET Core 3.1 |       10000 | 201,535.8 μs |  3,505.26 μs |  4,433.04 μs |  0.22 |    0.01 |  666.6667 |  333.3333 |       - |   19797.7 KB |
-|  RepoDbUpdateBatchAsync | .NET Core 3.1 | .NET Core 3.1 |       10000 | 519,209.3 μs |  5,884.42 μs |  5,216.38 μs |  0.56 |    0.01 |         - |         - |       - |  15064.96 KB |
-|                         |               |               |             |              |              |              |       |         |           |           |         |              |
-|  EFCoreUpdateBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       10000 | 709,775.8 μs | 13,755.93 μs | 15,289.68 μs |  1.00 |    0.00 | 3000.0000 | 1000.0000 |       - |  66307.98 KB |
-| VenflowUpdateBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       10000 | 192,461.3 μs |  2,819.74 μs |  2,354.61 μs |  0.27 |    0.01 |  666.6667 |  333.3333 |       - |  19746.22 KB |
-|  RepoDbUpdateBatchAsync | .NET Core 5.0 | .NET Core 5.0 |       10000 | 520,496.8 μs | 10,053.12 μs | 14,417.88 μs |  0.74 |    0.02 |         - |         - |       - |  15004.05 KB |
+|                  Method | UpdateCount |         Mean |      Error |     StdDev | Ratio | RatioSD |     Gen 0 |     Gen 1 | Gen 2 | Allocated |
+|------------------------ |------------ |-------------:|-----------:|-----------:|------:|--------:|----------:|----------:|------:|----------:|
+|  **EFCoreUpdateBatchAsync** |          **10** |     **2.146 ms** |  **0.0419 ms** |  **0.0601 ms** |  **1.00** |    **0.00** |         **-** |         **-** |     **-** |     **66 KB** |
+| VenflowUpdateBatchAsync |          10 |     1.768 ms |  0.0348 ms |  0.0532 ms |  0.83 |    0.04 |         - |         - |     - |     19 KB |
+|  RepoDbUpdateBatchAsync |          10 |     1.017 ms |  0.0203 ms |  0.0351 ms |  0.48 |    0.02 |         - |         - |     - |     11 KB |
+|                         |             |              |            |            |       |         |           |           |       |           |
+|  **EFCoreUpdateBatchAsync** |         **100** |    **11.027 ms** |  **0.2001 ms** |  **0.1872 ms** |  **1.00** |    **0.00** |   **15.6250** |         **-** |     **-** |    **577 KB** |
+| VenflowUpdateBatchAsync |         100 |     8.121 ms |  0.1616 ms |  0.1924 ms |  0.74 |    0.02 |         - |         - |     - |    158 KB |
+|  RepoDbUpdateBatchAsync |         100 |     4.978 ms |  0.0995 ms |  0.2496 ms |  0.42 |    0.02 |         - |         - |     - |     93 KB |
+|                         |             |              |            |            |       |         |           |           |       |           |
+|  **EFCoreUpdateBatchAsync** |        **1000** |    **93.709 ms** |  **1.8566 ms** |  **2.6027 ms** |  **1.00** |    **0.00** |  **200.0000** |         **-** |     **-** |  **5,711 KB** |
+| VenflowUpdateBatchAsync |        1000 |    69.863 ms |  1.3946 ms |  1.9551 ms |  0.75 |    0.03 |         - |         - |     - |  1,504 KB |
+|  RepoDbUpdateBatchAsync |        1000 |    39.091 ms |  0.7309 ms |  0.9758 ms |  0.42 |    0.01 |         - |         - |     - |    867 KB |
+|                         |             |              |            |            |       |         |           |           |       |           |
+|  **EFCoreUpdateBatchAsync** |       **10000** | **1,070.242 ms** | **20.9136 ms** | **24.0841 ms** |  **1.00** |    **0.00** | **2000.0000** | **1000.0000** |     **-** | **57,206 KB** |
+| VenflowUpdateBatchAsync |       10000 |   770.476 ms | 11.7090 ms | 12.0243 ms |  0.72 |    0.02 |         - |         - |     - | 15,210 KB |
+|  RepoDbUpdateBatchAsync |       10000 |   599.384 ms | 11.7331 ms | 20.2391 ms |  0.56 |    0.02 |         - |         - |     - |  8,639 KB |

@@ -1,20 +1,16 @@
 ``` ini
 
-BenchmarkDotNet=v0.12.1, OS=ubuntu 18.04
-Intel Xeon Platinum 8171M CPU 2.60GHz, 1 CPU, 2 logical and 2 physical cores
-.NET Core SDK=5.0.102
-  [Host]        : .NET Core 5.0.2 (CoreCLR 5.0.220.61120, CoreFX 5.0.220.61120), X64 RyuJIT
-  .NET Core 3.1 : .NET Core 3.1.11 (CoreCLR 4.700.20.56602, CoreFX 4.700.20.56604), X64 RyuJIT
-  .NET Core 5.0 : .NET Core 5.0.2 (CoreCLR 5.0.220.61120, CoreFX 5.0.220.61120), X64 RyuJIT
+BenchmarkDotNet=v0.13.0, OS=ubuntu 20.04
+Intel Xeon CPU E5-2673 v4 2.30GHz, 1 CPU, 2 logical and 2 physical cores
+.NET SDK=6.0.100-preview.5.21302.13
+  [Host]   : .NET 6.0.0 (6.0.21.30105), X64 RyuJIT
+  .NET 6.0 : .NET 6.0.0 (6.0.21.30105), X64 RyuJIT
 
+Job=.NET 6.0  Runtime=.NET 6.0  
 
 ```
-|                   Method |           Job |       Runtime |     Mean |    Error |   StdDev |   Median | Ratio | RatioSD | Gen 0 | Gen 1 | Gen 2 | Allocated |
-|------------------------- |-------------- |-------------- |---------:|---------:|---------:|---------:|------:|--------:|------:|------:|------:|----------:|
-|  EFCoreUpdateSingleAsync | .NET Core 3.1 | .NET Core 3.1 | 792.2 μs | 14.44 μs | 13.50 μs | 788.9 μs |  1.00 |    0.00 |     - |     - |     - |  16.19 KB |
-| VenflowUpdateSingleAsync | .NET Core 3.1 | .NET Core 3.1 | 611.5 μs | 11.98 μs | 18.65 μs | 608.3 μs |  0.78 |    0.03 |     - |     - |     - |   5.32 KB |
-|  RepoDbUpdateSingleAsync | .NET Core 3.1 | .NET Core 3.1 | 436.9 μs |  8.62 μs | 17.61 μs | 431.0 μs |  0.58 |    0.02 |     - |     - |     - |   7.02 KB |
-|                          |               |               |          |          |          |          |       |         |       |       |       |           |
-|  EFCoreUpdateSingleAsync | .NET Core 5.0 | .NET Core 5.0 | 804.2 μs | 15.80 μs | 30.07 μs | 790.2 μs |  1.00 |    0.00 |     - |     - |     - |  15.35 KB |
-| VenflowUpdateSingleAsync | .NET Core 5.0 | .NET Core 5.0 | 603.3 μs | 11.40 μs | 12.67 μs | 603.8 μs |  0.74 |    0.03 |     - |     - |     - |   5.25 KB |
-|  RepoDbUpdateSingleAsync | .NET Core 5.0 | .NET Core 5.0 | 448.0 μs | 10.22 μs | 30.14 μs | 438.6 μs |  0.56 |    0.05 |     - |     - |     - |    6.5 KB |
+|                   Method |       Mean |    Error |   StdDev | Ratio | RatioSD | Gen 0 | Gen 1 | Gen 2 | Allocated |
+|------------------------- |-----------:|---------:|---------:|------:|--------:|------:|------:|------:|----------:|
+|  EFCoreUpdateSingleAsync | 1,123.4 μs | 22.42 μs | 51.07 μs |  1.00 |    0.00 |     - |     - |     - |     13 KB |
+| VenflowUpdateSingleAsync |   902.7 μs | 17.93 μs | 29.45 μs |  0.80 |    0.04 |     - |     - |     - |      4 KB |
+|  RepoDbUpdateSingleAsync |   762.7 μs | 15.25 μs | 37.41 μs |  0.68 |    0.04 |     - |     - |     - |      7 KB |

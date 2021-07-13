@@ -1,17 +1,15 @@
 ``` ini
 
-BenchmarkDotNet=v0.12.1, OS=ubuntu 18.04
-Intel Xeon Platinum 8171M CPU 2.60GHz, 1 CPU, 2 logical and 2 physical cores
-.NET Core SDK=5.0.102
-  [Host]        : .NET Core 5.0.2 (CoreCLR 5.0.220.61120, CoreFX 5.0.220.61120), X64 RyuJIT
-  .NET Core 3.1 : .NET Core 3.1.11 (CoreCLR 4.700.20.56602, CoreFX 4.700.20.56604), X64 RyuJIT
-  .NET Core 5.0 : .NET Core 5.0.2 (CoreCLR 5.0.220.61120, CoreFX 5.0.220.61120), X64 RyuJIT
+BenchmarkDotNet=v0.13.0, OS=ubuntu 20.04
+Intel Xeon CPU E5-2673 v4 2.30GHz, 1 CPU, 2 logical and 2 physical cores
+.NET SDK=6.0.100-preview.5.21302.13
+  [Host]   : .NET 6.0.0 (6.0.21.30105), X64 RyuJIT
+  .NET 6.0 : .NET 6.0.0 (6.0.21.30105), X64 RyuJIT
 
+Job=.NET 6.0  Runtime=.NET 6.0  
 
 ```
-|                     Method |           Job |       Runtime |     Mean |    Error |   StdDev |  Gen 0 |  Gen 1 | Gen 2 | Allocated |
-|--------------------------- |-------------- |-------------- |---------:|---------:|---------:|-------:|-------:|------:|----------:|
-|   InstantiateEFCoreContext | .NET Core 3.1 | .NET Core 3.1 | 89.64 μs | 1.750 μs | 2.083 μs | 2.0752 | 0.1221 |     - |  39.12 KB |
-| InstantiateVenflowDatabase | .NET Core 3.1 | .NET Core 3.1 | 83.98 μs | 1.656 μs | 1.468 μs | 1.9531 | 0.1221 |     - |   37.1 KB |
-|   InstantiateEFCoreContext | .NET Core 5.0 | .NET Core 5.0 | 88.28 μs | 1.526 μs | 1.427 μs | 2.4414 | 0.1221 |     - |   45.2 KB |
-| InstantiateVenflowDatabase | .NET Core 5.0 | .NET Core 5.0 | 74.67 μs | 0.783 μs | 0.732 μs | 1.9531 | 0.1221 |     - |  37.13 KB |
+|                     Method |     Mean |    Error |   StdDev |  Gen 0 |  Gen 1 | Gen 2 | Allocated |
+|--------------------------- |---------:|---------:|---------:|-------:|-------:|------:|----------:|
+|   InstantiateEFCoreContext | 80.39 μs | 1.542 μs | 1.776 μs | 1.7090 |      - |     - |     46 KB |
+| InstantiateVenflowDatabase | 62.31 μs | 0.854 μs | 0.713 μs | 1.4038 | 0.0610 |     - |     37 KB |
