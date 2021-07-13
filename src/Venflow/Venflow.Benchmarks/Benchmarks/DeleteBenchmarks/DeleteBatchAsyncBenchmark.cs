@@ -13,7 +13,7 @@ namespace Venflow.Benchmarks.Benchmarks.DeleteBenchmarks
     public class DeleteBatchAsyncBenchmark : BenchmarkBase
     {
         [Params(10, 100, 1000, 10000)]
-        public int DeleteCount { get; set; }
+        public int BatchCount { get; set; }
 
         [GlobalSetup]
         public override async Task Setup()
@@ -29,7 +29,7 @@ namespace Venflow.Benchmarks.Benchmarks.DeleteBenchmarks
         {
             var toDelete = new List<Person>();
 
-            for (int i = 0; i < DeleteCount; i++)
+            for (int i = 0; i < BatchCount; i++)
             {
                 toDelete.Add(new Person { Name = "toDelete" + i.ToString() });
             }

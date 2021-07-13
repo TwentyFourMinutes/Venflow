@@ -15,9 +15,9 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
     public class QueryBatchWithRelationsAsyncBenchmark : BenchmarkBase
     {
         [Params(10, 100, 1000, 10000)]
-        public int QueryCount { get; set; }
+        public int BatchCount { get; set; }
 
-        private string sql => @"SELECT * FROM (SELECT * FROM ""People"" LIMIT " + QueryCount + @") AS ""People"" INNER JOIN ""Emails"" ON ""Emails"".""PersonId"" = ""People"".""Id"" INNER JOIN ""EmailContents"" ON ""EmailContents"".""EmailId"" = ""Emails"".""Id""";
+        private string sql => @"SELECT * FROM (SELECT * FROM ""People"" LIMIT " + BatchCount + @") AS ""People"" INNER JOIN ""Emails"" ON ""Emails"".""PersonId"" = ""People"".""Id"" INNER JOIN ""EmailContents"" ON ""EmailContents"".""EmailId"" = ""Emails"".""Id""";
 
         [GlobalSetup]
         public override async Task Setup()
@@ -28,7 +28,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
 
             await insertBenchmark.Setup();
 
-            insertBenchmark.InsertCount = 10000;
+            insertBenchmark.BatchCount = 10000;
 
             await insertBenchmark.VenflowInsertBatchAsync();
 
@@ -49,7 +49,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         {
             PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
-            return PersonDbContext.People.Include(x => x.Emails).ThenInclude(x => x.Contents).Take(QueryCount).ToListAsync();
+            return PersonDbContext.People.Include(x => x.Emails).ThenInclude(x => x.Contents).Take(BatchCount).ToListAsync();
         }
 
         [Benchmark]
@@ -57,7 +57,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         {
             PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
             PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            return PersonDbContext.People.AsNoTracking().Include(x => x.Emails).ThenInclude(x => x.Contents).Take(QueryCount).ToListAsync();
+            return PersonDbContext.People.AsNoTracking().Include(x => x.Emails).ThenInclude(x => x.Contents).Take(BatchCount).ToListAsync();
         }
 
         [Benchmark]

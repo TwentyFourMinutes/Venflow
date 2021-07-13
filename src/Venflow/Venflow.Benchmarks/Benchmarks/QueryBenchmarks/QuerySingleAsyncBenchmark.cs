@@ -26,7 +26,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
 
             await insertBenchmark.Setup();
 
-            insertBenchmark.InsertCount = 10000;
+            insertBenchmark.BatchCount = 10000;
 
             await insertBenchmark.VenflowInsertBatchAsync();
 

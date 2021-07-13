@@ -12,7 +12,7 @@ namespace Venflow.Benchmarks.Benchmarks.InsertBenchmarks
     public class InsertBatchWithRelationsAsyncBenchmark : BenchmarkBase
     {
         [Params(10, 100, 1000, 10000)]
-        public int InsertCount { get; set; }
+        public int BatchCount { get; set; }
 
         [GlobalSetup]
         public override async Task Setup()
@@ -27,7 +27,7 @@ namespace Venflow.Benchmarks.Benchmarks.InsertBenchmarks
         {
             var emails = new List<Email>();
 
-            for (int i = 0; i < InsertCount; i++)
+            for (int i = 0; i < BatchCount; i++)
             {
                 var person = new Person { Name = "Test" + i.ToString(), Emails = new List<Email>() };
 

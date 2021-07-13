@@ -16,7 +16,7 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
     public class UpdateBatchAsyncBenchmark : BenchmarkBase
     {
         [Params(10, 100, 1000, 10000)]
-        public int UpdateCount { get; set; }
+        public int BatchCount { get; set; }
 
         private List<Person> _efCorePeople;
         private List<Person> _venflowPeople;
@@ -36,7 +36,7 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
 
             await insertBenchmark.Setup();
 
-            insertBenchmark.InsertCount = 10000;
+            insertBenchmark.BatchCount = 10000;
 
             await insertBenchmark.VenflowInsertBatchAsync();
 
@@ -44,9 +44,9 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
 
             await insertBenchmark.PersonDbContext.DisposeAsync();
 
-            _efCorePeople = await PersonDbContext.People.Take(UpdateCount).ToListAsync();
-            _venflowPeople = await Database.People.QueryBatch(@"SELECT * FROM ""People"" LIMIT " + UpdateCount).TrackChanges().Build().QueryAsync();
-            _repoDbPeople = (await DbConnectionExtension.QueryAsync<Person>(Database.GetConnection(), what: null, top: UpdateCount)).ToList();
+            _efCorePeople = await PersonDbContext.People.Take(BatchCount).ToListAsync();
+            _venflowPeople = await Database.People.QueryBatch(@"SELECT * FROM ""People"" LIMIT " + BatchCount).TrackChanges().Build().QueryAsync();
+            _repoDbPeople = (await DbConnectionExtension.QueryAsync<Person>(Database.GetConnection(), what: null, top: BatchCount)).ToList();
 
             await EFCoreUpdateBatchAsync();
             await VenflowUpdateBatchAsync();

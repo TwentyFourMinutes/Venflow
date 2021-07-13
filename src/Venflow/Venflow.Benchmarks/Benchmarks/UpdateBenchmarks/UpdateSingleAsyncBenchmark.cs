@@ -32,7 +32,7 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
 
             await insertBenchmark.Setup();
 
-            insertBenchmark.InsertCount = 10000;
+            insertBenchmark.BatchCount = 10000;
 
             await insertBenchmark.VenflowInsertBatchAsync();
 

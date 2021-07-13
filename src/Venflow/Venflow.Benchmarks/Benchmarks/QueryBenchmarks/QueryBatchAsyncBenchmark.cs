@@ -18,9 +18,9 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
     public class QueryBatchAsyncBenchmark : BenchmarkBase
     {
         [Params(10, 100, 1000, 10000)]
-        public int QueryCount { get; set; }
+        public int BatchCount { get; set; }
 
-        private string sql => @"SELECT ""Id"", ""Name"" FROM ""People"" LIMIT " + QueryCount;
+        private string sql => @"SELECT ""Id"", ""Name"" FROM ""People"" LIMIT " + BatchCount;
 
         [GlobalSetup]
         public override async Task Setup()
@@ -31,7 +31,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
 
             await insertBenchmark.Setup();
 
-            insertBenchmark.InsertCount = 10000;
+            insertBenchmark.BatchCount = 10000;
 
             await insertBenchmark.VenflowInsertBatchAsync();
 
@@ -53,7 +53,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         {
             PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
-            return PersonDbContext.People.Take(QueryCount).ToListAsync();
+            return PersonDbContext.People.Take(BatchCount).ToListAsync();
         }
 
         [Benchmark]
@@ -61,7 +61,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         {
             PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
             PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            return PersonDbContext.People.Take(QueryCount).AsNoTracking().ToListAsync();
+            return PersonDbContext.People.Take(BatchCount).AsNoTracking().ToListAsync();
         }
 
         [Benchmark]
@@ -87,7 +87,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         [Benchmark]
         public async Task<List<Person>> RepoDbQueryBatchAsync()
         {
-            return EnumerableExtension.AsList(await DbConnectionExtension.QueryAsync<Person>(Database.GetConnection(), what: null, top: QueryCount));
+            return EnumerableExtension.AsList(await DbConnectionExtension.QueryAsync<Person>(Database.GetConnection(), what: null, top: BatchCount));
         }
 
         [Benchmark]
