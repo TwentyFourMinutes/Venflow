@@ -1,7 +1,7 @@
 ``` ini
 
 BenchmarkDotNet=v0.13.0, OS=ubuntu 20.04
-Intel Xeon CPU E5-2673 v4 2.30GHz, 1 CPU, 2 logical and 2 physical cores
+Intel Xeon Platinum 8272CL CPU 2.60GHz, 1 CPU, 2 logical and 2 physical cores
 .NET SDK=6.0.100-preview.5.21302.13
   [Host]   : .NET 6.0.0 (6.0.21.30105), X64 RyuJIT
   .NET 6.0 : .NET 6.0.0 (6.0.21.30105), X64 RyuJIT
@@ -9,32 +9,32 @@ Intel Xeon CPU E5-2673 v4 2.30GHz, 1 CPU, 2 logical and 2 physical cores
 Job=.NET 6.0  Runtime=.NET 6.0  
 
 ```
-|                                 Method | QueryCount |       Mean |     Error |    StdDev |     Median | Ratio | RatioSD |     Gen 0 |     Gen 1 |    Gen 2 | Allocated |
-|--------------------------------------- |----------- |-----------:|----------:|----------:|-----------:|------:|--------:|----------:|----------:|---------:|----------:|
-|                  **EfCoreQueryBatchAsync** |         **10** |   **7.795 ms** | **0.1525 ms** | **0.1815 ms** |   **7.744 ms** |  **1.00** |    **0.00** |         **-** |         **-** |        **-** |     **42 KB** |
-|  EfCoreQueryBatchNoChangeTrackingAsync |         10 |   7.813 ms | 0.1397 ms | 0.2047 ms |   7.824 ms |  1.01 |    0.03 |         - |         - |        - |     79 KB |
-|                 VenflowQueryBatchAsync |         10 |   7.242 ms | 0.1395 ms | 0.1165 ms |   7.276 ms |  0.92 |    0.03 |         - |         - |        - |     29 KB |
-| VenflowQueryBatchNoChangeTrackingAsync |         10 |   6.952 ms | 0.1325 ms | 0.3124 ms |   6.843 ms |  0.94 |    0.03 |         - |         - |        - |     29 KB |
-|       RecommendedDapperQueryBatchAsync |         10 |   6.843 ms | 0.1361 ms | 0.2420 ms |   6.788 ms |  0.88 |    0.05 |         - |         - |        - |     30 KB |
-|            CustomDapperQueryBatchAsync |         10 |   6.933 ms | 0.1318 ms | 0.3080 ms |   6.884 ms |  0.92 |    0.05 |         - |         - |        - |     29 KB |
-|                                        |            |            |           |           |            |       |         |           |           |          |           |
-|                  **EfCoreQueryBatchAsync** |        **100** |   **8.621 ms** | **0.1677 ms** | **0.2708 ms** |   **8.587 ms** |  **1.00** |    **0.00** |         **-** |         **-** |        **-** |    **316 KB** |
-|  EfCoreQueryBatchNoChangeTrackingAsync |        100 |   9.880 ms | 0.1964 ms | 0.2484 ms |   9.813 ms |  1.14 |    0.04 |   15.6250 |         - |        - |    687 KB |
-|                 VenflowQueryBatchAsync |        100 |   7.632 ms | 0.1515 ms | 0.3630 ms |   7.616 ms |  0.90 |    0.04 |         - |         - |        - |    228 KB |
-| VenflowQueryBatchNoChangeTrackingAsync |        100 |   8.007 ms | 0.1587 ms | 0.2173 ms |   8.009 ms |  0.93 |    0.04 |         - |         - |        - |    224 KB |
-|       RecommendedDapperQueryBatchAsync |        100 |   7.803 ms | 0.1417 ms | 0.1740 ms |   7.758 ms |  0.90 |    0.04 |         - |         - |        - |    246 KB |
-|            CustomDapperQueryBatchAsync |        100 |   8.119 ms | 0.1596 ms | 0.1961 ms |   8.078 ms |  0.94 |    0.03 |         - |         - |        - |    236 KB |
-|                                        |            |            |           |           |            |       |         |           |           |          |           |
-|                  **EfCoreQueryBatchAsync** |       **1000** |  **23.122 ms** | **0.4561 ms** | **0.6966 ms** |  **23.260 ms** |  **1.00** |    **0.00** |   **93.7500** |         **-** |        **-** |  **3,051 KB** |
-|  EfCoreQueryBatchNoChangeTrackingAsync |       1000 |  33.871 ms | 0.6537 ms | 0.8726 ms |  34.018 ms |  1.47 |    0.07 |  214.2857 |   71.4286 |        - |  6,748 KB |
-|                 VenflowQueryBatchAsync |       1000 |  14.220 ms | 0.2834 ms | 0.6455 ms |  14.088 ms |  0.63 |    0.03 |   62.5000 |   31.2500 |        - |  2,205 KB |
-| VenflowQueryBatchNoChangeTrackingAsync |       1000 |  14.269 ms | 0.2837 ms | 0.2913 ms |  14.205 ms |  0.61 |    0.02 |   62.5000 |   31.2500 |        - |  2,166 KB |
-|       RecommendedDapperQueryBatchAsync |       1000 |  18.602 ms | 0.3617 ms | 0.4306 ms |  18.578 ms |  0.80 |    0.03 |   62.5000 |   31.2500 |        - |  2,392 KB |
-|            CustomDapperQueryBatchAsync |       1000 |  18.834 ms | 0.3703 ms | 0.6289 ms |  18.780 ms |  0.82 |    0.03 |   62.5000 |   31.2500 |        - |  2,299 KB |
-|                                        |            |            |           |           |            |       |         |           |           |          |           |
-|                  **EfCoreQueryBatchAsync** |      **10000** | **177.409 ms** | **3.4612 ms** | **4.6206 ms** | **178.370 ms** |  **1.00** |    **0.00** | **1000.0000** |         **-** |        **-** | **30,503 KB** |
-|  EfCoreQueryBatchNoChangeTrackingAsync |      10000 | 273.089 ms | 5.2539 ms | 5.8397 ms | 273.329 ms |  1.54 |    0.05 | 2500.0000 | 1000.0000 |        - | 67,739 KB |
-|                 VenflowQueryBatchAsync |      10000 | 105.154 ms | 2.0932 ms | 4.4608 ms | 104.552 ms |  0.59 |    0.02 |  600.0000 |  400.0000 | 200.0000 | 23,703 KB |
-| VenflowQueryBatchNoChangeTrackingAsync |      10000 | 110.172 ms | 2.4733 ms | 7.2925 ms | 110.147 ms |  0.58 |    0.03 |  600.0000 |  400.0000 | 200.0000 | 23,313 KB |
-|       RecommendedDapperQueryBatchAsync |      10000 | 169.823 ms | 3.3491 ms | 6.9165 ms | 170.004 ms |  0.96 |    0.05 |  666.6667 |  333.3333 |        - | 26,200 KB |
-|            CustomDapperQueryBatchAsync |      10000 | 160.065 ms | 3.0963 ms | 4.1335 ms | 161.179 ms |  0.90 |    0.03 |  500.0000 |  250.0000 |        - | 25,328 KB |
+|                                 Method | BatchCount |       Mean |     Error |    StdDev | Ratio | RatioSD |     Gen 0 |     Gen 1 |    Gen 2 | Allocated |
+|--------------------------------------- |----------- |-----------:|----------:|----------:|------:|--------:|----------:|----------:|---------:|----------:|
+|                  **EfCoreQueryBatchAsync** |         **10** |   **6.239 ms** | **0.1184 ms** | **0.1107 ms** |  **1.00** |    **0.00** |         **-** |         **-** |        **-** |     **42 KB** |
+|  EfCoreQueryBatchNoChangeTrackingAsync |         10 |   6.751 ms | 0.0308 ms | 0.0273 ms |  1.08 |    0.02 |         - |         - |        - |     80 KB |
+|                 VenflowQueryBatchAsync |         10 |   5.832 ms | 0.0212 ms | 0.0235 ms |  0.94 |    0.02 |         - |         - |        - |     29 KB |
+| VenflowQueryBatchNoChangeTrackingAsync |         10 |   6.376 ms | 0.0262 ms | 0.0245 ms |  1.02 |    0.02 |         - |         - |        - |     29 KB |
+|       RecommendedDapperQueryBatchAsync |         10 |   5.828 ms | 0.0270 ms | 0.0429 ms |  0.94 |    0.02 |         - |         - |        - |     30 KB |
+|            CustomDapperQueryBatchAsync |         10 |   6.409 ms | 0.0197 ms | 0.0185 ms |  1.03 |    0.02 |         - |         - |        - |     29 KB |
+|                                        |            |            |           |           |       |         |           |           |          |           |
+|                  **EfCoreQueryBatchAsync** |        **100** |   **7.423 ms** | **0.1115 ms** | **0.1369 ms** |  **1.00** |    **0.00** |   **15.6250** |         **-** |        **-** |    **316 KB** |
+|  EfCoreQueryBatchNoChangeTrackingAsync |        100 |   8.492 ms | 0.0697 ms | 0.0652 ms |  1.14 |    0.02 |   31.2500 |         - |        - |    686 KB |
+|                 VenflowQueryBatchAsync |        100 |   7.024 ms | 0.0588 ms | 0.0550 ms |  0.94 |    0.02 |    7.8125 |         - |        - |    228 KB |
+| VenflowQueryBatchNoChangeTrackingAsync |        100 | 432.548 ms | 0.5899 ms | 0.4926 ms | 58.10 |    1.27 |         - |         - |        - |    227 KB |
+|       RecommendedDapperQueryBatchAsync |        100 |   7.037 ms | 0.0502 ms | 0.0470 ms |  0.95 |    0.02 |    7.8125 |         - |        - |    246 KB |
+|            CustomDapperQueryBatchAsync |        100 |   6.427 ms | 0.0300 ms | 0.0295 ms |  0.86 |    0.02 |    7.8125 |         - |        - |    236 KB |
+|                                        |            |            |           |           |       |         |           |           |          |           |
+|                  **EfCoreQueryBatchAsync** |       **1000** |  **20.699 ms** | **0.2485 ms** | **0.2325 ms** |  **1.00** |    **0.00** |  **156.2500** |         **-** |        **-** |  **3,052 KB** |
+|  EfCoreQueryBatchNoChangeTrackingAsync |       1000 |  29.524 ms | 0.5765 ms | 0.5920 ms |  1.43 |    0.03 |  343.7500 |  156.2500 |        - |  6,748 KB |
+|                 VenflowQueryBatchAsync |       1000 |  13.515 ms | 0.1681 ms | 0.1573 ms |  0.65 |    0.01 |  125.0000 |   78.1250 |  31.2500 |  2,205 KB |
+| VenflowQueryBatchNoChangeTrackingAsync |       1000 |  12.901 ms | 0.2474 ms | 0.2849 ms |  0.62 |    0.02 |  125.0000 |   78.1250 |  31.2500 |  2,166 KB |
+|       RecommendedDapperQueryBatchAsync |       1000 |  15.997 ms | 0.2224 ms | 0.2080 ms |  0.77 |    0.01 |   93.7500 |   31.2500 |        - |  2,392 KB |
+|            CustomDapperQueryBatchAsync |       1000 |  16.319 ms | 0.3177 ms | 0.4349 ms |  0.78 |    0.02 |   93.7500 |   31.2500 |        - |  2,299 KB |
+|                                        |            |            |           |           |       |         |           |           |          |           |
+|                  **EfCoreQueryBatchAsync** |      **10000** | **149.725 ms** | **2.8207 ms** | **2.7703 ms** |  **1.00** |    **0.00** | **1500.0000** |         **-** |        **-** | **30,503 KB** |
+|  EfCoreQueryBatchNoChangeTrackingAsync |      10000 | 257.982 ms | 5.0149 ms | 6.8644 ms |  1.74 |    0.06 | 3500.0000 | 1000.0000 |        - | 67,741 KB |
+|                 VenflowQueryBatchAsync |      10000 |  99.178 ms | 1.9516 ms | 3.3665 ms |  0.67 |    0.03 | 1000.0000 |  600.0000 | 200.0000 | 23,705 KB |
+| VenflowQueryBatchNoChangeTrackingAsync |      10000 |  98.154 ms | 1.8012 ms | 2.6401 ms |  0.66 |    0.03 | 1000.0000 |  600.0000 | 200.0000 | 23,314 KB |
+|       RecommendedDapperQueryBatchAsync |      10000 | 136.419 ms | 2.7245 ms | 3.1375 ms |  0.91 |    0.03 |  750.0000 |  250.0000 |        - | 26,202 KB |
+|            CustomDapperQueryBatchAsync |      10000 | 129.136 ms | 2.5342 ms | 4.3713 ms |  0.85 |    0.04 |  750.0000 |  250.0000 |        - | 25,329 KB |
