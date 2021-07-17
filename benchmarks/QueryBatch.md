@@ -1,7 +1,7 @@
 ``` ini
 
 BenchmarkDotNet=v0.13.0, OS=ubuntu 20.04
-Intel Xeon Platinum 8272CL CPU 2.60GHz, 1 CPU, 2 logical and 2 physical cores
+Intel Xeon CPU E5-2673 v4 2.30GHz, 1 CPU, 2 logical and 2 physical cores
 .NET SDK=6.0.100-preview.5.21302.13
   [Host]   : .NET 6.0.0 (6.0.21.30105), X64 RyuJIT
   .NET 6.0 : .NET 6.0.0 (6.0.21.30105), X64 RyuJIT
@@ -9,36 +9,36 @@ Intel Xeon Platinum 8272CL CPU 2.60GHz, 1 CPU, 2 logical and 2 physical cores
 Job=.NET 6.0  Runtime=.NET 6.0  
 
 ```
-|                                   Method | BatchCount |        Mean |     Error |    StdDev |      Median | Ratio | RatioSD |    Gen 0 |   Gen 1 |   Gen 2 | Allocated |
-|----------------------------------------- |----------- |------------:|----------:|----------:|------------:|------:|--------:|---------:|--------:|--------:|----------:|
-|                    **EfCoreQueryBatchAsync** |         **10** |    **278.0 μs** |   **5.54 μs** |  **15.25 μs** |    **282.2 μs** |  **1.00** |    **0.00** |        **-** |       **-** |       **-** |      **9 KB** |
-|    EfCoreQueryBatchNoChangeTrackingAsync |         10 |    322.5 μs |   9.39 μs |  27.68 μs |    318.1 μs |  1.18 |    0.11 |   0.4883 |       - |       - |     11 KB |
-| EfCoreQueryBatchRawNoChangeTrackingAsync |         10 |    298.0 μs |   5.92 μs |  14.97 μs |    297.0 μs |  1.07 |    0.08 |   0.4883 |       - |       - |     13 KB |
-|                   VenflowQueryBatchAsync |         10 |    153.4 μs |   4.63 μs |  13.59 μs |    151.4 μs |  0.56 |    0.05 |        - |       - |       - |      4 KB |
-|   VenflowQueryBatchNoChangeTrackingAsync |         10 |    157.6 μs |   4.51 μs |  13.29 μs |    159.3 μs |  0.57 |    0.06 |        - |       - |       - |      3 KB |
-|                    RepoDbQueryBatchAsync |         10 |    168.7 μs |   4.48 μs |  13.14 μs |    168.7 μs |  0.61 |    0.06 |        - |       - |       - |      3 KB |
-|                    DapperQueryBatchAsync |         10 |    157.1 μs |   4.95 μs |  14.61 μs |    152.7 μs |  0.57 |    0.06 |        - |       - |       - |      3 KB |
-|                                          |            |             |           |           |             |       |         |          |         |         |           |
-|                    **EfCoreQueryBatchAsync** |        **100** |    **352.2 μs** |   **6.81 μs** |  **10.41 μs** |    **350.6 μs** |  **1.00** |    **0.00** |   **1.4648** |       **-** |       **-** |     **32 KB** |
-|    EfCoreQueryBatchNoChangeTrackingAsync |        100 |    388.4 μs |   7.69 μs |  21.57 μs |    390.2 μs |  1.11 |    0.08 |   1.9531 |       - |       - |     36 KB |
-| EfCoreQueryBatchRawNoChangeTrackingAsync |        100 |    368.3 μs |   7.31 μs |  14.26 μs |    365.5 μs |  1.05 |    0.05 |   1.9531 |       - |       - |     38 KB |
-|                   VenflowQueryBatchAsync |        100 |    219.5 μs |   5.86 μs |  17.19 μs |    217.1 μs |  0.65 |    0.06 |   0.4883 |       - |       - |     16 KB |
-|   VenflowQueryBatchNoChangeTrackingAsync |        100 |    204.5 μs |   4.07 μs |  11.47 μs |    203.6 μs |  0.59 |    0.04 |   0.4883 |       - |       - |     12 KB |
-|                    RepoDbQueryBatchAsync |        100 |    227.2 μs |   5.68 μs |  16.73 μs |    230.5 μs |  0.64 |    0.06 |   0.4883 |       - |       - |     12 KB |
-|                    DapperQueryBatchAsync |        100 |    248.5 μs |   5.68 μs |  16.65 μs |    254.4 μs |  0.71 |    0.06 |   0.4883 |       - |       - |     13 KB |
-|                                          |            |             |           |           |             |       |         |          |         |         |           |
-|                    **EfCoreQueryBatchAsync** |       **1000** |    **937.3 μs** |  **18.08 μs** |  **19.35 μs** |    **934.2 μs** |  **1.00** |    **0.00** |  **13.6719** |       **-** |       **-** |    **264 KB** |
-|    EfCoreQueryBatchNoChangeTrackingAsync |       1000 |  1,064.3 μs |  11.87 μs |  11.10 μs |  1,066.4 μs |  1.13 |    0.03 |  15.6250 |  3.9063 |       - |    289 KB |
-| EfCoreQueryBatchRawNoChangeTrackingAsync |       1000 |  1,036.3 μs |  13.20 μs |  11.71 μs |  1,038.1 μs |  1.10 |    0.02 |  15.6250 |  3.9063 |       - |    292 KB |
-|                   VenflowQueryBatchAsync |       1000 |    663.6 μs |  12.53 μs |  19.13 μs |    662.8 μs |  0.71 |    0.03 |   6.8359 |  1.9531 |       - |    136 KB |
-|   VenflowQueryBatchNoChangeTrackingAsync |       1000 |    628.6 μs |  12.25 μs |  20.13 μs |    633.4 μs |  0.67 |    0.03 |   4.8828 |  0.9766 |       - |     97 KB |
-|                    RepoDbQueryBatchAsync |       1000 |    640.1 μs |  12.56 μs |  23.28 μs |    639.8 μs |  0.69 |    0.03 |   4.8828 |  0.9766 |       - |     97 KB |
-|                    DapperQueryBatchAsync |       1000 |    903.0 μs |   9.36 μs |   8.76 μs |    902.5 μs |  0.96 |    0.02 |   5.8594 |  1.9531 |       - |    119 KB |
-|                                          |            |             |           |           |             |       |         |          |         |         |           |
-|                    **EfCoreQueryBatchAsync** |      **10000** |  **6,106.8 μs** | **121.69 μs** | **113.83 μs** |  **6,142.2 μs** |  **1.00** |    **0.00** | **140.6250** | **23.4375** |  **7.8125** |  **2,684 KB** |
-|    EfCoreQueryBatchNoChangeTrackingAsync |      10000 | 10,618.8 μs | 179.97 μs | 252.30 μs | 10,596.0 μs |  1.76 |    0.05 | 156.2500 | 78.1250 | 31.2500 |  2,920 KB |
-| EfCoreQueryBatchRawNoChangeTrackingAsync |      10000 | 10,733.9 μs | 203.27 μs | 190.14 μs | 10,760.8 μs |  1.76 |    0.04 | 156.2500 | 78.1250 | 31.2500 |  2,923 KB |
-|                   VenflowQueryBatchAsync |      10000 |  6,231.1 μs |  84.65 μs |  70.69 μs |  6,247.0 μs |  1.02 |    0.02 |  78.1250 | 46.8750 | 15.6250 |  1,431 KB |
-|   VenflowQueryBatchNoChangeTrackingAsync |      10000 |  5,145.9 μs | 100.10 μs | 158.77 μs |  5,163.9 μs |  0.85 |    0.02 |  54.6875 | 31.2500 |  7.8125 |  1,041 KB |
-|                    RepoDbQueryBatchAsync |      10000 |  5,376.8 μs | 106.01 μs | 137.85 μs |  5,390.2 μs |  0.87 |    0.03 |  54.6875 | 31.2500 |  7.8125 |  1,041 KB |
-|                    DapperQueryBatchAsync |      10000 |  9,277.2 μs | 180.44 μs | 177.22 μs |  9,211.6 μs |  1.52 |    0.03 |  78.1250 | 46.8750 | 15.6250 |  1,274 KB |
+|                                   Method | BatchCount |        Mean |     Error |    StdDev | Ratio | RatioSD |    Gen 0 |   Gen 1 |   Gen 2 | Allocated |
+|----------------------------------------- |----------- |------------:|----------:|----------:|------:|--------:|---------:|--------:|--------:|----------:|
+|                    **EfCoreQueryBatchAsync** |         **10** |    **454.8 μs** |  **12.62 μs** |  **37.21 μs** |  **1.00** |    **0.00** |        **-** |       **-** |       **-** |      **9 KB** |
+|    EfCoreQueryBatchNoChangeTrackingAsync |         10 |    508.0 μs |  10.17 μs |  29.98 μs |  1.13 |    0.12 |        - |       - |       - |     10 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync |         10 |    473.3 μs |  11.83 μs |  34.50 μs |  1.05 |    0.12 |        - |       - |       - |     13 KB |
+|                   VenflowQueryBatchAsync |         10 |    277.9 μs |   6.20 μs |  18.27 μs |  0.62 |    0.07 |        - |       - |       - |      3 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync |         10 |    272.2 μs |   5.62 μs |  16.38 μs |  0.60 |    0.07 |        - |       - |       - |      3 KB |
+|                    RepoDbQueryBatchAsync |         10 |    286.7 μs |   5.86 μs |  17.10 μs |  0.64 |    0.06 |        - |       - |       - |      3 KB |
+|                    DapperQueryBatchAsync |         10 |    273.0 μs |   6.76 μs |  19.82 μs |  0.60 |    0.07 |        - |       - |       - |      3 KB |
+|                                          |            |             |           |           |       |         |          |         |         |           |
+|                    **EfCoreQueryBatchAsync** |        **100** |    **555.1 μs** |  **10.94 μs** |  **26.64 μs** |  **1.00** |    **0.00** |   **0.9766** |       **-** |       **-** |     **32 KB** |
+|    EfCoreQueryBatchNoChangeTrackingAsync |        100 |    582.4 μs |  11.60 μs |  25.45 μs |  1.05 |    0.06 |   0.9766 |       - |       - |     36 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync |        100 |    558.1 μs |  11.13 μs |  26.66 μs |  1.01 |    0.07 |   0.9766 |       - |       - |     39 KB |
+|                   VenflowQueryBatchAsync |        100 |    349.5 μs |   7.56 μs |  22.28 μs |  0.64 |    0.05 |   0.4883 |       - |       - |     16 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync |        100 |    338.1 μs |   6.71 μs |  19.03 μs |  0.61 |    0.05 |        - |       - |       - |     12 KB |
+|                    RepoDbQueryBatchAsync |        100 |    357.3 μs |  11.04 μs |  32.56 μs |  0.64 |    0.08 |        - |       - |       - |     12 KB |
+|                    DapperQueryBatchAsync |        100 |    392.9 μs |   7.84 μs |  22.86 μs |  0.71 |    0.06 |        - |       - |       - |     14 KB |
+|                                          |            |             |           |           |       |         |          |         |         |           |
+|                    **EfCoreQueryBatchAsync** |       **1000** |  **1,380.0 μs** |  **25.70 μs** |  **47.64 μs** |  **1.00** |    **0.00** |   **9.7656** |       **-** |       **-** |    **264 KB** |
+|    EfCoreQueryBatchNoChangeTrackingAsync |       1000 |  1,517.6 μs |  29.82 μs |  48.16 μs |  1.10 |    0.05 |   9.7656 |  1.9531 |       - |    289 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync |       1000 |  1,460.1 μs |  29.11 μs |  42.67 μs |  1.06 |    0.05 |   7.8125 |       - |       - |    292 KB |
+|                   VenflowQueryBatchAsync |       1000 |    993.7 μs |  19.81 μs |  33.64 μs |  0.72 |    0.03 |   3.9063 |       - |       - |    136 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync |       1000 |    914.8 μs |  18.02 μs |  26.42 μs |  0.66 |    0.03 |   2.9297 |  0.9766 |       - |     97 KB |
+|                    RepoDbQueryBatchAsync |       1000 |    965.0 μs |  19.08 μs |  31.87 μs |  0.70 |    0.04 |   1.9531 |       - |       - |     97 KB |
+|                    DapperQueryBatchAsync |       1000 |  1,310.6 μs |  25.88 μs |  41.79 μs |  0.95 |    0.04 |   3.9063 |       - |       - |    119 KB |
+|                                          |            |             |           |           |       |         |          |         |         |           |
+|                    **EfCoreQueryBatchAsync** |      **10000** |  **8,644.5 μs** | **171.99 μs** | **191.17 μs** |  **1.00** |    **0.00** |  **93.7500** |       **-** |       **-** |  **2,684 KB** |
+|    EfCoreQueryBatchNoChangeTrackingAsync |      10000 | 13,610.4 μs | 271.07 μs | 278.37 μs |  1.58 |    0.05 | 125.0000 | 78.1250 | 31.2500 |  2,920 KB |
+| EfCoreQueryBatchRawNoChangeTrackingAsync |      10000 | 13,481.9 μs | 265.99 μs | 345.86 μs |  1.56 |    0.05 | 125.0000 | 78.1250 | 31.2500 |  2,923 KB |
+|                   VenflowQueryBatchAsync |      10000 |  7,835.6 μs | 149.29 μs | 188.81 μs |  0.91 |    0.02 |  46.8750 | 15.6250 |       - |  1,431 KB |
+|   VenflowQueryBatchNoChangeTrackingAsync |      10000 |  6,965.2 μs | 137.14 μs | 134.69 μs |  0.81 |    0.03 |  39.0625 | 23.4375 |  7.8125 |  1,040 KB |
+|                    RepoDbQueryBatchAsync |      10000 |  7,180.1 μs | 142.73 μs | 146.57 μs |  0.83 |    0.03 |  39.0625 | 23.4375 |  7.8125 |  1,041 KB |
+|                    DapperQueryBatchAsync |      10000 | 11,002.0 μs | 208.22 μs | 194.77 μs |  1.27 |    0.04 |  31.2500 | 15.6250 |       - |  1,274 KB |
