@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Venflow.Modeling;
 
@@ -6,7 +6,6 @@ namespace Venflow.Commands
 {
     internal readonly struct InsertCacheKey
     {
-
         internal EntityRelation[] Relations => _relations;
 
         private readonly bool _isSingleInsert;
