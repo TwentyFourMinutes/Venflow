@@ -626,11 +626,16 @@ namespace Venflow.Dynamic.Inserter
             FieldBuilder? dataReaderTaskAwaiterField = default;
             FieldBuilder? boolTaskAwaiterField = default;
             FieldBuilder? intTaskAwaiterField = default;
+            FieldBuilder? valueTaskAwaiterField = default;
             FieldBuilder? dataReaderField = default;
+            FieldBuilder? iteratorField = default;
+            FieldBuilder? counterField = default;
 
             LocalBuilder? dataReaderTaskAwaiterLocal = default;
             LocalBuilder? boolTaskAwaiterLocal = default;
             LocalBuilder? intTaskAwaiterLocal = default;
+            LocalBuilder? valueTaskAwaiterLocal = default;
+
             var insertedCountLocal = _moveNextMethodIL.DeclareLocal(_intType);
 
             var retOfMethodLabel = _moveNextMethodIL.DefineLabel();
@@ -963,8 +968,8 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Ldloc, dataReaderLocal);
                     _moveNextMethodIL.Emit(OpCodes.Stfld, dataReaderField);
 
-                    var iteratorField = _stateMachineTypeBuilder.DefineField("_iterator", _intType, FieldAttributes.Private);
-                    var counterField = _stateMachineTypeBuilder.DefineField("_counter", typeof(ushort), FieldAttributes.Private);
+                    iteratorField ??= _stateMachineTypeBuilder.DefineField("_iterator", _intType, FieldAttributes.Private);
+                    counterField ??= _stateMachineTypeBuilder.DefineField("_counter", typeof(ushort), FieldAttributes.Private);
 
                     loopConditionLabel = _moveNextMethodIL.DefineLabel();
                     startLoopBodyLabel = _moveNextMethodIL.DefineLabel();
@@ -1175,13 +1180,13 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Blt, startLoopBodyLabel);
 
                     // dispose data reader
-                    var valueTaskAwaiterField = _stateMachineTypeBuilder.DefineField("_valueTaskAwaiter", typeof(ValueTaskAwaiter), FieldAttributes.Private);
+                    valueTaskAwaiterField ??= _stateMachineTypeBuilder.DefineField("_valueTaskAwaiter", typeof(ValueTaskAwaiter), FieldAttributes.Private);
 
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("DisposeAsync"));
 
-                    asyncGenerator.WriteAsyncValueTaskMethodAwaiter(_moveNextMethodIL.DeclareLocal(typeof(ValueTask)), _moveNextMethodIL.DeclareLocal(valueTaskAwaiterField.FieldType), valueTaskAwaiterField);
+                    asyncGenerator.WriteAsyncValueTaskMethodAwaiter(_moveNextMethodIL.DeclareLocal(typeof(ValueTask)), valueTaskAwaiterLocal ??= _moveNextMethodIL.DeclareLocal(valueTaskAwaiterField.FieldType), valueTaskAwaiterField);
 
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldnull);
@@ -1456,11 +1461,15 @@ namespace Venflow.Dynamic.Inserter
             FieldBuilder? dataReaderTaskAwaiterField = default;
             FieldBuilder? boolTaskAwaiterField = default;
             FieldBuilder? intTaskAwaiterField = default;
+            FieldBuilder? valueTaskAwaiterField = default;
             FieldBuilder? dataReaderField = default;
+            FieldBuilder? iteratorField = default;
+            FieldBuilder? counterField = default;
 
             LocalBuilder? dataReaderTaskAwaiterLocal = default;
             LocalBuilder? boolTaskAwaiterLocal = default;
             LocalBuilder? intTaskAwaiterLocal = default;
+            LocalBuilder? valueTaskAwaiterLocal = default;
 
             var insertedCountLocal = _moveNextMethodIL.DeclareLocal(_intType);
 
@@ -1999,8 +2008,8 @@ namespace Venflow.Dynamic.Inserter
                         _moveNextMethodIL.Emit(OpCodes.Ldloc, dataReaderLocal);
                         _moveNextMethodIL.Emit(OpCodes.Stfld, dataReaderField);
 
-                        var iteratorField = _stateMachineTypeBuilder.DefineField("_iterator", _intType, FieldAttributes.Private);
-                        var counterField = _stateMachineTypeBuilder.DefineField("_counter", typeof(ushort), FieldAttributes.Private);
+                        iteratorField ??= _stateMachineTypeBuilder.DefineField("_iterator", _intType, FieldAttributes.Private);
+                        counterField ??= _stateMachineTypeBuilder.DefineField("_counter", typeof(ushort), FieldAttributes.Private);
 
                         loopConditionLabel = _moveNextMethodIL.DefineLabel();
                         startLoopBodyLabel = _moveNextMethodIL.DefineLabel();
@@ -2211,13 +2220,13 @@ namespace Venflow.Dynamic.Inserter
                         _moveNextMethodIL.Emit(OpCodes.Blt, startLoopBodyLabel);
 
                         // dispose data reader
-                        var valueTaskAwaiterField = _stateMachineTypeBuilder.DefineField("_valueTaskAwaiter", typeof(ValueTaskAwaiter), FieldAttributes.Private);
+                        valueTaskAwaiterField ??= _stateMachineTypeBuilder.DefineField("_valueTaskAwaiter", typeof(ValueTaskAwaiter), FieldAttributes.Private);
 
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, dataReaderField);
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, dataReaderField.FieldType.GetMethod("DisposeAsync"));
 
-                        asyncGenerator.WriteAsyncValueTaskMethodAwaiter(_moveNextMethodIL.DeclareLocal(typeof(ValueTask)), _moveNextMethodIL.DeclareLocal(valueTaskAwaiterField.FieldType), valueTaskAwaiterField);
+                        asyncGenerator.WriteAsyncValueTaskMethodAwaiter(_moveNextMethodIL.DeclareLocal(typeof(ValueTask)), valueTaskAwaiterLocal ??= _moveNextMethodIL.DeclareLocal(valueTaskAwaiterField.FieldType), valueTaskAwaiterField);
 
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldnull);
