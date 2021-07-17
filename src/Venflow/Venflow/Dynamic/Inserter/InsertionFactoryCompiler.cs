@@ -2712,14 +2712,15 @@ namespace Venflow.Dynamic.Inserter
                     _entityHolders.TryGetValue(_reachableEntities.HasId(entity, out _), out var entityHolder) &&
                     entityHolder.DirectAssignedRelation is not null)
                 {
-                    if (entityHolder.DirectAssignedRelation.ForeignKeyLocation == ForeignKeyLocation.Left)
+                    if (entityHolder.DirectAssignedRelation.ForeignKeyLocation == ForeignKeyLocation.Left &&
+                        !lastEntity.HasDbGeneratedPrimaryKey)
                     {
                         _ilGenerator.Emit(OpCodes.Ldloc, leftEntityLocal);
                         _ilGenerator.Emit(OpCodes.Ldloc, lastEntityLocal);
                         _ilGenerator.Emit(OpCodes.Callvirt, lastEntity.GetPrimaryColumn().PropertyInfo.GetGetMethod());
                         WritePropertyAssigner(_ilGenerator, entityHolder.DirectAssignedRelation.ForeignKeyColumn);
                     }
-                    else
+                    else if (!entity.HasDbGeneratedPrimaryKey)
                     {
                         _ilGenerator.Emit(OpCodes.Ldloc, lastEntityLocal);
                         _ilGenerator.Emit(OpCodes.Ldloc, leftEntityLocal);
