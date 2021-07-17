@@ -17,4 +17,8 @@
   <ItemGroup>
     <None Include="..\Venflow.Generators\bin\$(Configuration)\netstandard2.0\Venflow.Generators.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="6.0.0-preview.6.21352.12" />
+  </ItemGroup>
 </Project>
