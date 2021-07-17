@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -11,6 +11,9 @@ namespace Venflow.Commands
 {
     internal class VenflowDeleteCommand<TEntity> : VenflowBaseCommand<TEntity>, IDeleteCommand<TEntity> where TEntity : class, new()
     {
+        private const int _minStringLength = 35; // Rough estimate of minimum length
+        private const int _minEntityStringLength = 3; // Rough estimate of minimum length
+
         internal VenflowDeleteCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, List<LoggerCallback> loggers, bool shouldLog) : base(database, entityConfiguration, underlyingCommand, disposeCommand, loggers, shouldLog)
         {
             underlyingCommand.Connection = database.GetConnection();
@@ -21,7 +24,7 @@ namespace Venflow.Commands
             if (entity is null)
                 return default;
 
-            var commandString = new StringBuilder();
+            var commandString = new StringBuilder(_minStringLength);
 
             commandString.Append("DELETE FROM ")
                          .AppendLine(EntityConfiguration.TableName)
@@ -43,7 +46,7 @@ namespace Venflow.Commands
 
         ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
         {
-            var commandString = new StringBuilder();
+            var commandString = new StringBuilder(_minStringLength + _minEntityStringLength);
 
             commandString.Append("DELETE FROM ")
                          .AppendLine(EntityConfiguration.TableName)
@@ -82,7 +85,7 @@ namespace Venflow.Commands
                 entities.Count == 0)
                 return default;
 
-            var commandString = new StringBuilder();
+            var commandString = new StringBuilder(_minStringLength + _minEntityStringLength * entities.Count);
 
             commandString.Append("DELETE FROM ")
                          .AppendLine(EntityConfiguration.TableName)
@@ -134,7 +137,7 @@ namespace Venflow.Commands
 
         private string DeleteBase(Span<TEntity> entities)
         {
-            var commandString = new StringBuilder();
+            var commandString = new StringBuilder(_minStringLength + _minEntityStringLength * entities.Count);
 
             commandString.Append("DELETE FROM ")
                          .AppendLine(EntityConfiguration.TableName)

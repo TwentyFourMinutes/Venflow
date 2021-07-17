@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -14,6 +14,8 @@ namespace Venflow.Commands
 {
     internal class VenflowUpdateCommand<TEntity> : VenflowBaseCommand<TEntity>, IUpdateCommand<TEntity> where TEntity : class, new()
     {
+        private const int _minEntityStringLength = 35; // Rough estimate of minimum length
+
         internal VenflowUpdateCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, List<LoggerCallback> loggers, bool shouldLog) : base(database, entityConfiguration, underlyingCommand, disposeCommand, loggers, shouldLog)
         {
             underlyingCommand.Connection = database.GetConnection();
@@ -24,7 +26,7 @@ namespace Venflow.Commands
             if (entity is null)
                 return default;
 
-            var commandString = new StringBuilder();
+            var commandString = new StringBuilder(_minEntityStringLength);
 
             BaseUpdate(entity, 0, commandString);
 
@@ -43,7 +45,7 @@ namespace Venflow.Commands
             if (entities is null)
                 return default;
 
-            var commandString = new StringBuilder();
+            var commandString = new StringBuilder(_minEntityStringLength);
 
             var index = 0;
 
@@ -69,7 +71,7 @@ namespace Venflow.Commands
                 entities.Count == 0)
                 return default;
 
-            var commandString = new StringBuilder();
+            var commandString = new StringBuilder(entities.Count * _minEntityStringLength);
 
             for (int i = 0; i < entities.Count; i++)
             {
@@ -144,7 +146,7 @@ namespace Venflow.Commands
 #endif
         private void BaseUpdate(TEntity entity, int index, StringBuilder commandString)
         {
-            if (!(entity is IEntityProxy<TEntity> proxy))
+            if (entity is not IEntityProxy<TEntity> proxy)
             {
                 throw new InvalidOperationException("The provided entity is currently not being change tracked. Also ensure that the entity itself has properties which are marked as virtual.");
             }
