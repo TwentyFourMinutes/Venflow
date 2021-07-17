@@ -3,7 +3,6 @@ using System.Linq;
 
 namespace Venflow.Score
 {
-
     public class Orm
     {
         public double BenchScore { get; private set; }

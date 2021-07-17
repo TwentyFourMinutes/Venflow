@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
+using CsvHelper.Configuration;
 
 namespace Venflow.Score
 {
@@ -68,15 +69,31 @@ namespace Venflow.Score
 
                     var reportIndex = fileName.IndexOf("-report");
 
-                    var benchmarkNameIndex = fileName.LastIndexOf(".", reportIndex) + 1;
+                    string newFileName;
 
-                    var newFileName = fileName[benchmarkNameIndex..reportIndex];
+                    if (reportIndex != -1)
+                    {
+                        var benchmarkNameIndex = fileName.LastIndexOf(".", reportIndex) + 1;
 
-                    newFileName = newFileName.TrimEnd("Benchmark").TrimEnd("Async");
+                        newFileName = fileName[benchmarkNameIndex..reportIndex];
 
-                    newFileName += Path.GetExtension(fileName);
+                        newFileName = newFileName.TrimEnd("Benchmark").TrimEnd("Async");
 
-                    File.Copy(fullFileName, Path.Combine(benchmarkDestionationPath, newFileName), true);
+                        newFileName += Path.GetExtension(fileName);
+                    }
+                    else
+                    {
+                        newFileName = fileName;
+                    }
+
+                    try
+                    {
+                        File.Copy(fullFileName, Path.Combine(benchmarkDestionationPath, newFileName), true);
+                    }
+                    catch (IOException ex)
+                    {
+                        Console.WriteLine($"Couldn't write to the file '{Path.Combine(benchmarkDestionationPath, newFileName)}'. Error: {ex.Message}");
+                    }
                 }
 
                 await CalculateOrmResults(ReadBenchResultFiles(benchmarkDestionationPath));
@@ -117,16 +134,23 @@ namespace Venflow.Score
         {
             var benchResults = new List<BenchResult>();
             string? lastJobName = null;
+            int? lastBatchCount = null;
 
             foreach (var fullFileName in Directory.EnumerateFiles(rootDirectory, "*.csv", SearchOption.TopDirectoryOnly))
             {
-                using var reader = new StreamReader(fullFileName);
-                using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+                var isBatch = fullFileName.Contains("Batch");
 
-                await foreach (var benchResult in csv.GetRecordsAsync<BenchResult>())
+                using var reader = new StreamReader(fullFileName);
+                using var csv = new CsvReader(reader, isBatch ? new CsvConfiguration(CultureInfo.InvariantCulture) { MissingFieldFound = new MissingFieldFound(e => { }) } : new CsvConfiguration(CultureInfo.InvariantCulture));
+
+                var benchRecordResults = isBatch ? csv.GetRecordsAsync<BatchBenchResult>() : csv.GetRecordsAsync<BenchResult>();
+
+                await foreach (var benchResult in benchRecordResults)
                 {
-                    if (lastJobName is not null &&
-                       benchResult.Job != lastJobName)
+                    var batchBenchResult = benchResult as BatchBenchResult;
+
+                    if ((batchBenchResult is not null && batchBenchResult.BatchCount != lastBatchCount) ||
+                        (lastJobName is not null && benchResult.Job != lastJobName))
                     {
                         yield return benchResults;
 
@@ -134,6 +158,11 @@ namespace Venflow.Score
                     }
 
                     lastJobName = benchResult.Job;
+
+                    if (batchBenchResult is not null)
+                    {
+                        lastBatchCount = batchBenchResult.BatchCount;
+                    }
 
                     benchResults.Add(benchResult);
                 }
@@ -167,16 +196,24 @@ namespace Venflow.Score
                     orm.AddBenchScore(benchTime, benchAlloc);
 
                     if (lowestTime > benchTime)
+                    {
                         lowestTime = benchTime;
+                    }
 
                     if (highestTime < benchTime)
+                    {
                         highestTime = benchTime;
+                    }
 
                     if (lowestAlloc > benchAlloc)
+                    {
                         lowestAlloc = benchAlloc;
+                    }
 
                     if (highestAlloc < benchAlloc)
+                    {
                         highestAlloc = benchAlloc;
+                    }
                 }
 
                 foreach (var orm in _orms.Values)
