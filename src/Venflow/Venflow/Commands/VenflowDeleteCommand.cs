@@ -137,7 +137,7 @@ namespace Venflow.Commands
 
         private string DeleteBase(Span<TEntity> entities)
         {
-            var commandString = new StringBuilder(_minStringLength + _minEntityStringLength * entities.Count);
+            var commandString = new StringBuilder(_minStringLength + _minEntityStringLength * entities.Length);
 
             commandString.Append("DELETE FROM ")
                          .AppendLine(EntityConfiguration.TableName)

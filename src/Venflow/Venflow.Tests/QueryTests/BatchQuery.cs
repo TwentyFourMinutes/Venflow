@@ -12,7 +12,8 @@ namespace Venflow.Tests.QueryTests
     public class BatchQuery : TestBase
     {
         [Fact, Priority(0)]
-        public async Task QueryWithRelationAsyncAndNoIncludeAsync()
+        public async Task QueryWithRelationAndNoIncludeAsync
+            ()
         {
             var people = await InsertPeopleWithRelationAsync();
 
