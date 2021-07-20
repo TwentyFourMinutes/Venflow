@@ -15,7 +15,7 @@ namespace Venflow
 {
     internal static class DatabaseConfigurationCache
     {
-        internal static ConcurrentDictionary<Type, DatabaseConfiguration> DatabaseConfigurations { get; } = new ConcurrentDictionary<Type, DatabaseConfiguration>();
+        internal static ConcurrentDictionary<Type, DatabaseConfiguration> DatabaseConfigurations { get; } = new ConcurrentDictionary<Type, DatabaseConfiguration>(Environment.ProcessorCount, 1);
 
         internal static Dictionary<Type, Entity> CustomEntities { get; } = new Dictionary<Type, Entity>(0);
 
