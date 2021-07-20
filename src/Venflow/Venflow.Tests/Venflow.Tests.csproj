@@ -1,8 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net5.0;netcoreapp3.1;net48;</TargetFrameworks>
-    <IsPackable>false</IsPackable>
+    <TargetFrameworks>net6.0;net5.0;netcoreapp3.1;net48</TargetFrameworks>
+    <LangVersion>preview</LangVersion>
+    <Nullable>enable</Nullable>
+    <AssemblyOriginatorKeyFile>../../../Venflow.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
     <UserSecretsId>9ee3e386-8d57-4d94-bde3-820b26e3efdf</UserSecretsId>
   </PropertyGroup>
 
@@ -34,6 +37,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Venflow.NewtonsoftJson\Venflow.NewtonsoftJson.csproj" />
+    <ProjectReference Include="..\Venflow.Tests.Keys\Venflow.Tests.Keys.csproj" />
     <ProjectReference Include="..\Venflow\Venflow.csproj" />
     <ProjectReference Include="..\Venflow.Shared\Venflow.Shared.csproj" />
     <ProjectReference Include="..\Venflow.Generators\Venflow.Generators.csproj" />

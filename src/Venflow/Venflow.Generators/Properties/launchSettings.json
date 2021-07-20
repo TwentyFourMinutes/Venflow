@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Venflow.Generators": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "../Venflow.Tests.Keys/Venflow.Tests.Keys.csproj"
+    }
+  }
+}
