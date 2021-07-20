@@ -34,7 +34,7 @@ namespace Venflow.Json
     }
 
     internal class JsonKeyConverter<TKey, TEntity, TKeyValue> : JsonConverter<TKey>
-        where TKey : struct, IKey<TKey, TEntity>
+        where TKey : struct, IKey<TEntity, TKeyValue>
         where TKeyValue : struct
     {
         public override TKey Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

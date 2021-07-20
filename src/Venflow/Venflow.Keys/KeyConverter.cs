@@ -15,8 +15,9 @@ namespace Venflow
     {
         private static int _typeNumberIdentifier = 0;
 
-        private static readonly ConcurrentDictionary<Type, TypeConverter> _typeConverters = new();
-        private static readonly ConcurrentDictionary<Type, Delegate> _keyFactories = new();
+        private static readonly ConcurrentDictionary<Type, TypeConverter> _typeConverters = new(Environment.ProcessorCount, 10);
+        private static readonly ConcurrentDictionary<Type, Delegate> _keyFactories = new(Environment.ProcessorCount, 10);
+        private static readonly ConcurrentDictionary<Type, Delegate> _objectKeyFactories = new(Environment.ProcessorCount, 0);
 
         private readonly TypeConverter _underlyingConverter;
 
@@ -48,7 +49,7 @@ namespace Venflow
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static Func<TValue, object> GetOrCreateKeyFactory<TValue>(Type keyType)
-            => (Func<TValue, object>)_keyFactories.GetOrAdd(keyType, CreateKeyFactory<TValue>);
+            => (Func<TValue, object>)_objectKeyFactories.GetOrAdd(keyType, CreateKeyFactory<object, TValue>);
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static Func<TValue, TKeyType> GetOrCreateKeyFactory<TKeyType, TValue>(Type keyType) where TKeyType : struct, IKey
@@ -68,28 +69,12 @@ namespace Venflow
             return (TypeConverter)ctor.Invoke(new[] { keyType });
         }
 
-        private static Func<TValue, object> CreateKeyFactory<TValue>(Type keyType)
-            => CreateKeyFactory<object, TValue>(keyType);
-
-        private static Func<TValue, TKeyType> CreateKeyFactory<TKeyType, TValue>(Type? keyType = null)
+        private static Func<TValue, TKeyType> CreateKeyFactory<TKeyType, TValue>(Type keyType)
         {
-            bool isFullGeneric;
-
-            if (keyType is null)
-            {
-                isFullGeneric = true;
-
-                keyType = typeof(TKeyType);
-            }
-            else
-            {
-                isFullGeneric = false;
-            }
-
             if (!typeof(IKey).IsAssignableFrom(keyType))
                 throw new ArgumentException($"Type '{keyType}' is not a key type.", nameof(keyType));
 
-            var ctor = keyType.GetConstructor(new[] { typeof(TValue) });
+            var ctor = keyType.GetConstructor(BindingFlags.Public | BindingFlags.Instance, null, new[] { typeof(TValue) }, null);
 
             if (ctor is null)
                 throw new ArgumentException($"Type '{keyType}' doesn't have a constructor with one parameter of type '{typeof(TValue)}'.", nameof(keyType));
@@ -100,7 +85,7 @@ namespace Venflow
             ilGenerator.Emit(OpCodes.Ldarg_0);
             ilGenerator.Emit(OpCodes.Newobj, ctor);
 
-            if (!isFullGeneric)
+            if (typeof(TKeyType) == typeof(object))
             {
                 ilGenerator.Emit(OpCodes.Box, keyType);
             }

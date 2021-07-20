@@ -9,7 +9,7 @@ namespace Venflow.NewtonsoftJson
     /// </summary>
     public class NewtonsoftJsonKeyConverter : JsonConverter
     {
-        private static readonly ConcurrentDictionary<Type, JsonConverter> _jsonConverters = new();
+        private static readonly ConcurrentDictionary<Type, JsonConverter> _jsonConverters = new(Environment.ProcessorCount, 10);
 
         /// <inheritdoc/>
         public override bool CanConvert(Type objectType)
@@ -58,7 +58,7 @@ namespace Venflow.NewtonsoftJson
     }
 
     internal class NewtonsoftJsonKeyConverter<TKey, TEntity, TKeyValue> : JsonConverter<TKey>
-        where TKey : struct, IKey<TKey, TEntity>
+        where TKey : struct, IKey<TEntity, TKeyValue>
         where TKeyValue : struct
     {
         public override TKey ReadJson(JsonReader reader, Type objectType, TKey existingValue, bool hasExistingValue, JsonSerializer serializer)
