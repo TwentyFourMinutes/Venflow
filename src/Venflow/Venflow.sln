@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.AspNetCore", "Venfl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Keys", "Venflow.Keys\Venflow.Keys.csproj", "{E282DF57-89A8-46F2-872F-37F84A84C87E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venflow.Tests.Keys", "Venflow.Tests.Keys\Venflow.Tests.Keys.csproj", "{9083AF7D-BB3C-47E5-8A6E-AC3A05DAED83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,10 @@ Global
 		{E282DF57-89A8-46F2-872F-37F84A84C87E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E282DF57-89A8-46F2-872F-37F84A84C87E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E282DF57-89A8-46F2-872F-37F84A84C87E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9083AF7D-BB3C-47E5-8A6E-AC3A05DAED83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9083AF7D-BB3C-47E5-8A6E-AC3A05DAED83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9083AF7D-BB3C-47E5-8A6E-AC3A05DAED83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9083AF7D-BB3C-47E5-8A6E-AC3A05DAED83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,6 +94,7 @@ Global
 		{AD531038-6689-45EE-8DF8-FB169F187FA2} = {665796E7-E527-43D5-B095-6000D6C0FF60}
 		{06498DCC-F8EE-475F-8FDE-2E63EC88996D} = {665796E7-E527-43D5-B095-6000D6C0FF60}
 		{E282DF57-89A8-46F2-872F-37F84A84C87E} = {665796E7-E527-43D5-B095-6000D6C0FF60}
+		{9083AF7D-BB3C-47E5-8A6E-AC3A05DAED83} = {EE96D718-66F6-4941-9169-0F5F46D632A6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {020D29CB-7D63-45D4-8F95-7C89DC06E6E6}
