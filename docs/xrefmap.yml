@@ -3259,6 +3259,21 @@ references:
   fullName.vb: Venflow.TableBase(Of TEntity).QuerySingle
   nameWithType: TableBase<TEntity>.QuerySingle
   nameWithType.vb: TableBase(Of TEntity).QuerySingle
+- uid: Venflow.Tests.Keys
+  name: Venflow.Tests.Keys
+  href: api/Venflow.Tests.Keys.html
+  commentId: N:Venflow.Tests.Keys
+  fullName: Venflow.Tests.Keys
+  nameWithType: Venflow.Tests.Keys
+- uid: Venflow.Tests.Keys.Key`1
+  name: Key<T>
+  href: api/Venflow.Tests.Keys.Key-1.html
+  commentId: T:Venflow.Tests.Keys.Key`1
+  name.vb: Key(Of T)
+  fullName: Venflow.Tests.Keys.Key<T>
+  fullName.vb: Venflow.Tests.Keys.Key(Of T)
+  nameWithType: Key<T>
+  nameWithType.vb: Key(Of T)
 - uid: Venflow.TypeArgumentException
   name: TypeArgumentException
   href: api/Venflow.TypeArgumentException.html

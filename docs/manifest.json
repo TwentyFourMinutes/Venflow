@@ -534,7 +534,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.KeyConverter.html",
-          "hash": "OuXbfMjpDDcApItz28gj4w=="
+          "hash": "o6soPblZUVVj3X70EAF0hQ=="
         }
       },
       "is_incremental": false,
@@ -746,6 +746,30 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Tests.Keys.Key-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Tests.Keys.Key-1.html",
+          "hash": "fLWcGUiW0QAfVXzLmuzi8w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Tests.Keys.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Tests.Keys.html",
+          "hash": "2MwoZkWHsZIEY0IqWS9mQw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Venflow.TypeArgumentException.yml",
       "output": {
         ".html": {
@@ -798,7 +822,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "VVpOXdcTaXqVAsWBn9Bwig=="
+          "hash": "gAvleLiHwd2VL8bJuqsgRQ=="
         }
       },
       "is_incremental": false,
@@ -1143,7 +1167,7 @@
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 64,
+          "total_file_count": 66,
           "skipped_file_count": 0
         },
         "ResourceDocumentProcessor": {
