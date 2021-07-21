@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
 using Venflow.Commands;
+using Venflow.Enums;
 using Venflow.Modeling;
 
 namespace Venflow.Dynamic.Inserter
@@ -25,7 +26,15 @@ namespace Venflow.Dynamic.Inserter
 
         internal Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>> GetOrCreateInserter<TInsert>(RelationBuilderValues relationBuilderValues, bool isSingleInsert, bool isFullInsert) where TInsert : class
         {
-            var cacheKey = new InsertCacheKey(relationBuilderValues?.GetFlattenedRelations() ?? Array.Empty<EntityRelation>(), isSingleInsert);
+            var insertOptions = InsertCacheKeyOptions.None;
+
+            if (isSingleInsert)
+                insertOptions |= InsertCacheKeyOptions.IsSingleInsert;
+
+            if (isFullInsert)
+                insertOptions |= InsertCacheKeyOptions.IsFullInsert;
+
+            var cacheKey = new InsertCacheKey(!isFullInsert && relationBuilderValues is not null ? relationBuilderValues.GetFlattenedRelations() : Array.Empty<EntityRelation>(), insertOptions);
 
             if (_inserterCache.TryGetValue(cacheKey, out var tempInserter))
             {

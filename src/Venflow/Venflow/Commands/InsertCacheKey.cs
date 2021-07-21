@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Venflow.Enums;
 using Venflow.Modeling;
 
 namespace Venflow.Commands
@@ -8,13 +9,13 @@ namespace Venflow.Commands
     {
         internal EntityRelation[] Relations => _relations;
 
-        private readonly bool _isSingleInsert;
+        private readonly InsertCacheKeyOptions _options;
         private readonly EntityRelation[] _relations;
 
-        internal InsertCacheKey(EntityRelation[] relations, bool isSingleInsert)
+        internal InsertCacheKey(EntityRelation[] relations, InsertCacheKeyOptions options)
         {
             _relations = relations;
-            _isSingleInsert = isSingleInsert;
+            _options = options;
         }
 
         public bool Equals(
@@ -24,7 +25,7 @@ namespace Venflow.Commands
             InsertCacheKey y)
         {
             if (y._relations.Length != _relations.Length ||
-                y._isSingleInsert != _isSingleInsert)
+                y._options != _options)
                 return false;
 
             var relaionsSpan = _relations.AsSpan();
@@ -43,7 +44,7 @@ namespace Venflow.Commands
         {
             var hashCode = new HashCode();
 
-            hashCode.Add(_isSingleInsert);
+            hashCode.Add(_options);
 
             var relaionsSpan = _relations.AsSpan();
 
