@@ -31,6 +31,25 @@ namespace Venflow.Tests.JsonTests
         }
 
         [Fact]
+        public void TwoWayParsingOfNull()
+        {
+            var uncommonType = new UncommonType
+            {
+                NGuidKey = null
+            };
+
+            var settings = new JsonSerializerSettings { Converters = new[] { new NewtonsoftJsonKeyConverter() } };
+
+            var value = JsonConvert.SerializeObject(uncommonType, settings);
+
+            var parsedUncommonType = JsonConvert.DeserializeObject<UncommonType>(value, settings);
+
+            Assert.NotNull(parsedUncommonType);
+
+            Assert.Equal(uncommonType.NGuidKey, parsedUncommonType.NGuidKey);
+        }
+
+        [Fact]
         public void TwoWayParsingOfKey()
         {
             var entity = new Entity();

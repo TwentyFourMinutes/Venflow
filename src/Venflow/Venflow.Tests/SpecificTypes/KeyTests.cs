@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Venflow.Tests.Keys;
 using Venflow.Tests.Models;
 using Xunit;
 
@@ -7,6 +8,38 @@ namespace Venflow.Tests.SpecificTypes
 {
     public class KeyTests : TestBase
     {
+        [Fact]
+        public void Equality()
+        {
+            var guid = Guid.NewGuid();
+
+            Key<KeyTests> key1 = guid;
+            Key<KeyTests> key2 = guid;
+
+            Assert.True(key1 == key2);
+            Assert.False(key1 != key2);
+        }
+
+        [Fact]
+        public void HashCode()
+        {
+            var guid = Guid.NewGuid();
+
+            Key<KeyTests> key = guid;
+
+            Assert.Equal(guid.GetHashCode(), key.GetHashCode());
+        }
+
+        [Fact]
+        public void ToString()
+        {
+            var guid = Guid.NewGuid();
+
+            Key<KeyTests> key = guid;
+
+            Assert.Equal(guid.ToString(), key.ToString());
+        }
+
         [Fact]
         public async Task Insert()
         {
