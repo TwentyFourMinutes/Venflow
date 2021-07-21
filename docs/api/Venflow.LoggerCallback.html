@@ -103,7 +103,7 @@
   <h6><strong>Assembly</strong>: Venflow.dll</h6>
   <h5 id="Venflow_LoggerCallback_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public delegate void LoggerCallback(NpgsqlCommand command, CommandType commandType, Exception? exception);</code></pre>
+    <pre><code class="lang-csharp hljs">public delegate void LoggerCallback(NpgsqlCommand? command, CommandType commandType, Exception? exception);</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -116,9 +116,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">NpgsqlCommand</span></td>
+        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.nullable-1">Nullable</a>&lt;<span class="xref">NpgsqlCommand</span>&gt;</td>
         <td><span class="parametername">command</span></td>
-        <td><p>The command which produced the log.</p>
+        <td><p>The command which produced the log. The command may only ever be <span class="xref">null</span> when the <a class="xref" href="Venflow.Enums.CommandType.html">CommandType</a> has the <a class="xref" href="Venflow.Enums.CommandType.html#Venflow_Enums_CommandType_Insert">Insert</a> flag.</p>
 </td>
       </tr>
       <tr>
