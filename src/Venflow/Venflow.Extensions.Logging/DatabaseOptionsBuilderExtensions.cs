@@ -27,7 +27,7 @@ namespace Venflow.Extensions.Logging
 
                     if (state is null)
                     {
-                        commandText = "The command was null, no information available."
+                        commandText = "The command was null, no information available.";
                     }
                     else
                     {
