@@ -7,6 +7,40 @@ namespace Venflow.Tests.SpecificTypes
     public class CLRUIntTests : TestBase
     {
         [Fact]
+        public async Task Query()
+        {
+            var dummy = new UncommonType
+            {
+                CLRUInt64 = ulong.MaxValue
+            };
+
+            Assert.Equal(1, await Database.UncommonTypes.InsertAsync(dummy));
+
+            dummy = await Database.UncommonTypes.QueryInterpolatedSingle($@"SELECT * FROM ""UncommonTypes"" WHERE ""Id"" = {dummy.Id} AND ""CLRUInt64"" = {dummy.CLRUInt64}").Build().QueryAsync();
+
+            Assert.Equal(ulong.MaxValue, dummy.CLRUInt64);
+
+            await Database.UncommonTypes.DeleteAsync(dummy);
+        }
+
+        [Fact]
+        public async Task QueryNullableValue()
+        {
+            var dummy = new UncommonType
+            {
+                NCLRUInt64 = ulong.MaxValue
+            };
+
+            Assert.Equal(1, await Database.UncommonTypes.InsertAsync(dummy));
+
+            dummy = await Database.UncommonTypes.QueryInterpolatedSingle($@"SELECT * FROM ""UncommonTypes"" WHERE ""Id"" = {dummy.Id} AND ""NCLRUInt64"" = {dummy.NCLRUInt64}").Build().QueryAsync();
+
+            Assert.Equal(ulong.MaxValue, dummy.NCLRUInt64);
+
+            await Database.UncommonTypes.DeleteAsync(dummy);
+        }
+
+        [Fact]
         public async Task Insert()
         {
             var dummy = new UncommonType
