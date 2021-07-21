@@ -3,21 +3,22 @@
     {
       "src": [
         {
-		  "src": "../../src/Venflow/",
+          "src": "../../src/Venflow/",
           "files": [ "**/**.csproj" ],
-		  "exclude": [
+          "exclude": [
             "**/Venflow.Benchmarks/**",
             "**/Venflow.Score/**",
-			"**/Venflow.Shared/**",
-			"**/Venflow.Generators/**",
-			"**/Venflow.Tests/**"
+            "**/Venflow.Shared/**",
+            "**/Venflow.Generators/**",
+            "**/Venflow.Tests/**",
+            "**/Venflow.Tests.Keys/**"
           ]
         }
       ],
       "dest": "api",
       "disableGitFeatures": false,
       "disableDefaultFilter": false,
-	  "filter": "filterConfig.yml"
+      "filter": "filterConfig.yml"
     }
   ],
   "build": {
@@ -46,8 +47,8 @@
         "files": [
           "**/images/**",
           "**/samples/**",
-		  "favicon.ico",
-		  "venflow.svg"
+          "favicon.ico",
+          "venflow.svg"
         ]
       }
     ],
@@ -64,8 +65,8 @@
       "_appTitle": "Venflow Documentation",
       "_appFooter": "<span>Copyright © 2021 Twenty</span>",
       "_enableSearch": "true",
-	  "_appFaviconPath": "favicon.ico",
-	  "_appLogoPath": "venflow.svg"
+      "_appFaviconPath": "favicon.ico",
+      "_appLogoPath": "venflow.svg"
     },
     "fileMetadataFiles": [],
     "template": [
@@ -75,12 +76,12 @@
     "postProcessors": [
       "ExtractSearchIndex"
     ],
-	"xref": [
-	  "https://www.npgsql.org/xrefmap.yml"
-	],
-	"xrefService": [
-	  "https://xref.docs.microsoft.com/query?uid={uid}"
-	],
+    "xref": [
+      "https://www.npgsql.org/xrefmap.yml"
+    ],
+    "xrefService": [
+      "https://xref.docs.microsoft.com/query?uid={uid}"
+    ],
     "markdownEngineName": "markdig",
     "noLangKeyword": false,
     "keepFileLink": false,
