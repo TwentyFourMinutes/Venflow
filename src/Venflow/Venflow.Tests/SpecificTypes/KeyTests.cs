@@ -31,7 +31,7 @@ namespace Venflow.Tests.SpecificTypes
         }
 
         [Fact]
-        public void ToString()
+        public void KeyToString()
         {
             var guid = Guid.NewGuid();
 
