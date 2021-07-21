@@ -9,10 +9,10 @@ namespace Venflow
     /// <summary>
     /// Represent a method that will handle all Logs produced by a <see cref="Database"/> instance.
     /// </summary>
-    /// <param name="command">The command which produced the log.</param>
+    /// <param name="command">The command which produced the log. The command may only ever be <see langword="null"/> when the <see cref="CommandType"/> has the <see cref="CommandType.Insert"/> flag.</param>
     /// <param name="commandType">The command type which produced the log.</param>
     /// <param name="exception">The exception occurred while trying to execute the command, if any occurred.</param>
-    public delegate void LoggerCallback(NpgsqlCommand command, CommandType commandType, Exception? exception);
+    public delegate void LoggerCallback(NpgsqlCommand? command, CommandType commandType, Exception? exception);
 
     /// <summary>
     /// Provides an option builder to further <i>dynamically</i> configure a <see cref="Database"/> instance.

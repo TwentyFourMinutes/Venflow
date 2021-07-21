@@ -10,8 +10,8 @@ namespace Venflow.Commands
     internal abstract class VenflowBaseCommand<TEntity> where TEntity : class, new()
     {
         internal bool DisposeCommand { get; set; }
+        internal Database Database { get; set; }
 
-        internal Database Database { get; }
         internal Entity<TEntity> EntityConfiguration { get; }
         internal NpgsqlCommand UnderlyingCommand { get; }
 
@@ -53,18 +53,20 @@ namespace Venflow.Commands
             return true;
         }
 
-        protected ValueTask ValidateConnectionAsync()
+        protected ValueTask ValidateConnectionAsync(bool hasGeneratedCommands = false)
         {
-            if (UnderlyingCommand.Connection.State == System.Data.ConnectionState.Open)
+            var connection = hasGeneratedCommands ? Database.GetConnection() : UnderlyingCommand.Connection;
+
+            if (connection.State == System.Data.ConnectionState.Open)
                 return default;
 
-            if (UnderlyingCommand.Connection.State == System.Data.ConnectionState.Closed)
+            if (connection.State == System.Data.ConnectionState.Closed)
             {
-                return new ValueTask(UnderlyingCommand.Connection.OpenAsync());
+                return new ValueTask(connection.OpenAsync());
             }
             else
             {
-                throw new InvalidOperationException($"The current connection state is invalid. Expected: '{System.Data.ConnectionState.Open}' or '{System.Data.ConnectionState.Closed}'. Actual: '{UnderlyingCommand.Connection.State}'.");
+                throw new InvalidOperationException($"The current connection state is invalid. Expected: '{System.Data.ConnectionState.Open}' or '{System.Data.ConnectionState.Closed}'. Actual: '{connection.State}'.");
             }
         }
 

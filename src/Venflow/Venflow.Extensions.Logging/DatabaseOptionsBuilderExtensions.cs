@@ -23,7 +23,18 @@ namespace Venflow.Extensions.Logging
             options.LogTo((command, commandType, exception) => logger.Log(exception is null ? LogLevel.Debug : LogLevel.Error, new EventId((int)commandType, null), command, exception,
                 (state, exception) =>
                 {
-                    return "CommandText: '" + (formatSensitiveInformation ? state.GetUnParameterizedCommandText() : state.CommandText) + (exception is not null ? "' Exception: " + exception.Message : "'");
+                    string commandText;
+
+                    if (state is null)
+                    {
+                        commandText = "The command was null, no information available."
+                    }
+                    else
+                    {
+                        commandText = formatSensitiveInformation ? state.GetUnParameterizedCommandText() : state.CommandText;
+                    }
+
+                    return "CommandText: '" + commandText + (exception is not null ? "' Exception: " + exception.Message : "'");
                 }));
 
             return options;

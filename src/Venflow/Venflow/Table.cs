@@ -123,7 +123,7 @@ namespace Venflow
         /// <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar')". This API is using parameterized commands.</remarks>
         public Task<int> InsertAsync(IInsertCommand<TEntity> insertCommand, TEntity entity, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)insertCommand).UnderlyingCommand.Connection = Database.GetConnection();
+            ((VenflowBaseCommand<TEntity>)insertCommand).Database = Database;
 
             return insertCommand.InsertAsync(entity, cancellationToken);
         }

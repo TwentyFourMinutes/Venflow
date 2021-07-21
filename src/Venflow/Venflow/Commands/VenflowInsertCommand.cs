@@ -15,24 +15,20 @@ namespace Venflow.Commands
         private readonly RelationBuilderValues? _relationBuilderValues;
         private readonly bool _isFullInsert;
 
-        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, bool isFullInsert, List<LoggerCallback> loggers, bool shouldLog) : base(database, entityConfiguration, underlyingCommand, disposeCommand, loggers, shouldLog)
+        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, bool disposeCommand, bool isFullInsert, List<LoggerCallback> loggers, bool shouldLog) : base(database, entityConfiguration, null!, disposeCommand, loggers, shouldLog)
         {
             _isFullInsert = isFullInsert;
-
-            underlyingCommand.Connection = database.GetConnection();
         }
 
-        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, RelationBuilderValues? relationBuilderValues, bool isFullInsert, List<LoggerCallback> loggers, bool shouldLog) : base(database, entityConfiguration, underlyingCommand, disposeCommand, loggers, shouldLog)
+        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, bool disposeCommand, RelationBuilderValues? relationBuilderValues, bool isFullInsert, List<LoggerCallback> loggers, bool shouldLog) : base(database, entityConfiguration, null!, disposeCommand, loggers, shouldLog)
         {
             _relationBuilderValues = relationBuilderValues;
             _isFullInsert = isFullInsert;
-
-            underlyingCommand.Connection = database.GetConnection();
         }
 
         async Task<int> IInsertCommand<TEntity>.InsertAsync(TEntity entity, CancellationToken cancellationToken)
         {
-            await ValidateConnectionAsync();
+            await ValidateConnectionAsync(true);
 
             Func<NpgsqlConnection, TEntity, CancellationToken, Task<int>> inserter;
 
@@ -56,7 +52,7 @@ namespace Venflow.Commands
                 if (!ShouldAutoCommit)
                     await transaction.SaveAsync(TransactionName, cancellationToken);
 
-                var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entity, cancellationToken);
+                var affectedRows = await inserter.Invoke(Database.GetConnection(), entity, cancellationToken);
 
                 if (ShouldAutoCommit)
                     await transaction.CommitAsync(cancellationToken);
@@ -90,7 +86,7 @@ namespace Venflow.Commands
 
         async Task<int> IInsertCommand<TEntity>.InsertAsync(IList<TEntity> entities, CancellationToken cancellationToken)
         {
-            await ValidateConnectionAsync();
+            await ValidateConnectionAsync(true);
 
             Func<NpgsqlConnection, IList<TEntity>, CancellationToken, Task<int>> inserter;
 
@@ -114,7 +110,7 @@ namespace Venflow.Commands
                 if (!ShouldAutoCommit)
                     await transaction.SaveAsync(TransactionName, cancellationToken);
 
-                var affectedRows = await inserter.Invoke(UnderlyingCommand.Connection, entities, cancellationToken);
+                var affectedRows = await inserter.Invoke(Database.GetConnection(), entities, cancellationToken);
 
                 if (ShouldAutoCommit)
                     await transaction.CommitAsync(cancellationToken);
@@ -148,9 +144,9 @@ namespace Venflow.Commands
 
         public ValueTask DisposeAsync()
         {
-            UnderlyingCommand.Dispose();
+            UnderlyingCommand?.Dispose();
 
-            return new ValueTask();
+            return default;
         }
     }
 }
