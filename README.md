@@ -166,7 +166,7 @@ I also want to mention all the other great packages out there, build by awesome 
 
 - [LunarLite](https://github.com/LunarLite) for helping me with highly complex logically issues.
 - [AnotherZane](https://github.com/AnotherZane) for being one of the early preview testers. 
-- [Jas](https://github.com/jas777) and [Fatal](https://github.com/fatalcenturion) for providing general surface API ideas.
+- [Jas](https://github.com/jas777) and [Altrius](https://github.com/AltriusRS) for providing general surface API ideas.
 
 ## Notes
 
