@@ -33,6 +33,7 @@ namespace Venflow
         internal IReadOnlyDictionary<string, Entity> Entities { get; private set; }
         internal LoggingBehavior DefaultLoggingBehavior { get; }
         internal bool HasActiveTransaction => _activeTransaction is not null && !_activeTransaction.IsDisposed;
+        internal bool HasLoggers => _loggers.Count > 0;
 
         internal string ConnectionString { get; }
 

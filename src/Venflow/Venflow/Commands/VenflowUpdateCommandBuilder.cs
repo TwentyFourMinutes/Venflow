@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Npgsql;
 using Venflow.Enums;
 using Venflow.Modeling;
 
@@ -13,7 +12,6 @@ namespace Venflow.Commands
         private bool _disposeCommand;
         private bool? _shouldForceLog;
 
-        private readonly NpgsqlCommand _command;
         private readonly Database _database;
         private readonly Entity<TEntity> _entityConfiguration;
         private readonly List<LoggerCallback> _loggers;
@@ -24,7 +22,6 @@ namespace Venflow.Commands
             _entityConfiguration = entityConfiguration;
             _disposeCommand = disposeCommand;
 
-            _command = new();
             _loggers = new(0);
         }
 
@@ -32,7 +29,7 @@ namespace Venflow.Commands
         {
             var shouldLog = _shouldForceLog ?? _database.DefaultLoggingBehavior == LoggingBehavior.Always || _loggers.Count != 0;
 
-            return new VenflowUpdateCommand<TEntity>(_database, _entityConfiguration, _command, _disposeCommand, _loggers, shouldLog);
+            return new VenflowUpdateCommand<TEntity>(_database, _entityConfiguration, _disposeCommand, _loggers, shouldLog);
         }
 
         ValueTask IUpdateCommandBuilder<TEntity>.UpdateAsync(TEntity entity, CancellationToken cancellationToken)

@@ -12,7 +12,6 @@ namespace Venflow.Commands
         where TEntity : class, new()
     {
         private RelationBuilderValues? _relationBuilderValues;
-        private bool _disposeCommand;
         private bool _isFullInsert;
         private bool? _shouldForceLog;
 
@@ -20,11 +19,10 @@ namespace Venflow.Commands
         private readonly Entity<TEntity> _entityConfiguration;
         private readonly List<LoggerCallback> _loggers;
 
-        internal VenflowInsertCommandBuilder(Database database, Entity<TEntity> entityConfiguration, bool disposeCommand)
+        internal VenflowInsertCommandBuilder(Database database, Entity<TEntity> entityConfiguration)
         {
             _database = database;
             _entityConfiguration = entityConfiguration;
-            _disposeCommand = disposeCommand;
 
             _loggers = new(0);
         }
@@ -35,23 +33,19 @@ namespace Venflow.Commands
 
             if (_relationBuilderValues is not null)
             {
-                return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _disposeCommand, _relationBuilderValues, _isFullInsert, _loggers, shouldLog);
+                return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _relationBuilderValues, _isFullInsert, _loggers, shouldLog);
             }
 
-            return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _disposeCommand, _isFullInsert, _loggers, shouldLog);
+            return new VenflowInsertCommand<TEntity>(_database, _entityConfiguration, _isFullInsert, _loggers, shouldLog);
         }
 
         public Task<int> InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
-            _disposeCommand = true;
-
             return Build().InsertAsync(entity, cancellationToken);
         }
 
         public Task<int> InsertAsync(IList<TEntity> entities, CancellationToken cancellationToken = default)
         {
-            _disposeCommand = true;
-
             return Build().InsertAsync(entities, cancellationToken);
         }
 

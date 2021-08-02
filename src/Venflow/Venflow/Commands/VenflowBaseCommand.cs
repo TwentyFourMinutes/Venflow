@@ -11,38 +11,42 @@ namespace Venflow.Commands
     {
         internal bool DisposeCommand { get; set; }
         internal Database Database { get; set; }
+        internal NpgsqlCommand UnderlyingCommand { get; set; }
 
         internal Entity<TEntity> EntityConfiguration { get; }
-        internal NpgsqlCommand UnderlyingCommand { get; }
+
+        protected List<LoggerCallback> Loggers { get; }
+        protected bool ShouldLog => (_shouldLog && (Database.HasLoggers || Loggers.Count > 0));
 
         protected bool ShouldAutoCommit = true;
         protected const string TransactionName = "_VenflowSavepoint";
-
-        private readonly List<LoggerCallback> _loggers;
         private readonly bool _shouldLog;
 
-        protected VenflowBaseCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, List<LoggerCallback> loggers, bool shouldLog)
+        protected VenflowBaseCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand? underlyingCommand, bool disposeCommand, List<LoggerCallback> loggers, bool shouldLog)
         {
             Database = database;
             EntityConfiguration = entityConfiguration;
             UnderlyingCommand = underlyingCommand;
             DisposeCommand = disposeCommand;
 
-            _loggers = loggers;
+            Loggers = loggers;
             _shouldLog = shouldLog;
+
+            if (underlyingCommand is not null)
+                underlyingCommand.Connection = database.GetConnection();
         }
 
         protected bool Log(Enums.CommandType commandType, Exception? exception = default)
         {
-            if (_shouldLog)
+            if (ShouldLog)
             {
-                if (_loggers.Count == 0)
+                if (Loggers.Count == 0)
                 {
                     Database.ExecuteLoggers(UnderlyingCommand, commandType, exception);
                 }
                 else
                 {
-                    Database.ExecuteLoggers(_loggers, UnderlyingCommand, commandType, exception);
+                    Database.ExecuteLoggers(Loggers, UnderlyingCommand, commandType, exception);
                 }
             }
 

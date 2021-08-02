@@ -9,7 +9,7 @@ namespace Venflow.Commands
 {
     internal class VenflowQueryCommand<TEntity, TReturn> : VenflowBaseCommand<TEntity>, IQueryCommand<TEntity, TReturn> where TEntity : class, new() where TReturn : class, new()
     {
-        internal Delegate? Materializer { get; set; }
+        private Delegate? _materializer;
 
         private readonly RelationBuilderValues? _relationBuilderValues;
         private readonly bool _isSingleResult;
@@ -19,8 +19,6 @@ namespace Venflow.Commands
         {
             _relationBuilderValues = relationBuilderValues;
             _isSingleResult = isSingleResult;
-
-            underlyingCommand.Connection = database.GetConnection();
 
             _sqlQueryCacheKey = new SqlQueryCacheKey(underlyingCommand.CommandText, trackChanges, typeof(TReturn));
         }
@@ -37,13 +35,13 @@ namespace Venflow.Commands
 
                 Func<NpgsqlDataReader, CancellationToken, Task<TReturn>> materializer;
 
-                if (Materializer is not null)
+                if (_materializer is not null)
                 {
-                    materializer = (Materializer as Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>)!;
+                    materializer = (_materializer as Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>)!;
                 }
                 else
                 {
-                    Materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer<TReturn>(_relationBuilderValues, reader, _sqlQueryCacheKey);
+                    _materializer = materializer = EntityConfiguration.MaterializerFactory.GetOrCreateMaterializer<TReturn>(_relationBuilderValues, reader, _sqlQueryCacheKey);
                 }
 
                 var result = await materializer(reader, cancellationToken);

@@ -68,7 +68,7 @@ namespace Venflow.Commands
 
         public IBaseInsertRelationBuilder<TEntity, TEntity> Insert()
         {
-            return new VenflowInsertCommandBuilder<TEntity>(_database, _entityConfiguration, _disposeCommand);
+            return new VenflowInsertCommandBuilder<TEntity>(_database, _entityConfiguration);
         }
 
         #endregion

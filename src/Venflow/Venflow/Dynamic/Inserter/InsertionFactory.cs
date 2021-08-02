@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Npgsql;
 using Venflow.Commands;
 using Venflow.Enums;
 using Venflow.Modeling;
@@ -24,7 +21,7 @@ namespace Venflow.Dynamic.Inserter
             _insertionLock = new();
         }
 
-        internal Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>> GetOrCreateInserter<TInsert>(RelationBuilderValues relationBuilderValues, bool isSingleInsert, bool isFullInsert) where TInsert : class
+        internal Delegate GetOrCreateInserter<TInsert>(RelationBuilderValues relationBuilderValues, bool shouldLog, bool isSingleInsert, bool isFullInsert) where TInsert : class
         {
             var insertOptions = InsertCacheKeyOptions.None;
 
@@ -34,18 +31,21 @@ namespace Venflow.Dynamic.Inserter
             if (isFullInsert)
                 insertOptions |= InsertCacheKeyOptions.IsFullInsert;
 
+            if (shouldLog)
+                insertOptions |= InsertCacheKeyOptions.HasLogging;
+
             var cacheKey = new InsertCacheKey(!isFullInsert && relationBuilderValues is not null ? relationBuilderValues.GetFlattenedRelations() : Array.Empty<EntityRelation>(), insertOptions);
 
             if (_inserterCache.TryGetValue(cacheKey, out var tempInserter))
             {
-                return (tempInserter as Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>)!;
+                return tempInserter!;
             }
 
             lock (_insertionLock)
             {
                 if (_inserterCache.TryGetValue(cacheKey, out tempInserter))
                 {
-                    return (tempInserter as Func<NpgsqlConnection, TInsert, CancellationToken, Task<int>>)!;
+                    return tempInserter!;
                 }
                 else
                 {
@@ -60,7 +60,7 @@ namespace Venflow.Dynamic.Inserter
                         sourceCompiler.CompileFromRelations(_entity, relationBuilderValues);
                     }
 
-                    var inserter = new InsertionFactoryCompiler(_entity).CreateInserter<TInsert>(sourceCompiler.GetEntities(), sourceCompiler.VisitedEntityIds, sourceCompiler.ReachableRelations);
+                    var inserter = new InsertionFactoryCompiler(_entity).CreateInserter<TInsert>(sourceCompiler.GetEntities(), sourceCompiler.VisitedEntityIds, sourceCompiler.ReachableRelations, shouldLog);
 
                     _inserterCache.Add(cacheKey, inserter);
 

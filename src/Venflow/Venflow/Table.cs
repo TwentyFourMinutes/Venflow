@@ -110,7 +110,7 @@ namespace Venflow
         /// <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar')". This API is using parameterized commands.</remarks>
         public Task<int> InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
-            return Insert(true).WithAll().Build().InsertAsync(entity, cancellationToken);
+            return Insert().WithAll().Build().InsertAsync(entity, cancellationToken);
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace Venflow
         /// <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar'), ('foo', 'bar')". This API is using parameterized commands.</remarks>
         public Task<int> InsertAsync(IList<TEntity> entities, CancellationToken cancellationToken = default)
         {
-            return Insert(true).WithAll().Build().InsertAsync(entities, cancellationToken);
+            return Insert().WithAll().Build().InsertAsync(entities, cancellationToken);
         }
 
 
@@ -151,7 +151,7 @@ namespace Venflow
         /// <remarks>This method represents the following SQL statement "INSERT INTO table (foo, bar) VALUES ('foo', 'bar'), ('foo', 'bar')". This API is using parameterized commands.</remarks>
         public Task<int> InsertAsync(IInsertCommand<TEntity> insertCommand, List<TEntity> entities, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)insertCommand).UnderlyingCommand.Connection = Database.GetConnection();
+            ((VenflowBaseCommand<TEntity>)insertCommand).Database = Database;
 
             return insertCommand.InsertAsync(entities, cancellationToken);
         }
@@ -182,7 +182,10 @@ namespace Venflow
         /// <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
         public ValueTask<int> DeleteAsync(IDeleteCommand<TEntity> deleteCommand, TEntity entity, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)deleteCommand).UnderlyingCommand.Connection = Database.GetConnection();
+            var command = (VenflowBaseCommand<TEntity>)deleteCommand;
+
+            command.Database = Database;
+            command.UnderlyingCommand.Connection = Database.GetConnection();
 
             return deleteCommand.DeleteAsync(entity, cancellationToken);
         }
@@ -245,7 +248,10 @@ namespace Venflow
         /// <remarks>This method represents the following SQL statement "DELETE FROM table WHERE pk = 0". This API is using parameterized commands.</remarks>
         public ValueTask<int> DeleteAsync(IDeleteCommand<TEntity> deleteCommand, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)deleteCommand).UnderlyingCommand.Connection = Database.GetConnection();
+            var command = (VenflowBaseCommand<TEntity>)deleteCommand;
+
+            command.Database = Database;
+            command.UnderlyingCommand.Connection = Database.GetConnection();
 
             return deleteCommand.DeleteAsync(entities, cancellationToken);
         }
@@ -276,7 +282,10 @@ namespace Venflow
         /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
         public ValueTask UpdateAsync(IUpdateCommand<TEntity> updateCommand, TEntity entity, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)updateCommand).UnderlyingCommand.Connection = Database.GetConnection();
+            var command = (VenflowBaseCommand<TEntity>)updateCommand;
+
+            command.Database = Database;
+            command.UnderlyingCommand.Connection = Database.GetConnection();
 
             return updateCommand.UpdateAsync(entity, cancellationToken);
         }
@@ -339,7 +348,10 @@ namespace Venflow
         /// <remarks>This method represents the following SQL statement "UPDATE table SET foo = 'foo' WHERE pk = 0". This API is using parameterized commands.</remarks>
         public ValueTask UpdateAsync(IUpdateCommand<TEntity> updateCommand, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
-            ((VenflowBaseCommand<TEntity>)updateCommand).UnderlyingCommand.Connection = Database.GetConnection();
+            var command = (VenflowBaseCommand<TEntity>)updateCommand;
+
+            command.Database = Database;
+            command.UnderlyingCommand.Connection = Database.GetConnection();
 
             return updateCommand.UpdateAsync(entities, cancellationToken);
         }
@@ -354,15 +366,7 @@ namespace Venflow
         /// <returns>A Fluent API Builder for a insert command.</returns>
         /// <remarks>The command will be automatically disposed the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</remarks>
         public IBaseInsertRelationBuilder<TEntity, TEntity> Insert()
-            => new VenflowCommandBuilder<TEntity>(Database, Configuration, false).Insert();
-
-        /// <summary>
-        /// Creates a new insert command.
-        /// </summary>
-        /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
-        /// <returns>A Fluent API Builder for a insert command.</returns>
-        public IBaseInsertRelationBuilder<TEntity, TEntity> Insert(bool disposeCommand)
-            => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).Insert();
+            => new VenflowCommandBuilder<TEntity>(Database, Configuration).Insert();
 
         /// <summary>
         /// Creates a new delete command.

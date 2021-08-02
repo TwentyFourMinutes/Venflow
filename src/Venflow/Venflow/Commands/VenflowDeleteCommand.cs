@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Npgsql;
 using Venflow.Dynamic;
 using Venflow.Modeling;
 
@@ -14,9 +13,9 @@ namespace Venflow.Commands
         private const int _minStringLength = 35; // Rough estimate of minimum length
         private const int _minEntityStringLength = 3; // Rough estimate of minimum length
 
-        internal VenflowDeleteCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, List<LoggerCallback> loggers, bool shouldLog) : base(database, entityConfiguration, underlyingCommand, disposeCommand, loggers, shouldLog)
+        internal VenflowDeleteCommand(Database database, Entity<TEntity> entityConfiguration, bool disposeCommand, List<LoggerCallback> loggers, bool shouldLog) : base(database, entityConfiguration, new(), disposeCommand, loggers, shouldLog)
         {
-            underlyingCommand.Connection = database.GetConnection();
+
         }
 
         ValueTask<int> IDeleteCommand<TEntity>.DeleteAsync(TEntity entity, CancellationToken cancellationToken)
@@ -214,7 +213,7 @@ namespace Venflow.Commands
         {
             UnderlyingCommand.Dispose();
 
-            return new ValueTask();
+            return default;
         }
     }
 }

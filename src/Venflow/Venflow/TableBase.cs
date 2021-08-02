@@ -35,7 +35,10 @@ namespace Venflow
         /// <remarks>This method could represents the following SQL statement "SELECT * FROM table".</remarks>
         public Task<TReturn?> QueryAsync<TReturn>(IQueryCommand<TEntity, TReturn> queryCommand, CancellationToken cancellationToken = default) where TReturn : class, new()
         {
-            ((VenflowBaseCommand<TEntity>)queryCommand).UnderlyingCommand.Connection = Database.GetConnection();
+            var command = (VenflowBaseCommand<TEntity>)queryCommand;
+
+            command.Database = Database;
+            command.UnderlyingCommand.Connection = Database.GetConnection();
 
             return queryCommand.QueryAsync(cancellationToken);
         }

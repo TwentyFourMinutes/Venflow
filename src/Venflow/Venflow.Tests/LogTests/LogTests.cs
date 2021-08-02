@@ -8,16 +8,22 @@ namespace Venflow.Tests.LogTests
     public class LogTests : TestBase
     {
         [Fact]
-        public Task LogToWrapperAsync()
+        public async Task LogToWrapperAsync()
         {
             var person = new Person { Name = "LogTest" };
 
-            return Database.People.Insert().LogTo(new LoggerCallback((cmd, type, ex) =>
+            var logCount = 0;
+
+            await Database.People.Insert().LogTo(new LoggerCallback((cmd, type, ex) =>
             {
-                Assert.Null(cmd);
+                Assert.NotNull(cmd);
                 Assert.Null(ex);
                 Assert.Equal(CommandType.InsertSingle, type);
+
+                logCount++;
             })).InsertAsync(person);
+
+            Assert.Equal(1, logCount);
         }
     }
 }

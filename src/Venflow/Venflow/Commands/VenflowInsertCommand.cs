@@ -3,24 +3,27 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
+using Venflow.Enums;
 using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
     internal class VenflowInsertCommand<TEntity> : VenflowBaseCommand<TEntity>, IInsertCommand<TEntity> where TEntity : class, new()
     {
-        internal Delegate? SingleInserter { get; set; }
-        internal Delegate? BatchInserter { get; set; }
+        private Delegate? _singleInserter;
+        private Delegate? _singleLoggingInserter;
+        private Delegate? _batchInserter;
+        private Delegate? _batchLoggingInserter;
 
         private readonly RelationBuilderValues? _relationBuilderValues;
         private readonly bool _isFullInsert;
 
-        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, bool disposeCommand, bool isFullInsert, List<LoggerCallback> loggers, bool shouldLog) : base(database, entityConfiguration, null!, disposeCommand, loggers, shouldLog)
+        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, bool isFullInsert, List<LoggerCallback> loggers, bool shouldLog) : base(database, entityConfiguration, null, true, loggers, shouldLog)
         {
             _isFullInsert = isFullInsert;
         }
 
-        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, bool disposeCommand, RelationBuilderValues? relationBuilderValues, bool isFullInsert, List<LoggerCallback> loggers, bool shouldLog) : base(database, entityConfiguration, null!, disposeCommand, loggers, shouldLog)
+        internal VenflowInsertCommand(Database database, Entity<TEntity> entityConfiguration, RelationBuilderValues? relationBuilderValues, bool isFullInsert, List<LoggerCallback> loggers, bool shouldLog) : base(database, entityConfiguration, null, true, loggers, shouldLog)
         {
             _relationBuilderValues = relationBuilderValues;
             _isFullInsert = isFullInsert;
@@ -30,15 +33,21 @@ namespace Venflow.Commands
         {
             await ValidateConnectionAsync(true);
 
-            Func<NpgsqlConnection, TEntity, CancellationToken, Task<int>> inserter;
+            Delegate inserter;
 
-            if (SingleInserter is not null)
+            if (ShouldLog &&
+                _singleLoggingInserter is not null)
             {
-                inserter = (SingleInserter as Func<NpgsqlConnection, TEntity, CancellationToken, Task<int>>)!;
+                inserter = _singleLoggingInserter;
+            }
+            else if (!ShouldLog &&
+                     _singleInserter is not null)
+            {
+                inserter = _singleInserter;
             }
             else
             {
-                SingleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<TEntity>(_relationBuilderValues, true, _isFullInsert);
+                _singleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<TEntity>(_relationBuilderValues, ShouldLog, true, _isFullInsert);
             }
 
             var transaction = await GetTransactionAsync(
@@ -47,17 +56,29 @@ namespace Venflow.Commands
 #endif
             );
 
+            UnderlyingCommand = new NpgsqlCommand
+            {
+                Connection = Database.GetConnection()
+            };
+
             try
             {
                 if (!ShouldAutoCommit)
                     await transaction.SaveAsync(TransactionName, cancellationToken);
 
-                var affectedRows = await inserter.Invoke(Database.GetConnection(), entity, cancellationToken);
+                int affectedRows;
+
+                if (ShouldLog)
+                {
+                    affectedRows = await (inserter as Func<NpgsqlCommand, TEntity, Action<CommandType>, CancellationToken, Task<int>>)!.Invoke(UnderlyingCommand, entity, Log, cancellationToken);
+                }
+                else
+                {
+                    affectedRows = await (inserter as Func<NpgsqlCommand, TEntity, CancellationToken, Task<int>>)!.Invoke(UnderlyingCommand, entity, cancellationToken);
+                }
 
                 if (ShouldAutoCommit)
                     await transaction.CommitAsync(cancellationToken);
-
-                Log(Enums.CommandType.InsertSingle);
 
                 return affectedRows;
             }
@@ -68,7 +89,7 @@ namespace Venflow.Commands
                 else
                     await transaction.RollbackAsync(TransactionName, cancellationToken);
 
-                Log(Enums.CommandType.InsertSingle, ex);
+                Log(CommandType.InsertSingle, ex);
 
                 return default;
             }
@@ -79,8 +100,7 @@ namespace Venflow.Commands
                 else
                     await transaction.ReleaseAsync(TransactionName, cancellationToken);
 
-                if (DisposeCommand)
-                    await this.DisposeAsync();
+                UnderlyingCommand.Dispose();
             }
         }
 
@@ -88,15 +108,21 @@ namespace Venflow.Commands
         {
             await ValidateConnectionAsync(true);
 
-            Func<NpgsqlConnection, IList<TEntity>, CancellationToken, Task<int>> inserter;
+            Delegate inserter;
 
-            if (BatchInserter is not null)
+            if (ShouldLog &&
+                _batchLoggingInserter is not null)
             {
-                inserter = (Func<NpgsqlConnection, IList<TEntity>, CancellationToken, Task<int>>)BatchInserter;
+                inserter = _batchLoggingInserter;
+            }
+            else if (!ShouldLog &&
+                     _batchInserter is not null)
+            {
+                inserter = _batchInserter;
             }
             else
             {
-                BatchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<IList<TEntity>>(_relationBuilderValues, false, _isFullInsert);
+                _batchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<IList<TEntity>>(_relationBuilderValues, ShouldLog, false, _isFullInsert);
             }
 
             var transaction = await GetTransactionAsync(
@@ -105,17 +131,29 @@ namespace Venflow.Commands
 #endif
             );
 
+            UnderlyingCommand = new NpgsqlCommand
+            {
+                Connection = Database.GetConnection()
+            };
+
             try
             {
                 if (!ShouldAutoCommit)
                     await transaction.SaveAsync(TransactionName, cancellationToken);
 
-                var affectedRows = await inserter.Invoke(Database.GetConnection(), entities, cancellationToken);
+                int affectedRows;
+
+                if (ShouldLog)
+                {
+                    affectedRows = await (inserter as Func<NpgsqlCommand, IList<TEntity>, Action<CommandType>, CancellationToken, Task<int>>)!.Invoke(UnderlyingCommand, entities, Log, cancellationToken);
+                }
+                else
+                {
+                    affectedRows = await (inserter as Func<NpgsqlCommand, IList<TEntity>, CancellationToken, Task<int>>)!.Invoke(UnderlyingCommand, entities, cancellationToken);
+                }
 
                 if (ShouldAutoCommit)
                     await transaction.CommitAsync(cancellationToken);
-
-                Log(Enums.CommandType.InsertBatch);
 
                 return affectedRows;
             }
@@ -126,7 +164,7 @@ namespace Venflow.Commands
                 else
                     await transaction.RollbackAsync(TransactionName, cancellationToken);
 
-                Log(Enums.CommandType.InsertBatch, ex);
+                Log(CommandType.InsertBatch, ex);
 
                 return default;
             }
@@ -137,16 +175,23 @@ namespace Venflow.Commands
                 else
                     await transaction.ReleaseAsync(TransactionName, cancellationToken);
 
-                if (DisposeCommand)
-                    await this.DisposeAsync();
+                UnderlyingCommand.Dispose();
+            }
+        }
+
+        private void Log(CommandType commandType)
+        {
+            if (Loggers.Count == 0)
+            {
+                Database.ExecuteLoggers(UnderlyingCommand, commandType, null);
+            }
+            else
+            {
+                Database.ExecuteLoggers(Loggers, UnderlyingCommand, commandType, null);
             }
         }
 
         public ValueTask DisposeAsync()
-        {
-            UnderlyingCommand?.Dispose();
-
-            return default;
-        }
+            => default;
     }
 }

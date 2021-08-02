@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Npgsql;
 using Venflow.Dynamic;
 using Venflow.Dynamic.Proxies;
 using Venflow.Enums;
@@ -16,9 +15,9 @@ namespace Venflow.Commands
     {
         private const int _minEntityStringLength = 35; // Rough estimate of minimum length
 
-        internal VenflowUpdateCommand(Database database, Entity<TEntity> entityConfiguration, NpgsqlCommand underlyingCommand, bool disposeCommand, List<LoggerCallback> loggers, bool shouldLog) : base(database, entityConfiguration, underlyingCommand, disposeCommand, loggers, shouldLog)
+        internal VenflowUpdateCommand(Database database, Entity<TEntity> entityConfiguration, bool disposeCommand, List<LoggerCallback> loggers, bool shouldLog) : base(database, entityConfiguration, new(), disposeCommand, loggers, shouldLog)
         {
-            underlyingCommand.Connection = database.GetConnection();
+
         }
 
         ValueTask IUpdateCommand<TEntity>.UpdateAsync(TEntity entity, CancellationToken cancellationToken)
@@ -208,7 +207,7 @@ namespace Venflow.Commands
         {
             UnderlyingCommand.Dispose();
 
-            return new ValueTask();
+            return default;
         }
     }
 }
