@@ -17,6 +17,18 @@ namespace Venflow.Tests.QueryTests
             Assert.NotNull(customResponse);
             Assert.NotNull(customResponse.Count);
         }
+
+        [Fact]
+        public async Task QueryBatchWithNoRelationAsync()
+        {
+            var customResponse = await Database.Custom<CustomResponse>()
+                                               .QueryBatch(@"SELECT Count(""Id"") As ""Count"" FROM ""People""")
+                                               .QueryAsync();
+
+            Assert.Equal(1, customResponse.Count);
+            Assert.NotNull(customResponse[0]);
+            Assert.NotNull(customResponse[0].Count);
+        }
     }
 
     public class CustomResponse

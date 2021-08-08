@@ -17,7 +17,7 @@ namespace Venflow.Dynamic.Instantiater
 
             var entitiesIndexerMethod = entitiesListType.GetMethod("get_Item");
 
-            var instantiaterMethod = new DynamicMethod($"Venflow.Dynamic.Instantiater.{customDatabaseType.Name}Instantiater", null, new[] { databaseType, entitiesListType }, TypeFactory.DynamicModule);
+            var instantiaterMethod = TypeFactory.GetDynamicMethod($"Venflow.Dynamic.Instantiater.{customDatabaseType.Name}Instantiater", null, new[] { databaseType, entitiesListType });
 
             var instantiaterMethodIL = instantiaterMethod.GetILGenerator();
 
@@ -37,7 +37,7 @@ namespace Venflow.Dynamic.Instantiater
 
             instantiaterMethodIL.Emit(OpCodes.Ret);
 
-#if NETCOREAPP5_0
+#if NET5_0_OR_GREATER
             return instantiaterMethod.CreateDelegate<Action<Database, IList<Entity>>>();
 #else
             return (Action<Database, IList<Entity>>)instantiaterMethod.CreateDelegate(typeof(Action<Database, IList<Entity>>));

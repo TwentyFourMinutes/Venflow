@@ -232,7 +232,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
             if (properties is null || properties.Length == 0)
             {
-                throw new TypeArgumentException($"The entity '{Type.Name}' doesn't contain any columns/properties. A entity needs at least one column/property.");
+                throw new TypeArgumentException($"The entity '{Type.Name}' doesn't contain any columns/properties. An entity needs at least one column/property.");
             }
 
             var propertiesSpan = properties.AsSpan();

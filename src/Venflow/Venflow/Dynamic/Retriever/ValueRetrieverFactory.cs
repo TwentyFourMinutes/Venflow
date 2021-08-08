@@ -39,7 +39,7 @@ namespace Venflow.Dynamic.Retriever
                 WriteDefaultRetriever(retrieverMethodIL, property, property.PropertyType.IsEnum && !isPostgreEnum ? Enum.GetUnderlyingType(property.PropertyType) : property.PropertyType);
             }
 
-#if NETCOREAPP5_0
+#if NET5_0_OR_GREATER
             return retrieverMethod.CreateDelegate<Func<TEntity, string, NpgsqlParameter>>();
 #else
             return (Func<TEntity, string, NpgsqlParameter>)retrieverMethod.CreateDelegate(typeof(Func<TEntity, string, NpgsqlParameter>));

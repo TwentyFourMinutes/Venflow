@@ -1649,13 +1649,13 @@ namespace Venflow.Dynamic.Materializer
             }
         }
 
-        private void WriteColumnMaterializer(ILGenerator iLGenerator, EntityColumn column)
+        private void WriteColumnMaterializer(ILGenerator ilGenerator, EntityColumn column)
         {
             if (column.IsNullableReferenceType)
             {
                 var valueRetriever = typeof(NpgsqlDataReaderExtensions).GetMethod("GetValueOrDefault", BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(column.PropertyInfo.PropertyType);
 
-                iLGenerator.Emit(OpCodes.Call, valueRetriever);
+                ilGenerator.Emit(OpCodes.Call, valueRetriever);
             }
             else
             {
@@ -1691,28 +1691,28 @@ namespace Venflow.Dynamic.Materializer
                         {
                             valueRetriever = valueRetriever.MakeGenericMethod(baseType);
 
-                            var baseLocal = iLGenerator.DeclareLocal(baseType);
-                            var outputLocal = iLGenerator.DeclareLocal(column.PropertyInfo.PropertyType);
+                            var baseLocal = ilGenerator.DeclareLocal(baseType);
+                            var outputLocal = ilGenerator.DeclareLocal(column.PropertyInfo.PropertyType);
 
-                            var afterHasNoValueLabel = iLGenerator.DefineLabel();
-                            var assignLabel = iLGenerator.DefineLabel();
+                            var afterHasNoValueLabel = ilGenerator.DefineLabel();
+                            var assignLabel = ilGenerator.DefineLabel();
 
-                            iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
-                            iLGenerator.Emit(OpCodes.Stloc_S, baseLocal);
+                            ilGenerator.Emit(OpCodes.Callvirt, valueRetriever);
+                            ilGenerator.Emit(OpCodes.Stloc_S, baseLocal);
 
-                            iLGenerator.Emit(OpCodes.Ldloca_S, baseLocal);
-                            iLGenerator.Emit(OpCodes.Call, baseLocal.LocalType.GetProperty("HasValue").GetGetMethod());
-                            iLGenerator.Emit(OpCodes.Brtrue, afterHasNoValueLabel);
+                            ilGenerator.Emit(OpCodes.Ldloca_S, baseLocal);
+                            ilGenerator.Emit(OpCodes.Call, baseLocal.LocalType.GetProperty("HasValue").GetGetMethod());
+                            ilGenerator.Emit(OpCodes.Brtrue, afterHasNoValueLabel);
 
-                            iLGenerator.Emit(OpCodes.Ldloca_S, outputLocal);
-                            iLGenerator.Emit(OpCodes.Initobj, column.PropertyInfo.PropertyType);
-                            iLGenerator.Emit(OpCodes.Ldloc_S, outputLocal);
-                            iLGenerator.Emit(OpCodes.Br, assignLabel);
+                            ilGenerator.Emit(OpCodes.Ldloca_S, outputLocal);
+                            ilGenerator.Emit(OpCodes.Initobj, column.PropertyInfo.PropertyType);
+                            ilGenerator.Emit(OpCodes.Ldloc_S, outputLocal);
+                            ilGenerator.Emit(OpCodes.Br, assignLabel);
 
-                            iLGenerator.MarkLabel(afterHasNoValueLabel);
+                            ilGenerator.MarkLabel(afterHasNoValueLabel);
 
-                            iLGenerator.Emit(OpCodes.Ldloca_S, baseLocal);
-                            iLGenerator.Emit(OpCodes.Call, baseType.GetProperty("Value").GetGetMethod());
+                            ilGenerator.Emit(OpCodes.Ldloca_S, baseLocal);
+                            ilGenerator.Emit(OpCodes.Call, baseType.GetProperty("Value").GetGetMethod());
 
                             if (isStronglyTypedKey)
                             {
@@ -1732,27 +1732,27 @@ namespace Venflow.Dynamic.Materializer
                                     underlyingType = longType;
                                 }
 
-                                var keyLocal = iLGenerator.DeclareLocal(underlyingType);
+                                var keyLocal = ilGenerator.DeclareLocal(underlyingType);
 
-                                iLGenerator.Emit(OpCodes.Stloc, keyLocal);
-                                iLGenerator.Emit(OpCodes.Ldloca, keyLocal);
+                                ilGenerator.Emit(OpCodes.Stloc, keyLocal);
+                                ilGenerator.Emit(OpCodes.Ldloca, keyLocal);
 
                                 if (underlyingStronglyTypedKeyType == uLongType)
                                 {
                                     underlyingType = keyType;
                                 }
 
-                                iLGenerator.Emit(OpCodes.Call, underlyingType.GetCastMethod(underlyingStronglyTypedKeyType, underlyingType));
+                                ilGenerator.Emit(OpCodes.Call, underlyingType.GetCastMethod(underlyingStronglyTypedKeyType, underlyingType));
                             }
                             else if (isUlong)
                             {
-                                iLGenerator.Emit(OpCodes.Ldc_I8, long.MinValue);
-                                iLGenerator.Emit(OpCodes.Sub);
+                                ilGenerator.Emit(OpCodes.Ldc_I8, long.MinValue);
+                                ilGenerator.Emit(OpCodes.Sub);
                             }
 
-                            iLGenerator.Emit(OpCodes.Newobj, column.PropertyInfo.PropertyType.GetConstructor(new[] { underlyingType }));
+                            ilGenerator.Emit(OpCodes.Newobj, column.PropertyInfo.PropertyType.GetConstructor(new[] { underlyingType }));
 
-                            iLGenerator.MarkLabel(assignLabel);
+                            ilGenerator.MarkLabel(assignLabel);
 
                             return;
                         }
@@ -1763,7 +1763,7 @@ namespace Venflow.Dynamic.Materializer
                         {
                             valueRetriever = valueRetriever.MakeGenericMethod(Enum.GetUnderlyingType(column.PropertyInfo.PropertyType));
 
-                            iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
+                            ilGenerator.Emit(OpCodes.Callvirt, valueRetriever);
 
                             return;
                         }
@@ -1778,7 +1778,7 @@ namespace Venflow.Dynamic.Materializer
 
                     valueRetriever = valueRetriever.MakeGenericMethod(type);
 
-                    iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
+                    ilGenerator.Emit(OpCodes.Callvirt, valueRetriever);
 
                     _moveNextMethodIL.Emit(OpCodes.Ldc_I8, long.MinValue);
                     _moveNextMethodIL.Emit(OpCodes.Sub);
@@ -1796,7 +1796,7 @@ namespace Venflow.Dynamic.Materializer
                     }
 
                     valueRetriever = valueRetriever.MakeGenericMethod(underlyingType);
-                    iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
+                    ilGenerator.Emit(OpCodes.Callvirt, valueRetriever);
 
                     if (underlyingType == longType)
                     {
@@ -1806,18 +1806,18 @@ namespace Venflow.Dynamic.Materializer
                         underlyingType = uLongType;
                     }
 
-                    var keyLocal = iLGenerator.DeclareLocal(underlyingType);
+                    var keyLocal = ilGenerator.DeclareLocal(underlyingType);
 
-                    iLGenerator.Emit(OpCodes.Stloc, keyLocal);
-                    iLGenerator.Emit(OpCodes.Ldloca, keyLocal);
+                    ilGenerator.Emit(OpCodes.Stloc, keyLocal);
+                    ilGenerator.Emit(OpCodes.Ldloca, keyLocal);
 
-                    iLGenerator.Emit(OpCodes.Call, type.GetCastMethod(underlyingType, type));
+                    ilGenerator.Emit(OpCodes.Call, type.GetCastMethod(underlyingType, type));
                 }
                 else
                 {
                     valueRetriever = valueRetriever.MakeGenericMethod(type);
 
-                    iLGenerator.Emit(OpCodes.Callvirt, valueRetriever);
+                    ilGenerator.Emit(OpCodes.Callvirt, valueRetriever);
                 }
             }
         }
