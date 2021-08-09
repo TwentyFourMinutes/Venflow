@@ -2885,14 +2885,6 @@ references:
   fullName.vb: Venflow.Table(Of TEntity).Insert()
   nameWithType: Table<TEntity>.Insert()
   nameWithType.vb: Table(Of TEntity).Insert()
-- uid: Venflow.Table`1.Insert(System.Boolean)
-  name: Insert(Boolean)
-  href: api/Venflow.Table-1.html#Venflow_Table_1_Insert_System_Boolean_
-  commentId: M:Venflow.Table`1.Insert(System.Boolean)
-  fullName: Venflow.Table<TEntity>.Insert(System.Boolean)
-  fullName.vb: Venflow.Table(Of TEntity).Insert(System.Boolean)
-  nameWithType: Table<TEntity>.Insert(Boolean)
-  nameWithType.vb: Table(Of TEntity).Insert(Boolean)
 - uid: Venflow.Table`1.Insert*
   name: Insert
   href: api/Venflow.Table-1.html#Venflow_Table_1_Insert_
