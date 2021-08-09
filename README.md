@@ -44,7 +44,7 @@ Install-Package Venflow
 
 ## Comparison
 
-Benchmarking ORM's isn't an easy task, since there are a bunch of different factors which can alter the result in one way or another. I do not present any beautiful graphs here for the simple reason, that showing them would be pretty impractical, since there would be just too many. That is also the reason why I tried to come up with a composite number based on the benchmark results. If you still want check all the individual benchmarks, which you definitely should, the source code can be found [here](./src/Venflow/Venflow.Benchmarks) and the results as `.csv` and `.md` are over [here](./benchmarks).
+Benchmarking ORM's isn't an easy task, since there are a bunch of different factors which can alter the result in one way or another. I do not present any beautiful graphs here simply because they would get too complex and it would require too many graphs to remain practical. This is also the reason why I tried to come up with a composite number based on benchmark results. If you still want check all the individual benchmarks, which you definitely should, the source code can be found [here](./src/Venflow/Venflow.Benchmarks) and the results as `.csv` and `.md` are over [here](./benchmarks).
 
 Lets just directly hop into the composite numbers of each tested ORM.
 <!--Benchmark Start-->
@@ -56,7 +56,7 @@ Lets just directly hop into the composite numbers of each tested ORM.
 | #4 [EFCore](https://github.com/dotnet/efcore) | 109,965 | 91,581 | 18,385 |
 <!--Benchmark End-->
 \* Lower is considered to be better </br>
-\*\* Do have missing benchmark entries for specific benchmark groups and therefor either might have better/worse scores.
+\*\* Do have missing benchmark entries for specific benchmark groups and therefor might have either better or worse scores.
 
 Now how do I calculate this _magic number_? The formula is as following: 
 ```
@@ -66,7 +66,7 @@ A group is considered to be a list of benchmark entries which are inside the sam
 
 #### Disclaimer
 
-The benchmarks themselves or even the calculation of the composite numbers may not be right and contain bugs. Therefor consider these results with a grain of salt. If you find any bugs inside the calculations or in the benchmarks please create an issue and I'll try to fix it ASAP.
+The benchmarks themselves or even the calculation of the composite numbers may not be right and contain bugs. Therefor take these results with a grain of salt. If you find any bugs inside the calculations or in the benchmarks please create an issue and I'll try to fix it ASAP.
 
 ## Is this package for you?
 
