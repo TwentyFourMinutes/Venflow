@@ -1,10 +1,15 @@
-# Venflow
-
+<p align="center">
+ <img width="100px" src="images/venflow.png" align="center" alt="GitHub Readme Stats" />
+ <h1 align="center">Venflow</h1>
+ <p align="center">A brand new, fast, and lightweight ORM. | <a href="https://twentyfourminutes.github.io/Venflow/">Documentation</a></p>
+</p>
+<p align="center">
 <a href="https://www.nuget.org/packages/Venflow"><img alt="Nuget" src="https://img.shields.io/nuget/v/Venflow"></a> <a href="https://www.nuget.org/packages/Venflow"><img alt="Nuget" src="https://img.shields.io/nuget/dt/Venflow"></a> <a href="https://github.com/TwentyFourMinutes/Venflow/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/TwentyFourMinutes/Venflow"></a> <a href='https://coveralls.io/github/TwentyFourMinutes/Venflow?branch=dev'><img src='https://coveralls.io/repos/github/TwentyFourMinutes/Venflow/badge.svg?branch=dev' alt='Coverage Status' /></a> <a href="https://github.com/TwentyFourMinutes/Venflow/blob/master/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/TwentyFourMinutes/DulcisX"></a> <a href="https://discordapp.com/invite/EYKxkce"><img alt="Discord" src="https://discordapp.com/api/guilds/275377268728135680/widget.png"></a>
-
-Venflow is a brand new ORM, written from the ground up to try and provide an alternative to EF-Core and many other ORMs. It allows you to define Models and their relations with each other. Additionally it maps all queries on its own while still maintaining great performance.
+</p>
 
 ## About
+
+Venflow is a brand new ORM, written from the ground up to try and provide an alternative to EF-Core and many other ORMs. It allows you to define Models and their relations with each other. Additionally it maps all queries on its own while still maintaining great performance.
 
 Lets face it, EF-Core is awesome, but it can be slow, really slow. However this library tries to overcome that by providing similar features while maintaining great performance. Venflow comes with a very similar UX to Dapper and EF-Core, in order to keep the learning curve as low as possible. 
 
@@ -25,9 +30,11 @@ The simplest way to do so, is by giving the project a :star: and sharing the pro
 - Creating pull requests
 - Reporting bugs
 
+For more information take a look at our [contribution guideline](https://github.com/TwentyFourMinutes/Venflow/blob/dev/CONTRIBUTING.md).
+
 ## Installation
 
-The pre-release versions of Venflow can currently be downloaded on [nuget.org](https://www.nuget.org/packages/Venflow). By now, the project should be fairly stable and safe to use.
+Venflow can currently be downloaded on [nuget.org](https://www.nuget.org/packages/Venflow).
 
 Also you can install it via the **P**ackage **M**anager **C**onsole:
 
@@ -37,31 +44,29 @@ Install-Package Venflow
 
 ## Comparison
 
-Benchmarking ORM's isn't an easy task, since there are a bunch of different factors which can alter the result in one way or another. I do not show any beautiful graphs here for the simple reason, that showing them would be pretty impractical, since there would be just too many. That is also the reason why I tried to come up with a composite number based on the benchmark results. If you still want check all the individual benchmarks, which you definitely should, the source code can be found [here](../../src/Venflow/Venflow.Benchmarks) and the results as `.csv` and `.md` are over [here](../../benchmarks).
+Benchmarking ORM's isn't an easy task, since there are a bunch of different factors which can alter the result in one way or another. I do not present any beautiful graphs here simply because they would get too complex and it would require too many graphs to remain practical. This is also the reason why I tried to come up with a composite number based on benchmark results. If you still want check all the individual benchmarks, which you definitely should, the source code can be found [here](../../src/Venflow/Venflow.Benchmarks) and the results as `.csv` and `.md` are over [here](../../benchmarks).
 
 Lets just directly hop into the composite numbers of each tested ORM.
-
 <!--Benchmark Start-->
 | ORM Name | Composite Score\* | Mean Score\* | Allocation Score\* |
 | :- | :-: | :-: | :-: |
-| #1 [Venflow](https://github.com/TwentyFourMinutes/Venflow) | 2.374 | 1.994 | 0.381 |
-| #2 [Dapper](https://github.com/StackExchange/Dapper) | 6.547 | 6.171 | 0.376 |
-| #3 [RepoDb](https://github.com/mikependon/RepoDb) | 62.006 | 57.928 | 4.078 |
-| #4 [EFCore](https://github.com/dotnet/efcore) | 219.079 | 188.615 | 30.464 |
+| #1 [Dapper](https://github.com/StackExchange/Dapper) | 2,917 | 2,813 | 0,104 |
+| #2 [Venflow](https://github.com/TwentyFourMinutes/Venflow) | 4,567 | 3,851 | 0,716 |
+| #3 [RepoDb](https://github.com/mikependon/RepoDb) | 50,295 | 48,043 | 2,252 |
+| #4 [EFCore](https://github.com/dotnet/efcore) | 109,965 | 91,581 | 18,385 |
 <!--Benchmark End-->
-
 \* Lower is considered to be better </br>
-\*\* Do have missing benchmark entries for specific benchmark groups and therefor either might have better/worse scores.
+\*\* Do have missing benchmark entries for specific benchmark groups and therefor might have either better or worse scores.
 
 Now how do I calculate this _magic number_? The formula is as following: 
 ```
 compositeScore = Σ((meanTime / lowestMeanTimeOfGroup - 1) + (allocation / lowestAllocationOfGroup - 1) / 10)
 ```
-A group is considered as a list of benchmark entries which are inside the same file and have the same count and target framework. Now as some ORM's don't have any benchmarks entries for specific benchmark groups it will instead take the _lowest_ mean and the _lowest_  allocation from this group. The source code of the calculation can be found [here](./src/Venflow/Venflow.Score).
+A group is considered to be a list of benchmark entries which are inside the same file and have the same count and target framework. Now as some ORM's don't have any benchmarks entries for specific benchmark groups it will instead take the _lowest_ mean and the _lowest_  allocation from this group. The source code of the calculation can be found [here](../../src/Venflow/Venflow.Score).
 
 #### Disclaimer
 
-The benchmarks themselves or even the calculation of the composite numbers may not be right and contain bugs. Therefor consider these results with a grain of salt. If you find any bugs inside the calculations or in the benchmarks please create an issue and I'll try to fix it ASAP.
+The benchmarks themselves or even the calculation of the composite numbers may not be right and contain bugs. Therefor take these results with a grain of salt. If you find any bugs inside the calculations or in the benchmarks please create an issue and I'll try to fix it ASAP.
 
 ## Is this package for you?
 
@@ -76,11 +81,11 @@ Especially for ORM's it is becoming a harder challenge than ever before, to choo
 
 #### But why should I use Venflow over EF-Core anyway?
 
-Obviously this project is nowhere near as mature as EF-Core and it already covers all your needs. However Venflow is all about performance in all its ways. You might ask yourself now, why would I even care? Well, especially for Web-Apps it really matters! Your response times for all requests involving some sort of Database interaction will immediately decrease. This also means that your application will not take up as much resources on your server. Obviously this only is applicable, if the website encounters somewhat high traffic.     
+Obviously this project is nowhere near as mature as EF-Core as it already covers all your needs. However Venflow is all about performance in every way. You might ask yourself now, why would I even care? Well, especially for Web-Apps it really matters! Your response times for all requests involving some sort of Database interaction will immediately decrease. This also means that your application will not take up as much resources on your server. Obviously this only is applicable, if the website encounters somewhat high traffic.     
 
 #### But why should I use Venflow over Dapper anyway?
 
-Venflow supports a lot more things out of the box, such as automatically generated Delete/Insert statements, as well as simple change tracking to easily update specific entities. Another big factor, which probably is one of the biggest differences to Dapper, are the automatically generated materializers for queries. A lot of the times a materializer generated by Venflow will _always_ be faster, especially for bigger tables, than a hand written Dapper one. This is due to the nature of how Dapper and Venflow handle the parsing of SQL results.
+Venflow supports a lot more things out of the box, such as automatically generated Delete/Insert statements, as well as simple change tracking to easily update specific entities. Another big factor, which probably is one of the biggest differences to Dapper, are the automatically generated materializers for queries. A lot of the times a materializer generated by Venflow will be faster, especially for bigger tables, than a hand written Dapper one. This is due to the nature of how Dapper and Venflow handle parsing of SQL results.
 
 ## Basic usage
 
@@ -161,7 +166,7 @@ I also want to mention all the other great packages out there, build by awesome 
 
 - [LunarLite](https://github.com/LunarLite) for helping me with highly complex logically issues.
 - [AnotherZane](https://github.com/AnotherZane) for being one of the early preview testers. 
-- [Jas](https://github.com/jas777) and [Fatal](https://github.com/fatalcenturion) for providing general surface API ideas.
+- [Jas](https://github.com/jas777) and [Altrius](https://github.com/AltriusRS) for providing general surface API ideas.
 
 ## Notes
 
