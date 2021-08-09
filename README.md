@@ -34,7 +34,7 @@ For more information take a look at our [contribution guideline](https://github.
 
 ## Installation
 
-The pre-release versions of Venflow can currently be downloaded on [nuget.org](https://www.nuget.org/packages/Venflow). By now, the project should be fairly stable and safe to use.
+Venflow can currently be downloaded on [nuget.org](https://www.nuget.org/packages/Venflow).
 
 Also you can install it via the **P**ackage **M**anager **C**onsole:
 
