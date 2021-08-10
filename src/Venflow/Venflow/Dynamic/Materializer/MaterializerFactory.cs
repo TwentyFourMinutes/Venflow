@@ -12,18 +12,7 @@ namespace Venflow.Dynamic.Materializer
 {
     internal class MaterializerFactory<TEntity> where TEntity : class, new()
     {
-        private class ExpirationEntry
-        {
-            internal long TimeStamp;
-
-            internal readonly SqlQueryCacheKey CacheKey;
-
-            internal ExpirationEntry(long timeStamp, SqlQueryCacheKey cacheKey)
-            {
-                TimeStamp = timeStamp;
-                CacheKey = cacheKey;
-            }
-        }
+        internal Dictionary<string, SqlExpression> InterpolatedSqlMaterializerCache { get; }
 
         private readonly Entity<TEntity> _entity;
         private readonly Dictionary<QueryCacheKey, Delegate> _materializerCache;
@@ -37,6 +26,7 @@ namespace Venflow.Dynamic.Materializer
         {
             _entity = entity;
 
+            InterpolatedSqlMaterializerCache = new();
             _primaryMaterializerCache = new(SqlQueryCacheKeyComparer.Default);
             _primaryExpirations = new();
             _materializerCache = new(QueryCacheKeyComparer.Default);
@@ -197,6 +187,18 @@ namespace Venflow.Dynamic.Materializer
 #endif
 
                 return materializer;
+            }
+        }
+        private class ExpirationEntry
+        {
+            internal long TimeStamp;
+
+            internal readonly SqlQueryCacheKey CacheKey;
+
+            internal ExpirationEntry(long timeStamp, SqlQueryCacheKey cacheKey)
+            {
+                TimeStamp = timeStamp;
+                CacheKey = cacheKey;
             }
         }
     }

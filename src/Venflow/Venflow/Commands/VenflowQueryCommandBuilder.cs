@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
 using Venflow.Dynamic;
+using Venflow.Dynamic.Materializer;
 using Venflow.Enums;
 using Venflow.Modeling;
 
@@ -20,15 +21,15 @@ namespace Venflow.Commands
         private QueryGenerationOptions _queryGenerationOptions;
         private bool _disposeCommand;
         private bool? _shouldForceLog;
+        private string _rawSql;
 
         private RelationBuilderValues? _relationBuilderValues;
         private readonly bool _singleResult;
-        private readonly StringBuilder _commandString;
-        private readonly string _rawSql;
         private readonly NpgsqlCommand _command;
         private readonly Database _database;
         private readonly Entity<TEntity> _entityConfiguration;
-        private readonly object?[]? _interploatedSqlParameters;
+        private readonly object?[]? _interpolatedSqlParameters;
+        private readonly LambdaExpression? _interpolatedSqlExpression;
         private readonly List<LoggerCallback> _loggers;
 
         private VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, QueryGenerationOptions queryGenerationOptions, bool disposeCommand, bool singleResult)
@@ -40,21 +41,23 @@ namespace Venflow.Commands
             _singleResult = singleResult;
 
             _loggers = new(0);
-            _commandString = new();
             _command = new();
         }
 
         internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, string sql, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, QueryGenerationOptions.None, disposeCommand, singleResult)
         {
             _rawSql = sql;
-            _commandString.Append(_rawSql);
+        }
+
+        internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, LambdaExpression interpolatedSqlExpression, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, QueryGenerationOptions.None, disposeCommand, singleResult)
+        {
+            _interpolatedSqlExpression = interpolatedSqlExpression;
         }
 
         internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, FormattableString interpolatedSql, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, QueryGenerationOptions.None, disposeCommand, singleResult)
         {
-            _interploatedSqlParameters = interpolatedSql.GetArguments();
+            _interpolatedSqlParameters = interpolatedSql.GetArguments();
             _rawSql = interpolatedSql.Format;
-            _commandString.Append(_rawSql);
         }
 
         internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, string sql, IList<NpgsqlParameter> parameters, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, sql, disposeCommand, singleResult)
@@ -102,7 +105,11 @@ namespace Venflow.Commands
 
         public IQueryCommand<TEntity, TReturn> Build()
         {
-            if (_interploatedSqlParameters is null)
+            if (_interpolatedSqlExpression is not null)
+            {
+                BuildFromExpression();
+            }
+            else if (_interpolatedSqlParameters is null)
             {
                 if ((_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0 &&
                     _relationBuilderValues is not null)
@@ -120,38 +127,185 @@ namespace Venflow.Commands
             }
             else
             {
-                var hasGeneratedJoins = (_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0 && _relationBuilderValues is not null;
+                BuildFromInterpolatedSql();
+            }
 
-                var argumentsSpan = _interploatedSqlParameters.AsSpan();
+            var shouldLog = _shouldForceLog ?? _database.DefaultLoggingBehavior == LoggingBehavior.Always || _loggers.Count != 0;
 
-                var sqlLength = _rawSql.Length;
+            return new VenflowQueryCommand<TEntity, TReturn>(_database, _entityConfiguration, _command, _relationBuilderValues, _trackChanges, _disposeCommand, _singleResult && _relationBuilderValues is null, _loggers, shouldLog);
+        }
 
-                var argumentedSql = new StringBuilder(sqlLength);
+        private void BuildFromExpression()
+        {
+            var cacheKey = _interpolatedSqlExpression.Body.ToString();
 
-                var sqlSpan = _rawSql.AsSpan();
+            Func<object[]> argumentsFunc = null!;
+            (int Index, string Name)[] staticArgumentsArray = null!;
 
-                var argumentIndex = 0;
-                var parameterIndex = 0;
-
-                for (int spanIndex = 0; spanIndex < sqlLength; spanIndex++)
+            if (!_entityConfiguration.MaterializerFactory.InterpolatedSqlMaterializerCache.TryGetValue(cacheKey, out var sqlExpression))
+            {
+                lock (_entityConfiguration.MaterializerFactory.InterpolatedSqlMaterializerCache)
                 {
-                    var spanChar = sqlSpan[spanIndex];
-
-                    if (spanChar == '{' &&
-                        spanIndex + 2 < sqlLength)
+                    if (!_entityConfiguration.MaterializerFactory.InterpolatedSqlMaterializerCache.TryGetValue(cacheKey, out sqlExpression))
                     {
-                        for (spanIndex++; spanIndex < sqlLength; spanIndex++)
+                        if (_interpolatedSqlExpression.Body is not MethodCallExpression method)
+                            throw new InvalidOperationException("The body of this Expression has to be an interpolated string.");
+
+                        var parameters = _interpolatedSqlExpression.Parameters;
+
+                        var expressionArguments = (method.Arguments[1] as NewArrayExpression)!.Expressions;
+
+                        var staticArguments = new List<(int, string)>();
+                        var instanceArguments = new List<Expression>
+                            {
+                                method.Arguments[0]
+                            };
+
+                        for (int expressionArgumentIndex = 0; expressionArgumentIndex < expressionArguments.Count; expressionArgumentIndex++)
                         {
-                            spanChar = sqlSpan[spanIndex];
+                            var argument = expressionArguments[expressionArgumentIndex];
 
-                            if (spanChar == '}')
+                            bool isConverted;
+
+                            if (argument.NodeType == ExpressionType.Convert)
+                            {
+                                argument = (argument as UnaryExpression)!.Operand;
+
+                                isConverted = true;
+                            }
+                            else
+                            {
+                                isConverted = false;
+                            }
+
+                            MemberExpression? memberArgument = null;
+                            ParameterExpression? parameterArgument = null;
+
+                            if (argument.NodeType == ExpressionType.MemberAccess)
+                            {
+                                memberArgument = (argument as MemberExpression)!;
+
+                                parameterArgument = memberArgument.Expression as ParameterExpression;
+
+                                if (parameterArgument is null)
+                                    memberArgument = null;
+                            }
+                            else if (argument.NodeType == ExpressionType.Parameter)
+                            {
+                                parameterArgument = argument as ParameterExpression;
+                            }
+
+                            if (parameterArgument is null)
+                            {
+                                instanceArguments.Add(isConverted ? Expression.Convert(argument, typeof(object)) : argument);
+
+                                continue;
+                            }
+
+                            string? name = null;
+
+                            for (int expressionParameterIndex = 0; expressionParameterIndex < parameters.Count; expressionParameterIndex++)
+                            {
+                                var parameter = parameters[expressionParameterIndex];
+
+                                if (parameterArgument.Name != parameter.Name)
+                                    continue;
+
+                                if (!_database.Entities.TryGetValue(parameter.Type.Name, out var entity))
+                                    throw new InvalidOperationException($"The generic type parameter '{parameter.Type.Name}' is not a valid entity.");
+
+                                if (memberArgument is not null)
+                                {
+                                    for (int columnIndex = 0; columnIndex < entity.GetColumnCount(); columnIndex++)
+                                    {
+                                        var column = entity.GetColumn(columnIndex);
+
+                                        if (column.PropertyInfo.Name != memberArgument.Member.Name)
+                                            continue;
+
+                                        name = entity.TableName + ".\"" + column.ColumnName + "\"";
+
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    name = entity.TableName;
+                                }
+
                                 break;
+                            }
 
-                            if (spanChar is < '0' or > '9')
-                                throw new InvalidOperationException();
+                            if (name is null)
+                                throw new InvalidOperationException($"The property {memberArgument!.Member.Name} is not mapped as a column.");
+
+                            staticArguments.Add((expressionArgumentIndex, name));
                         }
 
-                        var argument = argumentsSpan[argumentIndex++];
+                        staticArgumentsArray = staticArguments.ToArray();
+                        argumentsFunc = Expression.Lambda<Func<object[]>>(Expression.NewArrayInit(typeof(object), instanceArguments)).Compile();
+
+                        _entityConfiguration.MaterializerFactory.InterpolatedSqlMaterializerCache.Add(cacheKey, new SqlExpression(argumentsFunc, staticArgumentsArray));
+                    }
+                }
+            }
+
+            if (sqlExpression is not null)
+            {
+                staticArgumentsArray = sqlExpression.StaticArguments;
+                argumentsFunc = sqlExpression.Arguments;
+            }
+
+            var arguments = argumentsFunc.Invoke();
+
+            var hasGeneratedJoins = (_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0 && _relationBuilderValues is not null;
+
+            var argumentsSpan = arguments.AsSpan(1);
+
+            _rawSql = (string)arguments[0];
+
+            var sqlLength = _rawSql.Length;
+
+            var argumentedSql = new StringBuilder(sqlLength);
+
+            var sqlSpan = _rawSql.AsSpan();
+
+            var totalArgumentIndex = 0;
+            var argumentIndex = 0;
+            var parameterIndex = 0;
+            var staticArgumentIndex = 1;
+            var nextStaticArgument = staticArgumentsArray.Length == 0 ? (-1, null) : staticArgumentsArray[0];
+
+            for (int spanIndex = 0; spanIndex < sqlLength; spanIndex++)
+            {
+                var spanChar = sqlSpan[spanIndex];
+
+                if (spanChar == '{' &&
+                    spanIndex + 2 < sqlLength)
+                {
+                    for (spanIndex++; spanIndex < sqlLength; spanIndex++)
+                    {
+                        spanChar = sqlSpan[spanIndex];
+
+                        if (spanChar == '}')
+                            break;
+
+                        if (spanChar is < '0' or > '9')
+                            throw new InvalidOperationException();
+                    }
+
+                    if (totalArgumentIndex == nextStaticArgument.Index)
+                    {
+                        argumentedSql.Append(nextStaticArgument.Name);
+
+                        if (staticArgumentsArray.Length > staticArgumentIndex)
+                            nextStaticArgument = staticArgumentsArray[staticArgumentIndex];
+
+                        staticArgumentIndex++;
+                    }
+                    else
+                    {
+                        var argument = argumentsSpan[argumentIndex];
 
                         if (argument is IList list)
                         {
@@ -193,28 +347,122 @@ namespace Venflow.Commands
 
                             _command.Parameters.Add(ParameterTypeHandler.HandleParameter(parameterName, argument));
                         }
-                    }
-                    else if (hasGeneratedJoins &&
-                             spanChar == '>' &&
-                             spanIndex + 1 < sqlLength &&
-                             sqlSpan[spanIndex + 1] == '<')
-                    {
-                        AppendJoins(argumentedSql);
 
-                        spanIndex++;
+                        argumentIndex++;
+                    }
+
+                    totalArgumentIndex++;
+                }
+                else if (hasGeneratedJoins &&
+                         spanChar == '>' &&
+                         spanIndex + 1 < sqlLength &&
+                         sqlSpan[spanIndex + 1] == '<')
+                {
+                    AppendJoins(argumentedSql);
+
+                    spanIndex++;
+                }
+                else
+                {
+                    argumentedSql.Append(spanChar);
+                }
+            }
+
+            _command.CommandText = argumentedSql.ToString();
+        }
+
+        private void BuildFromInterpolatedSql()
+        {
+            var hasGeneratedJoins = (_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0 && _relationBuilderValues is not null;
+
+            var argumentsSpan = _interpolatedSqlParameters.AsSpan();
+
+            var sqlLength = _rawSql.Length;
+
+            var argumentedSql = new StringBuilder(sqlLength);
+
+            var sqlSpan = _rawSql.AsSpan();
+
+            var argumentIndex = 0;
+            var parameterIndex = 0;
+
+            for (int spanIndex = 0; spanIndex < sqlLength; spanIndex++)
+            {
+                var spanChar = sqlSpan[spanIndex];
+
+                if (spanChar == '{' &&
+                    spanIndex + 2 < sqlLength)
+                {
+                    for (spanIndex++; spanIndex < sqlLength; spanIndex++)
+                    {
+                        spanChar = sqlSpan[spanIndex];
+
+                        if (spanChar == '}')
+                            break;
+
+                        if (spanChar is < '0' or > '9')
+                            throw new InvalidOperationException();
+                    }
+
+                    var argument = argumentsSpan[argumentIndex++];
+
+                    if (argument is IList list)
+                    {
+                        if (list.Count > 0)
+                        {
+                            var listType = default(Type);
+
+                            for (int listIndex = 0; listIndex < list.Count; listIndex++)
+                            {
+                                var listItem = list[listIndex];
+
+                                if (listType is null &&
+                                    listItem is not null)
+                                {
+                                    listType = listItem.GetType();
+
+                                    if (listType == typeof(object))
+                                        throw new InvalidOperationException("The SQL string interpolation doesn't support object lists.");
+                                }
+
+                                var parameterName = "@p" + parameterIndex++.ToString();
+
+                                argumentedSql.Append(parameterName)
+                                             .Append(", ");
+
+                                _command.Parameters.Add(ParameterTypeHandler.HandleParameter(parameterName, listType!, listItem));
+                            }
+
+                            argumentedSql.Length -= 2;
+                        }
+
+                        parameterIndex--;
                     }
                     else
                     {
-                        argumentedSql.Append(spanChar);
+                        var parameterName = "@p" + parameterIndex++.ToString();
+
+                        argumentedSql.Append(parameterName);
+
+                        _command.Parameters.Add(ParameterTypeHandler.HandleParameter(parameterName, argument));
                     }
                 }
+                else if (hasGeneratedJoins &&
+                         spanChar == '>' &&
+                         spanIndex + 1 < sqlLength &&
+                         sqlSpan[spanIndex + 1] == '<')
+                {
+                    AppendJoins(argumentedSql);
 
-                _command.CommandText = argumentedSql.ToString();
+                    spanIndex++;
+                }
+                else
+                {
+                    argumentedSql.Append(spanChar);
+                }
             }
 
-            var shouldLog = _shouldForceLog ?? _database.DefaultLoggingBehavior == LoggingBehavior.Always || _loggers.Count != 0;
-
-            return new VenflowQueryCommand<TEntity, TReturn>(_database, _entityConfiguration, _command, _relationBuilderValues, _trackChanges, _disposeCommand, _singleResult && _relationBuilderValues is null, _loggers, shouldLog);
+            _command.CommandText = argumentedSql.ToString();
         }
 
         private void AppendJoins(StringBuilder sb)

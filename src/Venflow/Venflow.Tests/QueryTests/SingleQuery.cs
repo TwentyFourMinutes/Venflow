@@ -12,6 +12,22 @@ namespace Venflow.Tests.QueryTests
     public class SingleQuery : TestBase
     {
         [Fact]
+        public async Task QueryWithExpressionAsync()
+        {
+            var person = await InsertPersonAsync();
+
+            var queriedPerson = await Database.People.QuerySingle(x => $"SELECT * FROM {x} WHERE {x.Id} = {person.Id}").QueryAsync();
+
+            Assert.NotNull(queriedPerson);
+
+            Assert.Equal(person.Id, queriedPerson.Id);
+            Assert.Equal(person.Name, queriedPerson.Name);
+            Assert.Null(queriedPerson.Emails);
+
+            await Database.People.DeleteAsync(person);
+        }
+
+        [Fact]
         public async Task QueryWithNoRelationAsync()
         {
             var person = await InsertPersonAsync();
