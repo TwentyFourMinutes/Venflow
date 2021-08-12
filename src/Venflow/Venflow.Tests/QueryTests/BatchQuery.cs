@@ -11,34 +11,6 @@ namespace Venflow.Tests.QueryTests
     [TestCaseOrderer(PriorityOrderer.Name, PriorityOrderer.Assembly)]
     public class BatchQuery : TestBase
     {
-        [Fact]
-        public async Task QueryWithExpressionAsync()
-        {
-            var people = await InsertPeopleWithRelationAsync();
-
-            var queriedPeople = await Database.People.QueryBatch(x => $"SELECT * FROM {x} >< WHERE {x.Id} = {people[0].Id} OR {x.Id} = {people[1].Id}").AddFormatter().JoinWith(x => x.Emails).QueryAsync();
-
-            Assert.NotNull(queriedPeople);
-            Assert.Equal(people.Count, queriedPeople.Count);
-
-            for (int i = 0; i < queriedPeople.Count; i++)
-            {
-                Assert.Equal(people[i].Id, queriedPeople[i].Id);
-                Assert.Equal(people[i].Name, queriedPeople[i].Name);
-
-                Assert.NotNull(queriedPeople[i].Emails);
-                Assert.Single(queriedPeople[i].Emails);
-
-                var email = queriedPeople[i].Emails[0];
-
-                Assert.Equal(people[i].Emails[0].Id, email.Id);
-                Assert.Equal(people[i].Emails[0].Address, email.Address);
-                Assert.Equal(people[i].Emails[0].PersonId, email.PersonId);
-            }
-
-            await Database.People.DeleteAsync(people);
-        }
-
         [Fact, Priority(0)]
         public async Task QueryWithRelationAndNoIncludeAsync()
         {
