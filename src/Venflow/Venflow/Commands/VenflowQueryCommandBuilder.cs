@@ -139,8 +139,10 @@ namespace Venflow.Commands
         {
             var cacheKey = _interpolatedSqlExpression.Body.ToString();
 
-            Func<object[]> argumentsFunc = null!;
+            Delegate argumentsFunc = null!;
+            SqlExpressionOptions expressionOptions = SqlExpressionOptions.None;
             (int Index, string Name)[] staticArgumentsArray = null!;
+            Type? parameterType = null;
 
             if (!_entityConfiguration.MaterializerFactory.InterpolatedSqlMaterializerCache.TryGetValue(cacheKey, out var sqlExpression))
             {
@@ -243,9 +245,9 @@ namespace Venflow.Commands
                         }
 
                         staticArgumentsArray = staticArguments.ToArray();
-                        argumentsFunc = Expression.Lambda<Func<object[]>>(Expression.NewArrayInit(typeof(object), instanceArguments)).Compile();
+                        (argumentsFunc, expressionOptions, parameterType) = InterpolatedSqlExpressionConverter.GetConvertedDelegate(instanceArguments);
 
-                        _entityConfiguration.MaterializerFactory.InterpolatedSqlMaterializerCache.Add(cacheKey, new SqlExpression(argumentsFunc, staticArgumentsArray));
+                        _entityConfiguration.MaterializerFactory.InterpolatedSqlMaterializerCache.Add(cacheKey, new SqlExpression(argumentsFunc, parameterType, expressionOptions, staticArgumentsArray));
                     }
                 }
             }
@@ -254,13 +256,24 @@ namespace Venflow.Commands
             {
                 staticArgumentsArray = sqlExpression.StaticArguments;
                 argumentsFunc = sqlExpression.Arguments;
+                expressionOptions = sqlExpression.Options;
+                parameterType = sqlExpression.ParameterType;
             }
 
-            var arguments = argumentsFunc.Invoke();
+            object[] arguments;
+
+            if (expressionOptions == SqlExpressionOptions.None)
+            {
+                arguments = (argumentsFunc as Func<object[]>).Invoke();
+            }
+            else
+            {
+                arguments = (argumentsFunc as Func<object, object[]>).Invoke(InterpolatedSqlExpressionConverter.ExtractInstance(_interpolatedSqlExpression, parameterType));
+            }
 
             var hasGeneratedJoins = (_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0 && _relationBuilderValues is not null;
 
-            var argumentsSpan = arguments.AsSpan(1);
+            var argumentsSpan = arguments.Length > 1 ? arguments.AsSpan(1) : new Span<object>();
 
             _rawSql = (string)arguments[0];
 

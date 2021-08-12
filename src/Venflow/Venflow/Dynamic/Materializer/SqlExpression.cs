@@ -1,15 +1,20 @@
 ﻿using System;
+using Venflow.Enums;
 
 namespace Venflow.Dynamic.Materializer
 {
     internal class SqlExpression
     {
-        internal Func<object[]> Arguments { get; }
+        internal Delegate Arguments { get; }
+        internal Type ParameterType { get; }
+        internal SqlExpressionOptions Options { get; }
         internal (int, string)[] StaticArguments { get; }
 
-        internal SqlExpression(Func<object[]> arguments, (int, string)[] staticArguments)
+        internal SqlExpression(Delegate arguments, Type parameterType, SqlExpressionOptions options, (int, string)[] staticArguments)
         {
             Arguments = arguments;
+            ParameterType = parameterType;
+            Options = options;
             StaticArguments = staticArguments;
         }
     }
