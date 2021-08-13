@@ -27,7 +27,7 @@ jobs:
         id: publish_venflow_keys_nuget
         uses: Elskom/publish-nuget@main
         with:
-          PROJECT_FILE_PATH: src/Venflow/Venflow.Keys/Venflow.Keys.csproj
+          PROJECT_FILE_PATH: src/Venflow/Venflow.Keys/*.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
           PACKAGE_PATH: build/
           PACKAGE_NAME: Venflow.Keys
