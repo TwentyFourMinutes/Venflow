@@ -25,6 +25,7 @@ jobs:
         with:
           PROJECT_FILE_PATH: src/Venflow/Venflow.Keys/Venflow.Keys.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
+          PACKAGE_PATH: .
           PACKAGE_NAME: Venflow.Keys
           VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
           TAG_COMMIT: true
@@ -38,6 +39,7 @@ jobs:
         with:
           PROJECT_FILE_PATH: src/Venflow/Venflow/Venflow.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
+          PACKAGE_PATH: .
           PACKAGE_NAME: Venflow
           VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
           TAG_COMMIT: true
@@ -51,6 +53,7 @@ jobs:
         with:
           PROJECT_FILE_PATH: src/Venflow/Venflow.Extensions.Logging/Venflow.Extensions.Logging.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
+          PACKAGE_PATH: .
           PACKAGE_NAME: Venflow.Extensions.Logging
           VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
           TAG_COMMIT: true
@@ -64,6 +67,7 @@ jobs:
         with:
           PROJECT_FILE_PATH: src/Venflow/Venflow.AspNetCore/Venflow.AspNetCore.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
+          PACKAGE_PATH: .
           PACKAGE_NAME: Venflow.AspNetCore
           VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
           TAG_COMMIT: true
@@ -77,6 +81,7 @@ jobs:
         with:
           PROJECT_FILE_PATH: src/Venflow/Venflow.NewtonsoftJson/Venflow.NewtonsoftJson.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
+          PACKAGE_PATH: .
           PACKAGE_NAME: Venflow.NewtonsoftJson
           VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
           TAG_COMMIT: true
