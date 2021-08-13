@@ -9,6 +9,17 @@ namespace Venflow.Tests.QueryTests
     public class ExpressionQuery : TestBase
     {
         [Fact]
+        public async Task QueryWithExpressionAndCustomAsync()
+        {
+            var customResponse = await Database.Custom<CustomResponse>()
+                                               .QuerySingle<Person>((_, x) => $@"SELECT Count({x.Id}) As ""Count"" FROM {x}")
+                                               .QueryAsync();
+
+            Assert.NotNull(customResponse);
+            Assert.NotNull(customResponse.Count);
+        }
+
+        [Fact]
         public async Task QueryWithExpressionAsync()
         {
             var person = await InsertPersonAsync();
