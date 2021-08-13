@@ -19,6 +19,10 @@ jobs:
         working-directory: ./src/Venflow/Venflow.Generators
         run: dotnet build -c Release
 
+      - name: Generate build directory
+        working-directory: ./
+        run: mkdir build
+
       - name: Publish Venflow.Keys on version change
         id: publish_venflow_keys_nuget
         uses: Elskom/publish-nuget@main
