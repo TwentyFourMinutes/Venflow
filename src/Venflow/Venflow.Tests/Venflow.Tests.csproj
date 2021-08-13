@@ -43,4 +43,8 @@
     <ProjectReference Include="..\Venflow.Generators\Venflow.Generators.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="xunit.runner.json" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
 </Project>
