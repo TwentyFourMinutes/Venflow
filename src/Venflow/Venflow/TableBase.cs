@@ -198,7 +198,7 @@ namespace Venflow
         /// <summary>
         ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
         /// </summary>
-        /// <param name="sql">A string containing the SQL statement.
+        /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
         public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch(Expression<Func<TEntity, FormattableString>> sql, bool disposeCommand = true)
@@ -207,7 +207,7 @@ namespace Venflow
         /// <summary>
         ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
         /// </summary>
-        /// <param name="sql">A string containing the SQL statement.
+        /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
         public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch<TOne>(Expression<Func<TEntity, TOne, FormattableString>> sql, bool disposeCommand = true) where TOne : class, new()
@@ -216,7 +216,7 @@ namespace Venflow
         /// <summary>
         ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
         /// </summary>
-        /// <param name="sql">A string containing the SQL statement.
+        /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
         public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch<TOne, Two>(Expression<Func<TEntity, TOne, Two, FormattableString>> sql, bool disposeCommand = true) where TOne : class, new() where Two : class, new()
@@ -225,7 +225,7 @@ namespace Venflow
         /// <summary>
         ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
         /// </summary>
-        /// <param name="sql">A string containing the SQL statement.
+        /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
         public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch<TOne, Two, TThree>(Expression<Func<TEntity, TOne, Two, TThree, FormattableString>> sql, bool disposeCommand = true) where TOne : class, new() where Two : class, new() where TThree : class, new()
@@ -234,7 +234,7 @@ namespace Venflow
         /// <summary>
         ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
         /// </summary>
-        /// <param name="sql">A string containing the SQL statement.
+        /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
         public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch<TOne, Two, TThree, TFour>(Expression<Func<TEntity, TOne, Two, TThree, TFour, FormattableString>> sql, bool disposeCommand = true) where TOne : class, new() where Two : class, new() where TThree : class, new() where TFour : class, new()
@@ -243,7 +243,7 @@ namespace Venflow
         /// <summary>
         ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
         /// </summary>
-        /// <param name="sql">A string containing the SQL statement.
+        /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
         public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch<TOne, Two, TThree, TFour, TFive>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, FormattableString>> sql, bool disposeCommand = true) where TOne : class, new() where Two : class, new() where TThree : class, new() where TFour : class, new() where TFive : class, new()
@@ -252,7 +252,7 @@ namespace Venflow
         /// <summary>
         ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
         /// </summary>
-        /// <param name="sql">A string containing the SQL statement.
+        /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
         public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch<TOne, Two, TThree, TFour, TFive, TSix>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, FormattableString>> sql, bool disposeCommand = true) where TOne : class, new() where Two : class, new() where TThree : class, new() where TFour : class, new() where TFive : class, new() where TSix : class, new()
@@ -261,7 +261,7 @@ namespace Venflow
         /// <summary>
         ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
         /// </summary>
-        /// <param name="sql">A string containing the SQL statement.
+        /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
         public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch<TOne, Two, TThree, TFour, TFive, TSix, TSeven>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, FormattableString>> sql, bool disposeCommand = true) where TOne : class, new() where Two : class, new() where TThree : class, new() where TFour : class, new() where TFive : class, new() where TSix : class, new() where TSeven : class, new()
@@ -270,7 +270,7 @@ namespace Venflow
         /// <summary>
         ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
         /// </summary>
-        /// <param name="sql">A string containing the SQL statement.
+        /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
         public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch<TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString>> sql, bool disposeCommand = true) where TOne : class, new() where Two : class, new() where TThree : class, new() where TFour : class, new() where TFive : class, new() where TSix : class, new() where TSeven : class, new() where TEight : class, new()

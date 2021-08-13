@@ -157,7 +157,6 @@ namespace Venflow.Modeling
             return tables;
         }
 
-
         private void AddToConfigurations(EntityFactory entityFactory)
         {
             _entityFactories.Add(entityFactory);
