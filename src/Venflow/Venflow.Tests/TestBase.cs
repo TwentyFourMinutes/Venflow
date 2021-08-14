@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Venflow.Tests.Models;
 
 namespace Venflow.Tests
 {
-    public abstract class TestBase : IAsyncDisposable
+    public abstract class TestBase : IDisposable
     {
         protected RelationDatabase Database { get; }
 
@@ -13,9 +12,9 @@ namespace Venflow.Tests
             Database = new RelationDatabase();
         }
 
-        public ValueTask DisposeAsync()
+        public void Dispose()
         {
-            return Database.DisposeAsync();
+            Database.Dispose();
         }
     }
 }
