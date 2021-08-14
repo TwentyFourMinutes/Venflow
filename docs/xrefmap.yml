@@ -1195,6 +1195,15 @@ references:
   fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).Insert
   nameWithType: IVenflowCommandBuilder<TEntity>.Insert
   nameWithType.vb: IVenflowCommandBuilder(Of TEntity).Insert
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(Expression{Func{`0,FormattableString}})
+  name: QueryBatch(Expression<Func<TEntity, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_Expression_Func__0_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(Expression{Func{`0,FormattableString}})
+  name.vb: QueryBatch(Expression(Of Func(Of TEntity, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryBatch(Expression<Func<TEntity, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryBatch(Expression(Of Func(Of TEntity, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryBatch(Expression<Func<TEntity, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryBatch(Expression(Of Func(Of TEntity, FormattableString)))
 - uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.String)
   name: QueryBatch(String)
   href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch_System_String_
@@ -1221,6 +1230,78 @@ references:
   fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryBatch
   nameWithType: IVenflowCommandBuilder<TEntity>.QueryBatch
   nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryBatch
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``1(Expression{Func{`0,``0,FormattableString}})
+  name: QueryBatch<TOne>(Expression<Func<TEntity, TOne, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch__1_Expression_Func__0___0_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``1(Expression{Func{`0,``0,FormattableString}})
+  name.vb: QueryBatch(Of TOne)(Expression(Of Func(Of TEntity, TOne, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryBatch<TOne>(Expression<Func<TEntity, TOne, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne)(Expression(Of Func(Of TEntity, TOne, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryBatch<TOne>(Expression<Func<TEntity, TOne, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne)(Expression(Of Func(Of TEntity, TOne, FormattableString)))
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``2(Expression{Func{`0,``0,``1,FormattableString}})
+  name: QueryBatch<TOne, TTwo>(Expression<Func<TEntity, TOne, TTwo, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch__2_Expression_Func__0___0___1_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``2(Expression{Func{`0,``0,``1,FormattableString}})
+  name.vb: QueryBatch(Of TOne, TTwo)(Expression(Of Func(Of TEntity, TOne, TTwo, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryBatch<TOne, TTwo>(Expression<Func<TEntity, TOne, TTwo, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne, TTwo)(Expression(Of Func(Of TEntity, TOne, TTwo, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryBatch<TOne, TTwo>(Expression<Func<TEntity, TOne, TTwo, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne, TTwo)(Expression(Of Func(Of TEntity, TOne, TTwo, FormattableString)))
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``3(Expression{Func{`0,``0,``1,``2,FormattableString}})
+  name: QueryBatch<TOne, TTwo, TThree>(Expression<Func<TEntity, TOne, TTwo, TThree, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch__3_Expression_Func__0___0___1___2_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``3(Expression{Func{`0,``0,``1,``2,FormattableString}})
+  name.vb: QueryBatch(Of TOne, TTwo, TThree)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryBatch<TOne, TTwo, TThree>(Expression<Func<TEntity, TOne, TTwo, TThree, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne, TTwo, TThree)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryBatch<TOne, TTwo, TThree>(Expression<Func<TEntity, TOne, TTwo, TThree, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne, TTwo, TThree)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, FormattableString)))
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``4(Expression{Func{`0,``0,``1,``2,``3,FormattableString}})
+  name: QueryBatch<TOne, TTwo, TThree, TFour>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch__4_Expression_Func__0___0___1___2___3_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``4(Expression{Func{`0,``0,``1,``2,``3,FormattableString}})
+  name.vb: QueryBatch(Of TOne, TTwo, TThree, TFour)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryBatch<TOne, TTwo, TThree, TFour>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne, TTwo, TThree, TFour)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryBatch<TOne, TTwo, TThree, TFour>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne, TTwo, TThree, TFour)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, FormattableString)))
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``5(Expression{Func{`0,``0,``1,``2,``3,``4,FormattableString}})
+  name: QueryBatch<TOne, TTwo, TThree, TFour, TFive>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch__5_Expression_Func__0___0___1___2___3___4_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``5(Expression{Func{`0,``0,``1,``2,``3,``4,FormattableString}})
+  name.vb: QueryBatch(Of TOne, TTwo, TThree, TFour, TFive)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryBatch<TOne, TTwo, TThree, TFour, TFive>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne, TTwo, TThree, TFour, TFive)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryBatch<TOne, TTwo, TThree, TFour, TFive>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne, TTwo, TThree, TFour, TFive)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, FormattableString)))
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``6(Expression{Func{`0,``0,``1,``2,``3,``4,``5,FormattableString}})
+  name: QueryBatch<TOne, TTwo, TThree, TFour, TFive, TSix>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch__6_Expression_Func__0___0___1___2___3___4___5_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``6(Expression{Func{`0,``0,``1,``2,``3,``4,``5,FormattableString}})
+  name.vb: QueryBatch(Of TOne, TTwo, TThree, TFour, TFive, TSix)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryBatch<TOne, TTwo, TThree, TFour, TFive, TSix>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne, TTwo, TThree, TFour, TFive, TSix)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryBatch<TOne, TTwo, TThree, TFour, TFive, TSix>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne, TTwo, TThree, TFour, TFive, TSix)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, FormattableString)))
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``7(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,FormattableString}})
+  name: QueryBatch<TOne, TTwo, TThree, TFour, TFive, TSix, TSeven>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch__7_Expression_Func__0___0___1___2___3___4___5___6_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``7(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,FormattableString}})
+  name.vb: QueryBatch(Of TOne, TTwo, TThree, TFour, TFive, TSix, TSeven)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryBatch<TOne, TTwo, TThree, TFour, TFive, TSix, TSeven>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne, TTwo, TThree, TFour, TFive, TSix, TSeven)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryBatch<TOne, TTwo, TThree, TFour, TFive, TSix, TSeven>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne, TTwo, TThree, TFour, TFive, TSix, TSeven)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, FormattableString)))
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``8(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,``7,FormattableString}})
+  name: QueryBatch<TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryBatch__8_Expression_Func__0___0___1___2___3___4___5___6___7_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``8(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,``7,FormattableString}})
+  name.vb: QueryBatch(Of TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QueryBatch<TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QueryBatch<TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryBatch(Of TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString)))
 - uid: Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedBatch(FormattableString)
   name: QueryInterpolatedBatch(FormattableString)
   href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QueryInterpolatedBatch_FormattableString_
@@ -1255,6 +1336,15 @@ references:
   fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QueryInterpolatedSingle
   nameWithType: IVenflowCommandBuilder<TEntity>.QueryInterpolatedSingle
   nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QueryInterpolatedSingle
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(Expression{Func{`0,FormattableString}})
+  name: QuerySingle(Expression<Func<TEntity, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle_Expression_Func__0_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(Expression{Func{`0,FormattableString}})
+  name.vb: QuerySingle(Expression(Of Func(Of TEntity, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QuerySingle(Expression<Func<TEntity, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QuerySingle(Expression(Of Func(Of TEntity, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QuerySingle(Expression<Func<TEntity, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QuerySingle(Expression(Of Func(Of TEntity, FormattableString)))
 - uid: Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(System.String)
   name: QuerySingle(String)
   href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle_System_String_
@@ -1281,6 +1371,78 @@ references:
   fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QuerySingle
   nameWithType: IVenflowCommandBuilder<TEntity>.QuerySingle
   nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QuerySingle
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``1(Expression{Func{`0,``0,FormattableString}})
+  name: QuerySingle<TOne>(Expression<Func<TEntity, TOne, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle__1_Expression_Func__0___0_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``1(Expression{Func{`0,``0,FormattableString}})
+  name.vb: QuerySingle(Of TOne)(Expression(Of Func(Of TEntity, TOne, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QuerySingle<TOne>(Expression<Func<TEntity, TOne, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne)(Expression(Of Func(Of TEntity, TOne, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QuerySingle<TOne>(Expression<Func<TEntity, TOne, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne)(Expression(Of Func(Of TEntity, TOne, FormattableString)))
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``2(Expression{Func{`0,``0,``1,FormattableString}})
+  name: QuerySingle<TOne, TTwo>(Expression<Func<TEntity, TOne, TTwo, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle__2_Expression_Func__0___0___1_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``2(Expression{Func{`0,``0,``1,FormattableString}})
+  name.vb: QuerySingle(Of TOne, TTwo)(Expression(Of Func(Of TEntity, TOne, TTwo, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QuerySingle<TOne, TTwo>(Expression<Func<TEntity, TOne, TTwo, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne, TTwo)(Expression(Of Func(Of TEntity, TOne, TTwo, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QuerySingle<TOne, TTwo>(Expression<Func<TEntity, TOne, TTwo, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne, TTwo)(Expression(Of Func(Of TEntity, TOne, TTwo, FormattableString)))
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``3(Expression{Func{`0,``0,``1,``2,FormattableString}})
+  name: QuerySingle<TOne, TTwo, TThree>(Expression<Func<TEntity, TOne, TTwo, TThree, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle__3_Expression_Func__0___0___1___2_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``3(Expression{Func{`0,``0,``1,``2,FormattableString}})
+  name.vb: QuerySingle(Of TOne, TTwo, TThree)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QuerySingle<TOne, TTwo, TThree>(Expression<Func<TEntity, TOne, TTwo, TThree, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne, TTwo, TThree)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QuerySingle<TOne, TTwo, TThree>(Expression<Func<TEntity, TOne, TTwo, TThree, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne, TTwo, TThree)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, FormattableString)))
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``4(Expression{Func{`0,``0,``1,``2,``3,FormattableString}})
+  name: QuerySingle<TOne, TTwo, TThree, TFour>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle__4_Expression_Func__0___0___1___2___3_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``4(Expression{Func{`0,``0,``1,``2,``3,FormattableString}})
+  name.vb: QuerySingle(Of TOne, TTwo, TThree, TFour)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QuerySingle<TOne, TTwo, TThree, TFour>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne, TTwo, TThree, TFour)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QuerySingle<TOne, TTwo, TThree, TFour>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne, TTwo, TThree, TFour)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, FormattableString)))
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``5(Expression{Func{`0,``0,``1,``2,``3,``4,FormattableString}})
+  name: QuerySingle<TOne, TTwo, TThree, TFour, TFive>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle__5_Expression_Func__0___0___1___2___3___4_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``5(Expression{Func{`0,``0,``1,``2,``3,``4,FormattableString}})
+  name.vb: QuerySingle(Of TOne, TTwo, TThree, TFour, TFive)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QuerySingle<TOne, TTwo, TThree, TFour, TFive>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne, TTwo, TThree, TFour, TFive)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QuerySingle<TOne, TTwo, TThree, TFour, TFive>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne, TTwo, TThree, TFour, TFive)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, FormattableString)))
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``6(Expression{Func{`0,``0,``1,``2,``3,``4,``5,FormattableString}})
+  name: QuerySingle<TOne, TTwo, TThree, TFour, TFive, TSix>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle__6_Expression_Func__0___0___1___2___3___4___5_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``6(Expression{Func{`0,``0,``1,``2,``3,``4,``5,FormattableString}})
+  name.vb: QuerySingle(Of TOne, TTwo, TThree, TFour, TFive, TSix)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QuerySingle<TOne, TTwo, TThree, TFour, TFive, TSix>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne, TTwo, TThree, TFour, TFive, TSix)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QuerySingle<TOne, TTwo, TThree, TFour, TFive, TSix>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne, TTwo, TThree, TFour, TFive, TSix)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, FormattableString)))
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``7(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,FormattableString}})
+  name: QuerySingle<TOne, TTwo, TThree, TFour, TFive, TSix, TSeven>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle__7_Expression_Func__0___0___1___2___3___4___5___6_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``7(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,FormattableString}})
+  name.vb: QuerySingle(Of TOne, TTwo, TThree, TFour, TFive, TSix, TSeven)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QuerySingle<TOne, TTwo, TThree, TFour, TFive, TSix, TSeven>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne, TTwo, TThree, TFour, TFive, TSix, TSeven)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QuerySingle<TOne, TTwo, TThree, TFour, TFive, TSix, TSeven>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne, TTwo, TThree, TFour, TFive, TSix, TSeven)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, FormattableString)))
+- uid: Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``8(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,``7,FormattableString}})
+  name: QuerySingle<TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString>>)
+  href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_QuerySingle__8_Expression_Func__0___0___1___2___3___4___5___6___7_FormattableString___
+  commentId: M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``8(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,``7,FormattableString}})
+  name.vb: QuerySingle(Of TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString)))
+  fullName: Venflow.Commands.IVenflowCommandBuilder<TEntity>.QuerySingle<TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString>>)
+  fullName.vb: Venflow.Commands.IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString)))
+  nameWithType: IVenflowCommandBuilder<TEntity>.QuerySingle<TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight>(Expression<Func<TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString>>)
+  nameWithType.vb: IVenflowCommandBuilder(Of TEntity).QuerySingle(Of TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight)(Expression(Of Func(Of TEntity, TOne, TTwo, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString)))
 - uid: Venflow.Commands.IVenflowCommandBuilder`1.Update
   name: Update()
   href: api/Venflow.Commands.IVenflowCommandBuilder-1.html#Venflow_Commands_IVenflowCommandBuilder_1_Update
@@ -3113,6 +3275,15 @@ references:
   fullName.vb: Venflow.TableBase(Of TEntity).QueryAsync(Of TReturn)(Venflow.Commands.IQueryCommand(Of TEntity, TReturn), CancellationToken)
   nameWithType: TableBase<TEntity>.QueryAsync<TReturn>(IQueryCommand<TEntity, TReturn>, CancellationToken)
   nameWithType.vb: TableBase(Of TEntity).QueryAsync(Of TReturn)(IQueryCommand(Of TEntity, TReturn), CancellationToken)
+- uid: Venflow.TableBase`1.QueryBatch(Expression{Func{`0,FormattableString}},System.Boolean)
+  name: QueryBatch(Expression<Func<TEntity, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QueryBatch_Expression_Func__0_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QueryBatch(Expression{Func{`0,FormattableString}},System.Boolean)
+  name.vb: QueryBatch(Expression(Of Func(Of TEntity, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QueryBatch(Expression<Func<TEntity, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QueryBatch(Expression(Of Func(Of TEntity, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QueryBatch(Expression<Func<TEntity, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QueryBatch(Expression(Of Func(Of TEntity, FormattableString)), Boolean)
 - uid: Venflow.TableBase`1.QueryBatch(System.String,IList{NpgsqlParameter})
   name: QueryBatch(String, IList<NpgsqlParameter>)
   href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QueryBatch_System_String_IList_NpgsqlParameter__
@@ -3157,6 +3328,78 @@ references:
   fullName.vb: Venflow.TableBase(Of TEntity).QueryBatch
   nameWithType: TableBase<TEntity>.QueryBatch
   nameWithType.vb: TableBase(Of TEntity).QueryBatch
+- uid: Venflow.TableBase`1.QueryBatch``1(Expression{Func{`0,``0,FormattableString}},System.Boolean)
+  name: QueryBatch<TOne>(Expression<Func<TEntity, TOne, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QueryBatch__1_Expression_Func__0___0_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QueryBatch``1(Expression{Func{`0,``0,FormattableString}},System.Boolean)
+  name.vb: QueryBatch(Of TOne)(Expression(Of Func(Of TEntity, TOne, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QueryBatch<TOne>(Expression<Func<TEntity, TOne, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QueryBatch(Of TOne)(Expression(Of Func(Of TEntity, TOne, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QueryBatch<TOne>(Expression<Func<TEntity, TOne, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QueryBatch(Of TOne)(Expression(Of Func(Of TEntity, TOne, FormattableString)), Boolean)
+- uid: Venflow.TableBase`1.QueryBatch``2(Expression{Func{`0,``0,``1,FormattableString}},System.Boolean)
+  name: QueryBatch<TOne, Two>(Expression<Func<TEntity, TOne, Two, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QueryBatch__2_Expression_Func__0___0___1_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QueryBatch``2(Expression{Func{`0,``0,``1,FormattableString}},System.Boolean)
+  name.vb: QueryBatch(Of TOne, Two)(Expression(Of Func(Of TEntity, TOne, Two, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QueryBatch<TOne, Two>(Expression<Func<TEntity, TOne, Two, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QueryBatch(Of TOne, Two)(Expression(Of Func(Of TEntity, TOne, Two, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QueryBatch<TOne, Two>(Expression<Func<TEntity, TOne, Two, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QueryBatch(Of TOne, Two)(Expression(Of Func(Of TEntity, TOne, Two, FormattableString)), Boolean)
+- uid: Venflow.TableBase`1.QueryBatch``3(Expression{Func{`0,``0,``1,``2,FormattableString}},System.Boolean)
+  name: QueryBatch<TOne, Two, TThree>(Expression<Func<TEntity, TOne, Two, TThree, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QueryBatch__3_Expression_Func__0___0___1___2_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QueryBatch``3(Expression{Func{`0,``0,``1,``2,FormattableString}},System.Boolean)
+  name.vb: QueryBatch(Of TOne, Two, TThree)(Expression(Of Func(Of TEntity, TOne, Two, TThree, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QueryBatch<TOne, Two, TThree>(Expression<Func<TEntity, TOne, Two, TThree, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QueryBatch(Of TOne, Two, TThree)(Expression(Of Func(Of TEntity, TOne, Two, TThree, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QueryBatch<TOne, Two, TThree>(Expression<Func<TEntity, TOne, Two, TThree, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QueryBatch(Of TOne, Two, TThree)(Expression(Of Func(Of TEntity, TOne, Two, TThree, FormattableString)), Boolean)
+- uid: Venflow.TableBase`1.QueryBatch``4(Expression{Func{`0,``0,``1,``2,``3,FormattableString}},System.Boolean)
+  name: QueryBatch<TOne, Two, TThree, TFour>(Expression<Func<TEntity, TOne, Two, TThree, TFour, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QueryBatch__4_Expression_Func__0___0___1___2___3_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QueryBatch``4(Expression{Func{`0,``0,``1,``2,``3,FormattableString}},System.Boolean)
+  name.vb: QueryBatch(Of TOne, Two, TThree, TFour)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QueryBatch<TOne, Two, TThree, TFour>(Expression<Func<TEntity, TOne, Two, TThree, TFour, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QueryBatch(Of TOne, Two, TThree, TFour)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QueryBatch<TOne, Two, TThree, TFour>(Expression<Func<TEntity, TOne, Two, TThree, TFour, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QueryBatch(Of TOne, Two, TThree, TFour)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, FormattableString)), Boolean)
+- uid: Venflow.TableBase`1.QueryBatch``5(Expression{Func{`0,``0,``1,``2,``3,``4,FormattableString}},System.Boolean)
+  name: QueryBatch<TOne, Two, TThree, TFour, TFive>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QueryBatch__5_Expression_Func__0___0___1___2___3___4_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QueryBatch``5(Expression{Func{`0,``0,``1,``2,``3,``4,FormattableString}},System.Boolean)
+  name.vb: QueryBatch(Of TOne, Two, TThree, TFour, TFive)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QueryBatch<TOne, Two, TThree, TFour, TFive>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QueryBatch(Of TOne, Two, TThree, TFour, TFive)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QueryBatch<TOne, Two, TThree, TFour, TFive>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QueryBatch(Of TOne, Two, TThree, TFour, TFive)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, FormattableString)), Boolean)
+- uid: Venflow.TableBase`1.QueryBatch``6(Expression{Func{`0,``0,``1,``2,``3,``4,``5,FormattableString}},System.Boolean)
+  name: QueryBatch<TOne, Two, TThree, TFour, TFive, TSix>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QueryBatch__6_Expression_Func__0___0___1___2___3___4___5_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QueryBatch``6(Expression{Func{`0,``0,``1,``2,``3,``4,``5,FormattableString}},System.Boolean)
+  name.vb: QueryBatch(Of TOne, Two, TThree, TFour, TFive, TSix)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QueryBatch<TOne, Two, TThree, TFour, TFive, TSix>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QueryBatch(Of TOne, Two, TThree, TFour, TFive, TSix)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QueryBatch<TOne, Two, TThree, TFour, TFive, TSix>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QueryBatch(Of TOne, Two, TThree, TFour, TFive, TSix)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, FormattableString)), Boolean)
+- uid: Venflow.TableBase`1.QueryBatch``7(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,FormattableString}},System.Boolean)
+  name: QueryBatch<TOne, Two, TThree, TFour, TFive, TSix, TSeven>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QueryBatch__7_Expression_Func__0___0___1___2___3___4___5___6_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QueryBatch``7(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,FormattableString}},System.Boolean)
+  name.vb: QueryBatch(Of TOne, Two, TThree, TFour, TFive, TSix, TSeven)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QueryBatch<TOne, Two, TThree, TFour, TFive, TSix, TSeven>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QueryBatch(Of TOne, Two, TThree, TFour, TFive, TSix, TSeven)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QueryBatch<TOne, Two, TThree, TFour, TFive, TSix, TSeven>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QueryBatch(Of TOne, Two, TThree, TFour, TFive, TSix, TSeven)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, FormattableString)), Boolean)
+- uid: Venflow.TableBase`1.QueryBatch``8(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,``7,FormattableString}},System.Boolean)
+  name: QueryBatch<TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QueryBatch__8_Expression_Func__0___0___1___2___3___4___5___6___7_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QueryBatch``8(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,``7,FormattableString}},System.Boolean)
+  name.vb: QueryBatch(Of TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QueryBatch<TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QueryBatch(Of TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QueryBatch<TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QueryBatch(Of TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString)), Boolean)
 - uid: Venflow.TableBase`1.QueryInterpolatedBatch(FormattableString,System.Boolean)
   name: QueryInterpolatedBatch(FormattableString, Boolean)
   href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QueryInterpolatedBatch_FormattableString_System_Boolean_
@@ -3207,6 +3450,15 @@ references:
   fullName.vb: Venflow.TableBase(Of TEntity).QueryInterpolatedSingle
   nameWithType: TableBase<TEntity>.QueryInterpolatedSingle
   nameWithType.vb: TableBase(Of TEntity).QueryInterpolatedSingle
+- uid: Venflow.TableBase`1.QuerySingle(Expression{Func{`0,FormattableString}},System.Boolean)
+  name: QuerySingle(Expression<Func<TEntity, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle_Expression_Func__0_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QuerySingle(Expression{Func{`0,FormattableString}},System.Boolean)
+  name.vb: QuerySingle(Expression(Of Func(Of TEntity, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QuerySingle(Expression<Func<TEntity, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QuerySingle(Expression(Of Func(Of TEntity, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QuerySingle(Expression<Func<TEntity, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QuerySingle(Expression(Of Func(Of TEntity, FormattableString)), Boolean)
 - uid: Venflow.TableBase`1.QuerySingle(System.String,IList{NpgsqlParameter})
   name: QuerySingle(String, IList<NpgsqlParameter>)
   href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle_System_String_IList_NpgsqlParameter__
@@ -3251,6 +3503,78 @@ references:
   fullName.vb: Venflow.TableBase(Of TEntity).QuerySingle
   nameWithType: TableBase<TEntity>.QuerySingle
   nameWithType.vb: TableBase(Of TEntity).QuerySingle
+- uid: Venflow.TableBase`1.QuerySingle``1(Expression{Func{`0,``0,FormattableString}},System.Boolean)
+  name: QuerySingle<TOne>(Expression<Func<TEntity, TOne, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle__1_Expression_Func__0___0_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QuerySingle``1(Expression{Func{`0,``0,FormattableString}},System.Boolean)
+  name.vb: QuerySingle(Of TOne)(Expression(Of Func(Of TEntity, TOne, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QuerySingle<TOne>(Expression<Func<TEntity, TOne, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QuerySingle(Of TOne)(Expression(Of Func(Of TEntity, TOne, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QuerySingle<TOne>(Expression<Func<TEntity, TOne, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QuerySingle(Of TOne)(Expression(Of Func(Of TEntity, TOne, FormattableString)), Boolean)
+- uid: Venflow.TableBase`1.QuerySingle``2(Expression{Func{`0,``0,``1,FormattableString}},System.Boolean)
+  name: QuerySingle<TOne, Two>(Expression<Func<TEntity, TOne, Two, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle__2_Expression_Func__0___0___1_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QuerySingle``2(Expression{Func{`0,``0,``1,FormattableString}},System.Boolean)
+  name.vb: QuerySingle(Of TOne, Two)(Expression(Of Func(Of TEntity, TOne, Two, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QuerySingle<TOne, Two>(Expression<Func<TEntity, TOne, Two, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QuerySingle(Of TOne, Two)(Expression(Of Func(Of TEntity, TOne, Two, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QuerySingle<TOne, Two>(Expression<Func<TEntity, TOne, Two, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QuerySingle(Of TOne, Two)(Expression(Of Func(Of TEntity, TOne, Two, FormattableString)), Boolean)
+- uid: Venflow.TableBase`1.QuerySingle``3(Expression{Func{`0,``0,``1,``2,FormattableString}},System.Boolean)
+  name: QuerySingle<TOne, Two, TThree>(Expression<Func<TEntity, TOne, Two, TThree, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle__3_Expression_Func__0___0___1___2_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QuerySingle``3(Expression{Func{`0,``0,``1,``2,FormattableString}},System.Boolean)
+  name.vb: QuerySingle(Of TOne, Two, TThree)(Expression(Of Func(Of TEntity, TOne, Two, TThree, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QuerySingle<TOne, Two, TThree>(Expression<Func<TEntity, TOne, Two, TThree, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QuerySingle(Of TOne, Two, TThree)(Expression(Of Func(Of TEntity, TOne, Two, TThree, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QuerySingle<TOne, Two, TThree>(Expression<Func<TEntity, TOne, Two, TThree, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QuerySingle(Of TOne, Two, TThree)(Expression(Of Func(Of TEntity, TOne, Two, TThree, FormattableString)), Boolean)
+- uid: Venflow.TableBase`1.QuerySingle``4(Expression{Func{`0,``0,``1,``2,``3,FormattableString}},System.Boolean)
+  name: QuerySingle<TOne, Two, TThree, TFour>(Expression<Func<TEntity, TOne, Two, TThree, TFour, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle__4_Expression_Func__0___0___1___2___3_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QuerySingle``4(Expression{Func{`0,``0,``1,``2,``3,FormattableString}},System.Boolean)
+  name.vb: QuerySingle(Of TOne, Two, TThree, TFour)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QuerySingle<TOne, Two, TThree, TFour>(Expression<Func<TEntity, TOne, Two, TThree, TFour, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QuerySingle(Of TOne, Two, TThree, TFour)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QuerySingle<TOne, Two, TThree, TFour>(Expression<Func<TEntity, TOne, Two, TThree, TFour, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QuerySingle(Of TOne, Two, TThree, TFour)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, FormattableString)), Boolean)
+- uid: Venflow.TableBase`1.QuerySingle``5(Expression{Func{`0,``0,``1,``2,``3,``4,FormattableString}},System.Boolean)
+  name: QuerySingle<TOne, Two, TThree, TFour, TFive>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle__5_Expression_Func__0___0___1___2___3___4_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QuerySingle``5(Expression{Func{`0,``0,``1,``2,``3,``4,FormattableString}},System.Boolean)
+  name.vb: QuerySingle(Of TOne, Two, TThree, TFour, TFive)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QuerySingle<TOne, Two, TThree, TFour, TFive>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QuerySingle(Of TOne, Two, TThree, TFour, TFive)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QuerySingle<TOne, Two, TThree, TFour, TFive>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QuerySingle(Of TOne, Two, TThree, TFour, TFive)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, FormattableString)), Boolean)
+- uid: Venflow.TableBase`1.QuerySingle``6(Expression{Func{`0,``0,``1,``2,``3,``4,``5,FormattableString}},System.Boolean)
+  name: QuerySingle<TOne, Two, TThree, TFour, TFive, TSix>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle__6_Expression_Func__0___0___1___2___3___4___5_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QuerySingle``6(Expression{Func{`0,``0,``1,``2,``3,``4,``5,FormattableString}},System.Boolean)
+  name.vb: QuerySingle(Of TOne, Two, TThree, TFour, TFive, TSix)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QuerySingle<TOne, Two, TThree, TFour, TFive, TSix>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QuerySingle(Of TOne, Two, TThree, TFour, TFive, TSix)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QuerySingle<TOne, Two, TThree, TFour, TFive, TSix>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QuerySingle(Of TOne, Two, TThree, TFour, TFive, TSix)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, FormattableString)), Boolean)
+- uid: Venflow.TableBase`1.QuerySingle``7(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,FormattableString}},System.Boolean)
+  name: QuerySingle<TOne, Two, TThree, TFour, TFive, TSix, TSeven>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle__7_Expression_Func__0___0___1___2___3___4___5___6_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QuerySingle``7(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,FormattableString}},System.Boolean)
+  name.vb: QuerySingle(Of TOne, Two, TThree, TFour, TFive, TSix, TSeven)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QuerySingle<TOne, Two, TThree, TFour, TFive, TSix, TSeven>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QuerySingle(Of TOne, Two, TThree, TFour, TFive, TSix, TSeven)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QuerySingle<TOne, Two, TThree, TFour, TFive, TSix, TSeven>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QuerySingle(Of TOne, Two, TThree, TFour, TFive, TSix, TSeven)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, FormattableString)), Boolean)
+- uid: Venflow.TableBase`1.QuerySingle``8(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,``7,FormattableString}},System.Boolean)
+  name: QuerySingle<TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString>>, Boolean)
+  href: api/Venflow.TableBase-1.html#Venflow_TableBase_1_QuerySingle__8_Expression_Func__0___0___1___2___3___4___5___6___7_FormattableString___System_Boolean_
+  commentId: M:Venflow.TableBase`1.QuerySingle``8(Expression{Func{`0,``0,``1,``2,``3,``4,``5,``6,``7,FormattableString}},System.Boolean)
+  name.vb: QuerySingle(Of TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString)), Boolean)
+  fullName: Venflow.TableBase<TEntity>.QuerySingle<TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString>>, System.Boolean)
+  fullName.vb: Venflow.TableBase(Of TEntity).QuerySingle(Of TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString)), System.Boolean)
+  nameWithType: TableBase<TEntity>.QuerySingle<TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight>(Expression<Func<TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString>>, Boolean)
+  nameWithType.vb: TableBase(Of TEntity).QuerySingle(Of TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight)(Expression(Of Func(Of TEntity, TOne, Two, TThree, TFour, TFive, TSix, TSeven, TEight, FormattableString)), Boolean)
 - uid: Venflow.TypeArgumentException
   name: TypeArgumentException
   href: api/Venflow.TypeArgumentException.html
