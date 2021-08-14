@@ -45,7 +45,10 @@ var blogs = await database.Blogs.QueryInterpolatedBatch(sql)
 
 This will query all blogs with the ids `1`, `2` and `3`. The above written SQL statement will be converted to the following:
 
-`"SELECT * FROM ""Blogs"" WHERE ""Id"" IN (1, 2, 3)"` 
+```sql
+-- @p* will contain their repective values e.g. (1, 2, 3)
+SELECT * FROM "Blogs" WHERE "Id" IN (@p1, @p2, @p3)
+```
 
 Of course the numbers usually would be parametrized, however for the sake of this example it contains the values directly.  
 

@@ -6,10 +6,10 @@ title: Query with Venflow
 # Query Data with Venflow
 
 > [!WARNING] 
-> Be carful while dealing with raw SQL and ensure that you never pass user modified SQL to any of the methods. Instead use parameterized  overloads or the `Interpolated` siblings.
+> Be carful while dealing with raw SQL and ensure that you never pass user modified SQL to any of the methods. Instead use parameterized and lambda overloads, or the `Interpolated` siblings.
 
 > [!WARNING] 
-> The primary key always has to be the first column of a given table returned by an SQL Query.
+> The primary key always has to be present and it has to be the first column of any given table returned by a SQL Query.
 
 ## Query data without relations
 
@@ -34,7 +34,7 @@ Also, if you instead only wanted to query the first result, you can use the `Que
 var blog = await database.Blogs.QuerySingle(@"SELECT * FROM ""Blogs"" LIMIT 1").QueryAsync();
 ```
 
-## Query data with relations
+### Query data with relations
 
 In this case we want to get the first 5 blogs with all of their posts. If you want to perform a join, the builder exposes the `JoinWith` and the `ThenWith` method to perform nested joins.
 
@@ -47,13 +47,13 @@ const string sql =
 ) AS ""Blogs"" 
 JOIN ""Posts"" ON ""Posts"".""BlogId"" = ""Blogs"".""Id""";
 
-var query = await database.Blogs.QueryBatch(sql).JoinWith(x => x.Posts).QueryAsync();
+var blogs = await database.Blogs.QueryBatch(sql).JoinWith(x => x.Posts).QueryAsync();
 ```
 
 If you instead only wanted to query the first blog with all of its posts, you can again use the `QuerySingle` API.
 
 ```cs
-var blogs = await database.Blogs.QuerySingle().JoinWith(x => x.Posts).QueryAsync();
+var blog = await database.Blogs.QuerySingle().JoinWith(x => x.Posts).QueryAsync();
 ```
 > [!WARNING] 
 > When joining with multiple relations, ensure that the order of joins configured with Venflow, are equal to the order of joins in the SQL. 
@@ -74,11 +74,54 @@ $@"SELECT * FROM
 ) AS ""Blogs"" 
 JOIN ""Posts"" ON ""Posts"".""BlogId"" = ""Blogs"".""Id""";
 
-var blogs = await database.Blogs.QueryInterpolatedSingle(sql).JoinWith(x => x.Posts).QueryAsync();
+var blog = await database.Blogs.QueryInterpolatedSingle(sql).JoinWith(x => x.Posts).QueryAsync();
 ```
 
 > [!NOTE] 
 > Most of the methods in Venflow which accept raw SQL do have a sibling method called `*Interpolated*`.
+
+## Query with refactorable SQL
+All `Query*` methods do contain an overload with a `Func<T, FormattableString>` parameter. This will not only allow for usual string interpolation like the `Query*Interpolated` methods, but also for refactorable SQL.
+```cs
+var id = 1;
+
+var blog = await Database.Blogs.QuerySingle(b => $"SELECT * FROM {b} WHERE {b.Id} = {id}").QueryAsync();
+```
+
+This would result in the following SQL:
+
+```sql
+-- @p1 will contain the value '1'
+SELECT * FROM "Blogs" WHERE "Blogs"."Id" = @p1 
+```
+
+> [!NOTE] 
+> As the lambda is converted to an expression tree under the hood, try to keep computations as low as possible inside the interpolated string itself e.g. `{}`, in order to reduce the memory footprint as well as to improve the performance. Instead try to compute everything before querying and store these results in locals which then can used inside the interpolated SQL.
+
+### Query relations with refactorable SQL
+
+Querying with relations works quite similar as in the example above.
+
+```cs
+var id = 1;
+
+var blog = await Database.Blogs.QuerySingle<Post>(
+	(b, p) => 
+	$"SELECT * FROM {b} LEFT JOIN {p} ON {p.BlogId} = {b.Id} WHERE {b.Id} = {id}"
+	).JoinWith(x => x.Posts).QueryAsync();
+```
+
+This would result in the following SQL:
+
+```sql
+-- @p1 will contain the value '1'
+SELECT * FROM "Blogs" 
+LEFT JOIN "Posts" ON "Posts"."BlogId" = "Blogs"."Id"
+WHERE "Blogs"."Id" = @p1 
+```
+
+> [!NOTE] 
+> As the lambda is converted to  an expression tree under the hood, try to keep computations as low as possible inside the interpolated string itself e.g. `{}`, in order to reduce the memory footprint as well as to improve the performance. Instead try to compute everything before querying and store these results in locals which then can used inside the interpolated SQL.
 
 ## Query partial data
 
