@@ -94,11 +94,11 @@
 
 <div class="WARNING">
 <h5>Warning</h5>
-<p>Be carful while dealing with raw SQL and ensure that you never pass user modified SQL to any of the methods. Instead use parameterized  overloads or the <code>Interpolated</code> siblings.</p>
+<p>Be carful while dealing with raw SQL and ensure that you never pass user modified SQL to any of the methods. Instead use parameterized and lambda overloads, or the <code>Interpolated</code> siblings.</p>
 </div>
 <div class="WARNING">
 <h5>Warning</h5>
-<p>The primary key always has to be the first column of a given table returned by an SQL Query.</p>
+<p>The primary key always has to be present and it has to be the first column of any given table returned by a SQL Query.</p>
 </div>
 <h2 id="query-data-without-relations">Query data without relations</h2>
 <p>Your <code>Database</code> class exposes <code>Table&lt;T&gt;</code> properties which expose query operations. In Venflow queries are based on hand-written SQL. In this case we query the first 10 blogs in the database.</p>
@@ -115,7 +115,7 @@ var blogs = await query.QueryAsync(); // You can also inline this with the line 
 <p>Also, if you instead only wanted to query the first result, you can use the <code>QuerySingle</code> API.</p>
 <pre><code class="lang-cs">var blog = await database.Blogs.QuerySingle(@&quot;SELECT * FROM &quot;&quot;Blogs&quot;&quot; LIMIT 1&quot;).QueryAsync();
 </code></pre>
-<h2 id="query-data-with-relations">Query data with relations</h2>
+<h3 id="query-data-with-relations">Query data with relations</h3>
 <p>In this case we want to get the first 5 blogs with all of their posts. If you want to perform a join, the builder exposes the <code>JoinWith</code> and the <code>ThenWith</code> method to perform nested joins.</p>
 <pre><code class="lang-cs">const string sql = 
 @&quot;SELECT * FROM 
@@ -125,10 +125,10 @@ var blogs = await query.QueryAsync(); // You can also inline this with the line 
 ) AS &quot;&quot;Blogs&quot;&quot; 
 JOIN &quot;&quot;Posts&quot;&quot; ON &quot;&quot;Posts&quot;&quot;.&quot;&quot;BlogId&quot;&quot; = &quot;&quot;Blogs&quot;&quot;.&quot;&quot;Id&quot;&quot;&quot;;
 
-var query = await database.Blogs.QueryBatch(sql).JoinWith(x =&gt; x.Posts).QueryAsync();
+var blogs = await database.Blogs.QueryBatch(sql).JoinWith(x =&gt; x.Posts).QueryAsync();
 </code></pre>
 <p>If you instead only wanted to query the first blog with all of its posts, you can again use the <code>QuerySingle</code> API.</p>
-<pre><code class="lang-cs">var blogs = await database.Blogs.QuerySingle().JoinWith(x =&gt; x.Posts).QueryAsync();
+<pre><code class="lang-cs">var blog = await database.Blogs.QuerySingle().JoinWith(x =&gt; x.Posts).QueryAsync();
 </code></pre>
 <div class="WARNING">
 <h5>Warning</h5>
@@ -146,11 +146,44 @@ $@&quot;SELECT * FROM
 ) AS &quot;&quot;Blogs&quot;&quot; 
 JOIN &quot;&quot;Posts&quot;&quot; ON &quot;&quot;Posts&quot;&quot;.&quot;&quot;BlogId&quot;&quot; = &quot;&quot;Blogs&quot;&quot;.&quot;&quot;Id&quot;&quot;&quot;;
 
-var blogs = await database.Blogs.QueryInterpolatedSingle(sql).JoinWith(x =&gt; x.Posts).QueryAsync();
+var blog = await database.Blogs.QueryInterpolatedSingle(sql).JoinWith(x =&gt; x.Posts).QueryAsync();
 </code></pre>
 <div class="NOTE">
 <h5>Note</h5>
 <p>Most of the methods in Venflow which accept raw SQL do have a sibling method called <code>*Interpolated*</code>.</p>
+</div>
+<h2 id="query-with-refactorable-sql">Query with refactorable SQL</h2>
+<p>All <code>Query*</code> methods do contain an overload with a <code>Func&lt;T, FormattableString&gt;</code> parameter. This will not only allow for usual string interpolation like the <code>Query*Interpolated</code> methods, but also for refactorable SQL.</p>
+<pre><code class="lang-cs">var id = 1;
+
+var blog = await Database.Blogs.QuerySingle(b =&gt; $&quot;SELECT * FROM {b} WHERE {b.Id} = {id}&quot;).QueryAsync();
+</code></pre>
+<p>This would result in the following SQL:</p>
+<pre><code class="lang-sql">-- @p1 will contain the value '1'
+SELECT * FROM &quot;Blogs&quot; WHERE &quot;Blogs&quot;.&quot;Id&quot; = @p1 
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>As the lambda is converted to an expression tree under the hood, try to keep computations as low as possible inside the interpolated string itself e.g. <code>{}</code>, in order to reduce the memory footprint as well as to improve the performance. Instead try to compute everything before querying and store these results in locals which then can used inside the interpolated SQL.</p>
+</div>
+<h3 id="query-relations-with-refactorable-sql">Query relations with refactorable SQL</h3>
+<p>Querying with relations works quite similar as in the example above.</p>
+<pre><code class="lang-cs">var id = 1;
+
+var blog = await Database.Blogs.QuerySingle&lt;Post&gt;(
+	(b, p) =&gt; 
+	$&quot;SELECT * FROM {b} LEFT JOIN {p} ON {p.BlogId} = {b.Id} WHERE {b.Id} = {id}&quot;
+	).JoinWith(x =&gt; x.Posts).QueryAsync();
+</code></pre>
+<p>This would result in the following SQL:</p>
+<pre><code class="lang-sql">-- @p1 will contain the value '1'
+SELECT * FROM &quot;Blogs&quot; 
+LEFT JOIN &quot;Posts&quot; ON &quot;Posts&quot;.&quot;BlogId&quot; = &quot;Blogs&quot;.&quot;Id&quot;
+WHERE &quot;Blogs&quot;.&quot;Id&quot; = @p1 
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>As the lambda is converted to  an expression tree under the hood, try to keep computations as low as possible inside the interpolated string itself e.g. <code>{}</code>, in order to reduce the memory footprint as well as to improve the performance. Instead try to compute everything before querying and store these results in locals which then can used inside the interpolated SQL.</p>
 </div>
 <h2 id="query-partial-data">Query partial data</h2>
 <p>The beautiful thing about Venflow is that you can only query for partial data, which means that a query doesn't necessarily  has to return all column. There are only two thing you need to be aware of:</p>
