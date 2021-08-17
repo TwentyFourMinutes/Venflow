@@ -47,7 +47,7 @@ namespace Venflow
             }
 
             if (!_typeHandlers.TryGetValue(val.GetType(), out var handler))
-                return new NpgsqlParameter(name, val);
+                return new NpgsqlParameter<T>(name, val);
 
             return handler.Handle(name, val);
         }
