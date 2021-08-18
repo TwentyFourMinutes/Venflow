@@ -51,10 +51,10 @@ Lets just directly hop into the composite numbers of each tested ORM.
 <!--Benchmark Start-->
 | ORM Name | Composite Score\* | Mean Score\* | Allocation Score\* |
 | :- | :-: | :-: | :-: |
-| #1 [Dapper](https://github.com/StackExchange/Dapper) | 2,917 | 2,813 | 0,104 |
-| #2 [Venflow](https://github.com/TwentyFourMinutes/Venflow) | 4,567 | 3,851 | 0,716 |
-| #3 [RepoDb](https://github.com/mikependon/RepoDb) | 50,295 | 48,043 | 2,252 |
-| #4 [EFCore](https://github.com/dotnet/efcore) | 109,965 | 91,581 | 18,385 |
+| #1 [Venflow](https://github.com/TwentyFourMinutes/Venflow) | 4.499 | 3.774 | 0.725 |
+| #2 [Dapper](https://github.com/StackExchange/Dapper) | 26.679 | 26.444 | 0.235 |
+| #3 [EFCore](https://github.com/dotnet/efcore) | 113.011 | 94.434 | 18.578 |
+| #4 [RepoDb](https://github.com/mikependon/RepoDb) | 29756.14 | 29553.104 | 203.036 |
 <!--Benchmark End-->
 \* Lower is considered to be better </br>
 \*\* Do have missing benchmark entries for specific benchmark groups and therefor might have either better or worse scores.
