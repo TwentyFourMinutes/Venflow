@@ -45,9 +45,9 @@ namespace Venflow.Dynamic.Materializer
                 {
                     materializer = (materializerEntry.Value as Func<NpgsqlDataReader, CancellationToken, Task<TReturn>>)!;
 
-                    var expirationEntry = materializerEntry.ExpirationNode.Value;
+                    var expirationEntry = materializerEntry.ExpirationNode;
 
-                    expirationEntry.TimeStamp = timeStamp + VenflowConfiguration.DynamicCacheExpirationTime;
+                    expirationEntry.Value.TimeStamp = timeStamp + VenflowConfiguration.DynamicCacheExpirationTime;
 
                     _primaryExpirations.Remove(expirationEntry);
                     _primaryExpirations.AddLast(expirationEntry);
