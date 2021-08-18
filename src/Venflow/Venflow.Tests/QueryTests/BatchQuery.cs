@@ -49,7 +49,6 @@ namespace Venflow.Tests.QueryTests
             Assert.Empty(queriedPeople);
         }
 
-
         [Fact]
         public async Task QueryWithNoRelationAsync()
         {

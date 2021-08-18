@@ -44,7 +44,7 @@ jobs:
 
     - name: Clear old benchmarks
       working-directory: ./benchmarks
-      run: rm -r *
+      run: rm -rf *
 
     - name: Run Query Benchmarks
       working-directory: ./src/Venflow/Venflow.Benchmarks
