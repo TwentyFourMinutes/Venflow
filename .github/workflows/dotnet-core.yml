@@ -17,21 +17,21 @@ jobs:
     - uses: actions/checkout@v2
       with:
         persist-credentials: false
-        
+
     - name: Setup .NET 6.0
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0
-        
+        dotnet-version: 6.0.*
+
     - name: Setup .NET 5.0
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.201
+        dotnet-version: 5.0.*
 
     - name: Setup .NET 3.1
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.407
+        dotnet-version: 3.1.*
 
     - name: Install dependencies
       run: dotnet restore
@@ -48,7 +48,7 @@ jobs:
         postgresql db: 'venflow_tests'
         postgresql user: 'venflow_tests'
         postgresql password: 'venflow_tests'
-        
+
     - name: Execute Tests (.Net 6)
       working-directory: ./src/Venflow/Venflow.Tests
       run: 'dotnet test -c Release --no-restore --no-build --verbosity normal -f net6.0 /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=coverage-reports/ /p:Exclude="[Venflow.Shared]*"'

@@ -13,7 +13,7 @@ jobs:
       - name: Setup .NET 6.0
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 6.0
+          dotnet-version: 6.0.*
 
       - name: build Venflow.Generators
         working-directory: ./src/Venflow/Venflow.Generators
