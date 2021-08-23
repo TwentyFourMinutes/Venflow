@@ -16,8 +16,8 @@ namespace Venflow
     /// <typeparam name="TEntity">The entity which represents a table in the Database.</typeparam>
     public class TableBase<TEntity> where TEntity : class, new()
     {
-        private protected Database Database;
-        private protected readonly Entity<TEntity> Configuration;
+        private protected Database Database { get; }
+        private protected Entity<TEntity> Configuration { get; }
 
         internal TableBase(Database database, Entity<TEntity> configuration)
         {

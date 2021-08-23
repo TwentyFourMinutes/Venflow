@@ -21,9 +21,9 @@ namespace Venflow.Commands
         private QueryGenerationOptions _queryGenerationOptions;
         private bool _disposeCommand;
         private bool? _shouldForceLog;
-        private string _rawSql;
 
         private RelationBuilderValues? _relationBuilderValues;
+        private readonly string _rawSql;
         private readonly bool _singleResult;
         private readonly NpgsqlCommand _command;
         private readonly Database _database;
@@ -243,7 +243,7 @@ namespace Venflow.Commands
 
                         (argumentsFunc, expressionOptions, parameterType) = InterpolatedSqlExpressionConverter.GetConvertedDelegate(instanceArguments);
 
-                        sql = GetFinalizedSqlString(((method.Arguments[0] as ConstantExpression).Value as string), staticArguments);
+                        sql = GetFinalizedSqlString((method.Arguments[0] as ConstantExpression)!.Value as string, staticArguments);
 
                         _entityConfiguration.MaterializerFactory.InterpolatedSqlMaterializerCache.Add(cacheKey, new SqlExpression(sql, argumentsFunc, parameterType, expressionOptions));
                     }
@@ -262,11 +262,11 @@ namespace Venflow.Commands
 
             if (expressionOptions == SqlExpressionOptions.None)
             {
-                arguments = (argumentsFunc as Func<object[]>).Invoke();
+                arguments = (argumentsFunc as Func<object[]>)!.Invoke();
             }
             else
             {
-                arguments = (argumentsFunc as Func<object, object[]>).Invoke(InterpolatedSqlExpressionConverter.ExtractInstance(_interpolatedSqlExpression, parameterType));
+                arguments = (argumentsFunc as Func<object, object[]>)!.Invoke(InterpolatedSqlExpressionConverter.ExtractInstance(_interpolatedSqlExpression, parameterType));
             }
 
             var argumentsSpan = arguments.AsSpan();
