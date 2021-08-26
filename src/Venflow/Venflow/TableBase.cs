@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
@@ -58,7 +58,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QuerySingle(sql);
 
         /// <summary>
-        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -67,7 +67,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QuerySingleBase(sql);
 
         /// <summary>
-        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -76,7 +76,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QuerySingleBase(sql);
 
         /// <summary>
-        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -85,7 +85,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QuerySingleBase(sql);
 
         /// <summary>
-        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -94,7 +94,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QuerySingleBase(sql);
 
         /// <summary>
-        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -103,7 +103,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QuerySingleBase(sql);
 
         /// <summary>
-        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -112,7 +112,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QuerySingleBase(sql);
 
         /// <summary>
-        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -121,7 +121,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QuerySingleBase(sql);
 
         /// <summary>
-        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -130,7 +130,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QuerySingleBase(sql);
 
         /// <summary>
-        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -169,7 +169,7 @@ namespace Venflow
            => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QuerySingle(sql, parameters);
 
         /// <summary>
-        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -178,13 +178,13 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QueryInterpolatedSingle(sql);
 
         /// <summary>
-        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+        /// Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A <see cref="FormattableSqlStringBuilder"/> instance containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
         public IBaseQueryRelationBuilder<TEntity, TEntity, TEntity> QueryInterpolatedSingle(FormattableSqlStringBuilder sql, bool disposeCommand = true)
-            => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QuerySingle(sql.Build(), sql.Parameters);
+            => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QuerySingle(sql.ToString(), sql.Parameters);
 
         /// <summary>
         /// Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does not support string interpolation!</strong> If you need to pass parameters with the query, either use <see cref="QuerySingle(string, NpgsqlParameter[])"/> or <see cref="QueryInterpolatedSingle(FormattableString, bool)"/>.
@@ -196,7 +196,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QueryBatch(sql);
 
         /// <summary>
-        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -205,7 +205,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QueryBatchBase(sql);
 
         /// <summary>
-        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -214,7 +214,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QueryBatchBase(sql);
 
         /// <summary>
-        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -223,7 +223,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QueryBatchBase(sql);
 
         /// <summary>
-        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -232,7 +232,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QueryBatchBase(sql);
 
         /// <summary>
-        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -241,7 +241,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QueryBatchBase(sql);
 
         /// <summary>
-        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -250,7 +250,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QueryBatchBase(sql);
 
         /// <summary>
-        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -259,7 +259,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QueryBatchBase(sql);
 
         /// <summary>
-        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -268,7 +268,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QueryBatchBase(sql);
 
         /// <summary>
-        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+        ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -307,7 +307,7 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QueryBatch(sql, parameters);
 
         /// <summary>
-        /// Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+        /// Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. <strong>You should only add parameters trough string interpolation.</strong></param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
@@ -316,13 +316,13 @@ namespace Venflow
             => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QueryInterpolatedBatch(sql);
 
         /// <summary>
-        /// Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+        /// Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
         /// </summary>
         /// <param name="sql">A <see cref="FormattableSqlStringBuilder"/> instance containing the SQL statement.</param>
         /// <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="NpgsqlCommand"/> after the command got executed once.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
         public IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryInterpolatedBatch(FormattableSqlStringBuilder sql, bool disposeCommand = true)
-            => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QueryBatch(sql.Build(), sql.Parameters);
+            => new VenflowCommandBuilder<TEntity>(Database, Configuration, disposeCommand).QueryBatch(sql.ToString(), sql.Parameters);
 
         #endregion
 
