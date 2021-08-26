@@ -8,7 +8,7 @@ updates:
       - "TwentyFourMinutes"
   
   - package-ecosystem: "nuget"
-    directory: "/"
+    directory: "/src/Venflow/Venflow/"
     schedule:
       interval: "daily"
     assignees:
