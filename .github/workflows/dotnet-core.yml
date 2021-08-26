@@ -74,9 +74,9 @@ jobs:
     - name: Deploy Documentation to Github Pages
       uses: JamesIves/github-pages-deploy-action@4.1.5
       with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: dev
-        FOLDER: docs
-        TARGET_FOLDER: docs
-        PRESERVE: true
-        CLEAN: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: dev
+        folder: docs
+        target-folder: docs
+        commit-message: "Updated docs"
+        clean: true
