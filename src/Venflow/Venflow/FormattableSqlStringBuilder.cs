@@ -187,7 +187,8 @@ namespace Venflow
             }
         }
 
-        internal string Build()
+        /// <inheritdoc />
+        public override string ToString()
         {
             if (_sql is null || _sql.Length == 0)
                 throw new InvalidOperationException($"You have to populate the {nameof(FormattableSqlStringBuilder)} instance before you can inject it into a query method.");

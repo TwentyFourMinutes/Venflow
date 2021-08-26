@@ -19,7 +19,7 @@ namespace Venflow.Tests
 
             Assert.Equal(@"This @p0 an interpolated @p1
 .It parameterizes the @p2.This are very nice numbers:
-@p3@p4, @p5", stringBuilder.Build());
+@p3@p4, @p5", stringBuilder.ToString());
 
             Assert.True(stringBuilder.Parameters.Select(x => (x.ParameterName, x.Value))
                                     .SequenceEqual(new (string, object)[] {
