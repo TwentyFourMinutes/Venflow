@@ -8,7 +8,7 @@ namespace Venflow.Tests
     {
         internal static void ClearMaterializerCache<TEntity>(this Table<TEntity> table) where TEntity : class, new()
         {
-            var entity = (Entity<TEntity>)typeof(Table<TEntity>).GetField("Configuration", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(table);
+            var entity = (Entity<TEntity>)typeof(Table<TEntity>).GetProperty("Configuration", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetGetMethod(true).Invoke(table, null);
 
             var factory = entity.MaterializerFactory;
 
