@@ -2420,6 +2420,13 @@ namespace Venflow.Dynamic.Inserter
 
         private void WritePropertyAssigner(ILGenerator ilGenerator, EntityColumn column)
         {
+            var underlyingType = Nullable.GetUnderlyingType(column.PropertyInfo.PropertyType);
+
+            if (underlyingType is not null)
+            {
+                ilGenerator.Emit(OpCodes.Newobj, column.PropertyInfo.PropertyType.GetConstructor(new[] { underlyingType }));
+            }
+
             if (column.IsReadOnly)
                 ilGenerator.Emit(OpCodes.Stfld, column.PropertyInfo.GetBackingField());
             else
@@ -2872,8 +2879,16 @@ namespace Venflow.Dynamic.Inserter
 
                 _ilGenerator.MarkLabel(afterSplitLabel);
             }
+
             private void WritePropertyAssigner(ILGenerator ilGenerator, EntityColumn column)
             {
+                var underlyingType = Nullable.GetUnderlyingType(column.PropertyInfo.PropertyType);
+
+                if (underlyingType is not null)
+                {
+                    ilGenerator.Emit(OpCodes.Newobj, column.PropertyInfo.PropertyType.GetConstructor(new[] { underlyingType }));
+                }
+
                 if (column.IsReadOnly)
                     ilGenerator.Emit(OpCodes.Stfld, column.PropertyInfo.GetBackingField());
                 else
