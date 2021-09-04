@@ -165,6 +165,7 @@ namespace {namespaceText}
         private readonly {underlyingKeyFullName} _value;
 
         {underlyingKeyFullName} IKey<{typeArgumentName}, {underlyingKeyFullName}>.Value {{ get => _value; }}
+        object? IKey.BoxedValue {{ get => _value; }}
 
         /// <summary>
         /// Instantiates a new <see cref=""{baseStructXmlName}""/> instance withe the provided value.

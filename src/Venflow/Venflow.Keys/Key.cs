@@ -18,6 +18,7 @@ namespace Venflow
         private readonly TKey _value;
 
         TKey IKey<TEntity, TKey>.Value { get => _value; }
+        object? IKey.BoxedValue { get => _value; }
 
         /// <summary>
         /// Instantiates a new <see cref="Key{T, TKey}"/> instance withe the provided value.
@@ -103,6 +104,6 @@ namespace Venflow
     [EditorBrowsable(EditorBrowsableState.Never)]
     public interface IKey
     {
-
+        object? BoxedValue { get; }
     }
 }
