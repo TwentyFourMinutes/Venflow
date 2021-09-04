@@ -270,7 +270,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Commands.IVenflowCommandBuilder-1.html",
-          "hash": "OPBZEo5d0hJQbMWFNWJqwg=="
+          "hash": "rahmWgyrdBIfp11zF3uvOA=="
         }
       },
       "is_incremental": false,
@@ -554,6 +554,18 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html",
+          "hash": "l7TiZD00acJmQp9a5NSvVw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder-2.yml",
       "output": {
         ".html": {
@@ -642,7 +654,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Modeling.Definitions.Builder.html",
-          "hash": "sxX/WH+Ro0RVBMSipE/M6Q=="
+          "hash": "gieY7yoTAFkynbv7XQG13Q=="
         }
       },
       "is_incremental": false,
@@ -654,7 +666,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Modeling.Definitions.EntityConfiguration-1.html",
-          "hash": "Trgrwsac8/MYCdPl9vgiYQ=="
+          "hash": "hpbwHkV1rOf/vDyL4UUReg=="
         }
       },
       "is_incremental": false,
@@ -666,7 +678,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Modeling.Definitions.html",
-          "hash": "5hlXzKsj52vsOARovS0fcg=="
+          "hash": "y9/f+t9XuR6VB7wj06W2Pw=="
         }
       },
       "is_incremental": false,
@@ -798,7 +810,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "VVpOXdcTaXqVAsWBn9Bwig=="
+          "hash": "MwfeH/fH1b77+l7S0bq07A=="
         }
       },
       "is_incremental": false,
@@ -1143,7 +1155,7 @@
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 64,
+          "total_file_count": 65,
           "skipped_file_count": 0
         },
         "ResourceDocumentProcessor": {

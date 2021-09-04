@@ -2580,6 +2580,113 @@ references:
   commentId: N:Venflow.Modeling.Definitions.Builder
   fullName: Venflow.Modeling.Definitions.Builder
   nameWithType: Venflow.Modeling.Definitions.Builder
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1
+  name: IEntityBuilder<TEntity>
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html
+  commentId: T:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1
+  name.vb: IEntityBuilder(Of TEntity)
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity)
+  nameWithType: IEntityBuilder<TEntity>
+  nameWithType.vb: IEntityBuilder(Of TEntity)
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.Ignore*
+  name: Ignore
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_Ignore_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.Ignore
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.Ignore
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).Ignore
+  nameWithType: IEntityBuilder<TEntity>.Ignore
+  nameWithType.vb: IEntityBuilder(Of TEntity).Ignore
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.Ignore``1(Expression{Func{`0,``0}})
+  name: Ignore<TTarget>(Expression<Func<TEntity, TTarget>>)
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_Ignore__1_Expression_Func__0___0___
+  commentId: M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.Ignore``1(Expression{Func{`0,``0}})
+  name.vb: Ignore(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)))
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.Ignore<TTarget>(Expression<Func<TEntity, TTarget>>)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).Ignore(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)))
+  nameWithType: IEntityBuilder<TEntity>.Ignore<TTarget>(Expression<Func<TEntity, TTarget>>)
+  nameWithType.vb: IEntityBuilder(Of TEntity).Ignore(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)))
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn*
+  name: MapColumn
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.MapColumn
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapColumn
+  nameWithType: IEntityBuilder<TEntity>.MapColumn
+  nameWithType.vb: IEntityBuilder(Of TEntity).MapColumn
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(Expression{Func{`0,``0}},System.String)
+  name: MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, String)
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn__1_Expression_Func__0___0___System_String_
+  commentId: M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(Expression{Func{`0,``0}},System.String)
+  name.vb: MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), String)
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, System.String)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), System.String)
+  nameWithType: IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, String)
+  nameWithType.vb: IEntityBuilder(Of TEntity).MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), String)
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapId*
+  name: MapId
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapId_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapId
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.MapId
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapId
+  nameWithType: IEntityBuilder<TEntity>.MapId
+  nameWithType.vb: IEntityBuilder(Of TEntity).MapId
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapId``1(Expression{Func{`0,``0}},DatabaseGeneratedOption)
+  name: MapId<TTarget>(Expression<Func<TEntity, TTarget>>, DatabaseGeneratedOption)
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapId__1_Expression_Func__0___0___DatabaseGeneratedOption_
+  commentId: M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapId``1(Expression{Func{`0,``0}},DatabaseGeneratedOption)
+  name.vb: MapId(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), DatabaseGeneratedOption)
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.MapId<TTarget>(Expression<Func<TEntity, TTarget>>, DatabaseGeneratedOption)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapId(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), DatabaseGeneratedOption)
+  nameWithType: IEntityBuilder<TEntity>.MapId<TTarget>(Expression<Func<TEntity, TTarget>>, DatabaseGeneratedOption)
+  nameWithType.vb: IEntityBuilder(Of TEntity).MapId(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), DatabaseGeneratedOption)
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapPostgresEnum*
+  name: MapPostgresEnum
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapPostgresEnum_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapPostgresEnum
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.MapPostgresEnum
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapPostgresEnum
+  nameWithType: IEntityBuilder<TEntity>.MapPostgresEnum
+  nameWithType.vb: IEntityBuilder(Of TEntity).MapPostgresEnum
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapPostgresEnum``1(Expression{Func{`0,``0}},System.Nullable{System.String},System.Nullable{INpgsqlNameTranslator})
+  name: MapPostgresEnum<TTarget>(Expression<Func<TEntity, TTarget>>, Nullable<String>, Nullable<INpgsqlNameTranslator>)
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapPostgresEnum__1_Expression_Func__0___0___System_Nullable_System_String__System_Nullable_INpgsqlNameTranslator__
+  commentId: M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapPostgresEnum``1(Expression{Func{`0,``0}},System.Nullable{System.String},System.Nullable{INpgsqlNameTranslator})
+  name.vb: MapPostgresEnum(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), Nullable(Of String), Nullable(Of INpgsqlNameTranslator))
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.MapPostgresEnum<TTarget>(Expression<Func<TEntity, TTarget>>, System.Nullable<System.String>, System.Nullable<INpgsqlNameTranslator>)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapPostgresEnum(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), System.Nullable(Of System.String), System.Nullable(Of INpgsqlNameTranslator))
+  nameWithType: IEntityBuilder<TEntity>.MapPostgresEnum<TTarget>(Expression<Func<TEntity, TTarget>>, Nullable<String>, Nullable<INpgsqlNameTranslator>)
+  nameWithType.vb: IEntityBuilder(Of TEntity).MapPostgresEnum(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), Nullable(Of String), Nullable(Of INpgsqlNameTranslator))
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapPostgresEnum``1(Expression{Func{`0,System.Nullable{``0}}},System.Nullable{System.String},System.Nullable{INpgsqlNameTranslator})
+  name: MapPostgresEnum<TTarget>(Expression<Func<TEntity, Nullable<TTarget>>>, Nullable<String>, Nullable<INpgsqlNameTranslator>)
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapPostgresEnum__1_Expression_Func__0_System_Nullable___0____System_Nullable_System_String__System_Nullable_INpgsqlNameTranslator__
+  commentId: M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapPostgresEnum``1(Expression{Func{`0,System.Nullable{``0}}},System.Nullable{System.String},System.Nullable{INpgsqlNameTranslator})
+  name.vb: MapPostgresEnum(Of TTarget)(Expression(Of Func(Of TEntity, Nullable(Of TTarget))), Nullable(Of String), Nullable(Of INpgsqlNameTranslator))
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.MapPostgresEnum<TTarget>(Expression<Func<TEntity, System.Nullable<TTarget>>>, System.Nullable<System.String>, System.Nullable<INpgsqlNameTranslator>)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapPostgresEnum(Of TTarget)(Expression(Of Func(Of TEntity, System.Nullable(Of TTarget))), System.Nullable(Of System.String), System.Nullable(Of INpgsqlNameTranslator))
+  nameWithType: IEntityBuilder<TEntity>.MapPostgresEnum<TTarget>(Expression<Func<TEntity, Nullable<TTarget>>>, Nullable<String>, Nullable<INpgsqlNameTranslator>)
+  nameWithType.vb: IEntityBuilder(Of TEntity).MapPostgresEnum(Of TTarget)(Expression(Of Func(Of TEntity, Nullable(Of TTarget))), Nullable(Of String), Nullable(Of INpgsqlNameTranslator))
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapToTable(System.String)
+  name: MapToTable(String)
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapToTable_System_String_
+  commentId: M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapToTable(System.String)
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.MapToTable(System.String)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapToTable(System.String)
+  nameWithType: IEntityBuilder<TEntity>.MapToTable(String)
+  nameWithType.vb: IEntityBuilder(Of TEntity).MapToTable(String)
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapToTable*
+  name: MapToTable
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapToTable_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapToTable
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.MapToTable
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapToTable
+  nameWithType: IEntityBuilder<TEntity>.MapToTable
+  nameWithType.vb: IEntityBuilder(Of TEntity).MapToTable
 - uid: Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder`2
   name: IForeignKeyRelationBuilder<TEntity, TRelation>
   href: api/Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder-2.html
@@ -2803,13 +2910,13 @@ references:
   fullName.vb: Venflow.Modeling.Definitions.EntityConfiguration(Of TEntity)
   nameWithType: EntityConfiguration<TEntity>
   nameWithType.vb: EntityConfiguration(Of TEntity)
-- uid: Venflow.Modeling.Definitions.EntityConfiguration`1.Configure(IEntityBuilder{`0})
+- uid: Venflow.Modeling.Definitions.EntityConfiguration`1.Configure(Venflow.Modeling.Definitions.Builder.IEntityBuilder{`0})
   name: Configure(IEntityBuilder<TEntity>)
-  href: api/Venflow.Modeling.Definitions.EntityConfiguration-1.html#Venflow_Modeling_Definitions_EntityConfiguration_1_Configure_IEntityBuilder__0__
-  commentId: M:Venflow.Modeling.Definitions.EntityConfiguration`1.Configure(IEntityBuilder{`0})
+  href: api/Venflow.Modeling.Definitions.EntityConfiguration-1.html#Venflow_Modeling_Definitions_EntityConfiguration_1_Configure_Venflow_Modeling_Definitions_Builder_IEntityBuilder__0__
+  commentId: M:Venflow.Modeling.Definitions.EntityConfiguration`1.Configure(Venflow.Modeling.Definitions.Builder.IEntityBuilder{`0})
   name.vb: Configure(IEntityBuilder(Of TEntity))
-  fullName: Venflow.Modeling.Definitions.EntityConfiguration<TEntity>.Configure(IEntityBuilder<TEntity>)
-  fullName.vb: Venflow.Modeling.Definitions.EntityConfiguration(Of TEntity).Configure(IEntityBuilder(Of TEntity))
+  fullName: Venflow.Modeling.Definitions.EntityConfiguration<TEntity>.Configure(Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>)
+  fullName.vb: Venflow.Modeling.Definitions.EntityConfiguration(Of TEntity).Configure(Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity))
   nameWithType: EntityConfiguration<TEntity>.Configure(IEntityBuilder<TEntity>)
   nameWithType.vb: EntityConfiguration(Of TEntity).Configure(IEntityBuilder(Of TEntity))
 - uid: Venflow.Modeling.Definitions.EntityConfiguration`1.Configure*
