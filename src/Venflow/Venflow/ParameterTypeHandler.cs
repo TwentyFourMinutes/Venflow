@@ -28,9 +28,13 @@ namespace Venflow
 
         internal static NpgsqlParameter HandleParameter(string name, object? val)
         {
-            if (val is null)
+            switch (val)
             {
-                return new NpgsqlParameter(name, DBNull.Value);
+                case null:
+                    return new NpgsqlParameter(name, DBNull.Value);
+                case IKey key:
+                    val = key.BoxedValue;
+                    break;
             }
 
             if (!_typeHandlers.TryGetValue(val.GetType(), out var handler))
@@ -41,12 +45,23 @@ namespace Venflow
 
         internal static NpgsqlParameter HandleParameter<T>(string name, T? val)
         {
-            if (val is null)
+            IParameterTypeHandler? handler;
+
+            switch (val)
             {
-                return new NpgsqlParameter(name, DBNull.Value);
+                case null:
+                    return new NpgsqlParameter<DBNull>(name, DBNull.Value);
+
+                case IKey key:
+                    var tempVal = key.BoxedValue;
+
+                    if (!_typeHandlers.TryGetValue(tempVal.GetType(), out handler))
+                        return new NpgsqlParameter(name, tempVal);
+
+                    return handler.Handle(name, tempVal);
             }
 
-            if (!_typeHandlers.TryGetValue(val.GetType(), out var handler))
+            if (!_typeHandlers.TryGetValue(val.GetType(), out handler))
                 return new NpgsqlParameter<T>(name, val);
 
             return handler.Handle(name, val);
@@ -54,9 +69,13 @@ namespace Venflow
 
         internal static NpgsqlParameter HandleParameter(string name, Type type, object? val)
         {
-            if (val is null)
+            switch (val)
             {
-                return new NpgsqlParameter(name, DBNull.Value);
+                case null:
+                    return new NpgsqlParameter(name, DBNull.Value);
+                case IKey key:
+                    val = key.BoxedValue;
+                    break;
             }
 
             if (!_typeHandlers.TryGetValue(type, out var handler))

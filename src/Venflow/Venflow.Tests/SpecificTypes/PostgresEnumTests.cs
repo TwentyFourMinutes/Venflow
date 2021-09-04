@@ -7,6 +7,40 @@ namespace Venflow.Tests.SpecificTypes
     public class PostgresEnumTests : TestBase
     {
         [Fact]
+        public async Task Query()
+        {
+            var dummy = new UncommonType
+            {
+                PostgreEnum = PostgreEnum.Foo
+            };
+
+            Assert.Equal(1, await Database.UncommonTypes.InsertAsync(dummy));
+
+            dummy = await Database.UncommonTypes.QueryInterpolatedSingle($@"SELECT * FROM ""UncommonTypes"" WHERE ""PostgreEnum"" = {dummy.PostgreEnum}").Build().QueryAsync();
+
+            Assert.False(dummy.NPostgreEnum.HasValue);
+
+            await Database.UncommonTypes.DeleteAsync(dummy);
+        }
+
+        [Fact]
+        public async Task QueryNullableValue()
+        {
+            var dummy = new UncommonType
+            {
+                NPostgreEnum = PostgreEnum.Foo
+            };
+
+            Assert.Equal(1, await Database.UncommonTypes.InsertAsync(dummy));
+
+            dummy = await Database.UncommonTypes.QueryInterpolatedSingle($@"SELECT * FROM ""UncommonTypes"" WHERE ""NPostgreEnum"" = {dummy.NPostgreEnum}").Build().QueryAsync();
+
+            Assert.Equal(PostgreEnum.Foo, dummy.NPostgreEnum);
+
+            await Database.UncommonTypes.DeleteAsync(dummy);
+        }
+
+        [Fact]
         public async Task Insert()
         {
             var dummy = new UncommonType

@@ -41,6 +41,44 @@ namespace Venflow.Tests.SpecificTypes
         }
 
         [Fact]
+        public async Task Query()
+        {
+            var guid = Guid.NewGuid();
+
+            var dummy = new UncommonType
+            {
+                GuidKey = guid
+            };
+
+            Assert.Equal(1, await Database.UncommonTypes.InsertAsync(dummy));
+
+            dummy = await Database.UncommonTypes.QueryInterpolatedSingle($@"SELECT * FROM ""UncommonTypes"" WHERE ""GuidKey"" = {dummy.GuidKey}").Build().QueryAsync();
+
+            Assert.Equal(guid, (Guid)dummy.GuidKey);
+
+            await Database.UncommonTypes.DeleteAsync(dummy);
+        }
+
+        [Fact]
+        public async Task QueryNullableValue()
+        {
+            var guid = Guid.NewGuid();
+
+            var dummy = new UncommonType
+            {
+                NGuidKey = guid
+            };
+
+            Assert.Equal(1, await Database.UncommonTypes.InsertAsync(dummy));
+
+            dummy = await Database.UncommonTypes.QueryInterpolatedSingle($@"SELECT * FROM ""UncommonTypes"" WHERE ""NGuidKey"" = {dummy.NGuidKey}").Build().QueryAsync();
+
+            Assert.Equal(guid, (Guid)dummy.NGuidKey);
+
+            await Database.UncommonTypes.DeleteAsync(dummy);
+        }
+
+        [Fact]
         public async Task Insert()
         {
             var guid = Guid.NewGuid();
