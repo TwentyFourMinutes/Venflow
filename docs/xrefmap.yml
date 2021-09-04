@@ -2144,6 +2144,19 @@ references:
   commentId: T:Venflow.IKey
   fullName: Venflow.IKey
   nameWithType: IKey
+- uid: Venflow.IKey.BoxedValue
+  name: BoxedValue
+  href: api/Venflow.IKey.html#Venflow_IKey_BoxedValue
+  commentId: P:Venflow.IKey.BoxedValue
+  fullName: Venflow.IKey.BoxedValue
+  nameWithType: IKey.BoxedValue
+- uid: Venflow.IKey.BoxedValue*
+  name: BoxedValue
+  href: api/Venflow.IKey.html#Venflow_IKey_BoxedValue_
+  commentId: Overload:Venflow.IKey.BoxedValue
+  isSpec: "True"
+  fullName: Venflow.IKey.BoxedValue
+  nameWithType: IKey.BoxedValue
 - uid: Venflow.IKey`2
   name: IKey<TEntity, TKey>
   href: api/Venflow.IKey-2.html
@@ -2415,6 +2428,25 @@ references:
   fullName.vb: Venflow.Key(Of TEntity, TKey).ToString
   nameWithType: Key<TEntity, TKey>.ToString
   nameWithType.vb: Key(Of TEntity, TKey).ToString
+- uid: Venflow.Key`2.Venflow#IKey#BoxedValue
+  name: IKey.BoxedValue
+  href: api/Venflow.Key-2.html#Venflow_Key_2_Venflow_IKey_BoxedValue
+  commentId: P:Venflow.Key`2.Venflow#IKey#BoxedValue
+  name.vb: Venflow.IKey.BoxedValue
+  fullName: Venflow.Key<TEntity, TKey>.Venflow.IKey.BoxedValue
+  fullName.vb: Venflow.Key(Of TEntity, TKey).Venflow.IKey.BoxedValue
+  nameWithType: Key<TEntity, TKey>.IKey.BoxedValue
+  nameWithType.vb: Key(Of TEntity, TKey).Venflow.IKey.BoxedValue
+- uid: Venflow.Key`2.Venflow#IKey#BoxedValue*
+  name: IKey.BoxedValue
+  href: api/Venflow.Key-2.html#Venflow_Key_2_Venflow_IKey_BoxedValue_
+  commentId: Overload:Venflow.Key`2.Venflow#IKey#BoxedValue
+  isSpec: "True"
+  name.vb: Venflow.IKey.BoxedValue
+  fullName: Venflow.Key<TEntity, TKey>.Venflow.IKey.BoxedValue
+  fullName.vb: Venflow.Key(Of TEntity, TKey).Venflow.IKey.BoxedValue
+  nameWithType: Key<TEntity, TKey>.IKey.BoxedValue
+  nameWithType.vb: Key(Of TEntity, TKey).Venflow.IKey.BoxedValue
 - uid: Venflow.Key`2.Venflow#IKey{TEntity,TKey}#Value
   name: IKey<TEntity, TKey>.Value
   href: api/Venflow.Key-2.html#Venflow_Key_2_Venflow_IKey_TEntity_TKey__Value
