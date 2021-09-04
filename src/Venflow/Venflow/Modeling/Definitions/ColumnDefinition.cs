@@ -1,18 +1,18 @@
-﻿using System;
-using Npgsql;
+﻿using System.Reflection;
+using Venflow.Enums;
 
 namespace Venflow.Modeling.Definitions
 {
-    internal class ColumnDefinition<TEntity> where TEntity : class, new()
+    internal class ColumnDefinition
     {
+        internal PropertyInfo Property { get; }
         internal string Name { get; set; }
-        internal bool IsReadOnly { get; set; }
+        internal ColumnOptions Options { get; set; }
 
-        internal Action<TEntity, NpgsqlDataReader>? ValueWriter { get; set; }
-
-        internal ColumnDefinition(string name)
+        internal ColumnDefinition(PropertyInfo property)
         {
-            Name = name;
+            Property = property;
+            Name = property.Name;
         }
     }
 }

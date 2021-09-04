@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Npgsql;
+using Venflow.Enums;
 
 namespace Venflow.Modeling
 {
@@ -8,7 +9,7 @@ namespace Venflow.Modeling
     {
         internal Func<TEntity, string, NpgsqlParameter> ValueRetriever { get; }
 
-        internal EntityColumn(PropertyInfo propertyInfo, string columnName, Func<TEntity, string, NpgsqlParameter> valueRetriever, bool isNullableReferenceType, bool isReadOnly) : base(propertyInfo, columnName, isNullableReferenceType, isReadOnly)
+        internal EntityColumn(PropertyInfo propertyInfo, string columnName, Func<TEntity, string, NpgsqlParameter> valueRetriever, ColumnOptions options) : base(propertyInfo, columnName, options)
         {
             ValueRetriever = valueRetriever;
         }
@@ -20,16 +21,13 @@ namespace Venflow.Modeling
 
         internal PropertyInfo PropertyInfo { get; }
 
-        internal bool IsNullableReferenceType { get; }
+        internal ColumnOptions Options { get; }
 
-        internal bool IsReadOnly { get; }
-
-        protected EntityColumn(PropertyInfo propertyInfo, string columnName, bool isNullableReferenceType, bool isReadOnly)
+        protected EntityColumn(PropertyInfo propertyInfo, string columnName, ColumnOptions options)
         {
             PropertyInfo = propertyInfo;
             ColumnName = columnName;
-            IsNullableReferenceType = isNullableReferenceType;
-            IsReadOnly = isReadOnly;
+            Options = options;
         }
     }
 }

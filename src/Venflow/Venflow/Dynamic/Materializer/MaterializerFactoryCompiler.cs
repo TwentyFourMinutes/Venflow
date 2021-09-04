@@ -1651,7 +1651,7 @@ namespace Venflow.Dynamic.Materializer
 
         private void WriteColumnMaterializer(ILGenerator ilGenerator, EntityColumn column)
         {
-            if (column.IsNullableReferenceType)
+            if (column.Options.HasFlag(ColumnOptions.NullableReferenceType))
             {
                 var valueRetriever = typeof(NpgsqlDataReaderExtensions).GetMethod("GetValueOrDefault", BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(column.PropertyInfo.PropertyType);
 
@@ -1661,7 +1661,7 @@ namespace Venflow.Dynamic.Materializer
             {
                 var valueRetriever = _dataReaderType.GetMethod("GetFieldValue", BindingFlags.Instance | BindingFlags.Public);
 
-                if (column is not IPostgreEnumEntityColumn)
+                if (!column.Options.HasFlag(ColumnOptions.PostgreEnum))
                 {
                     var underlyingType = Nullable.GetUnderlyingType(column.PropertyInfo.PropertyType);
 
@@ -1824,7 +1824,7 @@ namespace Venflow.Dynamic.Materializer
 
         private void WritePropertyAssigner(ILGenerator ilGenerator, EntityColumn column)
         {
-            if (column.IsReadOnly)
+            if (column.Options.HasFlag(ColumnOptions.ReadOnly))
                 ilGenerator.Emit(OpCodes.Stfld, column.PropertyInfo.GetBackingField());
             else
                 ilGenerator.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod(true));

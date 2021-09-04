@@ -24,12 +24,11 @@ namespace Venflow.Modeling.Definitions.Builder
 
         internal ChangeTrackerFactory<TEntity>? ChangeTrackerFactory { get; private set; }
         internal string TableName { get; private set; }
-        internal IDictionary<string, ColumnDefinition<TEntity>> ColumnDefinitions { get; }
+        internal IDictionary<string, ColumnDefinition> ColumnDefinitions { get; }
 
         internal bool EntityInNullableContext { get; }
         internal bool DefaultPropNullability { get; }
 
-        private readonly HashSet<string> _ignoredColumns;
         private readonly ValueRetrieverFactory<TEntity> _valueRetrieverFactory;
 
         internal EntityBuilder(string tableName)
@@ -37,8 +36,7 @@ namespace Venflow.Modeling.Definitions.Builder
             TableName = tableName;
 
             Type = typeof(TEntity);
-            ColumnDefinitions = new Dictionary<string, ColumnDefinition<TEntity>>();
-            _ignoredColumns = new HashSet<string>();
+            ColumnDefinitions = new Dictionary<string, ColumnDefinition>();
             _valueRetrieverFactory = new ValueRetrieverFactory<TEntity>(Type);
             IsRegularEntity = true;
 
@@ -56,6 +54,8 @@ namespace Venflow.Modeling.Definitions.Builder
                 DefaultPropNullability = true;
                 EntityInNullableContext = false;
             }
+
+            DiscorverColumns();
         }
 
         IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapToTable(string tableName)
@@ -72,18 +72,14 @@ namespace Venflow.Modeling.Definitions.Builder
 
         IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string columnName)
         {
+            if (string.IsNullOrWhiteSpace(columnName))
+            {
+                throw new ArgumentException($"The column name '{columnName}' is invalid.", nameof(columnName));
+            }
+
             var property = propertySelector.ValidatePropertySelector();
 
-            if (ColumnDefinitions.TryGetValue(property.Name, out var definition))
-            {
-                definition.Name = columnName;
-            }
-            else
-            {
-                definition = new ColumnDefinition<TEntity>(columnName);
-
-                ColumnDefinitions.Add(property.Name, definition);
-            }
+            ColumnDefinitions[property.Name].Name = columnName;
 
             return this;
         }
@@ -92,7 +88,7 @@ namespace Venflow.Modeling.Definitions.Builder
         {
             var property = propertySelector.ValidatePropertySelector();
 
-            _ignoredColumns.Add(property.Name);
+            IgnoreProperty(property.Name);
 
             return this;
         }
@@ -101,21 +97,18 @@ namespace Venflow.Modeling.Definitions.Builder
         {
             var property = propertySelector.ValidatePropertySelector();
 
-            var isServerSideGenerated = option != DatabaseGeneratedOption.None;
+            var definition = ColumnDefinitions[property.Name];
 
-            var columnDefinition = new PrimaryColumnDefinition<TEntity>(property.Name)
+            definition.Options |= ColumnOptions.PrimaryKey;
+
+            if (option != DatabaseGeneratedOption.None)
             {
-                IsServerSideGenerated = isServerSideGenerated
-            };
-
-            if (ColumnDefinitions.TryGetValue(property.Name, out var definition))
-            {
-                columnDefinition.Name = definition.Name;
-
-                ColumnDefinitions.Remove(property.Name);
+                definition.Options |= ColumnOptions.IsGenerated;
             }
-
-            ColumnDefinitions.Add(property.Name, columnDefinition);
+            else
+            {
+                definition.Options &= ~ColumnOptions.IsGenerated;
+            }
 
             return this;
         }
@@ -178,9 +171,7 @@ namespace Venflow.Modeling.Definitions.Builder
                 PostgreSQLEnums.Add(name);
             }
 
-            var columnDefinition = new PostgreEnumColumnDefenition<TEntity>(property.Name);
-
-            ColumnDefinitions.Add(property.Name, columnDefinition);
+            ColumnDefinitions[property.Name].Options |= ColumnOptions.PostgreEnum;
         }
 
         INotRequiredSingleRightRelationBuilder<TEntity, TRelation> ILeftRelationBuilder<TEntity>.HasMany<TRelation>(Expression<Func<TEntity, IList<TRelation>>> navigationProperty) where TRelation : class
@@ -224,206 +215,153 @@ namespace Venflow.Modeling.Definitions.Builder
         }
 
         internal override void IgnoreProperty(string propertyName)
-            => _ignoredColumns.Add(propertyName);
+            => ColumnDefinitions.Remove(propertyName);
 
         internal EntityColumnCollection<TEntity> Build()
         {
-            var properties = Type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-            if (properties is null || properties.Length == 0)
-            {
-                throw new TypeArgumentException($"The entity '{Type.Name}' doesn't contain any columns/properties. An entity needs at least one column/property.");
-            }
-
-            var propertiesSpan = properties.AsSpan();
-
-            var filteredProperties = new List<PropertyInfo>();
-            PropertyInfo? annotedPrimaryKey = default;
-
-            var notMappedAttributeType = typeof(NotMappedAttribute);
-
-            Type? primaryKeyAttributeType = default;
-
-            if (IsRegularEntity)
-            {
-                primaryKeyAttributeType = typeof(KeyAttribute);
-            }
-
-            for (int i = propertiesSpan.Length - 1; i >= 0; i--)
-            {
-                var property = propertiesSpan[i];
-
-                var hasPropertySetter = property.GetSetMethod() is not null;
-                var hasPropertyBackingField = property.GetBackingField() is not null;
-
-                if (((property.CanWrite && property.SetMethod!.IsPublic) ||
-                    (!hasPropertySetter && hasPropertyBackingField)) &&
-                    !_ignoredColumns.Contains(property.Name) &&
-                    !Attribute.IsDefined(property, notMappedAttributeType))
-                {
-                    if (IsRegularEntity &&
-                        (Attribute.IsDefined(property, primaryKeyAttributeType) ||
-                        property.Name == "Id"))
-                    {
-                        annotedPrimaryKey = property;
-                    }
-
-                    filteredProperties.Add(property);
-                }
-            }
-
-            var filteredPropertiesSpan = filteredProperties.AsSpan();
-
-            var columns = new List<EntityColumn<TEntity>>();
+            var columns = new LinkedList<EntityColumn<TEntity>>();
             var nameToColumn = new Dictionary<string, EntityColumn<TEntity>>();
             var changeTrackingColumns = new Dictionary<int, EntityColumn<TEntity>>();
-            PrimaryEntityColumn<TEntity>? primaryColumn = null;
 
-            // Important column specifications
+            LinkedListNode<EntityColumn<TEntity>>? firstRegularNode = default;
+            LinkedListNode<EntityColumn<TEntity>>? firstReadOnlyNode = default;
+
+            var columnIndex = 0;
             var regularColumnsOffset = 0;
-            var lastNonReadOnlyColumnsIndex = 1;
             var readOnlyCount = 0;
+            var lastRegularColumnsIndex = 0;
 
-            for (int i = filteredPropertiesSpan.Length - 1, columnIndex = 0; i >= 0; i--, columnIndex++)
+            foreach (var columnDefinition in ColumnDefinitions.Values)
             {
-                var property = filteredPropertiesSpan[i];
+                var property = columnDefinition.Property;
+                var isPropertyTypeNullableReferenceType = property.IsNullableReferenceType(EntityInNullableContext, DefaultPropNullability);
 
-                var hasCustomDefinition = false;
-
-                bool isPropertyTypeNullableReferenceType = property.IsNullableReferenceType(EntityInNullableContext, DefaultPropNullability);
+                if (isPropertyTypeNullableReferenceType)
+                {
+                    columnDefinition.Options |= ColumnOptions.NullableReferenceType;
+                }
 
                 var setMethod = property.GetSetMethod();
                 var isReadOnly = setMethod is null;
-                var expectsChangeTracking = !isReadOnly && setMethod.IsVirtual && !setMethod.IsFinal;
 
-                // Handle custom columns
-
-                ColumnDefinition<TEntity>? definition = default;
-
-                if (IsRegularEntity && ColumnDefinitions.TryGetValue(property.Name, out definition))
+                if (isReadOnly)
                 {
-                    switch (definition)
-                    {
-                        case PrimaryColumnDefinition<TEntity> primaryDefintion:
-
-                            if (EntityInNullableContext && isPropertyTypeNullableReferenceType)
-                            {
-                                throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
-                            }
-
-                            if (isReadOnly &&
-                                !primaryDefintion.IsServerSideGenerated)
-                            {
-                                throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as read-only. This is not allowed on non database generated primary key.");
-                            }
-
-                            primaryColumn = new PrimaryEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, false), primaryDefintion.IsServerSideGenerated, isReadOnly);
-
-                            columns.Insert(0, primaryColumn);
-
-                            regularColumnsOffset++;
-
-                            if (expectsChangeTracking)
-                            {
-                                changeTrackingColumns.Add(columnIndex, primaryColumn);
-                            }
-
-                            nameToColumn.Add(definition.Name, primaryColumn);
-
-                            hasCustomDefinition = true;
-
-                            break;
-                        case PostgreEnumColumnDefenition<TEntity> enumDefinition:
-
-                            var enumColumn = new PostgreEnumEntityColumn<TEntity>(property, definition.Name, _valueRetrieverFactory.GenerateRetriever(property, true), isReadOnly);
-
-                            columns.Add(enumColumn);
-
-                            setMethod = property.GetSetMethod();
-
-                            if (expectsChangeTracking)
-                            {
-                                changeTrackingColumns.Add(columnIndex, enumColumn);
-                            }
-
-                            if (!isReadOnly)
-                                lastNonReadOnlyColumnsIndex = columnIndex;
-                            else
-                                readOnlyCount++;
-
-                            nameToColumn.Add(definition.Name, enumColumn);
-
-                            hasCustomDefinition = true;
-                            break;
-                    }
-                }
-                else if (IsRegularEntity &&
-                         annotedPrimaryKey == property)
-                {
-                    if (EntityInNullableContext &&
-                        isPropertyTypeNullableReferenceType)
-                    {
-                        throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
-                    }
-
-                    primaryColumn = new PrimaryEntityColumn<TEntity>(property, annotedPrimaryKey.Name, _valueRetrieverFactory.GenerateRetriever(property, false), true, isReadOnly);
-
-                    columns.Insert(0, primaryColumn);
-
-                    regularColumnsOffset++;
-
-                    if (expectsChangeTracking)
-                    {
-                        changeTrackingColumns.Add(columnIndex, primaryColumn);
-                    }
-
-                    nameToColumn.Add(annotedPrimaryKey.Name, primaryColumn);
-
-                    hasCustomDefinition = true;
+                    columnDefinition.Options |= ColumnOptions.ReadOnly;
                 }
 
-                if (!hasCustomDefinition)
+                var expectsChangeTracking = IsRegularEntity && !isReadOnly && setMethod.IsVirtual && !setMethod.IsFinal;
+
+                string? columnName = null;
+
+                if (IsRegularEntity)
                 {
-                    string columnName;
-
-                    if (IsRegularEntity &&
-                        definition is not null)
+                    if ((columnDefinition.Options & ColumnOptions.PrimaryKey) != 0)
                     {
-                        columnName = definition.Name;
+                        if (EntityInNullableContext &&
+                            isPropertyTypeNullableReferenceType)
+                        {
+                            throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as null-able. This is not allowed, a primary key always has to be not-null.");
+                        }
 
+                        if (isReadOnly &&
+                            (columnDefinition.Options & ColumnOptions.IsGenerated) == 0)
+                        {
+                            throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as read-only. This is not allowed on non database generated primary key.");
+                        }
+
+                        regularColumnsOffset++;
+                    }
+                    else
+                    {
                         var relation = Relations.FirstOrDefault(x => x.ForeignKeyColumnName == property.Name);
 
                         if (relation is not null)
                         {
+                            columnName = columnDefinition.Name;
+
                             relation.ForeignKeyColumnName = columnName;
+                        }
+                    }
+                }
+
+                if (columnName is null)
+                {
+                    columnName = columnDefinition.Name;
+                }
+
+                var column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(property, (columnDefinition.Options & ColumnOptions.PostgreEnum) != 0), columnDefinition.Options);
+
+                if (expectsChangeTracking)
+                {
+                    changeTrackingColumns.Add(columnIndex, column);
+                }
+
+                nameToColumn.Add(columnName, column);
+
+                if ((columnDefinition.Options & ColumnOptions.PrimaryKey) != 0)
+                {
+                    if (firstRegularNode is null)
+                    {
+                        if (firstReadOnlyNode is null)
+                        {
+                            columns.AddLast(column);
+                        }
+                        else
+                        {
+                            columns.AddBefore(firstReadOnlyNode, column);
                         }
                     }
                     else
                     {
-                        columnName = property.Name;
+                        columns.AddBefore(firstRegularNode, column);
                     }
-
-                    var column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(property, false), isPropertyTypeNullableReferenceType, isReadOnly);
-
-                    columns.Add(column);
-
-                    if (IsRegularEntity &&
-                        expectsChangeTracking)
-                    {
-                        changeTrackingColumns.Add(columnIndex, column);
-                    }
-
-                    if (!isReadOnly)
-                        lastNonReadOnlyColumnsIndex = columnIndex;
-                    else
-                        readOnlyCount++;
-
-                    nameToColumn.Add(columnName, column);
                 }
+                else if ((columnDefinition.Options & ColumnOptions.ReadOnly) != 0)
+                {
+                    if (firstReadOnlyNode is null)
+                    {
+                        firstReadOnlyNode = columns.AddLast(column);
+                    }
+                    else
+                    {
+                        columns.AddLast(column);
+                    }
+
+                    readOnlyCount++;
+                }
+                else
+                {
+                    if (firstRegularNode is null)
+                    {
+                        if (firstReadOnlyNode is null)
+                        {
+                            firstRegularNode = columns.AddLast(column);
+                        }
+                        else
+                        {
+                            firstRegularNode = columns.AddBefore(firstReadOnlyNode, column);
+                        }
+                    }
+                    else
+                    {
+                        if (firstReadOnlyNode is null)
+                        {
+                            columns.AddLast(column);
+                        }
+                        else
+                        {
+                            columns.AddBefore(firstReadOnlyNode, column);
+                        }
+                    }
+                }
+
+                columnIndex++;
             }
 
-            if (primaryColumn is null
-                && IsRegularEntity)
+            lastRegularColumnsIndex = columns.Count - 1 - readOnlyCount;
+
+            if (regularColumnsOffset == 0 &&
+                IsRegularEntity)
             {
                 throw new InvalidOperationException($"The EntityBuilder couldn't find the primary key on the entity '{Type.Name}', it isn't named 'Id', the KeyAttribute wasn't set nor was any property in the configuration defined as the primary key.");
             }
@@ -438,7 +376,7 @@ namespace Venflow.Modeling.Definitions.Builder
                 throw new InvalidOperationException($"The entity '{Type.Name}' doesn't contain any non-primary/non-database generated columns/mapped properties. An entity needs at least one non-primary/non-database generated column/mapped property.");
             }
 
-            if (lastNonReadOnlyColumnsIndex == columns.Count + 1)
+            if (readOnlyCount == columns.Count + regularColumnsOffset)
             {
                 throw new InvalidOperationException($"The entity '{Type.Name}' doesn't contain any non-read-only properties. An entity needs at least one non-read-only property.");
             }
@@ -453,7 +391,51 @@ namespace Venflow.Modeling.Definitions.Builder
                 ChangeTrackerFactory.GenerateEntityProxy(changeTrackingColumns);
             }
 
-            return new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn, regularColumnsOffset, lastNonReadOnlyColumnsIndex, readOnlyCount, changeTrackingColumns.Count);
+            return new EntityColumnCollection<TEntity>(columns.ToArray(), nameToColumn, regularColumnsOffset, lastRegularColumnsIndex, readOnlyCount, changeTrackingColumns.Count);
+        }
+
+        private void DiscorverColumns()
+        {
+            var properties = Type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            if (properties is null || properties.Length == 0)
+            {
+                throw new TypeArgumentException($"The entity '{Type.Name}' doesn't contain any columns/properties. An entity needs at least one column/property.");
+            }
+
+            var notMappedAttributeType = typeof(NotMappedAttribute);
+            Type? primaryKeyAttributeType = default;
+
+            if (IsRegularEntity)
+            {
+                primaryKeyAttributeType = typeof(KeyAttribute);
+            }
+
+            var propertiesSpan = properties.AsSpan();
+
+            for (int i = 0; i < propertiesSpan.Length; i++)
+            {
+                var property = propertiesSpan[i];
+
+                var hasPropertySetter = property.GetSetMethod() is not null;
+                var hasPropertyBackingField = property.GetBackingField() is not null;
+
+                if (((property.CanWrite && property.SetMethod!.IsPublic) ||
+                    (!hasPropertySetter && hasPropertyBackingField)) &&
+                    !Attribute.IsDefined(property, notMappedAttributeType))
+                {
+                    var column = new ColumnDefinition(property);
+
+                    if (IsRegularEntity &&
+                        (Attribute.IsDefined(property, primaryKeyAttributeType) ||
+                        property.Name == "Id"))
+                    {
+                        column.Options |= ColumnOptions.PrimaryKey | ColumnOptions.IsGenerated;
+                    }
+
+                    ColumnDefinitions.Add(property.Name, column);
+                }
+            }
         }
     }
 

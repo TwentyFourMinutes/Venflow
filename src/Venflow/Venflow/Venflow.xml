@@ -716,7 +716,13 @@
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.Linq.Expressions.Expression{System.Func{`0,System.FormattableString}})" -->
+        <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.Linq.Expressions.Expression{System.Func{`0,System.FormattableString}})">
+            <summary>
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+            </summary>
+            <param name="sql">A string containing the SQL statement.</param>
+            <returns>A Fluent API Builder for a query command.</returns>
+        </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``1(System.Linq.Expressions.Expression{System.Func{`0,``0,System.FormattableString}})">
             <summary>
              Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
@@ -1305,6 +1311,9 @@
             </summary>
             <typeparam name="T">The type of the parameter value.</typeparam>
             <param name="value">The parameter value.</param>
+        </member>
+        <member name="M:Venflow.FormattableSqlStringBuilder.ToString">
+            <inheritdoc />
         </member>
         <member name="T:Venflow.InvalidEntityRelationException">
             <summary>
@@ -1911,7 +1920,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QuerySingle(System.Linq.Expressions.Expression{System.Func{`0,System.FormattableString}},System.Boolean)">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -1919,7 +1928,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QuerySingle``1(System.Linq.Expressions.Expression{System.Func{`0,``0,System.FormattableString}},System.Boolean)">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -1927,7 +1936,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QuerySingle``2(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,System.FormattableString}},System.Boolean)">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -1935,7 +1944,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QuerySingle``3(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,System.FormattableString}},System.Boolean)">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -1943,7 +1952,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QuerySingle``4(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,System.FormattableString}},System.Boolean)">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -1951,7 +1960,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QuerySingle``5(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,System.FormattableString}},System.Boolean)">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -1959,7 +1968,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QuerySingle``6(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,``5,System.FormattableString}},System.Boolean)">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -1967,7 +1976,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QuerySingle``7(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,``5,``6,System.FormattableString}},System.Boolean)">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -1975,7 +1984,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QuerySingle``8(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,``5,``6,``7,System.FormattableString}},System.Boolean)">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -2010,7 +2019,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QueryInterpolatedSingle(System.FormattableString,System.Boolean)">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -2018,7 +2027,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QueryInterpolatedSingle(Venflow.FormattableSqlStringBuilder,System.Boolean)">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A <see cref="T:Venflow.FormattableSqlStringBuilder"/> instance containing the SQL statement.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -2034,7 +2043,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QueryBatch(System.Linq.Expressions.Expression{System.Func{`0,System.FormattableString}},System.Boolean)">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -2042,7 +2051,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QueryBatch``1(System.Linq.Expressions.Expression{System.Func{`0,``0,System.FormattableString}},System.Boolean)">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -2050,7 +2059,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QueryBatch``2(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,System.FormattableString}},System.Boolean)">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -2058,7 +2067,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QueryBatch``3(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,System.FormattableString}},System.Boolean)">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -2066,7 +2075,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QueryBatch``4(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,System.FormattableString}},System.Boolean)">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -2074,7 +2083,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QueryBatch``5(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,System.FormattableString}},System.Boolean)">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -2082,7 +2091,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QueryBatch``6(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,``5,System.FormattableString}},System.Boolean)">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -2090,7 +2099,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QueryBatch``7(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,``5,``6,System.FormattableString}},System.Boolean)">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -2098,7 +2107,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QueryBatch``8(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,``5,``6,``7,System.FormattableString}},System.Boolean)">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -2133,7 +2142,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QueryInterpolatedBatch(System.FormattableString,System.Boolean)">
             <summary>
-            Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. <strong>You should only add parameters trough string interpolation.</strong></param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>
@@ -2141,7 +2150,7 @@
         </member>
         <member name="M:Venflow.TableBase`1.QueryInterpolatedBatch(Venflow.FormattableSqlStringBuilder,System.Boolean)">
             <summary>
-            Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A <see cref="T:Venflow.FormattableSqlStringBuilder"/> instance containing the SQL statement.</param>
             <param name="disposeCommand">Indicates whether or not to dispose the underlying <see cref="T:Npgsql.NpgsqlCommand"/> after the command got executed once.</param>

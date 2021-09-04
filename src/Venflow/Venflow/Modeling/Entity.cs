@@ -2,13 +2,14 @@ using System;
 using Venflow.Dynamic.Inserter;
 using Venflow.Dynamic.Materializer;
 using Venflow.Dynamic.Proxies;
+using Venflow.Enums;
 
 namespace Venflow.Modeling
 {
     internal class Entity<TEntity> : Entity where TEntity : class, new()
     {
         internal EntityColumnCollection<TEntity> Columns { get; }
-        internal PrimaryEntityColumn<TEntity>? PrimaryColumn { get; }
+        internal EntityColumn<TEntity>? PrimaryColumn { get; }
 
         internal Func<ChangeTracker<TEntity>, TEntity>? ChangeTrackerFactory { get; }
         internal Func<ChangeTracker<TEntity>, TEntity, TEntity>? ChangeTrackerApplier { get; }
@@ -16,9 +17,9 @@ namespace Venflow.Modeling
         internal MaterializerFactory<TEntity> MaterializerFactory { get; }
         internal InsertionFactory<TEntity> InsertionFactory { get; }
 
-        internal override bool HasDbGeneratedPrimaryKey => PrimaryColumn.IsServerSideGenerated;
+        internal override bool HasDbGeneratedPrimaryKey => PrimaryColumn is not null && (PrimaryColumn.Options & ColumnOptions.IsGenerated) != 0;
 
-        internal Entity(Type entityType, Type? proxyEntityType, string tableName, bool isInNullableContext, bool defaultPropNullability, EntityColumnCollection<TEntity> columns, PrimaryEntityColumn<TEntity>? primaryColumn, string columnListString, string nonPrimaryColumnListString, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier) : base(entityType, proxyEntityType, tableName, isInNullableContext, defaultPropNullability, columnListString, nonPrimaryColumnListString)
+        internal Entity(Type entityType, Type? proxyEntityType, string tableName, bool isInNullableContext, bool defaultPropNullability, EntityColumnCollection<TEntity> columns, EntityColumn<TEntity>? primaryColumn, string columnListString, string nonPrimaryColumnListString, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier) : base(entityType, proxyEntityType, tableName, isInNullableContext, defaultPropNullability, columnListString, nonPrimaryColumnListString)
         {
             ChangeTrackerFactory = changeTrackerFactory;
             ChangeTrackerApplier = changeTrackerApplier;
@@ -92,8 +93,8 @@ namespace Venflow.Modeling
         internal override int GetRegularColumnOffset()
             => Columns.RegularColumnsOffset;
 
-        internal override int GetLastNonReadOnlyColumnsIndex()
-            => Columns.LastNonReadOnlyColumnsIndex;
+        internal override int GetLastRegularColumnsIndex()
+            => Columns.LastRegularColumnsIndex;
     }
 
     internal abstract class Entity
@@ -131,7 +132,7 @@ namespace Venflow.Modeling
         internal abstract int GetChangeTrackingCount();
         internal abstract int GetReadOnlyCount();
         internal abstract int GetRegularColumnOffset();
-        internal abstract int GetLastNonReadOnlyColumnsIndex();
+        internal abstract int GetLastRegularColumnsIndex();
         internal abstract EntityColumn GetColumn(int index);
         internal abstract EntityColumn GetColumn(string columnName);
         internal abstract bool TryGetColumn(string columnName, out EntityColumn? entityColumn);

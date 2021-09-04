@@ -57,9 +57,7 @@ namespace Venflow.Dynamic.Inserter
 
             bool isSingleInsert = _insertType == _rootEntity.EntityType;
 
-            var primaryColumn = (IPrimaryEntityColumn)_rootEntity.GetPrimaryColumn();
-
-            if (primaryColumn.IsServerSideGenerated ||
+            if (_rootEntity.HasDbGeneratedPrimaryKey ||
                 !isSingleInsert ||
                 entities.Length > 1 ||
                 shouldLog)
@@ -269,7 +267,7 @@ namespace Venflow.Dynamic.Inserter
             var totalColumnCount = _rootEntity.GetColumnCount();
             var columnCount = totalColumnCount - _rootEntity.GetReadOnlyCount();
             var columnOffset = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0;
-            var lastNonReadOnlyIndex = _rootEntity.GetLastNonReadOnlyColumnsIndex();
+            var lastNonReadOnlyIndex = _rootEntity.GetLastRegularColumnsIndex();
 
             stringBuilder.Append("INSERT INTO ")
                          .Append(_rootEntity.TableName)
@@ -356,7 +354,7 @@ namespace Venflow.Dynamic.Inserter
             {
                 var column = _rootEntity.GetColumn(k);
 
-                if (column.IsReadOnly)
+                if (column.Options.HasFlag(ColumnOptions.ReadOnly))
                     continue;
 
                 // Write placeholder to the command builder => (@Name(n)),
@@ -781,7 +779,7 @@ namespace Venflow.Dynamic.Inserter
                 var totalColumnCount = entity.GetColumnCount();
                 var columnCount = totalColumnCount - entity.GetReadOnlyCount();
                 var columnOffset = skipPrimaryKey ? entity.GetRegularColumnOffset() : 0;
-                var lastNonReadOnlyIndex = entity.GetLastNonReadOnlyColumnsIndex();
+                var lastNonReadOnlyIndex = entity.GetLastRegularColumnsIndex();
 
                 stringBuilder.Append("INSERT INTO ")
                              .Append(entity.TableName)
@@ -892,7 +890,7 @@ namespace Venflow.Dynamic.Inserter
                 {
                     var column = entity.GetColumn(k);
 
-                    if (column.IsReadOnly)
+                    if (column.Options.HasFlag(ColumnOptions.ReadOnly))
                         continue;
 
                     // Write placeholder to the command builder => (@Name(n)),
@@ -1378,13 +1376,13 @@ namespace Venflow.Dynamic.Inserter
                       .Append(") VALUES (");
 
             var columnOffset = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0;
-            var lastNonReadOnlyIndex = _rootEntity.GetLastNonReadOnlyColumnsIndex();
+            var lastNonReadOnlyIndex = _rootEntity.GetLastRegularColumnsIndex();
 
             for (int columnIndex = columnOffset; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
             {
                 var column = _rootEntity.GetColumn(columnIndex);
 
-                if (column.IsReadOnly)
+                if (column.Options.HasFlag(ColumnOptions.ReadOnly))
                     continue;
 
                 sqlBuilder.Append('@')
@@ -1417,7 +1415,7 @@ namespace Venflow.Dynamic.Inserter
             {
                 var column = _rootEntity.GetColumn(columnIndex);
 
-                if (column.IsReadOnly)
+                if (column.Options.HasFlag(ColumnOptions.ReadOnly))
                     continue;
 
                 _moveNextMethodIL.Emit(OpCodes.Dup);
@@ -1580,7 +1578,7 @@ namespace Venflow.Dynamic.Inserter
                 var totalColumnCount = entity.GetColumnCount();
                 var columnCount = totalColumnCount - entity.GetReadOnlyCount();
                 var columnOffset = skipPrimaryKey ? entity.GetRegularColumnOffset() : 0;
-                var lastNonReadOnlyIndex = entity.GetLastNonReadOnlyColumnsIndex();
+                var lastNonReadOnlyIndex = entity.GetLastRegularColumnsIndex();
 
                 stringBuilder.Append("INSERT INTO ")
                              .Append(entity.TableName)
@@ -1596,7 +1594,7 @@ namespace Venflow.Dynamic.Inserter
                     {
                         var column = _rootEntity.GetColumn(columnIndex);
 
-                        if (column.IsReadOnly)
+                        if (column.Options.HasFlag(ColumnOptions.ReadOnly))
                             continue;
 
                         stringBuilder.Append('@')
@@ -1667,7 +1665,7 @@ namespace Venflow.Dynamic.Inserter
                     {
                         var column = _rootEntity.GetColumn(columnIndex);
 
-                        if (column.IsReadOnly)
+                        if (column.Options.HasFlag(ColumnOptions.ReadOnly))
                             continue;
 
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -1942,7 +1940,7 @@ namespace Venflow.Dynamic.Inserter
                     {
                         var column = entity.GetColumn(k);
 
-                        if (column.IsReadOnly)
+                        if (column.Options.HasFlag(ColumnOptions.ReadOnly))
                             continue;
 
                         // Write placeholder to the command builder => (@Name(n)),
@@ -2367,13 +2365,13 @@ namespace Venflow.Dynamic.Inserter
                       .Append(_rootEntity.ColumnListString)
                       .Append(") VALUES (");
 
-            var lastNonReadOnlyIndex = _rootEntity.GetLastNonReadOnlyColumnsIndex();
+            var lastNonReadOnlyIndex = _rootEntity.GetLastRegularColumnsIndex();
 
             for (int columnIndex = 0; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
             {
                 var column = _rootEntity.GetColumn(columnIndex);
 
-                if (column.IsReadOnly)
+                if (column.Options.HasFlag(ColumnOptions.ReadOnly))
                     continue;
 
                 sqlBuilder.Append('@')
@@ -2400,7 +2398,7 @@ namespace Venflow.Dynamic.Inserter
             {
                 var column = _rootEntity.GetColumn(columnIndex);
 
-                if (column.IsReadOnly)
+                if (column.Options.HasFlag(ColumnOptions.ReadOnly))
                     continue;
 
                 iLGenerator.Emit(OpCodes.Dup);
@@ -2427,7 +2425,7 @@ namespace Venflow.Dynamic.Inserter
                 ilGenerator.Emit(OpCodes.Newobj, column.PropertyInfo.PropertyType.GetConstructor(new[] { underlyingType }));
             }
 
-            if (column.IsReadOnly)
+            if (column.Options.HasFlag(ColumnOptions.ReadOnly))
                 ilGenerator.Emit(OpCodes.Stfld, column.PropertyInfo.GetBackingField());
             else
                 ilGenerator.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod(true));
@@ -2516,7 +2514,7 @@ namespace Venflow.Dynamic.Inserter
                 ilGenerator.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("Value").GetGetMethod());
 
                 if (underlyingType.IsEnum &&
-                    column is not IPostgreEnumEntityColumn)
+                    !column.Options.HasFlag(ColumnOptions.PostgreEnum))
                 {
                     underlyingType = Enum.GetUnderlyingType(underlyingType);
                 }
@@ -2574,7 +2572,7 @@ namespace Venflow.Dynamic.Inserter
                 var isUlong = column.PropertyInfo.PropertyType == typeof(ulong);
 
                 if (column.PropertyInfo.PropertyType.IsEnum &&
-                    column is not IPostgreEnumEntityColumn)
+                    !column.Options.HasFlag(ColumnOptions.PostgreEnum))
                 {
                     npgsqlType = Enum.GetUnderlyingType(column.PropertyInfo.PropertyType);
                 }
@@ -2889,7 +2887,7 @@ namespace Venflow.Dynamic.Inserter
                     ilGenerator.Emit(OpCodes.Newobj, column.PropertyInfo.PropertyType.GetConstructor(new[] { underlyingType }));
                 }
 
-                if (column.IsReadOnly)
+                if (column.Options.HasFlag(ColumnOptions.ReadOnly))
                     ilGenerator.Emit(OpCodes.Stfld, column.PropertyInfo.GetBackingField());
                 else
                     ilGenerator.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod(true));

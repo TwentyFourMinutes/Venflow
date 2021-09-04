@@ -95,7 +95,7 @@ namespace Venflow.Commands
         /// <summary>
         ///  Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
         /// </summary>
-        /// <param name="sql">A string containing the SQL statement.
+        /// <param name="sql">A string containing the SQL statement.</param>
         /// <returns>A Fluent API Builder for a query command.</returns>
         IBaseQueryRelationBuilder<TEntity, TEntity, List<TEntity>> QueryBatch(Expression<Func<TEntity, FormattableString>> sql);
         /// <summary>
