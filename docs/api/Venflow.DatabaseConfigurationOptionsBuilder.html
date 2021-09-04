@@ -114,10 +114,83 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseConfigurationOptionsBuilder_RegisterPostgresEnum__1_System_Nullable_System_String__System_Nullable_INpgsqlNameTranslator__.md&amp;value=---%0Auid%3A%20Venflow.DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum%60%601(System.Nullable%7BSystem.String%7D%2CSystem.Nullable%7BINpgsqlNameTranslator%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseConfigurationOptionsBuilder.cs/#L73">View Source</a>
+  </span>
+  <a id="Venflow_DatabaseConfigurationOptionsBuilder_RegisterPostgresEnum_" data-uid="Venflow.DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum*"></a>
+  <h4 id="Venflow_DatabaseConfigurationOptionsBuilder_RegisterPostgresEnum__1_System_Nullable_System_String__System_Nullable_INpgsqlNameTranslator__" data-uid="Venflow.DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum``1(System.Nullable{System.String},System.Nullable{INpgsqlNameTranslator})">RegisterPostgresEnum&lt;TEnum&gt;(Nullable&lt;String&gt;, Nullable&lt;INpgsqlNameTranslator&gt;)</h4>
+  <div class="markdown level1 summary"><p>Maps a PostgreSQL enum to a CLR enum.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DatabaseConfigurationOptionsBuilder RegisterPostgresEnum&lt;TEnum&gt;(string? name = null, INpgsqlNameTranslator? npgsqlNameTranslator = null)
+    where TEnum : struct, Enum</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.nullable-1">Nullable</a>&lt;<a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a>&gt;</td>
+        <td><span class="parametername">name</span></td>
+        <td><p>The name of the enum in PostgreSQL, if none used it will try to convert the name of the CLR enum e.g. 'FooBar' to 'foo_bar'</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.nullable-1">Nullable</a>&lt;<span class="xref">INpgsqlNameTranslator</span>&gt;</td>
+        <td><span class="parametername">npgsqlNameTranslator</span></td>
+        <td><p>A component which will be used to translate CLR names (e.g. SomeClass) into database names (e.g. some_class). Defaults to <see cref="!:Npgsql.NameTranslation.NpgsqlSnakeCaseNameTranslator"></see>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.DatabaseConfigurationOptionsBuilder.html">DatabaseConfigurationOptionsBuilder</a></td>
+        <td><p>The same builder instance so that multiple calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TEnum</span></td>
+        <td><p>The type of the enum.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseConfigurationOptionsBuilder_UseConfigurations_Assembly_.md&amp;value=---%0Auid%3A%20Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseConfigurationOptionsBuilder.cs/#L43">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseConfigurationOptionsBuilder.cs/#L45">View Source</a>
   </span>
   <a id="Venflow_DatabaseConfigurationOptionsBuilder_UseConfigurations_" data-uid="Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations*"></a>
   <h4 id="Venflow_DatabaseConfigurationOptionsBuilder_UseConfigurations_Assembly_" data-uid="Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly)">UseConfigurations(Assembly)</h4>
@@ -170,7 +243,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseConfigurationOptionsBuilder_UseConfigurations_Assembly___.md&amp;value=---%0Auid%3A%20Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseConfigurationOptionsBuilder.cs/#L56">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseConfigurationOptionsBuilder.cs/#L58">View Source</a>
   </span>
   <a id="Venflow_DatabaseConfigurationOptionsBuilder_UseConfigurations_" data-uid="Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations*"></a>
   <h4 id="Venflow_DatabaseConfigurationOptionsBuilder_UseConfigurations_Assembly___" data-uid="Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly[])">UseConfigurations(Assembly[])</h4>
@@ -223,7 +296,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseConfigurationOptionsBuilder_UseConfigurations__1.md&amp;value=---%0Auid%3A%20Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations%60%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseConfigurationOptionsBuilder.cs/#L30">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseConfigurationOptionsBuilder.cs/#L32">View Source</a>
   </span>
   <a id="Venflow_DatabaseConfigurationOptionsBuilder_UseConfigurations_" data-uid="Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations*"></a>
   <h4 id="Venflow_DatabaseConfigurationOptionsBuilder_UseConfigurations__1" data-uid="Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations``1">UseConfigurations&lt;T&gt;()</h4>
@@ -288,7 +361,7 @@
                     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_DatabaseConfigurationOptionsBuilder.md&amp;value=---%0Auid%3A%20Venflow.DatabaseConfigurationOptionsBuilder%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseConfigurationOptionsBuilder.cs/#L11" class="contribution-link">View Source</a>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/DatabaseConfigurationOptionsBuilder.cs/#L13" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

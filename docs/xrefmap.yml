@@ -1658,6 +1658,22 @@ references:
   commentId: T:Venflow.DatabaseConfigurationOptionsBuilder
   fullName: Venflow.DatabaseConfigurationOptionsBuilder
   nameWithType: DatabaseConfigurationOptionsBuilder
+- uid: Venflow.DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum*
+  name: RegisterPostgresEnum
+  href: api/Venflow.DatabaseConfigurationOptionsBuilder.html#Venflow_DatabaseConfigurationOptionsBuilder_RegisterPostgresEnum_
+  commentId: Overload:Venflow.DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum
+  isSpec: "True"
+  fullName: Venflow.DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum
+  nameWithType: DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum
+- uid: Venflow.DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum``1(System.Nullable{System.String},System.Nullable{INpgsqlNameTranslator})
+  name: RegisterPostgresEnum<TEnum>(Nullable<String>, Nullable<INpgsqlNameTranslator>)
+  href: api/Venflow.DatabaseConfigurationOptionsBuilder.html#Venflow_DatabaseConfigurationOptionsBuilder_RegisterPostgresEnum__1_System_Nullable_System_String__System_Nullable_INpgsqlNameTranslator__
+  commentId: M:Venflow.DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum``1(System.Nullable{System.String},System.Nullable{INpgsqlNameTranslator})
+  name.vb: RegisterPostgresEnum(Of TEnum)(Nullable(Of String), Nullable(Of INpgsqlNameTranslator))
+  fullName: Venflow.DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum<TEnum>(System.Nullable<System.String>, System.Nullable<INpgsqlNameTranslator>)
+  fullName.vb: Venflow.DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum(Of TEnum)(System.Nullable(Of System.String), System.Nullable(Of INpgsqlNameTranslator))
+  nameWithType: DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum<TEnum>(Nullable<String>, Nullable<INpgsqlNameTranslator>)
+  nameWithType.vb: DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum(Of TEnum)(Nullable(Of String), Nullable(Of INpgsqlNameTranslator))
 - uid: Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly)
   name: UseConfigurations(Assembly)
   href: api/Venflow.DatabaseConfigurationOptionsBuilder.html#Venflow_DatabaseConfigurationOptionsBuilder_UseConfigurations_Assembly_
