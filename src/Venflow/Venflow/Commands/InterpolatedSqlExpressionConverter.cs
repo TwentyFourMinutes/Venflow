@@ -17,7 +17,7 @@ namespace Venflow.Commands
 
             if (instanceArguments.Count > 0)
             {
-                for (int instanceArgumentIndex = 1; instanceArgumentIndex < instanceArguments.Count; instanceArgumentIndex++)
+                for (int instanceArgumentIndex = 0; instanceArgumentIndex < instanceArguments.Count; instanceArgumentIndex++)
                 {
                     visitor.Visit(instanceArguments[instanceArgumentIndex]);
                 }
@@ -31,7 +31,7 @@ namespace Venflow.Commands
 
             var replacer = new ConstantExpressionReplacer(visitor.DisplayClassType, visitor.ThisType);
 
-            for (int instanceArgumentIndex = 1; instanceArgumentIndex < instanceArguments.Count; instanceArgumentIndex++)
+            for (int instanceArgumentIndex = 0; instanceArgumentIndex < instanceArguments.Count; instanceArgumentIndex++)
             {
                 instanceArguments[instanceArgumentIndex] = replacer.Visit(instanceArguments[instanceArgumentIndex]);
             }
