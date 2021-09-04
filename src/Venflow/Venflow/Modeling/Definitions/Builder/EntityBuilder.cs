@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -9,6 +8,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Npgsql;
+using NpgsqlTypes;
 using Venflow.Dynamic;
 using Venflow.Dynamic.Proxies;
 using Venflow.Dynamic.Retriever;
@@ -84,6 +84,24 @@ namespace Venflow.Modeling.Definitions.Builder
             return this;
         }
 
+        IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, NpgsqlDbType dbType)
+        {
+            var property = propertySelector.ValidatePropertySelector();
+
+            ColumnDefinitions[property.Name].DbType = dbType;
+
+            return this;
+        }
+
+        IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string columnName, NpgsqlDbType dbType)
+        {
+            var property = propertySelector.ValidatePropertySelector();
+
+            ColumnDefinitions[property.Name].DbType = dbType;
+
+            return this;
+        }
+
         IEntityBuilder<TEntity> IEntityBuilder<TEntity>.Ignore<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector)
         {
             var property = propertySelector.ValidatePropertySelector();
@@ -103,11 +121,11 @@ namespace Venflow.Modeling.Definitions.Builder
 
             if (option != DatabaseGeneratedOption.None)
             {
-                definition.Options |= ColumnOptions.IsGenerated;
+                definition.Options |= ColumnOptions.Generated;
             }
             else
             {
-                definition.Options &= ~ColumnOptions.IsGenerated;
+                definition.Options &= ~ColumnOptions.Generated;
             }
 
             return this;
@@ -257,7 +275,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                 if (IsRegularEntity)
                 {
-                    if ((columnDefinition.Options & ColumnOptions.PrimaryKey) != 0)
+                    if (columnDefinition.Options.HasFlag(ColumnOptions.PrimaryKey))
                     {
                         if (EntityInNullableContext &&
                             isPropertyTypeNullableReferenceType)
@@ -266,7 +284,7 @@ namespace Venflow.Modeling.Definitions.Builder
                         }
 
                         if (isReadOnly &&
-                            (columnDefinition.Options & ColumnOptions.IsGenerated) == 0)
+                            !columnDefinition.Options.HasFlag(ColumnOptions.Generated))
                         {
                             throw new InvalidOperationException($"The property '{property.Name}' on the entity '{Type.Name}' is marked as read-only. This is not allowed on non database generated primary key.");
                         }
@@ -291,7 +309,7 @@ namespace Venflow.Modeling.Definitions.Builder
                     columnName = columnDefinition.Name;
                 }
 
-                var column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(property, (columnDefinition.Options & ColumnOptions.PostgreEnum) != 0), columnDefinition.Options);
+                var column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(columnDefinition), columnDefinition.DbType, columnDefinition.Options);
 
                 if (expectsChangeTracking)
                 {
@@ -300,7 +318,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                 nameToColumn.Add(columnName, column);
 
-                if ((columnDefinition.Options & ColumnOptions.PrimaryKey) != 0)
+                if (columnDefinition.Options.HasFlag(ColumnOptions.PrimaryKey))
                 {
                     if (firstRegularNode is null)
                     {
@@ -318,7 +336,7 @@ namespace Venflow.Modeling.Definitions.Builder
                         columns.AddBefore(firstRegularNode, column);
                     }
                 }
-                else if ((columnDefinition.Options & ColumnOptions.ReadOnly) != 0)
+                else if (columnDefinition.Options.HasFlag(ColumnOptions.ReadOnly))
                 {
                     if (firstReadOnlyNode is null)
                     {
@@ -432,7 +450,7 @@ namespace Venflow.Modeling.Definitions.Builder
                         (Attribute.IsDefined(property, primaryKeyAttributeType) ||
                         property.Name == "Id"))
                     {
-                        column.Options |= ColumnOptions.PrimaryKey | ColumnOptions.IsGenerated;
+                        column.Options |= ColumnOptions.PrimaryKey | ColumnOptions.Generated;
                     }
 
                     ColumnDefinitions.Add(property.Name, column);
@@ -477,6 +495,25 @@ namespace Venflow.Modeling.Definitions.Builder
         /// <param name="columnName">The name of the column in the database to which the used property should map to.</param>
         /// <returns>The same builder instance so that multiple calls can be chained.</returns>
         IEntityBuilder<TEntity> MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string columnName);
+
+        /// <summary>
+        /// Configures the column that the property maps to, if not configured it will use the name of the property inside the entity.
+        /// </summary>
+        /// <typeparam name="TTarget">The type of the property.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the property on this entity type.</param>
+        /// <param name="dbType">The type of the column in the database.</param>
+        /// <returns>The same builder instance so that multiple calls can be chained.</returns>
+        IEntityBuilder<TEntity> MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, NpgsqlDbType dbType);
+
+        /// <summary>
+        /// Configures the column that the property maps to, if not configured it will use the name of the property inside the entity.
+        /// </summary>
+        /// <typeparam name="TTarget">The type of the property.</typeparam>
+        /// <param name="propertySelector">A lambda expression representing the property on this entity type.</param>
+        /// <param name="columnName">The name of the column in the database to which the used property should map to.</param>
+        /// <param name="dbType">The type of the column in the database.</param>
+        /// <returns>The same builder instance so that multiple calls can be chained.</returns>
+        IEntityBuilder<TEntity> MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string columnName, NpgsqlDbType dbType);
 
         /// <summary>
         /// Ignores a property for this entity type. This is the Fluent API equivalent to the <see cref="NotMappedAttribute"/>.

@@ -2540,7 +2540,15 @@ namespace Venflow.Dynamic.Inserter
                     ilGenerator.Emit(OpCodes.Add);
                 }
 
-                ilGenerator.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underlyingType).GetConstructor(new[] { stringType, underlyingType }));
+                if (column.DbType is null)
+                {
+                    ilGenerator.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underlyingType).GetConstructor(new[] { stringType, underlyingType }));
+                }
+                else
+                {
+                    ilGenerator.Emit(OpCodes.Ldc_I4, (int)column.DbType);
+                    ilGenerator.Emit(OpCodes.Call, typeof(NpgsqlParameterExtensions).GetMethod("CreateParameter", BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(underlyingType));
+                }
 
                 ilGenerator.MarkLabel(afterHasValueLabel);
             }
@@ -2603,7 +2611,15 @@ namespace Venflow.Dynamic.Inserter
                     ilGenerator.Emit(OpCodes.Add);
                 }
 
-                ilGenerator.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(npgsqlType).GetConstructor(new[] { stringType, npgsqlType }));
+                if (column.DbType is null)
+                {
+                    ilGenerator.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(npgsqlType).GetConstructor(new[] { stringType, npgsqlType }));
+                }
+                else
+                {
+                    ilGenerator.Emit(OpCodes.Ldc_I4, (int)column.DbType);
+                    ilGenerator.Emit(OpCodes.Call, typeof(NpgsqlParameterExtensions).GetMethod("CreateParameter", BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(npgsqlType));
+                }
             }
         }
 

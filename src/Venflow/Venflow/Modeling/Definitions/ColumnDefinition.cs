@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using NpgsqlTypes;
 using Venflow.Enums;
 
 namespace Venflow.Modeling.Definitions
@@ -7,6 +8,7 @@ namespace Venflow.Modeling.Definitions
     {
         internal PropertyInfo Property { get; }
         internal string Name { get; set; }
+        internal NpgsqlDbType? DbType { get; set; }
         internal ColumnOptions Options { get; set; }
 
         internal ColumnDefinition(PropertyInfo property)

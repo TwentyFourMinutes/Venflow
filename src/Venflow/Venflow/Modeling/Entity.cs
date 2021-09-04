@@ -17,7 +17,7 @@ namespace Venflow.Modeling
         internal MaterializerFactory<TEntity> MaterializerFactory { get; }
         internal InsertionFactory<TEntity> InsertionFactory { get; }
 
-        internal override bool HasDbGeneratedPrimaryKey => PrimaryColumn is not null && (PrimaryColumn.Options & ColumnOptions.IsGenerated) != 0;
+        internal override bool HasDbGeneratedPrimaryKey => PrimaryColumn is not null && PrimaryColumn.Options.HasFlag(ColumnOptions.Generated);
 
         internal Entity(Type entityType, Type? proxyEntityType, string tableName, bool isInNullableContext, bool defaultPropNullability, EntityColumnCollection<TEntity> columns, EntityColumn<TEntity>? primaryColumn, string columnListString, string nonPrimaryColumnListString, Func<ChangeTracker<TEntity>, TEntity>? changeTrackerFactory, Func<ChangeTracker<TEntity>, TEntity, TEntity>? changeTrackerApplier) : base(entityType, proxyEntityType, tableName, isInNullableContext, defaultPropNullability, columnListString, nonPrimaryColumnListString)
         {
