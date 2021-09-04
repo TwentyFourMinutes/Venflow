@@ -2632,6 +2632,15 @@ references:
   fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapColumn
   nameWithType: IEntityBuilder<TEntity>.MapColumn
   nameWithType.vb: IEntityBuilder(Of TEntity).MapColumn
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(Expression{Func{`0,``0}},NpgsqlDbType)
+  name: MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, NpgsqlDbType)
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn__1_Expression_Func__0___0___NpgsqlDbType_
+  commentId: M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(Expression{Func{`0,``0}},NpgsqlDbType)
+  name.vb: MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), NpgsqlDbType)
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, NpgsqlDbType)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), NpgsqlDbType)
+  nameWithType: IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, NpgsqlDbType)
+  nameWithType.vb: IEntityBuilder(Of TEntity).MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), NpgsqlDbType)
 - uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(Expression{Func{`0,``0}},System.String)
   name: MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, String)
   href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn__1_Expression_Func__0___0___System_String_
@@ -2641,6 +2650,15 @@ references:
   fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), System.String)
   nameWithType: IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, String)
   nameWithType.vb: IEntityBuilder(Of TEntity).MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), String)
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(Expression{Func{`0,``0}},System.String,NpgsqlDbType)
+  name: MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, String, NpgsqlDbType)
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn__1_Expression_Func__0___0___System_String_NpgsqlDbType_
+  commentId: M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(Expression{Func{`0,``0}},System.String,NpgsqlDbType)
+  name.vb: MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), String, NpgsqlDbType)
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, System.String, NpgsqlDbType)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), System.String, NpgsqlDbType)
+  nameWithType: IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, String, NpgsqlDbType)
+  nameWithType.vb: IEntityBuilder(Of TEntity).MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), String, NpgsqlDbType)
 - uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapId*
   name: MapId
   href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapId_
