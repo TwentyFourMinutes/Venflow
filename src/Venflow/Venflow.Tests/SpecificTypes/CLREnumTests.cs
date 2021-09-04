@@ -7,6 +7,40 @@ namespace Venflow.Tests.SpecificTypes
     public class CLREnumTests : TestBase
     {
         [Fact]
+        public async Task Query()
+        {
+            var dummy = new UncommonType
+            {
+                CLREnum = DummyEnum.Foo
+            };
+
+            Assert.Equal(1, await Database.UncommonTypes.InsertAsync(dummy));
+
+            dummy = await Database.UncommonTypes.QueryInterpolatedSingle($@"SELECT * FROM ""UncommonTypes"" WHERE ""CLREnum"" = {dummy.CLREnum}").Build().QueryAsync();
+
+            Assert.Equal(DummyEnum.Foo, dummy.CLREnum);
+
+            await Database.UncommonTypes.DeleteAsync(dummy);
+        }
+
+        [Fact]
+        public async Task QueryNullableValue()
+        {
+            var dummy = new UncommonType
+            {
+                NCLREnum = DummyEnum.Foo
+            };
+
+            Assert.Equal(1, await Database.UncommonTypes.InsertAsync(dummy));
+
+            dummy = await Database.UncommonTypes.QueryInterpolatedSingle($@"SELECT * FROM ""UncommonTypes"" WHERE ""NCLREnum"" = {dummy.NCLREnum}").Build().QueryAsync();
+
+            Assert.Equal(DummyEnum.Foo, dummy.NCLREnum);
+
+            await Database.UncommonTypes.DeleteAsync(dummy);
+        }
+
+        [Fact]
         public async Task Insert()
         {
             var dummy = new UncommonType

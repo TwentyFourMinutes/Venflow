@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
@@ -351,12 +351,12 @@ namespace Venflow
 
         private void Build()
         {
-            var type = this.GetType();
-
-            if (!DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(type, out var configuration))
+            if (!DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(this.GetType(), out var configuration))
             {
                 lock (DatabaseConfigurationCache.BuildLocker)
                 {
+                    var type = this.GetType();
+
                     if (!DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(type, out configuration))
                     {
                         var dbConfigurator = new DatabaseConfigurationFactory();

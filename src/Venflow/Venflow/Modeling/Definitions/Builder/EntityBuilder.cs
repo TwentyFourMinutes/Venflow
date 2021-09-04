@@ -113,6 +113,7 @@ namespace Venflow.Modeling.Definitions.Builder
             return this;
         }
 
+        [Obsolete("This method will be removed in the next major version. Please instead use the DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum method on the Database.Configure method.")]
         IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapPostgresEnum<TTarget>(Expression<Func<TEntity, TTarget?>> propertySelector, string? name, INpgsqlNameTranslator? npgsqlNameTranslator)
         {
             var property = propertySelector.ValidatePropertySelector();
@@ -122,6 +123,7 @@ namespace Venflow.Modeling.Definitions.Builder
             return this;
         }
 
+        [Obsolete("This method will be removed in the next major version. Please instead use the DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum method on the Database.Configure method.")]
         IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapPostgresEnum<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string? name, INpgsqlNameTranslator? npgsqlNameTranslator)
         {
             var property = propertySelector.ValidatePropertySelector();
@@ -164,11 +166,11 @@ namespace Venflow.Modeling.Definitions.Builder
                 name = nameBuilder.ToString();
             }
 
-            if (!PostgreSQLEnums.Contains(name))
+            if (!ParameterTypeHandler.PostgreEnums.Contains(property.PropertyType))
             {
                 NpgsqlConnection.GlobalTypeMapper.MapEnum<TTarget>(name, npgsqlNameTranslator);
 
-                PostgreSQLEnums.Add(name);
+                ParameterTypeHandler.PostgreEnums.Add(property.PropertyType);
             }
 
             ColumnDefinitions[property.Name].Options |= ColumnOptions.PostgreEnum;
@@ -443,13 +445,6 @@ namespace Venflow.Modeling.Definitions.Builder
     {
         internal static uint RelationCounter { get; set; }
 
-        internal static ConcurrentBag<string> PostgreSQLEnums { get; }
-
-        static EntityBuilder()
-        {
-            PostgreSQLEnums = new ConcurrentBag<string>();
-        }
-
         internal List<EntityRelationDefinition> Relations { get; }
         internal abstract Type Type { get; }
 
@@ -508,6 +503,7 @@ namespace Venflow.Modeling.Definitions.Builder
         /// <param name="name">The name of the enum in PostgreSQL, if none used it will try to convert the name of the CLR enum e.g. 'FooBar' to 'foo_bar'</param>
         /// <param name="npgsqlNameTranslator">A component which will be used to translate CLR names (e.g. SomeClass) into database names (e.g. some_class). Defaults to <see cref="Npgsql.NameTranslation.NpgsqlSnakeCaseNameTranslator"/>.</param>
         /// <returns>The same builder instance so that multiple calls can be chained.</returns>
+        [Obsolete("This method will be removed in the next major version. Please instead use the DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum method on the Database.Configure method.")]
         IEntityBuilder<TEntity> MapPostgresEnum<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string? name = default, INpgsqlNameTranslator? npgsqlNameTranslator = default)
             where TTarget : struct, Enum;
 
@@ -519,6 +515,7 @@ namespace Venflow.Modeling.Definitions.Builder
         /// <param name="name">The name of the enum in PostgreSQL, if none used it will try to convert the name of the CLR enum e.g. 'FooBar' to 'foo_bar'</param>
         /// <param name="npgsqlNameTranslator">A component which will be used to translate CLR names (e.g. SomeClass) into database names (e.g. some_class). Defaults to <see cref="Npgsql.NameTranslation.NpgsqlSnakeCaseNameTranslator"/>.</param>
         /// <returns>The same builder instance so that multiple calls can be chained.</returns>
+        [Obsolete("This method will be removed in the next major version. Please instead use the DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum method on the Database.Configure method.")]
         IEntityBuilder<TEntity> MapPostgresEnum<TTarget>(Expression<Func<TEntity, TTarget?>> propertySelector, string? name = default, INpgsqlNameTranslator? npgsqlNameTranslator = default)
             where TTarget : struct, Enum;
     }

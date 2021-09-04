@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 using Npgsql;
 
 namespace Venflow
@@ -9,13 +9,19 @@ namespace Venflow
     /// </summary>
     public static class ParameterTypeHandler
     {
-        private readonly static ConditionalWeakTable<Type, IParameterTypeHandler> _typeHandlers = new ConditionalWeakTable<Type, IParameterTypeHandler>();
+        internal static HashSet<Type> PostgreEnums => _postgreEnums;
+
+        private readonly static Dictionary<Type, IParameterTypeHandler> _typeHandlers = new Dictionary<Type, IParameterTypeHandler>();
+        private readonly static Dictionary<Type, IParameterTypeHandler> _castHandlers = new Dictionary<Type, IParameterTypeHandler>(1);
+        private readonly static HashSet<Type> _postgreEnums = new HashSet<Type>(0);
 
         static ParameterTypeHandler()
         {
             var uInt64Handler = new UInt64Handler();
             AddTypeHandler(typeof(ulong), uInt64Handler);
             AddTypeHandler(typeof(ulong?), uInt64Handler);
+
+            _castHandlers.Add(typeof(ulong), uInt64Handler);
         }
 
         /// <summary>
@@ -28,6 +34,9 @@ namespace Venflow
 
         internal static NpgsqlParameter HandleParameter(string name, object? val)
         {
+            Type? type = null;
+            IParameterTypeHandler? handler;
+
             switch (val)
             {
                 case null:
@@ -35,9 +44,35 @@ namespace Venflow
                 case IKey key:
                     val = key.BoxedValue;
                     break;
+                case Enum:
+                    type = val.GetType();
+
+                    var tempType = Nullable.GetUnderlyingType(type) ?? type;
+
+                    if (!_postgreEnums.Contains(tempType))
+                    {
+                        if (!_typeHandlers.TryGetValue(tempType, out handler))
+                        {
+                            var underlyingType = tempType.GetEnumUnderlyingType();
+
+                            if (!_castHandlers.TryGetValue(underlyingType, out handler))
+                            {
+                                handler = (IParameterTypeHandler)Activator.CreateInstance(typeof(CastTypeHandler<>).MakeGenericType(underlyingType));
+
+                                _castHandlers.Add(underlyingType, handler);
+                            }
+
+                            _typeHandlers.Add(tempType, handler);
+                        }
+
+                        return handler.Handle(name, val);
+                    }
+                    break;
             }
 
-            if (!_typeHandlers.TryGetValue(val.GetType(), out var handler))
+            type ??= val.GetType();
+
+            if (!_typeHandlers.TryGetValue(type, out handler))
                 return new NpgsqlParameter(name, val);
 
             return handler.Handle(name, val);
@@ -45,13 +80,13 @@ namespace Venflow
 
         internal static NpgsqlParameter HandleParameter<T>(string name, T? val)
         {
+            Type? type = null;
             IParameterTypeHandler? handler;
 
             switch (val)
             {
                 case null:
                     return new NpgsqlParameter<DBNull>(name, DBNull.Value);
-
                 case IKey key:
                     var tempVal = key.BoxedValue;
 
@@ -59,9 +94,35 @@ namespace Venflow
                         return new NpgsqlParameter(name, tempVal);
 
                     return handler.Handle(name, tempVal);
+                case Enum:
+                    type = val.GetType();
+
+                    var tempType = Nullable.GetUnderlyingType(type) ?? type;
+
+                    if (!_postgreEnums.Contains(tempType))
+                    {
+                        if (!_typeHandlers.TryGetValue(tempType, out handler))
+                        {
+                            var underlyingType = tempType.GetEnumUnderlyingType();
+
+                            if (!_castHandlers.TryGetValue(underlyingType, out handler))
+                            {
+                                handler = (IParameterTypeHandler)Activator.CreateInstance(typeof(CastTypeHandler<>).MakeGenericType(underlyingType));
+
+                                _castHandlers.Add(underlyingType, handler);
+                            }
+
+                            _typeHandlers.Add(tempType, handler);
+                        }
+
+                        return handler.Handle(name, val);
+                    }
+                    break;
             }
 
-            if (!_typeHandlers.TryGetValue(val.GetType(), out handler))
+            type ??= val.GetType();
+
+            if (!_typeHandlers.TryGetValue(type, out handler))
                 return new NpgsqlParameter<T>(name, val);
 
             return handler.Handle(name, val);
@@ -69,6 +130,8 @@ namespace Venflow
 
         internal static NpgsqlParameter HandleParameter(string name, Type type, object? val)
         {
+            IParameterTypeHandler? handler;
+
             switch (val)
             {
                 case null:
@@ -76,9 +139,31 @@ namespace Venflow
                 case IKey key:
                     val = key.BoxedValue;
                     break;
+                case Enum:
+                    var tempType = Nullable.GetUnderlyingType(type) ?? type;
+
+                    if (!_postgreEnums.Contains(tempType))
+                    {
+                        if (!_typeHandlers.TryGetValue(tempType, out handler))
+                        {
+                            var underlyingType = tempType.GetEnumUnderlyingType();
+
+                            if (!_castHandlers.TryGetValue(underlyingType, out handler))
+                            {
+                                handler = (IParameterTypeHandler)Activator.CreateInstance(typeof(CastTypeHandler<>).MakeGenericType(underlyingType));
+
+                                _castHandlers.Add(underlyingType, handler);
+                            }
+
+                            _typeHandlers.Add(tempType, handler);
+                        }
+
+                        return handler.Handle(name, val);
+                    }
+                    break;
             }
 
-            if (!_typeHandlers.TryGetValue(type, out var handler))
+            if (!_typeHandlers.TryGetValue(type, out handler))
                 return new NpgsqlParameter(name, val);
 
             return handler.Handle(name, val);
