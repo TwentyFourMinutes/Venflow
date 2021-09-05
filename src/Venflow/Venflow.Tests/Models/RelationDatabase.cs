@@ -16,5 +16,10 @@ namespace Venflow.Tests.Models
         {
             UnitTestHandler.Init(this);
         }
+
+        protected override void Configure(DatabaseConfigurationOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.RegisterPostgresEnum<PostgreEnum>();
+        }
     }
 }

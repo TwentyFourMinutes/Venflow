@@ -269,6 +269,13 @@ namespace Venflow.Modeling.Definitions.Builder
                     columnDefinition.Options |= ColumnOptions.ReadOnly;
                 }
 
+                var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+
+                if (type.IsEnum && ParameterTypeHandler.PostgreEnums.Contains(type))
+                {
+                    columnDefinition.Options |= ColumnOptions.PostgreEnum;
+                }
+
                 var expectsChangeTracking = IsRegularEntity && !isReadOnly && setMethod.IsVirtual && !setMethod.IsFinal;
 
                 string? columnName = null;
