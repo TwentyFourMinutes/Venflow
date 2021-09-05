@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Npgsql;
-using NpgsqlTypes;
 using Venflow.Dynamic;
 using Venflow.Dynamic.Proxies;
 using Venflow.Dynamic.Retriever;
@@ -70,6 +69,13 @@ namespace Venflow.Modeling.Definitions.Builder
             return this;
         }
 
+        IPropertyBuilder IEntityBuilder<TEntity>.Column<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector)
+        {
+            var property = propertySelector.ValidatePropertySelector();
+
+            return new PropertyBuilder(ColumnDefinitions[property.Name]);
+        }
+
         IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string columnName)
         {
             if (string.IsNullOrWhiteSpace(columnName))
@@ -80,24 +86,6 @@ namespace Venflow.Modeling.Definitions.Builder
             var property = propertySelector.ValidatePropertySelector();
 
             ColumnDefinitions[property.Name].Name = columnName;
-
-            return this;
-        }
-
-        IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, NpgsqlDbType dbType)
-        {
-            var property = propertySelector.ValidatePropertySelector();
-
-            ColumnDefinitions[property.Name].DbType = dbType;
-
-            return this;
-        }
-
-        IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string columnName, NpgsqlDbType dbType)
-        {
-            var property = propertySelector.ValidatePropertySelector();
-
-            ColumnDefinitions[property.Name].DbType = dbType;
 
             return this;
         }
@@ -482,7 +470,7 @@ namespace Venflow.Modeling.Definitions.Builder
     }
 
     /// <summary>
-    /// Instances of this class are returned from methods inside the <see cref="Table{TEntity}"/> class when using the Fluid API and it is not designed to be directly constructed in your application code.
+    /// Instances of this class are returned from methods inside the <see cref="EntityConfiguration{TEntity}{TEntity}"/> class when using the Fluent API and it is not designed to be directly constructed in your application code.
     /// </summary>
     /// <typeparam name="TEntity">The entity type being configured.</typeparam>
     public interface IEntityBuilder<TEntity> : ILeftRelationBuilder<TEntity> where TEntity : class, new()
@@ -495,6 +483,13 @@ namespace Venflow.Modeling.Definitions.Builder
         IEntityBuilder<TEntity> MapToTable(string tableName);
 
         /// <summary>
+        /// Configures a column on the current entity.
+        /// </summary>
+        /// <param name="propertySelector">A lambda expression representing the property on this entity type.</param>
+        /// <returns>A new column builder instance so that multiple calls can be chained.</returns>
+        IPropertyBuilder Column<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector);
+
+        /// <summary>
         /// Configures the column that the property maps to, if not configured it will use the name of the property inside the entity.
         /// </summary>
         /// <typeparam name="TTarget">The type of the property.</typeparam>
@@ -502,25 +497,6 @@ namespace Venflow.Modeling.Definitions.Builder
         /// <param name="columnName">The name of the column in the database to which the used property should map to.</param>
         /// <returns>The same builder instance so that multiple calls can be chained.</returns>
         IEntityBuilder<TEntity> MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string columnName);
-
-        /// <summary>
-        /// Configures the column that the property maps to, if not configured it will use the name of the property inside the entity.
-        /// </summary>
-        /// <typeparam name="TTarget">The type of the property.</typeparam>
-        /// <param name="propertySelector">A lambda expression representing the property on this entity type.</param>
-        /// <param name="dbType">The type of the column in the database.</param>
-        /// <returns>The same builder instance so that multiple calls can be chained.</returns>
-        IEntityBuilder<TEntity> MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, NpgsqlDbType dbType);
-
-        /// <summary>
-        /// Configures the column that the property maps to, if not configured it will use the name of the property inside the entity.
-        /// </summary>
-        /// <typeparam name="TTarget">The type of the property.</typeparam>
-        /// <param name="propertySelector">A lambda expression representing the property on this entity type.</param>
-        /// <param name="columnName">The name of the column in the database to which the used property should map to.</param>
-        /// <param name="dbType">The type of the column in the database.</param>
-        /// <returns>The same builder instance so that multiple calls can be chained.</returns>
-        IEntityBuilder<TEntity> MapColumn<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, string columnName, NpgsqlDbType dbType);
 
         /// <summary>
         /// Ignores a property for this entity type. This is the Fluent API equivalent to the <see cref="NotMappedAttribute"/>.

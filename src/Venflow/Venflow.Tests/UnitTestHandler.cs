@@ -139,7 +139,8 @@ ALTER TABLE public.""Emails"" ALTER COLUMN ""Id"" ADD GENERATED ALWAYS AS IDENTI
 
 CREATE TABLE public.""People"" (
     ""Id"" integer NOT NULL,
-    ""Name"" text
+    ""Name"" text,
+    ""DefaultValue"" timestamp without time zone NOT NULL DEFAULT now()
 );
 
 ALTER TABLE public.""People"" OWNER TO venflow_tests;

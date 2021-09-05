@@ -360,20 +360,29 @@ namespace Venflow.Dynamic.Inserter
                 // Write placeholder to the command builder => (@Name(n)),
                 _moveNextMethodIL.Emit(OpCodes.Ldloc, commandBuilderLocal);
 
-                // Create new parameter with placeholder and add it to the parameter list
-                _moveNextMethodIL.Emit(OpCodes.Ldloc, npgsqlCommandLocal);
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandLocal.LocalType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                if (column.Options.HasFlag(ColumnOptions.DefaultValue))
+                {
+                    _moveNextMethodIL.Emit(OpCodes.Ldstr, lastNonReadOnlyIndex == k ? "DEFAULT), " : "DEFAULT, ");
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
+                    _moveNextMethodIL.Emit(OpCodes.Pop);
+                }
+                else
+                {
+                    // Create new parameter with placeholder and add it to the parameter list
+                    _moveNextMethodIL.Emit(OpCodes.Ldloc, npgsqlCommandLocal);
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, npgsqlCommandLocal.LocalType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
 
-                WriteNpgsqlParameterFromColumn(_moveNextMethodIL, iteratorElementLocal, column, currentLocal);
+                    WriteNpgsqlParameterFromColumn(_moveNextMethodIL, iteratorElementLocal, column, currentLocal);
 
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameterCollection).GetMethod("Add", new[] { typeof(NpgsqlParameter) }));
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameterCollection).GetMethod("Add", new[] { typeof(NpgsqlParameter) }));
 
-                // Write placeholder to the command builder => (@Name(n)),
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameter).GetProperty("ParameterName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
-                _moveNextMethodIL.Emit(OpCodes.Ldstr, lastNonReadOnlyIndex == k ? "), " : ", ");
-                _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
-                _moveNextMethodIL.Emit(OpCodes.Pop);
+                    // Write placeholder to the command builder => (@Name(n)),
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameter).GetProperty("ParameterName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
+                    _moveNextMethodIL.Emit(OpCodes.Ldstr, lastNonReadOnlyIndex == k ? "), " : ", ");
+                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
+                    _moveNextMethodIL.Emit(OpCodes.Pop);
+                }
             }
 
             // loop iterator increment
@@ -897,21 +906,30 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
 
-                    // Create new parameter with placeholder and add it to the parameter list
-                    _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                    _moveNextMethodIL.Emit(OpCodes.Ldfld, _commandField);
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, _commandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                    if (column.Options.HasFlag(ColumnOptions.DefaultValue))
+                    {
+                        _moveNextMethodIL.Emit(OpCodes.Ldstr, lastNonReadOnlyIndex == k ? "DEFAULT), " : "DEFAULT, ");
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
+                        _moveNextMethodIL.Emit(OpCodes.Pop);
+                    }
+                    else
+                    {
+                        // Create new parameter with placeholder and add it to the parameter list
+                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                        _moveNextMethodIL.Emit(OpCodes.Ldfld, _commandField);
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, _commandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
 
-                    WriteNpgsqlParameterFromColumn(_moveNextMethodIL, iteratorElementLocal, column, currentLocal);
+                        WriteNpgsqlParameterFromColumn(_moveNextMethodIL, iteratorElementLocal, column, currentLocal);
 
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameterCollection).GetMethod("Add", new[] { typeof(NpgsqlParameter) }));
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameterCollection).GetMethod("Add", new[] { typeof(NpgsqlParameter) }));
 
-                    // Write placeholder to the command builder => (@Name(n)),
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameter).GetProperty("ParameterName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
-                    _moveNextMethodIL.Emit(OpCodes.Ldstr, lastNonReadOnlyIndex == k ? "), " : ", ");
-                    _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
-                    _moveNextMethodIL.Emit(OpCodes.Pop);
+                        // Write placeholder to the command builder => (@Name(n)),
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameter).GetProperty("ParameterName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
+                        _moveNextMethodIL.Emit(OpCodes.Ldstr, lastNonReadOnlyIndex == k ? "), " : ", ");
+                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
+                        _moveNextMethodIL.Emit(OpCodes.Pop);
+                    }
                 }
 
                 // loop iterator increment
@@ -1385,9 +1403,16 @@ namespace Venflow.Dynamic.Inserter
                 if (column.Options.HasFlag(ColumnOptions.ReadOnly))
                     continue;
 
-                sqlBuilder.Append('@')
-                          .Append(column.ColumnName)
-                          .Append(", ");
+                if (column.Options.HasFlag(ColumnOptions.DefaultValue))
+                {
+                    sqlBuilder.Append("DEFAULT, ");
+                }
+                else
+                {
+                    sqlBuilder.Append('@')
+                              .Append(column.ColumnName)
+                              .Append(", ");
+                }
             }
 
             sqlBuilder.Length -= 2;
@@ -1415,7 +1440,8 @@ namespace Venflow.Dynamic.Inserter
             {
                 var column = _rootEntity.GetColumn(columnIndex);
 
-                if (column.Options.HasFlag(ColumnOptions.ReadOnly))
+                if (column.Options.HasFlag(ColumnOptions.ReadOnly) ||
+                    column.Options.HasFlag(ColumnOptions.DefaultValue))
                     continue;
 
                 _moveNextMethodIL.Emit(OpCodes.Dup);
@@ -1597,9 +1623,16 @@ namespace Venflow.Dynamic.Inserter
                         if (column.Options.HasFlag(ColumnOptions.ReadOnly))
                             continue;
 
-                        stringBuilder.Append('@')
-                                     .Append(column.ColumnName)
-                                     .Append(", ");
+                        if (column.Options.HasFlag(ColumnOptions.DefaultValue))
+                        {
+                            stringBuilder.Append("DEFAULT, ");
+                        }
+                        else
+                        {
+                            stringBuilder.Append('@')
+                                         .Append(column.ColumnName)
+                                         .Append(", ");
+                        }
                     }
 
                     stringBuilder.Length -= 2;
@@ -1665,7 +1698,8 @@ namespace Venflow.Dynamic.Inserter
                     {
                         var column = _rootEntity.GetColumn(columnIndex);
 
-                        if (column.Options.HasFlag(ColumnOptions.ReadOnly))
+                        if (column.Options.HasFlag(ColumnOptions.ReadOnly) ||
+                            column.Options.HasFlag(ColumnOptions.DefaultValue))
                             continue;
 
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
@@ -1947,21 +1981,30 @@ namespace Venflow.Dynamic.Inserter
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
 
-                        // Create new parameter with placeholder and add it to the parameter list
-                        _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
-                        _moveNextMethodIL.Emit(OpCodes.Ldfld, _commandField);
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, _commandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                        if (column.Options.HasFlag(ColumnOptions.DefaultValue))
+                        {
+                            _moveNextMethodIL.Emit(OpCodes.Ldstr, lastNonReadOnlyIndex == k ? "DEFAULT), " : "DEFAULT, ");
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
+                            _moveNextMethodIL.Emit(OpCodes.Pop);
+                        }
+                        else
+                        {
+                            // Create new parameter with placeholder and add it to the parameter list
+                            _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
+                            _moveNextMethodIL.Emit(OpCodes.Ldfld, _commandField);
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, _commandField.FieldType.GetProperty("Parameters", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
 
-                        WriteNpgsqlParameterFromColumn(_moveNextMethodIL, iteratorElementLocal, column, currentLocal);
+                            WriteNpgsqlParameterFromColumn(_moveNextMethodIL, iteratorElementLocal, column, currentLocal);
 
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameterCollection).GetMethod("Add", new[] { typeof(NpgsqlParameter) }));
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameterCollection).GetMethod("Add", new[] { typeof(NpgsqlParameter) }));
 
-                        // Write placeholder to the command builder => (@Name(n)),
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameter).GetProperty("ParameterName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
-                        _moveNextMethodIL.Emit(OpCodes.Ldstr, lastNonReadOnlyIndex == k ? "), " : ", ");
-                        _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
-                        _moveNextMethodIL.Emit(OpCodes.Pop);
+                            // Write placeholder to the command builder => (@Name(n)),
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, typeof(NpgsqlParameter).GetProperty("ParameterName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).GetGetMethod());
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
+                            _moveNextMethodIL.Emit(OpCodes.Ldstr, lastNonReadOnlyIndex == k ? "), " : ", ");
+                            _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
+                            _moveNextMethodIL.Emit(OpCodes.Pop);
+                        }
                     }
 
                     // loop iterator increment
@@ -2374,9 +2417,16 @@ namespace Venflow.Dynamic.Inserter
                 if (column.Options.HasFlag(ColumnOptions.ReadOnly))
                     continue;
 
-                sqlBuilder.Append('@')
-                          .Append(column.ColumnName)
-                          .Append(", ");
+                if (column.Options.HasFlag(ColumnOptions.DefaultValue))
+                {
+                    sqlBuilder.Append("DEFAULT, ");
+                }
+                else
+                {
+                    sqlBuilder.Append('@')
+                              .Append(column.ColumnName)
+                              .Append(", ");
+                }
             }
 
             sqlBuilder.Length -= 2;
@@ -2398,7 +2448,8 @@ namespace Venflow.Dynamic.Inserter
             {
                 var column = _rootEntity.GetColumn(columnIndex);
 
-                if (column.Options.HasFlag(ColumnOptions.ReadOnly))
+                if (column.Options.HasFlag(ColumnOptions.ReadOnly) ||
+                    column.Options.HasFlag(ColumnOptions.DefaultValue))
                     continue;
 
                 iLGenerator.Emit(OpCodes.Dup);

@@ -10,6 +10,7 @@ namespace Venflow.Enums
         ReadOnly = 1 << 1,
         PrimaryKey = 1 << 2,
         PostgreEnum = 1 << 3,
-        Generated = 1 << 4
+        Generated = 1 << 4,
+        DefaultValue = 1 << 5
     }
 }

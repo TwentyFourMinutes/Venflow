@@ -10,6 +10,9 @@ namespace Venflow.Tests.Models
             entityBuilder.HasMany(x => x.Emails)
                          .WithOne(x => x.Person)
                          .UsingForeignKey(x => x.PersonId);
+
+            entityBuilder.Column(x => x.DefaultValue)
+                         .HasDefault();
         }
     }
 }

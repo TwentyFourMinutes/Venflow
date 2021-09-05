@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Venflow.Tests.Models
@@ -11,6 +12,7 @@ namespace Venflow.Tests.Models
 
         public string Something { get; }
         public string SomethingElse { get; private set; } = "SomethingElse";
+        public DateTime DefaultValue { get; set; }
 
         [NotMapped]
         public string Stuff { get; set; }
