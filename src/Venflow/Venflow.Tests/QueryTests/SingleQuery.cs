@@ -22,6 +22,7 @@ namespace Venflow.Tests.QueryTests
 
             Assert.Equal(person.Id, queriedPerson.Id);
             Assert.Equal(person.Name, queriedPerson.Name);
+            Assert.NotEqual(person.DefaultValue, queriedPerson.DefaultValue);
             Assert.Null(queriedPerson.Emails);
 
             await Database.People.DeleteAsync(person);
@@ -47,6 +48,7 @@ namespace Venflow.Tests.QueryTests
 
             Assert.Equal(person.Id, queriedPerson.Id);
             Assert.Equal(person.Name, queriedPerson.Name);
+            Assert.NotEqual(person.DefaultValue, queriedPerson.DefaultValue);
             Assert.Null(queriedPerson.Emails);
 
             await Database.People.DeleteAsync(person);
@@ -75,6 +77,7 @@ namespace Venflow.Tests.QueryTests
             Assert.Null(queriedPerson.Name);
             Assert.NotEqual(person.Name, queriedPerson.Name);
             Assert.Null(queriedPerson.Emails);
+            Assert.Equal(person.DefaultValue, queriedPerson.DefaultValue);
 
             await Database.People.DeleteAsync(person);
         }
@@ -90,6 +93,7 @@ namespace Venflow.Tests.QueryTests
 
             Assert.Equal(person.Id, queriedPerson.Id);
             Assert.Equal(person.Name, queriedPerson.Name);
+            Assert.NotEqual(person.DefaultValue, queriedPerson.DefaultValue);
             Assert.Null(queriedPerson.Emails);
 
             await Database.People.DeleteAsync(person);
@@ -129,6 +133,7 @@ namespace Venflow.Tests.QueryTests
 
             Assert.Equal(person.Id, queriedPerson.Id);
             Assert.Equal(person.Name, queriedPerson.Name);
+            Assert.NotEqual(person.DefaultValue, queriedPerson.DefaultValue);
 
             Assert.NotNull(queriedPerson.Emails);
             Assert.Single(queriedPerson.Emails);
@@ -153,6 +158,7 @@ namespace Venflow.Tests.QueryTests
 
             Assert.Equal(person.Id, queriedPerson.Id);
             Assert.Equal(person.Name, queriedPerson.Name);
+            Assert.NotEqual(person.DefaultValue, queriedPerson.DefaultValue);
 
             Assert.NotNull(queriedPerson.Emails);
             Assert.Single(queriedPerson.Emails);

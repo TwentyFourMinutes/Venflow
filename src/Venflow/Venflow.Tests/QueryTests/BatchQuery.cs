@@ -63,6 +63,7 @@ namespace Venflow.Tests.QueryTests
             {
                 Assert.Equal(people[i].Id, queriedPeople[i].Id);
                 Assert.Equal(people[i].Name, queriedPeople[i].Name);
+                Assert.NotEqual(people[i].DefaultValue, queriedPeople[i].DefaultValue);
                 Assert.Null(queriedPeople[i].Emails);
             }
 
@@ -83,6 +84,7 @@ namespace Venflow.Tests.QueryTests
             {
                 Assert.Equal(people[i].Id, queriedPeople[i].Id);
                 Assert.Equal(people[i].Name, queriedPeople[i].Name);
+                Assert.NotEqual(people[i].DefaultValue, queriedPeople[i].DefaultValue);
 
                 Assert.NotNull(queriedPeople[i].Emails);
                 Assert.Single(queriedPeople[i].Emails);
