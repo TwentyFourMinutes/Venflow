@@ -558,7 +558,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html",
-          "hash": "eIDc4aPdyXGokInYG1ZygA=="
+          "hash": "R4u0m9NxuqAa5nsSn90HFA=="
         }
       },
       "is_incremental": false,
@@ -626,6 +626,18 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Modeling.Definitions.Builder.IPropertyBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Modeling.Definitions.Builder.IPropertyBuilder.html",
+          "hash": "MjJgHtBkyFJ+N3qkwBXiWg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Venflow.Modeling.Definitions.Builder.IRequiredMultiRightRelationBuilder-2.yml",
       "output": {
         ".html": {
@@ -654,7 +666,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Modeling.Definitions.Builder.html",
-          "hash": "gieY7yoTAFkynbv7XQG13Q=="
+          "hash": "6ZbtZRvMoWwPmPfxuvYo4w=="
         }
       },
       "is_incremental": false,
@@ -822,7 +834,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "ok1wQxe59ULa2wFtiDMVdQ=="
+          "hash": "25DR/ZaApdmHo01nc+aO3g=="
         }
       },
       "is_incremental": false,
@@ -1167,7 +1179,7 @@
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 66,
+          "total_file_count": 67,
           "skipped_file_count": 0
         },
         "ResourceDocumentProcessor": {

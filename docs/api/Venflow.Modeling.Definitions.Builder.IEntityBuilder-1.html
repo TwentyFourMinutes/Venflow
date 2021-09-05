@@ -96,7 +96,7 @@
   
   <h1 id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1" class="text-break">Interface IEntityBuilder&lt;TEntity&gt;
   </h1>
-  <div class="markdown level0 summary"><p>Instances of this class are returned from methods inside the <a class="xref" href="Venflow.Table-1.html">Table&lt;TEntity&gt;</a> class when using the Fluid API and it is not designed to be directly constructed in your application code.</p>
+  <div class="markdown level0 summary"><p>Instances of this class are returned from methods inside the <see cref="!:EntityConfiguration&lt;TEntity>&lt;TEntity>"></see> class when using the Fluent API and it is not designed to be directly constructed in your application code.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritedMembers">
@@ -140,10 +140,75 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_Column__1_Expression_Func__0___0___.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.Builder.IEntityBuilder%601.Column%60%601(Expression%7BFunc%7B%600%2C%60%600%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L490">View Source</a>
+  </span>
+  <a id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_Column_" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.Column*"></a>
+  <h4 id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_Column__1_Expression_Func__0___0___" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.Column``1(Expression{Func{`0,``0}})">Column&lt;TTarget&gt;(Expression&lt;Func&lt;TEntity, TTarget&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Configures a column on the current entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IPropertyBuilder Column&lt;TTarget&gt;(Expression&lt;Func&lt;TEntity, TTarget&gt;&gt; propertySelector)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Expression</span>&lt;<span class="xref">Func</span>&lt;TEntity, TTarget&gt;&gt;</td>
+        <td><span class="parametername">propertySelector</span></td>
+        <td><p>A lambda expression representing the property on this entity type.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Venflow.Modeling.Definitions.Builder.IPropertyBuilder.html">IPropertyBuilder</a></td>
+        <td><p>A new column builder instance so that multiple calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TTarget</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_Ignore__1_Expression_Func__0___0___.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.Builder.IEntityBuilder%601.Ignore%60%601(Expression%7BFunc%7B%600%2C%60%600%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L531">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L507">View Source</a>
   </span>
   <a id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_Ignore_" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.Ignore*"></a>
   <h4 id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_Ignore__1_Expression_Func__0___0___" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.Ignore``1(Expression{Func{`0,``0}})">Ignore&lt;TTarget&gt;(Expression&lt;Func&lt;TEntity, TTarget&gt;&gt;)</h4>
@@ -206,82 +271,10 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn__1_Expression_Func__0___0___NpgsqlDbType_.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.Builder.IEntityBuilder%601.MapColumn%60%601(Expression%7BFunc%7B%600%2C%60%600%7D%7D%2CNpgsqlDbType)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L513">View Source</a>
-  </span>
-  <a id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn_" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn*"></a>
-  <h4 id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn__1_Expression_Func__0___0___NpgsqlDbType_" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(Expression{Func{`0,``0}},NpgsqlDbType)">MapColumn&lt;TTarget&gt;(Expression&lt;Func&lt;TEntity, TTarget&gt;&gt;, NpgsqlDbType)</h4>
-  <div class="markdown level1 summary"><p>Configures the column that the property maps to, if not configured it will use the name of the property inside the entity.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IEntityBuilder&lt;TEntity&gt; MapColumn&lt;TTarget&gt;(Expression&lt;Func&lt;TEntity, TTarget&gt;&gt; propertySelector, NpgsqlDbType dbType)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Expression</span>&lt;<span class="xref">Func</span>&lt;TEntity, TTarget&gt;&gt;</td>
-        <td><span class="parametername">propertySelector</span></td>
-        <td><p>A lambda expression representing the property on this entity type.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">NpgsqlDbType</span></td>
-        <td><span class="parametername">dbType</span></td>
-        <td><p>The type of the column in the database.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html">IEntityBuilder</a>&lt;TEntity&gt;</td>
-        <td><p>The same builder instance so that multiple calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TTarget</span></td>
-        <td><p>The type of the property.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn__1_Expression_Func__0___0___System_String_.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.Builder.IEntityBuilder%601.MapColumn%60%601(Expression%7BFunc%7B%600%2C%60%600%7D%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L504">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L499">View Source</a>
   </span>
   <a id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn_" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn*"></a>
   <h4 id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn__1_Expression_Func__0___0___System_String_" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(Expression{Func{`0,``0}},System.String)">MapColumn&lt;TTarget&gt;(Expression&lt;Func&lt;TEntity, TTarget&gt;&gt;, String)</h4>
@@ -350,88 +343,10 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn__1_Expression_Func__0___0___System_String_NpgsqlDbType_.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.Builder.IEntityBuilder%601.MapColumn%60%601(Expression%7BFunc%7B%600%2C%60%600%7D%7D%2CSystem.String%2CNpgsqlDbType)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L523">View Source</a>
-  </span>
-  <a id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn_" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn*"></a>
-  <h4 id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn__1_Expression_Func__0___0___System_String_NpgsqlDbType_" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(Expression{Func{`0,``0}},System.String,NpgsqlDbType)">MapColumn&lt;TTarget&gt;(Expression&lt;Func&lt;TEntity, TTarget&gt;&gt;, String, NpgsqlDbType)</h4>
-  <div class="markdown level1 summary"><p>Configures the column that the property maps to, if not configured it will use the name of the property inside the entity.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IEntityBuilder&lt;TEntity&gt; MapColumn&lt;TTarget&gt;(Expression&lt;Func&lt;TEntity, TTarget&gt;&gt; propertySelector, string columnName, NpgsqlDbType dbType)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Expression</span>&lt;<span class="xref">Func</span>&lt;TEntity, TTarget&gt;&gt;</td>
-        <td><span class="parametername">propertySelector</span></td>
-        <td><p>A lambda expression representing the property on this entity type.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a></td>
-        <td><span class="parametername">columnName</span></td>
-        <td><p>The name of the column in the database to which the used property should map to.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">NpgsqlDbType</span></td>
-        <td><span class="parametername">dbType</span></td>
-        <td><p>The type of the column in the database.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html">IEntityBuilder</a>&lt;TEntity&gt;</td>
-        <td><p>The same builder instance so that multiple calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TTarget</span></td>
-        <td><p>The type of the property.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapId__1_Expression_Func__0___0___DatabaseGeneratedOption_.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.Builder.IEntityBuilder%601.MapId%60%601(Expression%7BFunc%7B%600%2C%60%600%7D%7D%2CDatabaseGeneratedOption)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L540">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L516">View Source</a>
   </span>
   <a id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapId_" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapId*"></a>
   <h4 id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapId__1_Expression_Func__0___0___DatabaseGeneratedOption_" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapId``1(Expression{Func{`0,``0}},DatabaseGeneratedOption)">MapId&lt;TTarget&gt;(Expression&lt;Func&lt;TEntity, TTarget&gt;&gt;, DatabaseGeneratedOption)</h4>
@@ -503,7 +418,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapPostgresEnum__1_Expression_Func__0___0___System_Nullable_System_String__System_Nullable_INpgsqlNameTranslator__.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.Builder.IEntityBuilder%601.MapPostgresEnum%60%601(Expression%7BFunc%7B%600%2C%60%600%7D%7D%2CSystem.Nullable%7BSystem.String%7D%2CSystem.Nullable%7BINpgsqlNameTranslator%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L550">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L526">View Source</a>
   </span>
   <a id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapPostgresEnum_" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapPostgresEnum*"></a>
   <h4 id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapPostgresEnum__1_Expression_Func__0___0___System_Nullable_System_String__System_Nullable_INpgsqlNameTranslator__" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapPostgresEnum``1(Expression{Func{`0,``0}},System.Nullable{System.String},System.Nullable{INpgsqlNameTranslator})">MapPostgresEnum&lt;TTarget&gt;(Expression&lt;Func&lt;TEntity, TTarget&gt;&gt;, Nullable&lt;String&gt;, Nullable&lt;INpgsqlNameTranslator&gt;)</h4>
@@ -582,7 +497,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapPostgresEnum__1_Expression_Func__0_System_Nullable___0____System_Nullable_System_String__System_Nullable_INpgsqlNameTranslator__.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.Builder.IEntityBuilder%601.MapPostgresEnum%60%601(Expression%7BFunc%7B%600%2CSystem.Nullable%7B%60%600%7D%7D%7D%2CSystem.Nullable%7BSystem.String%7D%2CSystem.Nullable%7BINpgsqlNameTranslator%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L562">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L538">View Source</a>
   </span>
   <a id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapPostgresEnum_" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapPostgresEnum*"></a>
   <h4 id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapPostgresEnum__1_Expression_Func__0_System_Nullable___0____System_Nullable_System_String__System_Nullable_INpgsqlNameTranslator__" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapPostgresEnum``1(Expression{Func{`0,System.Nullable{``0}}},System.Nullable{System.String},System.Nullable{INpgsqlNameTranslator})">MapPostgresEnum&lt;TTarget&gt;(Expression&lt;Func&lt;TEntity, Nullable&lt;TTarget&gt;&gt;&gt;, Nullable&lt;String&gt;, Nullable&lt;INpgsqlNameTranslator&gt;)</h4>
@@ -661,7 +576,7 @@
     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapToTable_System_String_.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.Builder.IEntityBuilder%601.MapToTable(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L495">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L483">View Source</a>
   </span>
   <a id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapToTable_" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapToTable*"></a>
   <h4 id="Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapToTable_System_String_" data-uid="Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapToTable(System.String)">MapToTable(String)</h4>
@@ -725,7 +640,7 @@
                     <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_Builder_IEntityBuilder_1.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.Builder.IEntityBuilder%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L488" class="contribution-link">View Source</a>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Venflow/Modeling/Definitions/Builder/EntityBuilder.cs/#L476" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

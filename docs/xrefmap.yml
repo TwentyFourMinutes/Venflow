@@ -2605,6 +2605,24 @@ references:
   fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity)
   nameWithType: IEntityBuilder<TEntity>
   nameWithType.vb: IEntityBuilder(Of TEntity)
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.Column*
+  name: Column
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_Column_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.Column
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.Column
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).Column
+  nameWithType: IEntityBuilder<TEntity>.Column
+  nameWithType.vb: IEntityBuilder(Of TEntity).Column
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.Column``1(Expression{Func{`0,``0}})
+  name: Column<TTarget>(Expression<Func<TEntity, TTarget>>)
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_Column__1_Expression_Func__0___0___
+  commentId: M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.Column``1(Expression{Func{`0,``0}})
+  name.vb: Column(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)))
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.Column<TTarget>(Expression<Func<TEntity, TTarget>>)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).Column(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)))
+  nameWithType: IEntityBuilder<TEntity>.Column<TTarget>(Expression<Func<TEntity, TTarget>>)
+  nameWithType.vb: IEntityBuilder(Of TEntity).Column(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)))
 - uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.Ignore*
   name: Ignore
   href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_Ignore_
@@ -2632,15 +2650,6 @@ references:
   fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapColumn
   nameWithType: IEntityBuilder<TEntity>.MapColumn
   nameWithType.vb: IEntityBuilder(Of TEntity).MapColumn
-- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(Expression{Func{`0,``0}},NpgsqlDbType)
-  name: MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, NpgsqlDbType)
-  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn__1_Expression_Func__0___0___NpgsqlDbType_
-  commentId: M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(Expression{Func{`0,``0}},NpgsqlDbType)
-  name.vb: MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), NpgsqlDbType)
-  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, NpgsqlDbType)
-  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), NpgsqlDbType)
-  nameWithType: IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, NpgsqlDbType)
-  nameWithType.vb: IEntityBuilder(Of TEntity).MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), NpgsqlDbType)
 - uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(Expression{Func{`0,``0}},System.String)
   name: MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, String)
   href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn__1_Expression_Func__0___0___System_String_
@@ -2650,15 +2659,6 @@ references:
   fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), System.String)
   nameWithType: IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, String)
   nameWithType.vb: IEntityBuilder(Of TEntity).MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), String)
-- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(Expression{Func{`0,``0}},System.String,NpgsqlDbType)
-  name: MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, String, NpgsqlDbType)
-  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapColumn__1_Expression_Func__0___0___System_String_NpgsqlDbType_
-  commentId: M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(Expression{Func{`0,``0}},System.String,NpgsqlDbType)
-  name.vb: MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), String, NpgsqlDbType)
-  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, System.String, NpgsqlDbType)
-  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), System.String, NpgsqlDbType)
-  nameWithType: IEntityBuilder<TEntity>.MapColumn<TTarget>(Expression<Func<TEntity, TTarget>>, String, NpgsqlDbType)
-  nameWithType.vb: IEntityBuilder(Of TEntity).MapColumn(Of TTarget)(Expression(Of Func(Of TEntity, TTarget)), String, NpgsqlDbType)
 - uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapId*
   name: MapId
   href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_MapId_
@@ -2899,6 +2899,64 @@ references:
   fullName.vb: Venflow.Modeling.Definitions.Builder.INotRequiredSingleRightRelationBuilder(Of TEntity, TRelation).WithOne
   nameWithType: INotRequiredSingleRightRelationBuilder<TEntity, TRelation>.WithOne
   nameWithType.vb: INotRequiredSingleRightRelationBuilder(Of TEntity, TRelation).WithOne
+- uid: Venflow.Modeling.Definitions.Builder.IPropertyBuilder
+  name: IPropertyBuilder
+  href: api/Venflow.Modeling.Definitions.Builder.IPropertyBuilder.html
+  commentId: T:Venflow.Modeling.Definitions.Builder.IPropertyBuilder
+  fullName: Venflow.Modeling.Definitions.Builder.IPropertyBuilder
+  nameWithType: IPropertyBuilder
+- uid: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.HasDefault
+  name: HasDefault()
+  href: api/Venflow.Modeling.Definitions.Builder.IPropertyBuilder.html#Venflow_Modeling_Definitions_Builder_IPropertyBuilder_HasDefault
+  commentId: M:Venflow.Modeling.Definitions.Builder.IPropertyBuilder.HasDefault
+  fullName: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.HasDefault()
+  nameWithType: IPropertyBuilder.HasDefault()
+- uid: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.HasDefault*
+  name: HasDefault
+  href: api/Venflow.Modeling.Definitions.Builder.IPropertyBuilder.html#Venflow_Modeling_Definitions_Builder_IPropertyBuilder_HasDefault_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.IPropertyBuilder.HasDefault
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.HasDefault
+  nameWithType: IPropertyBuilder.HasDefault
+- uid: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.HasId
+  name: HasId()
+  href: api/Venflow.Modeling.Definitions.Builder.IPropertyBuilder.html#Venflow_Modeling_Definitions_Builder_IPropertyBuilder_HasId
+  commentId: M:Venflow.Modeling.Definitions.Builder.IPropertyBuilder.HasId
+  fullName: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.HasId()
+  nameWithType: IPropertyBuilder.HasId()
+- uid: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.HasId*
+  name: HasId
+  href: api/Venflow.Modeling.Definitions.Builder.IPropertyBuilder.html#Venflow_Modeling_Definitions_Builder_IPropertyBuilder_HasId_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.IPropertyBuilder.HasId
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.HasId
+  nameWithType: IPropertyBuilder.HasId
+- uid: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.WithName(System.String)
+  name: WithName(String)
+  href: api/Venflow.Modeling.Definitions.Builder.IPropertyBuilder.html#Venflow_Modeling_Definitions_Builder_IPropertyBuilder_WithName_System_String_
+  commentId: M:Venflow.Modeling.Definitions.Builder.IPropertyBuilder.WithName(System.String)
+  fullName: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.WithName(System.String)
+  nameWithType: IPropertyBuilder.WithName(String)
+- uid: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.WithName*
+  name: WithName
+  href: api/Venflow.Modeling.Definitions.Builder.IPropertyBuilder.html#Venflow_Modeling_Definitions_Builder_IPropertyBuilder_WithName_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.IPropertyBuilder.WithName
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.WithName
+  nameWithType: IPropertyBuilder.WithName
+- uid: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.WithType(NpgsqlDbType)
+  name: WithType(NpgsqlDbType)
+  href: api/Venflow.Modeling.Definitions.Builder.IPropertyBuilder.html#Venflow_Modeling_Definitions_Builder_IPropertyBuilder_WithType_NpgsqlDbType_
+  commentId: M:Venflow.Modeling.Definitions.Builder.IPropertyBuilder.WithType(NpgsqlDbType)
+  fullName: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.WithType(NpgsqlDbType)
+  nameWithType: IPropertyBuilder.WithType(NpgsqlDbType)
+- uid: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.WithType*
+  name: WithType
+  href: api/Venflow.Modeling.Definitions.Builder.IPropertyBuilder.html#Venflow_Modeling_Definitions_Builder_IPropertyBuilder_WithType_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.IPropertyBuilder.WithType
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.IPropertyBuilder.WithType
+  nameWithType: IPropertyBuilder.WithType
 - uid: Venflow.Modeling.Definitions.Builder.IRequiredMultiRightRelationBuilder`2
   name: IRequiredMultiRightRelationBuilder<TEntity, TRelation>
   href: api/Venflow.Modeling.Definitions.Builder.IRequiredMultiRightRelationBuilder-2.html
