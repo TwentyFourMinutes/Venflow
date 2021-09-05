@@ -27,6 +27,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.AspNetCore", "Venflow.AspNetCore\Venflow.AspNetCore.csproj", "{06498DCC-F8EE-475F-8FDE-2E63EC88996D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Keys", "Venflow.Keys\Venflow.Keys.csproj", "{E282DF57-89A8-46F2-872F-37F84A84C87E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B617D0A6-90A0-4337-8F8B-D25F7A806040} = {B617D0A6-90A0-4337-8F8B-D25F7A806040}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venflow.Tests.Keys", "Venflow.Tests.Keys\Venflow.Tests.Keys.csproj", "{9083AF7D-BB3C-47E5-8A6E-AC3A05DAED83}"
 EndProject
