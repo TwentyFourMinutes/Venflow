@@ -141,6 +141,22 @@ namespace Venflow.Tests.QueryTests
             Assert.Equal($"sample query '1' '1' '1' '1' '{parameterValue}'", commandText);
         }
 
+        [Fact]
+        public async Task QueryWithExpressionAndDbTypeAsync()
+        {
+            var person = await InsertPersonAsync();
+
+            var queriedPerson = await Database.People.QuerySingle(x => $"SELECT * FROM {x} WHERE {x.Id} = {person.Id,VenflowDbType.Integer}").QueryAsync();
+
+            Assert.NotNull(queriedPerson);
+
+            Assert.Equal(person.Id, queriedPerson.Id);
+            Assert.Equal(person.Name, queriedPerson.Name);
+            Assert.Null(queriedPerson.Emails);
+
+            await Database.People.DeleteAsync(person);
+        }
+
         private int SampleMethod(int value)
             => value;
 

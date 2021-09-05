@@ -5,13 +5,14 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using NpgsqlTypes;
 using Venflow.Enums;
 
 namespace Venflow.Commands
 {
     internal static class InterpolatedSqlExpressionConverter
     {
-        internal static (Delegate function, SqlExpressionOptions options, Type? parameterType) GetConvertedDelegate(List<Expression> instanceArguments)
+        internal static (Delegate function, SqlExpressionOptions options, Type? parameterType) GetConvertedDelegate(List<Expression> instanceArguments, List<(int Index, NpgsqlDbType DbType)> dbTypes)
         {
             var visitor = new ConstantExpressionVisitor();
 
@@ -31,9 +32,30 @@ namespace Venflow.Commands
 
             var replacer = new ConstantExpressionReplacer(visitor.DisplayClassType, visitor.ThisType);
 
+            var nextDbType = dbTypes.Count == 0 ? (-1, 0) : dbTypes[0];
+            var dbTypeIndex = 0;
+
             for (int instanceArgumentIndex = 0; instanceArgumentIndex < instanceArguments.Count; instanceArgumentIndex++)
             {
-                instanceArguments[instanceArgumentIndex] = replacer.Visit(instanceArguments[instanceArgumentIndex]);
+                if (instanceArgumentIndex == nextDbType.Item1)
+                {
+                    instanceArguments[instanceArgumentIndex] = Expression.New(typeof(Tuple<object, NpgsqlDbType>).GetConstructor(new[] { typeof(object), typeof(NpgsqlDbType) }), replacer.Visit(instanceArguments[instanceArgumentIndex]), Expression.Constant(nextDbType.Item2));
+
+                    dbTypeIndex++;
+
+                    if (dbTypeIndex == dbTypes.Count)
+                    {
+                        nextDbType = (-1, 0);
+                    }
+                    else
+                    {
+                        nextDbType = dbTypes[dbTypeIndex];
+                    }
+                }
+                else
+                {
+                    instanceArguments[instanceArgumentIndex] = replacer.Visit(instanceArguments[instanceArgumentIndex]);
+                }
             }
 
             return (Expression.Lambda<Func<object, object[]>>(Expression.Block(new[] { replacer.LocalExpression }, new Expression[] { replacer.ConvertExpression, Expression.NewArrayInit(typeof(object), instanceArguments) }), replacer.ParameterExpression).Compile(),

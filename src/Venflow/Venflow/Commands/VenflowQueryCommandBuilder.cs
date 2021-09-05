@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
+using NpgsqlTypes;
 using Venflow.Dynamic;
 using Venflow.Dynamic.Materializer;
 using Venflow.Enums;
@@ -241,9 +242,9 @@ namespace Venflow.Commands
                             staticArguments.Add((expressionArgumentIndex, name));
                         }
 
-                        (argumentsFunc, expressionOptions, parameterType) = InterpolatedSqlExpressionConverter.GetConvertedDelegate(instanceArguments);
+                        (sql, var dbTypes) = GetFinalizedSqlString((method.Arguments[0] as ConstantExpression)!.Value as string, staticArguments);
 
-                        sql = GetFinalizedSqlString((method.Arguments[0] as ConstantExpression)!.Value as string, staticArguments);
+                        (argumentsFunc, expressionOptions, parameterType) = InterpolatedSqlExpressionConverter.GetConvertedDelegate(instanceArguments, dbTypes);
 
                         _entityConfiguration.MaterializerFactory.InterpolatedSqlMaterializerCache.Add(cacheKey, new SqlExpression(sql, argumentsFunc, parameterType, expressionOptions));
                     }
@@ -292,10 +293,19 @@ namespace Venflow.Commands
                             break;
 
                         if (spanChar is < '0' or > '9')
+                        {
                             throw new InvalidOperationException();
+                        }
                     }
 
                     var argument = argumentsSpan[argumentIndex++];
+                    NpgsqlDbType? dbType = default;
+
+                    if (argument is Tuple<object, NpgsqlDbType> tuple)
+                    {
+                        argument = tuple.Item1;
+                        dbType = tuple.Item2;
+                    }
 
                     if (argument is IList list)
                     {
@@ -321,7 +331,14 @@ namespace Venflow.Commands
                                 argumentedSql.Append(parameterName)
                                              .Append(", ");
 
-                                _command.Parameters.Add(ParameterTypeHandler.HandleParameter(parameterName, listType!, listItem));
+                                if (dbType is null)
+                                {
+                                    _command.Parameters.Add(ParameterTypeHandler.HandleParameter(parameterName, listType!, listItem));
+                                }
+                                else
+                                {
+                                    _command.Parameters.Add(ParameterTypeHandler.HandleParameter(parameterName, listItem, dbType.Value));
+                                }
                             }
 
                             argumentedSql.Length -= 2;
@@ -335,7 +352,14 @@ namespace Venflow.Commands
 
                         argumentedSql.Append(parameterName);
 
-                        _command.Parameters.Add(ParameterTypeHandler.HandleParameter(parameterName, argument));
+                        if (dbType is null)
+                        {
+                            _command.Parameters.Add(ParameterTypeHandler.HandleParameter(parameterName, argument));
+                        }
+                        else
+                        {
+                            _command.Parameters.Add(ParameterTypeHandler.HandleParameter(parameterName, argument, dbType.Value));
+                        }
                     }
                 }
                 else
@@ -347,12 +371,14 @@ namespace Venflow.Commands
             _command.CommandText = argumentedSql.ToString();
         }
 
-        private string GetFinalizedSqlString(string sql, List<(int Index, string Name)> staticArguments)
+        private (string Sql, List<(int Index, NpgsqlDbType DbType)> DbTypes) GetFinalizedSqlString(string sql, List<(int Index, string Name)> staticArguments)
         {
             var hasGeneratedJoins = (_queryGenerationOptions & QueryGenerationOptions.GenerateJoins) != 0 && _relationBuilderValues is not null;
             var sqlLength = sql.Length;
             var argumentedSql = new StringBuilder(sqlLength);
             var sqlSpan = sql.AsSpan();
+
+            var dbTypes = new List<(int Index, NpgsqlDbType DbType)>();
 
             var argumentIndex = 0;
             var staticArgumentIndex = 1;
@@ -365,6 +391,9 @@ namespace Venflow.Commands
                 if (spanChar == '{' &&
                     spanIndex + 2 < sqlLength)
                 {
+                    var dbTypeString = string.Empty;
+                    var appendDbTypeString = false;
+
                     for (spanIndex++; spanIndex < sqlLength; spanIndex++)
                     {
                         spanChar = sqlSpan[spanIndex];
@@ -372,8 +401,23 @@ namespace Venflow.Commands
                         if (spanChar == '}')
                             break;
 
-                        if (spanChar is < '0' or > '9')
+                        if (spanChar == ',')
+                        {
+                            appendDbTypeString = true;
+                        }
+                        else if (spanChar is < '0' or > '9')
+                        {
                             throw new InvalidOperationException();
+                        }
+                        else if (appendDbTypeString)
+                        {
+                            dbTypeString += spanChar.ToString();
+                        }
+                    }
+
+                    if (dbTypeString != string.Empty)
+                    {
+                        dbTypes.Add((argumentIndex - staticArgumentIndex + 1, (NpgsqlDbType)int.Parse(dbTypeString)));
                     }
 
                     if (argumentIndex == nextStaticArgument.Index)
@@ -409,7 +453,7 @@ namespace Venflow.Commands
                 }
             }
 
-            return argumentedSql.ToString();
+            return (argumentedSql.ToString(), dbTypes);
         }
 
         private void BuildFromInterpolatedSql()
@@ -438,7 +482,9 @@ namespace Venflow.Commands
                             break;
 
                         if (spanChar is < '0' or > '9')
+                        {
                             throw new InvalidOperationException();
+                        }
                     }
 
                     var argument = argumentsSpan[argumentIndex++];
@@ -587,30 +633,30 @@ namespace Venflow.Commands
             return new QueryRelationBuilder<TEntity, TEntity, TReturn>(_entityConfiguration, this, _relationBuilderValues).JoinWith(propertySelector, joinBehaviour);
         }
         IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.LeftJoinWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector)
-            => JoinWith(propertySelector, JoinBehaviour.LeftJoin);
+                => JoinWith(propertySelector, JoinBehaviour.LeftJoin);
 
         IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.LeftJoinWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>> propertySelector)
-            => JoinWith(propertySelector, JoinBehaviour.LeftJoin);
+                => JoinWith(propertySelector, JoinBehaviour.LeftJoin);
 
         IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.LeftJoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector)
-            => JoinWith(propertySelector, JoinBehaviour.LeftJoin);
+                => JoinWith(propertySelector, JoinBehaviour.LeftJoin);
 
         IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.RightJoinWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector)
-            => JoinWith(propertySelector, JoinBehaviour.RightJoin);
+                => JoinWith(propertySelector, JoinBehaviour.RightJoin);
 
         IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.RightJoinWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>> propertySelector)
-            => JoinWith(propertySelector, JoinBehaviour.RightJoin);
+                => JoinWith(propertySelector, JoinBehaviour.RightJoin);
 
         IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.RightJoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector)
-            => JoinWith(propertySelector, JoinBehaviour.RightJoin);
+                => JoinWith(propertySelector, JoinBehaviour.RightJoin);
 
         IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.FullJoinWith<TToEntity>(Expression<Func<TEntity, TToEntity>> propertySelector)
-            => JoinWith(propertySelector, JoinBehaviour.FullJoin);
+                => JoinWith(propertySelector, JoinBehaviour.FullJoin);
 
         IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.FullJoinWith<TToEntity>(Expression<Func<TEntity, IList<TToEntity>>> propertySelector)
-            => JoinWith(propertySelector, JoinBehaviour.FullJoin);
+                => JoinWith(propertySelector, JoinBehaviour.FullJoin);
 
         IQueryRelationBuilder<TToEntity, TEntity, TReturn> IBaseQueryRelationBuilder<TEntity, TEntity, TReturn>.FullJoinWith<TToEntity>(Expression<Func<TEntity, List<TToEntity>>> propertySelector)
-            => JoinWith(propertySelector, JoinBehaviour.FullJoin);
+                => JoinWith(propertySelector, JoinBehaviour.FullJoin);
     }
 }

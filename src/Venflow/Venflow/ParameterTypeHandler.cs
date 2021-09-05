@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace Venflow
 {
@@ -126,6 +127,20 @@ namespace Venflow
                 return new NpgsqlParameter<T>(name, val);
 
             return handler.Handle(name, val);
+        }
+
+        internal static NpgsqlParameter HandleParameter(string name, object? val, NpgsqlDbType dbType)
+        {
+            if (val is null)
+            {
+                return new NpgsqlParameter<DBNull>(name, DBNull.Value);
+            }
+
+            var parameter = new NpgsqlParameter(name, dbType);
+
+            parameter.Value = val;
+
+            return parameter;
         }
 
         internal static NpgsqlParameter HandleParameter(string name, Type type, object? val)
