@@ -25,70 +25,50 @@ jobs:
 
       - name: Publish Venflow.Keys on version change
         id: publish_venflow_keys_nuget
-        uses: Rebel028/publish-nuget@v2.6.3
+        uses: TwentyFourMinutes/PublishNuget@v1.1.0
         with:
-          PROJECT_FILE_PATH: src/Venflow/Venflow.Keys/Venflow.Keys.csproj
-          VERSION_FILE_PATH: src/Venflow/Directory.Build.props
-          PACKAGE_NAME: Venflow.Keys
-          VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
-          TAG_COMMIT: true
-          TAG_FORMAT: v*
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-          NUGET_SOURCE: https://api.nuget.org
-          INCLUDE_SYMBOLS: true
+          name: Venflow.Keys
+          project_file_path: src/Venflow/Venflow.Keys/Venflow.Keys.csproj
+          version_file_path: src/Venflow/Directory.Build.props
+          nuget_key: ${{secrets.NUGET_API_KEY}}
+          include_symbols: true
 
       - name: Publish Venflow on version change
         id: publish_venflow_nuget
-        uses: Rebel028/publish-nuget@v2.6.3
+        uses: TwentyFourMinutes/PublishNuget@v1.1.0
         with:
-          PROJECT_FILE_PATH: src/Venflow/Venflow/Venflow.csproj
-          VERSION_FILE_PATH: src/Venflow/Directory.Build.props
-          PACKAGE_NAME: Venflow
-          VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
-          TAG_COMMIT: true
-          TAG_FORMAT: v*
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-          NUGET_SOURCE: https://api.nuget.org
-          INCLUDE_SYMBOLS: true
+          name: Venflow
+          project_file_path: src/Venflow/Venflow/Venflow.csproj
+          version_file_path: src/Venflow/Directory.Build.props
+          nuget_key: ${{secrets.NUGET_API_KEY}}
+          include_symbols: true
 
       - name: Publish Venflow.Extensions.Logging on version change
         id: publish_venflow_extensions_logging_nuget
-        uses: Rebel028/publish-nuget@v2.6.3
+        uses: TwentyFourMinutes/PublishNuget@v1.1.0
         with:
-          PROJECT_FILE_PATH: src/Venflow/Venflow.Extensions.Logging/Venflow.Extensions.Logging.csproj
-          VERSION_FILE_PATH: src/Venflow/Directory.Build.props
-          PACKAGE_NAME: Venflow.Extensions.Logging
-          VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
-          TAG_COMMIT: true
-          TAG_FORMAT: v*
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-          NUGET_SOURCE: https://api.nuget.org
-          INCLUDE_SYMBOLS: true
+          name: Venflow.Extensions.Logging
+          project_file_path: src/Venflow/Venflow.Extensions.Logging/Venflow.Extensions.Logging.csproj
+          version_file_path: src/Venflow/Directory.Build.props
+          nuget_key: ${{secrets.NUGET_API_KEY}}
+          include_symbols: true
 
       - name: Publish Venflow.AspNetCore on version change
         id: publish_venflow_aspnetcore_nuget
-        uses: Rebel028/publish-nuget@v2.6.3
+        uses: TwentyFourMinutes/PublishNuget@v1.1.0
         with:
-          PROJECT_FILE_PATH: src/Venflow/Venflow.AspNetCore/Venflow.AspNetCore.csproj
-          VERSION_FILE_PATH: src/Venflow/Directory.Build.props
-          PACKAGE_NAME: Venflow.AspNetCore
-          VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
-          TAG_COMMIT: true
-          TAG_FORMAT: v*
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-          NUGET_SOURCE: https://api.nuget.org
-          INCLUDE_SYMBOLS: true
+          name: Venflow.AspNetCore
+          project_file_path: src/Venflow/Venflow.AspNetCore/Venflow.AspNetCore.csproj
+          version_file_path: src/Venflow/Directory.Build.props
+          nuget_key: ${{secrets.NUGET_API_KEY}}
+          include_symbols: true
 
       - name: Publish Venflow.NewtonsoftJson on version change
         id: publish_venflow_newtonsoftjson_nuget
-        uses: Rebel028/publish-nuget@v2.6.3
+        uses: TwentyFourMinutes/PublishNuget@v1.1.0
         with:
-          PROJECT_FILE_PATH: src/Venflow/Venflow.NewtonsoftJson/Venflow.NewtonsoftJson.csproj
-          VERSION_FILE_PATH: src/Venflow/Directory.Build.props
-          PACKAGE_NAME: Venflow.NewtonsoftJson
-          VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
-          TAG_COMMIT: true
-          TAG_FORMAT: v*
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-          NUGET_SOURCE: https://api.nuget.org
-          INCLUDE_SYMBOLS: true
+          name: Venflow.NewtonsoftJson
+          project_file_path: src/Venflow/Venflow.NewtonsoftJson/Venflow.NewtonsoftJson.csproj
+          version_file_path: src/Venflow/Directory.Build.props
+          nuget_key: ${{secrets.NUGET_API_KEY}}
+          include_symbols: true
