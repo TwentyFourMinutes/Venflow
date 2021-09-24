@@ -20,13 +20,13 @@ jobs:
         run: dotnet build -c Release
 
       - name: Generate build directory
-        run: mkdir build/
+        working-directory: ./
+        run: mkdir build
 
       - name: Publish Venflow.Keys on version change
         id: publish_venflow_keys_nuget
         uses: Elskom/publish-nuget@main
         with:
-          PACKAGE_PATH: build/
           PROJECT_FILE_PATH: src/Venflow/Venflow.Keys/Venflow.Keys.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
           PACKAGE_NAME: Venflow.Keys
@@ -35,12 +35,12 @@ jobs:
           TAG_FORMAT: v*
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
           NUGET_SOURCE: https://api.nuget.org
+          INCLUDE_SYMBOLS: true
 
       - name: Publish Venflow on version change
         id: publish_venflow_nuget
         uses: Elskom/publish-nuget@main
         with:
-          PACKAGE_PATH: build/
           PROJECT_FILE_PATH: src/Venflow/Venflow/Venflow.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
           PACKAGE_NAME: Venflow
@@ -49,12 +49,12 @@ jobs:
           TAG_FORMAT: v*
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
           NUGET_SOURCE: https://api.nuget.org
+          INCLUDE_SYMBOLS: true
 
       - name: Publish Venflow.Extensions.Logging on version change
         id: publish_venflow_extensions_logging_nuget
         uses: Elskom/publish-nuget@main
         with:
-          PACKAGE_PATH: build/
           PROJECT_FILE_PATH: src/Venflow/Venflow.Extensions.Logging/Venflow.Extensions.Logging.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
           PACKAGE_NAME: Venflow.Extensions.Logging
@@ -63,12 +63,12 @@ jobs:
           TAG_FORMAT: v*
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
           NUGET_SOURCE: https://api.nuget.org
+          INCLUDE_SYMBOLS: true
 
       - name: Publish Venflow.AspNetCore on version change
         id: publish_venflow_aspnetcore_nuget
         uses: Elskom/publish-nuget@main
         with:
-          PACKAGE_PATH: build/
           PROJECT_FILE_PATH: src/Venflow/Venflow.AspNetCore/Venflow.AspNetCore.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
           PACKAGE_NAME: Venflow.AspNetCore
@@ -77,12 +77,12 @@ jobs:
           TAG_FORMAT: v*
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
           NUGET_SOURCE: https://api.nuget.org
+          INCLUDE_SYMBOLS: true
 
       - name: Publish Venflow.NewtonsoftJson on version change
         id: publish_venflow_newtonsoftjson_nuget
         uses: Elskom/publish-nuget@main
         with:
-          PACKAGE_PATH: build/
           PROJECT_FILE_PATH: src/Venflow/Venflow.NewtonsoftJson/Venflow.NewtonsoftJson.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
           PACKAGE_NAME: Venflow.NewtonsoftJson
@@ -91,3 +91,4 @@ jobs:
           TAG_FORMAT: v*
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
           NUGET_SOURCE: https://api.nuget.org
+          INCLUDE_SYMBOLS: true
