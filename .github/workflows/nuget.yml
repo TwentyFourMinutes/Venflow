@@ -25,7 +25,7 @@ jobs:
 
       - name: Publish Venflow.Keys on version change
         id: publish_venflow_keys_nuget
-        uses: Elskom/publish-nuget@main
+        uses: Rebel028/publish-nuget@v2.6.3
         with:
           PROJECT_FILE_PATH: src/Venflow/Venflow.Keys/Venflow.Keys.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
@@ -39,7 +39,7 @@ jobs:
 
       - name: Publish Venflow on version change
         id: publish_venflow_nuget
-        uses: Elskom/publish-nuget@main
+        uses: Rebel028/publish-nuget@v2.6.3
         with:
           PROJECT_FILE_PATH: src/Venflow/Venflow/Venflow.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
@@ -53,7 +53,7 @@ jobs:
 
       - name: Publish Venflow.Extensions.Logging on version change
         id: publish_venflow_extensions_logging_nuget
-        uses: Elskom/publish-nuget@main
+        uses: Rebel028/publish-nuget@v2.6.3
         with:
           PROJECT_FILE_PATH: src/Venflow/Venflow.Extensions.Logging/Venflow.Extensions.Logging.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
@@ -67,7 +67,7 @@ jobs:
 
       - name: Publish Venflow.AspNetCore on version change
         id: publish_venflow_aspnetcore_nuget
-        uses: Elskom/publish-nuget@main
+        uses: Rebel028/publish-nuget@v2.6.3
         with:
           PROJECT_FILE_PATH: src/Venflow/Venflow.AspNetCore/Venflow.AspNetCore.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
@@ -81,7 +81,7 @@ jobs:
 
       - name: Publish Venflow.NewtonsoftJson on version change
         id: publish_venflow_newtonsoftjson_nuget
-        uses: Elskom/publish-nuget@main
+        uses: Rebel028/publish-nuget@v2.6.3
         with:
           PROJECT_FILE_PATH: src/Venflow/Venflow.NewtonsoftJson/Venflow.NewtonsoftJson.csproj
           VERSION_FILE_PATH: src/Venflow/Directory.Build.props
