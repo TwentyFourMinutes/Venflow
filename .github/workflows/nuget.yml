@@ -25,7 +25,7 @@ jobs:
 
       - name: Publish Venflow.Keys on version change
         id: publish_venflow_keys_nuget
-        uses: TwentyFourMinutes/PublishNuget@v1.1.1
+        uses: TwentyFourMinutes/PublishNuget@v1.1.2
         with:
           name: Venflow.Keys
           project_file_path: src/Venflow/Venflow.Keys/Venflow.Keys.csproj
@@ -35,7 +35,7 @@ jobs:
 
       - name: Publish Venflow on version change
         id: publish_venflow_nuget
-        uses: TwentyFourMinutes/PublishNuget@v1.1.1
+        uses: TwentyFourMinutes/PublishNuget@v1.1.2
         with:
           name: Venflow
           project_file_path: src/Venflow/Venflow/Venflow.csproj
@@ -45,7 +45,7 @@ jobs:
 
       - name: Publish Venflow.Extensions.Logging on version change
         id: publish_venflow_extensions_logging_nuget
-        uses: TwentyFourMinutes/PublishNuget@v1.1.1
+        uses: TwentyFourMinutes/PublishNuget@v1.1.2
         with:
           name: Venflow.Extensions.Logging
           project_file_path: src/Venflow/Venflow.Extensions.Logging/Venflow.Extensions.Logging.csproj
@@ -55,7 +55,7 @@ jobs:
 
       - name: Publish Venflow.AspNetCore on version change
         id: publish_venflow_aspnetcore_nuget
-        uses: TwentyFourMinutes/PublishNuget@v1.1.1
+        uses: TwentyFourMinutes/PublishNuget@v1.1.2
         with:
           name: Venflow.AspNetCore
           project_file_path: src/Venflow/Venflow.AspNetCore/Venflow.AspNetCore.csproj
@@ -65,7 +65,7 @@ jobs:
 
       - name: Publish Venflow.NewtonsoftJson on version change
         id: publish_venflow_newtonsoftjson_nuget
-        uses: TwentyFourMinutes/PublishNuget@v1.1.1
+        uses: TwentyFourMinutes/PublishNuget@v1.1.2
         with:
           name: Venflow.NewtonsoftJson
           project_file_path: src/Venflow/Venflow.NewtonsoftJson/Venflow.NewtonsoftJson.csproj
