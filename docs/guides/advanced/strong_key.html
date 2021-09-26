@@ -103,7 +103,7 @@ public Post GetPostByBlog(int blogId, int postId)
     // Omitted for brevity 
 }
 </code></pre>
-<p>This code will compile just fine, however as you might have spotted, the <code>postId</code> and <code>blogId</code> are in the wrong order and therefore might not give us the expected result. This can be a real nightmare to fix as it is rather hard to spot in a large codebase with a lot of different entities. Luckily Venflow directly provides you with a build in solution called strongly-typed ids, through the <a class="xref" href="../../api/Venflow.Key-2.html"><code>Key&lt;T,TKey&gt;</code></a> API. Lets look at a full implementation.</p>
+<p>This code will compile just fine, however as you might have spotted, the <code>postId</code> and <code>blogId</code> are in the wrong order and therefore might not give us the expected result. This can be a real nightmare to fix as it is rather hard to spot in a large codebase with a lot of different entities. Luckily Venflow directly provides you with a build in solution called strongly-typed ids, through the <a href="xref:Venflow.Key%602"><code>Key&lt;T,TKey&gt;</code></a> API. Lets look at a full implementation.</p>
 <pre><code class="lang-cs">public class Blog
 {
     public Key&lt;Blog, int&gt; Id { get; set; } // Using Key instead of int
