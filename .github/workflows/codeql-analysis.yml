@@ -57,7 +57,7 @@ jobs:
     - name: Manual build
       working-directory: ./
       run:  | 
-        dotnet build -c Release -f net6.0
+        dotnet build -c Release
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
