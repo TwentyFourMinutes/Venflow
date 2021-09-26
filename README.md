@@ -45,10 +45,11 @@ Install-Package Venflow
 
 ## Comparison
 
-Benchmarking ORM's isn't an easy task, since there are a bunch of different factors which can alter the result in one way or another. I do not present any beautiful graphs here simply because they would get too complex and it would require too many graphs to remain practical. This is also the reason why I tried to come up with a composite number based on benchmark results. If you still want check all the individual benchmarks, which you definitely should, the source code can be found [here](./src/Venflow/Venflow.Benchmarks) and the results as `.csv` and `.md` are over [here](./benchmarks).
+Benchmarking ORM's isn't an easy task, since there are a bunch of different factors which can alter the result in one way or another. I do not present any beautiful graphs here simply because they would get too complex and it would require too many graphs to remain practical. This is also the reason why I tried to come up with a composite number based on benchmark results. If you still want check all the individual benchmarks, which you definitely should, the source code can be found [here](./test/Venflow.Benchmarks) and the results as `.csv` and `.md` are over [here](./benchmarks).
 
 Lets just directly hop into the composite numbers of each tested ORM.
 <!--Benchmark Start-->
+
 | ORM Name | Composite Score\* | Mean Score\* | Allocation Score\* |
 | :- | :-: | :-: | :-: |
 | #1 [Dapper](https://github.com/StackExchange/Dapper) | 2,822 | 2,707 | 0,115 |
@@ -63,7 +64,7 @@ Now how do I calculate this _magic number_? The formula is as following:
 ```
 compositeScore = Σ((meanTime / lowestMeanTimeOfGroup - 1) + (allocation / lowestAllocationOfGroup - 1) / 10)
 ```
-A group is considered to be a list of benchmark entries which are inside the same file and have the same count and target framework. Now as some ORM's don't have any benchmarks entries for specific benchmark groups it will instead take the _lowest_ mean and the _lowest_  allocation from this group. The source code of the calculation can be found [here](./src/Venflow/Venflow.Score).
+A group is considered to be a list of benchmark entries which are inside the same file and have the same count and target framework. Now as some ORM's don't have any benchmarks entries for specific benchmark groups it will instead take the _lowest_ mean and the _lowest_  allocation from this group. The source code of the calculation can be found [here](./test/Venflow.Score).
 
 #### Disclaimer
 

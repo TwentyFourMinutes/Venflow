@@ -35,11 +35,9 @@ jobs:
 
     - name: Install dependencies
       run: dotnet restore
-      working-directory: ./src/Venflow
 
     - name: Build
       run: dotnet build --configuration Release --no-restore
-      working-directory: ./src/Venflow
 
     - name: Configure PostgreSQL
       uses: harmon758/postgresql-action@v1
@@ -50,15 +48,15 @@ jobs:
         postgresql password: 'venflow_tests'
 
     - name: Execute Tests (.Net 6)
-      working-directory: ./src/Venflow/Venflow.Tests
+      working-directory: ./test/Venflow.Tests
       run: 'dotnet test -c Release --no-restore --no-build --verbosity normal -f net6.0 /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=coverage-reports/ /p:Exclude="[Venflow.Shared]*"'
 
     - name: Execute Tests (.Net 5)
-      working-directory: ./src/Venflow/Venflow.Tests
+      working-directory: ./test/Venflow.Tests
       run: dotnet test -c Release --no-restore --no-build --verbosity normal -f net5.0
 
     - name: Execute Tests (.Net Core 3.1)
-      working-directory: ./src/Venflow/Venflow.Tests
+      working-directory: ./test/Venflow.Tests
       run: dotnet test -c Release --no-restore --no-build --verbosity normal -f netcoreapp3.1
 
     - name: Upload coverage report to coveralls.io

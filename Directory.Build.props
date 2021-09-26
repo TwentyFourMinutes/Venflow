@@ -20,9 +20,9 @@
     <Copyright>Copyright ©2021 Twenty</Copyright>
 
     <DocumentationFile>$(MSBuildProjectDirectory)/$(MSBuildProjectName).xml</DocumentationFile>
-    <PackageOutputPath>$(MSBuildThisFileDirectory)../../build</PackageOutputPath>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)build</PackageOutputPath>
 
-    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)../../Venflow.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)/Venflow.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
 
     <IncludeSymbols>true</IncludeSymbols>
@@ -35,8 +35,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)../../images/icon.png" Pack="true" PackagePath="" />
-    <None Include="$(MSBuildThisFileDirectory)../../LICENSE" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)images/icon.png" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>

@@ -633,63 +633,63 @@
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle(System.Linq.Expressions.Expression{System.Func{`0,System.FormattableString}})">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``1(System.Linq.Expressions.Expression{System.Func{`0,``0,System.FormattableString}})">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``2(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,System.FormattableString}})">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``3(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,System.FormattableString}})">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``4(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,System.FormattableString}})">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``5(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,System.FormattableString}})">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``6(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,``5,System.FormattableString}})">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``7(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,``5,``6,System.FormattableString}})">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QuerySingle``8(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,``5,``6,``7,System.FormattableString}})">
             <summary>
-            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter.</param>
             <returns>A Fluent API Builder for a query command.</returns>
@@ -704,7 +704,7 @@
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedSingle(System.FormattableString)">
             <summary>
-            Creates a new query command builder, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command builder, which expects a single returned primary row. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
             <returns>A Fluent API Builder for a query command.</returns>
@@ -718,63 +718,63 @@
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch(System.Linq.Expressions.Expression{System.Func{`0,System.FormattableString}})">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``1(System.Linq.Expressions.Expression{System.Func{`0,``0,System.FormattableString}})">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``2(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,System.FormattableString}})">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``3(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,System.FormattableString}})">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``4(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,System.FormattableString}})">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``5(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,System.FormattableString}})">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``6(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,``5,System.FormattableString}})">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``7(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,``5,``6,System.FormattableString}})">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <returns>A Fluent API Builder for a query command.</returns>
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryBatch``8(System.Linq.Expressions.Expression{System.Func{`0,``0,``1,``2,``3,``4,``5,``6,``7,System.FormattableString}})">
             <summary>
-             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+             Creates a new query command, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement.</param>
             <returns>A Fluent API Builder for a query command.</returns>
@@ -789,7 +789,7 @@
         </member>
         <member name="M:Venflow.Commands.IVenflowCommandBuilder`1.QueryInterpolatedBatch(System.FormattableString)">
             <summary>
-            Creates a new query command builder, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>.
+            Creates a new query command builder, which expects a set of primary rows to be returned. <strong>This API does support string interpolation!</strong>
             </summary>
             <param name="sql">A string containing the SQL statement. Ensure that you do not pass any user manipulated SQL for this parameter. You should only add parameters trough string interpolation.</param>
             <returns>A Fluent API Builder for a query command.</returns>
@@ -986,6 +986,15 @@
             <param name="assemblies">The assemblies which should be added to the lookup list.</param>
             <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/> instance.</returns>
             <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
+        </member>
+        <member name="M:Venflow.DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum``1(System.String,Npgsql.INpgsqlNameTranslator)">
+            <summary>
+            Maps a PostgreSQL enum to a CLR enum.
+            </summary>
+            <typeparam name="TEnum">The type of the enum.</typeparam>
+            <param name="name">The name of the enum in PostgreSQL, if none used it will try to convert the name of the CLR enum e.g. 'FooBar' to 'foo_bar'</param>
+            <param name="npgsqlNameTranslator">A component which will be used to translate CLR names (e.g. SomeClass) into database names (e.g. some_class). Defaults to <see cref="T:Npgsql.NameTranslation.NpgsqlSnakeCaseNameTranslator"/>.</param>
+            <returns>The same builder instance so that multiple calls can be chained.</returns>
         </member>
         <member name="T:Venflow.LoggerCallback">
             <summary>
@@ -1362,7 +1371,7 @@
         </member>
         <member name="T:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1">
             <summary>
-            Instances of this class are returned from methods inside the <see cref="T:Venflow.Table`1"/> class when using the Fluid API and it is not designed to be directly constructed in your application code.
+            Instances of this class are returned from methods inside the <see cref="!:EntityConfiguration&lt;TEntity&gt;&lt;TEntity&gt;"/> class when using the Fluent API and it is not designed to be directly constructed in your application code.
             </summary>
             <typeparam name="TEntity">The entity type being configured.</typeparam>
         </member>
@@ -1372,6 +1381,13 @@
             </summary>
             <param name="tableName">The name of the table.</param>
             <returns>The same builder instance so that multiple calls can be chained.</returns>
+        </member>
+        <member name="M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.Column``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+            Configures a column on the current entity.
+            </summary>
+            <param name="propertySelector">A lambda expression representing the property on this entity type.</param>
+            <returns>A new column builder instance so that multiple calls can be chained.</returns>
         </member>
         <member name="M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapColumn``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String)">
             <summary>
@@ -1577,6 +1593,37 @@
             </summary>
             <param name="navigationProperty">A lambda expression representing the reference navigation property on the other end of this relationship (blog => blog.BlogInfo). If no property is specified, the relationship will be configured without a navigation property on the other end of the relationship.</param>
             <returns>An object that can be used to configure the relationship.</returns>
+        </member>
+        <member name="T:Venflow.Modeling.Definitions.Builder.IPropertyBuilder">
+            <summary>
+            Instances of this class are returned from methods inside the <see cref="T:Venflow.Modeling.Definitions.Builder.EntityBuilder`1"/> class when using the Fluent API and it is not designed to be directly constructed in your application code.
+            </summary>
+        </member>
+        <member name="M:Venflow.Modeling.Definitions.Builder.IPropertyBuilder.HasId">
+            <summary>
+            Marks the current property as a primary key. This is the Fluent API equivalent to the <see cref="T:System.ComponentModel.DataAnnotations.KeyAttribute"/>.
+            </summary>
+            <returns>The same builder instance so that multiple calls can be chained.</returns>
+        </member>
+        <member name="M:Venflow.Modeling.Definitions.Builder.IPropertyBuilder.WithName(System.String)">
+            <summary>
+            Configures the name of the current column, if not configured it will use the name of the property.
+            </summary>
+            <param name="name">The name of the column in the database to which the used property should map to.</param>
+            <returns>The same builder instance so that multiple calls can be chained.</returns>
+        </member>
+        <member name="M:Venflow.Modeling.Definitions.Builder.IPropertyBuilder.WithType(NpgsqlTypes.NpgsqlDbType)">
+            <summary>
+            Configures the database type of the current column, if not configured it will use the default of the property.
+            </summary>
+            <param name="dbType">The type of the column in the database.</param>
+            <returns>The same builder instance so that multiple calls can be chained.</returns>
+        </member>
+        <member name="M:Venflow.Modeling.Definitions.Builder.IPropertyBuilder.HasDefault">
+            <summary>
+            Marks the current column to be generated by the database
+            </summary>
+            <returns>The same builder instance so that multiple calls can be chained.</returns>
         </member>
         <member name="T:Venflow.Modeling.Definitions.EntityConfiguration`1">
             <summary>
@@ -2210,6 +2257,427 @@
             Changes the value of the <see cref="P:Venflow.VenflowConfiguration.ShouldUseDeepValidation"/> property.
             </summary>
             <param name="validation">Determines if Venflow should use deep validation or not.</param>
+        </member>
+        <member name="T:Venflow.VenflowDbType">
+            <inheritdoc cref="T:NpgsqlTypes.NpgsqlDbType"/>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Bigint">
+            <summary>
+            Corresponds to the PostgreSQL 8-byte "bigint" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-numeric.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Double">
+            <summary>
+            Corresponds to the PostgreSQL 8-byte floating-point "double" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-numeric.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Integer">
+            <summary>
+            Corresponds to the PostgreSQL 4-byte "integer" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-numeric.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Numeric">
+            <summary>
+            Corresponds to the PostgreSQL arbitrary-precision "numeric" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-numeric.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Real">
+            <summary>
+            Corresponds to the PostgreSQL floating-point "real" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-numeric.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Smallint">
+            <summary>
+            Corresponds to the PostgreSQL 2-byte "smallint" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-numeric.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Money">
+            <summary>
+            Corresponds to the PostgreSQL "money" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-money.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Boolean">
+            <summary>
+            Corresponds to the PostgreSQL "boolean" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-boolean.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Box">
+            <summary>
+            Corresponds to the PostgreSQL geometric "box" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-geometric.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Circle">
+            <summary>
+            Corresponds to the PostgreSQL geometric "circle" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-geometric.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Line">
+            <summary>
+            Corresponds to the PostgreSQL geometric "line" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-geometric.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.LSeg">
+            <summary>
+            Corresponds to the PostgreSQL geometric "lseg" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-geometric.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Path">
+            <summary>
+            Corresponds to the PostgreSQL geometric "path" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-geometric.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Point">
+            <summary>
+            Corresponds to the PostgreSQL geometric "point" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-geometric.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Polygon">
+            <summary>
+            Corresponds to the PostgreSQL geometric "polygon" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-geometric.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Char">
+            <summary>
+            Corresponds to the PostgreSQL "char(n)" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-character.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Text">
+            <summary>
+            Corresponds to the PostgreSQL "text" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-character.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Varchar">
+            <summary>
+            Corresponds to the PostgreSQL "varchar" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-character.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Name">
+            <summary>
+            Corresponds to the PostgreSQL internal "name" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-character.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Citext">
+            <summary>
+            Corresponds to the PostgreSQL "citext" type for the citext module.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/citext.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.InternalChar">
+             <summary>
+             Corresponds to the PostgreSQL "char" type.
+             </summary>
+             <remarks>
+             This is an internal field and should normally not be used for regular applications.
+            
+             See https://www.postgresql.org/docs/current/static/datatype-text.html
+             </remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Bytea">
+            <summary>
+            Corresponds to the PostgreSQL "bytea" type, holding a raw byte string.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-binary.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Date">
+            <summary>
+            Corresponds to the PostgreSQL "date" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-datetime.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Time">
+            <summary>
+            Corresponds to the PostgreSQL "time" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-datetime.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Timestamp">
+            <summary>
+            Corresponds to the PostgreSQL "timestamp" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-datetime.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.TimestampTZ">
+            <summary>
+            Corresponds to the PostgreSQL "timestamp with time zone" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-datetime.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.TimestampTz">
+            <summary>
+            Corresponds to the PostgreSQL "timestamp with time zone" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-datetime.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Interval">
+            <summary>
+            Corresponds to the PostgreSQL "interval" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-datetime.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.TimeTZ">
+            <summary>
+            Corresponds to the PostgreSQL "time with time zone" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-datetime.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.TimeTz">
+            <summary>
+            Corresponds to the PostgreSQL "time with time zone" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-datetime.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Abstime">
+            <summary>
+            Corresponds to the obsolete PostgreSQL "abstime" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-datetime.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Inet">
+            <summary>
+            Corresponds to the PostgreSQL "inet" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-net-types.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Cidr">
+            <summary>
+            Corresponds to the PostgreSQL "cidr" type, a field storing an IPv4 or IPv6 network.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-net-types.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.MacAddr">
+            <summary>
+            Corresponds to the PostgreSQL "macaddr" type, a field storing a 6-byte physical address.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-net-types.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.MacAddr8">
+            <summary>
+            Corresponds to the PostgreSQL "macaddr8" type, a field storing a 6-byte or 8-byte physical address.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-net-types.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Bit">
+            <summary>
+            Corresponds to the PostgreSQL "bit" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-bit.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Varbit">
+            <summary>
+            Corresponds to the PostgreSQL "varbit" type, a field storing a variable-length string of bits.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-boolean.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.TsVector">
+            <summary>
+            Corresponds to the PostgreSQL "tsvector" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-textsearch.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.TsQuery">
+            <summary>
+            Corresponds to the PostgreSQL "tsquery" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-textsearch.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Regconfig">
+            <summary>
+            Corresponds to the PostgreSQL "regconfig" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-textsearch.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Uuid">
+            <summary>
+            Corresponds to the PostgreSQL "uuid" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-uuid.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Xml">
+            <summary>
+            Corresponds to the PostgreSQL "xml" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-xml.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Json">
+            <summary>
+            Corresponds to the PostgreSQL "json" type, a field storing JSON in text format.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-json.html</remarks>
+            <seealso cref="F:Venflow.VenflowDbType.Jsonb"/>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Jsonb">
+            <summary>
+            Corresponds to the PostgreSQL "jsonb" type, a field storing JSON in an optimized binary.
+            format.
+            </summary>
+            <remarks>
+            Supported since PostgreSQL 9.4.
+            See https://www.postgresql.org/docs/current/static/datatype-json.html
+            </remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.JsonPath">
+            <summary>
+            Corresponds to the PostgreSQL "jsonpath" type, a field storing JSON path in text format.
+            format.
+            </summary>
+            <remarks>
+            Supported since PostgreSQL 12.
+            See https://www.postgresql.org/docs/current/datatype-json.html#DATATYPE-JSONPATH
+            </remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Hstore">
+            <summary>
+            Corresponds to the PostgreSQL "hstore" type, a dictionary of string key-value pairs.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/hstore.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Refcursor">
+            <summary>
+            Corresponds to the PostgreSQL "refcursor" type.
+            </summary>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Oidvector">
+            <summary>
+            Corresponds to the PostgreSQL internal "oidvector" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-oid.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Int2Vector">
+            <summary>
+            Corresponds to the PostgreSQL internal "int2vector" type.
+            </summary>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Oid">
+            <summary>
+            Corresponds to the PostgreSQL "oid" type.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-oid.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Xid">
+            <summary>
+            Corresponds to the PostgreSQL "xid" type, an internal transaction identifier.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-oid.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Xid8">
+            <summary>
+            Corresponds to the PostgreSQL "xid8" type, an internal transaction identifier.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-oid.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Cid">
+            <summary>
+            Corresponds to the PostgreSQL "cid" type, an internal command identifier.
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/datatype-oid.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Regtype">
+            <summary>
+            Corresponds to the PostgreSQL "regtype" type, a numeric (OID) ID of a type in the pg_type table.
+            </summary>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Tid">
+            <summary>
+            Corresponds to the PostgreSQL "tid" type, a tuple id identifying the physical location of a row within its table.
+            </summary>
+        </member>
+        <member name="F:Venflow.VenflowDbType.PgLsn">
+            <summary>
+            Corresponds to the PostgreSQL "pg_lsn" type, which can be used to store LSN (Log Sequence Number) data which
+            is a pointer to a location in the WAL.
+            </summary>
+            <remarks>
+            See: https://www.postgresql.org/docs/current/datatype-pg-lsn.html and
+            https://git.postgresql.org/gitweb/?p=postgresql.git;a=commit;h=7d03a83f4d0736ba869fa6f93973f7623a27038a
+            </remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Unknown">
+            <summary>
+            A special value that can be used to send parameter values to the database without
+            specifying their type, allowing the database to cast them to another value based on context.
+            The value will be converted to a string and send as text.
+            </summary>
+            <remarks>
+            This value shouldn't ordinarily be used, and makes sense only when sending a data type
+            unsupported by Npgsql.
+            </remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Geometry">
+            <summary>
+            The geometry type for PostgreSQL spatial extension PostGIS.
+            </summary>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Geography">
+            <summary>
+            The geography (geodetic) type for PostgreSQL spatial extension PostGIS.
+            </summary>
+        </member>
+        <member name="F:Venflow.VenflowDbType.LTree">
+            <summary>
+            The PostgreSQL ltree type, each value is a label path "a.label.tree.value", forming a tree in a set.
+            </summary>
+            <remarks>See http://www.postgresql.org/docs/current/static/ltree.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.LQuery">
+            <summary>
+            The PostgreSQL lquery type for PostgreSQL extension ltree
+            </summary>
+            <remarks>See http://www.postgresql.org/docs/current/static/ltree.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.LTxtQuery">
+            <summary>
+            The PostgreSQL ltxtquery type for PostgreSQL extension ltree
+            </summary>
+            <remarks>See http://www.postgresql.org/docs/current/static/ltree.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Array">
+            <summary>
+            Corresponds to the PostgreSQL "array" type, a variable-length multidimensional array of
+            another type. This value must be combined with another value from <see cref="!:NpgsqlDbType"/>
+            via a bit OR (e.g. NpgsqlDbType.Array | NpgsqlDbType.Integer)
+            </summary>
+            <remarks>See https://www.postgresql.org/docs/current/static/arrays.html</remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Range">
+            <summary>
+            Corresponds to the PostgreSQL "range" type, continuous range of values of specific type.
+            This value must be combined with another value from <see cref="!:NpgsqlDbType"/>
+            via a bit OR (e.g. NpgsqlDbType.Range | NpgsqlDbType.Integer)
+            </summary>
+            <remarks>
+            Supported since PostgreSQL 9.2.
+            See https://www.postgresql.org/docs/current/static/rangetypes.html
+            </remarks>
+        </member>
+        <member name="F:Venflow.VenflowDbType.Multirange">
+            <summary>
+            Corresponds to the PostgreSQL "multirange" type, continuous range of values of specific type.
+            This value must be combined with another value from <see cref="!:NpgsqlDbType"/>
+            via a bit OR (e.g. NpgsqlDbType.Multirange | NpgsqlDbType.Integer)
+            </summary>
+            <remarks>
+            Supported since PostgreSQL 14.
+            See https://www.postgresql.org/docs/current/static/rangetypes.html
+            </remarks>
         </member>
         <member name="T:System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute">
             <summary>

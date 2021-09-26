@@ -69,10 +69,11 @@ namespace Venflow.Tests.UpdateTests
 
         private async Task<List<Person>> InsertPeopleAsync()
         {
-            var people = new List<Person>();
-
-            people.Add(new Person { Name = "None1" });
-            people.Add(new Person { Name = "None2" });
+            var people = new List<Person>
+            {
+                new Person { Name = "None1" },
+                new Person { Name = "None2" }
+            };
 
             await Database.People.InsertAsync(people);
 

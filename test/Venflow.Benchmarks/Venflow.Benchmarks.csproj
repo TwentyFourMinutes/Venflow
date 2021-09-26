@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Venflow\Venflow.csproj" />
+    <ProjectReference Include="..\..\src\Venflow\Venflow.csproj" />
     <ProjectReference Include="..\Venflow.Shared\Venflow.Shared.csproj" />
   </ItemGroup>
 
