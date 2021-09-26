@@ -42,7 +42,7 @@ jobs:
     - name: Configure PostgreSQL
       uses: harmon758/postgresql-action@v1
       with:
-        postgresql version: '13.1'
+        postgresql version: '13.4'
         postgresql db: 'venflow_tests'
         postgresql user: 'venflow_tests'
         postgresql password: 'venflow_tests'
@@ -63,7 +63,7 @@ jobs:
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ./src/Venflow/Venflow.Tests/coverage-reports/coverage.net6.0.info
+        path-to-lcov: ./coverage-reports/coverage.net6.0.info
 
     - name: Build Documentation
       uses: nikeee/docfx-action@v1.0.0
