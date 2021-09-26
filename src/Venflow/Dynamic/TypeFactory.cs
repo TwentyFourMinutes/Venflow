@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using System.Threading;
 
 namespace Venflow.Dynamic
 {
@@ -29,7 +25,7 @@ namespace Venflow.Dynamic
             _dynamicModule = _assemblyBuilder.DefineDynamicModule(_assemblyName.Name + ".dll");
 
 #if NET5_0_OR_GREATER
-            _dynamicModule.SetCustomAttribute(new CustomAttributeBuilder(typeof(SkipLocalsInitAttribute).GetConstructor(Type.EmptyTypes), Array.Empty<object>()));
+            _dynamicModule.SetCustomAttribute(new CustomAttributeBuilder(typeof(SkipLocalsInitAttribute).GetConstructor(Type.EmptyTypes)!, Array.Empty<object>()));
 #endif
 
             _namespaceNames = new[] { "Venflow.Dynamic.Proxies.", "Venflow.Dynamic.Materializer.", "Venflow.Dynamic.Inserter." };
@@ -44,7 +40,7 @@ namespace Venflow.Dynamic
 
             var ignoresAccessChecksTo = new CustomAttributeBuilder
             (
-                typeof(IgnoresAccessChecksToAttribute).GetConstructor(new Type[] { typeof(string) }), new object[] { assemblyName }
+                typeof(IgnoresAccessChecksToAttribute).GetConstructor(new Type[] { typeof(string) })!, new object[] { assemblyName }
             );
 
             _assemblyBuilder.SetCustomAttribute(ignoresAccessChecksTo);
@@ -67,11 +63,10 @@ namespace Venflow.Dynamic
 
         internal static DynamicMethod GetDynamicMethod(string methodName, Type? returnType, Type[]? parameters, bool skipVisiblity = true)
         {
-            var method = new DynamicMethod(methodName + "_" + Interlocked.Increment(ref _typeNumberIdentifier), returnType, parameters, DynamicModule, skipVisiblity);
-
-            method.InitLocals = false;
-
-            return method;
+            return new DynamicMethod(methodName + "_" + Interlocked.Increment(ref _typeNumberIdentifier), returnType, parameters, DynamicModule, skipVisiblity)
+            {
+                InitLocals = false
+            };
         }
 
         private static string GetTypeName(NamespaceType namespaceType, string typeName)

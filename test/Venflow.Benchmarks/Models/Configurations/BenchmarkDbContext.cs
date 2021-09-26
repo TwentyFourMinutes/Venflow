@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿#pragma warning disable 8618
+using Microsoft.EntityFrameworkCore;
 using Venflow.Shared;
 
 namespace Venflow.Benchmarks.Models.Configurations

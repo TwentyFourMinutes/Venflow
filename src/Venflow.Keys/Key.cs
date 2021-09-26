@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Text.Json.Serialization;
 using Venflow.Json;
 
@@ -104,6 +103,9 @@ namespace Venflow
     [EditorBrowsable(EditorBrowsableState.Never)]
     public interface IKey
     {
+        /// <summary>
+        /// The boxed representation of the value this instance is representing.
+        /// </summary>
         object? BoxedValue { get; }
     }
 }

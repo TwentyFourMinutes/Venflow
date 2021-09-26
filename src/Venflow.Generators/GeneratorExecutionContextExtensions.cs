@@ -20,7 +20,7 @@ namespace Venflow.Generators
 
             if (addToSyntaxTree)
             {
-                return context.Compilation.AddSyntaxTrees(CSharpSyntaxTree.ParseText(sourceText, (context.Compilation as CSharpCompilation).SyntaxTrees[0].Options as CSharpParseOptions));
+                return context.Compilation.AddSyntaxTrees(CSharpSyntaxTree.ParseText(sourceText, (context.Compilation as CSharpCompilation)!.SyntaxTrees[0].Options as CSharpParseOptions));
             }
 
             return context.Compilation;

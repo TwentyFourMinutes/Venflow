@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Reflection;
+#pragma warning disable 8602,8604
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Npgsql;
 using Venflow.Dynamic.IL;
 using Venflow.Enums;
@@ -18,25 +13,25 @@ namespace Venflow.Dynamic.Inserter
     // TODO: Consider adding Spans
     internal class InsertionFactoryCompiler
     {
-        private FieldBuilder _commandField;
-        private FieldBuilder _rootEntityInsertField;
-        private FieldBuilder _cancellationTokenField;
+        private FieldBuilder _commandField = null!;
+        private FieldBuilder _rootEntityInsertField = null!;
+        private FieldBuilder _cancellationTokenField = null!;
         private FieldBuilder? _loggerField;
 
-        private FieldBuilder _stateField;
-        private LocalBuilder _stateLocal;
-        private Type _insertType;
+        private FieldBuilder _stateField = null!;
+        private LocalBuilder _stateLocal = null!;
+        private Type _insertType = null!;
 
-        private FieldBuilder _methodBuilderField;
+        private FieldBuilder _methodBuilderField = null!;
 
-        private TypeBuilder _inserterTypeBuilder;
-        private TypeBuilder _stateMachineTypeBuilder;
+        private TypeBuilder _inserterTypeBuilder = null!;
+        private TypeBuilder _stateMachineTypeBuilder = null!;
 
-        private MethodBuilder _moveNextMethod;
-        private ILGenerator _moveNextMethodIL;
+        private MethodBuilder _moveNextMethod = null!;
+        private ILGenerator _moveNextMethodIL = null!;
 
-        private ObjectIDGenerator _reachableEntities;
-        private HashSet<uint> _reachableRelations;
+        private ObjectIDGenerator _reachableEntities = null!;
+        private HashSet<uint> _reachableRelations = null!;
 
         private readonly Type _intType = typeof(int);
         private readonly Type _genericICollectionType = typeof(ICollection<>);
@@ -55,7 +50,7 @@ namespace Venflow.Dynamic.Inserter
 
             _insertType = typeof(TInsert);
 
-            bool isSingleInsert = _insertType == _rootEntity.EntityType;
+            var isSingleInsert = _insertType == _rootEntity.EntityType;
 
             if (_rootEntity.HasDbGeneratedPrimaryKey ||
                 !isSingleInsert ||
@@ -350,7 +345,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(char) }));
             _moveNextMethodIL.Emit(OpCodes.Pop);
 
-            for (int k = columnOffset; k <= lastNonReadOnlyIndex; k++)
+            for (var k = columnOffset; k <= lastNonReadOnlyIndex; k++)
             {
                 var column = _rootEntity.GetColumn(k);
 
@@ -696,7 +691,7 @@ namespace Venflow.Dynamic.Inserter
 
             var awaiterCount = 0;
 
-            for (int entityIndex = entities.Length - 1; entityIndex >= 0; entityIndex--)
+            for (var entityIndex = entities.Length - 1; entityIndex >= 0; entityIndex--)
             {
                 awaiterCount += entities[entityIndex].Entity.HasDbGeneratedPrimaryKey ? 4 : 1;
             }
@@ -739,7 +734,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Newobj, commandBuilderField.FieldType.GetConstructor(Type.EmptyTypes));
             _moveNextMethodIL.Emit(OpCodes.Stfld, commandBuilderField);
 
-            for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
+            for (var entityIndex = 0; entityIndex < entities.Length; entityIndex++)
             {
                 var entityHolder = entities[entityIndex];
                 var entity = entityHolder.Entity;
@@ -867,7 +862,7 @@ namespace Venflow.Dynamic.Inserter
                 _moveNextMethodIL.Emit(OpCodes.Stloc, iteratorElementLocal);
 
                 // assign foreign key to itself from navigation property primary key
-                for (int relationIndex = entityHolder.SelfAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
+                for (var relationIndex = entityHolder.SelfAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
                 {
                     var relation = entityHolder.SelfAssignedRelations[relationIndex];
 
@@ -895,7 +890,7 @@ namespace Venflow.Dynamic.Inserter
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(char) }));
                 _moveNextMethodIL.Emit(OpCodes.Pop);
 
-                for (int k = columnOffset; k <= lastNonReadOnlyIndex; k++)
+                for (var k = columnOffset; k <= lastNonReadOnlyIndex; k++)
                 {
                     var column = entity.GetColumn(k);
 
@@ -1098,7 +1093,7 @@ namespace Venflow.Dynamic.Inserter
 
                         LocalBuilder? innerIteratorLocal = default;
 
-                        for (int relationIndex = entityHolder.ForeignAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
+                        for (var relationIndex = entityHolder.ForeignAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
                         {
                             var relation = entityHolder.ForeignAssignedRelations[relationIndex];
 
@@ -1396,7 +1391,7 @@ namespace Venflow.Dynamic.Inserter
             var columnOffset = skipPrimaryKey ? _rootEntity.GetRegularColumnOffset() : 0;
             var lastNonReadOnlyIndex = _rootEntity.GetLastRegularColumnsIndex();
 
-            for (int columnIndex = columnOffset; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
+            for (var columnIndex = columnOffset; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
             {
                 var column = _rootEntity.GetColumn(columnIndex);
 
@@ -1436,7 +1431,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Callvirt, _commandField.FieldType.GetProperty("CommandText").GetSetMethod());
 
             // Assign parameters to command
-            for (int columnIndex = columnOffset; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
+            for (var columnIndex = columnOffset; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
             {
                 var column = _rootEntity.GetColumn(columnIndex);
 
@@ -1549,7 +1544,7 @@ namespace Venflow.Dynamic.Inserter
 
             var awaiterCount = 0;
 
-            for (int entityIndex = entities.Length - 1; entityIndex >= 0; entityIndex--)
+            for (var entityIndex = entities.Length - 1; entityIndex >= 0; entityIndex--)
             {
                 var entity = entities[entityIndex].Entity;
 
@@ -1592,7 +1587,7 @@ namespace Venflow.Dynamic.Inserter
             _moveNextMethodIL.Emit(OpCodes.Newobj, commandBuilderField.FieldType.GetConstructor(Type.EmptyTypes));
             _moveNextMethodIL.Emit(OpCodes.Stfld, commandBuilderField);
 
-            for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
+            for (var entityIndex = 0; entityIndex < entities.Length; entityIndex++)
             {
                 var entityHolder = entities[entityIndex];
                 var entity = entityHolder.Entity;
@@ -1616,7 +1611,7 @@ namespace Venflow.Dynamic.Inserter
                 {
                     stringBuilder.Append('(');
 
-                    for (int columnIndex = columnOffset; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
+                    for (var columnIndex = columnOffset; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
                     {
                         var column = _rootEntity.GetColumn(columnIndex);
 
@@ -1669,7 +1664,7 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, _commandField.FieldType.GetProperty("CommandText").GetSetMethod());
 
                     // assign foreign key to itself from navigation property primary key
-                    for (int relationIndex = entityHolder.SelfAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
+                    for (var relationIndex = entityHolder.SelfAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
                     {
                         var relation = entityHolder.SelfAssignedRelations[relationIndex];
 
@@ -1694,7 +1689,7 @@ namespace Venflow.Dynamic.Inserter
                     }
 
                     // Assign parameters to command
-                    for (int columnIndex = columnOffset; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
+                    for (var columnIndex = columnOffset; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
                     {
                         var column = _rootEntity.GetColumn(columnIndex);
 
@@ -1761,7 +1756,7 @@ namespace Venflow.Dynamic.Inserter
                     {
                         LocalBuilder? innerIteratorLocal = default;
 
-                        for (int relationIndex = entityHolder.ForeignAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
+                        for (var relationIndex = entityHolder.ForeignAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
                         {
                             var relation = entityHolder.ForeignAssignedRelations[relationIndex];
 
@@ -1942,7 +1937,7 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Stloc, iteratorElementLocal);
 
                     // assign foreign key to itself from navigation property primary key
-                    for (int relationIndex = entityHolder.SelfAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
+                    for (var relationIndex = entityHolder.SelfAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
                     {
                         var relation = entityHolder.SelfAssignedRelations[relationIndex];
 
@@ -1970,7 +1965,7 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(char) }));
                     _moveNextMethodIL.Emit(OpCodes.Pop);
 
-                    for (int k = columnOffset; k <= lastNonReadOnlyIndex; k++)
+                    for (var k = columnOffset; k <= lastNonReadOnlyIndex; k++)
                     {
                         var column = entity.GetColumn(k);
 
@@ -2055,6 +2050,7 @@ namespace Venflow.Dynamic.Inserter
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, _commandField);
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
+
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("ToString", Type.EmptyTypes));
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, _commandField.FieldType.GetProperty("CommandText").GetSetMethod());
 
@@ -2174,7 +2170,7 @@ namespace Venflow.Dynamic.Inserter
 
                             LocalBuilder? innerIteratorLocal = default;
 
-                            for (int relationIndex = entityHolder.ForeignAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
+                            for (var relationIndex = entityHolder.ForeignAssignedRelations.Count - 1; relationIndex >= 0; relationIndex--)
                             {
                                 var relation = entityHolder.ForeignAssignedRelations[relationIndex];
 
@@ -2410,7 +2406,7 @@ namespace Venflow.Dynamic.Inserter
 
             var lastNonReadOnlyIndex = _rootEntity.GetLastRegularColumnsIndex();
 
-            for (int columnIndex = 0; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
+            for (var columnIndex = 0; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
             {
                 var column = _rootEntity.GetColumn(columnIndex);
 
@@ -2444,7 +2440,7 @@ namespace Venflow.Dynamic.Inserter
             iLGenerator.Emit(OpCodes.Callvirt, typeof(NpgsqlCommand).GetProperty("CommandText").GetSetMethod());
 
             // Assign parameters to command
-            for (int columnIndex = 0; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
+            for (var columnIndex = 0; columnIndex <= lastNonReadOnlyIndex; columnIndex++)
             {
                 var column = _rootEntity.GetColumn(columnIndex);
 
@@ -2676,8 +2672,8 @@ namespace Venflow.Dynamic.Inserter
 
         private class EntitySeprator
         {
-            private LocalBuilder _entityIdCheckerLocal;
-            private LocalBuilder _firstTimeLocal;
+            private LocalBuilder _entityIdCheckerLocal = null!;
+            private LocalBuilder _firstTimeLocal = null!;
 
             private readonly ILGenerator _ilGenerator;
             private readonly TypeBuilder _typeBuilder;
@@ -2706,7 +2702,7 @@ namespace Venflow.Dynamic.Inserter
 
                 _entityHolders = new Dictionary<long, EntityRelationHolder>(entities.Length);
 
-                for (int i = 0; i < entities.Length; i++)
+                for (var i = 0; i < entities.Length; i++)
                 {
                     var entity = entities[i];
 
@@ -2788,7 +2784,7 @@ namespace Venflow.Dynamic.Inserter
                 _ilGenerator.Emit(OpCodes.Stloc, _entityIdCheckerLocal);
 
                 // instantiate entityCollections
-                for (int entityIndex = _entities.Length - 1; entityIndex >= 0; entityIndex--)
+                for (var entityIndex = _entities.Length - 1; entityIndex >= 0; entityIndex--)
                 {
                     var entity = _entities[entityIndex].Entity;
 
@@ -2863,7 +2859,7 @@ namespace Venflow.Dynamic.Inserter
                     _ilGenerator.Emit(OpCodes.Callvirt, entityCollectionField.FieldType.GetMethod("Add"));
                 }
 
-                for (int relationIndex = entity.Relations.Count - 1; relationIndex >= 0; relationIndex--)
+                for (var relationIndex = entity.Relations.Count - 1; relationIndex >= 0; relationIndex--)
                 {
                     var relation = entity.Relations[relationIndex];
 
@@ -2882,8 +2878,7 @@ namespace Venflow.Dynamic.Inserter
 
                     // add foreign key to collection
 
-                    if (relation.RelationType == RelationType.ManyToOne ||
-                        relation.RelationType == RelationType.OneToOne)
+                    if (relation.RelationType is RelationType.ManyToOne or RelationType.OneToOne)
                     {
                         var rightEntityLocal = _ilGenerator.DeclareLocal(relation.RightEntity.EntityType);
 

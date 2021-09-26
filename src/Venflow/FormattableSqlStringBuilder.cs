@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
+﻿using System.Runtime.CompilerServices;
 using Npgsql;
 
 namespace Venflow
@@ -73,7 +69,7 @@ namespace Venflow
         {
             AppendInterpolated(sql);
 
-            _sql.AppendLine();
+            _sql!.AppendLine();
         }
 
         /// <summary>
@@ -96,7 +92,7 @@ namespace Venflow
 
             var argumentIndex = 0;
 
-            for (int spanIndex = 0; spanIndex < sqlLength; spanIndex++)
+            for (var spanIndex = 0; spanIndex < sqlLength; spanIndex++)
             {
                 var spanChar = sqlSpan[spanIndex];
 
@@ -151,7 +147,7 @@ namespace Venflow
                 {
                     var listType = default(Type);
 
-                    for (int listIndex = 0; listIndex < list.Count; listIndex++)
+                    for (var listIndex = 0; listIndex < list.Count; listIndex++)
                     {
                         var listItem = list[listIndex];
 
@@ -166,13 +162,13 @@ namespace Venflow
 
                         var parameterName = "@p" + _parameterIndex++.ToString();
 
-                        _sql.Append(parameterName)
+                        _sql!.Append(parameterName)
                             .Append(", ");
 
                         Parameters.Add(ParameterTypeHandler.HandleParameter(parameterName, listType!, listItem));
                     }
 
-                    _sql.Length -= 2;
+                    _sql!.Length -= 2;
                 }
 
                 _parameterIndex--;
@@ -181,7 +177,7 @@ namespace Venflow
             {
                 var parameterName = "@p" + _parameterIndex++.ToString();
 
-                _sql.Append(parameterName);
+                _sql!.Append(parameterName);
 
                 Parameters.Add(ParameterTypeHandler.HandleParameter(parameterName, value));
             }

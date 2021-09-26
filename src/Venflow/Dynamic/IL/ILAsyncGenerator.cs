@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection.Emit;
+﻿using System.Reflection.Emit;
 
 namespace Venflow.Dynamic.IL
 {
@@ -35,10 +34,10 @@ namespace Venflow.Dynamic.IL
         {
             var afterAwaitLabel = _ilGenerator.DefineLabel();
 
-            _ilGenerator.Emit(OpCodes.Callvirt, returnType.GetMethod("GetAwaiter"));
+            _ilGenerator.Emit(OpCodes.Callvirt, returnType.GetMethod("GetAwaiter")!);
             _ilGenerator.Emit(OpCodes.Stloc, taskAwaiterLocal);
             _ilGenerator.Emit(OpCodes.Ldloca, taskAwaiterLocal);
-            _ilGenerator.Emit(OpCodes.Call, taskAwaiterLocal.LocalType.GetProperty("IsCompleted").GetGetMethod());
+            _ilGenerator.Emit(OpCodes.Call, taskAwaiterLocal.LocalType.GetProperty("IsCompleted")!.GetGetMethod()!);
             _ilGenerator.Emit(OpCodes.Brtrue, afterAwaitLabel);
 
             // await handler
@@ -65,7 +64,7 @@ namespace Venflow.Dynamic.IL
             _ilGenerator.Emit(OpCodes.Ldflda, _methodBuilderField);
             _ilGenerator.Emit(OpCodes.Ldloca, taskAwaiterLocal);
             _ilGenerator.Emit(OpCodes.Ldarg_0);
-            _ilGenerator.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("AwaitUnsafeOnCompleted").MakeGenericMethod(taskAwaiterLocal.LocalType, _stateMachineType));
+            _ilGenerator.Emit(OpCodes.Call, _methodBuilderField.FieldType.GetMethod("AwaitUnsafeOnCompleted")!.MakeGenericMethod(taskAwaiterLocal.LocalType, _stateMachineType));
             _ilGenerator.Emit(OpCodes.Leave, _returnOfMethodLabel);
 
             _ilSwitchBuilder.MarkCase();
@@ -90,7 +89,7 @@ namespace Venflow.Dynamic.IL
             // wait of the result from the TaskAwaiter
             _ilGenerator.MarkLabel(afterAwaitLabel);
             _ilGenerator.Emit(OpCodes.Ldloca, taskAwaiterLocal);
-            _ilGenerator.Emit(OpCodes.Call, taskAwaiterLocal.LocalType.GetMethod("GetResult"));
+            _ilGenerator.Emit(OpCodes.Call, taskAwaiterLocal.LocalType.GetMethod("GetResult")!);
         }
 
         internal void WriteAsyncValueTaskMethodAwaiter(LocalBuilder valueTaskLocal, LocalBuilder valueTaskAwaiterLocal, FieldBuilder valueTaskAwaiterField)

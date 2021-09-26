@@ -30,13 +30,13 @@
                     IsDirty = true;
                 }
 
-                _changedColumns[propertyIndex] = (byte)(columnIndex + 1);
+                _changedColumns![propertyIndex] = (byte)(columnIndex + 1);
             }
         }
 
         internal byte[] GetColumns()
         {
-            return _changedColumns;
+            return _changedColumns!;
         }
     }
 }

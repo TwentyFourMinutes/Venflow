@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Venflow.Enums;
 using Venflow.Modeling;
@@ -31,7 +30,7 @@ namespace Venflow.Commands
             var relaionsSpan = _relations.AsSpan();
             var foreignRelaionsSpan = y._relations.AsSpan();
 
-            for (int relationIndex = relaionsSpan.Length - 1; relationIndex >= 0; relationIndex--)
+            for (var relationIndex = relaionsSpan.Length - 1; relationIndex >= 0; relationIndex--)
             {
                 if (relaionsSpan[relationIndex].RelationId != foreignRelaionsSpan[relationIndex].RelationId)
                     return false;
@@ -48,7 +47,7 @@ namespace Venflow.Commands
 
             var relaionsSpan = _relations.AsSpan();
 
-            for (int relationIndex = relaionsSpan.Length - 1; relationIndex >= 0; relationIndex--)
+            for (var relationIndex = relaionsSpan.Length - 1; relationIndex >= 0; relationIndex--)
             {
                 hashCode.Add(relaionsSpan[relationIndex].RelationId);
             }

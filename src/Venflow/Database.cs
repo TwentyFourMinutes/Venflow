@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Data;
-using System.Threading;
-using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
 using Venflow.Enums;
@@ -30,7 +25,7 @@ namespace Venflow
     /// </remarks>
     public abstract class Database : IAsyncDisposable, IDisposable
     {
-        internal IReadOnlyDictionary<string, Entity> Entities { get; private set; }
+        internal IReadOnlyDictionary<string, Entity> Entities { get; private set; } = null!;
         internal LoggingBehavior DefaultLoggingBehavior { get; }
         internal bool HasActiveTransaction => _activeTransaction is not null && !_activeTransaction.IsDisposed;
         internal bool HasLoggers => _loggers.Count > 0;
@@ -67,12 +62,20 @@ namespace Venflow
             Build();
         }
 
+#if NET48
+        /// <summary>
+        /// Asynchronously begins a new transaction.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
+        /// <remarks>Be aware, that this method will not create a new transaction on every call. It will only create a new one, if the old one is disposed or not available.</remarks>
+#else
         /// <summary>
         /// Asynchronously begins a new transaction.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
         /// <remarks>Be aware, that this method will not create a new transaction on every call. It will only create a new one, if the old one is disposed or not available.</remarks>
+#endif
         public async ValueTask<IDatabaseTransaction> BeginTransactionAsync(
 #if !NET48
             CancellationToken cancellationToken = default
@@ -88,6 +91,14 @@ namespace Venflow
 #endif
         }
 
+#if NET48
+        /// <summary>
+        /// Asynchronously begins a new transaction.
+        /// </summary>
+        /// <param name="isolationLevel">The isolation level under which the transaction should run.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
+        /// <remarks>Be aware, that this method will not create a new transaction on every call. It will only create a new one, if the old one is disposed or not available.</remarks>
+#else
         /// <summary>
         /// Asynchronously begins a new transaction.
         /// </summary>
@@ -95,6 +106,7 @@ namespace Venflow
         /// <param name="cancellationToken">The cancellation token, which is used to cancel the operation</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the newly created transaction.</returns>
         /// <remarks>Be aware, that this method will not create a new transaction on every call. It will only create a new one, if the old one is disposed or not available.</remarks>
+#endif
         public async ValueTask<IDatabaseTransaction> BeginTransactionAsync(IsolationLevel isolationLevel
 #if !NET48
             , CancellationToken cancellationToken = default
@@ -110,24 +122,27 @@ namespace Venflow
 #endif
         }
 
-        internal async ValueTask<IDatabaseTransaction> GetOrCreateTransactionAsync(
-#if !NET48
-            CancellationToken cancellationToken = default
-#endif
-            )
+#if NET48
+        internal ValueTask<IDatabaseTransaction> GetOrCreateTransactionAsync()
         {
             if (HasActiveTransaction)
             {
-                return _activeTransaction;
+                return new ValueTask<IDatabaseTransaction>(_activeTransaction!);
             }
 
-#if NET48
-            return _activeTransaction = new DatabaseTransaction(GetConnection().BeginTransaction());
+            return new ValueTask<IDatabaseTransaction>(_activeTransaction = new DatabaseTransaction(GetConnection().BeginTransaction()));
+        }
 #else
+        internal async ValueTask<IDatabaseTransaction> GetOrCreateTransactionAsync(CancellationToken cancellationToken = default)
+        {
+            if (HasActiveTransaction)
+            {
+                return _activeTransaction!;
+            }
 
             return _activeTransaction = new DatabaseTransaction(await GetConnection().BeginTransactionAsync(cancellationToken));
-#endif
         }
+#endif
 
         /// <summary>
         /// Asynchronously executes a command against the current Database. As with any API that accepts SQL it is important to parameterize any user input to protect against a SQL injection attack. You can include parameter place holders in the SQL query string and then supply parameter values as additional arguments.
@@ -159,7 +174,7 @@ namespace Venflow
 
             using var command = new NpgsqlCommand(sql, GetConnection());
 
-            for (int i = 0; i < parameters.Count; i++)
+            for (var i = 0; i < parameters.Count; i++)
             {
                 command.Parameters.Add(parameters[i]);
             }
@@ -180,7 +195,7 @@ namespace Venflow
 
             using var command = new NpgsqlCommand(sql, GetConnection());
 
-            for (int i = 0; i < parameters.Length; i++)
+            for (var i = 0; i < parameters.Length; i++)
             {
                 command.Parameters.Add(parameters[i]);
             }
@@ -221,7 +236,7 @@ namespace Venflow
 
             using var command = new NpgsqlCommand(sql, GetConnection());
 
-            return (T)await command.ExecuteScalarAsync(cancellationToken);
+            return (T)(await command.ExecuteScalarAsync(cancellationToken))!;
         }
 
         /// <summary>
@@ -239,12 +254,12 @@ namespace Venflow
 
             using var command = new NpgsqlCommand(sql, GetConnection());
 
-            for (int i = 0; i < parameters.Count; i++)
+            for (var i = 0; i < parameters.Count; i++)
             {
                 command.Parameters.Add(parameters[i]);
             }
 
-            return (T)await command.ExecuteScalarAsync(cancellationToken);
+            return (T)(await command.ExecuteScalarAsync(cancellationToken))!;
         }
 
         /// <summary>
@@ -261,12 +276,12 @@ namespace Venflow
 
             using var command = new NpgsqlCommand(sql, GetConnection());
 
-            for (int i = 0; i < parameters.Length; i++)
+            for (var i = 0; i < parameters.Length; i++)
             {
                 command.Parameters.Add(parameters[i]);
             }
 
-            return (T)await command.ExecuteScalarAsync();
+            return (T)(await command.ExecuteScalarAsync())!;
         }
 
         /// <summary>
@@ -288,7 +303,7 @@ namespace Venflow
 
             var npgsql = new NpgsqlDateTime(DateTime.Now);
 
-            return (T)await command.ExecuteScalarAsync(cancellationToken);
+            return (T)(await command.ExecuteScalarAsync(cancellationToken))!;
         }
 
         /// <summary>
@@ -312,9 +327,10 @@ namespace Venflow
                     return new TableBase<TEntity>(this, (Entity<TEntity>)entity);
                 }
 
-                var entityBuilder = new EntityBuilder<TEntity>(string.Empty);
-
-                entityBuilder.IsRegularEntity = false;
+                var entityBuilder = new EntityBuilder<TEntity>(string.Empty)
+                {
+                    IsRegularEntity = false
+                };
 
                 var entityFactory = new EntityFactory<TEntity>(entityBuilder);
 
@@ -343,7 +359,7 @@ namespace Venflow
 
         internal void ExecuteLoggers(IReadOnlyList<LoggerCallback> loggers, NpgsqlCommand command, Venflow.Enums.CommandType commandType, Exception? exception)
         {
-            for (int loggerIndex = 0; loggerIndex < loggers.Count; loggerIndex++)
+            for (var loggerIndex = 0; loggerIndex < loggers.Count; loggerIndex++)
             {
                 loggers[loggerIndex].Invoke(command, commandType, exception);
             }

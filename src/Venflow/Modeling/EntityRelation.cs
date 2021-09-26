@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Venflow.Enums;
+﻿using Venflow.Enums;
 
 namespace Venflow.Modeling
 {
@@ -21,7 +20,7 @@ namespace Venflow.Modeling
         internal RelationType RelationType { get; }
         internal ForeignKeyLocation ForeignKeyLocation { get; }
 
-        internal EntityRelation Sibiling { get; set; }
+        internal EntityRelation Sibiling { get; set; } = null!;
 
         internal EntityRelation(uint relationId, Entity leftEntity, PropertyInfo? leftNavigationProperty, bool isLeftNavigationPropertyInitialized, bool isLeftNavigationPropertyNullable, Entity rightEntity,
                                 PropertyInfo? rightNavigationProperty, bool isRightNavigationPropertyInitialized, bool isRightNavigationPropertyNullable, EntityColumn foreignKeyColumn, RelationType relationType, ForeignKeyLocation foreignKeyLocation)

@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Venflow.Commands
+﻿namespace Venflow.Commands
 {
     /// <summary>
     /// Represents a command which performs deletions of entities.

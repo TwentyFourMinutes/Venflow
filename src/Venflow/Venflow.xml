@@ -519,7 +519,7 @@
             </summary>
             <param name="shouldLog">Determines if this command should be logged. This is helpful, if you configured the default logging behavior to be <see langword="true"/>.</param>
             <returns>An object that can be used to further configure the operation.</returns>
-            <remarks>You can configure the loggers in the <see cref="M:Venflow.Database.Configure(Venflow.DatabaseConfigurationOptionsBuilder)"/> method with the <see cref="!:DatabaseOptionsBuilder.LogTo(LoggerCallback)"/> methods.</remarks>
+            <remarks>You can configure the loggers in the <see cref="M:Venflow.Database.Configure(Venflow.DatabaseConfigurationOptionsBuilder)"/> method with the <see cref="M:Venflow.DatabaseOptionsBuilder`1.LogTo(Venflow.LoggerCallback)"/> methods.</remarks>
         </member>
         <member name="M:Venflow.Commands.ISpecficVenflowCommandBuilder`2.LogTo(Venflow.LoggerCallback)">
             <summary>
@@ -1371,7 +1371,7 @@
         </member>
         <member name="T:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1">
             <summary>
-            Instances of this class are returned from methods inside the <see cref="!:EntityConfiguration&lt;TEntity&gt;&lt;TEntity&gt;"/> class when using the Fluent API and it is not designed to be directly constructed in your application code.
+            Instances of this class are returned from methods inside the <see cref="T:Venflow.Modeling.Definitions.EntityConfiguration`1"/> class when using the Fluent API and it is not designed to be directly constructed in your application code.
             </summary>
             <typeparam name="TEntity">The entity type being configured.</typeparam>
         </member>
@@ -2208,6 +2208,9 @@
             Represents an error which occur when an invalid type argument gets passed to a generic method.
             </summary>
         </member>
+        <member name="M:Venflow.TypeArgumentException.#ctor">
+            <inheritdoc/>
+        </member>
         <member name="M:Venflow.TypeArgumentException.#ctor(System.String)">
             <inheritdoc/>
         </member>
@@ -2652,7 +2655,7 @@
         <member name="F:Venflow.VenflowDbType.Array">
             <summary>
             Corresponds to the PostgreSQL "array" type, a variable-length multidimensional array of
-            another type. This value must be combined with another value from <see cref="!:NpgsqlDbType"/>
+            another type. This value must be combined with another value from <see cref="T:NpgsqlTypes.NpgsqlDbType"/>
             via a bit OR (e.g. NpgsqlDbType.Array | NpgsqlDbType.Integer)
             </summary>
             <remarks>See https://www.postgresql.org/docs/current/static/arrays.html</remarks>
@@ -2660,7 +2663,7 @@
         <member name="F:Venflow.VenflowDbType.Range">
             <summary>
             Corresponds to the PostgreSQL "range" type, continuous range of values of specific type.
-            This value must be combined with another value from <see cref="!:NpgsqlDbType"/>
+            This value must be combined with another value from <see cref="T:NpgsqlTypes.NpgsqlDbType"/>
             via a bit OR (e.g. NpgsqlDbType.Range | NpgsqlDbType.Integer)
             </summary>
             <remarks>
@@ -2671,7 +2674,7 @@
         <member name="F:Venflow.VenflowDbType.Multirange">
             <summary>
             Corresponds to the PostgreSQL "multirange" type, continuous range of values of specific type.
-            This value must be combined with another value from <see cref="!:NpgsqlDbType"/>
+            This value must be combined with another value from <see cref="T:NpgsqlTypes.NpgsqlDbType"/>
             via a bit OR (e.g. NpgsqlDbType.Multirange | NpgsqlDbType.Integer)
             </summary>
             <remarks>

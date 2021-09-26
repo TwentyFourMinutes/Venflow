@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿#pragma warning disable 8618
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Venflow.Benchmarks.Models
 {

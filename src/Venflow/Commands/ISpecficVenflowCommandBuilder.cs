@@ -20,7 +20,7 @@
         /// </summary>
         /// <param name="shouldLog">Determines if this command should be logged. This is helpful, if you configured the default logging behavior to be <see langword="true"/>.</param>
         /// <returns>An object that can be used to further configure the operation.</returns>
-        /// <remarks>You can configure the loggers in the <see cref="Database.Configure(DatabaseConfigurationOptionsBuilder)"/> method with the <see cref="DatabaseOptionsBuilder.LogTo(LoggerCallback)"/> methods.</remarks>
+        /// <remarks>You can configure the loggers in the <see cref="Database.Configure(DatabaseConfigurationOptionsBuilder)"/> method with the <see cref="DatabaseOptionsBuilder{TDatabase}.LogTo(LoggerCallback)"/> methods.</remarks>
         TLogResult Log(bool shouldLog = true);
 
         /// <summary>

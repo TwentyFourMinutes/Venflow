@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Reflection;
+﻿using System.Collections.ObjectModel;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using Npgsql.Schema;
@@ -25,7 +22,7 @@ namespace Venflow.Dynamic
                 var ilGenerator = method.GetILGenerator();
 
                 ilGenerator.Emit(OpCodes.Ldarg_0);
-                ilGenerator.Emit(OpCodes.Ldfld, typeof(List<TType>).GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance));
+                ilGenerator.Emit(OpCodes.Ldfld, typeof(List<TType>).GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance)!);
                 ilGenerator.Emit(OpCodes.Ret);
 
                 UnderlyingElementGetter = (Func<List<TType>, TType[]>)method.CreateDelegate(typeof(Func<List<TType>, TType[]>));
@@ -76,7 +73,7 @@ namespace Venflow.Dynamic
             var ilGenerator = method.GetILGenerator();
 
             ilGenerator.Emit(OpCodes.Ldarg_0);
-            ilGenerator.Emit(OpCodes.Ldfld, typeof(ReadOnlyCollection<NpgsqlDbColumn>).GetField("list", BindingFlags.NonPublic | BindingFlags.Instance));
+            ilGenerator.Emit(OpCodes.Ldfld, typeof(ReadOnlyCollection<NpgsqlDbColumn>).GetField("list", BindingFlags.NonPublic | BindingFlags.Instance)!);
             ilGenerator.Emit(OpCodes.Ret);
 
             return (Func<ReadOnlyCollection<NpgsqlDbColumn>, List<NpgsqlDbColumn>>)method.CreateDelegate(typeof(Func<ReadOnlyCollection<NpgsqlDbColumn>, List<NpgsqlDbColumn>>));

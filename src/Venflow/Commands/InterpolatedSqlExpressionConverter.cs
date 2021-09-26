@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using NpgsqlTypes;
 using Venflow.Enums;
@@ -18,7 +14,7 @@ namespace Venflow.Commands
 
             if (instanceArguments.Count > 0)
             {
-                for (int instanceArgumentIndex = 0; instanceArgumentIndex < instanceArguments.Count; instanceArgumentIndex++)
+                for (var instanceArgumentIndex = 0; instanceArgumentIndex < instanceArguments.Count; instanceArgumentIndex++)
                 {
                     visitor.Visit(instanceArguments[instanceArgumentIndex]);
                 }
@@ -35,11 +31,11 @@ namespace Venflow.Commands
             var nextDbType = dbTypes.Count == 0 ? (-1, 0) : dbTypes[0];
             var dbTypeIndex = 0;
 
-            for (int instanceArgumentIndex = 0; instanceArgumentIndex < instanceArguments.Count; instanceArgumentIndex++)
+            for (var instanceArgumentIndex = 0; instanceArgumentIndex < instanceArguments.Count; instanceArgumentIndex++)
             {
                 if (instanceArgumentIndex == nextDbType.Item1)
                 {
-                    instanceArguments[instanceArgumentIndex] = Expression.New(typeof(Tuple<object, NpgsqlDbType>).GetConstructor(new[] { typeof(object), typeof(NpgsqlDbType) }), replacer.Visit(instanceArguments[instanceArgumentIndex]), Expression.Constant(nextDbType.Item2));
+                    instanceArguments[instanceArgumentIndex] = Expression.New(typeof(Tuple<object, NpgsqlDbType>).GetConstructor(new[] { typeof(object), typeof(NpgsqlDbType) })!, replacer.Visit(instanceArguments[instanceArgumentIndex]), Expression.Constant(nextDbType.Item2));
 
                     dbTypeIndex++;
 
@@ -126,15 +122,15 @@ namespace Venflow.Commands
 
                 if (displayClassType is null)
                 {
-                    LocalExpression = Expression.Parameter(thisType);
-                    ConvertExpression = Expression.Assign(LocalExpression, Expression.Convert(ParameterExpression, thisType));
+                    LocalExpression = Expression.Parameter(thisType!);
+                    ConvertExpression = Expression.Assign(LocalExpression, Expression.Convert(ParameterExpression, thisType!));
                 }
                 else
                 {
                     LocalExpression = Expression.Parameter(displayClassType);
                     ConvertExpression = Expression.Assign(LocalExpression, Expression.Convert(ParameterExpression, displayClassType));
 
-                    _thisField = _displayClassType.GetFields().FirstOrDefault(x => x.FieldType == thisType && x.Name.StartsWith("<>") && x.Name.Contains("__this"));
+                    _thisField = _displayClassType!.GetFields().FirstOrDefault(x => x.FieldType == thisType && x.Name.StartsWith("<>") && x.Name.Contains("__this"));
                 }
             }
 
@@ -153,7 +149,7 @@ namespace Venflow.Commands
                     }
                     else
                     {
-                        return Expression.Field(LocalExpression, _thisField);
+                        return Expression.Field(LocalExpression, _thisField!);
                     }
                 }
 

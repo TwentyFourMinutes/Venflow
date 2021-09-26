@@ -18,9 +18,9 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
         [Params(10, 100, 1000, 10000)]
         public int BatchCount { get; set; }
 
-        private List<Person> _efCorePeople;
-        private List<Person> _venflowPeople;
-        private List<Person> _repoDbPeople;
+        private List<Person> _efCorePeople = null!;
+        private List<Person> _venflowPeople = null!;
+        private List<Person> _repoDbPeople = null!;
 
         private int index = 0;
 
@@ -45,7 +45,7 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
             await insertBenchmark.PersonDbContext.DisposeAsync();
 
             _efCorePeople = await PersonDbContext.People.Take(BatchCount).ToListAsync();
-            _venflowPeople = await Database.People.QueryBatch(@"SELECT * FROM ""People"" LIMIT " + BatchCount).TrackChanges().Build().QueryAsync();
+            _venflowPeople = (await Database.People.QueryBatch(@"SELECT * FROM ""People"" LIMIT " + BatchCount).TrackChanges().Build().QueryAsync())!;
             _repoDbPeople = (await DbConnectionExtension.QueryAsync<Person>(Database.GetConnection(), what: null, top: BatchCount)).ToList();
 
             await EFCoreUpdateBatchAsync();

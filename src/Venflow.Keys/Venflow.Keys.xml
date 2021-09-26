@@ -71,6 +71,11 @@
             <strong>Do not use this interface, if you are not absolutely sure what it does.</strong>
             </summary>
         </member>
+        <member name="P:Venflow.IKey.BoxedValue">
+            <summary>
+            The boxed representation of the value this instance is representing.
+            </summary>
+        </member>
         <member name="T:Venflow.KeyConverter">
             <summary>
             Provides a way of converting <see cref="T:Venflow.Key`2"/> to strings and vice versa.
@@ -93,6 +98,16 @@
         </member>
         <member name="M:Venflow.KeyConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object,System.Type)">
             <inheritdoc/>
+        </member>
+        <member name="M:Venflow.KeyConverter.GetOrCreateKeyFactory``1(System.Type)">
+            <summary>
+            Gets or creates a key factory for the given type.
+            </summary>
+        </member>
+        <member name="M:Venflow.KeyConverter.GetOrCreateKeyFactory``2(System.Type)">
+            <summary>
+            Gets or creates a key factory for the given type.
+            </summary>
         </member>
     </members>
 </doc>

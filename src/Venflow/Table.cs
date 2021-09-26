@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Npgsql;
+﻿using Npgsql;
 using Venflow.Commands;
 using Venflow.Enums;
 using Venflow.Modeling;
@@ -94,7 +89,7 @@ namespace Venflow
 
             using var command = new NpgsqlCommand("SELECT COUNT(*) FROM " + Configuration.TableName, Database.GetConnection());
 
-            return (long)await command.ExecuteScalarAsync(cancellationToken);
+            return (long)(await command.ExecuteScalarAsync(cancellationToken))!;
         }
 
         #endregion
@@ -432,7 +427,7 @@ namespace Venflow
         /// <exception cref="InvalidOperationException">Thrown when a provided entity does not contain any virtual properties.</exception>
         public void TrackChanges(IList<TEntity> entities)
         {
-            for (int i = entities.Count - 1; i >= 0; i--)
+            for (var i = entities.Count - 1; i >= 0; i--)
             {
                 entities[i] = Configuration.ApplyChangeTracking(entities[i]);
             }

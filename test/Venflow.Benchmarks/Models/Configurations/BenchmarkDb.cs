@@ -1,4 +1,5 @@
-﻿using Venflow.Shared;
+﻿#pragma warning disable 8618
+using Venflow.Shared;
 
 namespace Venflow.Benchmarks.Models.Configurations
 {

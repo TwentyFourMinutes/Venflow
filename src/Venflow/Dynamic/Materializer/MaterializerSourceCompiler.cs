@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Venflow.Commands;
+﻿using Venflow.Commands;
 using Venflow.Enums;
 using Venflow.Modeling;
 
@@ -42,7 +40,7 @@ namespace Venflow.Dynamic.Materializer
             if (_rootRelationPath is null)
                 return;
 
-            for (int i = 0; i < _rootRelationPath.TrailingPath.Count; i++)
+            for (var i = 0; i < _rootRelationPath.TrailingPath.Count; i++)
             {
                 BaseCompile((RelationPath<JoinBehaviour>)_rootRelationPath.TrailingPath[i], queryEntityHolder);
             }
@@ -64,14 +62,14 @@ namespace Venflow.Dynamic.Materializer
                     relationPath.Value == JoinBehaviour.LeftJoin) &&
                     !relation.IsRightNavigationPropertyNullable)
                 {
-                    throw new InvalidOperationException($"The join you configured 'Join...(x => x.{relation.RightNavigationProperty.Name})' from the entity '{relation.RightEntity.EntityName}' to the entity '{relation.LeftEntity.EntityName}' is configured as a LeftJoin, however the property '{relation.RightNavigationProperty.Name}' on the entity '{relation.RightEntity.EntityName}' isn't marked as null-able!");
+                    throw new InvalidOperationException($"The join you configured 'Join...(x => x.{relation.RightNavigationProperty!.Name})' from the entity '{relation.RightEntity.EntityName}' to the entity '{relation.LeftEntity.EntityName}' is configured as a LeftJoin, however the property '{relation.RightNavigationProperty.Name}' on the entity '{relation.RightEntity.EntityName}' isn't marked as null-able!");
                 }
                 else if ((relationPath.Value == JoinBehaviour.FullJoin ||
                         relationPath.Value == JoinBehaviour.RightJoin) &&
                         !relation.IsLeftNavigationPropertyNullable &&
                         relation.LeftNavigationProperty is not null)
                 {
-                    throw new InvalidOperationException($"The join you configured 'Join...(x => x.{relation.RightNavigationProperty.Name})' from the entity '{relation.RightEntity.EntityName}' to the entity '{relation.LeftEntity.EntityName}' is configured as a RightJoin, however the property '{relation.LeftNavigationProperty.Name}' on the entity '{relation.LeftEntity.EntityName}' isn't marked as null-able!");
+                    throw new InvalidOperationException($"The join you configured 'Join...(x => x.{relation.RightNavigationProperty!.Name})' from the entity '{relation.RightEntity.EntityName}' to the entity '{relation.LeftEntity.EntityName}' is configured as a RightJoin, however the property '{relation.LeftNavigationProperty.Name}' on the entity '{relation.LeftEntity.EntityName}' isn't marked as null-able!");
                 }
             }
 #endif
@@ -79,7 +77,7 @@ namespace Venflow.Dynamic.Materializer
             if (relation.RelationType == RelationType.ManyToOne)
             {
                 if (!relation.IsRightNavigationPropertyInitialized &&
-                    (relation.RightNavigationProperty.CanWrite ||
+                    (relation.RightNavigationProperty!.CanWrite ||
                     relation.RightNavigationProperty.GetBackingField() is not null))
                 {
                     rightQueryHolder.InitializeNavigations.Add(relation.Sibiling);
@@ -143,7 +141,7 @@ namespace Venflow.Dynamic.Materializer
                 }
             }
 
-            for (int i = 0; i < relationPath.TrailingPath.Count; i++)
+            for (var i = 0; i < relationPath.TrailingPath.Count; i++)
             {
                 BaseCompile((RelationPath<JoinBehaviour>)relationPath.TrailingPath[i], leftQueryHolder);
             }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Venflow.Modeling;
+﻿using Venflow.Modeling;
 
 namespace Venflow.Dynamic.Inserter
 {

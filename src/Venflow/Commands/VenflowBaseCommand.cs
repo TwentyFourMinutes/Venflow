@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Npgsql;
+﻿using Npgsql;
 using Venflow.Modeling;
 
 namespace Venflow.Commands
@@ -16,7 +12,7 @@ namespace Venflow.Commands
         internal Entity<TEntity> EntityConfiguration { get; }
 
         protected List<LoggerCallback> Loggers { get; }
-        protected bool ShouldLog => (_shouldLog && (Database.HasLoggers || Loggers.Count > 0));
+        protected bool ShouldLog => _shouldLog && (Database.HasLoggers || Loggers.Count > 0);
 
         protected bool ShouldAutoCommit = true;
         protected const string TransactionName = "_VenflowSavepoint";
@@ -26,7 +22,7 @@ namespace Venflow.Commands
         {
             Database = database;
             EntityConfiguration = entityConfiguration;
-            UnderlyingCommand = underlyingCommand;
+            UnderlyingCommand = underlyingCommand!;
             DisposeCommand = disposeCommand;
 
             Loggers = loggers;
@@ -61,10 +57,10 @@ namespace Venflow.Commands
         {
             var connection = hasGeneratedCommands ? Database.GetConnection() : UnderlyingCommand.Connection;
 
-            if (connection.State == System.Data.ConnectionState.Open)
+            if (connection!.State == System.Data.ConnectionState.Open)
                 return default;
 
-            if (connection.State == System.Data.ConnectionState.Closed)
+            if (connection!.State == System.Data.ConnectionState.Closed)
             {
                 return new ValueTask(connection.OpenAsync());
             }

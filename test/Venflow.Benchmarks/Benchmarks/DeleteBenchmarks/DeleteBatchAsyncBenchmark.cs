@@ -29,7 +29,7 @@ namespace Venflow.Benchmarks.Benchmarks.DeleteBenchmarks
         {
             var toDelete = new List<Person>();
 
-            for (int i = 0; i < BatchCount; i++)
+            for (var i = 0; i < BatchCount; i++)
             {
                 toDelete.Add(new Person { Name = "toDelete" + i.ToString() });
             }

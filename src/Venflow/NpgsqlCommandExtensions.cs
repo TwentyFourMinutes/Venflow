@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Text;
-using Npgsql;
+﻿using Npgsql;
 
 namespace Venflow
 {
@@ -45,7 +42,7 @@ namespace Venflow
             var argumentIndex = 0;
             var parameterIndex = 0;
 
-            for (int spanIndex = 0; spanIndex < sqlLength; spanIndex++)
+            for (var spanIndex = 0; spanIndex < sqlLength; spanIndex++)
             {
                 var spanChar = sqlSpan[spanIndex];
 
@@ -71,7 +68,7 @@ namespace Venflow
                         {
                             var listType = default(Type);
 
-                            for (int listIndex = 0; listIndex < list.Count; listIndex++)
+                            for (var listIndex = 0; listIndex < list.Count; listIndex++)
                             {
                                 var listItem = list[listIndex];
 
@@ -133,7 +130,7 @@ namespace Venflow
 
             var argumentIndex = 0;
 
-            for (int spanIndex = 0; spanIndex < sqlLength; spanIndex++)
+            for (var spanIndex = 0; spanIndex < sqlLength; spanIndex++)
             {
                 var spanChar = sqlSpan[spanIndex];
 
@@ -153,8 +150,7 @@ namespace Venflow
 
                     var argument = command.Parameters[argumentIndex++];
 
-                    if (argument.Value is null ||
-                        argument.Value is DBNull)
+                    if (argument.Value is null or DBNull)
                     {
                         argumentedSql.Append("null");
                     }

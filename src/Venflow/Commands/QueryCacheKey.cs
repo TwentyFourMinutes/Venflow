@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Npgsql.Schema;
 using Venflow.Dynamic;
 using Venflow.Modeling;
@@ -38,7 +36,7 @@ namespace Venflow.Commands
             var columnSchemaSpan = _columnSchema.AsSpan();
             var foreignColumnSchemaSpan = y._columnSchema.AsSpan();
 
-            for (int columnIndex = columnSchemaSpan.Length - 1; columnIndex >= 0; columnIndex--)
+            for (var columnIndex = columnSchemaSpan.Length - 1; columnIndex >= 0; columnIndex--)
             {
                 if (columnSchemaSpan[columnIndex].ColumnName != foreignColumnSchemaSpan[columnIndex].ColumnName)
                     return false;
@@ -61,8 +59,8 @@ namespace Venflow.Commands
 
                 var flattenedPathSpan = _relations.AsSpan();
 
-                Entity nextJoin = _entity;
-                string? nextJoinPKName = _entity.GetPrimaryColumn().ColumnName;
+                var nextJoin = _entity;
+                var nextJoinPKName = _entity.GetPrimaryColumn()!.ColumnName;
 
                 for (int columnIndex = 0, max = columnSchemaSpan.Length; columnIndex < max; columnIndex++)
                 {
@@ -76,7 +74,7 @@ namespace Venflow.Commands
                             break;
 
                         nextJoin = flattenedPathSpan[joinIndex].RightEntity;
-                        nextJoinPKName = nextJoin.GetPrimaryColumn().ColumnName;
+                        nextJoinPKName = nextJoin.GetPrimaryColumn()!.ColumnName;
 
                         joinIndex++;
                     }

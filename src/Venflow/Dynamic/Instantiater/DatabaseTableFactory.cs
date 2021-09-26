@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Reflection.Emit;
 using Venflow.Modeling;
 
@@ -15,13 +12,13 @@ namespace Venflow.Dynamic.Instantiater
 
             var genericEntityType = typeof(Entity<>);
 
-            var entitiesIndexerMethod = entitiesListType.GetMethod("get_Item");
+            var entitiesIndexerMethod = entitiesListType.GetMethod("get_Item")!;
 
             var instantiaterMethod = TypeFactory.GetDynamicMethod($"Venflow.Dynamic.Instantiater.{customDatabaseType.Name}Instantiater", null, new[] { databaseType, entitiesListType });
 
             var instantiaterMethodIL = instantiaterMethod.GetILGenerator();
 
-            for (int i = 0; i < tableProperties.Count; i++)
+            for (var i = 0; i < tableProperties.Count; i++)
             {
                 var tableProperty = tableProperties[i];
 
@@ -31,8 +28,8 @@ namespace Venflow.Dynamic.Instantiater
                 instantiaterMethodIL.Emit(OpCodes.Ldarg_1);
                 instantiaterMethodIL.Emit(OpCodes.Ldc_I4, i);
                 instantiaterMethodIL.Emit(OpCodes.Callvirt, entitiesIndexerMethod);
-                instantiaterMethodIL.Emit(OpCodes.Newobj, tableProperty.PropertyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { databaseType, genericEntityType.MakeGenericType(entities[i].EntityType) }, null));
-                instantiaterMethodIL.Emit(OpCodes.Callvirt, tableProperty.GetSetMethod());
+                instantiaterMethodIL.Emit(OpCodes.Newobj, tableProperty.PropertyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { databaseType, genericEntityType.MakeGenericType(entities[i].EntityType) }, null)!);
+                instantiaterMethodIL.Emit(OpCodes.Callvirt, tableProperty.GetSetMethod()!);
             }
 
             instantiaterMethodIL.Emit(OpCodes.Ret);

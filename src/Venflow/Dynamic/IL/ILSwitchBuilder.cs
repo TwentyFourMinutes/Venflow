@@ -14,7 +14,7 @@ namespace Venflow.Dynamic.IL
             _iLGenerator = iLGenerator;
             _labels = new Label[labelCount];
 
-            for (int i = labelCount - 1; i >= 0; i--)
+            for (var i = labelCount - 1; i >= 0; i--)
             {
                 _labels[i] = iLGenerator.DefineLabel();
             }

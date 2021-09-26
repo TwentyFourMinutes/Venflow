@@ -2,10 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net5.0;netcoreapp3.1;net48</TargetFrameworks>
-    <LangVersion>preview</LangVersion>
-    <Nullable>enable</Nullable>
     <AssemblyOriginatorKeyFile>../../Venflow.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
+    <NoWarn>8600;8602;8604;8605;8616;8618;8620;8629;8002</NoWarn>
     <UserSecretsId>9ee3e386-8d57-4d94-bde3-820b26e3efdf</UserSecretsId>
   </PropertyGroup>
 

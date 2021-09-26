@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Venflow.Dynamic;
 using Venflow.Dynamic.Proxies;
 using Venflow.Enums;
@@ -72,7 +67,7 @@ namespace Venflow.Commands
 
             var commandString = new StringBuilder(entities.Count * _minEntityStringLength);
 
-            for (int i = 0; i < entities.Count; i++)
+            for (var i = 0; i < entities.Count; i++)
             {
                 BaseUpdate(entities[i], i, commandString);
             }
@@ -166,7 +161,7 @@ namespace Venflow.Commands
 
                 var entityColumns = EntityConfiguration.Columns.Values.AsSpan();
 
-                for (int i = columns.Length - 1; i >= 0; i--)
+                for (var i = columns.Length - 1; i >= 0; i--)
                 {
                     var columnIndex = columns[i];
 
@@ -192,7 +187,7 @@ namespace Venflow.Commands
             commandString.Length -= 2;
 
             commandString.Append(" WHERE \"")
-                         .Append(EntityConfiguration.PrimaryColumn.ColumnName)
+                         .Append(EntityConfiguration.PrimaryColumn!.ColumnName)
                          .Append("\" = ");
 
             var primaryParameter = EntityConfiguration.PrimaryColumn.ValueRetriever(entity, "PK" + index);

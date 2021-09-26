@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Reflection.Emit;
 using Venflow.Modeling;
 
@@ -9,7 +6,7 @@ namespace Venflow.Dynamic.Proxies
 {
     internal class ChangeTrackerFactory<TEntity> where TEntity : class, new()
     {
-        internal Type ProxyType { get; private set; }
+        internal Type ProxyType { get; private set; } = null!;
 
         private readonly Type _entityType;
         private readonly Type _changeTrackerType;
@@ -79,21 +76,21 @@ namespace Venflow.Dynamic.Proxies
             var constructorIL = constructor.GetILGenerator();
 
             constructorIL.Emit(OpCodes.Ldarg_0);
-            constructorIL.Emit(OpCodes.Call, _entityType.GetConstructor(Type.EmptyTypes));
+            constructorIL.Emit(OpCodes.Call, _entityType.GetConstructor(Type.EmptyTypes)!);
             constructorIL.Emit(OpCodes.Ldarg_0);
             constructorIL.Emit(OpCodes.Ldarg_1);
             constructorIL.Emit(OpCodes.Stfld, changeTrackerField);
             constructorIL.Emit(OpCodes.Ret);
 
             // Create Proxy Type
-            ProxyType = proxyTypeBuilder.CreateType();
+            ProxyType = proxyTypeBuilder.CreateType()!;
         }
 
         internal Func<ChangeTracker<TEntity>, TEntity> GetProxyFactory()
         {
             var changeTrackerParameter = Expression.Parameter(_changeTrackerType, "changeTracker");
 
-            var proxyInstance = Expression.New(ProxyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { _changeTrackerType }, null), changeTrackerParameter);
+            var proxyInstance = Expression.New(ProxyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { _changeTrackerType }, null)!, changeTrackerParameter);
 
             return Expression.Lambda<Func<ChangeTracker<TEntity>, TEntity>>(Expression.Convert(proxyInstance, _entityType), changeTrackerParameter).Compile();
         }
@@ -104,11 +101,11 @@ namespace Venflow.Dynamic.Proxies
             var ilGenerator = method.GetILGenerator();
 
             ilGenerator.Emit(OpCodes.Ldarg_0);
-            ilGenerator.Emit(OpCodes.Newobj, ProxyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { _changeTrackerType }, null));
+            ilGenerator.Emit(OpCodes.Newobj, ProxyType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { _changeTrackerType }, null)!);
 
             var properties = _entityType.GetProperties(BindingFlags.Public | BindingFlags.Instance).AsSpan();
 
-            for (int propertyIndex = 0; propertyIndex < properties.Length; propertyIndex++)
+            for (var propertyIndex = 0; propertyIndex < properties.Length; propertyIndex++)
             {
                 var property = properties[propertyIndex];
 
@@ -127,15 +124,15 @@ namespace Venflow.Dynamic.Proxies
                 {
                     var proxyProperty = ProxyType.GetProperty(property.Name, BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly) ?? property;
 
-                    ilGenerator.Emit(OpCodes.Callvirt, property.GetGetMethod());
+                    ilGenerator.Emit(OpCodes.Callvirt, property.GetGetMethod()!);
 
-                    ilGenerator.Emit(OpCodes.Callvirt, proxyProperty.GetSetMethod(true));
+                    ilGenerator.Emit(OpCodes.Callvirt, proxyProperty.GetSetMethod(true)!);
                 }
             }
 
             ilGenerator.Emit(OpCodes.Ldarg_0);
             ilGenerator.Emit(OpCodes.Ldc_I4_1);
-            ilGenerator.Emit(OpCodes.Callvirt, _changeTrackerType.GetProperty("TrackChanges", BindingFlags.NonPublic | BindingFlags.Instance).GetSetMethod(true));
+            ilGenerator.Emit(OpCodes.Callvirt, _changeTrackerType.GetProperty("TrackChanges", BindingFlags.NonPublic | BindingFlags.Instance)!.GetSetMethod(true)!);
             ilGenerator.Emit(OpCodes.Ret);
 
             return (Func<ChangeTracker<TEntity>, TEntity, TEntity>)method.CreateDelegate(typeof(Func<ChangeTracker<TEntity>, TEntity, TEntity>));

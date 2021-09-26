@@ -25,7 +25,7 @@ namespace Venflow.Tests.QueryTests
                                                .QueryBatch(@"SELECT Count(""Id"") As ""Count"" FROM ""People""")
                                                .QueryAsync();
 
-            Assert.Equal(1, customResponse.Count);
+            Assert.Single(customResponse);
             Assert.NotNull(customResponse[0]);
             Assert.NotNull(customResponse[0].Count);
         }

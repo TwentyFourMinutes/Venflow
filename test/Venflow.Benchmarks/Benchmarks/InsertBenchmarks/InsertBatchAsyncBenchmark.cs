@@ -29,7 +29,7 @@ namespace Venflow.Benchmarks.Benchmarks.InsertBenchmarks
         {
             var people = new List<Person>();
 
-            for (int i = 0; i < BatchCount; i++)
+            for (var i = 0; i < BatchCount; i++)
             {
                 people.Add(new Person { Name = "InsertBatchAsync" + i.ToString() });
             }

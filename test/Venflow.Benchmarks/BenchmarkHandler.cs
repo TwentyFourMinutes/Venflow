@@ -7,8 +7,8 @@ namespace Venflow.Benchmarks
 {
     public class BenchmarkHandler
     {
-        private static BenchmarkHandler _current;
-        private static BenchmarkDb _database;
+        private static BenchmarkHandler _current = null!;
+        private static BenchmarkDb _database = null!;
 
         private static readonly object _buildLocker = new object();
         private static readonly TaskCompletionSource<bool> _waitHandle = new TaskCompletionSource<bool>();

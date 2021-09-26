@@ -42,7 +42,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         }
 
         [Benchmark(Baseline = true)]
-        public Task<Person> EfCoreQuerySingleAsync()
+        public Task<Person?> EfCoreQuerySingleAsync()
         {
             PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
@@ -51,7 +51,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         }
 
         [Benchmark]
-        public Task<Person> EfCoreQuerySingleNoChangeTrackingAsync()
+        public Task<Person?> EfCoreQuerySingleNoChangeTrackingAsync()
         {
             PersonDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
             PersonDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
@@ -59,13 +59,13 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         }
 
         [Benchmark]
-        public Task<Person> VenflowQuerySingleAsync()
+        public Task<Person?> VenflowQuerySingleAsync()
         {
             return Database.People.QuerySingle(sql).JoinWith(x => x.Emails).ThenWith(x => x.Contents).TrackChanges().Build().QueryAsync();
         }
 
         [Benchmark]
-        public Task<Person> VenflowQuerySingleNoChangeTrackingAsync()
+        public Task<Person?> VenflowQuerySingleNoChangeTrackingAsync()
         {
             return Database.People.QuerySingle(sql).JoinWith(x => x.Emails).ThenWith(x => x.Contents).Build().QueryAsync();
         }
@@ -126,7 +126,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
                 return person;
             })).Distinct().FirstOrDefault();
 
-            return person;
+            return person!;
         }
 
         [Benchmark]
@@ -183,10 +183,10 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
                     email.Contents.Add(emailContent);
                 }
 
-                return null;
+                return null!;
             });
 
-            return resultPerson;
+            return resultPerson!;
         }
 
         [GlobalCleanup]

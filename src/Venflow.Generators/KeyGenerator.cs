@@ -41,10 +41,10 @@ namespace Venflow.Generators
 
             var attributeSymbol = compilation.GetTypeByMetadataName("Venflow.GeneratedKeyAttribute");
 
-            var comparableInterfaceType = compilation.GetTypeByMetadataName("System.IComparable");
-            var convertibleInterfaceType = compilation.GetTypeByMetadataName("System.IConvertible");
+            var comparableInterfaceType = compilation.GetTypeByMetadataName("System.IComparable")!;
+            var convertibleInterfaceType = compilation.GetTypeByMetadataName("System.IConvertible")!;
 
-            var specialTypeMembers = comparableInterfaceType.GetMembers().Union(convertibleInterfaceType.GetMembers()).OfType<IMethodSymbol>().ToArray();
+            var specialTypeMembers = comparableInterfaceType.GetMembers().Union(convertibleInterfaceType.GetMembers(), SymbolEqualityComparer.Default).OfType<IMethodSymbol>().ToArray();
 
             foreach (var declarationSyntax in ((SyntaxReceiver)context.SyntaxReceiver!).Candidates)
             {
@@ -55,14 +55,14 @@ namespace Venflow.Generators
 
                 foreach (var attributeSyntax in declarationSyntax.AttributeLists.SelectMany(x => x.Attributes))
                 {
-                    var attributeType = semanticModel.GetTypeInfo(attributeSyntax, context.CancellationToken).Type;
+                    var attributeType = semanticModel.GetTypeInfo(attributeSyntax, context.CancellationToken).Type!;
 
                     if (!attributeType.Equals(attributeSymbol, SymbolEqualityComparer.Default) ||
-                        attributeSyntax.ArgumentList.Arguments.Count != 1 ||
-                        attributeSyntax.ArgumentList.Arguments[0].Expression is not TypeOfExpressionSyntax typeOfExpression)
+                        attributeSyntax.ArgumentList!.Arguments.Count != 1 ||
+                        attributeSyntax.ArgumentList!.Arguments[0].Expression is not TypeOfExpressionSyntax typeOfExpression)
                         continue;
 
-                    underlyingKeyType = semanticModel.GetTypeInfo(typeOfExpression.Type, context.CancellationToken).Type;
+                    underlyingKeyType = semanticModel.GetTypeInfo(typeOfExpression.Type, context.CancellationToken).Type!;
 
                     underlyingKeyFullName = underlyingKeyType.ToString();
 
@@ -73,7 +73,7 @@ namespace Venflow.Generators
                     underlyingKeyType is null)
                     continue;
 
-                var baseStruct = semanticModel.GetDeclaredSymbol(declarationSyntax);
+                var baseStruct = semanticModel.GetDeclaredSymbol(declarationSyntax)!;
 
                 var namespaceText = baseStruct.ContainingNamespace;
                 var typeArgumentName = baseStruct.TypeArguments[0].Name;
@@ -96,7 +96,7 @@ namespace Venflow.Generators
                     }
                     else
                     {
-                        tempSpecialTypeMembers = specialTypeMembers.Union(comparableGenericType.GetMembers());
+                        tempSpecialTypeMembers = specialTypeMembers.Union(comparableGenericType.GetMembers(), SymbolEqualityComparer.Default);
                     }
 
                     foreach (var specialTypeMember in tempSpecialTypeMembers)
@@ -118,7 +118,7 @@ namespace Venflow.Generators
                         if (!methodSymbol.IsStatic ||
                             methodSymbol.Name is not "Parse" and not "TryParse" and not "ParseExact" and not "TryParseExact" ||
                             methodSymbol.ReturnType is null ||
-                            methodSymbol.ReturnType.ContainingNamespace != underlyingKeyType.ContainingNamespace ||
+                            !methodSymbol.ReturnType.ContainingNamespace.Equals(underlyingKeyType.ContainingNamespace, SymbolEqualityComparer.Default) ||
                             (methodSymbol.ReturnType.Name != underlyingKeyType.Name &&
                             methodSymbol.ReturnType.ContainingNamespace + "." + methodSymbol.ReturnType.Name != typeof(bool).FullName))
                         {

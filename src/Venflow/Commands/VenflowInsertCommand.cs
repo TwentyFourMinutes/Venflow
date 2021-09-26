@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Npgsql;
 using Venflow.Enums;
 using Venflow.Modeling;
@@ -35,19 +31,27 @@ namespace Venflow.Commands
 
             Delegate inserter;
 
-            if (ShouldLog &&
-                _singleLoggingInserter is not null)
+            if (ShouldLog)
             {
-                inserter = _singleLoggingInserter;
-            }
-            else if (!ShouldLog &&
-                     _singleInserter is not null)
-            {
-                inserter = _singleInserter;
+                if (_singleLoggingInserter is null)
+                {
+                    _singleLoggingInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<TEntity>(_relationBuilderValues!, ShouldLog, true, _isFullInsert);
+                }
+                else
+                {
+                    inserter = _singleLoggingInserter;
+                }
             }
             else
             {
-                _singleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<TEntity>(_relationBuilderValues, ShouldLog, true, _isFullInsert);
+                if (_singleInserter is null)
+                {
+                    _singleInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<TEntity>(_relationBuilderValues!, ShouldLog, true, _isFullInsert);
+                }
+                else
+                {
+                    inserter = _singleInserter;
+                }
             }
 
             var transaction = await GetTransactionAsync(
@@ -110,19 +114,27 @@ namespace Venflow.Commands
 
             Delegate inserter;
 
-            if (ShouldLog &&
-                _batchLoggingInserter is not null)
+            if (ShouldLog)
             {
-                inserter = _batchLoggingInserter;
-            }
-            else if (!ShouldLog &&
-                     _batchInserter is not null)
-            {
-                inserter = _batchInserter;
+                if (_batchLoggingInserter is null)
+                {
+                    _batchLoggingInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<IList<TEntity>>(_relationBuilderValues!, ShouldLog, false, _isFullInsert);
+                }
+                else
+                {
+                    inserter = _batchLoggingInserter;
+                }
             }
             else
             {
-                _batchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<IList<TEntity>>(_relationBuilderValues, ShouldLog, false, _isFullInsert);
+                if (_batchInserter is null)
+                {
+                    _batchInserter = inserter = EntityConfiguration.InsertionFactory.GetOrCreateInserter<IList<TEntity>>(_relationBuilderValues!, ShouldLog, false, _isFullInsert);
+                }
+                else
+                {
+                    inserter = _batchInserter;
+                }
             }
 
             var transaction = await GetTransactionAsync(

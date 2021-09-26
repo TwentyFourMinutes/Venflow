@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Venflow
+﻿namespace Venflow
 {
     /// <summary>
     /// Represents an error which occur when an invalid type argument gets passed to a generic method.
@@ -8,6 +6,9 @@ namespace Venflow
     [Serializable]
     public class TypeArgumentException : Exception
     {
+        /// <inheritdoc/>
+        public TypeArgumentException() : base() { }
+
         /// <inheritdoc/>
         public TypeArgumentException(string message) : base(message) { }
 

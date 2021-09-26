@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading;
-using System.Threading.Tasks;
 using Npgsql;
 using Npgsql.Schema;
 using Venflow.Commands;
@@ -70,7 +66,7 @@ namespace Venflow.Dynamic.Materializer
 
                     _primaryMaterializerCache.Remove(node.Value.CacheKey);
 
-                    for (node = node.Next; node is object && node.Value.TimeStamp < timeStamp; node = node.Next)
+                    for (node = node.Next; node is not null && node.Value.TimeStamp < timeStamp; node = node.Next)
                     {
                         _primaryExpirations.Remove(node);
 
@@ -110,16 +106,16 @@ namespace Venflow.Dynamic.Materializer
                 var columnSchemaSpan = columnSchema.AsSpan();
 
                 var entities = new List<(QueryEntityHolder, List<(EntityColumn, int)>)>();
-                List<(EntityColumn, int)> columns = default;
+                List<(EntityColumn, int)> columns = null!;
 
                 var joinIndex = 1;
 
-                QueryEntityHolder nextJoin = generatedEntities[0];
-                QueryEntityHolder currentJoin = generatedEntities[0];
+                var nextJoin = generatedEntities[0];
+                var currentJoin = generatedEntities[0];
 
                 var nextJoinPKName = _entity.PrimaryColumn?.ColumnName ?? _entity.Columns[0].ColumnName;
 
-                for (int columnIndex = 0; columnIndex < columnSchemaSpan.Length; columnIndex++)
+                for (var columnIndex = 0; columnIndex < columnSchemaSpan.Length; columnIndex++)
                 {
                     var column = columnSchemaSpan[columnIndex];
 
@@ -136,11 +132,11 @@ namespace Venflow.Dynamic.Materializer
                             joinIndex < generatedEntities.Length)
                         {
                             nextJoin = generatedEntities[joinIndex];
-                            nextJoinPKName = nextJoin.Entity.GetPrimaryColumn().ColumnName;
+                            nextJoinPKName = nextJoin.Entity.GetPrimaryColumn()!.ColumnName;
 
                             var currentJoinColumnCount = currentJoin.Entity.GetColumnCount();
 
-                            for (int i = currentJoin.Entity.GetRegularColumnOffset(); i < currentJoinColumnCount; i++)
+                            for (var i = currentJoin.Entity.GetRegularColumnOffset(); i < currentJoinColumnCount; i++)
                             {
                                 var currentJoinColumn = currentJoin.Entity.GetColumn(i);
 
@@ -159,7 +155,7 @@ namespace Venflow.Dynamic.Materializer
                         throw new InvalidOperationException($"The column '{column.ColumnName}' on entity '{currentJoin.Entity.EntityName}' does not exist.");
                     }
 
-                    columns.Add((entityColumn, column.ColumnOrdinal.Value));
+                    columns.Add((entityColumn!, column.ColumnOrdinal!.Value));
                 }
 
                 if (relationBuilderValues is not null)

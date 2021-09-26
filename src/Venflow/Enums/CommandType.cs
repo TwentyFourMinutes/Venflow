@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Venflow.Enums
+﻿namespace Venflow.Enums
 {
     /// <summary>
     /// Specifies the type of command that produced a log.

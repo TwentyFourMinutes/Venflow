@@ -14,9 +14,9 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
 
     public class UpdateSingleAsyncBenchmark : BenchmarkBase
     {
-        private Person _efCorePerson;
-        private Person _venflowPerson;
-        private Person _repoDbPerson;
+        private Person _efCorePerson = null!;
+        private Person _venflowPerson = null!;
+        private Person _repoDbPerson = null!;
 
         private int index = 0;
 
@@ -40,9 +40,9 @@ namespace Venflow.Benchmarks.Benchmarks.UpdateBenchmarks
 
             await insertBenchmark.PersonDbContext.DisposeAsync();
 
-            _efCorePerson = await PersonDbContext.People.FirstOrDefaultAsync();
-            _venflowPerson = await Database.People.QuerySingle(@"SELECT * FROM ""People"" LIMIT 1").TrackChanges().Build().QueryAsync();
-            _repoDbPerson = (await DbConnectionExtension.QueryAsync<Person>(Database.GetConnection(), what: null, top: 1)).FirstOrDefault();
+            _efCorePerson = (await PersonDbContext.People.FirstOrDefaultAsync())!;
+            _venflowPerson = (await Database.People.QuerySingle(@"SELECT * FROM ""People"" LIMIT 1").TrackChanges().Build().QueryAsync())!;
+            _repoDbPerson = (await DbConnectionExtension.QueryAsync<Person>(Database.GetConnection(), what: null, top: 1)).FirstOrDefault()!;
 
             await EFCoreUpdateSingleAsync();
             await VenflowUpdateSingleAsync();

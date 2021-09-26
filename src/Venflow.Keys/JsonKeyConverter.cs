@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -29,7 +28,7 @@ namespace Venflow.Json
 
             var parameters = keyInterface.GetGenericArguments();
 
-            return (JsonConverter)Activator.CreateInstance(typeof(JsonKeyConverter<,,>).MakeGenericType(typeToConvert, parameters[0], parameters[1]));
+            return (JsonConverter)Activator.CreateInstance(typeof(JsonKeyConverter<,,>).MakeGenericType(typeToConvert, parameters[0], parameters[1]))!;
         }
     }
 

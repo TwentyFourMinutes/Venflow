@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Venflow.Commands;
 using Venflow.Enums;
 using Venflow.Modeling;
@@ -57,7 +55,7 @@ namespace Venflow.Dynamic.Inserter
                     }
                     else
                     {
-                        sourceCompiler.CompileFromRelations(_entity, relationBuilderValues);
+                        sourceCompiler.CompileFromRelations(_entity, relationBuilderValues!);
                     }
 
                     var inserter = new InsertionFactoryCompiler(_entity).CreateInserter<TInsert>(sourceCompiler.GetEntities(), sourceCompiler.VisitedEntityIds, sourceCompiler.ReachableRelations, shouldLog);

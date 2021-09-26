@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reflection;
-using System.Reflection.Emit;
+﻿using System.Reflection.Emit;
 using Npgsql;
 using Venflow.Enums;
 using Venflow.Modeling.Definitions;
@@ -56,20 +54,20 @@ namespace Venflow.Dynamic.Retriever
 
             il.Emit(OpCodes.Ldstr, "@p" + column.Property.Name);
             il.Emit(OpCodes.Ldarg_1);
-            il.Emit(OpCodes.Call, stringType.GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new[] { stringType, stringType }, null));
+            il.Emit(OpCodes.Call, stringType.GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new[] { stringType, stringType }, null)!);
             il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Callvirt, column.Property.GetGetMethod());
+            il.Emit(OpCodes.Callvirt, column.Property.GetGetMethod()!);
 
             if (typeof(IKey).IsAssignableFrom(underlyingType))
             {
-                var underlyingStronglyTypedIdType = underlyingType.GetInterface(typeof(IKey<,>).Name).GetGenericArguments()[1];
+                var underlyingStronglyTypedIdType = underlyingType.GetInterface(typeof(IKey<,>).Name)!.GetGenericArguments()[1];
 
                 var keyLocal = il.DeclareLocal(underlyingStronglyTypedIdType);
 
                 il.Emit(OpCodes.Stloc, keyLocal);
                 il.Emit(OpCodes.Ldloca, keyLocal);
 
-                il.Emit(OpCodes.Call, underlyingType.GetCastMethod(underlyingType, underlyingStronglyTypedIdType));
+                il.Emit(OpCodes.Call, underlyingType.GetCastMethod(underlyingType, underlyingStronglyTypedIdType)!);
 
                 underlyingType = underlyingStronglyTypedIdType;
             }
@@ -84,12 +82,12 @@ namespace Venflow.Dynamic.Retriever
 
             if (column.DbType is null)
             {
-                il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underlyingType).GetConstructor(new[] { stringType, underlyingType }));
+                il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underlyingType).GetConstructor(new[] { stringType, underlyingType })!);
             }
             else
             {
                 il.Emit(OpCodes.Ldc_I4, (int)column.DbType);
-                il.Emit(OpCodes.Call, typeof(NpgsqlParameterExtensions).GetMethod("CreateParameter", BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(underlyingType));
+                il.Emit(OpCodes.Call, typeof(NpgsqlParameterExtensions).GetMethod("CreateParameter", BindingFlags.NonPublic | BindingFlags.Static)!.MakeGenericMethod(underlyingType));
             }
 
             il.Emit(OpCodes.Ret);
@@ -100,7 +98,7 @@ namespace Venflow.Dynamic.Retriever
             var stringType = typeof(string);
             var dbNullType = typeof(DBNull);
 
-            var stringConcatMethod = stringType.GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new[] { stringType, stringType }, null);
+            var stringConcatMethod = stringType.GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new[] { stringType, stringType }, null)!;
 
             var propertyLocal = il.DeclareLocal(column.Property.PropertyType);
 
@@ -108,18 +106,18 @@ namespace Venflow.Dynamic.Retriever
 
             // Check if property has value
             il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Callvirt, column.Property.GetGetMethod());
+            il.Emit(OpCodes.Callvirt, column.Property.GetGetMethod()!);
             il.Emit(OpCodes.Stloc_S, propertyLocal);
             il.Emit(OpCodes.Ldloca_S, propertyLocal);
-            il.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("HasValue").GetGetMethod());
+            il.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("HasValue")!.GetGetMethod()!);
             il.Emit(OpCodes.Brtrue_S, defaultRetrieverLabel);
 
             // Nullable retriever
             il.Emit(OpCodes.Ldstr, "@p" + column.Property.Name);
             il.Emit(OpCodes.Ldarg_1);
             il.Emit(OpCodes.Call, stringConcatMethod);
-            il.Emit(OpCodes.Ldsfld, dbNullType.GetField("Value"));
-            il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(dbNullType).GetConstructor(new[] { stringType, dbNullType }));
+            il.Emit(OpCodes.Ldsfld, dbNullType.GetField("Value")!);
+            il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(dbNullType).GetConstructor(new[] { stringType, dbNullType })!);
             il.Emit(OpCodes.Ret);
 
             // Default retriever
@@ -129,21 +127,21 @@ namespace Venflow.Dynamic.Retriever
             il.Emit(OpCodes.Ldarg_1);
             il.Emit(OpCodes.Call, stringConcatMethod);
             il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Callvirt, column.Property.GetGetMethod());
+            il.Emit(OpCodes.Callvirt, column.Property.GetGetMethod()!);
             il.Emit(OpCodes.Stloc_S, propertyLocal);
             il.Emit(OpCodes.Ldloca_S, propertyLocal);
-            il.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("Value").GetGetMethod());
+            il.Emit(OpCodes.Call, propertyLocal.LocalType.GetProperty("Value")!.GetGetMethod()!);
 
             if (typeof(IKey).IsAssignableFrom(underlyingType))
             {
-                var underlyingStronglyTypedIdType = underlyingType.GetInterface(typeof(IKey<,>).Name).GetGenericArguments()[1];
+                var underlyingStronglyTypedIdType = underlyingType.GetInterface(typeof(IKey<,>).Name)!.GetGenericArguments()[1];
 
                 var keyLocal = il.DeclareLocal(underlyingStronglyTypedIdType);
 
                 il.Emit(OpCodes.Stloc, keyLocal);
                 il.Emit(OpCodes.Ldloca, keyLocal);
 
-                il.Emit(OpCodes.Call, underlyingType.GetCastMethod(underlyingType, underlyingStronglyTypedIdType));
+                il.Emit(OpCodes.Call, underlyingType.GetCastMethod(underlyingType, underlyingStronglyTypedIdType)!);
 
                 underlyingType = underlyingStronglyTypedIdType;
             }
@@ -158,12 +156,12 @@ namespace Venflow.Dynamic.Retriever
 
             if (column.DbType is null)
             {
-                il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underlyingType).GetConstructor(new[] { stringType, underlyingType }));
+                il.Emit(OpCodes.Newobj, typeof(NpgsqlParameter<>).MakeGenericType(underlyingType).GetConstructor(new[] { stringType, underlyingType })!);
             }
             else
             {
                 il.Emit(OpCodes.Ldc_I4, (int)column.DbType);
-                il.Emit(OpCodes.Call, typeof(NpgsqlParameterExtensions).GetMethod("CreateParameter", BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(underlyingType));
+                il.Emit(OpCodes.Call, typeof(NpgsqlParameterExtensions).GetMethod("CreateParameter", BindingFlags.NonPublic | BindingFlags.Static)!.MakeGenericMethod(underlyingType));
             }
 
             il.Emit(OpCodes.Ret);

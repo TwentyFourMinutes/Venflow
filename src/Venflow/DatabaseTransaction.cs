@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Npgsql;
+﻿using Npgsql;
 
 namespace Venflow
 {
@@ -78,7 +75,7 @@ namespace Venflow
         /// Commits the database transaction.
         /// </summary>
         /// <param name="cancellationToken">An optional token to cancel the asynchronous operation.</param>
-        Task CommitAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task CommitAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Rolls back a transaction from a pending state.
@@ -89,7 +86,7 @@ namespace Venflow
         /// Rolls back a transaction from a pending state.
         /// </summary>
         /// <param name="cancellationToken">An optional token to cancel the asynchronous operation.</param>
-        Task RollbackAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task RollbackAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Creates a transaction save point.
@@ -104,7 +101,7 @@ namespace Venflow
         /// <param name="name">The name of the savepoint.</param>
         /// <param name="cancellationToken">An optional token to cancel the asynchronous operation.</param>
         /// <remarks>This method does not cause a database roundtrip to be made, and will therefore always complete synchronously. The savepoint creation statement will instead be sent along with the next command.</remarks>
-        Task SaveAsync(string name, CancellationToken cancellationToken = default(CancellationToken));
+        Task SaveAsync(string name, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Rolls back a transaction from a pending savepoint state.
@@ -117,7 +114,7 @@ namespace Venflow
         /// </summary>
         /// <param name="name">The name of the savepoint.</param>
         /// <param name="cancellationToken">An optional token to cancel the asynchronous operation.</param>
-        Task RollbackAsync(string name, CancellationToken cancellationToken = default(CancellationToken));
+        Task RollbackAsync(string name, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Releases a transaction from a pending savepoint state.
@@ -130,7 +127,7 @@ namespace Venflow
         /// </summary>
         /// <param name="name">The name of the savepoint.</param>
         /// <param name="cancellationToken">An optional token to cancel the asynchronous operation.</param>
-        Task ReleaseAsync(string name, CancellationToken cancellationToken = default(CancellationToken));
+        Task ReleaseAsync(string name, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Will return the underlying <see cref="NpgsqlTransaction"/>.

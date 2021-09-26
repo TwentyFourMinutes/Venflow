@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Venflow.Modeling;
+﻿using Venflow.Modeling;
 
 namespace Venflow.Commands
 {
@@ -24,7 +23,7 @@ namespace Venflow.Commands
 
         internal RelationPath AddToPath(EntityRelation relation, out bool isNew)
         {
-            for (int pathIndex = TrailingPath.Count - 1; pathIndex >= 0; pathIndex--)
+            for (var pathIndex = TrailingPath.Count - 1; pathIndex >= 0; pathIndex--)
             {
                 var trailingPath = TrailingPath[pathIndex];
 
@@ -47,7 +46,7 @@ namespace Venflow.Commands
 
         internal RelationPath AddToPath<T>(EntityRelation relation, T value, out bool isNew)
         {
-            for (int pathIndex = TrailingPath.Count - 1; pathIndex >= 0; pathIndex--)
+            for (var pathIndex = TrailingPath.Count - 1; pathIndex >= 0; pathIndex--)
             {
                 var trailingPath = TrailingPath[pathIndex];
 

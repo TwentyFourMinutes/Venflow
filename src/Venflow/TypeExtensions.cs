@@ -1,7 +1,4 @@
-﻿using System;
-using System.Reflection;
-
-namespace Venflow
+﻿namespace Venflow
 {
     internal static class TypeExtensions
     {
@@ -21,7 +18,7 @@ namespace Venflow
         {
             var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
 
-            for (int methodIndex = 0; methodIndex < methods.Length; methodIndex++)
+            for (var methodIndex = 0; methodIndex < methods.Length; methodIndex++)
             {
                 var method = methods[methodIndex];
 

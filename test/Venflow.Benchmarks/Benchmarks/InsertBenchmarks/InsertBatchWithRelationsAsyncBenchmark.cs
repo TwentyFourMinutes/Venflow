@@ -27,11 +27,11 @@ namespace Venflow.Benchmarks.Benchmarks.InsertBenchmarks
         {
             var emails = new List<Email>();
 
-            for (int i = 0; i < BatchCount; i++)
+            for (var i = 0; i < BatchCount; i++)
             {
                 var person = new Person { Name = "Test" + i.ToString(), Emails = new List<Email>() };
 
-                for (int k = 0; k < 2; k++)
+                for (var k = 0; k < 2; k++)
                 {
                     var email = new Email { Address = person.Name + k.ToString(), Person = person, Contents = new List<EmailContent>() };
 
@@ -39,7 +39,7 @@ namespace Venflow.Benchmarks.Benchmarks.InsertBenchmarks
 
                     emails.Add(email);
 
-                    for (int z = 0; z < 2; z++)
+                    for (var z = 0; z < 2; z++)
                     {
                         email.Contents.Add(new EmailContent { Content = email.Address + z.ToString(), Email = email });
                     }

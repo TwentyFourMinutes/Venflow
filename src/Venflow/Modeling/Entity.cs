@@ -1,4 +1,3 @@
-using System;
 using Venflow.Dynamic.Inserter;
 using Venflow.Dynamic.Materializer;
 using Venflow.Dynamic.Proxies;
@@ -50,7 +49,7 @@ namespace Venflow.Modeling
             return ChangeTrackerApplier.Invoke(new ChangeTracker<TEntity>(Columns.ChangeTrackedCount, false), entity);
         }
 
-        internal override EntityColumn GetPrimaryColumn()
+        internal override EntityColumn? GetPrimaryColumn()
         {
             return PrimaryColumn;
         }
@@ -127,7 +126,7 @@ namespace Venflow.Modeling
             NonPrimaryColumnListString = nonPrimaryColumnListString;
         }
 
-        internal abstract EntityColumn GetPrimaryColumn();
+        internal abstract EntityColumn? GetPrimaryColumn();
         internal abstract int GetColumnCount();
         internal abstract int GetChangeTrackingCount();
         internal abstract int GetReadOnlyCount();

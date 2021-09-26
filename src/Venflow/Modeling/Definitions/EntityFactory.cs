@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Venflow.Enums;
+﻿using Venflow.Enums;
 using Venflow.Modeling.Definitions.Builder;
 
 namespace Venflow.Modeling.Definitions
@@ -10,7 +7,7 @@ namespace Venflow.Modeling.Definitions
     {
         internal override EntityBuilder EntityBuilder => _entityBuilder;
 
-        private Entity _entity;
+        private Entity _entity = null!;
 
         private readonly EntityBuilder<TEntity> _entityBuilder;
 
@@ -41,7 +38,7 @@ namespace Venflow.Modeling.Definitions
 
             var entityInstance = default(object?);
 
-            for (int relationIndex = _entityBuilder.Relations.Count - 1; relationIndex >= 0; relationIndex--)
+            for (var relationIndex = _entityBuilder.Relations.Count - 1; relationIndex >= 0; relationIndex--)
             {
                 var relation = _entityBuilder.Relations[relationIndex];
 
@@ -70,7 +67,7 @@ namespace Venflow.Modeling.Definitions
                     if (backingValue is null &&
                         relation.LeftNavigationProperty.GetBackingField() is not null)
                     {
-                        backingValue = relation.LeftNavigationProperty.GetBackingField().GetValue(entityInstance);
+                        backingValue = relation.LeftNavigationProperty!.GetBackingField()!.GetValue(entityInstance);
                     }
 
                     relation.IsLeftNavigationPropertyInitialized = backingValue is not null;
@@ -85,7 +82,7 @@ namespace Venflow.Modeling.Definitions
                     if (backingValue is null &&
                         relation.RightNavigationProperty.GetBackingField() is not null)
                     {
-                        backingValue = relation.RightNavigationProperty.GetBackingField().GetValue(foreignEntityInstance);
+                        backingValue = relation.RightNavigationProperty!.GetBackingField()!.GetValue(foreignEntityInstance);
                     }
 
                     relation.IsRightNavigationPropertyInitialized = backingValue is not null;
@@ -113,7 +110,7 @@ namespace Venflow.Modeling.Definitions
             var relationIdToColumn = new Dictionary<uint, EntityRelation>();
             var relationNameToColumn = new Dictionary<string, EntityRelation>();
 
-            for (int i = _entityBuilder.Relations.Count - 1; i >= 0; i--)
+            for (var i = _entityBuilder.Relations.Count - 1; i >= 0; i--)
             {
                 var relation = _entityBuilder.Relations[i];
 
@@ -142,8 +139,8 @@ namespace Venflow.Modeling.Definitions
                 if (entityRelation.RightEntity.Relations is not null &&
                     entityRelation.RightEntity.Relations.TryGetValue(relation.RelationId, out var sibilingRelation))
                 {
-                    entityRelation.Sibiling = sibilingRelation;
-                    sibilingRelation.Sibiling = entityRelation;
+                    entityRelation.Sibiling = sibilingRelation!;
+                    sibilingRelation!.Sibiling = entityRelation;
                 }
 
                 foreignEntityRelations[i] = entityRelation;

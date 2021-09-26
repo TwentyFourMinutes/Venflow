@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Npgsql;
+﻿using Npgsql;
 using Venflow.Enums;
 
 namespace Venflow
@@ -90,7 +87,7 @@ namespace Venflow
         /// <summary>
         /// Gets or sets the connection string which will be used in all <see cref="Database"/> instances using the current <see cref="DatabaseOptionsBuilder{TDatabase}"/> instance.
         /// </summary>
-        public string ConnectionString { get; set; }
+        public string ConnectionString { get; set; } = null!;
 
         internal List<LoggerCallback> Loggers { get; }
 

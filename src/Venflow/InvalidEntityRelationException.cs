@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Venflow
+﻿namespace Venflow
 {
     /// <summary>
     /// Represents errors that occur during the relation entity generation.

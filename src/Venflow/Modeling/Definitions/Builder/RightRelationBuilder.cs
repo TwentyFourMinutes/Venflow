@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
+﻿using System.Linq.Expressions;
 using Venflow.Enums;
 
 namespace Venflow.Modeling.Definitions.Builder
@@ -31,7 +28,7 @@ namespace Venflow.Modeling.Definitions.Builder
             if (!_rightNavigationProperty.CanWrite &&
                 _rightNavigationProperty.GetBackingField() is null)
             {
-                throw new InvalidOperationException($"The foreign property '{_rightNavigationProperty.Name}' on the entity '{_rightNavigationProperty.ReflectedType.Name}' doesn't implement a setter, nor does it match the common backing field pattern ('<{_rightNavigationProperty.Name}>k__BackingField', '{char.ToLowerInvariant(_leftNavigationProperty.Name[0])}{_leftNavigationProperty.Name.Substring(1)}' or  '_{char.ToLowerInvariant(_leftNavigationProperty.Name[0])}{_leftNavigationProperty.Name.Substring(1)}').");
+                throw new InvalidOperationException($"The foreign property '{_rightNavigationProperty.Name}' on the entity '{_rightNavigationProperty!.ReflectedType!.Name}' doesn't implement a setter, nor does it match the common backing field pattern ('<{_rightNavigationProperty.Name}>k__BackingField', '{char.ToLowerInvariant(_leftNavigationProperty!.Name[0])}{_leftNavigationProperty.Name.Substring(1)}' or  '_{char.ToLowerInvariant(_leftNavigationProperty.Name[0])}{_leftNavigationProperty.Name.Substring(1)}').");
             }
 
             return this;
@@ -53,7 +50,7 @@ namespace Venflow.Modeling.Definitions.Builder
             if (!_rightNavigationProperty.CanWrite &&
                 _rightNavigationProperty.GetBackingField() is null)
             {
-                throw new InvalidOperationException($"The foreign property '{_rightNavigationProperty.Name}' on the entity '{_rightNavigationProperty.ReflectedType.Name}' doesn't implement a setter, nor does it match the common backing field pattern ('<{_rightNavigationProperty.Name}>k__BackingField', '{char.ToLowerInvariant(_leftNavigationProperty.Name[0])}{_leftNavigationProperty.Name.Substring(1)}' or  '_{char.ToLowerInvariant(_leftNavigationProperty.Name[0])}{_leftNavigationProperty.Name.Substring(1)}').");
+                throw new InvalidOperationException($"The foreign property '{_rightNavigationProperty.Name}' on the entity '{_rightNavigationProperty!.ReflectedType!.Name}' doesn't implement a setter, nor does it match the common backing field pattern ('<{_rightNavigationProperty.Name}>k__BackingField', '{char.ToLowerInvariant(_leftNavigationProperty!.Name[0])}{_leftNavigationProperty!.Name.Substring(1)}' or  '_{char.ToLowerInvariant(_leftNavigationProperty.Name[0])}{_leftNavigationProperty.Name.Substring(1)}').");
             }
 
             return this;

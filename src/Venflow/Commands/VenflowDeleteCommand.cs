@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Venflow.Dynamic;
 using Venflow.Modeling;
 
@@ -28,7 +23,7 @@ namespace Venflow.Commands
             commandString.Append("DELETE FROM ")
                          .AppendLine(EntityConfiguration.TableName)
                          .Append(" WHERE \"")
-                         .Append(EntityConfiguration.PrimaryColumn.ColumnName)
+                         .Append(EntityConfiguration.PrimaryColumn!.ColumnName)
                          .Append("\" = ");
 
             var primaryParameter = EntityConfiguration.PrimaryColumn.ValueRetriever(entity, "0");
@@ -50,7 +45,7 @@ namespace Venflow.Commands
             commandString.Append("DELETE FROM ")
                          .AppendLine(EntityConfiguration.TableName)
                          .Append(" WHERE \"")
-                         .Append(EntityConfiguration.PrimaryColumn.ColumnName)
+                         .Append(EntityConfiguration.PrimaryColumn!.ColumnName)
                          .Append("\" IN (");
 
             var valueRetriever = EntityConfiguration.PrimaryColumn.ValueRetriever;
@@ -89,12 +84,12 @@ namespace Venflow.Commands
             commandString.Append("DELETE FROM ")
                          .AppendLine(EntityConfiguration.TableName)
                          .Append(" WHERE \"")
-                         .Append(EntityConfiguration.PrimaryColumn.ColumnName)
+                         .Append(EntityConfiguration.PrimaryColumn!.ColumnName)
                          .Append("\" IN (");
 
             var valueRetriever = EntityConfiguration.PrimaryColumn.ValueRetriever;
 
-            for (int i = entities.Count - 1; i >= 0; i--)
+            for (var i = entities.Count - 1; i >= 0; i--)
             {
                 var parameter = valueRetriever.Invoke(entities[i], i.ToString());
 
@@ -141,12 +136,12 @@ namespace Venflow.Commands
             commandString.Append("DELETE FROM ")
                          .AppendLine(EntityConfiguration.TableName)
                          .Append(" WHERE \"")
-                         .Append(EntityConfiguration.PrimaryColumn.ColumnName)
+                         .Append(EntityConfiguration.PrimaryColumn!.ColumnName)
                          .Append("\" IN (");
 
             var valueRetriever = EntityConfiguration.PrimaryColumn.ValueRetriever;
 
-            for (int i = entities.Length - 1; i >= 0; i--)
+            for (var i = entities.Length - 1; i >= 0; i--)
             {
                 var parameter = valueRetriever.Invoke(entities[i], i.ToString());
 

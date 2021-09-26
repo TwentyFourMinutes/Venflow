@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Venflow.Dynamic;
 using Venflow.Modeling;
 using Venflow.Modeling.Definitions;
@@ -33,7 +31,7 @@ namespace Venflow.Commands
             var entityRelations = new EntityRelation[flattenedPathSpan.Length];
             var entityRelationsSpan = entityRelations.AsSpan();
 
-            for (int i = flattenedPathSpan.Length - 1; i >= 0; i--)
+            for (var i = flattenedPathSpan.Length - 1; i >= 0; i--)
             {
                 entityRelationsSpan[i] = flattenedPathSpan[i].CurrentRelation;
             }
@@ -52,9 +50,9 @@ namespace Venflow.Commands
                 throw new TypeArgumentException($"The provided entity '{typeof(TRootEntity).Name}' isn't in any relation with the entity '{typeof(TRootEntity).Name}' over the foreign property '{foreignProperty.Name}'. Ensure that you defined the relation in your configuration file.");
             }
 
-            AddToPath(relation, true);
+            AddToPath(relation!, true);
 
-            return relation.RightEntity;
+            return relation!.RightEntity;
         }
 
         internal Entity BaseRelationWith<TRootEntity, TTarget, T>(Entity parent, Expression<Func<TRootEntity, TTarget>> propertySelector, T value)
@@ -68,9 +66,9 @@ namespace Venflow.Commands
                 throw new TypeArgumentException($"The provided entity '{typeof(TRootEntity).Name}' isn't in any relation with the entity '{typeof(TRootEntity).Name}' over the foreign property '{foreignProperty.Name}'. Ensure that you defined the relation in your configuration file.");
             }
 
-            AddToPath(relation, value, true);
+            AddToPath(relation!, value, true);
 
-            return relation.RightEntity;
+            return relation!.RightEntity;
         }
 
         internal Entity BaseAndWith<TRelationEntity, TTarget>(Entity parent, Expression<Func<TRelationEntity, TTarget>> propertySelector)
@@ -84,9 +82,9 @@ namespace Venflow.Commands
                 throw new TypeArgumentException($"The provided entity '{typeof(TRelationEntity).Name}' isn't in any relation with the entity '{typeof(TRelationEntity).Name}' over the foreign property '{foreignProperty.Name}'. Ensure that you defined the relation in your configuration file.");
             }
 
-            AddToPath(relation, false);
+            AddToPath(relation!, false);
 
-            return relation.RightEntity;
+            return relation!.RightEntity;
         }
 
         internal Entity BaseAndWith<TRelationEntity, TTarget, T>(Entity parent, Expression<Func<TRelationEntity, TTarget>> propertySelector, T value)
@@ -100,16 +98,16 @@ namespace Venflow.Commands
                 throw new TypeArgumentException($"The provided entity '{typeof(TRelationEntity).Name}' isn't in any relation with the entity '{typeof(TRelationEntity).Name}' over the foreign property '{foreignProperty.Name}'. Ensure that you defined the relation in your configuration file.");
             }
 
-            AddToPath(relation, value, false);
+            AddToPath(relation!, value, false);
 
-            return relation.RightEntity;
+            return relation!.RightEntity;
         }
 
         private void AddToPath<T>(EntityRelation relation, T value, bool newFullPath)
         {
             if (newFullPath)
             {
-                for (int pathIndex = _trailingPath.Count - 1; pathIndex >= 0; pathIndex--)
+                for (var pathIndex = _trailingPath.Count - 1; pathIndex >= 0; pathIndex--)
                 {
                     var path = _trailingPath[pathIndex];
 
@@ -142,7 +140,7 @@ namespace Venflow.Commands
         {
             if (newFullPath)
             {
-                for (int pathIndex = _trailingPath.Count - 1; pathIndex >= 0; pathIndex--)
+                for (var pathIndex = _trailingPath.Count - 1; pathIndex >= 0; pathIndex--)
                 {
                     var path = _trailingPath[pathIndex];
 

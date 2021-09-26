@@ -73,13 +73,13 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         }
 
         [Benchmark]
-        public Task<List<Person>> VenflowQueryBatchAsync()
+        public Task<List<Person>?> VenflowQueryBatchAsync()
         {
             return Database.People.QueryBatch(sql).TrackChanges().Build().QueryAsync();
         }
 
         [Benchmark]
-        public Task<List<Person>> VenflowQueryBatchNoChangeTrackingAsync()
+        public Task<List<Person>?> VenflowQueryBatchNoChangeTrackingAsync()
         {
             return Database.People.QueryBatch(sql).Build().QueryAsync();
         }

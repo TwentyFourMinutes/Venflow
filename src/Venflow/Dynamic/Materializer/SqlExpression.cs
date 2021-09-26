@@ -1,5 +1,4 @@
-﻿using System;
-using Venflow.Enums;
+﻿using Venflow.Enums;
 
 namespace Venflow.Dynamic.Materializer
 {

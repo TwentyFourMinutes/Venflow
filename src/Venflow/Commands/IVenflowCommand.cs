@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Venflow.Commands
+﻿namespace Venflow.Commands
 {
     /// <summary>
     /// The base command for all other CRUD commands.

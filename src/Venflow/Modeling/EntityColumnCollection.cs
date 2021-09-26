@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Venflow.Modeling
+﻿namespace Venflow.Modeling
 {
     internal class EntityColumnCollection<TEntity> : DualKeyCollection<string, EntityColumn<TEntity>> where TEntity : class, new()
     {

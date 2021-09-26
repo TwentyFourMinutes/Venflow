@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using NpgsqlTypes;
+﻿using NpgsqlTypes;
 using Venflow.Enums;
 
 namespace Venflow.Modeling.Definitions

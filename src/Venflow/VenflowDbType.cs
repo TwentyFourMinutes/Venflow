@@ -1,4 +1,6 @@
-﻿namespace Venflow
+﻿using NpgsqlTypes;
+
+namespace Venflow
 {
     /// <inheritdoc cref="NpgsqlTypes.NpgsqlDbType"/>
     public static class VenflowDbType

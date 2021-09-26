@@ -2,10 +2,10 @@
 {
     public class BenchResult
     {
-        public string Method { get; set; }
-        public string Job { get; set; }
-        public string Mean { get; set; }
-        public string Allocated { get; set; }
+        public string Method { get; set; } = null!;
+        public string Job { get; set; } = null!;
+        public string Mean { get; set; } = null!;
+        public string Allocated { get; set; } = null!;
     }
 
     public class BatchBenchResult : BenchResult

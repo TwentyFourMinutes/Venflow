@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Reflection;
 using Venflow.Dynamic;
 using Venflow.Dynamic.Instantiater;
 using Venflow.Modeling.Definitions;
@@ -31,12 +28,12 @@ namespace Venflow.Modeling
 
             var entityFactoriesSpan = _entityFactories.AsSpan();
 
-            for (int i = 0; i < entityFactoriesSpan.Length; i++)
+            for (var i = 0; i < entityFactoriesSpan.Length; i++)
             {
                 entityFactoriesSpan[i].ConfigureForeignRelations(_entityBuilders);
             }
 
-            for (int i = 0; i < entityFactoriesSpan.Length; i++)
+            for (var i = 0; i < entityFactoriesSpan.Length; i++)
             {
                 var entity = entityFactoriesSpan[i].BuildEntity();
 
@@ -44,7 +41,7 @@ namespace Venflow.Modeling
                 entitiesArray[i] = entity;
             }
 
-            for (int i = 0; i < entityFactoriesSpan.Length; i++)
+            for (var i = 0; i < entityFactoriesSpan.Length; i++)
             {
                 var entityFactory = entityFactoriesSpan[i];
 
@@ -65,12 +62,12 @@ namespace Venflow.Modeling
 
             var configurations = new Dictionary<Type, Type>();
 
-            for (int assemblyIndex = configurationAssembliesSpan.Length - 1; assemblyIndex >= 0; assemblyIndex--)
+            for (var assemblyIndex = configurationAssembliesSpan.Length - 1; assemblyIndex >= 0; assemblyIndex--)
             {
                 // See https://stackoverflow.com/q/63942274/10070647
                 var assemblyTypesSpan = new ReadOnlySpan<Type>(configurationAssembliesSpan[assemblyIndex].GetTypes());
 
-                for (int typeIndex = assemblyTypesSpan.Length - 1; typeIndex >= 0; typeIndex--)
+                for (var typeIndex = assemblyTypesSpan.Length - 1; typeIndex >= 0; typeIndex--)
                 {
                     var assemblyType = assemblyTypesSpan[typeIndex];
 
@@ -105,7 +102,7 @@ namespace Venflow.Modeling
 
             var databaseTablesSpan = databaseTables.AsSpan();
 
-            for (int i = 0; i < databaseTablesSpan.Length; i++)
+            for (var i = 0; i < databaseTablesSpan.Length; i++)
             {
                 var property = databaseTablesSpan[i];
 
@@ -124,8 +121,8 @@ namespace Venflow.Modeling
                     var entityBuilderType = genericEntityBuilderType.MakeGenericType(entityType);
                     var entityFactoryType = genericEntityFactoryType.MakeGenericType(entityType);
 
-                    var entityBuilderInstance = Activator.CreateInstance(entityBuilderType, BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { property.Name }, null);
-                    var entityFactoryInstance = Activator.CreateInstance(entityFactoryType, BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { entityBuilderInstance }, null);
+                    var entityBuilderInstance = Activator.CreateInstance(entityBuilderType, BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { property.Name }, null)!;
+                    var entityFactoryInstance = Activator.CreateInstance(entityFactoryType, BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { entityBuilderInstance }, null)!;
 
                     AddToConfigurations((EntityFactory)entityFactoryInstance);
                 }
@@ -142,7 +139,7 @@ namespace Venflow.Modeling
 
             var tables = new List<PropertyInfo>();
 
-            for (int i = 0; i < propertiesSpan.Length; i++)
+            for (var i = 0; i < propertiesSpan.Length; i++)
             {
                 var property = propertiesSpan[i];
 

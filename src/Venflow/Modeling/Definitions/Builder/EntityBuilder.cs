@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
 using Npgsql;
 using Venflow.Dynamic;
 using Venflow.Dynamic.Proxies;
@@ -154,7 +149,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
                 var nameSpan = name.AsSpan();
 
-                for (int i = 1; i < nameSpan.Length; i++)
+                for (var i = 1; i < nameSpan.Length; i++)
                 {
                     var c = nameSpan[i];
 
@@ -191,7 +186,7 @@ namespace Venflow.Modeling.Definitions.Builder
             if (!property.CanWrite &&
                 property.GetBackingField() is null)
             {
-                throw new InvalidOperationException($"The foreign property '{property.Name}' on the entity '{property.ReflectedType.Name}' doesn't implement a setter, nor does it match the common backing field pattern ('<{property.Name}>k__BackingField', '{char.ToLowerInvariant(property.Name[0])}{property.Name.Substring(1)}' or  '_{char.ToLowerInvariant(property.Name[0])}{property.Name.Substring(1)}').");
+                throw new InvalidOperationException($"The foreign property '{property.Name}' on the entity '{property!.ReflectedType!.Name}' doesn't implement a setter, nor does it match the common backing field pattern ('<{property.Name}>k__BackingField', '{char.ToLowerInvariant(property.Name[0])}{property.Name.Substring(1)}' or  '_{char.ToLowerInvariant(property.Name[0])}{property.Name.Substring(1)}').");
             }
 
             return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.Many, property, this);
@@ -211,7 +206,7 @@ namespace Venflow.Modeling.Definitions.Builder
             if (!property.CanWrite &&
                 property.GetBackingField() is null)
             {
-                throw new InvalidOperationException($"The foreign property '{property.Name}' on the entity '{property.ReflectedType.Name}' doesn't implement a setter, nor does it match the common backing field pattern ('<{property.Name}>k__BackingField', '{char.ToLowerInvariant(property.Name[0])}{property.Name.Substring(1)}' or  '_{char.ToLowerInvariant(property.Name[0])}{property.Name.Substring(1)}').");
+                throw new InvalidOperationException($"The foreign property '{property.Name}' on the entity '{property!.ReflectedType!.Name}' doesn't implement a setter, nor does it match the common backing field pattern ('<{property.Name}>k__BackingField', '{char.ToLowerInvariant(property.Name[0])}{property.Name.Substring(1)}' or  '_{char.ToLowerInvariant(property.Name[0])}{property.Name.Substring(1)}').");
             }
 
             return new RightRelationBuilder<TEntity, TRelation>(RelationPartType.One, property, this);
@@ -264,7 +259,7 @@ namespace Venflow.Modeling.Definitions.Builder
                     columnDefinition.Options |= ColumnOptions.PostgreEnum;
                 }
 
-                var expectsChangeTracking = IsRegularEntity && !isReadOnly && setMethod.IsVirtual && !setMethod.IsFinal;
+                var expectsChangeTracking = IsRegularEntity && !isReadOnly && setMethod!.IsVirtual && !setMethod!.IsFinal;
 
                 string? columnName = null;
 
@@ -428,7 +423,7 @@ namespace Venflow.Modeling.Definitions.Builder
 
             var propertiesSpan = properties.AsSpan();
 
-            for (int i = 0; i < propertiesSpan.Length; i++)
+            for (var i = 0; i < propertiesSpan.Length; i++)
             {
                 var property = propertiesSpan[i];
 
@@ -442,7 +437,7 @@ namespace Venflow.Modeling.Definitions.Builder
                     var column = new ColumnDefinition(property);
 
                     if (IsRegularEntity &&
-                        (Attribute.IsDefined(property, primaryKeyAttributeType) ||
+                        (Attribute.IsDefined(property, primaryKeyAttributeType!) ||
                         property.Name == "Id"))
                     {
                         column.Options |= ColumnOptions.PrimaryKey | ColumnOptions.Generated;
@@ -470,7 +465,7 @@ namespace Venflow.Modeling.Definitions.Builder
     }
 
     /// <summary>
-    /// Instances of this class are returned from methods inside the <see cref="EntityConfiguration{TEntity}{TEntity}"/> class when using the Fluent API and it is not designed to be directly constructed in your application code.
+    /// Instances of this class are returned from methods inside the <see cref="EntityConfiguration{TEntity}"/> class when using the Fluent API and it is not designed to be directly constructed in your application code.
     /// </summary>
     /// <typeparam name="TEntity">The entity type being configured.</typeparam>
     public interface IEntityBuilder<TEntity> : ILeftRelationBuilder<TEntity> where TEntity : class, new()

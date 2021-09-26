@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Venflow.Enums
+﻿namespace Venflow.Enums
 {
     [Flags]
     internal enum InsertCacheKeyOptions : byte

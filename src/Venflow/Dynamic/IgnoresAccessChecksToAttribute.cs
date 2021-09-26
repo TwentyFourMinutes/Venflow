@@ -9,9 +9,11 @@ namespace System.Runtime.CompilerServices
     [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
     public class IgnoresAccessChecksToAttribute : Attribute
     {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public IgnoresAccessChecksToAttribute(string assemblyName)
             => AssemblyName = assemblyName;
 
         public string AssemblyName { get; }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 }

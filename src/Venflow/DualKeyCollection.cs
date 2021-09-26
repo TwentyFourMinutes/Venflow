@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Venflow
+﻿namespace Venflow
 {
     internal class DualKeyCollection<TKeyTwo, TValue>
         where TKeyTwo : notnull

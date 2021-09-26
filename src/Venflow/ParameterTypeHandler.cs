@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Npgsql;
+﻿using Npgsql;
 using NpgsqlTypes;
 
 namespace Venflow
@@ -58,7 +56,7 @@ namespace Venflow
 
                             if (!_castHandlers.TryGetValue(underlyingType, out handler))
                             {
-                                handler = (IParameterTypeHandler)Activator.CreateInstance(typeof(CastTypeHandler<>).MakeGenericType(underlyingType));
+                                handler = (IParameterTypeHandler)Activator.CreateInstance(typeof(CastTypeHandler<>).MakeGenericType(underlyingType))!;
 
                                 _castHandlers.Add(underlyingType, handler);
                             }
@@ -71,12 +69,12 @@ namespace Venflow
                     break;
             }
 
-            type ??= val.GetType();
+            type ??= val!.GetType();
 
             if (!_typeHandlers.TryGetValue(type, out handler))
                 return new NpgsqlParameter(name, val);
 
-            return handler.Handle(name, val);
+            return handler.Handle(name, val!);
         }
 
         internal static NpgsqlParameter HandleParameter<T>(string name, T? val)
@@ -91,7 +89,7 @@ namespace Venflow
                 case IKey key:
                     var tempVal = key.BoxedValue;
 
-                    if (!_typeHandlers.TryGetValue(tempVal.GetType(), out handler))
+                    if (!_typeHandlers.TryGetValue(tempVal!.GetType(), out handler))
                         return new NpgsqlParameter(name, tempVal);
 
                     return handler.Handle(name, tempVal);
@@ -108,9 +106,9 @@ namespace Venflow
 
                             if (!_castHandlers.TryGetValue(underlyingType, out handler))
                             {
-                                handler = (IParameterTypeHandler)Activator.CreateInstance(typeof(CastTypeHandler<>).MakeGenericType(underlyingType));
+                                handler = (IParameterTypeHandler)Activator.CreateInstance(typeof(CastTypeHandler<>).MakeGenericType(underlyingType!))!;
 
-                                _castHandlers.Add(underlyingType, handler);
+                                _castHandlers.Add(underlyingType, handler!);
                             }
 
                             _typeHandlers.Add(tempType, handler);
@@ -165,15 +163,15 @@ namespace Venflow
 
                             if (!_castHandlers.TryGetValue(underlyingType, out handler))
                             {
-                                handler = (IParameterTypeHandler)Activator.CreateInstance(typeof(CastTypeHandler<>).MakeGenericType(underlyingType));
+                                handler = (IParameterTypeHandler)Activator.CreateInstance(typeof(CastTypeHandler<>).MakeGenericType(underlyingType!))!;
 
-                                _castHandlers.Add(underlyingType, handler);
+                                _castHandlers.Add(underlyingType, handler!);
                             }
 
-                            _typeHandlers.Add(tempType, handler);
+                            _typeHandlers.Add(tempType, handler!);
                         }
 
-                        return handler.Handle(name, val);
+                        return handler!.Handle(name, val);
                     }
                     break;
             }
@@ -181,7 +179,7 @@ namespace Venflow
             if (!_typeHandlers.TryGetValue(type, out handler))
                 return new NpgsqlParameter(name, val);
 
-            return handler.Handle(name, val);
+            return handler.Handle(name, val!);
         }
     }
 }

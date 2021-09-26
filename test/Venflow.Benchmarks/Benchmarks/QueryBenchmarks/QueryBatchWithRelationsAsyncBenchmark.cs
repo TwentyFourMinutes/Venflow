@@ -61,13 +61,13 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
         }
 
         [Benchmark]
-        public Task<List<Person>> VenflowQueryBatchAsync()
+        public Task<List<Person>?> VenflowQueryBatchAsync()
         {
             return Database.People.QueryBatch(sql).JoinWith(x => x.Emails).ThenWith(x => x.Contents).TrackChanges().Build().QueryAsync();
         }
 
         [Benchmark]
-        public Task<List<Person>> VenflowQueryBatchNoChangeTrackingAsync()
+        public Task<List<Person>?> VenflowQueryBatchNoChangeTrackingAsync()
         {
             return Database.People.QueryBatch(sql).JoinWith(x => x.Emails).ThenWith(x => x.Contents).Build().QueryAsync();
         }
@@ -186,7 +186,7 @@ namespace Venflow.Benchmarks.Benchmarks.QueryBenchmarks
                     email.Contents.Add(emailContent);
                 }
 
-                return null;
+                return null!;
             });
 
             return people;

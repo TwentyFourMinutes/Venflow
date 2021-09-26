@@ -53,7 +53,7 @@ namespace Venflow.NewtonsoftJson
 
             var parameters = keyInterface.GetGenericArguments();
 
-            return (JsonConverter)Activator.CreateInstance(typeof(NewtonsoftJsonKeyConverter<,,>).MakeGenericType(keyType, parameters[0], parameters[1]));
+            return (JsonConverter)Activator.CreateInstance(typeof(NewtonsoftJsonKeyConverter<,,>).MakeGenericType(keyType, parameters[0], parameters[1]))!;
         }
     }
 

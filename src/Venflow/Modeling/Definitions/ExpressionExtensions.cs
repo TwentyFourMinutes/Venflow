@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using System.Reflection;
+﻿using System.Linq.Expressions;
 
 namespace Venflow.Modeling.Definitions
 {
@@ -8,21 +6,17 @@ namespace Venflow.Modeling.Definitions
     {
         internal static PropertyInfo ValidatePropertySelector<TSource, TTarget>(this Expression<Func<TSource, TTarget>> propertySelector, bool validateSetter = true)
         {
-            var body = propertySelector.Body as MemberExpression;
-
-            if (body is null)
+            if (propertySelector.Body is not MemberExpression body)
             {
                 throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property.", nameof(propertySelector));
             }
 
-            var property = body.Member as PropertyInfo;
-
-            if (property is null)
+            if (body.Member is not PropertyInfo property)
             {
                 throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property.", nameof(propertySelector));
             }
 
-            if (validateSetter && (!property.CanWrite || !property.SetMethod.IsPublic))
+            if (validateSetter && (!property.CanWrite || !property.SetMethod!.IsPublic))
             {
                 throw new ArgumentException($"The provided property doesn't contain a setter or it isn't public.", nameof(propertySelector));
             }
@@ -30,7 +24,7 @@ namespace Venflow.Modeling.Definitions
             var type = typeof(TSource);
 
             if (type != property.ReflectedType &&
-                !type.IsSubclassOf(property.ReflectedType))
+                !type.IsSubclassOf(property.ReflectedType!))
             {
                 throw new ArgumentException($"The provided {nameof(propertySelector)} is not pointing to a property on the entity itself.", nameof(propertySelector));
             }

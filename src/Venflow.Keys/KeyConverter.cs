@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
@@ -32,25 +31,31 @@ namespace Venflow
         }
 
         /// <inheritdoc/>
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
             => _underlyingConverter.CanConvertFrom(context, sourceType);
 
         /// <inheritdoc/>
-        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+        public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType)
             => _underlyingConverter.CanConvertTo(context, destinationType);
 
         /// <inheritdoc/>
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
             => _underlyingConverter.ConvertFrom(context, culture, value);
 
         /// <inheritdoc/>
-        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+        public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
             => _underlyingConverter.ConvertTo(context, culture, value, destinationType);
 
+        /// <summary>
+        /// Gets or creates a key factory for the given type.
+        /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static Func<TValue, object> GetOrCreateKeyFactory<TValue>(Type keyType)
             => (Func<TValue, object>)_objectKeyFactories.GetOrAdd(keyType, CreateKeyFactory<object, TValue>);
 
+        /// <summary>
+        /// Gets or creates a key factory for the given type.
+        /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static Func<TValue, TKeyType> GetOrCreateKeyFactory<TKeyType, TValue>(Type keyType) where TKeyType : struct, IKey
             => (Func<TValue, TKeyType>)_keyFactories.GetOrAdd(keyType, CreateKeyFactory<TKeyType, TValue>);
@@ -64,7 +69,7 @@ namespace Venflow
 
             var parameters = keyInterface.GetGenericArguments();
 
-            var ctor = typeof(KeyConverter<,>).MakeGenericType(parameters[0], parameters[1]).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(Type) }, null);
+            var ctor = typeof(KeyConverter<,>).MakeGenericType(parameters[0], parameters[1]).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(Type) }, null)!;
 
             return (TypeConverter)ctor.Invoke(new[] { keyType });
         }
@@ -107,24 +112,24 @@ namespace Venflow
             _type = type;
         }
 
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
         {
             return sourceType == typeof(string) ||
                    sourceType == typeof(TKeyValue) ||
                    base.CanConvertFrom(context, sourceType);
         }
 
-        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+        public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType)
         {
             return destinationType == typeof(TKeyValue) ||
                    base.CanConvertTo(context, destinationType);
         }
 
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object sourceValue)
+        public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object sourceValue)
         {
             if (sourceValue is string value)
             {
-                sourceValue = _keyConverter.ConvertFrom(value);
+                sourceValue = _keyConverter.ConvertFrom(value)!;
             }
 
             if (sourceValue is TKeyValue keyValue)
@@ -137,7 +142,7 @@ namespace Venflow
             }
         }
 
-        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+        public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
         {
             if (value is not IKey<TEntity, TKeyValue> { Value: var keyValue })
                 throw new ArgumentNullException(nameof(value));

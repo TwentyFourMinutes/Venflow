@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using Npgsql;
+﻿using Npgsql;
 using Venflow.Modeling.Definitions;
 
 namespace Venflow
@@ -86,7 +82,7 @@ namespace Venflow
 
                 var nameSpan = name.AsSpan();
 
-                for (int i = 1; i < nameSpan.Length; i++)
+                for (var i = 1; i < nameSpan.Length; i++)
                 {
                     var c = nameSpan[i];
 

@@ -1,10 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
 using Venflow.Dynamic;
@@ -24,7 +18,7 @@ namespace Venflow.Commands
         private bool? _shouldForceLog;
 
         private RelationBuilderValues? _relationBuilderValues;
-        private readonly string _rawSql;
+        private readonly string _rawSql = null!;
         private readonly bool _singleResult;
         private readonly NpgsqlCommand _command;
         private readonly Database _database;
@@ -63,7 +57,7 @@ namespace Venflow.Commands
 
         internal VenflowQueryCommandBuilder(Database database, Entity<TEntity> entityConfiguration, string sql, IList<NpgsqlParameter> parameters, bool disposeCommand, bool singleResult) : this(database, entityConfiguration, sql, disposeCommand, singleResult)
         {
-            for (int i = 0; i < parameters.Count; i++)
+            for (var i = 0; i < parameters.Count; i++)
             {
                 _command.Parameters.Add(parameters[i]);
             }
@@ -138,10 +132,10 @@ namespace Venflow.Commands
 
         private void BuildFromExpression()
         {
-            var cacheKey = _interpolatedSqlExpression.Body.ToString();
+            var cacheKey = _interpolatedSqlExpression!.Body.ToString();
 
+            var expressionOptions = SqlExpressionOptions.None;
             Delegate argumentsFunc = null!;
-            SqlExpressionOptions expressionOptions = SqlExpressionOptions.None;
             string sql = null!;
             Type? parameterType = null;
 
@@ -161,7 +155,7 @@ namespace Venflow.Commands
                         var staticArguments = new List<(int, string)>();
                         var instanceArguments = new List<Expression>();
 
-                        for (int expressionArgumentIndex = 0; expressionArgumentIndex < expressionArguments.Count; expressionArgumentIndex++)
+                        for (var expressionArgumentIndex = 0; expressionArgumentIndex < expressionArguments.Count; expressionArgumentIndex++)
                         {
                             var argument = expressionArguments[expressionArgumentIndex];
 
@@ -204,7 +198,7 @@ namespace Venflow.Commands
 
                             string? name = null;
 
-                            for (int expressionParameterIndex = 0; expressionParameterIndex < parameters.Count; expressionParameterIndex++)
+                            for (var expressionParameterIndex = 0; expressionParameterIndex < parameters.Count; expressionParameterIndex++)
                             {
                                 var parameter = parameters[expressionParameterIndex];
 
@@ -216,7 +210,7 @@ namespace Venflow.Commands
 
                                 if (memberArgument is not null)
                                 {
-                                    for (int columnIndex = 0; columnIndex < entity.GetColumnCount(); columnIndex++)
+                                    for (var columnIndex = 0; columnIndex < entity.GetColumnCount(); columnIndex++)
                                     {
                                         var column = entity.GetColumn(columnIndex);
 
@@ -242,11 +236,11 @@ namespace Venflow.Commands
                             staticArguments.Add((expressionArgumentIndex, name));
                         }
 
-                        (sql, var dbTypes) = GetFinalizedSqlString((method.Arguments[0] as ConstantExpression)!.Value as string, staticArguments);
+                        (sql, var dbTypes) = GetFinalizedSqlString(((method.Arguments[0] as ConstantExpression)!.Value as string)!, staticArguments);
 
                         (argumentsFunc, expressionOptions, parameterType) = InterpolatedSqlExpressionConverter.GetConvertedDelegate(instanceArguments, dbTypes);
 
-                        _entityConfiguration.MaterializerFactory.InterpolatedSqlMaterializerCache.Add(cacheKey, new SqlExpression(sql, argumentsFunc, parameterType, expressionOptions));
+                        _entityConfiguration.MaterializerFactory.InterpolatedSqlMaterializerCache.Add(cacheKey, new SqlExpression(sql, argumentsFunc, parameterType!, expressionOptions));
                     }
                 }
             }
@@ -267,7 +261,7 @@ namespace Venflow.Commands
             }
             else
             {
-                arguments = (argumentsFunc as Func<object, object[]>)!.Invoke(InterpolatedSqlExpressionConverter.ExtractInstance(_interpolatedSqlExpression, parameterType));
+                arguments = (argumentsFunc as Func<object, object[]>)!.Invoke(InterpolatedSqlExpressionConverter.ExtractInstance(_interpolatedSqlExpression!, parameterType!)!);
             }
 
             var argumentsSpan = arguments.AsSpan();
@@ -278,7 +272,7 @@ namespace Venflow.Commands
             var argumentIndex = 0;
             var parameterIndex = 0;
 
-            for (int spanIndex = 0; spanIndex < sqlLength; spanIndex++)
+            for (var spanIndex = 0; spanIndex < sqlLength; spanIndex++)
             {
                 var spanChar = sqlSpan[spanIndex];
 
@@ -313,7 +307,7 @@ namespace Venflow.Commands
                         {
                             var listType = default(Type);
 
-                            for (int listIndex = 0; listIndex < list.Count; listIndex++)
+                            for (var listIndex = 0; listIndex < list.Count; listIndex++)
                             {
                                 var listItem = list[listIndex];
 
@@ -384,7 +378,7 @@ namespace Venflow.Commands
             var staticArgumentIndex = 1;
             var nextStaticArgument = staticArguments.Count == 0 ? (-1, null) : staticArguments[0];
 
-            for (int spanIndex = 0; spanIndex < sqlLength; spanIndex++)
+            for (var spanIndex = 0; spanIndex < sqlLength; spanIndex++)
             {
                 var spanChar = sqlSpan[spanIndex];
 
@@ -467,7 +461,7 @@ namespace Venflow.Commands
             var argumentIndex = 0;
             var parameterIndex = 0;
 
-            for (int spanIndex = 0; spanIndex < sqlLength; spanIndex++)
+            for (var spanIndex = 0; spanIndex < sqlLength; spanIndex++)
             {
                 var spanChar = sqlSpan[spanIndex];
 
@@ -495,7 +489,7 @@ namespace Venflow.Commands
                         {
                             var listType = default(Type);
 
-                            for (int listIndex = 0; listIndex < list.Count; listIndex++)
+                            for (var listIndex = 0; listIndex < list.Count; listIndex++)
                             {
                                 var listItem = list[listIndex];
 
@@ -552,7 +546,7 @@ namespace Venflow.Commands
 
         private void AppendJoins(StringBuilder sb)
         {
-            var relationsSpan = _relationBuilderValues.FlattenedPath.AsSpan();
+            var relationsSpan = _relationBuilderValues!.FlattenedPath.AsSpan();
 
             for (int max = relationsSpan.Length, current = 0; current < max; current++)
             {
@@ -588,7 +582,7 @@ namespace Venflow.Commands
                       .Append("\" = ")
                       .Append(relation.RightEntity.TableName)
                       .Append(".\"")
-                      .Append(relation.RightEntity.GetPrimaryColumn().ColumnName);
+                      .Append(relation.RightEntity.GetPrimaryColumn()!.ColumnName);
                 }
                 else
                 {
@@ -598,7 +592,7 @@ namespace Venflow.Commands
                       .Append("\" = ")
                       .Append(relation.LeftEntity.TableName)
                       .Append(".\"")
-                      .Append(relation.LeftEntity.GetPrimaryColumn().ColumnName);
+                      .Append(relation.LeftEntity.GetPrimaryColumn()!.ColumnName);
                 }
 
                 sb.Append('"');

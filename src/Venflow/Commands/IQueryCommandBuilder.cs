@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-namespace Venflow.Commands
+﻿namespace Venflow.Commands
 {
     /// <summary>
     /// Represents a command builder to configure the query.
