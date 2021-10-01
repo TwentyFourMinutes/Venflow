@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Npgsql;
-using Venflow.Dynamic;
 using Venflow.Dynamic.Proxies;
 using Venflow.Dynamic.Retriever;
 using Venflow.Enums;
@@ -17,23 +16,14 @@ namespace Venflow.Modeling.Definitions.Builder
 {
     internal class EntityBuilder<TEntity> : EntityBuilder, IEntityBuilder<TEntity> where TEntity : class, new()
     {
-        internal bool IsRegularEntity { get; set; }
-
-        internal override Type Type { get; }
-
-        internal ChangeTrackerFactory<TEntity>? ChangeTrackerFactory { get; private set; }
-        internal string TableName { get; private set; }
-        internal IDictionary<string, ColumnDefinition> ColumnDefinitions { get; }
-
-        internal bool EntityInNullableContext { get; }
-        internal bool DefaultPropNullability { get; }
-
+        private readonly Database _database;
+        private readonly string _tableName;
         private readonly ValueRetrieverFactory<TEntity> _valueRetrieverFactory;
 
-        internal EntityBuilder(string tableName)
+        internal EntityBuilder(Database database, string tableName)
         {
-            TableName = tableName;
-
+            _database = database;
+            _tableName = tableName;
             Type = typeof(TEntity);
             ColumnDefinitions = new Dictionary<string, ColumnDefinition>();
             _valueRetrieverFactory = new ValueRetrieverFactory<TEntity>(Type);
@@ -57,6 +47,19 @@ namespace Venflow.Modeling.Definitions.Builder
             DiscorverColumns();
         }
 
+        internal bool IsRegularEntity { get; set; }
+        internal override Type Type { get; }
+        internal ChangeTrackerFactory<TEntity>? ChangeTrackerFactory { get; private set; }
+        internal INpgsqlNameTranslator NpgsqlNameTranslator => CustomNpgsqlNameTranslator ?? _database.NpgsqlNameTranslator;
+        internal string TableName => string.IsNullOrWhiteSpace(CustomTableName)
+            ? NpgsqlNameTranslator.TranslateTypeName(_tableName)
+            : CustomTableName;
+        internal string CustomTableName { get; private set; }
+        internal INpgsqlNameTranslator CustomNpgsqlNameTranslator { get; private set; }
+        internal IDictionary<string, ColumnDefinition> ColumnDefinitions { get; }
+        internal bool EntityInNullableContext { get; }
+        internal bool DefaultPropNullability { get; }
+
         IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapToTable(string tableName)
         {
             if (string.IsNullOrWhiteSpace(tableName))
@@ -64,7 +67,7 @@ namespace Venflow.Modeling.Definitions.Builder
                 throw new ArgumentException($"The table name '{tableName}' is invalid.", nameof(tableName));
             }
 
-            TableName = tableName;
+            CustomTableName = $"\"{tableName}\"";
 
             return this;
         }
@@ -115,6 +118,13 @@ namespace Venflow.Modeling.Definitions.Builder
             {
                 definition.Options &= ~ColumnOptions.Generated;
             }
+
+            return this;
+        }
+
+        public IEntityBuilder<TEntity> SetNpgsqlNameTranslator<T>() where T : INpgsqlNameTranslator, new()
+        {
+            CustomNpgsqlNameTranslator = new T();
 
             return this;
         }
@@ -304,7 +314,7 @@ namespace Venflow.Modeling.Definitions.Builder
                     columnName = columnDefinition.Name;
                 }
 
-                var column = new EntityColumn<TEntity>(property, columnName, _valueRetrieverFactory.GenerateRetriever(columnDefinition), columnDefinition.DbType, columnDefinition.Options);
+                var column = new EntityColumn<TEntity>(property, NpgsqlNameTranslator.TranslateMemberName(columnName), _valueRetrieverFactory.GenerateRetriever(columnDefinition), columnDefinition.DbType, columnDefinition.Options);
 
                 if (expectsChangeTracking)
                 {
@@ -514,6 +524,14 @@ namespace Venflow.Modeling.Definitions.Builder
         /// <param name="option">The option which define how the primary key is generate.</param>
         /// <returns>The same builder instance so that multiple calls can be chained.</returns>
         IEntityBuilder<TEntity> MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        IEntityBuilder<TEntity> SetNpgsqlNameTranslator<T>() where T : INpgsqlNameTranslator, new();
+
 
         /// <summary>
         /// Maps a PostgreSQL enum to a CLR enum.

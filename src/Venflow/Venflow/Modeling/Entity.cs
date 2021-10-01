@@ -120,7 +120,7 @@ namespace Venflow.Modeling
             EntityType = entityType;
             ProxyEntityType = proxyEntityType;
             EntityName = entityType.Name;
-            TableName = "\"" + tableName + "\"";
+            TableName = tableName;
             IsInNullableContext = isInNullableContext;
             DefaultPropNullability = defaultPropNullability;
             ColumnListString = columnListString;

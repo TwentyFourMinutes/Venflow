@@ -20,11 +20,12 @@ namespace Venflow.Modeling
             _entityBuilders = new Dictionary<string, EntityBuilder>();
         }
 
-        internal DatabaseConfiguration BuildConfiguration(Type databaseType, DatabaseConfigurationOptionsBuilder configurationOptionsBuilder)
+        internal DatabaseConfiguration BuildConfiguration(DatabaseConfigurationOptionsBuilder configurationOptionsBuilder)
         {
+            var databaseType = configurationOptionsBuilder.EffectiveDatabaseType;
             var tables = GetDatabaseTables(databaseType);
 
-            CreateEntityConfigurations(databaseType, tables, configurationOptionsBuilder.ConfigurationAssemblies);
+            CreateEntityConfigurations(tables, configurationOptionsBuilder);
 
             var entities = new Dictionary<string, Entity>();
             var entitiesArray = new Entity[_entityFactories.Count];
@@ -51,15 +52,19 @@ namespace Venflow.Modeling
                 entityFactory.ApplyForeignRelations(entities);
             }
 
-            return new DatabaseConfiguration(DatabaseTableFactory.CreateInstantiater(databaseType, tables, entitiesArray),
-                                             new ReadOnlyDictionary<string, Entity>(entities), entitiesArray);
+            return new DatabaseConfiguration(
+                DatabaseTableFactory.CreateInstantiater(databaseType, tables, entitiesArray),
+                new ReadOnlyDictionary<string, Entity>(entities),
+                entitiesArray,
+                configurationOptionsBuilder.NpgsqlNameTranslator
+            );
         }
 
-        private void CreateEntityConfigurations(Type databaseType, List<PropertyInfo> databaseTables, IReadOnlyList<Assembly> configurationAssemblies)
+        private void CreateEntityConfigurations(List<PropertyInfo> databaseTables, DatabaseConfigurationOptionsBuilder configurationOptionsBuilder)
         {
-            var configurationAssembliesSpan = ((List<Assembly>)configurationAssemblies).AsSpan();
+            var configurationAssembliesSpan = (configurationOptionsBuilder.ConfigurationAssemblies).AsSpan();
 
-            VenflowConfiguration.SetDefaultValidationIfNeeded(databaseType.Assembly);
+            VenflowConfiguration.SetDefaultValidationIfNeeded(configurationOptionsBuilder.EffectiveDatabaseType.Assembly);
 
             var configurationType = typeof(EntityConfiguration<>);
 
@@ -112,19 +117,19 @@ namespace Venflow.Modeling
                 var entityType = property.PropertyType.GetGenericArguments()[0];
 
                 TypeFactory.AddEntityAssembly(entityType.Assembly.GetName().Name!);
+                var entityBuilderType = genericEntityBuilderType.MakeGenericType(entityType);
+                // var constructor = entityBuilderType.GetConstructor(new [] {typeof(Database), typeof(string)});
+                var entityBuilderInstance = Activator.CreateInstance(entityBuilderType, BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] {configurationOptionsBuilder.EffectiveDatabase, property.Name}, null);
 
                 if (configurations.TryGetValue(entityType, out var configuration))
                 {
                     var entityConfiguration = (IEntityConfiguration)Activator.CreateInstance(configuration)!;
 
-                    AddToConfigurations(entityConfiguration.BuildConfiguration(property.Name));
+                    AddToConfigurations(entityConfiguration.BuildConfiguration(entityBuilderInstance));
                 }
                 else
                 {
-                    var entityBuilderType = genericEntityBuilderType.MakeGenericType(entityType);
                     var entityFactoryType = genericEntityFactoryType.MakeGenericType(entityType);
-
-                    var entityBuilderInstance = Activator.CreateInstance(entityBuilderType, BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { property.Name }, null);
                     var entityFactoryInstance = Activator.CreateInstance(entityFactoryType, BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { entityBuilderInstance }, null);
 
                     AddToConfigurations((EntityFactory)entityFactoryInstance);

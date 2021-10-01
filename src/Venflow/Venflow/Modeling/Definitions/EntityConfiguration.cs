@@ -1,4 +1,6 @@
-﻿using Venflow.Modeling.Definitions.Builder;
+﻿using Npgsql;
+using Venflow.Enums;
+using Venflow.Modeling.Definitions.Builder;
 
 namespace Venflow.Modeling.Definitions
 {
@@ -16,18 +18,17 @@ namespace Venflow.Modeling.Definitions
         /// <param name="entityBuilder">The builder used to configure the entity.</param>
         protected abstract void Configure(IEntityBuilder<TEntity> entityBuilder);
 
-        EntityFactory IEntityConfiguration.BuildConfiguration(string tableName)
+        EntityFactory IEntityConfiguration.BuildConfiguration(object entityBuilder)
         {
-            var entityBuilder = new EntityBuilder<TEntity>(tableName);
+            var eb = (EntityBuilder<TEntity>)entityBuilder;
+            Configure(eb);
 
-            Configure(entityBuilder);
-
-            return new EntityFactory<TEntity>(entityBuilder);
+            return new EntityFactory<TEntity>(eb);
         }
     }
 
     internal interface IEntityConfiguration
     {
-        EntityFactory BuildConfiguration(string tableName);
+        EntityFactory BuildConfiguration(object entityBuilder);
     }
 }

@@ -32,6 +32,7 @@ namespace Venflow
     {
         internal IReadOnlyDictionary<string, Entity> Entities { get; private set; }
         internal LoggingBehavior DefaultLoggingBehavior { get; }
+        internal INpgsqlNameTranslator NpgsqlNameTranslator { get; private set; }
         internal bool HasActiveTransaction => _activeTransaction is not null && !_activeTransaction.IsDisposed;
         internal bool HasLoggers => _loggers.Count > 0;
 
@@ -312,7 +313,7 @@ namespace Venflow
                     return new TableBase<TEntity>(this, (Entity<TEntity>)entity);
                 }
 
-                var entityBuilder = new EntityBuilder<TEntity>(string.Empty);
+                var entityBuilder = new EntityBuilder<TEntity>(this, string.Empty);
 
                 entityBuilder.IsRegularEntity = false;
 
@@ -351,21 +352,20 @@ namespace Venflow
 
         private void Build()
         {
-            if (!DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(this.GetType(), out var configuration))
+            var type = this.GetType();
+            if (!DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(type, out var configuration))
             {
                 lock (DatabaseConfigurationCache.BuildLocker)
                 {
-                    var type = this.GetType();
-
                     if (!DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(type, out configuration))
                     {
                         var dbConfigurator = new DatabaseConfigurationFactory();
 
-                        var configurationOptionsBuilder = new DatabaseConfigurationOptionsBuilder(type);
+                        var configurationOptionsBuilder = new DatabaseConfigurationOptionsBuilder(this);
 
                         Configure(configurationOptionsBuilder);
 
-                        configuration = dbConfigurator.BuildConfiguration(type, configurationOptionsBuilder);
+                        configuration = dbConfigurator.BuildConfiguration(configurationOptionsBuilder);
 
                         DatabaseConfigurationCache.DatabaseConfigurations.TryAdd(type, configuration);
                     }
@@ -373,6 +373,7 @@ namespace Venflow
             }
 
             Entities = configuration.Entities;
+            NpgsqlNameTranslator = configuration.NpgsqlNameTranslator;
 
             configuration.InstantiateDatabase(this);
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using Npgsql;
+using Npgsql.NameTranslation;
 using Venflow.Modeling.Definitions;
 
 namespace Venflow
@@ -12,15 +13,17 @@ namespace Venflow
     /// </summary>
     public class DatabaseConfigurationOptionsBuilder
     {
+        internal Database EffectiveDatabase { get; }
         internal Type EffectiveDatabaseType { get; }
-
         internal List<Assembly> ConfigurationAssemblies { get; }
+        internal INpgsqlNameTranslator NpgsqlNameTranslator { get; private set; }
 
-        internal DatabaseConfigurationOptionsBuilder(Type effectiveDatabaseType)
+        internal DatabaseConfigurationOptionsBuilder(Database effectiveDatabase)
         {
-            ConfigurationAssemblies = new(1) { effectiveDatabaseType.Assembly };
-
-            EffectiveDatabaseType = effectiveDatabaseType;
+            EffectiveDatabase = effectiveDatabase;
+            EffectiveDatabaseType = EffectiveDatabase.GetType();
+            ConfigurationAssemblies = new(1) { EffectiveDatabaseType.Assembly };
+            NpgsqlNameTranslator = new NpgsqlSnakeCaseNameTranslator();
         }
 
         /// <summary>
@@ -58,6 +61,19 @@ namespace Venflow
         public DatabaseConfigurationOptionsBuilder UseConfigurations(params Assembly[] assemblies)
         {
             ConfigurationAssemblies.AddRange(assemblies);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the naming convention to be used for entity table & column names.
+        /// </summary>
+        /// <typeparam name="T">An implementation of <see cref="INpgsqlNameTranslator"/> to be used for name translation.</typeparam>
+        /// <returns>The same builder instance so that multiple calls can be chained.</returns>
+        public DatabaseConfigurationOptionsBuilder SetNamingConvention<T>()
+            where T : INpgsqlNameTranslator, new()
+        {
+            NpgsqlNameTranslator = new T();
 
             return this;
         }
