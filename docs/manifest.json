@@ -62,6 +62,30 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.AspNetCore.VenflowServiceCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.AspNetCore.VenflowServiceCollectionExtensions.html",
+          "hash": "zTqXXFZz7q7QWLRYkjBECw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.AspNetCore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.AspNetCore.html",
+          "hash": "XsL7QBVkx1XW7LoBkAANhw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Venflow.Commands.IBaseInsertRelationBuilder-2.yml",
       "output": {
         ".html": {
@@ -374,6 +398,30 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Extensions.Logging.DatabaseOptionsBuilderExtensions.html",
+          "hash": "lxT81soy3OC3szu6sxx7Cw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Extensions.Logging.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Extensions.Logging.html",
+          "hash": "0V+HJI5aCiHL8CULhFZ1fA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Venflow.FormattableSqlStringBuilder.yml",
       "output": {
         ".html": {
@@ -398,6 +446,30 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.IKey-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.IKey-2.html",
+          "hash": "1F52I4jJJtjncmvPi3IVmQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.IKey.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.IKey.html",
+          "hash": "7wD2lRAJZAvRQG8F+Skiow=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Venflow.IParameterTypeHandler.yml",
       "output": {
         ".html": {
@@ -415,6 +487,54 @@
         ".html": {
           "relative_path": "api/Venflow.InvalidEntityRelationException.html",
           "hash": "WtCkjguoEJIPzZjdhI13+Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Json.JsonKeyConverterFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Json.JsonKeyConverterFactory.html",
+          "hash": "dCzPPMZpVWLfw6OCn4vPgQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Json.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Json.html",
+          "hash": "elQxoqJfOirHMbFg1UE5JA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.Key-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.Key-2.html",
+          "hash": "qA5b/Ln1OYsaHObsffuUQw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.KeyConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.KeyConverter.html",
+          "hash": "tq2urBGLxTH8lK0TJZw7eQ=="
         }
       },
       "is_incremental": false,
@@ -578,6 +698,30 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.NewtonsoftJson.NewtonsoftJsonKeyConverter.html",
+          "hash": "MaKhAy8gN8HgaJ3puniBiw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.NewtonsoftJson.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.NewtonsoftJson.html",
+          "hash": "u3FqMa91wb5fxdxuixl2vg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Venflow.NpgsqlCommandExtensions.yml",
       "output": {
         ".html": {
@@ -666,7 +810,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.html",
-          "hash": "yoDYsI+h6lleTS+qsAOzew=="
+          "hash": "5azxiEAGywd5fnshuUbY9Q=="
         }
       },
       "is_incremental": false,
@@ -690,7 +834,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "7YcSufIuxpTVnSwon25kDA=="
+          "hash": "25DR/ZaApdmHo01nc+aO3g=="
         }
       },
       "is_incremental": false,
@@ -810,15 +954,12 @@
       "version": ""
     },
     {
-      "log_codes": [
-        "UidNotFound"
-      ],
       "type": "Conceptual",
       "source_relative_path": "guides/advanced/strong_key.md",
       "output": {
         ".html": {
           "relative_path": "guides/advanced/strong_key.html",
-          "hash": "sOW6n9rHomIQXej9WR3E4w=="
+          "hash": "PKzwfl6/dKWWwbzNXV1HZw=="
         }
       },
       "is_incremental": false,
@@ -1038,7 +1179,7 @@
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 55,
+          "total_file_count": 67,
           "skipped_file_count": 0
         },
         "ResourceDocumentProcessor": {
