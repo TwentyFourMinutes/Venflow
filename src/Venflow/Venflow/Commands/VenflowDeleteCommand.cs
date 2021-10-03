@@ -27,9 +27,9 @@ namespace Venflow.Commands
 
             commandString.Append("DELETE FROM ")
                          .AppendLine(EntityConfiguration.TableName)
-                         .Append(" WHERE \"")
+                         .Append(" WHERE ")
                          .Append(EntityConfiguration.PrimaryColumn.ColumnName)
-                         .Append("\" = ");
+                         .Append(" = ");
 
             var primaryParameter = EntityConfiguration.PrimaryColumn.ValueRetriever(entity, "0");
 
@@ -49,9 +49,9 @@ namespace Venflow.Commands
 
             commandString.Append("DELETE FROM ")
                          .AppendLine(EntityConfiguration.TableName)
-                         .Append(" WHERE \"")
+                         .Append(" WHERE ")
                          .Append(EntityConfiguration.PrimaryColumn.ColumnName)
-                         .Append("\" IN (");
+                         .Append(" IN (");
 
             var valueRetriever = EntityConfiguration.PrimaryColumn.ValueRetriever;
 
@@ -88,9 +88,9 @@ namespace Venflow.Commands
 
             commandString.Append("DELETE FROM ")
                          .AppendLine(EntityConfiguration.TableName)
-                         .Append(" WHERE \"")
+                         .Append(" WHERE ")
                          .Append(EntityConfiguration.PrimaryColumn.ColumnName)
-                         .Append("\" IN (");
+                         .Append(" IN (");
 
             var valueRetriever = EntityConfiguration.PrimaryColumn.ValueRetriever;
 
@@ -140,9 +140,9 @@ namespace Venflow.Commands
 
             commandString.Append("DELETE FROM ")
                          .AppendLine(EntityConfiguration.TableName)
-                         .Append(" WHERE \"")
+                         .Append(" WHERE ")
                          .Append(EntityConfiguration.PrimaryColumn.ColumnName)
-                         .Append("\" IN (");
+                         .Append(" IN (");
 
             var valueRetriever = EntityConfiguration.PrimaryColumn.ValueRetriever;
 

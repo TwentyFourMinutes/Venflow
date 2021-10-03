@@ -409,7 +409,7 @@ namespace Venflow.Dynamic.Inserter
             {
                 // Append " RETURNING \"PrimaryKey\""
                 _moveNextMethodIL.Emit(OpCodes.Ldloc, commandBuilderLocal);
-                _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING \"" + _rootEntity.GetPrimaryColumn().ColumnName + "\";");
+                _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING " + _rootEntity.GetPrimaryColumn().ColumnName + ";");
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
                 _moveNextMethodIL.Emit(OpCodes.Pop);
             }
@@ -958,7 +958,7 @@ namespace Venflow.Dynamic.Inserter
                     // Append " RETURNING \"PrimaryKey\""
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING \"" + entity.GetPrimaryColumn().ColumnName + "\";");
+                    _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING " + entity.GetPrimaryColumn().ColumnName + ";");
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
                     _moveNextMethodIL.Emit(OpCodes.Pop);
                 }
@@ -1410,7 +1410,7 @@ namespace Venflow.Dynamic.Inserter
                 else
                 {
                     sqlBuilder.Append('@')
-                              .Append(column.ColumnName)
+                              .Append(column.PropertyInfo.Name)
                               .Append(", ");
                 }
             }
@@ -1419,9 +1419,9 @@ namespace Venflow.Dynamic.Inserter
 
             if (skipPrimaryKey)
             {
-                sqlBuilder.Append(") RETURNING \"")
+                sqlBuilder.Append(") RETURNING ")
                           .Append(_rootEntity.GetPrimaryColumn().ColumnName)
-                          .Append("\";");
+                          .Append(";");
             }
             else
             {
@@ -1630,7 +1630,7 @@ namespace Venflow.Dynamic.Inserter
                         else
                         {
                             stringBuilder.Append('@')
-                                         .Append(column.ColumnName)
+                                         .Append(column.PropertyInfo.Name)
                                          .Append(", ");
                         }
                     }
@@ -1639,9 +1639,9 @@ namespace Venflow.Dynamic.Inserter
 
                     if (skipPrimaryKey)
                     {
-                        stringBuilder.Append(") RETURNING \"")
+                        stringBuilder.Append(") RETURNING ")
                                      .Append(_rootEntity.GetPrimaryColumn().ColumnName)
-                                     .Append("\";");
+                                     .Append(";");
                     }
                     else
                     {
@@ -2033,7 +2033,7 @@ namespace Venflow.Dynamic.Inserter
                         // Append " RETURNING \"PrimaryKey\""
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
-                        _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING \"" + entity.GetPrimaryColumn().ColumnName + "\";");
+                        _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING " + entity.GetPrimaryColumn().ColumnName + ";");
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
                         _moveNextMethodIL.Emit(OpCodes.Pop);
                     }
@@ -2424,7 +2424,7 @@ namespace Venflow.Dynamic.Inserter
                 else
                 {
                     sqlBuilder.Append('@')
-                              .Append(column.ColumnName)
+                              .Append(column.PropertyInfo.Name)
                               .Append(", ");
                 }
             }
@@ -2524,7 +2524,7 @@ namespace Venflow.Dynamic.Inserter
                 ilGenerator.Emit(OpCodes.Brtrue, defaultRetrieverLabel);
 
                 // Nullable retriever
-                ilGenerator.Emit(OpCodes.Ldstr, "@" + column.ColumnName);
+                ilGenerator.Emit(OpCodes.Ldstr, '@' + column.PropertyInfo.Name);
 
                 if (iteratorLocal is not null)
                 {
@@ -2540,7 +2540,7 @@ namespace Venflow.Dynamic.Inserter
                 // Default retriever
                 ilGenerator.MarkLabel(defaultRetrieverLabel);
 
-                ilGenerator.Emit(OpCodes.Ldstr, "@" + column.ColumnName);
+                ilGenerator.Emit(OpCodes.Ldstr, '@' + column.PropertyInfo.Name);
 
                 if (iteratorLocal is not null)
                 {
@@ -2605,7 +2605,7 @@ namespace Venflow.Dynamic.Inserter
             }
             else
             {
-                ilGenerator.Emit(OpCodes.Ldstr, "@" + column.ColumnName);
+                ilGenerator.Emit(OpCodes.Ldstr, '@' + column.PropertyInfo.Name);
 
                 if (iteratorLocal is not null)
                 {

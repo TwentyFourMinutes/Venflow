@@ -18,7 +18,7 @@ namespace Venflow.Modeling.Definitions
         /// <param name="entityBuilder">The builder used to configure the entity.</param>
         protected abstract void Configure(IEntityBuilder<TEntity> entityBuilder);
 
-        EntityFactory IEntityConfiguration.BuildConfiguration(object entityBuilder)
+        EntityFactory IEntityConfiguration.BuildConfiguration(EntityBuilder entityBuilder)
         {
             var eb = (EntityBuilder<TEntity>)entityBuilder;
             Configure(eb);
@@ -29,6 +29,6 @@ namespace Venflow.Modeling.Definitions
 
     internal interface IEntityConfiguration
     {
-        EntityFactory BuildConfiguration(object entityBuilder);
+        EntityFactory BuildConfiguration(EntityBuilder entityBuilder);
     }
 }

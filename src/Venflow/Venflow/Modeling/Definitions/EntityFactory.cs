@@ -23,13 +23,19 @@ namespace Venflow.Modeling.Definitions
         {
             var columns = _entityBuilder.Build();
 
-            _entity = new Entity<TEntity>(_entityBuilder.Type, _entityBuilder.ChangeTrackerFactory?.ProxyType, _entityBuilder.TableName,
-                _entityBuilder.EntityInNullableContext, _entityBuilder.DefaultPropNullability, columns,
-                _entityBuilder.IsRegularEntity ? columns[0] : default,
-                _entityBuilder.IsRegularEntity ? GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns) : string.Empty,
-                _entityBuilder.IsRegularEntity ? GetColumnListString(columns, ColumnListStringOptions.None) : string.Empty,
-                _entityBuilder.IsRegularEntity ? _entityBuilder.ChangeTrackerFactory?.GetProxyFactory() : default,
-                _entityBuilder.IsRegularEntity ? _entityBuilder.ChangeTrackerFactory?.GetProxyApplyingFactory() : default);
+            _entity = new Entity<TEntity>(
+                entityType:_entityBuilder.Type,
+                proxyEntityType:_entityBuilder.ChangeTrackerFactory?.ProxyType,
+                tableName:_entityBuilder.TableName,
+                isInNullableContext:_entityBuilder.EntityInNullableContext,
+                defaultPropNullability:_entityBuilder.DefaultPropNullability,
+                columns:columns,
+                primaryColumn:_entityBuilder.IsRegularEntity ? columns[0] : default,
+                columnListString:_entityBuilder.IsRegularEntity ? GetColumnListString(columns, ColumnListStringOptions.IncludePrimaryColumns) : string.Empty,
+                nonPrimaryColumnListString:_entityBuilder.IsRegularEntity ? GetColumnListString(columns, ColumnListStringOptions.None) : string.Empty,
+                changeTrackerFactory:_entityBuilder.IsRegularEntity ? _entityBuilder.ChangeTrackerFactory?.GetProxyFactory() : default,
+                changeTrackerApplier:_entityBuilder.IsRegularEntity ? _entityBuilder.ChangeTrackerFactory?.GetProxyApplyingFactory() : default
+            );
 
             return _entity;
         }

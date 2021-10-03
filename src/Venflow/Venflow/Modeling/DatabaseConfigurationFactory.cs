@@ -20,12 +20,11 @@ namespace Venflow.Modeling
             _entityBuilders = new Dictionary<string, EntityBuilder>();
         }
 
-        internal DatabaseConfiguration BuildConfiguration(DatabaseConfigurationOptionsBuilder configurationOptionsBuilder)
+        internal DatabaseConfiguration BuildConfiguration(Type databaseType, DatabaseConfigurationOptionsBuilder configurationOptionsBuilder)
         {
-            var databaseType = configurationOptionsBuilder.EffectiveDatabaseType;
             var tables = GetDatabaseTables(databaseType);
 
-            CreateEntityConfigurations(tables, configurationOptionsBuilder);
+            CreateEntityConfigurations(databaseType, tables, configurationOptionsBuilder);
 
             var entities = new Dictionary<string, Entity>();
             var entitiesArray = new Entity[_entityFactories.Count];
@@ -55,16 +54,15 @@ namespace Venflow.Modeling
             return new DatabaseConfiguration(
                 DatabaseTableFactory.CreateInstantiater(databaseType, tables, entitiesArray),
                 new ReadOnlyDictionary<string, Entity>(entities),
-                entitiesArray,
-                configurationOptionsBuilder.NpgsqlNameTranslator
+                entitiesArray
             );
         }
 
-        private void CreateEntityConfigurations(List<PropertyInfo> databaseTables, DatabaseConfigurationOptionsBuilder configurationOptionsBuilder)
+        private void CreateEntityConfigurations(Type databaseType, List<PropertyInfo> databaseTables, DatabaseConfigurationOptionsBuilder configurationOptionsBuilder)
         {
             var configurationAssembliesSpan = (configurationOptionsBuilder.ConfigurationAssemblies).AsSpan();
 
-            VenflowConfiguration.SetDefaultValidationIfNeeded(configurationOptionsBuilder.EffectiveDatabaseType.Assembly);
+            VenflowConfiguration.SetDefaultValidationIfNeeded(databaseType.Assembly);
 
             var configurationType = typeof(EntityConfiguration<>);
 
@@ -118,8 +116,7 @@ namespace Venflow.Modeling
 
                 TypeFactory.AddEntityAssembly(entityType.Assembly.GetName().Name!);
                 var entityBuilderType = genericEntityBuilderType.MakeGenericType(entityType);
-                // var constructor = entityBuilderType.GetConstructor(new [] {typeof(Database), typeof(string)});
-                var entityBuilderInstance = Activator.CreateInstance(entityBuilderType, BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] {configurationOptionsBuilder.EffectiveDatabase, property.Name}, null);
+                var entityBuilderInstance = (EntityBuilder) Activator.CreateInstance(entityBuilderType, BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] {configurationOptionsBuilder, property.Name}, null);
 
                 if (configurations.TryGetValue(entityType, out var configuration))
                 {

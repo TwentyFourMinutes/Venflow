@@ -32,7 +32,6 @@ namespace Venflow
     {
         internal IReadOnlyDictionary<string, Entity> Entities { get; private set; }
         internal LoggingBehavior DefaultLoggingBehavior { get; }
-        internal INpgsqlNameTranslator NpgsqlNameTranslator { get; private set; }
         internal bool HasActiveTransaction => _activeTransaction is not null && !_activeTransaction.IsDisposed;
         internal bool HasLoggers => _loggers.Count > 0;
 
@@ -40,6 +39,7 @@ namespace Venflow
 
         private NpgsqlConnection? _connection;
         private DatabaseTransaction? _activeTransaction;
+        private readonly DatabaseConfigurationOptionsBuilder _databaseConfigurationOptionsBuilder;
 
         private readonly IReadOnlyList<LoggerCallback> _loggers;
 
@@ -48,11 +48,8 @@ namespace Venflow
         /// </summary>
         /// <param name="connectionString">The connection string to your PostgreSQL Database.</param>
         protected Database(string connectionString)
+            :this(new DatabaseOptionsBuilder<Database> {ConnectionString = connectionString})
         {
-            ConnectionString = connectionString;
-            _loggers = Array.Empty<LoggerCallback>();
-
-            Build();
         }
 
         /// <summary>
@@ -63,8 +60,8 @@ namespace Venflow
         {
             ConnectionString = optionsBuilder.ConnectionString;
             DefaultLoggingBehavior = optionsBuilder.DefaultLoggingBehavior;
-            _loggers = optionsBuilder.Loggers;
-
+            _loggers = optionsBuilder.Loggers.Count > 0 ? optionsBuilder.Loggers : Array.Empty<LoggerCallback>();
+            _databaseConfigurationOptionsBuilder = new DatabaseConfigurationOptionsBuilder(this.GetType());
             Build();
         }
 
@@ -313,7 +310,7 @@ namespace Venflow
                     return new TableBase<TEntity>(this, (Entity<TEntity>)entity);
                 }
 
-                var entityBuilder = new EntityBuilder<TEntity>(this, string.Empty);
+                var entityBuilder = new EntityBuilder<TEntity>(_databaseConfigurationOptionsBuilder, string.Empty);
 
                 entityBuilder.IsRegularEntity = false;
 
@@ -352,20 +349,19 @@ namespace Venflow
 
         private void Build()
         {
-            var type = this.GetType();
-            if (!DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(type, out var configuration))
+            if (!DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(this.GetType(), out var configuration))
             {
                 lock (DatabaseConfigurationCache.BuildLocker)
                 {
+                    var type = this.GetType();
+
                     if (!DatabaseConfigurationCache.DatabaseConfigurations.TryGetValue(type, out configuration))
                     {
                         var dbConfigurator = new DatabaseConfigurationFactory();
 
-                        var configurationOptionsBuilder = new DatabaseConfigurationOptionsBuilder(this);
+                        Configure(_databaseConfigurationOptionsBuilder);
 
-                        Configure(configurationOptionsBuilder);
-
-                        configuration = dbConfigurator.BuildConfiguration(configurationOptionsBuilder);
+                        configuration = dbConfigurator.BuildConfiguration(type, _databaseConfigurationOptionsBuilder);
 
                         DatabaseConfigurationCache.DatabaseConfigurations.TryAdd(type, configuration);
                     }
@@ -373,7 +369,6 @@ namespace Venflow
             }
 
             Entities = configuration.Entities;
-            NpgsqlNameTranslator = configuration.NpgsqlNameTranslator;
 
             configuration.InstantiateDatabase(this);
         }

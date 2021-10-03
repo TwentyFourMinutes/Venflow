@@ -223,7 +223,7 @@ namespace Venflow.Commands
                                         if (column.PropertyInfo.Name != memberArgument.Member.Name)
                                             continue;
 
-                                        name = entity.TableName + ".\"" + column.ColumnName + "\"";
+                                        name = entity.TableName + "." + column.ColumnName;
 
                                         break;
                                     }
@@ -583,25 +583,23 @@ namespace Venflow.Commands
                 if (relation.ForeignKeyLocation == ForeignKeyLocation.Left)
                 {
                     sb.Append(relation.LeftEntity.TableName)
-                      .Append(".\"")
+                      .Append(".")
                       .Append(relation.ForeignKeyColumn.ColumnName)
-                      .Append("\" = ")
+                      .Append(" = ")
                       .Append(relation.RightEntity.TableName)
-                      .Append(".\"")
+                      .Append(".")
                       .Append(relation.RightEntity.GetPrimaryColumn().ColumnName);
                 }
                 else
                 {
                     sb.Append(relation.RightEntity.TableName)
-                      .Append(".\"")
+                      .Append(".")
                       .Append(relation.ForeignKeyColumn.ColumnName)
-                      .Append("\" = ")
+                      .Append(" = ")
                       .Append(relation.LeftEntity.TableName)
-                      .Append(".\"")
+                      .Append(".")
                       .Append(relation.LeftEntity.GetPrimaryColumn().ColumnName);
                 }
-
-                sb.Append('"');
             }
         }
 

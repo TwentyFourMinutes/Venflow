@@ -16,13 +16,30 @@ namespace Venflow.Modeling.Definitions.Builder
 {
     internal class EntityBuilder<TEntity> : EntityBuilder, IEntityBuilder<TEntity> where TEntity : class, new()
     {
-        private readonly Database _database;
+        internal bool IsRegularEntity { get; set; }
+
+        internal override Type Type { get; }
+
+        internal ChangeTrackerFactory<TEntity>? ChangeTrackerFactory { get; private set; }
+        internal string TableName => string.IsNullOrWhiteSpace(CustomTableName)
+            ? NpgsqlNameTranslator.TranslateTypeName(_tableName)
+            : CustomTableName;
+        internal string CustomTableName { get; private set; }
+        internal IDictionary<string, ColumnDefinition> ColumnDefinitions { get; }
+
+        internal INpgsqlNameTranslator NpgsqlNameTranslator => CustomNpgsqlNameTranslator ?? _configurationOptionsBuilder.NpgsqlNameTranslator;
+        internal INpgsqlNameTranslator CustomNpgsqlNameTranslator { get; private set; }
+
+        internal bool EntityInNullableContext { get; }
+        internal bool DefaultPropNullability { get; }
+
+        private readonly DatabaseConfigurationOptionsBuilder _configurationOptionsBuilder;
         private readonly string _tableName;
         private readonly ValueRetrieverFactory<TEntity> _valueRetrieverFactory;
 
-        internal EntityBuilder(Database database, string tableName)
+        internal EntityBuilder(DatabaseConfigurationOptionsBuilder configurationOptionsBuilder, string tableName)
         {
-            _database = database;
+            _configurationOptionsBuilder = configurationOptionsBuilder;
             _tableName = tableName;
             Type = typeof(TEntity);
             ColumnDefinitions = new Dictionary<string, ColumnDefinition>();
@@ -46,19 +63,6 @@ namespace Venflow.Modeling.Definitions.Builder
 
             DiscorverColumns();
         }
-
-        internal bool IsRegularEntity { get; set; }
-        internal override Type Type { get; }
-        internal ChangeTrackerFactory<TEntity>? ChangeTrackerFactory { get; private set; }
-        internal INpgsqlNameTranslator NpgsqlNameTranslator => CustomNpgsqlNameTranslator ?? _database.NpgsqlNameTranslator;
-        internal string TableName => string.IsNullOrWhiteSpace(CustomTableName)
-            ? NpgsqlNameTranslator.TranslateTypeName(_tableName)
-            : CustomTableName;
-        internal string CustomTableName { get; private set; }
-        internal INpgsqlNameTranslator CustomNpgsqlNameTranslator { get; private set; }
-        internal IDictionary<string, ColumnDefinition> ColumnDefinitions { get; }
-        internal bool EntityInNullableContext { get; }
-        internal bool DefaultPropNullability { get; }
 
         IEntityBuilder<TEntity> IEntityBuilder<TEntity>.MapToTable(string tableName)
         {
@@ -122,7 +126,14 @@ namespace Venflow.Modeling.Definitions.Builder
             return this;
         }
 
-        public IEntityBuilder<TEntity> SetNpgsqlNameTranslator<T>() where T : INpgsqlNameTranslator, new()
+        IEntityBuilder<TEntity> IEntityBuilder<TEntity>.SetNpgsqlNameTranslator(INpgsqlNameTranslator npgsqlNameTranslator)
+        {
+            CustomNpgsqlNameTranslator = npgsqlNameTranslator;
+
+            return this;
+        }
+
+        IEntityBuilder<TEntity> IEntityBuilder<TEntity>.SetNpgsqlNameTranslator<T>()
         {
             CustomNpgsqlNameTranslator = new T();
 
@@ -526,12 +537,18 @@ namespace Venflow.Modeling.Definitions.Builder
         IEntityBuilder<TEntity> MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option);
 
         /// <summary>
-        ///
+        /// Sets the <see cref="INpgsqlNameTranslator"/> instance to be used for entity table & column name translations.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        IEntityBuilder<TEntity> SetNpgsqlNameTranslator<T>() where T : INpgsqlNameTranslator, new();
+        /// <param name="npgsqlNameTranslator">An implementation of <see cref="INpgsqlNameTranslator"/> to be used for entity name translations.</param>
+        /// <returns>The same builder instance so that multiple calls can be chained.</returns>
+        IEntityBuilder<TEntity> SetNpgsqlNameTranslator(INpgsqlNameTranslator npgsqlNameTranslator);
 
+        /// <summary>
+        /// Sets the <see cref="INpgsqlNameTranslator"/> instance to be used for entity table & column name translations.
+        /// </summary>
+        /// <typeparam name="T">An implementation of <see cref="INpgsqlNameTranslator"/> to be used for entity name translations.</typeparam>
+        /// <returns>The same builder instance so that multiple calls can be chained.</returns>
+        IEntityBuilder<TEntity> SetNpgsqlNameTranslator<T>() where T : INpgsqlNameTranslator, new();
 
         /// <summary>
         /// Maps a PostgreSQL enum to a CLR enum.

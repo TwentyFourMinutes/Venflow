@@ -13,16 +13,12 @@ namespace Venflow
     /// </summary>
     public class DatabaseConfigurationOptionsBuilder
     {
-        internal Database EffectiveDatabase { get; }
-        internal Type EffectiveDatabaseType { get; }
         internal List<Assembly> ConfigurationAssemblies { get; }
         internal INpgsqlNameTranslator NpgsqlNameTranslator { get; private set; }
 
-        internal DatabaseConfigurationOptionsBuilder(Database effectiveDatabase)
+        internal DatabaseConfigurationOptionsBuilder(Type effectiveDatabaseType)
         {
-            EffectiveDatabase = effectiveDatabase;
-            EffectiveDatabaseType = EffectiveDatabase.GetType();
-            ConfigurationAssemblies = new(1) { EffectiveDatabaseType.Assembly };
+            ConfigurationAssemblies = new(1) { effectiveDatabaseType.Assembly };
             NpgsqlNameTranslator = new NpgsqlSnakeCaseNameTranslator();
         }
 
@@ -66,18 +62,27 @@ namespace Venflow
         }
 
         /// <summary>
-        /// Sets the naming convention to be used for entity table & column names.
+        /// Sets the default naming convention to be used for entity table & column names.
         /// </summary>
-        /// <typeparam name="T">An implementation of <see cref="INpgsqlNameTranslator"/> to be used for name translation.</typeparam>
+        /// <typeparam name="T">An implementation of <see cref="INpgsqlNameTranslator"/> to be used as the default for name translation.</typeparam>
         /// <returns>The same builder instance so that multiple calls can be chained.</returns>
         public DatabaseConfigurationOptionsBuilder SetNamingConvention<T>()
             where T : INpgsqlNameTranslator, new()
         {
-            NpgsqlNameTranslator = new T();
+            return SetNamingConvention(new T());
+        }
+
+        /// <summary>
+        /// Sets the default naming convention to be used for entity table & column names.
+        /// </summary>
+        /// <param name="npgsqlNameTranslator">An implementation of <see cref="INpgsqlNameTranslator"/> to be used as the default for name translation.</param>
+        /// <returns>The same builder instance so that multiple calls can be chained.</returns>
+        public DatabaseConfigurationOptionsBuilder SetNamingConvention(INpgsqlNameTranslator npgsqlNameTranslator)
+        {
+            NpgsqlNameTranslator = npgsqlNameTranslator;
 
             return this;
         }
-
 
         /// <summary>
         /// Maps a PostgreSQL enum to a CLR enum.

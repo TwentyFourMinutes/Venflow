@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Npgsql;
 using Venflow.Modeling;
 
 namespace Venflow
@@ -11,21 +10,14 @@ namespace Venflow
         internal IReadOnlyDictionary<string, Entity> Entities { get; }
         internal Dictionary<Type, Entity> CustomEntities { get; }
         internal IList<Entity> EntitiesList { get; }
-        public INpgsqlNameTranslator NpgsqlNameTranslator { get; }
 
-        internal DatabaseConfiguration(
-            Action<Database, IList<Entity>> databaseInstantiater,
-            IReadOnlyDictionary<string, Entity> entities,
-            IList<Entity> entitiesList,
-            INpgsqlNameTranslator nameTranslator
-            )
+        internal DatabaseConfiguration(Action<Database, IList<Entity>> databaseInstantiater, IReadOnlyDictionary<string, Entity> entities, IList<Entity> entitiesList)
         {
             CustomEntities = new Dictionary<Type, Entity>();
 
             DatabaseInstantiater = databaseInstantiater;
             Entities = entities;
             EntitiesList = entitiesList;
-            NpgsqlNameTranslator = nameTranslator;
         }
 
         internal void InstantiateDatabase(Database database)
