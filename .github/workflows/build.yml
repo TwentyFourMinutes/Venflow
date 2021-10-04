@@ -61,16 +61,20 @@ jobs:
 
     - name: Upload coverage report to coveralls.io
       uses: coverallsapp/github-action@master
+      if: ${{ github.event_name == 'push' }}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: ./test/Venflow.Tests/coverage-reports/coverage.net6.0.info
 
     - name: Build Documentation
       uses: nikeee/docfx-action@v1.0.0
+      if: ${{ github.event_name == 'push' }}
       with:
         args: /github/workspace/docs/docfx/docfx.json --property TargetFramework=net5.0
+        
     - name: Deploy Documentation to Github Pages
       uses: JamesIves/github-pages-deploy-action@4.1.5
+      if: ${{ github.event_name == 'push' }}
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         branch: dev
