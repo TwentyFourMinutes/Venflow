@@ -17,6 +17,8 @@ namespace Venflow
     {
         internal static ConcurrentDictionary<Type, DatabaseConfiguration> DatabaseConfigurations { get; } = new ConcurrentDictionary<Type, DatabaseConfiguration>(Environment.ProcessorCount, 1);
 
+        internal static ConcurrentDictionary<Type, DatabaseConfigurationOptionsBuilder> DatabaseConfigurationOptionsBuilders { get; } = new ConcurrentDictionary<Type, DatabaseConfigurationOptionsBuilder>(Environment.ProcessorCount, 1);
+
         internal static Dictionary<Type, Entity> CustomEntities { get; } = new Dictionary<Type, Entity>(0);
 
         internal static object BuildLocker { get; } = new object();
@@ -39,7 +41,6 @@ namespace Venflow
 
         private NpgsqlConnection? _connection;
         private DatabaseTransaction? _activeTransaction;
-        private readonly DatabaseConfigurationOptionsBuilder _databaseConfigurationOptionsBuilder;
 
         private readonly IReadOnlyList<LoggerCallback> _loggers;
 
@@ -60,8 +61,7 @@ namespace Venflow
         {
             ConnectionString = optionsBuilder.ConnectionString;
             DefaultLoggingBehavior = optionsBuilder.DefaultLoggingBehavior;
-            _loggers = optionsBuilder.Loggers.Count > 0 ? optionsBuilder.Loggers : Array.Empty<LoggerCallback>();
-            _databaseConfigurationOptionsBuilder = new DatabaseConfigurationOptionsBuilder(this.GetType());
+            _loggers = optionsBuilder.Loggers;
             Build();
         }
 
@@ -310,7 +310,8 @@ namespace Venflow
                     return new TableBase<TEntity>(this, (Entity<TEntity>)entity);
                 }
 
-                var entityBuilder = new EntityBuilder<TEntity>(_databaseConfigurationOptionsBuilder, string.Empty);
+                var databaseConfigurationOptionsBuilder = DatabaseConfigurationCache.DatabaseConfigurationOptionsBuilders[this.GetType()];
+                var entityBuilder = new EntityBuilder<TEntity>(databaseConfigurationOptionsBuilder, string.Empty);
 
                 entityBuilder.IsRegularEntity = false;
 
@@ -359,11 +360,13 @@ namespace Venflow
                     {
                         var dbConfigurator = new DatabaseConfigurationFactory();
 
-                        Configure(_databaseConfigurationOptionsBuilder);
+                        var databaseConfigurationOptionsBuilder = new DatabaseConfigurationOptionsBuilder(this.GetType());
+                        Configure(databaseConfigurationOptionsBuilder);
 
-                        configuration = dbConfigurator.BuildConfiguration(type, _databaseConfigurationOptionsBuilder);
+                        configuration = dbConfigurator.BuildConfiguration(type, databaseConfigurationOptionsBuilder);
 
                         DatabaseConfigurationCache.DatabaseConfigurations.TryAdd(type, configuration);
+                        DatabaseConfigurationCache.DatabaseConfigurationOptionsBuilders.TryAdd(type, databaseConfigurationOptionsBuilder);
                     }
                 }
             }
