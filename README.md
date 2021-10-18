@@ -7,7 +7,7 @@
 <a href="https://www.nuget.org/packages/Venflow"><img alt="Nuget" src="https://img.shields.io/nuget/v/Venflow"></a> <a href="https://www.nuget.org/packages/Venflow"><img alt="Nuget" src="https://img.shields.io/nuget/dt/Venflow"></a> <a href="https://github.com/TwentyFourMinutes/Venflow/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/TwentyFourMinutes/Venflow"></a> <a href='https://coveralls.io/github/TwentyFourMinutes/Venflow?branch=dev'><img src='https://coveralls.io/repos/github/TwentyFourMinutes/Venflow/badge.svg?branch=dev' alt='Coverage Status' /></a> <a href="https://github.com/TwentyFourMinutes/Venflow/blob/master/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/TwentyFourMinutes/DulcisX"></a> <a href="https://discordapp.com/invite/EYKxkce"><img alt="Discord" src="https://discordapp.com/api/guilds/275377268728135680/widget.png"></a>
 </p>
 
-**🚧 Venflow is currently undergoing a full rewrite, moving all its capabilities to Soruce Generators, check the progress [here](https://github.com/TwentyFourMinutes/Venflow/projects/1). 🚧**
+**🚧 Venflow is currently undergoing a full rewrite, check the progress [here](https://github.com/TwentyFourMinutes/Venflow/projects/1). 🚧**
 
 ## About
 
