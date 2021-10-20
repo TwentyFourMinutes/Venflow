@@ -54,10 +54,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Venflow", "Venflow", "{36D1
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Reflow.Analyzer.Shared", "src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.shproj", "{08D360BA-AE0A-4234-9F25-2E11D499A52C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflow.Playground", "src\Reflow.Playground\Reflow.Playground.csproj", "{B60A2FF5-CFD4-4E23-A434-4961AB97D86E}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{08d360ba-ae0a-4234-9f25-2e11d499a52c}*SharedItemsImports = 13
 		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{28d63a25-d4f3-441c-97f4-9ff68b6e7c5d}*SharedItemsImports = 5
+		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{91a3aeec-1cbb-4b31-979b-cf91ec3ee5eb}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -116,6 +119,10 @@ Global
 		{28D63A25-D4F3-441C-97F4-9FF68B6E7C5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28D63A25-D4F3-441C-97F4-9FF68B6E7C5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28D63A25-D4F3-441C-97F4-9FF68B6E7C5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B60A2FF5-CFD4-4E23-A434-4961AB97D86E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B60A2FF5-CFD4-4E23-A434-4961AB97D86E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B60A2FF5-CFD4-4E23-A434-4961AB97D86E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B60A2FF5-CFD4-4E23-A434-4961AB97D86E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -141,6 +148,7 @@ Global
 		{28D63A25-D4F3-441C-97F4-9FF68B6E7C5D} = {BCB6D863-5657-4179-9C6B-1779CFEF9B1F}
 		{36D1EF4A-6B1B-42A5-885F-BDBA55F1A04B} = {EE96D718-66F6-4941-9169-0F5F46D632A6}
 		{08D360BA-AE0A-4234-9F25-2E11D499A52C} = {BCB6D863-5657-4179-9C6B-1779CFEF9B1F}
+		{B60A2FF5-CFD4-4E23-A434-4961AB97D86E} = {C5886FD4-BD01-499B-B3D3-1BA0BF2B1D3B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {020D29CB-7D63-45D4-8F95-7C89DC06E6E6}

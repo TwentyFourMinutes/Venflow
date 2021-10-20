@@ -9,9 +9,7 @@
     <Import_RootNamespace>Reflow.Analyzer.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)LambdaLink\LambdaLink.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)LambdaLink\" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lambdas\ClosureLambdaLink.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lambdas\LambdaLink.cs" />
   </ItemGroup>
 </Project>

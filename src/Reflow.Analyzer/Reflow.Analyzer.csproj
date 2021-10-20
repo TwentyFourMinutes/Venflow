@@ -25,14 +25,18 @@
   </Target>
 
   <ItemGroup>
-    <EmbeddedResource Include="LambdaLink\Resources\LambdaLinker.sbncs" />
+    <EmbeddedResource Include="Database\Resources\DatabaseConfigurations.sbncs" />
+    <EmbeddedResource Include="Lambdas\Resources\LambdaLinks.sbncs" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="../Reflow.Analyzer.Shared/**/*.cs">
+    <None Include="../Reflow.Analyzer.Shared/**/*.cs">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <LogicalName>Shared\%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
-    </EmbeddedResource>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Database\Resources\DatabaseConfigurations.sbncs" />
   </ItemGroup>
 
   <Import Project="..\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems" Label="Shared" />

@@ -1,0 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace Reflow
+{
+    public static class DatabaseConfigurations
+    {
+        public static Dictionary<Type, DatabaseConfiguration> Configurations = new({{configurations.Count}})
+        {
+            {{~ for configuration in configurations ~}}
+            [typeof({{ configuration.full_database_name }})] = new DatabaseConfiguration(static baseDatabase =>
+            {
+               var database = ({{ configuration.full_database_name }})baseDatabase;
+
+               {{~ for property in configuration.properties ~}}
+               database.{{ property.name }} = new Table<{{ property.full_type_name }}>(database);
+               {{~ end ~}}
+            }),
+            {{~ end ~}}
+        };
+    }
+}

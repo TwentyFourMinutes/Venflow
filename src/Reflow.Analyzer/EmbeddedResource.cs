@@ -5,20 +5,16 @@ namespace Reflow.Analyzer
 {
     internal static class EmbeddedResource
     {
-        internal static string GetContent(string relativePath, bool isFullPath = false)
+        internal static string GetContent(string relativePath)
         {
             var assembly = typeof(EmbeddedResource).Assembly;
 
-            var baseName = isFullPath ? null : assembly.GetName().Name;
-            var resourceName = isFullPath
-                ? relativePath
-                : relativePath.TrimStart('.')
-                      .Replace(Path.DirectorySeparatorChar, '.')
-                      .Replace(Path.AltDirectorySeparatorChar, '.');
+            var baseName = assembly.GetName().Name;
+            var resourceName = relativePath.TrimStart('.')
+                .Replace(Path.DirectorySeparatorChar, '.')
+                .Replace(Path.AltDirectorySeparatorChar, '.');
 
-            using var stream = assembly.GetManifestResourceStream(
-                isFullPath ? resourceName : baseName + "." + resourceName
-            );
+            using var stream = assembly.GetManifestResourceStream(baseName + "." + resourceName);
 
             if (stream == null)
                 throw new NotSupportedException();

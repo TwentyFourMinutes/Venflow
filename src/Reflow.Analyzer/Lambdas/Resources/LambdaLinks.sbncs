@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Reflow
 {
-    public static class LambdaLinker
+    public static class LambdaLinks
     {
         public static LambdaLink[] Links = new LambdaLink[]
         {

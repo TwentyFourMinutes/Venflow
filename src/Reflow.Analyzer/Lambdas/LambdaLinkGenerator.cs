@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
-using Scriban;
 
-namespace Reflow.Analyzer
+namespace Reflow.Analyzer.LambdaLinker
 {
-    [Generator]
+    [Generator(LanguageNames.CSharp)]
     public class LambdaLinkGenerator : ISourceGenerator
     {
         void ISourceGenerator.Initialize(GeneratorInitializationContext context)
@@ -387,18 +384,12 @@ namespace Reflow.Analyzer
                 staticVariableMembers.Clear();
             }
 
-            var template = Template.Parse(
-                EmbeddedResource.GetContent("LambdaLink/Resources/LambdaLinker.sbncs"),
-                "LambdaLinker.sbncs"
-            );
-
             var (links, closureLinks) = lambdaCollector.Build();
 
-            var content = template.Render(new { links, closureLinks });
-
-            context.AddGeneratorSources();
-
-            context.AddSource("LambdaLinker.generated.cs", SourceText.From(content, Encoding.UTF8));
+            context.AddTemplatedSource(
+                "Lambdas/Resources/LambdaLinks.sbncs",
+                new { links, closureLinks }
+            );
         }
 
         private static bool IsStaticMember(MemberDeclarationSyntax member)
@@ -570,7 +561,7 @@ namespace Reflow.Analyzer
                 _nodeStack.Clear();
             }
 
-            internal (List<LambdaLink> links, List<ClosureLambdaLink> closureLinks) Build() =>
+            internal (List<LambdaLink> Links, List<ClosureLambdaLink> ClosureLinks) Build() =>
                 (_lambdaLinks, _closureLambdaLinks);
         }
 

@@ -1,39 +1,27 @@
 ﻿using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using Scriban;
 
 namespace Reflow.Analyzer
 {
     internal static class GeneratorExecutionContextExtensions
     {
-        internal static void AddGeneratorSources(
+        internal static void AddTemplatedSource(
             this GeneratorExecutionContext context,
-            [CallerFilePath] string? fullName = null
+            string relativePath,
+            object model
         ) {
-            var directoryName = Path.GetDirectoryName(fullName);
-            var parentIndex = directoryName.LastIndexOf('\\') + 1;
+            var template = Template.Parse(
+                EmbeddedResource.GetContent(relativePath),
+                Path.GetFileName(relativePath)
+            );
 
-            var resourceBasePath =
-                "Shared\\"
-                + directoryName.Substring(parentIndex, directoryName.Length - parentIndex)
-                + "\\";
-
-            var resourceNames =
-                typeof(GeneratorExecutionContextExtensions).Assembly.GetManifestResourceNames()
-                    .Where(x => x.StartsWith(resourceBasePath));
-
-            foreach (var resourceName in resourceNames)
-            {
-                context.AddSource(
-                    Path.GetFileNameWithoutExtension(resourceName)
-                        + ".generated"
-                        + Path.GetExtension(resourceName),
-                    SourceText.From(EmbeddedResource.GetContent(resourceName, true), Encoding.UTF8)
-                );
-            }
+            context.AddSource(
+                Path.GetFileNameWithoutExtension(relativePath) + ".generated.cs",
+                SourceText.From(template.Render(model), Encoding.UTF8)
+            );
         }
     }
 }
