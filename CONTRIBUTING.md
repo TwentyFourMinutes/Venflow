@@ -1,11 +1,11 @@
 # Contributing to Venflow
-First and foremost, I want to say, thank you! Maintaining this project is not an easy task and any help, no matter the scope, is appreciated. However, to keep things organized and well organized there are a few steps you should have gone through before creating an issue or a pull-request.
+First and foremost, I want to say, thank you! Maintaining this project is not an easy task and any help, no matter the scope, is appreciated. However, to keep things well organized there are a few steps you should go through before creating an issue or a pull-request.
 No matter how you are planning on contributing to Venflow, always ensure that your behaviour and the ones of others align with the [Code of Conduct](https://github.com/TwentyFourMinutes/Venflow/blob/dev/CODE_OF_CONDUCT.md).
 ## Creating an issue
-1. You should make sure, that the issue you are facing is not or was not already discussed in an existent issue or discussion.
+1. You should make sure, that the issue you are facing is or was not discussed in an existent issue or discussion.
 2. Make sure, that you include _all_ the necessary information to reproduce this issue.
 ## Creating a pull-requests
-1.  You should make sure, that the contribution you want to make, is not already discussed in an existent pull request, issue, or discussion.
+1.  You should make sure that the contribution you want to make is not already discussed in an existent pull request, issue, or discussion.
 2. If you would like to contribute to Venflow, first identify the scale of what you would like to contribute. If it is small (grammar/spelling or a bug fix) feel free to start working on a fix. However, if you are submitting a feature or substantial code contribution, please discuss it beforehand with other contributors if your pull request is appropriate.
 
 3. You should read the *Writing Code* section and make sure your code contributions stick as tightly to it as possible.
