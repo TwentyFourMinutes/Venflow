@@ -17,6 +17,8 @@ namespace Reflow.Analyzer.LambdaLinker
 
         void ISourceGenerator.Execute(GeneratorExecutionContext context)
         {
+            context.Compilation.EnsureReference("Reflow", AssemblyInfo.PublicKey);
+
             var candidates = (context.SyntaxContextReceiver as SyntaxContextReceiver)!.Candidates;
             var lambdaCollector = new LambdaCollector(context.Compilation);
 
@@ -93,7 +95,8 @@ namespace Reflow.Analyzer.LambdaLinker
                                 var accessorIndex = 0;
                                 accessorIndex < propertySyntax.AccessorList.Accessors.Count;
                                 accessorIndex++
-                            ) {
+                            )
+                            {
                                 var accessor = propertySyntax.AccessorList.Accessors[accessorIndex];
 
                                 if (accessor.IsKind(SyntaxKind.GetAccessorDeclaration))
@@ -119,7 +122,8 @@ namespace Reflow.Analyzer.LambdaLinker
                                     if (
                                         propertySyntax.Initializer is null
                                         && accessor.Body is not null
-                                    ) {
+                                    )
+                                    {
                                         lambdaCollector.Collect(
                                             accessor.Body,
                                             "set" + propertySyntax.Identifier.Text
@@ -160,7 +164,8 @@ namespace Reflow.Analyzer.LambdaLinker
                             var variableMemberIndex = 0;
                             variableMemberIndex < variableMembers.Count;
                             variableMemberIndex++
-                        ) {
+                        )
+                        {
                             var variableMember = variableMembers[variableMemberIndex];
 
                             if (variableMember is FieldDeclarationSyntax field)
@@ -169,7 +174,8 @@ namespace Reflow.Analyzer.LambdaLinker
                                     var fieldVariableIndex = 0;
                                     fieldVariableIndex < field.Declaration.Variables.Count;
                                     fieldVariableIndex++
-                                ) {
+                                )
+                                {
                                     var fieldVariable = field.Declaration.Variables[
                                         fieldVariableIndex
                                     ];
@@ -191,7 +197,8 @@ namespace Reflow.Analyzer.LambdaLinker
                             var accessorIndex = 0;
                             accessorIndex < eventSyntax.AccessorList!.Accessors.Count;
                             accessorIndex++
-                        ) {
+                        )
+                        {
                             var accessor = eventSyntax.AccessorList.Accessors[accessorIndex];
 
                             if (accessor.IsKind(SyntaxKind.AddAccessorDeclaration))
@@ -255,7 +262,8 @@ namespace Reflow.Analyzer.LambdaLinker
                                 var accessorIndex = 0;
                                 accessorIndex < indexSyntax.AccessorList!.Accessors.Count;
                                 accessorIndex++
-                            ) {
+                            )
+                            {
                                 var accessor = indexSyntax.AccessorList!.Accessors[accessorIndex];
 
                                 if (accessor.IsKind(SyntaxKind.GetAccessorDeclaration))
@@ -318,7 +326,8 @@ namespace Reflow.Analyzer.LambdaLinker
                         var variableMemberIndex = 0;
                         variableMemberIndex < instanceVariableMembers.Count;
                         variableMemberIndex++
-                    ) {
+                    )
+                    {
                         var variableMember = instanceVariableMembers[variableMemberIndex];
 
                         if (variableMember is FieldDeclarationSyntax fieldSyntax)
@@ -327,7 +336,8 @@ namespace Reflow.Analyzer.LambdaLinker
                                 var fieldVariableIndex = 0;
                                 fieldVariableIndex < fieldSyntax.Declaration.Variables.Count;
                                 fieldVariableIndex++
-                            ) {
+                            )
+                            {
                                 var fieldVariable = fieldSyntax.Declaration.Variables[
                                     fieldVariableIndex
                                 ];
@@ -352,7 +362,8 @@ namespace Reflow.Analyzer.LambdaLinker
                         var variableMemberIndex = 0;
                         variableMemberIndex < staticVariableMembers.Count;
                         variableMemberIndex++
-                    ) {
+                    )
+                    {
                         var variableMember = staticVariableMembers[variableMemberIndex];
 
                         if (variableMember is FieldDeclarationSyntax fieldSyntax)
@@ -361,7 +372,8 @@ namespace Reflow.Analyzer.LambdaLinker
                                 var fieldVariableIndex = 0;
                                 fieldVariableIndex < fieldSyntax.Declaration.Variables.Count;
                                 fieldVariableIndex++
-                            ) {
+                            )
+                            {
                                 lambdaCollector.Collect(
                                     fieldSyntax.Declaration.Variables[fieldVariableIndex],
                                     ".cctor"
@@ -541,7 +553,8 @@ namespace Reflow.Analyzer.LambdaLinker
                                 var bufferIndex = _nodeBuffer.Count - 1;
                                 bufferIndex >= 0;
                                 bufferIndex--
-                            ) {
+                            )
+                            {
                                 _nodeStack.Push(_nodeBuffer[bufferIndex]);
                             }
 
@@ -599,18 +612,18 @@ namespace Reflow.Analyzer.LambdaLinker
                     if (
                         memberAccessSyntax is null
                         || memberAccessSyntax.Name.Identifier.Text is not "Query" and not "QueryRaw"
-                    ) {
+                    )
+                    {
                         return;
                     }
 
                     var symbol = context.SemanticModel.GetSymbolInfo(invocationSyntax).Symbol;
 
-                    if (symbol is null)
+                    if (symbol is null ||
+                        !symbol.ContainingSymbol.IsReflowSymbol())
                     {
                         return;
                     }
-
-                    var fullName = symbol.ContainingSymbol.ToDisplayString(); // TOOO: Check for the name and assembly
 
                     Candidates.Add(classDeclaration);
                 }

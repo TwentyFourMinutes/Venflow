@@ -12,7 +12,8 @@ namespace Reflow.Analyzer
             this GeneratorExecutionContext context,
             string relativePath,
             object model
-        ) {
+        )
+        {
             var template = Template.Parse(
                 EmbeddedResource.GetContent(relativePath),
                 Path.GetFileName(relativePath)

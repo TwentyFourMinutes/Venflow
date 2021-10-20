@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -16,6 +14,8 @@ namespace Reflow.Analyzer.Database
 
         public void Execute(GeneratorExecutionContext context)
         {
+            context.Compilation.EnsureReference("Reflow", AssemblyInfo.PublicKey);
+
             var candidates = (context.SyntaxContextReceiver as SyntaxContextReceiver)!.Candidates;
             var databaseConfigurations = new List<DatabaseConfiguration>();
 
@@ -84,16 +84,10 @@ namespace Reflow.Analyzer.Database
                     if (
                         potentialDatabaseType.Name is not "Database"
                         || potentialDatabaseType.ContainingNamespace.Name is not "Reflow"
+                        || !potentialDatabaseType.IsReflowSymbol();
                     )
                         continue;
 
-                    var assemblyIdentity = potentialDatabaseType.ContainingAssembly.Identity;
-
-                    if (
-                        assemblyIdentity.Name is not "Reflow"
-                        || !assemblyIdentity.PublicKey.SequenceEqual(AssemblyInfo.PublicKey)
-                    )
-                        continue;
                     break;
                 }
 
