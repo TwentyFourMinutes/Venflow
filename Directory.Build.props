@@ -1,0 +1,51 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>preview</LangVersion>
+    <Nullable>enable</Nullable>
+    <AnalysisLevel>preview</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>NU5104</NoWarn>
+
+    <Title>Venflow</Title>
+    <Authors>Twenty</Authors>
+    <Company>Twenty</Company>
+    <Version>1.2.0</Version>
+    <Language>en</Language>
+    <NeutralLanguage>en</NeutralLanguage>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryUrl>https://github.com/TwentyFourMinutes/Venflow</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Venflow ORM ORM-Framework O/RM Data Postgres SQL PostgreSQL</PackageTags>
+    <Copyright>Copyright ©2021 Twenty</Copyright>
+
+    <DocumentationFile>$(MSBuildProjectDirectory)/$(MSBuildProjectName).xml</DocumentationFile>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)build</PackageOutputPath>
+
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)/Venflow.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Deterministic>true</Deterministic>
+
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)images/icon.png" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)LICENSE" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.0-beta-20204-02">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

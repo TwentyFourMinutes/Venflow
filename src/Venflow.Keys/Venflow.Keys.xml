@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Venflow.Keys</name>
+    </assembly>
+    <members>
+        <member name="T:Venflow.Json.JsonKeyConverterFactory">
+            <summary>
+            A <see cref="T:System.Text.Json.Serialization.JsonConverter"/> to parse <see cref="T:Venflow.IKey`2"/> instances.
+            </summary>
+        </member>
+        <member name="M:Venflow.Json.JsonKeyConverterFactory.CanConvert(System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Json.JsonKeyConverterFactory.CreateConverter(System.Type,System.Text.Json.JsonSerializerOptions)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Venflow.Key`2">
+            <summary>
+            This is used to create strongly-typed ids.
+            </summary>
+            <typeparam name="TEntity">They type of entity the key sits in.</typeparam>
+            <typeparam name="TKey">The type of the key.</typeparam>
+            <remarks>You can also create more specific implementations of this type, by creating a <i>struct</i> implementing <see cref="T:Venflow.IKey`2"/>.</remarks>
+        </member>
+        <member name="M:Venflow.Key`2.#ctor(`1)">
+            <summary>
+            Instantiates a new <see cref="T:Venflow.Key`2"/> instance withe the provided value.
+            </summary>
+            <param name="value">The value which should represent the new <see cref="T:Venflow.Key`2"/> instance.</param>
+        </member>
+        <member name="M:Venflow.Key`2.op_Implicit(Venflow.Key{`0,`1}@)~`1">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Key`2.op_Implicit(`1@)~Venflow.Key{`0,`1}">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Key`2.op_Equality(Venflow.Key{`0,`1}@,Venflow.Key{`0,`1}@)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Key`2.op_Inequality(Venflow.Key{`0,`1}@,Venflow.Key{`0,`1}@)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Key`2.Equals(Venflow.Key{`0,`1})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Key`2.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Key`2.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.Key`2.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:Venflow.IKey`2">
+            <summary>
+            This interface should be implemented by <i>structs</i>, to create strongly-typed ids.
+            </summary>
+            <typeparam name="TEntity">They type of entity the key sits in.</typeparam>
+            <typeparam name="TKey">The type of the key.</typeparam>
+            <remarks>See <see cref="T:Venflow.Key`2"/>for a possible implementation.</remarks>
+        </member>
+        <member name="P:Venflow.IKey`2.Value">
+            <summary>
+            The underlying value representing the <see cref="T:Venflow.Key`2"/>.
+            </summary>
+        </member>
+        <member name="T:Venflow.IKey">
+            <summary>
+            <strong>Do not use this interface, if you are not absolutely sure what it does.</strong>
+            </summary>
+        </member>
+        <member name="P:Venflow.IKey.BoxedValue">
+            <summary>
+            The boxed representation of the value this instance is representing.
+            </summary>
+        </member>
+        <member name="T:Venflow.KeyConverter">
+            <summary>
+            Provides a way of converting <see cref="T:Venflow.Key`2"/> to strings and vice versa.
+            </summary>
+        </member>
+        <member name="M:Venflow.KeyConverter.#ctor(System.Type)">
+            <summary>
+            Creates a new instance of a <see cref="T:Venflow.KeyConverter"/> with the given key type.
+            </summary>
+            <param name="keyType">The type of the key to which the <see cref="T:Venflow.KeyConverter"/> should bind to.</param>
+        </member>
+        <member name="M:Venflow.KeyConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.KeyConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.KeyConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.KeyConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object,System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Venflow.KeyConverter.GetOrCreateKeyFactory``1(System.Type)">
+            <summary>
+            Gets or creates a key factory for the given type.
+            </summary>
+        </member>
+        <member name="M:Venflow.KeyConverter.GetOrCreateKeyFactory``2(System.Type)">
+            <summary>
+            Gets or creates a key factory for the given type.
+            </summary>
+        </member>
+    </members>
+</doc>

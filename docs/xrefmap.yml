@@ -2501,12 +2501,15 @@ references:
   isSpec: "True"
   fullName: Venflow.KeyConverter.KeyConverter
   nameWithType: KeyConverter.KeyConverter
-- uid: Venflow.KeyConverter.CanConvertFrom(ITypeDescriptorContext,Type)
-  name: CanConvertFrom(ITypeDescriptorContext, Type)
-  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_CanConvertFrom_ITypeDescriptorContext_Type_
-  commentId: M:Venflow.KeyConverter.CanConvertFrom(ITypeDescriptorContext,Type)
-  fullName: Venflow.KeyConverter.CanConvertFrom(ITypeDescriptorContext, Type)
-  nameWithType: KeyConverter.CanConvertFrom(ITypeDescriptorContext, Type)
+- uid: Venflow.KeyConverter.CanConvertFrom(System.Nullable{ITypeDescriptorContext},Type)
+  name: CanConvertFrom(Nullable<ITypeDescriptorContext>, Type)
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_CanConvertFrom_System_Nullable_ITypeDescriptorContext__Type_
+  commentId: M:Venflow.KeyConverter.CanConvertFrom(System.Nullable{ITypeDescriptorContext},Type)
+  name.vb: CanConvertFrom(Nullable(Of ITypeDescriptorContext), Type)
+  fullName: Venflow.KeyConverter.CanConvertFrom(System.Nullable<ITypeDescriptorContext>, Type)
+  fullName.vb: Venflow.KeyConverter.CanConvertFrom(System.Nullable(Of ITypeDescriptorContext), Type)
+  nameWithType: KeyConverter.CanConvertFrom(Nullable<ITypeDescriptorContext>, Type)
+  nameWithType.vb: KeyConverter.CanConvertFrom(Nullable(Of ITypeDescriptorContext), Type)
 - uid: Venflow.KeyConverter.CanConvertFrom*
   name: CanConvertFrom
   href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_CanConvertFrom_
@@ -2514,12 +2517,15 @@ references:
   isSpec: "True"
   fullName: Venflow.KeyConverter.CanConvertFrom
   nameWithType: KeyConverter.CanConvertFrom
-- uid: Venflow.KeyConverter.CanConvertTo(ITypeDescriptorContext,Type)
-  name: CanConvertTo(ITypeDescriptorContext, Type)
-  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_CanConvertTo_ITypeDescriptorContext_Type_
-  commentId: M:Venflow.KeyConverter.CanConvertTo(ITypeDescriptorContext,Type)
-  fullName: Venflow.KeyConverter.CanConvertTo(ITypeDescriptorContext, Type)
-  nameWithType: KeyConverter.CanConvertTo(ITypeDescriptorContext, Type)
+- uid: Venflow.KeyConverter.CanConvertTo(System.Nullable{ITypeDescriptorContext},System.Nullable{Type})
+  name: CanConvertTo(Nullable<ITypeDescriptorContext>, Nullable<Type>)
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_CanConvertTo_System_Nullable_ITypeDescriptorContext__System_Nullable_Type__
+  commentId: M:Venflow.KeyConverter.CanConvertTo(System.Nullable{ITypeDescriptorContext},System.Nullable{Type})
+  name.vb: CanConvertTo(Nullable(Of ITypeDescriptorContext), Nullable(Of Type))
+  fullName: Venflow.KeyConverter.CanConvertTo(System.Nullable<ITypeDescriptorContext>, System.Nullable<Type>)
+  fullName.vb: Venflow.KeyConverter.CanConvertTo(System.Nullable(Of ITypeDescriptorContext), System.Nullable(Of Type))
+  nameWithType: KeyConverter.CanConvertTo(Nullable<ITypeDescriptorContext>, Nullable<Type>)
+  nameWithType.vb: KeyConverter.CanConvertTo(Nullable(Of ITypeDescriptorContext), Nullable(Of Type))
 - uid: Venflow.KeyConverter.CanConvertTo*
   name: CanConvertTo
   href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_CanConvertTo_
@@ -2527,12 +2533,15 @@ references:
   isSpec: "True"
   fullName: Venflow.KeyConverter.CanConvertTo
   nameWithType: KeyConverter.CanConvertTo
-- uid: Venflow.KeyConverter.ConvertFrom(ITypeDescriptorContext,CultureInfo,System.Object)
-  name: ConvertFrom(ITypeDescriptorContext, CultureInfo, Object)
-  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_ConvertFrom_ITypeDescriptorContext_CultureInfo_System_Object_
-  commentId: M:Venflow.KeyConverter.ConvertFrom(ITypeDescriptorContext,CultureInfo,System.Object)
-  fullName: Venflow.KeyConverter.ConvertFrom(ITypeDescriptorContext, CultureInfo, System.Object)
-  nameWithType: KeyConverter.ConvertFrom(ITypeDescriptorContext, CultureInfo, Object)
+- uid: Venflow.KeyConverter.ConvertFrom(System.Nullable{ITypeDescriptorContext},System.Nullable{CultureInfo},System.Object)
+  name: ConvertFrom(Nullable<ITypeDescriptorContext>, Nullable<CultureInfo>, Object)
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_ConvertFrom_System_Nullable_ITypeDescriptorContext__System_Nullable_CultureInfo__System_Object_
+  commentId: M:Venflow.KeyConverter.ConvertFrom(System.Nullable{ITypeDescriptorContext},System.Nullable{CultureInfo},System.Object)
+  name.vb: ConvertFrom(Nullable(Of ITypeDescriptorContext), Nullable(Of CultureInfo), Object)
+  fullName: Venflow.KeyConverter.ConvertFrom(System.Nullable<ITypeDescriptorContext>, System.Nullable<CultureInfo>, System.Object)
+  fullName.vb: Venflow.KeyConverter.ConvertFrom(System.Nullable(Of ITypeDescriptorContext), System.Nullable(Of CultureInfo), System.Object)
+  nameWithType: KeyConverter.ConvertFrom(Nullable<ITypeDescriptorContext>, Nullable<CultureInfo>, Object)
+  nameWithType.vb: KeyConverter.ConvertFrom(Nullable(Of ITypeDescriptorContext), Nullable(Of CultureInfo), Object)
 - uid: Venflow.KeyConverter.ConvertFrom*
   name: ConvertFrom
   href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_ConvertFrom_
@@ -2540,12 +2549,15 @@ references:
   isSpec: "True"
   fullName: Venflow.KeyConverter.ConvertFrom
   nameWithType: KeyConverter.ConvertFrom
-- uid: Venflow.KeyConverter.ConvertTo(ITypeDescriptorContext,CultureInfo,System.Object,Type)
-  name: ConvertTo(ITypeDescriptorContext, CultureInfo, Object, Type)
-  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_ConvertTo_ITypeDescriptorContext_CultureInfo_System_Object_Type_
-  commentId: M:Venflow.KeyConverter.ConvertTo(ITypeDescriptorContext,CultureInfo,System.Object,Type)
-  fullName: Venflow.KeyConverter.ConvertTo(ITypeDescriptorContext, CultureInfo, System.Object, Type)
-  nameWithType: KeyConverter.ConvertTo(ITypeDescriptorContext, CultureInfo, Object, Type)
+- uid: Venflow.KeyConverter.ConvertTo(System.Nullable{ITypeDescriptorContext},System.Nullable{CultureInfo},System.Nullable{System.Object},Type)
+  name: ConvertTo(Nullable<ITypeDescriptorContext>, Nullable<CultureInfo>, Nullable<Object>, Type)
+  href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_ConvertTo_System_Nullable_ITypeDescriptorContext__System_Nullable_CultureInfo__System_Nullable_System_Object__Type_
+  commentId: M:Venflow.KeyConverter.ConvertTo(System.Nullable{ITypeDescriptorContext},System.Nullable{CultureInfo},System.Nullable{System.Object},Type)
+  name.vb: ConvertTo(Nullable(Of ITypeDescriptorContext), Nullable(Of CultureInfo), Nullable(Of Object), Type)
+  fullName: Venflow.KeyConverter.ConvertTo(System.Nullable<ITypeDescriptorContext>, System.Nullable<CultureInfo>, System.Nullable<System.Object>, Type)
+  fullName.vb: Venflow.KeyConverter.ConvertTo(System.Nullable(Of ITypeDescriptorContext), System.Nullable(Of CultureInfo), System.Nullable(Of System.Object), Type)
+  nameWithType: KeyConverter.ConvertTo(Nullable<ITypeDescriptorContext>, Nullable<CultureInfo>, Nullable<Object>, Type)
+  nameWithType.vb: KeyConverter.ConvertTo(Nullable(Of ITypeDescriptorContext), Nullable(Of CultureInfo), Nullable(Of Object), Type)
 - uid: Venflow.KeyConverter.ConvertTo*
   name: ConvertTo
   href: api/Venflow.KeyConverter.html#Venflow_KeyConverter_ConvertTo_
@@ -3812,6 +3824,12 @@ references:
   commentId: T:Venflow.TypeArgumentException
   fullName: Venflow.TypeArgumentException
   nameWithType: TypeArgumentException
+- uid: Venflow.TypeArgumentException.#ctor
+  name: TypeArgumentException()
+  href: api/Venflow.TypeArgumentException.html#Venflow_TypeArgumentException__ctor
+  commentId: M:Venflow.TypeArgumentException.#ctor
+  fullName: Venflow.TypeArgumentException.TypeArgumentException()
+  nameWithType: TypeArgumentException.TypeArgumentException()
 - uid: Venflow.TypeArgumentException.#ctor(System.String)
   name: TypeArgumentException(String)
   href: api/Venflow.TypeArgumentException.html#Venflow_TypeArgumentException__ctor_System_String_

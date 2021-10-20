@@ -28,11 +28,9 @@ jobs:
 
     - name: Install dependencies
       run: dotnet restore
-      working-directory: ./src/Venflow
 
     - name: Build
       run: dotnet build --configuration Release --no-restore
-      working-directory: ./src/Venflow
 
     - name: Configure PostgreSQL
       uses: harmon758/postgresql-action@v1
@@ -47,27 +45,27 @@ jobs:
       run: rm -rf *
 
     - name: Run Query Benchmarks
-      working-directory: ./src/Venflow/Venflow.Benchmarks
+      working-directory: ./test/Venflow.Benchmarks
       run: dotnet run -c Release -f net6.0 -- -f "*query*"
 
     - name: Run Insert Benchmarks
-      working-directory: ./src/Venflow/Venflow.Benchmarks
+      working-directory: ./test/Venflow.Benchmarks
       run: dotnet run -c Release -f net6.0 -- -f "*insert*"
 
     - name: Run Update Benchmarks
-      working-directory: ./src/Venflow/Venflow.Benchmarks
+      working-directory: ./test/Venflow.Benchmarks
       run: dotnet run -c Release -f net6.0 -- -f "*update*"
 
     - name: Run Delete Benchmarks
-      working-directory: ./src/Venflow/Venflow.Benchmarks
+      working-directory: ./test/Venflow.Benchmarks
       run: dotnet run -c Release -f net6.0 -- -f "*delete*"
 
     - name: Run Instantiation Benchmarks
-      working-directory: ./src/Venflow/Venflow.Benchmarks
+      working-directory: ./test/Venflow.Benchmarks
       run: dotnet run -c Release -f net6.0 -- -f "*instantiation*"
 
     - name: Run Score Calculator
-      working-directory: ./src/Venflow/Venflow.Score
+      working-directory: ./test/Venflow.Score
       run: dotnet run -c Release -- "../Venflow.Benchmarks/BenchmarkDotNet.Artifacts/results" "../../../benchmarks" "../../../README.md"
 
     - name: Commit Benchmark changes
