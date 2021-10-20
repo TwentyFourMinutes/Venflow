@@ -17,8 +17,6 @@ namespace Venflow
     {
         internal static ConcurrentDictionary<Type, DatabaseConfiguration> DatabaseConfigurations { get; } = new ConcurrentDictionary<Type, DatabaseConfiguration>(Environment.ProcessorCount, 1);
 
-        internal static ConcurrentDictionary<Type, DatabaseConfigurationOptionsBuilder> DatabaseConfigurationOptionsBuilders { get; } = new ConcurrentDictionary<Type, DatabaseConfigurationOptionsBuilder>(Environment.ProcessorCount, 1);
-
         internal static Dictionary<Type, Entity> CustomEntities { get; } = new Dictionary<Type, Entity>(0);
 
         internal static object BuildLocker { get; } = new object();
@@ -310,8 +308,8 @@ namespace Venflow
                     return new TableBase<TEntity>(this, (Entity<TEntity>)entity);
                 }
 
-                var databaseConfigurationOptionsBuilder = DatabaseConfigurationCache.DatabaseConfigurationOptionsBuilders[this.GetType()];
-                var entityBuilder = new EntityBuilder<TEntity>(databaseConfigurationOptionsBuilder, string.Empty);
+                var configuration = DatabaseConfigurationCache.DatabaseConfigurations[this.GetType()];
+                var entityBuilder = new EntityBuilder<TEntity>(configuration.ConfigurationOptionsBuilder, string.Empty);
 
                 entityBuilder.IsRegularEntity = false;
 
@@ -366,7 +364,6 @@ namespace Venflow
                         configuration = dbConfigurator.BuildConfiguration(type, databaseConfigurationOptionsBuilder);
 
                         DatabaseConfigurationCache.DatabaseConfigurations.TryAdd(type, configuration);
-                        DatabaseConfigurationCache.DatabaseConfigurationOptionsBuilders.TryAdd(type, databaseConfigurationOptionsBuilder);
                     }
                 }
             }

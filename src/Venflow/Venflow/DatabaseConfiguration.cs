@@ -10,14 +10,16 @@ namespace Venflow
         internal IReadOnlyDictionary<string, Entity> Entities { get; }
         internal Dictionary<Type, Entity> CustomEntities { get; }
         internal IList<Entity> EntitiesList { get; }
+        internal DatabaseConfigurationOptionsBuilder ConfigurationOptionsBuilder { get; }
 
-        internal DatabaseConfiguration(Action<Database, IList<Entity>> databaseInstantiater, IReadOnlyDictionary<string, Entity> entities, IList<Entity> entitiesList)
+        internal DatabaseConfiguration(Action<Database, IList<Entity>> databaseInstantiater, IReadOnlyDictionary<string, Entity> entities, IList<Entity> entitiesList, DatabaseConfigurationOptionsBuilder configurationOptionsBuilder)
         {
             CustomEntities = new Dictionary<Type, Entity>();
 
             DatabaseInstantiater = databaseInstantiater;
             Entities = entities;
             EntitiesList = entitiesList;
+            ConfigurationOptionsBuilder = configurationOptionsBuilder;
         }
 
         internal void InstantiateDatabase(Database database)

@@ -54,7 +54,8 @@ namespace Venflow.Modeling
             return new DatabaseConfiguration(
                 DatabaseTableFactory.CreateInstantiater(databaseType, tables, entitiesArray),
                 new ReadOnlyDictionary<string, Entity>(entities),
-                entitiesArray
+                entitiesArray,
+                configurationOptionsBuilder
             );
         }
 
