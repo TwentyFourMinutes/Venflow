@@ -33,6 +33,35 @@ namespace Reflow.Analyzer.SyntaxGenerator
             return ClassDeclaration(name).WithModifiers(TokenList(modifiers.Select(x => Token(x))));
         }
 
+        internal static ConstructorDeclarationSyntax Constructor(
+            string type,
+            params SyntaxKind[] modifiers
+        )
+        {
+            return ConstructorDeclaration(type)
+                .WithModifiers(TokenList(modifiers.Select(x => Token(x))));
+        }
+
+        internal static PropertyDeclarationSyntax Property(
+            TypeSyntax type,
+            string name,
+            params SyntaxKind[] modifiers
+        )
+        {
+            return PropertyDeclaration(type, name)
+                .WithModifiers(TokenList(modifiers.Select(x => Token(x))));
+        }
+
+        internal static AccessorDeclarationSyntax GetAccessor()
+        {
+            return AccessorDeclaration(SyntaxKind.GetAccessorDeclaration);
+        }
+
+        internal static AccessorDeclarationSyntax SetAccessor()
+        {
+            return AccessorDeclaration(SyntaxKind.SetAccessorDeclaration);
+        }
+
         internal static FieldDeclarationSyntax Field(
             VariableDeclarationSyntax variable,
             params SyntaxKind[] modifiers
@@ -67,6 +96,17 @@ namespace Reflow.Analyzer.SyntaxGenerator
                     ),
                     expression
                 )
+            );
+        }
+
+        internal static IfStatementSyntax IfStatement(
+            ExpressionSyntax condition,
+            params ExpressionSyntax[] statements
+        )
+        {
+            return SyntaxFactory.IfStatement(
+                condition,
+                Block(List(statements.Select(x => ExpressionStatement(x))))
             );
         }
 
@@ -217,7 +257,25 @@ namespace Reflow.Analyzer.SyntaxGenerator
             params MemberDeclarationSyntax[] members
         )
         {
+            return classSyntax.WithMembers((IEnumerable<MemberDeclarationSyntax>)members);
+        }
+
+        internal static ClassDeclarationSyntax WithMembers(
+            this ClassDeclarationSyntax classSyntax,
+            IEnumerable<MemberDeclarationSyntax> members
+        )
+        {
             return classSyntax.WithMembers(List(members));
+        }
+
+        internal static ClassDeclarationSyntax WithBase(
+            this ClassDeclarationSyntax classSyntax,
+            TypeSyntax type
+        )
+        {
+            return classSyntax.WithBaseList(
+                BaseList(SingletonSeparatedList<BaseTypeSyntax>(SimpleBaseType(type)))
+            );
         }
 
         internal static ObjectCreationExpressionSyntax WithArguments(
@@ -230,12 +288,59 @@ namespace Reflow.Analyzer.SyntaxGenerator
             );
         }
 
+        internal static ConstructorDeclarationSyntax WithParameters(
+            this ConstructorDeclarationSyntax constructorSyntax,
+            params (TypeSyntax Type, string Name, SyntaxKind? Default)[] parameters
+        )
+        {
+            return constructorSyntax.WithParameterList(
+                ParameterList(
+                    SeparatedList(
+                        parameters.Select(
+                            x =>
+                                Parameter(Identifier(x.Name))
+                                    .WithType(x.Type)
+                                    .WithDefault(
+                                        x.Default is null
+                                          ? null
+                                          : EqualsValueClause(LiteralExpression(x.Default.Value))
+                                    )
+                        )
+                    )
+                )
+            );
+        }
+
+        internal static PropertyDeclarationSyntax WithAccessors(
+            this PropertyDeclarationSyntax propertySyntax,
+            params AccessorDeclarationSyntax[] accessors
+        )
+        {
+            return propertySyntax.WithAccessorList(AccessorList(List(accessors)));
+        }
+
         internal static ParenthesizedLambdaExpressionSyntax WithStatements(
-            this ParenthesizedLambdaExpressionSyntax ParenthesizedLambdaSyntax,
+            this ParenthesizedLambdaExpressionSyntax parenthesizedLambdaSyntax,
             params StatementSyntax[] statements
         )
         {
-            return ParenthesizedLambdaSyntax.WithBlock(Block(statements));
+            return parenthesizedLambdaSyntax.WithBlock(Block(statements));
+        }
+
+        internal static ConstructorDeclarationSyntax WithStatements(
+            this ConstructorDeclarationSyntax constructorSyntax,
+            params StatementSyntax[] statements
+        )
+        {
+            return constructorSyntax.WithBody(Block(statements));
+        }
+
+        internal static AccessorDeclarationSyntax WithStatements(
+            this AccessorDeclarationSyntax accessorSyntax,
+            params StatementSyntax[] statements
+        )
+        {
+            return accessorSyntax.WithBody(Block(statements));
         }
     }
 }

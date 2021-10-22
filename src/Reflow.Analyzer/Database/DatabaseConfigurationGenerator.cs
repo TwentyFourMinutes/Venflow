@@ -19,6 +19,10 @@ namespace Reflow.Analyzer.Database
             var candidates = (context.SyntaxContextReceiver as SyntaxContextReceiver)!.Candidates;
             var databaseConfigurations = new List<DatabaseConfiguration>();
 
+            var updatableEntites = new Dictionary<string, List<IPropertySymbol>>();
+
+            var genericTableSymbol = context.Compilation.GetTypeByMetadataName("Reflow.Table`1");
+
             foreach (var databaseSymbol in candidates)
             {
                 var members = databaseSymbol.GetMembers();
@@ -29,13 +33,49 @@ namespace Reflow.Analyzer.Database
                 {
                     var member = members[memberIndex];
 
-                    if (member is not IPropertySymbol propertySymbol)
+                    if (
+                        member is not IPropertySymbol tableSymbol
+                        || !tableSymbol.Type.OriginalDefinition.Equals(
+                            genericTableSymbol,
+                            SymbolEqualityComparer.Default
+                        )
+                    )
                         continue;
+
+                    var updatableProperties = new List<IPropertySymbol>();
+
+                    var entityType = ((INamedTypeSymbol)tableSymbol.Type).TypeArguments[0];
+
+                    var entityMembers = entityType.GetMembers();
+
+                    for (
+                        var entityMemberIndex = 0;
+                        entityMemberIndex < entityMembers.Length;
+                        entityMemberIndex++
+                    )
+                    {
+                        var entityMember = entityMembers[entityMemberIndex];
+
+                        if (
+                            entityMember is not IPropertySymbol entityPropertySymbol
+                            || entityPropertySymbol.DeclaredAccessibility != Accessibility.Public
+                            || !entityPropertySymbol.IsVirtual
+                            || entityPropertySymbol.GetMethod is null
+                            || entityPropertySymbol.GetMethod.DeclaredAccessibility
+                                != Accessibility.Public
+                        )
+                            continue;
+
+                        updatableProperties.Add(entityPropertySymbol);
+                    }
+
+                    if (updatableProperties.Count > 0)
+                        updatableEntites.Add(entityType.GetFullName(), updatableProperties);
 
                     configuration.Properties.Add(
                         new DatabaseTable(
-                            propertySymbol.Name,
-                            ((INamedTypeSymbol)propertySymbol.Type).TypeArguments[0].GetFullName()
+                            tableSymbol.Name,
+                            ((INamedTypeSymbol)tableSymbol.Type).TypeArguments[0].GetFullName()
                         )
                     );
                 }
@@ -45,6 +85,8 @@ namespace Reflow.Analyzer.Database
 
                 databaseConfigurations.Add(configuration);
             }
+
+            context.AddNamedSource("Proxies", EntityProxyEmitter.Emit(updatableEntites));
 
             context.AddNamedSource(
                 "DatabaseInstantiater",

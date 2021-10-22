@@ -9,7 +9,7 @@ namespace Reflow.Analyzer
             if (symbol.ContainingNamespace.IsGlobalNamespace)
                 return symbol.Name;
             else
-                return symbol.ContainingNamespace.Name + "." + symbol.Name;
+                return symbol.ContainingNamespace.ToString() + "." + symbol.Name;
         }
 
         public static bool IsReflowSymbol(this ISymbol symbol)
