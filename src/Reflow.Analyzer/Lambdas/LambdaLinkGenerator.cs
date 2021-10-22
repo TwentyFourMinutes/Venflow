@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Reflow.Analyzer.Lambdas;
+using Reflow.Analyzer.Lambdas.Emitters;
 
 namespace Reflow.Analyzer.LambdaLinker
 {
@@ -46,10 +45,7 @@ namespace Reflow.Analyzer.LambdaLinker
                     switch (childNode)
                     {
                         case FieldDeclarationSyntax:
-                        case PropertyDeclarationSyntax
-                        {
-                            Initializer: not null
-                        }:
+                        case PropertyDeclarationSyntax { Initializer: not null }:
                             break;
                         default:
                             continue;
@@ -396,12 +392,23 @@ namespace Reflow.Analyzer.LambdaLinker
                 staticVariableMembers.Clear();
             }
 
+            if (lambdaCollector.Diagnostics.Count > 0)
+            {
+                for (
+                    var diagnosticIndex = 0;
+                    diagnosticIndex < lambdaCollector.Diagnostics.Count;
+                    diagnosticIndex++
+                )
+                {
+                    context.ReportDiagnostic(lambdaCollector.Diagnostics[diagnosticIndex]);
+                }
+
+                return;
+            }
+
             var (links, closureLinks) = lambdaCollector.Build();
 
-            context.AddTemplatedSource(
-                "Lambdas/Resources/LambdaLinks.sbncs",
-                new { links, closureLinks }
-            );
+            context.AddNamedSource("LambdaLinks", LambdaLinksEmitter.Emit(links, closureLinks));
         }
 
         private static bool IsStaticMember(MemberDeclarationSyntax member)
@@ -417,6 +424,8 @@ namespace Reflow.Analyzer.LambdaLinker
 
         private class LambdaCollector
         {
+            public List<Diagnostic> Diagnostics { get; }
+
             private int _memberIndex;
             private int _lambdaIndex;
             private ClassDeclarationSyntax _classSyntax = null!;
@@ -434,6 +443,7 @@ namespace Reflow.Analyzer.LambdaLinker
             {
                 _compilation = compilation;
 
+                Diagnostics = new();
                 _lambdaLinks = new();
                 _closureLambdaLinks = new();
                 _nodeQueue = new();
@@ -495,7 +505,7 @@ namespace Reflow.Analyzer.LambdaLinker
 
                     var traverseIntoChildren = true;
 
-                    if (node is BlockSyntax)
+                    if (node is BlockSyntax && node.Parent is not MemberDeclarationSyntax)
                     {
                         traverseIntoChildren = false;
 
@@ -503,39 +513,41 @@ namespace Reflow.Analyzer.LambdaLinker
                     }
                     else if (node is LambdaExpressionSyntax lambdaSyntax)
                     {
-                        _semanticModel ??= _compilation.GetSemanticModel(
-                            _classSyntax!.SyntaxTree,
-                            true
-                        );
-                        var dataFlow = _semanticModel.AnalyzeDataFlow(lambdaSyntax);
-
-                        if (dataFlow is null || !dataFlow.Succeeded)
+                        if (TryGetQueryLambdaData(lambdaSyntax, out var lambdaData))
                         {
-                            throw new InvalidOperationException();
-                        }
-
-                        var content = lambdaSyntax.ExpressionBody!.ToString().Replace("\"", "\"\"");
-
-                        if (dataFlow.CapturedInside.Length == 0)
-                        {
-                            _lambdaLinks.Add(
-                                new LambdaLink(
-                                    _className,
-                                    $"<{identifier}>b__{_memberIndex}_{_lambdaIndex}",
-                                    content
-                                )
+                            _semanticModel ??= _compilation.GetSemanticModel(
+                                _classSyntax!.SyntaxTree,
+                                true
                             );
-                        }
-                        else
-                        {
-                            _closureLambdaLinks.Add(
-                                new ClosureLambdaLink(
-                                    _className,
-                                    _memberIndex,
-                                    $"<{identifier}>b__{_lambdaIndex}",
-                                    content
-                                )
-                            );
+
+                            var dataFlow = _semanticModel.AnalyzeDataFlow(lambdaSyntax);
+
+                            if (dataFlow is null || !dataFlow.Succeeded)
+                            {
+                                throw new InvalidOperationException();
+                            }
+
+                            if (dataFlow.CapturedInside.Length == 0)
+                            {
+                                _lambdaLinks.Add(
+                                    new LambdaLink(
+                                        _className,
+                                        $"<{identifier}>b__{_memberIndex}_{_lambdaIndex}",
+                                        lambdaData!
+                                    )
+                                );
+                            }
+                            else
+                            {
+                                _closureLambdaLinks.Add(
+                                    new ClosureLambdaLink(
+                                        _className,
+                                        _memberIndex,
+                                        $"<{identifier}>b__{_lambdaIndex}",
+                                        lambdaData!
+                                    )
+                                );
+                            }
                         }
 
                         IncrementLambdaIndex();
@@ -574,6 +586,67 @@ namespace Reflow.Analyzer.LambdaLinker
                 _nodeStack.Clear();
             }
 
+            private bool TryGetQueryLambdaData(
+                LambdaExpressionSyntax lambdaSyntax,
+                out LambdaData? lambdaData
+            )
+            {
+                if (
+                    lambdaSyntax.ExpressionBody
+                    is not InterpolatedStringExpressionSyntax interpolatedStringSyntax
+                )
+                {
+                    Diagnostics.Add(
+                        Diagnostic.Create(
+                            DiagnosticDescriptors.InvalidBody,
+                            lambdaSyntax.GetLocation()
+                        )
+                    );
+
+                    lambdaData = null;
+
+                    return false;
+                }
+
+                var contentLength = 0;
+                short argumentIndex = 0;
+                var parameterIndecies = new List<short>();
+
+                for (
+                    var contentIndex = 0;
+                    contentIndex < interpolatedStringSyntax.Contents.Count;
+                    contentIndex++
+                )
+                {
+                    var content = interpolatedStringSyntax.Contents[contentIndex];
+
+                    if (content is InterpolationSyntax)
+                    {
+                        parameterIndecies.Add(argumentIndex++);
+
+                        contentLength += 3 + (int)Math.Log10(argumentIndex);
+                    }
+                    else if (content is InterpolatedStringContentSyntax stringContentSyntax)
+                    {
+                        contentLength += stringContentSyntax.GetText().Length;
+                    }
+                    else
+                    {
+                        Diagnostics.Add(
+                            Diagnostic.Create(
+                                DiagnosticDescriptors.UnexpectedSymbol,
+                                content.GetLocation(),
+                                content.GetText().ToString()
+                            )
+                        );
+                    }
+                }
+
+                lambdaData = new LambdaData(contentLength, parameterIndecies.ToArray());
+
+                return true;
+            }
+
             internal (List<LambdaLink> Links, List<ClosureLambdaLink> ClosureLinks) Build() =>
                 (_lambdaLinks, _closureLambdaLinks);
         }
@@ -605,7 +678,8 @@ namespace Reflow.Analyzer.LambdaLinker
                         return;
                     }
 
-                    var memberAccessSyntax = invocationSyntax.ChildNodes()
+                    var memberAccessSyntax = invocationSyntax
+                        .ChildNodes()
                         .OfType<MemberAccessExpressionSyntax>()
                         .FirstOrDefault();
 
@@ -619,8 +693,7 @@ namespace Reflow.Analyzer.LambdaLinker
 
                     var symbol = context.SemanticModel.GetSymbolInfo(invocationSyntax).Symbol;
 
-                    if (symbol is null ||
-                        !symbol.ContainingSymbol.IsReflowSymbol())
+                    if (symbol is null || !symbol.ContainingSymbol.IsReflowSymbol())
                     {
                         return;
                     }

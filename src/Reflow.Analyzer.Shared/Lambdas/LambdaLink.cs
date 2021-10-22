@@ -2,15 +2,15 @@
 {
     public class LambdaLink
     {
-        public string FullClassName { get; }
-        public string FullLambdaName { get; }
-        public string Content { get; }
+        internal string FullClassName { get; }
+        internal string FullLambdaName { get; }
+        internal LambdaData Data { get; }
 
-        internal LambdaLink(string fullClassName, string fullLambdaName, string content)
+        public LambdaLink(string fullClassName, string fullLambdaName, LambdaData data)
         {
             FullClassName = fullClassName;
             FullLambdaName = fullLambdaName;
-            Content = content;
+            Data = data;
         }
     }
 }

@@ -5,38 +5,20 @@
     <IsRoslynComponent>true</IsRoslynComponent>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <LangVersion>preview</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CSharpier.MsBuild" Version="0.9.9" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.0-5.final" PrivateAssets="all" />
+    <PackageReference Include="CSharpier.MsBuild" Version="0.10.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.0-6.final" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2" PrivateAssets="all" />
-    <PackageReference Include="Scriban.Signed" Version="4.1.0" GeneratePathProperty="true" PrivateAssets="all" />
-  </ItemGroup>
-
-  <PropertyGroup>
-    <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
-  </PropertyGroup>
-
-  <Target Name="GetDependencyTargetPaths">
-    <ItemGroup>
-      <TargetPathWithTargetPlatformMoniker Include="$(PKGScriban_Signed)\lib\netstandard2.0\Scriban.Signed.dll" IncludeRuntimeDependency="false" />
-    </ItemGroup>
-  </Target>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Database\Resources\DatabaseConfigurations.sbncs" />
-    <EmbeddedResource Include="Lambdas\Resources\LambdaLinks.sbncs" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.0-6.final" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="../Reflow.Analyzer.Shared/**/*.cs">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Database\Resources\DatabaseConfigurations.sbncs" />
   </ItemGroup>
 
   <Import Project="..\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems" Label="Shared" />

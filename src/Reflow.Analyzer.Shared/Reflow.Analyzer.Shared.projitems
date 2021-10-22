@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Lambdas\ClosureLambdaLink.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lambdas\LambdaData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Lambdas\LambdaLink.cs" />
   </ItemGroup>
 </Project>

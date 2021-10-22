@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace Reflow
+﻿namespace Reflow
 {
     internal class AssemblyInfo
     {
-        internal static readonly IReadOnlyList<byte> PublicKey =
-            typeof(AssemblyInfo).Assembly.GetName().GetPublicKey();
+        internal static readonly IReadOnlyList<byte> PublicKey = typeof(AssemblyInfo).Assembly
+            .GetName()
+            .GetPublicKey();
     }
 }

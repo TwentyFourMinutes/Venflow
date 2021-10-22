@@ -2,14 +2,14 @@
 {
     public class ClosureLambdaLink : LambdaLink
     {
-        public int MemberIndex { get; }
+        internal int MemberIndex { get; }
 
-        internal ClosureLambdaLink(
+        public ClosureLambdaLink(
             string fullClassName,
             int memberIndex,
             string fullLambdaName,
-            string content
-        ) : base(fullClassName, fullLambdaName, content)
+            LambdaData data
+        ) : base(fullClassName, fullLambdaName, data)
         {
             MemberIndex = memberIndex;
         }

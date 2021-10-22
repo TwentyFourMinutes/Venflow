@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Reflow.Analyzer.Database.Emitters;
 
 namespace Reflow.Analyzer.Database
 {
@@ -46,9 +46,9 @@ namespace Reflow.Analyzer.Database
                 databaseConfigurations.Add(configuration);
             }
 
-            context.AddTemplatedSource(
-                "Database/Resources/DatabaseConfigurations.sbncs",
-                new { Configurations = databaseConfigurations }
+            context.AddNamedSource(
+                "DatabaseInstantiater",
+                DatabaseConfigurationEmitter.Emit(databaseConfigurations)
             );
         }
 
@@ -84,10 +84,9 @@ namespace Reflow.Analyzer.Database
                     if (
                         potentialDatabaseType.Name is not "Database"
                         || potentialDatabaseType.ContainingNamespace.Name is not "Reflow"
-                        || !potentialDatabaseType.IsReflowSymbol();
+                        || !potentialDatabaseType.IsReflowSymbol()
                     )
                         continue;
-
                     break;
                 }
 

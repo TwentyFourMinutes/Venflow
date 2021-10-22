@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Reflow.Analyzer.Database
+﻿namespace Reflow.Analyzer.Database
 {
     internal class DatabaseConfiguration
     {
