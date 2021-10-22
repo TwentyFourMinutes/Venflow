@@ -5,6 +5,8 @@
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 		<LangVersion>preview</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<EnablePreviewFeatures>true</EnablePreviewFeatures>
+		<GenerateRequiresPreviewFeaturesAttribute>False</GenerateRequiresPreviewFeaturesAttribute>
 	</PropertyGroup>
 
 	<ItemGroup>

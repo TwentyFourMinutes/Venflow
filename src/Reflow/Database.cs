@@ -1,4 +1,8 @@
-﻿namespace Reflow
+﻿using System.Data;
+using System.Data.Common;
+using Npgsql;
+
+namespace Reflow
 {
     public class Database<T> : IDatabase where T : Database<T>
     {
@@ -6,7 +10,9 @@
 
         static Database()
         {
-            var configurations = (Dictionary<Type, DatabaseConfiguration>)typeof(T).Assembly.GetType("Reflow.DatabaseConfigurations")!.GetField("Configurations")!.GetValue(null)!;
+            AssemblyRegister.Assembly ??= typeof(T).Assembly;
+
+            var configurations = (Dictionary<Type, DatabaseConfiguration>)AssemblyRegister.Assembly.GetType("Reflow.DatabaseConfigurations")!.GetField("Configurations")!.GetValue(null)!;
 
             lock (configurations)
             {
@@ -22,14 +28,39 @@
             }
         }
 
-        public Database()
+        /// <inheritdoc/>
+        public DbConnection? Connection { get; private set; }
+
+        private readonly string _connectionString;
+
+        public Database(string connectionString)
         {
+            _connectionString = connectionString;
+
             _configuration.Instantiater.Invoke(this);
+        }
+
+        internal ValueTask EnsureValidConnection(CancellationToken cancellationToken)
+        {
+            Connection ??= new NpgsqlConnection(_connectionString);
+
+            if (Connection.State == ConnectionState.Open)
+            {
+                return default;
+            }
+            else if (Connection.State == ConnectionState.Closed)
+            {
+                return new ValueTask(Connection.OpenAsync(cancellationToken));
+            }
+            else
+            {
+                throw new InvalidOperationException($"The current connection state is invalid. Expected: '{ConnectionState.Open}' or '{ConnectionState.Closed}'. Actual: '{Connection.State}'.");
+            }
         }
     }
 
     public interface IDatabase
     {
-
+        DbConnection? Connection { get; }
     }
 }
