@@ -326,8 +326,8 @@ namespace Venflow
                 var configuration = DatabaseConfigurationCache.DatabaseConfigurations[this.GetType()];
                 var entityBuilder = new EntityBuilder<TEntity>(configuration.ConfigurationOptionsBuilder, string.Empty)
                 {
-                    IsRegularEntity = false;
-                }
+                    IsRegularEntity = false,
+                };
 
 
                 var entityFactory = new EntityFactory<TEntity>(entityBuilder);

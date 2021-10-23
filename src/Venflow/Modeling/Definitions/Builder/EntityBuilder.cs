@@ -532,14 +532,14 @@ namespace Venflow.Modeling.Definitions.Builder
         IEntityBuilder<TEntity> MapId<TTarget>(Expression<Func<TEntity, TTarget>> propertySelector, DatabaseGeneratedOption option);
 
         /// <summary>
-        /// Sets the <see cref="INpgsqlNameTranslator"/> instance to be used for entity table & column name translations.
+        /// Sets the <see cref="INpgsqlNameTranslator"/> instance to be used for entity table and column name translations.
         /// </summary>
         /// <param name="npgsqlNameTranslator">An implementation of <see cref="INpgsqlNameTranslator"/> to be used for entity name translations.</param>
         /// <returns>The same builder instance so that multiple calls can be chained.</returns>
         IEntityBuilder<TEntity> SetNpgsqlNameTranslator(INpgsqlNameTranslator npgsqlNameTranslator);
 
         /// <summary>
-        /// Sets the <see cref="INpgsqlNameTranslator"/> instance to be used for entity table & column name translations.
+        /// Sets the <see cref="INpgsqlNameTranslator"/> instance to be used for entity table and column name translations.
         /// </summary>
         /// <typeparam name="T">An implementation of <see cref="INpgsqlNameTranslator"/> to be used for entity name translations.</typeparam>
         /// <returns>The same builder instance so that multiple calls can be chained.</returns>

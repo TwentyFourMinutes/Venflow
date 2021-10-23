@@ -15,7 +15,7 @@ namespace Venflow
         internal DatabaseConfigurationOptionsBuilder(Type effectiveDatabaseType)
         {
             ConfigurationAssemblies = new(1) { effectiveDatabaseType.Assembly };
-            NpgsqlNameTranslator = new NpgsqlSnakeCaseNameTranslator();
+            NpgsqlNameTranslator = new NpgsqlQuotedNameTranslator();
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Venflow
         }
 
         /// <summary>
-        /// Sets the default naming convention to be used for entity table & column names.
+        /// Sets the default naming convention to be used for entity table and column names.
         /// </summary>
         /// <typeparam name="T">An implementation of <see cref="INpgsqlNameTranslator"/> to be used as the default for name translation.</typeparam>
         /// <returns>The same builder instance so that multiple calls can be chained.</returns>
@@ -69,7 +69,7 @@ namespace Venflow
         }
 
         /// <summary>
-        /// Sets the default naming convention to be used for entity table & column names.
+        /// Sets the default naming convention to be used for entity table and column names.
         /// </summary>
         /// <param name="npgsqlNameTranslator">An implementation of <see cref="INpgsqlNameTranslator"/> to be used as the default for name translation.</param>
         /// <returns>The same builder instance so that multiple calls can be chained.</returns>
