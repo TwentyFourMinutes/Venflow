@@ -19,11 +19,11 @@ namespace Venflow.Modeling.Definitions.Builder
         internal string TableName => string.IsNullOrWhiteSpace(CustomTableName)
             ? NpgsqlNameTranslator.TranslateTypeName(_tableName)
             : CustomTableName;
-        internal string CustomTableName { get; private set; }
+        internal string? CustomTableName { get; private set; }
         internal IDictionary<string, ColumnDefinition> ColumnDefinitions { get; }
 
         internal INpgsqlNameTranslator NpgsqlNameTranslator => CustomNpgsqlNameTranslator ?? _configurationOptionsBuilder.NpgsqlNameTranslator;
-        internal INpgsqlNameTranslator CustomNpgsqlNameTranslator { get; private set; }
+        internal INpgsqlNameTranslator? CustomNpgsqlNameTranslator { get; private set; }
 
         internal bool EntityInNullableContext { get; }
         internal bool DefaultPropNullability { get; }
