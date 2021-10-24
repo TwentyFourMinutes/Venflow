@@ -16,9 +16,21 @@ namespace Venflow.Modeling.Definitions.Builder
         internal override Type Type { get; }
 
         internal ChangeTrackerFactory<TEntity>? ChangeTrackerFactory { get; private set; }
-        internal string TableName => string.IsNullOrWhiteSpace(CustomTableName)
-            ? NpgsqlNameTranslator.TranslateTypeName(_tableName)
-            : CustomTableName;
+        internal string TableName { 
+            get {
+                if (!string.IsNullOrWhiteSpace(CustomTableName))
+                {
+                    return CustomTableName;
+                }
+                var translation = NpgsqlNameTranslator.TranslateTypeName(_tableName);
+                if (string.IsNullOrEmpty(translation))
+                {
+                    throw new NullReferenceException($"Table name: '{_tableName}' translated to null using {NpgsqlNameTranslator.GetType().Name}.");
+                }
+
+                return translation;
+            }
+        } 
         internal string? CustomTableName { get; private set; }
         internal IDictionary<string, ColumnDefinition> ColumnDefinitions { get; }
 
