@@ -7,7 +7,7 @@ using Reflow.Internal;
 
 namespace Reflow.Analyzer.LambdaLinker
 {
-    [Generator(LanguageNames.CSharp)]
+    [Generator]
     public class LambdaLinkGenerator : ISourceGenerator
     {
         void ISourceGenerator.Initialize(GeneratorInitializationContext context)

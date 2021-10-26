@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Reflow.Internal.CodeGenerator\Reflow.Internal.CodeGenerator.csproj" />
+    <ProjectReference Include="..\Reflow.Internal.CodeGenerator\Reflow.Internal.CodeGenerator.csproj" />
   </ItemGroup>
 
   <ItemGroup>
