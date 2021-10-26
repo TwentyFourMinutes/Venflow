@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Reflow.Analyzer
+namespace Reflow.Internal
 {
     public static class GeneratorExecutionContextExtensions
     {

@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Reflow.Analyzer.Lambdas;
 using Reflow.Analyzer.Lambdas.Emitters;
+using Reflow.Internal;
 
 namespace Reflow.Analyzer.LambdaLinker
 {

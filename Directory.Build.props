@@ -38,8 +38,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)images/icon.png" Pack="true" PackagePath="" />
-    <None Include="$(MSBuildThisFileDirectory)LICENSE" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)images/icon.png" Pack="true" PackagePath="" >
+      <Visible>false</Visible>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)LICENSE" Pack="true" PackagePath="" >
+      <Visible>false</Visible>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

@@ -2,8 +2,8 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using Reflow.Analyzer.SyntaxGenerator;
-using static Reflow.Analyzer.SyntaxGenerator.CSharpSyntaxGenerator;
+using Reflow.Internal;
+using static Reflow.Internal.CSharpCodeGenerator;
 
 namespace Reflow.Analyzer.Database.Emitters
 {
@@ -31,14 +31,14 @@ namespace Reflow.Analyzer.Database.Emitters
                 if (numericType != TypeCode.UInt64)
                 {
                     proxyMembers = proxyMembers.Add(
-                        Field("_changes", Type(numericType), Modifiers.Private)
+                        Field("_changes", Type(numericType), CSharpModifiers.Private)
                     );
                 }
                 else
                     throw new NotImplementedException();
 
                 proxyMembers = proxyMembers.Add(
-                    Constructor(proxyTypeName, Modifiers.Public)
+                    Constructor(proxyTypeName, CSharpModifiers.Public)
                         .WithParameters(
                             Parameter("trackChanges", Type(TypeCode.Boolean))
                                 .WithDefault(SyntaxKind.FalseLiteralExpression)
@@ -64,7 +64,7 @@ namespace Reflow.Analyzer.Database.Emitters
                         Property(
                                 property.Name,
                                 Type(property.Type),
-                                Modifiers.Public | Modifiers.Override
+                                CSharpModifiers.Public | CSharpModifiers.Override
                             )
                             .WithGetAccessor(Return(AccessMember(Base(), property.Name)))
                             .WithSetAccessor(
@@ -87,7 +87,7 @@ namespace Reflow.Analyzer.Database.Emitters
                 }
 
                 members = members.Add(
-                    Class(proxyTypeName, Modifiers.Public | Modifiers.Sealed)
+                    Class(proxyTypeName, CSharpModifiers.Public | CSharpModifiers.Sealed)
                         .WithBase(Type(updatableEntity.Key))
                         .WithMembers(proxyMembers)
                 );

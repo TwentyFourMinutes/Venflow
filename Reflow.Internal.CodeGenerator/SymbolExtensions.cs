@@ -1,8 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace Reflow.Analyzer
+namespace Reflow.Internal
 {
-    internal static class SymbolExtensions
+    public static class SymbolExtensions
     {
         public static string GetFullName(this ISymbol symbol)
         {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using Reflow.Analyzer.SyntaxGenerator;
-using static Reflow.Analyzer.SyntaxGenerator.CSharpSyntaxGenerator;
+using Reflow.Internal;
+using static Reflow.Internal.CSharpCodeGenerator;
 
 namespace Reflow.Analyzer.Lambdas.Emitters
 {
@@ -64,12 +64,12 @@ namespace Reflow.Analyzer.Lambdas.Emitters
 
             return File("Reflow")
                 .WithMembers(
-                    Class("Lambdas", Modifiers.Public | Modifiers.Static)
+                    Class("Lambdas", CSharpModifiers.Public | CSharpModifiers.Static)
                         .WithMembers(
                             Field(
                                     "Links",
                                     Array(Type(nameof(LambdaLink))),
-                                    Modifiers.Public | Modifiers.Static
+                                    CSharpModifiers.Public | CSharpModifiers.Static
                                 )
                                 .WithInitializer(
                                     ArrayInitializer(Array(Type(nameof(LambdaLink))), syntaxLinks)

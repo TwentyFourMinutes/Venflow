@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Reflow.Analyzer.Database.Emitters;
+using Reflow.Internal;
 
 namespace Reflow.Analyzer.Database
 {
@@ -16,7 +17,8 @@ namespace Reflow.Analyzer.Database
         {
             context.Compilation.EnsureReference("Reflow", AssemblyInfo.PublicKey);
 
-            var candidates = (context.SyntaxContextReceiver as SyntaxContextReceiver)!.Candidates;
+            var candidates =
+                (context.SyntaxContextReceiver as SyntaxContextReceiver)!.DatabaseCandidates;
             var databaseConfigurations = new List<DatabaseConfiguration>();
 
             var updatableEntites = new Dictionary<string, List<IPropertySymbol>>();
@@ -96,12 +98,17 @@ namespace Reflow.Analyzer.Database
 
         private class SyntaxContextReceiver : ISyntaxContextReceiver
         {
-            internal HashSet<INamedTypeSymbol> Candidates { get; }
+            internal HashSet<INamedTypeSymbol> DatabaseCandidates { get; }
+            internal Dictionary<
+                ITypeSymbol,
+                INamedTypeSymbol
+            > EntityConfigurationCandidates { get; }
 
             internal SyntaxContextReceiver()
             {
 #pragma warning disable RS1024 // Compare symbols correctly
-                Candidates = new(SymbolEqualityComparer.Default);
+                DatabaseCandidates = new(SymbolEqualityComparer.Default);
+                EntityConfigurationCandidates = new(SymbolEqualityComparer.Default);
 #pragma warning restore RS1024 // Compare symbols correctly
             }
 
@@ -114,6 +121,11 @@ namespace Reflow.Analyzer.Database
                     context.Node
                 )!;
 
+                _ = TryGetDatbase(classSymbol) || TryGetEntityConfiguration(classSymbol);
+            }
+
+            private bool TryGetDatbase(INamedTypeSymbol classSymbol)
+            {
                 var potentialDatabaseType = classSymbol;
 
                 while (true)
@@ -121,18 +133,37 @@ namespace Reflow.Analyzer.Database
                     potentialDatabaseType = potentialDatabaseType.BaseType;
 
                     if (potentialDatabaseType is null)
-                        return;
+                        return false;
 
                     if (
-                        potentialDatabaseType.Name is not "Database"
-                        || potentialDatabaseType.ContainingNamespace.Name is not "Reflow"
+                        potentialDatabaseType.GetFullName() is not "Reflow.Database"
                         || !potentialDatabaseType.IsReflowSymbol()
                     )
                         continue;
                     break;
                 }
 
-                Candidates.Add(classSymbol);
+                DatabaseCandidates.Add(classSymbol);
+
+                return true;
+            }
+
+            private bool TryGetEntityConfiguration(INamedTypeSymbol classSymbol)
+            {
+                var baseType = classSymbol.BaseType;
+
+                if (baseType is null)
+                    return false;
+
+                if (
+                    baseType.GetFullName() is not "Reflow.IEntityConfiguration"
+                    || !baseType.IsReflowSymbol()
+                )
+                    return false;
+
+                EntityConfigurationCandidates.Add(baseType.TypeArguments[0], classSymbol);
+
+                return true;
             }
         }
     }

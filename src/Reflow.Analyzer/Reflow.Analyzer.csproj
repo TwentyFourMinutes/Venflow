@@ -21,6 +21,14 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Reflow.Internal.CodeGenerator\Reflow.Internal.CodeGenerator.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Reflow.Internal.Analyzer\Reflow.Internal.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
   <Import Project="..\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems" Label="Shared" />
 
 </Project>

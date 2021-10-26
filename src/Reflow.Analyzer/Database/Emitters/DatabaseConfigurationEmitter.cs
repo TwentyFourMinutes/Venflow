@@ -1,8 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using Reflow.Analyzer.SyntaxGenerator;
-using static Reflow.Analyzer.SyntaxGenerator.CSharpSyntaxGenerator;
+using Reflow.Internal;
+using static Reflow.Internal.CSharpCodeGenerator;
 
 namespace Reflow.Analyzer.Database.Emitters
 {
@@ -65,12 +65,12 @@ namespace Reflow.Analyzer.Database.Emitters
 
             return File("Reflow")
                 .WithMembers(
-                    Class("DatabaseConfigurations", Modifiers.Public | Modifiers.Static)
+                    Class("DatabaseConfigurations", CSharpModifiers.Public | CSharpModifiers.Static)
                         .WithMembers(
                             Field(
                                     "Configurations",
                                     dictionaryType,
-                                    Modifiers.Public | Modifiers.Static
+                                    CSharpModifiers.Public | CSharpModifiers.Static
                                 )
                                 .WithInitializer(
                                     Instance(dictionaryType)
