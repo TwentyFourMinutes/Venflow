@@ -21,7 +21,10 @@ namespace Reflow.Commands
         {
             var queryData = AmbientData.Current ?? throw new InvalidOperationException();
 
-            var dataReader = await queryData.Command.ExecuteReaderAsync(CommandBehavior.SingleRow, cancellationToken);
+            var dataReader = await queryData.Command.ExecuteReaderAsync(
+                CommandBehavior.SingleRow,
+                cancellationToken
+            );
 
             try
             {
@@ -34,7 +37,9 @@ namespace Reflow.Commands
                 {
                     var columnSchema = dataReader.GetColumnSchema();
 
-                    queryData.LambdaData.ColumnIndecies = columnIndecies = new short[columnSchema.Count];
+                    queryData.LambdaData.ColumnIndecies = columnIndecies = new short[
+                        columnSchema.Count
+                    ];
 
                     for (var columnIndex = 0; columnIndex < columnSchema.Count; columnIndex++)
                     {
@@ -42,7 +47,8 @@ namespace Reflow.Commands
 
                         var column = columnSchema[columnIndex];
 
-                        columnIndecies[columnIndex] = (short)column.ColumnOrdinal.GetValueOrDefault();
+                        columnIndecies[columnIndex] =
+                            (short)column.ColumnOrdinal.GetValueOrDefault();
                     }
                 }
 
@@ -80,11 +86,7 @@ namespace Reflow.Commands
 
             command.CommandText = commandBuilder.ToString();
 
-            var queryData = new AmbientData
-            {
-                Command = command,
-                LambdaData = lambdaData
-            };
+            var queryData = new AmbientData { Command = command, LambdaData = lambdaData };
 
             AmbientData.Current = queryData;
         }

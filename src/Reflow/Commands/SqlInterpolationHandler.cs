@@ -38,7 +38,9 @@ namespace Reflow.Commands
             var current = AmbientData.Current;
 
             if (current is null)
-                throw new InvalidOperationException($"Invalid usage of the '{nameof(SqlInterpolationHandler)}' struct, it should never be called explictly by user code.");
+                throw new InvalidOperationException(
+                    $"Invalid usage of the '{nameof(SqlInterpolationHandler)}' struct, it should never be called explictly by user code."
+                );
 
             _commandBuilder = current.CommandBuilder;
             _parameterIndecies = current.ParameterIndecies;

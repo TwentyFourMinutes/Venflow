@@ -12,7 +12,10 @@ namespace Reflow
         {
             AssemblyRegister.Assembly ??= typeof(T).Assembly;
 
-            var configurations = (Dictionary<Type, DatabaseConfiguration>)AssemblyRegister.Assembly.GetType("Reflow.DatabaseConfigurations")!.GetField("Configurations")!.GetValue(null)!;
+            var configurations =
+                (Dictionary<Type, DatabaseConfiguration>)AssemblyRegister.Assembly.GetType(
+                    "Reflow.DatabaseConfigurations"
+                )!.GetField("Configurations")!.GetValue(null)!;
 
             lock (configurations)
             {
@@ -54,7 +57,9 @@ namespace Reflow
             }
             else
             {
-                throw new InvalidOperationException($"The current connection state is invalid. Expected: '{ConnectionState.Open}' or '{ConnectionState.Closed}'. Actual: '{Connection.State}'.");
+                throw new InvalidOperationException(
+                    $"The current connection state is invalid. Expected: '{ConnectionState.Open}' or '{ConnectionState.Closed}'. Actual: '{Connection.State}'."
+                );
             }
         }
     }

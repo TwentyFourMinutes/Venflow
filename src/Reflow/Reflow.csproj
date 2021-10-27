@@ -10,6 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CSharpier.MsBuild" Version="0.10.0" PrivateAssets="all" />
 		<PackageReference Include="Npgsql" Version="6.0.0-rc.1" />
 	</ItemGroup>
 

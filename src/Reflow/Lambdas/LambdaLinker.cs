@@ -11,7 +11,9 @@ namespace Reflow.Lambdas
             if (AssemblyRegister.Assembly is null)
                 throw new InvalidOperationException();
 
-            var linksField = AssemblyRegister.Assembly.GetType("Reflow.Lambdas")!.GetField("Links")!;
+            var linksField = AssemblyRegister.Assembly.GetType("Reflow.Lambdas")!.GetField(
+                "Links"
+            )!;
 
             var links = (LambdaLink[])linksField.GetValue(null)!;
 
@@ -21,7 +23,9 @@ namespace Reflow.Lambdas
             {
                 var link = links[linkIndex];
 
-                var lambdaClosureClass = AssemblyRegister.Assembly.GetType(link.FullClassName) ?? throw new InvalidOperationException();
+                var lambdaClosureClass =
+                    AssemblyRegister.Assembly.GetType(link.FullClassName)
+                    ?? throw new InvalidOperationException();
 
                 MethodInfo? method = null;
 
@@ -31,14 +35,21 @@ namespace Reflow.Lambdas
 
                     var expectedTypeName = "<>DisplayClass" + closureLink.MemberIndex;
 
-                    for (var nestedTypeIndex = 0; nestedTypeIndex < nestedTypes.Length; nestedTypeIndex++)
+                    for (
+                        var nestedTypeIndex = 0;
+                        nestedTypeIndex < nestedTypes.Length;
+                        nestedTypeIndex++
+                    )
                     {
                         var nestedType = nestedTypes[nestedTypeIndex];
 
                         if (!nestedType.Name.StartsWith(expectedTypeName))
                             continue;
 
-                        var tempMethod = nestedType.GetMethod(link.FullLambdaName, BindingFlags.NonPublic | BindingFlags.Instance);
+                        var tempMethod = nestedType.GetMethod(
+                            link.FullLambdaName,
+                            BindingFlags.NonPublic | BindingFlags.Instance
+                        );
 
                         if (tempMethod is null)
                             continue;
@@ -51,8 +62,14 @@ namespace Reflow.Lambdas
                 }
                 else
                 {
-                    var lambdaClass = lambdaClosureClass.GetNestedType("<>c", BindingFlags.NonPublic) ?? throw new InvalidOperationException();
-                    method = lambdaClass.GetMethod(link.FullLambdaName, BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new InvalidOperationException();
+                    var lambdaClass =
+                        lambdaClosureClass.GetNestedType("<>c", BindingFlags.NonPublic)
+                        ?? throw new InvalidOperationException();
+                    method =
+                        lambdaClass.GetMethod(
+                            link.FullLambdaName,
+                            BindingFlags.NonPublic | BindingFlags.Instance
+                        ) ?? throw new InvalidOperationException();
                 }
 
                 lambdaData.Add(method, link.Data);
