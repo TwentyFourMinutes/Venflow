@@ -37,7 +37,7 @@ namespace Reflow.Internal
         public CSharpFileSyntax WithUsings(IEnumerable<string> members)
         {
             _namespaceSyntax = _namespaceSyntax.WithUsings(
-                List(members.Select(x => UsingDirective(Name(x))))
+                List(members.Select(x => UsingDirective(Variable(x))))
             );
 
             return this;

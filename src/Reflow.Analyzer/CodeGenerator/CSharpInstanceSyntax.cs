@@ -10,7 +10,7 @@ namespace Reflow.Internal
 
         public CSharpInstanceSyntax(TypeSyntax type)
         {
-            _objectCreationSyntax = ObjectCreationExpression(type);
+            _objectCreationSyntax = ObjectCreationExpression(type).WithArgumentList(ArgumentList());
         }
 
         public static implicit operator ExpressionSyntax(CSharpInstanceSyntax syntax)

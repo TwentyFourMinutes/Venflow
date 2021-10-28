@@ -7,9 +7,9 @@ namespace Reflow.Internal
     {
         private AttributeSyntax _attributeSyntax;
 
-        public CSharpAttributeSyntax(string name)
+        public CSharpAttributeSyntax(NameSyntax name)
         {
-            _attributeSyntax = Attribute(IdentifierName(name));
+            _attributeSyntax = Attribute(name);
         }
 
         public static implicit operator AttributeSyntax(CSharpAttributeSyntax syntax)
