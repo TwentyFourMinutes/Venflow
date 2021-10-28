@@ -3,7 +3,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Reflow.Analyzer.Lambdas;
 using Reflow.Analyzer.Lambdas.Emitters;
-using Reflow.Internal;
 
 namespace Reflow.Analyzer.LambdaLinker
 {
@@ -514,13 +513,13 @@ namespace Reflow.Analyzer.LambdaLinker
                     }
                     else if (node is LambdaExpressionSyntax lambdaSyntax)
                     {
+                        _semanticModel ??= _compilation.GetSemanticModel(
+                            _classSyntax!.SyntaxTree,
+                            true
+                        );
+
                         if (TryGetQueryLambdaData(lambdaSyntax, out var lambdaData))
                         {
-                            _semanticModel ??= _compilation.GetSemanticModel(
-                                _classSyntax!.SyntaxTree,
-                                true
-                            );
-
                             var dataFlow = _semanticModel.AnalyzeDataFlow(lambdaSyntax);
 
                             if (dataFlow is null || !dataFlow.Succeeded)
@@ -609,6 +608,19 @@ namespace Reflow.Analyzer.LambdaLinker
                     return false;
                 }
 
+                var invocationSymbol = (IMethodSymbol)_semanticModel!.GetSymbolInfo(
+                    lambdaSyntax.FirstAncestorOrSelf<InvocationExpressionSyntax>()!
+                ).Symbol!;
+
+                if (invocationSymbol is null || !invocationSymbol.ContainingSymbol.IsReflowSymbol())
+                {
+                    throw new InvalidOperationException();
+                }
+
+                var entityType = ((INamedTypeSymbol)invocationSymbol.ReceiverType!).TypeArguments[
+                    0
+                ];
+
                 var contentLength = 0;
                 short argumentIndex = 0;
                 var parameterIndecies = new List<short>();
@@ -643,7 +655,11 @@ namespace Reflow.Analyzer.LambdaLinker
                     }
                 }
 
-                lambdaData = new LambdaData(contentLength, parameterIndecies.ToArray());
+                lambdaData = new LambdaData(
+                    contentLength,
+                    parameterIndecies.ToArray(),
+                    new string[] { entityType.GetFullName() }
+                );
 
                 return true;
             }
@@ -688,13 +704,6 @@ namespace Reflow.Analyzer.LambdaLinker
                         memberAccessSyntax is null
                         || memberAccessSyntax.Name.Identifier.Text is not "Query" and not "QueryRaw"
                     )
-                    {
-                        return;
-                    }
-
-                    var symbol = context.SemanticModel.GetSymbolInfo(invocationSyntax).Symbol;
-
-                    if (symbol is null || !symbol.ContainingSymbol.IsReflowSymbol())
                     {
                         return;
                     }

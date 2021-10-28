@@ -55,6 +55,12 @@ namespace Reflow.Analyzer.Database
             }
 
             context.AddNamedSource("EntityProxies", EntityProxyEmitter.Emit(entityProxies));
+            context.AddNamedSource(
+                "EntityConfigurations",
+                EntityConfigurationEmitter.Emit(
+                    data.Configurations.SelectMany(x => x.Tables).ToList()
+                )
+            );
         }
 
         private class SyntaxContextReceiver : ISyntaxContextReceiver

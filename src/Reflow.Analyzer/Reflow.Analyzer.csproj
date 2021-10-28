@@ -15,12 +15,4 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.0-6.final" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="../Reflow.Analyzer.Shared/**/*.cs">
-      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-    </None>
-  </ItemGroup>
-
-  <Import Project="..\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems" Label="Shared" />
-
 </Project>

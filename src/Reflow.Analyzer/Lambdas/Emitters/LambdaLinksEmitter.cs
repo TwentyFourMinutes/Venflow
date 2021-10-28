@@ -20,17 +20,23 @@ namespace Reflow.Analyzer.Lambdas.Emitters
                 var link = links[linkIndex];
 
                 syntaxLinks = syntaxLinks.Add(
-                    Instance(Type(typeof(LambdaLink)))
+                    Instance(Type("Reflow.Lambdas.LambdaLink"))
                         .WithArguments(
-                            Constant(link.FullClassName),
+                            TypeOf(Type(link.FullClassName)),
                             Constant(link.FullLambdaName),
-                            Instance(Type(typeof(LambdaData)))
+                            Instance(Type("Reflow.Lambdas.LambdaData"))
                                 .WithArguments(
                                     Constant(link.Data.MinimumSqlLength),
                                     ArrayInitializer(
-                                        Array(Type(TypeCode.Int16)),
+                                        Array(Type(typeof(short))),
                                         link.Data.ParameterIndecies.Select(
                                             x => (ExpressionSyntax)Constant(x)
+                                        )
+                                    ),
+                                    ArrayInitializer(
+                                        Array(Type(typeof(Type))),
+                                        link.Data.UsedEntities.Select(
+                                            x => (ExpressionSyntax)TypeOf(Type(x))
                                         )
                                     )
                                 )
@@ -43,18 +49,24 @@ namespace Reflow.Analyzer.Lambdas.Emitters
                 var link = closureLinks[linkIndex];
 
                 syntaxLinks = syntaxLinks.Add(
-                    Instance(Type(typeof(ClosureLambdaLink)))
+                    Instance(Type("Reflow.Lambdas.ClosureLambdaLink"))
                         .WithArguments(
-                            Constant(link.FullClassName),
+                            TypeOf(Type(link.FullClassName)),
                             Constant(link.MemberIndex),
                             Constant(link.FullLambdaName),
-                            Instance(Type(typeof(LambdaData)))
+                            Instance(Type("Reflow.Lambdas.LambdaData"))
                                 .WithArguments(
                                     Constant(link.Data.MinimumSqlLength),
                                     ArrayInitializer(
-                                        Array(Type(TypeCode.Int16)),
+                                        Array(Type(typeof(short))),
                                         link.Data.ParameterIndecies.Select(
                                             x => (ExpressionSyntax)Constant(x)
+                                        )
+                                    ),
+                                    ArrayInitializer(
+                                        Array(Type(typeof(Type))),
+                                        link.Data.UsedEntities.Select(
+                                            x => (ExpressionSyntax)TypeOf(Type(x))
                                         )
                                     )
                                 )
@@ -62,17 +74,20 @@ namespace Reflow.Analyzer.Lambdas.Emitters
                 );
             }
 
-            return File("Reflow")
+            return File("Reflow.Lambdas")
                 .WithMembers(
-                    Class("Lambdas", CSharpModifiers.Public | CSharpModifiers.Static)
+                    Class("LambdaLinks", CSharpModifiers.Public | CSharpModifiers.Static)
                         .WithMembers(
                             Field(
                                     "Links",
-                                    Array(Type(typeof(LambdaLink))),
+                                    Array(Type("Reflow.Lambdas.LambdaLink")),
                                     CSharpModifiers.Public | CSharpModifiers.Static
                                 )
                                 .WithInitializer(
-                                    ArrayInitializer(Array(Type(typeof(LambdaLink))), syntaxLinks)
+                                    ArrayInitializer(
+                                        Array(Type("Reflow.Lambdas.LambdaLink")),
+                                        syntaxLinks
+                                    )
                                 )
                         )
                 )

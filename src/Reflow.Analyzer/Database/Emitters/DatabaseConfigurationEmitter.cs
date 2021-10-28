@@ -57,23 +57,17 @@ namespace Reflow.Analyzer.Database.Emitters
                 );
             }
 
-            var dictionaryType = GenericType(
-                typeof(Dictionary<, >),
-                Type(typeof(Type)),
-                Type("Reflow.DatabaseConfiguration")
-            );
-
             return File("Reflow")
                 .WithMembers(
                     Class("DatabaseConfigurations", CSharpModifiers.Public | CSharpModifiers.Static)
                         .WithMembers(
                             Field(
                                     "Configurations",
-                                    dictionaryType,
+                                    DictionaryType(),
                                     CSharpModifiers.Public | CSharpModifiers.Static
                                 )
                                 .WithInitializer(
-                                    Instance(dictionaryType)
+                                    Instance(DictionaryType())
                                         .WithArguments(Constant(configurations.Count))
                                         .WithInitializer(
                                             DictionaryInitializer(configurationEntries)
@@ -82,6 +76,13 @@ namespace Reflow.Analyzer.Database.Emitters
                         )
                 )
                 .GetText();
+
+            static TypeSyntax DictionaryType() =>
+                GenericType(
+                    typeof(Dictionary<, >),
+                    Type(typeof(Type)),
+                    Type("Reflow.DatabaseConfiguration")
+                );
         }
     }
 }
