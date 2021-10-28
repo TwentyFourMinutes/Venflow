@@ -13,10 +13,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Reflow\Reflow.csproj" />
+    <PackageReference Include="CSharpier.MsBuild" Version="0.10.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Reflow\Reflow.csproj" />
     <ProjectReference Include="..\Reflow.Analyzer\Reflow.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 

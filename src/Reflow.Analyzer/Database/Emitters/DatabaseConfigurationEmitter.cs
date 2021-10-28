@@ -24,25 +24,25 @@ namespace Reflow.Analyzer.Database.Emitters
                 const string databaseLocal = "database";
 
                 var statements = new SyntaxList<StatementSyntax>().Add(
-                    Local(databaseLocal, Type("var"))
+                    Local(databaseLocal, Var())
                         .WithInitializer(
-                            Cast(Type(configuration.FullDatabaseName), Name(databaseParameter))
+                            Cast(Type(configuration.Type), Variable(databaseParameter))
                         )
                 );
 
                 for (
                     var propertyIndex = 0;
-                    propertyIndex < configuration.Properties.Count;
+                    propertyIndex < configuration.Tables.Count;
                     propertyIndex++
                 )
                 {
-                    var property = configuration.Properties[propertyIndex];
+                    var property = configuration.Tables[propertyIndex];
 
                     statements = statements.Add(
                         AssignMember(
                             databaseLocal,
-                            property.Name,
-                            Instance(GenericType("Table", Type(property.FullTypeName)))
+                            property.Type,
+                            Instance(GenericType("Reflow.Table", Type(property.EntityType)))
                                 .WithArguments(IdentifierName(databaseLocal))
                         )
                     );
@@ -50,17 +50,17 @@ namespace Reflow.Analyzer.Database.Emitters
 
                 configurationEntries = configurationEntries.Add(
                     DictionaryEntry(
-                        TypeOf(Type(configuration.FullDatabaseName)),
-                        Instance(Type(nameof(DatabaseConfiguration)))
+                        TypeOf(Type(configuration.Type)),
+                        Instance(Type("Reflow.DatabaseConfiguration"))
                             .WithArguments(Lambda(databaseParameter).WithStatements(statements))
                     )
                 );
             }
 
             var dictionaryType = GenericType(
-                "Dictionary",
-                Type(nameof(System.Type)),
-                Type(nameof(DatabaseConfiguration))
+                typeof(Dictionary<, >),
+                Type(typeof(Type)),
+                Type("Reflow.DatabaseConfiguration")
             );
 
             return File("Reflow")

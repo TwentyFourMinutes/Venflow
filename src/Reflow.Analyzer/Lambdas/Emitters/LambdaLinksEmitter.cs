@@ -20,11 +20,11 @@ namespace Reflow.Analyzer.Lambdas.Emitters
                 var link = links[linkIndex];
 
                 syntaxLinks = syntaxLinks.Add(
-                    Instance(Type(nameof(LambdaLink)))
+                    Instance(Type(typeof(LambdaLink)))
                         .WithArguments(
                             Constant(link.FullClassName),
                             Constant(link.FullLambdaName),
-                            Instance(Type(nameof(LambdaData)))
+                            Instance(Type(typeof(LambdaData)))
                                 .WithArguments(
                                     Constant(link.Data.MinimumSqlLength),
                                     ArrayInitializer(
@@ -43,12 +43,12 @@ namespace Reflow.Analyzer.Lambdas.Emitters
                 var link = closureLinks[linkIndex];
 
                 syntaxLinks = syntaxLinks.Add(
-                    Instance(Type(nameof(ClosureLambdaLink)))
+                    Instance(Type(typeof(ClosureLambdaLink)))
                         .WithArguments(
                             Constant(link.FullClassName),
                             Constant(link.MemberIndex),
                             Constant(link.FullLambdaName),
-                            Instance(Type(nameof(LambdaData)))
+                            Instance(Type(typeof(LambdaData)))
                                 .WithArguments(
                                     Constant(link.Data.MinimumSqlLength),
                                     ArrayInitializer(
@@ -68,11 +68,11 @@ namespace Reflow.Analyzer.Lambdas.Emitters
                         .WithMembers(
                             Field(
                                     "Links",
-                                    Array(Type(nameof(LambdaLink))),
+                                    Array(Type(typeof(LambdaLink))),
                                     CSharpModifiers.Public | CSharpModifiers.Static
                                 )
                                 .WithInitializer(
-                                    ArrayInitializer(Array(Type(nameof(LambdaLink))), syntaxLinks)
+                                    ArrayInitializer(Array(Type(typeof(LambdaLink))), syntaxLinks)
                                 )
                         )
                 )

@@ -17,10 +17,7 @@ namespace Reflow.Playground
     {
         public Table<Person> People { get; set; }
 
-        public MyDatabase() : base("")
-        {
-
-        }
+        public MyDatabase() : base("") { }
     }
 
     public class Person
@@ -37,9 +34,7 @@ namespace Reflow.Playground
 
             entityBuilder.MapId(x => x.Id);
 
-            entityBuilder.Column(x => x.Name)
-                         .HasName("name")
-                         .HasType(NpgsqlDbType.Varchar);
+            entityBuilder.Column(x => x.Name).HasName("name").HasType(NpgsqlDbType.Varchar);
         }
     }
 }

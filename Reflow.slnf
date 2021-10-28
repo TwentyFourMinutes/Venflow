@@ -4,8 +4,6 @@
     "projects": [
       "src\\Reflow.Analyzer.Shared\\Reflow.Analyzer.Shared.shproj",
       "src\\Reflow.Analyzer\\Reflow.Analyzer.csproj",
-      "src\\Reflow.Internal.Analyzer\\Reflow.Internal.Analyzer.csproj",
-      "src\\Reflow.Internal.CodeGenerator\\Reflow.Internal.CodeGenerator.csproj",
       "src\\Reflow.Playground\\Reflow.Playground.csproj",
       "src\\Reflow\\Reflow.csproj"
     ]

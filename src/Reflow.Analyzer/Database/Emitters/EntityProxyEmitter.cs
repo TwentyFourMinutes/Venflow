@@ -9,13 +9,15 @@ namespace Reflow.Analyzer.Database.Emitters
 {
     internal static class EntityProxyEmitter
     {
-        internal static SourceText Emit(Dictionary<string, List<IPropertySymbol>> updatableEntites)
+        internal static SourceText Emit(
+            Dictionary<ITypeSymbol, List<IPropertySymbol>> updatableEntites
+        )
         {
             var members = new SyntaxList<SyntaxNode>();
 
             foreach (var updatableEntity in updatableEntites)
             {
-                var proxyTypeName = "__" + updatableEntity.Key.Replace('.', '_');
+                var proxyTypeName = "__" + updatableEntity.Key.Name.Replace('.', '_');
                 var proxyMembers = new SyntaxList<MemberDeclarationSyntax>();
 
                 var propertyCount = updatableEntity.Value.Count;
@@ -45,10 +47,10 @@ namespace Reflow.Analyzer.Database.Emitters
                         )
                         .WithStatements(
                             If(
-                                IdentifierName("trackChanges"),
+                                Variable("trackChanges"),
                                 AssignMember(
                                     This(),
-                                    IdentifierName("_changes"),
+                                    Variable("_changes"),
                                     Constant(1),
                                     SyntaxKind.OrAssignmentExpression
                                 )
@@ -70,14 +72,10 @@ namespace Reflow.Analyzer.Database.Emitters
                             .WithSetAccessor(
                                 AssignMember(Base(), property.Name, Value()),
                                 If(
-                                    IsBitSet(
-                                        IdentifierName("_changes"),
-                                        Type(numericType),
-                                        Constant(1)
-                                    ),
+                                    IsBitSet(Variable("_changes"), Type(numericType), Constant(1)),
                                     AssignMember(
                                         This(),
-                                        IdentifierName("_changes"),
+                                        Variable("_changes"),
                                         Constant(1 << (propertyIndex + 1)),
                                         SyntaxKind.OrAssignmentExpression
                                     )
@@ -85,6 +83,28 @@ namespace Reflow.Analyzer.Database.Emitters
                             )
                     );
                 }
+
+                proxyMembers = proxyMembers.Add(
+                    Method("GetSectionChanges", Type(numericType), CSharpModifiers.Public)
+                        .WithParameters(Parameter("sectionIndex", Type(typeof(byte))))
+                        .WithStatements(
+                            Switch(
+                                Variable("sectionIndex"),
+                                Case(
+                                    Constant(0),
+                                    Return(
+                                        Cast(
+                                            Type(numericType),
+                                            Parenthesis(
+                                                ShiftRight(Variable("_changes"), Constant(1))
+                                            )
+                                        )
+                                    )
+                                ),
+                                DefaultCase(Throw(Instance(Type(typeof(ArgumentException)))))
+                            )
+                        )
+                );
 
                 members = members.Add(
                     Class(proxyTypeName, CSharpModifiers.Public | CSharpModifiers.Sealed)
