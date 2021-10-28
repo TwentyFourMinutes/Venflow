@@ -1,10 +1,10 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace Reflow.Internal
+namespace Reflow.Analyzer
 {
-    public static class SymbolExtensions
+    internal static class SymbolExtensions
     {
-        public static string GetFullName(this ISymbol symbol)
+        internal static string GetFullName(this ISymbol symbol)
         {
             if (symbol.ContainingNamespace.IsGlobalNamespace)
                 return symbol.Name;
@@ -12,7 +12,7 @@ namespace Reflow.Internal
                 return symbol.ContainingNamespace.ToString() + "." + symbol.Name;
         }
 
-        public static bool IsReflowSymbol(this ISymbol symbol)
+        internal static bool IsReflowSymbol(this ISymbol symbol)
         {
             var assemblyIdentity = symbol.ContainingAssembly.Identity;
 
