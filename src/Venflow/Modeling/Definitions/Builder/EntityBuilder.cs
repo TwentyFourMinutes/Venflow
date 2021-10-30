@@ -332,7 +332,12 @@ namespace Venflow.Modeling.Definitions.Builder
                     columnName = columnDefinition.Name;
                 }
 
-                var column = new EntityColumn<TEntity>(property, NpgsqlNameTranslator.TranslateMemberName(columnName), _valueRetrieverFactory.GenerateRetriever(columnDefinition), columnDefinition.DbType, columnDefinition.Options);
+                var translatedColumn = NpgsqlNameTranslator.TranslateMemberName(columnName);
+                if(translatedColumn is null || string.IsNullOrWhiteSpace(translatedColumn))
+                {
+                    throw new NullReferenceException($"Column name: '{columnName}' translated to null using {NpgsqlNameTranslator.GetType().Name}.");
+                }
+                var column = new EntityColumn<TEntity>(property, columnName, translatedColumn, _valueRetrieverFactory.GenerateRetriever(columnDefinition), columnDefinition.DbType, columnDefinition.Options);
 
                 if (expectsChangeTracking)
                 {

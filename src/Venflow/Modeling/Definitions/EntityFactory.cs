@@ -188,7 +188,7 @@ namespace Venflow.Modeling.Definitions
                 if (column.Options.HasFlag(ColumnOptions.ReadOnly) && index > 0)
                     continue;
 
-                sb.Append(column.ColumnName)
+                sb.Append(column.QueryColumnName)
                   .Append(", ");
             }
 

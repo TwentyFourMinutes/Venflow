@@ -987,6 +987,20 @@
             <returns>An object that can be used to configure the current <see cref="T:Venflow.Database"/> instance.</returns>
             <remarks>If you add a custom configuration location, the assembly of the database type will not be automatically included.</remarks>
         </member>
+        <member name="M:Venflow.DatabaseConfigurationOptionsBuilder.SetNamingConvention``1">
+            <summary>
+            Sets the default naming convention to be used for entity table and column names.
+            </summary>
+            <typeparam name="T">An implementation of <see cref="T:Npgsql.INpgsqlNameTranslator"/> to be used as the default for name translation.</typeparam>
+            <returns>The same builder instance so that multiple calls can be chained.</returns>
+        </member>
+        <member name="M:Venflow.DatabaseConfigurationOptionsBuilder.SetNamingConvention(Npgsql.INpgsqlNameTranslator)">
+            <summary>
+            Sets the default naming convention to be used for entity table and column names.
+            </summary>
+            <param name="npgsqlNameTranslator">An implementation of <see cref="T:Npgsql.INpgsqlNameTranslator"/> to be used as the default for name translation.</param>
+            <returns>The same builder instance so that multiple calls can be chained.</returns>
+        </member>
         <member name="M:Venflow.DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum``1(System.String,Npgsql.INpgsqlNameTranslator)">
             <summary>
             Maps a PostgreSQL enum to a CLR enum.
@@ -1415,6 +1429,20 @@
             <param name="option">The option which define how the primary key is generate.</param>
             <returns>The same builder instance so that multiple calls can be chained.</returns>
         </member>
+        <member name="M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.SetNpgsqlNameTranslator(Npgsql.INpgsqlNameTranslator)">
+            <summary>
+            Sets the <see cref="T:Npgsql.INpgsqlNameTranslator"/> instance to be used for entity table and column name translations.
+            </summary>
+            <param name="npgsqlNameTranslator">An implementation of <see cref="T:Npgsql.INpgsqlNameTranslator"/> to be used for entity name translations.</param>
+            <returns>The same builder instance so that multiple calls can be chained.</returns>
+        </member>
+        <member name="M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.SetNpgsqlNameTranslator``1">
+            <summary>
+            Sets the <see cref="T:Npgsql.INpgsqlNameTranslator"/> instance to be used for entity table and column name translations.
+            </summary>
+            <typeparam name="T">An implementation of <see cref="T:Npgsql.INpgsqlNameTranslator"/> to be used for entity name translations.</typeparam>
+            <returns>The same builder instance so that multiple calls can be chained.</returns>
+        </member>
         <member name="M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.MapPostgresEnum``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.String,Npgsql.INpgsqlNameTranslator)">
             <summary>
             Maps a PostgreSQL enum to a CLR enum.
@@ -1669,6 +1697,21 @@
             <remarks>
             <strong>This API may very likely not return the exact SQL the server will be using!</strong> This is due to its client-side implementation. The returned SQL is just a rough estimate of what the server may be using. Additionally this API does require the naming of parameters to be like '@p' followed by their index. Furthermore the parameters have to be in the exact order as their placeholder.
             </remarks>
+        </member>
+        <member name="T:Venflow.NpgsqlQuotedNameTranslator">
+            <summary>
+            A name translator which preserves CLR names (e.g. SomeClass) when mapping names to the database.
+            </summary>
+        </member>
+        <member name="M:Venflow.NpgsqlQuotedNameTranslator.TranslateTypeName(System.String)">
+            <summary>
+            Given a CLR type name (e.g class, struct, enum), translates its name to a database type name.
+            </summary>
+        </member>
+        <member name="M:Venflow.NpgsqlQuotedNameTranslator.TranslateMemberName(System.String)">
+            <summary>
+            Given a CLR member name (property or field), translates its name to a database type name.
+            </summary>
         </member>
         <member name="T:Venflow.ParameterTypeHandler">
             <summary>

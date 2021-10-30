@@ -329,7 +329,6 @@ namespace Venflow
                     IsRegularEntity = false,
                 };
 
-
                 var entityFactory = new EntityFactory<TEntity>(entityBuilder);
 
                 entity = entityFactory.BuildEntity();
