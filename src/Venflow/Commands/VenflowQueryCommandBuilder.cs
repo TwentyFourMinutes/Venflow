@@ -217,7 +217,7 @@ namespace Venflow.Commands
                                         if (column.PropertyInfo.Name != memberArgument.Member.Name)
                                             continue;
 
-                                        name = entity.TableName + "." + column.QueryColumnName;
+                                        name = entity.TableName + "." + column.NormalizedColumnName;
 
                                         break;
                                     }
@@ -578,21 +578,21 @@ namespace Venflow.Commands
                 {
                     sb.Append(relation.LeftEntity.TableName)
                       .Append(".")
-                      .Append(relation.ForeignKeyColumn.QueryColumnName)
+                      .Append(relation.ForeignKeyColumn.NormalizedColumnName)
                       .Append(" = ")
                       .Append(relation.RightEntity.TableName)
                       .Append(".")
-                      .Append(relation.RightEntity.GetPrimaryColumn()!.QueryColumnName);
+                      .Append(relation.RightEntity.GetPrimaryColumn()!.NormalizedColumnName);
                 }
                 else
                 {
                     sb.Append(relation.RightEntity.TableName)
                       .Append(".")
-                      .Append(relation.ForeignKeyColumn.QueryColumnName)
+                      .Append(relation.ForeignKeyColumn.NormalizedColumnName)
                       .Append(" = ")
                       .Append(relation.LeftEntity.TableName)
                       .Append(".")
-                      .Append(relation.LeftEntity.GetPrimaryColumn()!.QueryColumnName);
+                      .Append(relation.LeftEntity.GetPrimaryColumn()!.NormalizedColumnName);
                 }
             }
         }

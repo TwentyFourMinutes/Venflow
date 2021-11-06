@@ -404,7 +404,7 @@ namespace Venflow.Dynamic.Inserter
             {
                 // Append " RETURNING \"PrimaryKey\""
                 _moveNextMethodIL.Emit(OpCodes.Ldloc, commandBuilderLocal);
-                _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING " + _rootEntity.GetPrimaryColumn().QueryColumnName + ";");
+                _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING " + _rootEntity.GetPrimaryColumn().NormalizedColumnName + ";");
                 _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderLocal.LocalType.GetMethod("Append", new[] { typeof(string) }));
                 _moveNextMethodIL.Emit(OpCodes.Pop);
             }
@@ -953,7 +953,7 @@ namespace Venflow.Dynamic.Inserter
                     // Append " RETURNING \"PrimaryKey\""
                     _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                     _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
-                    _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING " + entity.GetPrimaryColumn().QueryColumnName + ";");
+                    _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING " + entity.GetPrimaryColumn().NormalizedColumnName + ";");
                     _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
                     _moveNextMethodIL.Emit(OpCodes.Pop);
                 }
@@ -1415,7 +1415,7 @@ namespace Venflow.Dynamic.Inserter
             if (skipPrimaryKey)
             {
                 sqlBuilder.Append(") RETURNING ")
-                          .Append(_rootEntity.GetPrimaryColumn().QueryColumnName)
+                          .Append(_rootEntity.GetPrimaryColumn().NormalizedColumnName)
                           .Append(";");
             }
             else
@@ -1635,7 +1635,7 @@ namespace Venflow.Dynamic.Inserter
                     if (skipPrimaryKey)
                     {
                         stringBuilder.Append(") RETURNING ")
-                                     .Append(_rootEntity.GetPrimaryColumn().QueryColumnName)
+                                     .Append(_rootEntity.GetPrimaryColumn().NormalizedColumnName)
                                      .Append(";");
                     }
                     else
@@ -2028,7 +2028,7 @@ namespace Venflow.Dynamic.Inserter
                         // Append " RETURNING \"PrimaryKey\""
                         _moveNextMethodIL.Emit(OpCodes.Ldarg_0);
                         _moveNextMethodIL.Emit(OpCodes.Ldfld, commandBuilderField);
-                        _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING " + entity.GetPrimaryColumn().QueryColumnName + ";");
+                        _moveNextMethodIL.Emit(OpCodes.Ldstr, " RETURNING " + entity.GetPrimaryColumn().NormalizedColumnName + ";");
                         _moveNextMethodIL.Emit(OpCodes.Callvirt, commandBuilderField.FieldType.GetMethod("Append", new[] { typeof(string) }));
                         _moveNextMethodIL.Emit(OpCodes.Pop);
                     }

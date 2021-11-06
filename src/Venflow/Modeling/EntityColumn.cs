@@ -25,7 +25,7 @@ namespace Venflow.Modeling
     internal abstract class EntityColumn
     {
         internal string ColumnName { get; }
-        internal string QueryColumnName { get; }
+        internal string NormalizedColumnName { get; }
 
         internal PropertyInfo PropertyInfo { get; }
         internal NpgsqlDbType? DbType { get; }
@@ -34,14 +34,14 @@ namespace Venflow.Modeling
         protected EntityColumn(
             PropertyInfo propertyInfo, 
             string columnName,
-            string queryColumnName,
+            string normalizedColumnName,
             NpgsqlDbType? dbType, 
             ColumnOptions options
             )
         {
             PropertyInfo = propertyInfo;
             ColumnName = columnName;
-            QueryColumnName = queryColumnName;
+            NormalizedColumnName = normalizedColumnName;
             DbType = dbType;
             Options = options;
         }

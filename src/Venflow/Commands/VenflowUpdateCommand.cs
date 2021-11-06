@@ -170,7 +170,7 @@ namespace Venflow.Commands
 
                     var column = entityColumns[columnIndex - 1];
 
-                    commandString.Append(column.QueryColumnName)
+                    commandString.Append(column.NormalizedColumnName)
                                  .Append(" = ");
 
                     var parameter = column.ValueRetriever(entity, index.ToString());
@@ -186,7 +186,7 @@ namespace Venflow.Commands
             commandString.Length -= 2;
 
             commandString.Append(" WHERE ")
-                         .Append(EntityConfiguration.PrimaryColumn!.QueryColumnName)
+                         .Append(EntityConfiguration.PrimaryColumn!.NormalizedColumnName)
                          .Append(" = ");
 
             var primaryParameter = EntityConfiguration.PrimaryColumn.ValueRetriever(entity, "PK" + index);
