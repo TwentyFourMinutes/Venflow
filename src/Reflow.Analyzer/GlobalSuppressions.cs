@@ -10,12 +10,19 @@ using System.Diagnostics.CodeAnalysis;
     "RS1024:Compare symbols correctly",
     Justification = "<Pending>",
     Scope = "member",
-    Target = "~M:Reflow.Analyzer.Database.EntityConfigurationGenerator.SyntaxContextReceiver.#ctor"
+    Target = "~M:Reflow.Analyzer.Database.EntityConfigurationSection.SyntaxReceiver.#ctor"
 )]
 [assembly: SuppressMessage(
     "MicrosoftCodeAnalysisCorrectness",
     "RS1024:Compare symbols correctly",
     Justification = "<Pending>",
     Scope = "member",
-    Target = "~M:Reflow.Analyzer.Database.EntityConfigurationGenerator.Execute(Microsoft.CodeAnalysis.GeneratorExecutionContext,Microsoft.CodeAnalysis.ISyntaxContextReceiver,Reflow.Analyzer.Database.DatabaseGeneratorGroup.Data)"
+    Target = "~M:Reflow.Analyzer.Database.EntityConfigurationSection.Execute(Microsoft.CodeAnalysis.GeneratorExecutionContext,Reflow.Analyzer.Database.EntityConfigurationGenerator.SyntaxReceiver,Reflow.Analyzer.Database.DatabaseConfigurationSection)~Reflow.Analyzer.NoData"
+)]
+[assembly: SuppressMessage(
+    "MicrosoftCodeAnalysisCorrectness",
+    "RS1024:Compare symbols correctly",
+    Justification = "<Pending>",
+    Scope = "member",
+    Target = "~M:Reflow.Analyzer.Database.EntityConfigurationSection.Execute(Microsoft.CodeAnalysis.GeneratorExecutionContext,Reflow.Analyzer.Database.EntityConfigurationSection.SyntaxReceiver,Reflow.Analyzer.Database.DatabaseConfigurationSection)~Reflow.Analyzer.NoData"
 )]

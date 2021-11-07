@@ -1,29 +1,36 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Reflow.Analyzer.Database.Emitters;
+using Reflow.Analyzer.LambdaLinker;
 
 namespace Reflow.Analyzer.Database
 {
-    internal class DatabaseConfigurationGenerator
-        : IGroupableSourceGenerator<DatabaseGeneratorGroup.Data>
+    internal class DatabaseConfigurationSection
+        : GeneratorSection<
+              LambdaLinkSection,
+              DatabaseConfigurationSection.SyntaxReceiver,
+              List<DatabaseConfiguration>
+          >
     {
-        public ISyntaxContextReceiver Initialize() => new SyntaxContextReceiver();
-
-        public void Execute(
+        protected override List<DatabaseConfiguration> Execute(
             GeneratorExecutionContext context,
-            ISyntaxContextReceiver syntaxReceiver,
-            DatabaseGeneratorGroup.Data data
+            SyntaxReceiver syntaxReceiver,
+            LambdaLinkSection previous
         )
         {
             context.Compilation.EnsureReference("Reflow", AssemblyInfo.PublicKey);
 
-            var candidates = (syntaxReceiver as SyntaxContextReceiver)!.Candidates;
-
             var genericTableSymbol = context.Compilation.GetTypeByMetadataName("Reflow.Table`1");
 
-            for (var candidateIndex = 0; candidateIndex < candidates.Count; candidateIndex++)
+            var configurations = new List<DatabaseConfiguration>();
+
+            for (
+                var candidateIndex = 0;
+                candidateIndex < syntaxReceiver.Candidates.Count;
+                candidateIndex++
+            )
             {
-                var candidate = candidates[candidateIndex];
+                var candidate = syntaxReceiver.Candidates[candidateIndex];
 
                 var members = candidate.GetMembers();
 
@@ -76,21 +83,23 @@ namespace Reflow.Analyzer.Database
                     if (configuration.Tables.Count == 0)
                         continue;
 
-                    data.Configurations.Add(configuration);
+                    configurations.Add(configuration);
                 }
             }
 
             context.AddNamedSource(
                 "DatabaseInstantiater",
-                DatabaseConfigurationEmitter.Emit(data.Configurations)
+                DatabaseConfigurationEmitter.Emit(configurations)
             );
+
+            return configurations;
         }
 
-        private class SyntaxContextReceiver : ISyntaxContextReceiver
+        internal class SyntaxReceiver : ISyntaxContextReceiver
         {
             internal List<INamedTypeSymbol> Candidates { get; }
 
-            internal SyntaxContextReceiver()
+            internal SyntaxReceiver()
             {
                 Candidates = new();
             }

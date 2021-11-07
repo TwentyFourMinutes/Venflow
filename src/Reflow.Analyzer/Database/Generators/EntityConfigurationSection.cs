@@ -4,32 +4,26 @@ using Reflow.Analyzer.Database.Emitters;
 
 namespace Reflow.Analyzer.Database
 {
-    internal class EntityConfigurationGenerator
-        : IGroupableSourceGenerator<DatabaseGeneratorGroup.Data>
+    internal class EntityConfigurationSection
+        : GeneratorSection<DatabaseConfigurationSection, EntityConfigurationSection.SyntaxReceiver>
     {
-        public ISyntaxContextReceiver Initialize() => new SyntaxContextReceiver();
-
-        public void Execute(
+        protected override NoData Execute(
             GeneratorExecutionContext context,
-            ISyntaxContextReceiver syntaxReceiver,
-            DatabaseGeneratorGroup.Data data
+            SyntaxReceiver syntaxReceiver,
+            DatabaseConfigurationSection previous
         )
         {
-            context.Compilation.EnsureReference("Reflow", AssemblyInfo.PublicKey);
-
-            var candidates = (syntaxReceiver as SyntaxContextReceiver)!.Candidates;
-
             var entityProxies = new Dictionary<ITypeSymbol, List<IPropertySymbol>>(
                 SymbolEqualityComparer.Default
             );
 
             for (
                 var configurationIndex = 0;
-                configurationIndex < data.Configurations.Count;
+                configurationIndex < previous.Data.Count;
                 configurationIndex++
             )
             {
-                var configuration = data.Configurations[configurationIndex];
+                var configuration = previous.Data[configurationIndex];
 
                 for (var tableIndex = 0; tableIndex < configuration.Tables.Count; tableIndex++)
                 {
@@ -57,17 +51,17 @@ namespace Reflow.Analyzer.Database
             context.AddNamedSource("EntityProxies", EntityProxyEmitter.Emit(entityProxies));
             context.AddNamedSource(
                 "EntityConfigurations",
-                EntityConfigurationEmitter.Emit(
-                    data.Configurations.SelectMany(x => x.Tables).ToList()
-                )
+                EntityConfigurationEmitter.Emit(previous.Data.SelectMany(x => x.Tables).ToList())
             );
+
+            return default;
         }
 
-        private class SyntaxContextReceiver : ISyntaxContextReceiver
+        internal class SyntaxReceiver : ISyntaxContextReceiver
         {
             internal Dictionary<ITypeSymbol, INamedTypeSymbol> Candidates { get; }
 
-            internal SyntaxContextReceiver()
+            internal SyntaxReceiver()
             {
                 Candidates = new(SymbolEqualityComparer.Default);
             }

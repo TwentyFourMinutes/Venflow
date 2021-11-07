@@ -6,26 +6,22 @@ using Reflow.Analyzer.Lambdas.Emitters;
 
 namespace Reflow.Analyzer.LambdaLinker
 {
-    [Generator]
-    public class LambdaLinkGenerator : ISourceGenerator
+    internal class LambdaLinkSection
+        : GeneratorSection<SourceGenerator, LambdaLinkSection.SyntaxReceiver>
     {
-        void ISourceGenerator.Initialize(GeneratorInitializationContext context)
+        protected override NoData Execute(
+            GeneratorExecutionContext context,
+            SyntaxReceiver syntaxReceiver,
+            SourceGenerator previous
+        )
         {
-            context.RegisterForSyntaxNotifications(() => new SyntaxContextReceiver());
-        }
-
-        void ISourceGenerator.Execute(GeneratorExecutionContext context)
-        {
-            context.Compilation.EnsureReference("Reflow", AssemblyInfo.PublicKey);
-
-            var candidates = (context.SyntaxContextReceiver as SyntaxContextReceiver)!.Candidates;
             var lambdaCollector = new LambdaCollector(context.Compilation);
 
             var members = new List<SyntaxNode>();
             var instanceVariableMembers = new List<MemberDeclarationSyntax>();
             var staticVariableMembers = new List<MemberDeclarationSyntax>();
 
-            foreach (var classSyntax in candidates)
+            foreach (var classSyntax in syntaxReceiver.Candidates)
             {
                 lambdaCollector.SetClassScope(classSyntax);
 
@@ -403,12 +399,14 @@ namespace Reflow.Analyzer.LambdaLinker
                     context.ReportDiagnostic(lambdaCollector.Diagnostics[diagnosticIndex]);
                 }
 
-                return;
+                return default;
             }
 
             var (links, closureLinks) = lambdaCollector.Build();
 
             context.AddNamedSource("LambdaLinks", LambdaLinksEmitter.Emit(links, closureLinks));
+
+            return default;
         }
 
         private static bool IsStaticMember(MemberDeclarationSyntax member)
@@ -668,11 +666,11 @@ namespace Reflow.Analyzer.LambdaLinker
                 (_lambdaLinks, _closureLambdaLinks);
         }
 
-        private class SyntaxContextReceiver : ISyntaxContextReceiver
+        internal class SyntaxReceiver : ISyntaxContextReceiver
         {
             internal HashSet<ClassDeclarationSyntax> Candidates { get; }
 
-            internal SyntaxContextReceiver()
+            internal SyntaxReceiver()
             {
                 Candidates = new();
             }
