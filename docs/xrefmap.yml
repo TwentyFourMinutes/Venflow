@@ -1674,6 +1674,28 @@ references:
   fullName.vb: Venflow.DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum(Of TEnum)(System.Nullable(Of System.String), System.Nullable(Of INpgsqlNameTranslator))
   nameWithType: DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum<TEnum>(Nullable<String>, Nullable<INpgsqlNameTranslator>)
   nameWithType.vb: DatabaseConfigurationOptionsBuilder.RegisterPostgresEnum(Of TEnum)(Nullable(Of String), Nullable(Of INpgsqlNameTranslator))
+- uid: Venflow.DatabaseConfigurationOptionsBuilder.SetNamingConvention(INpgsqlNameTranslator)
+  name: SetNamingConvention(INpgsqlNameTranslator)
+  href: api/Venflow.DatabaseConfigurationOptionsBuilder.html#Venflow_DatabaseConfigurationOptionsBuilder_SetNamingConvention_INpgsqlNameTranslator_
+  commentId: M:Venflow.DatabaseConfigurationOptionsBuilder.SetNamingConvention(INpgsqlNameTranslator)
+  fullName: Venflow.DatabaseConfigurationOptionsBuilder.SetNamingConvention(INpgsqlNameTranslator)
+  nameWithType: DatabaseConfigurationOptionsBuilder.SetNamingConvention(INpgsqlNameTranslator)
+- uid: Venflow.DatabaseConfigurationOptionsBuilder.SetNamingConvention*
+  name: SetNamingConvention
+  href: api/Venflow.DatabaseConfigurationOptionsBuilder.html#Venflow_DatabaseConfigurationOptionsBuilder_SetNamingConvention_
+  commentId: Overload:Venflow.DatabaseConfigurationOptionsBuilder.SetNamingConvention
+  isSpec: "True"
+  fullName: Venflow.DatabaseConfigurationOptionsBuilder.SetNamingConvention
+  nameWithType: DatabaseConfigurationOptionsBuilder.SetNamingConvention
+- uid: Venflow.DatabaseConfigurationOptionsBuilder.SetNamingConvention``1
+  name: SetNamingConvention<T>()
+  href: api/Venflow.DatabaseConfigurationOptionsBuilder.html#Venflow_DatabaseConfigurationOptionsBuilder_SetNamingConvention__1
+  commentId: M:Venflow.DatabaseConfigurationOptionsBuilder.SetNamingConvention``1
+  name.vb: SetNamingConvention(Of T)()
+  fullName: Venflow.DatabaseConfigurationOptionsBuilder.SetNamingConvention<T>()
+  fullName.vb: Venflow.DatabaseConfigurationOptionsBuilder.SetNamingConvention(Of T)()
+  nameWithType: DatabaseConfigurationOptionsBuilder.SetNamingConvention<T>()
+  nameWithType.vb: DatabaseConfigurationOptionsBuilder.SetNamingConvention(Of T)()
 - uid: Venflow.DatabaseConfigurationOptionsBuilder.UseConfigurations(Assembly)
   name: UseConfigurations(Assembly)
   href: api/Venflow.DatabaseConfigurationOptionsBuilder.html#Venflow_DatabaseConfigurationOptionsBuilder_UseConfigurations_Assembly_
@@ -2733,6 +2755,32 @@ references:
   fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).MapToTable
   nameWithType: IEntityBuilder<TEntity>.MapToTable
   nameWithType.vb: IEntityBuilder(Of TEntity).MapToTable
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.SetNpgsqlNameTranslator(INpgsqlNameTranslator)
+  name: SetNpgsqlNameTranslator(INpgsqlNameTranslator)
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_SetNpgsqlNameTranslator_INpgsqlNameTranslator_
+  commentId: M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.SetNpgsqlNameTranslator(INpgsqlNameTranslator)
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.SetNpgsqlNameTranslator(INpgsqlNameTranslator)
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).SetNpgsqlNameTranslator(INpgsqlNameTranslator)
+  nameWithType: IEntityBuilder<TEntity>.SetNpgsqlNameTranslator(INpgsqlNameTranslator)
+  nameWithType.vb: IEntityBuilder(Of TEntity).SetNpgsqlNameTranslator(INpgsqlNameTranslator)
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.SetNpgsqlNameTranslator*
+  name: SetNpgsqlNameTranslator
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_SetNpgsqlNameTranslator_
+  commentId: Overload:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.SetNpgsqlNameTranslator
+  isSpec: "True"
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.SetNpgsqlNameTranslator
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).SetNpgsqlNameTranslator
+  nameWithType: IEntityBuilder<TEntity>.SetNpgsqlNameTranslator
+  nameWithType.vb: IEntityBuilder(Of TEntity).SetNpgsqlNameTranslator
+- uid: Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.SetNpgsqlNameTranslator``1
+  name: SetNpgsqlNameTranslator<T>()
+  href: api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html#Venflow_Modeling_Definitions_Builder_IEntityBuilder_1_SetNpgsqlNameTranslator__1
+  commentId: M:Venflow.Modeling.Definitions.Builder.IEntityBuilder`1.SetNpgsqlNameTranslator``1
+  name.vb: SetNpgsqlNameTranslator(Of T)()
+  fullName: Venflow.Modeling.Definitions.Builder.IEntityBuilder<TEntity>.SetNpgsqlNameTranslator<T>()
+  fullName.vb: Venflow.Modeling.Definitions.Builder.IEntityBuilder(Of TEntity).SetNpgsqlNameTranslator(Of T)()
+  nameWithType: IEntityBuilder<TEntity>.SetNpgsqlNameTranslator<T>()
+  nameWithType.vb: IEntityBuilder(Of TEntity).SetNpgsqlNameTranslator(Of T)()
 - uid: Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder`2
   name: IForeignKeyRelationBuilder<TEntity, TRelation>
   href: api/Venflow.Modeling.Definitions.Builder.IForeignKeyRelationBuilder-2.html
@@ -3124,6 +3172,38 @@ references:
   isSpec: "True"
   fullName: Venflow.NpgsqlCommandExtensions.SetInterpolatedCommandText
   nameWithType: NpgsqlCommandExtensions.SetInterpolatedCommandText
+- uid: Venflow.NpgsqlQuotedNameTranslator
+  name: NpgsqlQuotedNameTranslator
+  href: api/Venflow.NpgsqlQuotedNameTranslator.html
+  commentId: T:Venflow.NpgsqlQuotedNameTranslator
+  fullName: Venflow.NpgsqlQuotedNameTranslator
+  nameWithType: NpgsqlQuotedNameTranslator
+- uid: Venflow.NpgsqlQuotedNameTranslator.TranslateMemberName(System.String)
+  name: TranslateMemberName(String)
+  href: api/Venflow.NpgsqlQuotedNameTranslator.html#Venflow_NpgsqlQuotedNameTranslator_TranslateMemberName_System_String_
+  commentId: M:Venflow.NpgsqlQuotedNameTranslator.TranslateMemberName(System.String)
+  fullName: Venflow.NpgsqlQuotedNameTranslator.TranslateMemberName(System.String)
+  nameWithType: NpgsqlQuotedNameTranslator.TranslateMemberName(String)
+- uid: Venflow.NpgsqlQuotedNameTranslator.TranslateMemberName*
+  name: TranslateMemberName
+  href: api/Venflow.NpgsqlQuotedNameTranslator.html#Venflow_NpgsqlQuotedNameTranslator_TranslateMemberName_
+  commentId: Overload:Venflow.NpgsqlQuotedNameTranslator.TranslateMemberName
+  isSpec: "True"
+  fullName: Venflow.NpgsqlQuotedNameTranslator.TranslateMemberName
+  nameWithType: NpgsqlQuotedNameTranslator.TranslateMemberName
+- uid: Venflow.NpgsqlQuotedNameTranslator.TranslateTypeName(System.String)
+  name: TranslateTypeName(String)
+  href: api/Venflow.NpgsqlQuotedNameTranslator.html#Venflow_NpgsqlQuotedNameTranslator_TranslateTypeName_System_String_
+  commentId: M:Venflow.NpgsqlQuotedNameTranslator.TranslateTypeName(System.String)
+  fullName: Venflow.NpgsqlQuotedNameTranslator.TranslateTypeName(System.String)
+  nameWithType: NpgsqlQuotedNameTranslator.TranslateTypeName(String)
+- uid: Venflow.NpgsqlQuotedNameTranslator.TranslateTypeName*
+  name: TranslateTypeName
+  href: api/Venflow.NpgsqlQuotedNameTranslator.html#Venflow_NpgsqlQuotedNameTranslator_TranslateTypeName_
+  commentId: Overload:Venflow.NpgsqlQuotedNameTranslator.TranslateTypeName
+  isSpec: "True"
+  fullName: Venflow.NpgsqlQuotedNameTranslator.TranslateTypeName
+  nameWithType: NpgsqlQuotedNameTranslator.TranslateTypeName
 - uid: Venflow.ParameterTypeHandler
   name: ParameterTypeHandler
   href: api/Venflow.ParameterTypeHandler.html

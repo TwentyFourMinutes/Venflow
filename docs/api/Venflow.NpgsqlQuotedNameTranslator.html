@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class EntityConfiguration&lt;TEntity&gt;
+    <title>Class NpgsqlQuotedNameTranslator
    | Venflow Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta property="og:title" content="Class EntityConfiguration&lt;TEntity&gt;
+    <meta property="og:title" content="Class NpgsqlQuotedNameTranslator
    | Venflow Documentation ">
     
     <meta property="og:locale" content="en-us">
@@ -91,61 +91,46 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Venflow.Modeling.Definitions.EntityConfiguration`1">
+            <article class="content wrap" id="_content" data-uid="Venflow.NpgsqlQuotedNameTranslator">
   
   
-  <h1 id="Venflow_Modeling_Definitions_EntityConfiguration_1" data-uid="Venflow.Modeling.Definitions.EntityConfiguration`1" class="text-break">Class EntityConfiguration&lt;TEntity&gt;
+  <h1 id="Venflow_NpgsqlQuotedNameTranslator" data-uid="Venflow.NpgsqlQuotedNameTranslator" class="text-break">Class NpgsqlQuotedNameTranslator
   </h1>
-  <div class="markdown level0 summary"><p>Allows configuration for an entity type. Inherit from this class and override the <a class="xref" href="Venflow.Modeling.Definitions.EntityConfiguration-1.html#Venflow_Modeling_Definitions_EntityConfiguration_1_Configure_Venflow_Modeling_Definitions_Builder_IEntityBuilder__0__">Configure(IEntityBuilder&lt;TEntity&gt;)</a> method to configure the entity <code data-dev-comment-type="typeparamref" class="typeparamref">TEntity</code>.</p>
+  <div class="markdown level0 summary"><p>A name translator which preserves CLR names (e.g. SomeClass) when mapping names to the database.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.object">Object</a></div>
-    <div class="level1"><span class="xref">EntityConfiguration&lt;TEntity&gt;</span></div>
+    <div class="level1"><span class="xref">NpgsqlQuotedNameTranslator</span></div>
   </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Venflow.Modeling.Definitions.html">Venflow.Modeling.Definitions</a></h6>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">INpgsqlNameTranslator</span></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Venflow.html">Venflow</a></h6>
   <h6><strong>Assembly</strong>: Venflow.dll</h6>
-  <h5 id="Venflow_Modeling_Definitions_EntityConfiguration_1_syntax">Syntax</h5>
+  <h5 id="Venflow_NpgsqlQuotedNameTranslator_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class EntityConfiguration&lt;TEntity&gt; : object, IEntityConfiguration where TEntity : class, new()</code></pre>
+    <pre><code class="lang-csharp hljs">public class NpgsqlQuotedNameTranslator : NpgsqlNullNameTranslator, INpgsqlNameTranslator</code></pre>
   </div>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TEntity</span></td>
-        <td><p>The entity to be configured.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Venflow_Modeling_Definitions_EntityConfiguration_1_remarks"><strong>Remarks</strong></h5>
-  <div class="markdown level0 remarks"><p>Classes which inherit from this one, have to be in the same assembly as the <a class="xref" href="Venflow.Database.html">Database</a> in order to be discoverable.</p>
-</div>
   <h3 id="methods">Methods
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_EntityConfiguration_1_Configure_Venflow_Modeling_Definitions_Builder_IEntityBuilder__0__.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.EntityConfiguration%601.Configure(Venflow.Modeling.Definitions.Builder.IEntityBuilder%7B%600%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_NpgsqlQuotedNameTranslator_TranslateMemberName_System_String_.md&amp;value=---%0Auid%3A%20Venflow.NpgsqlQuotedNameTranslator.TranslateMemberName(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Modeling/Definitions/EntityConfiguration.cs/#L19">View Source</a>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/NpgsqlQuotedNameTranslator.cs/#L19">View Source</a>
   </span>
-  <a id="Venflow_Modeling_Definitions_EntityConfiguration_1_Configure_" data-uid="Venflow.Modeling.Definitions.EntityConfiguration`1.Configure*"></a>
-  <h4 id="Venflow_Modeling_Definitions_EntityConfiguration_1_Configure_Venflow_Modeling_Definitions_Builder_IEntityBuilder__0__" data-uid="Venflow.Modeling.Definitions.EntityConfiguration`1.Configure(Venflow.Modeling.Definitions.Builder.IEntityBuilder{`0})">Configure(IEntityBuilder&lt;TEntity&gt;)</h4>
-  <div class="markdown level1 summary"><p>Allows for configuration of the entity <code data-dev-comment-type="typeparamref" class="typeparamref">TEntity</code>.</p>
+  <a id="Venflow_NpgsqlQuotedNameTranslator_TranslateMemberName_" data-uid="Venflow.NpgsqlQuotedNameTranslator.TranslateMemberName*"></a>
+  <h4 id="Venflow_NpgsqlQuotedNameTranslator_TranslateMemberName_System_String_" data-uid="Venflow.NpgsqlQuotedNameTranslator.TranslateMemberName(System.String)">TranslateMemberName(String)</h4>
+  <div class="markdown level1 summary"><p>Given a CLR member name (property or field), translates its name to a database type name.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract void Configure(IEntityBuilder&lt;TEntity&gt; entityBuilder)</code></pre>
+    <pre><code class="lang-csharp hljs">public string TranslateMemberName(string clrName)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -158,13 +143,79 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html">IEntityBuilder</a>&lt;TEntity&gt;</td>
-        <td><span class="parametername">entityBuilder</span></td>
-        <td><p>The builder used to configure the entity.</p>
-</td>
+        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a></td>
+        <td><span class="parametername">clrName</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_NpgsqlQuotedNameTranslator_TranslateTypeName_System_String_.md&amp;value=---%0Auid%3A%20Venflow.NpgsqlQuotedNameTranslator.TranslateTypeName(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/NpgsqlQuotedNameTranslator.cs/#L14">View Source</a>
+  </span>
+  <a id="Venflow_NpgsqlQuotedNameTranslator_TranslateTypeName_" data-uid="Venflow.NpgsqlQuotedNameTranslator.TranslateTypeName*"></a>
+  <h4 id="Venflow_NpgsqlQuotedNameTranslator_TranslateTypeName_System_String_" data-uid="Venflow.NpgsqlQuotedNameTranslator.TranslateTypeName(System.String)">TranslateTypeName(String)</h4>
+  <div class="markdown level1 summary"><p>Given a CLR type name (e.g class, struct, enum), translates its name to a database type name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string TranslateTypeName(string clrName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a></td>
+        <td><span class="parametername">clrName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://docs.microsoft.com/dotnet/api/system.string">String</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">INpgsqlNameTranslator</span>
+  </div>
 </article>
           </div>
           
@@ -181,10 +232,10 @@
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_Modeling_Definitions_EntityConfiguration_1.md&amp;value=---%0Auid%3A%20Venflow.Modeling.Definitions.EntityConfiguration%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/new/dev/apiSpec/new?filename=Venflow_NpgsqlQuotedNameTranslator.md&amp;value=---%0Auid%3A%20Venflow.NpgsqlQuotedNameTranslator%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/Modeling/Definitions/EntityConfiguration.cs/#L12" class="contribution-link">View Source</a>
+                    <a href="https://github.com/TwentyFourMinutes/Venflow/blob/dev/src/Venflow/NpgsqlQuotedNameTranslator.cs/#L9" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

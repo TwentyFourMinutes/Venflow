@@ -294,7 +294,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Database.html",
-          "hash": "T4JKmHWUi7pc/Y+JVDZryQ=="
+          "hash": "kPSpmLBAl0rEu+u+w5VXoQ=="
         }
       },
       "is_incremental": false,
@@ -306,7 +306,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.DatabaseConfigurationOptionsBuilder.html",
-          "hash": "mcOw0ogHs/fWEJVHZYz4Pg=="
+          "hash": "KVPTYQnE7MjaKIo3izterg=="
         }
       },
       "is_incremental": false,
@@ -558,7 +558,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Modeling.Definitions.Builder.IEntityBuilder-1.html",
-          "hash": "ar0EluZWtxHcdl8Zejn37g=="
+          "hash": "9SRvB++xJesCjwnyDqXMeA=="
         }
       },
       "is_incremental": false,
@@ -678,7 +678,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.Modeling.Definitions.EntityConfiguration-1.html",
-          "hash": "4N7gxV5RWepZC2qM7aXUJw=="
+          "hash": "qZewPMlH/DUIrygCfaLY1g=="
         }
       },
       "is_incremental": false,
@@ -727,6 +727,18 @@
         ".html": {
           "relative_path": "api/Venflow.NpgsqlCommandExtensions.html",
           "hash": "EmJaHHm4w124zduYGZIZdw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Venflow.NpgsqlQuotedNameTranslator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Venflow.NpgsqlQuotedNameTranslator.html",
+          "hash": "qBEnFuhHR4dLV9fL3Fjrsg=="
         }
       },
       "is_incremental": false,
@@ -810,7 +822,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Venflow.html",
-          "hash": "5azxiEAGywd5fnshuUbY9Q=="
+          "hash": "QstsyHWNa1uC+lPhcT/K4g=="
         }
       },
       "is_incremental": false,
@@ -834,7 +846,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "25DR/ZaApdmHo01nc+aO3g=="
+          "hash": "hTCpxM5FZCVqfNLPlVa3Dw=="
         }
       },
       "is_incremental": false,
@@ -1179,7 +1191,7 @@
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 67,
+          "total_file_count": 68,
           "skipped_file_count": 0
         },
         "ResourceDocumentProcessor": {
