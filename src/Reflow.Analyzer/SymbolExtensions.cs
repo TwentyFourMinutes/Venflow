@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Reflow.Analyzer.Properties;
 
 namespace Reflow.Analyzer
 {

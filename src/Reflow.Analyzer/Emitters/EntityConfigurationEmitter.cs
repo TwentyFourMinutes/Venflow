@@ -1,27 +1,28 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using Reflow.Internal;
-using static Reflow.Internal.CSharpCodeGenerator;
+using Reflow.Analyzer.CodeGenerator;
+using Reflow.Analyzer.Models;
+using static Reflow.Analyzer.CodeGenerator.CSharpCodeGenerator;
 
-namespace Reflow.Analyzer.Database.Emitters
+namespace Reflow.Analyzer.Emitters
 {
     internal static class EntityConfigurationEmitter
     {
-        internal static SourceText Emit(List<DatabaseTable> tables)
+        internal static SourceText Emit(List<Entity> entities)
         {
             var entityConfigurations = new SyntaxList<InitializerExpressionSyntax>();
 
-            for (var tableIndex = 0; tableIndex < tables.Count; tableIndex++)
+            for (var tableIndex = 0; tableIndex < entities.Count; tableIndex++)
             {
-                var table = tables[tableIndex];
+                var entity = entities[tableIndex];
 
                 entityConfigurations = entityConfigurations.Add(
                     DictionaryEntry(
-                        TypeOf(Type(table.EntityType)),
+                        TypeOf(Type(entity.EntitySymbol)),
                         ArrayInitializer(
                             Array(Type(typeof(string))),
-                            table.Columns.Select(x => Constant(x.Name)) // TODO: Requires actual name
+                            entity.Columns.Select(x => Constant(x.Symbol.Name)) // TODO: Requires actual name
                         )
                     )
                 );

@@ -1,28 +1,26 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Reflow.Analyzer.Database.Emitters;
-using Reflow.Analyzer.LambdaLinker;
+using Reflow.Analyzer.Emitters;
+using Reflow.Analyzer.Models;
 
-namespace Reflow.Analyzer.Database
+namespace Reflow.Analyzer.Sections
 {
     internal class DatabaseConfigurationSection
         : GeneratorSection<
-              LambdaLinkSection,
+              SourceGenerator,
               DatabaseConfigurationSection.SyntaxReceiver,
-              List<DatabaseConfiguration>
+              List<Database>
           >
     {
-        protected override List<DatabaseConfiguration> Execute(
+        protected override List<Database> Execute(
             GeneratorExecutionContext context,
             SyntaxReceiver syntaxReceiver,
-            LambdaLinkSection previous
+            SourceGenerator previous
         )
         {
-            context.Compilation.EnsureReference("Reflow", AssemblyInfo.PublicKey);
-
             var genericTableSymbol = context.Compilation.GetTypeByMetadataName("Reflow.Table`1");
 
-            var configurations = new List<DatabaseConfiguration>();
+            var configurations = new List<Database>();
 
             for (
                 var candidateIndex = 0;
@@ -34,27 +32,27 @@ namespace Reflow.Analyzer.Database
 
                 var members = candidate.GetMembers();
 
-                var configuration = new DatabaseConfiguration(candidate);
+                var configuration = new Database(candidate);
 
                 for (var memberIndex = 0; memberIndex < members.Length; memberIndex++)
                 {
                     var member = members[memberIndex];
 
                     if (
-                        member is not IPropertySymbol tableSymbol
-                        || !tableSymbol.Type.OriginalDefinition.Equals(
+                        member is not IPropertySymbol entitySymbol
+                        || !entitySymbol.Type.OriginalDefinition.Equals(
                             genericTableSymbol,
                             SymbolEqualityComparer.Default
                         )
                     )
                         continue;
 
-                    var table = new DatabaseTable(
-                        tableSymbol,
-                        ((INamedTypeSymbol)tableSymbol.Type).TypeArguments[0]
+                    var entity = new Entity(
+                        entitySymbol,
+                        ((INamedTypeSymbol)entitySymbol.Type).TypeArguments[0]
                     );
 
-                    var entityType = ((INamedTypeSymbol)tableSymbol.Type).TypeArguments[0];
+                    var entityType = ((INamedTypeSymbol)entitySymbol.Type).TypeArguments[0];
 
                     var entityMembers = entityType.GetMembers();
 
@@ -75,13 +73,10 @@ namespace Reflow.Analyzer.Database
                         )
                             continue;
 
-                        table.Columns.Add(entityPropertySymbol);
+                        entity.Columns.Add(new Column(entityPropertySymbol));
                     }
 
-                    configuration.Tables.Add(table);
-
-                    if (configuration.Tables.Count == 0)
-                        continue;
+                    configuration.Entities.Add(entity);
 
                     configurations.Add(configuration);
                 }

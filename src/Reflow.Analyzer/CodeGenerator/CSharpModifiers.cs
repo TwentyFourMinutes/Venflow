@@ -1,4 +1,4 @@
-﻿namespace Reflow.Internal
+﻿namespace Reflow.Analyzer.CodeGenerator
 {
     [Flags]
     public enum CSharpModifiers : ushort

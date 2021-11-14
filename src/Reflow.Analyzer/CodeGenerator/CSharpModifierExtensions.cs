@@ -2,7 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Reflow.Internal
+namespace Reflow.Analyzer.CodeGenerator
 {
     public static class CSharpModifierExtensions
     {

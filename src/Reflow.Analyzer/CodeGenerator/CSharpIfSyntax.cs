@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Reflow.Internal
+namespace Reflow.Analyzer.CodeGenerator
 {
     public class CSharpIfSyntax
     {

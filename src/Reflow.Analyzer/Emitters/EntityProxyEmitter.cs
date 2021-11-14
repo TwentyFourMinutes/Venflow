@@ -2,16 +2,15 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using Reflow.Internal;
-using static Reflow.Internal.CSharpCodeGenerator;
+using Reflow.Analyzer.CodeGenerator;
+using Reflow.Analyzer.Models;
+using static Reflow.Analyzer.CodeGenerator.CSharpCodeGenerator;
 
-namespace Reflow.Analyzer.Database.Emitters
+namespace Reflow.Analyzer.Emitters
 {
     internal static class EntityProxyEmitter
     {
-        internal static SourceText Emit(
-            Dictionary<ITypeSymbol, List<IPropertySymbol>> updatableEntites
-        )
+        internal static SourceText Emit(Dictionary<ITypeSymbol, List<Column>> updatableEntites)
         {
             var members = new SyntaxList<SyntaxNode>();
 
@@ -64,19 +63,19 @@ namespace Reflow.Analyzer.Database.Emitters
 
                     proxyMembers = proxyMembers.Add(
                         Property(
-                                property.Name,
-                                Type(property.Type),
+                                property.Symbol.Name,
+                                Type(property.Symbol),
                                 CSharpModifiers.Public | CSharpModifiers.Override
                             )
-                            .WithGetAccessor(Return(AccessMember(Base(), property.Name)))
+                            .WithGetAccessor(Return(AccessMember(Base(), property.Symbol.Name)))
                             .WithSetAccessor(
-                                AssignMember(Base(), property.Name, Value()),
+                                AssignMember(Base(), property.Symbol.Name, Value()),
                                 If(
                                     IsBitSet(Variable("_changes"), Type(numericType), Constant(1)),
                                     AssignMember(
                                         This(),
                                         Variable("_changes"),
-                                        Constant(1 << (propertyIndex + 1)),
+                                        Constant(1 << propertyIndex + 1),
                                         SyntaxKind.OrAssignmentExpression
                                     )
                                 )

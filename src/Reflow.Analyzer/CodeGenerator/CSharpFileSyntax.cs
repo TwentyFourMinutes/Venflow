@@ -4,9 +4,9 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-using static Reflow.Internal.CSharpCodeGenerator;
+using static Reflow.Analyzer.CodeGenerator.CSharpCodeGenerator;
 
-namespace Reflow.Internal
+namespace Reflow.Analyzer.CodeGenerator
 {
     public class CSharpFileSyntax
     {

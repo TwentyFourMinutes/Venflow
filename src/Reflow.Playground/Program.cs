@@ -1,6 +1,6 @@
 ﻿using NpgsqlTypes;
+using Reflow.Commands;
 using Reflow.Modeling;
-
 namespace Reflow.Playground
 {
     public static class Program
@@ -8,9 +8,18 @@ namespace Reflow.Playground
         public static void Main()
         {
             var db = new MyDatabase();
-
-            db.People.Query(() => $"select * from people where id = {0}");
+            Test(
+                () =>
+                {
+                    var a = db.People
+                        .Query(() => $"select * from people where id = {0}")
+                        .TrackChanges()
+                        .TrackChanges(false)
+                        .SingleAsync();
+                }
+            );
         }
+        public static void Test(Action a) => Console.WriteLine(a);
     }
 
     public class MyDatabase : Database<MyDatabase>

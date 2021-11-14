@@ -1,18 +1,21 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Reflow.Analyzer.Lambdas;
-using Reflow.Analyzer.Lambdas.Emitters;
+using Reflow.Analyzer.Models.Definitions;
 
-namespace Reflow.Analyzer.LambdaLinker
+namespace Reflow.Analyzer.Sections
 {
-    internal class LambdaLinkSection
-        : GeneratorSection<SourceGenerator, LambdaLinkSection.SyntaxReceiver>
+    internal class LambdaCollectionSection
+        : GeneratorSection<
+              EntityConfigurationSection,
+              LambdaCollectionSection.SyntaxReceiver,
+              Dictionary<ITypeSymbol, List<FluentCallDefinition>>
+          >
     {
-        protected override NoData Execute(
+        protected override Dictionary<ITypeSymbol, List<FluentCallDefinition>> Execute(
             GeneratorExecutionContext context,
             SyntaxReceiver syntaxReceiver,
-            SourceGenerator previous
+            EntityConfigurationSection previous
         )
         {
             var lambdaCollector = new LambdaCollector(context.Compilation);
@@ -32,8 +35,6 @@ namespace Reflow.Analyzer.LambdaLinker
                         case BaseTypeDeclarationSyntax:
                             lambdaCollector.IncrementMemberIndex();
                             continue;
-                        default:
-                            break;
                     }
 
                     members.Add(childNode);
@@ -399,14 +400,11 @@ namespace Reflow.Analyzer.LambdaLinker
                     context.ReportDiagnostic(lambdaCollector.Diagnostics[diagnosticIndex]);
                 }
 
-                return default;
+                return null!;
             }
 
-            var (links, closureLinks) = lambdaCollector.Build();
-
-            context.AddNamedSource("LambdaLinks", LambdaLinksEmitter.Emit(links, closureLinks));
-
-            return default;
+            return lambdaCollector.FluentCalls;
+            //context.AddNamedSource("LambdaLinks", LambdaLinksEmitter.Emit(links, closureLinks));
         }
 
         private static bool IsStaticMember(MemberDeclarationSyntax member)
@@ -422,7 +420,8 @@ namespace Reflow.Analyzer.LambdaLinker
 
         private class LambdaCollector
         {
-            public List<Diagnostic> Diagnostics { get; }
+            internal List<Diagnostic> Diagnostics { get; }
+            internal Dictionary<ITypeSymbol, List<FluentCallDefinition>> FluentCalls { get; }
 
             private int _memberIndex;
             private int _lambdaIndex;
@@ -430,20 +429,22 @@ namespace Reflow.Analyzer.LambdaLinker
             private string _className = null!;
             private SemanticModel? _semanticModel;
 
-            private readonly List<LambdaLink> _lambdaLinks;
-            private readonly List<ClosureLambdaLink> _closureLambdaLinks;
             private readonly Queue<SyntaxNode> _nodeQueue;
             private readonly Stack<SyntaxNode> _nodeStack;
             private readonly List<SyntaxNode> _nodeBuffer;
             private readonly Compilation _compilation;
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage(
+                "MicrosoftCodeAnalysisCorrectness",
+                "RS1024:Compare symbols correctly",
+                Justification = "<Pending>"
+            )]
             internal LambdaCollector(Compilation compilation)
             {
                 _compilation = compilation;
 
                 Diagnostics = new();
-                _lambdaLinks = new();
-                _closureLambdaLinks = new();
+                FluentCalls = new(SymbolEqualityComparer.Default);
                 _nodeQueue = new();
                 _nodeStack = new();
                 _nodeBuffer = new();
@@ -516,7 +517,7 @@ namespace Reflow.Analyzer.LambdaLinker
                             true
                         );
 
-                        if (TryGetQueryLambdaData(lambdaSyntax, out var lambdaData))
+                        if (TryGetFluentCallBaseData(lambdaSyntax, out var data))
                         {
                             var dataFlow = _semanticModel.AnalyzeDataFlow(lambdaSyntax);
 
@@ -525,27 +526,28 @@ namespace Reflow.Analyzer.LambdaLinker
                                 throw new InvalidOperationException();
                             }
 
-                            if (dataFlow.CapturedInside.Length == 0)
+                            if (!FluentCalls.TryGetValue(data.DatabaseSymbol, out var calls))
                             {
-                                _lambdaLinks.Add(
+                                FluentCalls.Add(
+                                    data.DatabaseSymbol,
+                                    calls = new List<FluentCallDefinition>()
+                                );
+                            }
+
+                            calls.Add(
+                                new FluentCallDefinition(
+                                    _semanticModel,
+                                    lambdaSyntax,
+                                    data.Invocations,
                                     new LambdaLink(
                                         _className,
-                                        $"<{identifier}>b__{_memberIndex}_{_lambdaIndex}",
-                                        lambdaData!
-                                    )
-                                );
-                            }
-                            else
-                            {
-                                _closureLambdaLinks.Add(
-                                    new ClosureLambdaLink(
-                                        _className,
+                                        identifier,
                                         _memberIndex,
-                                        $"<{identifier}>b__{_lambdaIndex}",
-                                        lambdaData!
+                                        _lambdaIndex,
+                                        dataFlow.CapturedInside.Length == 0
                                     )
-                                );
-                            }
+                                )
+                            );
                         }
 
                         IncrementLambdaIndex();
@@ -584,9 +586,9 @@ namespace Reflow.Analyzer.LambdaLinker
                 _nodeStack.Clear();
             }
 
-            private bool TryGetQueryLambdaData(
+            private bool TryGetFluentCallBaseData(
                 LambdaExpressionSyntax lambdaSyntax,
-                out LambdaData? lambdaData
+                out (ITypeSymbol DatabaseSymbol, List<InvocationExpressionSyntax> Invocations) data
             )
             {
                 if (
@@ -594,80 +596,62 @@ namespace Reflow.Analyzer.LambdaLinker
                     is not InterpolatedStringExpressionSyntax interpolatedStringSyntax
                 )
                 {
-                    Diagnostics.Add(
-                        Diagnostic.Create(
-                            DiagnosticDescriptors.InvalidBody,
-                            lambdaSyntax.GetLocation()
-                        )
-                    );
-
-                    lambdaData = null;
+                    data = default;
 
                     return false;
                 }
 
-                var invocationSymbol = (IMethodSymbol)_semanticModel!.GetSymbolInfo(
-                    lambdaSyntax.FirstAncestorOrSelf<InvocationExpressionSyntax>()!
-                ).Symbol!;
+                var invocations = new List<InvocationExpressionSyntax>();
 
-                if (invocationSymbol is null || !invocationSymbol.ContainingSymbol.IsReflowSymbol())
+                var lastInvocationSyntax =
+                    lambdaSyntax.FirstAncestorOrSelf<InvocationExpressionSyntax>();
+
+                while (lastInvocationSyntax is not null)
                 {
-                    throw new InvalidOperationException();
+                    var symbol = (IMethodSymbol)_semanticModel!.GetSymbolInfo(
+                        lastInvocationSyntax!
+                    ).Symbol!;
+
+                    if (!symbol.ConstructedFrom.IsReflowSymbol())
+                        break;
+
+                    invocations.Add(lastInvocationSyntax);
+
+                    lastInvocationSyntax =
+                        lastInvocationSyntax.Parent!.FirstAncestorOrSelf<InvocationExpressionSyntax>();
                 }
 
-                var entityType = ((INamedTypeSymbol)invocationSymbol.ReceiverType!).TypeArguments[
-                    0
-                ];
+                var memberAccessSyntax = (MemberAccessExpressionSyntax)invocations[0].Expression;
 
-                var contentLength = 0;
-                short argumentIndex = 0;
-                var parameterIndecies = new List<short>();
+                ITypeSymbol databaseSymbol;
 
-                for (
-                    var contentIndex = 0;
-                    contentIndex < interpolatedStringSyntax.Contents.Count;
-                    contentIndex++
+                if (
+                    memberAccessSyntax.Expression
+                    is MemberAccessExpressionSyntax tableMemberAccessSyntax
                 )
                 {
-                    var content = interpolatedStringSyntax.Contents[contentIndex];
-
-                    if (content is InterpolationSyntax)
-                    {
-                        parameterIndecies.Add(argumentIndex++);
-
-                        contentLength += 3 + (int)Math.Log10(argumentIndex);
-                    }
-                    else if (content is InterpolatedStringContentSyntax stringContentSyntax)
-                    {
-                        contentLength += stringContentSyntax.GetText().Length;
-                    }
-                    else
-                    {
-                        Diagnostics.Add(
-                            Diagnostic.Create(
-                                DiagnosticDescriptors.UnexpectedSymbol,
-                                content.GetLocation(),
-                                content.GetText().ToString()
-                            )
-                        );
-                    }
+                    databaseSymbol = _semanticModel.GetTypeInfo(
+                        tableMemberAccessSyntax.Expression
+                    ).Type!;
+                }
+                else
+                {
+                    databaseSymbol = _semanticModel.GetTypeInfo(
+                        memberAccessSyntax.Expression
+                    ).Type!;
                 }
 
-                lambdaData = new LambdaData(
-                    contentLength,
-                    parameterIndecies.ToArray(),
-                    new string[] { entityType.GetFullName() }
-                );
+                data = (databaseSymbol, invocations);
 
                 return true;
             }
-
-            internal (List<LambdaLink> Links, List<ClosureLambdaLink> ClosureLinks) Build() =>
-                (_lambdaLinks, _closureLambdaLinks);
         }
 
         internal class SyntaxReceiver : ISyntaxContextReceiver
         {
+            private static readonly HashSet<string> _validInvocationNames =
+                new() { "Query", "QueryRaw", "Insert", "Update", "Delete" };
+
             internal HashSet<ClassDeclarationSyntax> Candidates { get; }
 
             internal SyntaxReceiver()
@@ -700,7 +684,7 @@ namespace Reflow.Analyzer.LambdaLinker
 
                     if (
                         memberAccessSyntax is null
-                        || memberAccessSyntax.Name.Identifier.Text is not "Query" and not "QueryRaw"
+                        || !_validInvocationNames.Contains(memberAccessSyntax.Name.Identifier.Text)
                     )
                     {
                         return;

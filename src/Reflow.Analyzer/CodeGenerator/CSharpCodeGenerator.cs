@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Reflow.Analyzer;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Reflow.Internal
+namespace Reflow.Analyzer.CodeGenerator
 {
     public static class CSharpCodeGenerator
     {
@@ -153,7 +153,7 @@ namespace Reflow.Internal
 
         public static TypeSyntax Void()
         {
-            return SyntaxFactory.PredefinedType(Token(SyntaxKind.VoidKeyword));
+            return PredefinedType(Token(SyntaxKind.VoidKeyword));
         }
 
         public static TypeSyntax Type(ISymbol type)
@@ -175,13 +175,11 @@ namespace Reflow.Internal
         {
             return Type(
                 "System."
-                    + (
-                        type switch
-                        {
-                            TypeCode.Empty => throw new ArgumentException(),
-                            _ => type.ToString()
-                        }
-                    )
+                    + type switch
+                    {
+                        TypeCode.Empty => throw new ArgumentException(),
+                        _ => type.ToString()
+                    }
             );
         }
 
@@ -298,7 +296,7 @@ namespace Reflow.Internal
         }
         public static TypeOfExpressionSyntax TypeOf(TypeSyntax type)
         {
-            return SyntaxFactory.TypeOfExpression(type);
+            return TypeOfExpression(type);
         }
         public static CSharpLambdaSyntax Lambda(params string[] parameters)
         {

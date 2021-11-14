@@ -1,19 +1,26 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Reflow.Analyzer.Database.Emitters;
+using Reflow.Analyzer.Emitters;
+using Reflow.Analyzer.Models;
 
-namespace Reflow.Analyzer.Database
+namespace Reflow.Analyzer.Sections
 {
     internal class EntityConfigurationSection
-        : GeneratorSection<DatabaseConfigurationSection, EntityConfigurationSection.SyntaxReceiver>
+        : GeneratorSection<
+              DatabaseConfigurationSection,
+              EntityConfigurationSection.SyntaxReceiver,
+              NoData
+          >
     {
+        [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1024:Compare symbols correctly")]
         protected override NoData Execute(
             GeneratorExecutionContext context,
             SyntaxReceiver syntaxReceiver,
             DatabaseConfigurationSection previous
         )
         {
-            var entityProxies = new Dictionary<ITypeSymbol, List<IPropertySymbol>>(
+            var entityProxies = new Dictionary<ITypeSymbol, List<Column>>(
                 SymbolEqualityComparer.Default
             );
 
@@ -25,33 +32,33 @@ namespace Reflow.Analyzer.Database
             {
                 var configuration = previous.Data[configurationIndex];
 
-                for (var tableIndex = 0; tableIndex < configuration.Tables.Count; tableIndex++)
+                for (var entityIndex = 0; entityIndex < configuration.Entities.Count; entityIndex++)
                 {
-                    var table = configuration.Tables[tableIndex];
+                    var entity = configuration.Entities[entityIndex];
 
                     //if (!candidates.TryGetValue(table.EntityType, out var tableConfiguration))
                     //    continue;
 
-                    var updatableProperties = new List<IPropertySymbol>();
+                    var updatableProperties = new List<Column>();
 
-                    for (var columnIndex = 0; columnIndex < table.Columns.Count; columnIndex++)
+                    for (var columnIndex = 0; columnIndex < entity.Columns.Count; columnIndex++)
                     {
-                        var column = table.Columns[columnIndex];
+                        var column = entity.Columns[columnIndex];
 
-                        if (column.IsVirtual)
+                        if (column.Symbol.IsVirtual)
                         {
                             updatableProperties.Add(column);
                         }
                     }
 
-                    entityProxies.Add(table.EntityType, updatableProperties);
+                    entityProxies.Add(entity.EntitySymbol, updatableProperties);
                 }
             }
 
             context.AddNamedSource("EntityProxies", EntityProxyEmitter.Emit(entityProxies));
             context.AddNamedSource(
                 "EntityConfigurations",
-                EntityConfigurationEmitter.Emit(previous.Data.SelectMany(x => x.Tables).ToList())
+                EntityConfigurationEmitter.Emit(previous.Data.SelectMany(x => x.Entities).ToList())
             );
 
             return default;
@@ -61,6 +68,11 @@ namespace Reflow.Analyzer.Database
         {
             internal Dictionary<ITypeSymbol, INamedTypeSymbol> Candidates { get; }
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage(
+                "MicrosoftCodeAnalysisCorrectness",
+                "RS1024:Compare symbols correctly",
+                Justification = "<Pending>"
+            )]
             internal SyntaxReceiver()
             {
                 Candidates = new(SymbolEqualityComparer.Default);

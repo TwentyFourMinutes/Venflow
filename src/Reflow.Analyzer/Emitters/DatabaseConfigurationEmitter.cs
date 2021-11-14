@@ -1,48 +1,39 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using Reflow.Internal;
-using static Reflow.Internal.CSharpCodeGenerator;
+using Reflow.Analyzer.CodeGenerator;
+using Reflow.Analyzer.Models;
+using static Reflow.Analyzer.CodeGenerator.CSharpCodeGenerator;
 
-namespace Reflow.Analyzer.Database.Emitters
+namespace Reflow.Analyzer.Emitters
 {
     internal static class DatabaseConfigurationEmitter
     {
-        internal static SourceText Emit(IList<DatabaseConfiguration> configurations)
+        internal static SourceText Emit(IList<Database> databases)
         {
             var configurationEntries = new SyntaxList<InitializerExpressionSyntax>();
 
-            for (
-                var configurationIndex = 0;
-                configurationIndex < configurations.Count;
-                configurationIndex++
-            )
+            for (var databaseIndex = 0; databaseIndex < databases.Count; databaseIndex++)
             {
-                var configuration = configurations[configurationIndex];
+                var database = databases[databaseIndex];
 
                 const string databaseParameter = "baseDatabase";
                 const string databaseLocal = "database";
 
                 var statements = new SyntaxList<StatementSyntax>().Add(
                     Local(databaseLocal, Var())
-                        .WithInitializer(
-                            Cast(Type(configuration.Type), Variable(databaseParameter))
-                        )
+                        .WithInitializer(Cast(Type(database.Symbol), Variable(databaseParameter)))
                 );
 
-                for (
-                    var propertyIndex = 0;
-                    propertyIndex < configuration.Tables.Count;
-                    propertyIndex++
-                )
+                for (var entityIndex = 0; entityIndex < database.Entities.Count; entityIndex++)
                 {
-                    var property = configuration.Tables[propertyIndex];
+                    var entity = database.Entities[entityIndex];
 
                     statements = statements.Add(
                         AssignMember(
                             databaseLocal,
-                            property.Type,
-                            Instance(GenericType("Reflow.Table", Type(property.EntityType)))
+                            entity.PropertySymbol,
+                            Instance(GenericType("Reflow.Table", Type(entity.EntitySymbol)))
                                 .WithArguments(IdentifierName(databaseLocal))
                         )
                     );
@@ -50,7 +41,7 @@ namespace Reflow.Analyzer.Database.Emitters
 
                 configurationEntries = configurationEntries.Add(
                     DictionaryEntry(
-                        TypeOf(Type(configuration.Type)),
+                        TypeOf(Type(database.Symbol)),
                         Instance(Type("Reflow.DatabaseConfiguration"))
                             .WithArguments(Lambda(databaseParameter).WithStatements(statements))
                     )
@@ -68,7 +59,7 @@ namespace Reflow.Analyzer.Database.Emitters
                                 )
                                 .WithInitializer(
                                     Instance(DictionaryType())
-                                        .WithArguments(Constant(configurations.Count))
+                                        .WithArguments(Constant(databases.Count))
                                         .WithInitializer(
                                             DictionaryInitializer(configurationEntries)
                                         )
