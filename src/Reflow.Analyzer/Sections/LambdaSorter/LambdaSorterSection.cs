@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Reflow.Analyzer.Emitters;
 
 namespace Reflow.Analyzer.Sections.LambdaSorter
 {
@@ -12,6 +13,8 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
         )
         {
             var databases = GetPrevious<DatabaseConfigurationSection>().Data;
+
+            var queries = new List<Query>();
 
             for (var databaseIndex = 0; databaseIndex < databases.Count; databaseIndex++)
             {
@@ -33,12 +36,19 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                     ) {
                         case "Query":
                         case "QueryRaw":
-                            var query = Query.Construct(fluentCall);
+                            queries.Add(Query.Construct(fluentCall));
                             break;
                         default:
                             continue;
                     }
                 }
+
+                context.AddNamedSource(
+                    database.Symbol.GetFullName().Replace('.', '_'),
+                    QueriesEmitter.Emit(database, queries)
+                );
+
+                queries.Clear();
             }
 
             return default;

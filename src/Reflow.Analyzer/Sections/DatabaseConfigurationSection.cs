@@ -76,7 +76,7 @@ namespace Reflow.Analyzer.Sections
                         entity.Columns.Add(new Column(entityPropertySymbol));
                     }
 
-                    configuration.Entities.Add(entity);
+                    configuration.Entities.Add(entity.EntitySymbol, entity);
 
                     configurations.Add(configuration);
                 }

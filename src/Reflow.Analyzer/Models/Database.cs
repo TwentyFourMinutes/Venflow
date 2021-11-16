@@ -6,14 +6,19 @@ namespace Reflow.Analyzer.Models
     internal class Database
     {
         internal ITypeSymbol Symbol { get; }
-        internal List<Entity> Entities { get; }
+        internal Dictionary<ITypeSymbol, Entity> Entities { get; }
 
         internal List<Query> Queries { get; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "MicrosoftCodeAnalysisCorrectness",
+            "RS1024:Compare symbols correctly",
+            Justification = "<Pending>"
+        )]
         internal Database(ITypeSymbol symbol)
         {
             Symbol = symbol;
-            Entities = new();
+            Entities = new(SymbolEqualityComparer.Default);
             Queries = new();
         }
     }

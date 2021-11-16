@@ -1,7 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Reflow.Analyzer;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Reflow.Analyzer.CodeGenerator
@@ -127,9 +126,28 @@ namespace Reflow.Analyzer.CodeGenerator
             return SwitchStatement(switchOn, List(switchSections));
         }
 
+        public static SwitchStatementSyntax Switch(
+            ExpressionSyntax switchOn,
+            IEnumerable<SwitchSectionSyntax> switchSections
+        )
+        {
+            return SwitchStatement(switchOn, List(switchSections));
+        }
+
         public static SwitchSectionSyntax Case(
             LiteralExpressionSyntax caseOn,
             params StatementSyntax[] statements
+        )
+        {
+            return SwitchSection(
+                SingletonList<SwitchLabelSyntax>(CaseSwitchLabel(caseOn)),
+                List(statements)
+            );
+        }
+
+        public static SwitchSectionSyntax Case(
+            LiteralExpressionSyntax caseOn,
+            IEnumerable<StatementSyntax> statements
         )
         {
             return SwitchSection(
@@ -159,6 +177,10 @@ namespace Reflow.Analyzer.CodeGenerator
         public static TypeSyntax Type(ISymbol type)
         {
             return Type(type.GetFullName());
+        }
+        public static TypeSyntax Type(IPropertySymbol type)
+        {
+            return Type(type.Type.GetFullName());
         }
 
         public static TypeSyntax Type(Type type)
@@ -241,7 +263,8 @@ namespace Reflow.Analyzer.CodeGenerator
                 IdentifierName(sections[0])
             );
 
-            var genericName = GenericName(Identifier(sections[sections.Length - 1]))
+            var genericName = SyntaxFactory
+                .GenericName(Identifier(sections[sections.Length - 1]))
                 .WithTypeArgumentList(TypeArgumentList(SeparatedList(types)));
 
             if (sections.Length == 1)
@@ -257,24 +280,17 @@ namespace Reflow.Analyzer.CodeGenerator
 
             return QualifiedName(qualifiedName, genericName);
         }
+
+        public static GenericNameSyntax GenericName(string name, params TypeSyntax[] typeArguments)
+        {
+            return SyntaxFactory
+                .GenericName(Identifier(name))
+                .WithTypeArgumentList(TypeArgumentList(SeparatedList(typeArguments)));
+        }
+
         public static SimpleNameSyntax Variable(string name)
         {
             return IdentifierName(name);
-        }
-
-        public static SimpleNameSyntax IdentifierName(Type type)
-        {
-            return SyntaxFactory.IdentifierName(type.FullName);
-        }
-
-        public static SimpleNameSyntax IdentifierName(Type type, string memberName)
-        {
-            return SyntaxFactory.IdentifierName(type.FullName + "." + memberName);
-        }
-
-        public static SimpleNameSyntax IdentifierName(string name)
-        {
-            return SyntaxFactory.IdentifierName(name);
         }
 
         public static LiteralExpressionSyntax Constant(short value)
@@ -309,6 +325,22 @@ namespace Reflow.Analyzer.CodeGenerator
         )
         {
             return new CSharpIfSyntax(condition, statements);
+        }
+
+        public static InvocationExpressionSyntax Invoke(
+            NameSyntax member,
+            SimpleNameSyntax memberName,
+            params ExpressionSyntax[] parameters
+        )
+        {
+            return InvocationExpression(
+                    MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        member,
+                        memberName
+                    )
+                )
+                .WithArgumentList(ArgumentList(SeparatedList(parameters.Select(x => Argument(x)))));
         }
 
         public static ExpressionStatementSyntax AssignLocal(
@@ -422,6 +454,11 @@ namespace Reflow.Analyzer.CodeGenerator
             return ReturnStatement(syntax);
         }
 
+        public static BreakStatementSyntax Break()
+        {
+            return BreakStatement();
+        }
+
         public static BinaryExpressionSyntax IsBitSet(
             ExpressionSyntax expression,
             TypeSyntax type,
@@ -448,6 +485,25 @@ namespace Reflow.Analyzer.CodeGenerator
             return BinaryExpression(SyntaxKind.RightShiftExpression, expression, count);
         }
 
+        public static BinaryExpressionSyntax LessThen(ExpressionSyntax left, ExpressionSyntax right)
+        {
+            return BinaryExpression(SyntaxKind.LessThanExpression, left, right);
+        }
+
+        public static PostfixUnaryExpressionSyntax Increment(ExpressionSyntax variable)
+        {
+            return PostfixUnaryExpression(SyntaxKind.PostIncrementExpression, variable);
+        }
+
+        public static ElementAccessExpressionSyntax AccessElement(
+            ExpressionSyntax collection,
+            ExpressionSyntax index
+        )
+        {
+            return ElementAccessExpression(collection)
+                .WithArgumentList(BracketedArgumentList(SingletonSeparatedList(Argument(index))));
+        }
+
         public static ParenthesizedExpressionSyntax Parenthesis(ExpressionSyntax expression)
         {
             return ParenthesizedExpression(expression);
@@ -456,6 +512,25 @@ namespace Reflow.Analyzer.CodeGenerator
         public static ThrowStatementSyntax Throw(ExpressionSyntax? exception = null)
         {
             return ThrowStatement(exception);
+        }
+
+        public static LiteralExpressionSyntax Null()
+        {
+            return LiteralExpression(SyntaxKind.NullLiteralExpression);
+        }
+        public static ForStatementSyntax For(
+            CSharpLocalSyntax local,
+            ExpressionSyntax condition,
+            ExpressionSyntax increment,
+            params StatementSyntax[] statements
+        )
+        {
+            var localSyntax = (LocalDeclarationStatementSyntax)(StatementSyntax)local;
+
+            return ForStatement(Block(statements))
+                .WithDeclaration(localSyntax.Declaration)
+                .WithCondition(condition)
+                .WithIncrementors(SingletonSeparatedList(increment));
         }
     }
 }

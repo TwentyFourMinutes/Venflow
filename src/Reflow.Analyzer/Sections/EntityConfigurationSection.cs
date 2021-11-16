@@ -32,10 +32,8 @@ namespace Reflow.Analyzer.Sections
             {
                 var configuration = previous.Data[configurationIndex];
 
-                for (var entityIndex = 0; entityIndex < configuration.Entities.Count; entityIndex++)
+                foreach (var entity in configuration.Entities.Values)
                 {
-                    var entity = configuration.Entities[entityIndex];
-
                     //if (!candidates.TryGetValue(table.EntityType, out var tableConfiguration))
                     //    continue;
 
@@ -58,7 +56,9 @@ namespace Reflow.Analyzer.Sections
             context.AddNamedSource("EntityProxies", EntityProxyEmitter.Emit(entityProxies));
             context.AddNamedSource(
                 "EntityConfigurations",
-                EntityConfigurationEmitter.Emit(previous.Data.SelectMany(x => x.Entities).ToList())
+                EntityConfigurationEmitter.Emit(
+                    previous.Data.SelectMany(x => x.Entities.Values).ToList()
+                )
             );
 
             return default;

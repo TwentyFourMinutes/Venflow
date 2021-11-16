@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using System.Data.Common;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Reflow.Analyzer.CodeGenerator;
 using Reflow.Analyzer.Models;
@@ -9,33 +10,140 @@ namespace Reflow.Analyzer.Emitters
 {
     internal static class QueriesEmitter
     {
-        //internal static SourceText Emit(Database database, List<Query> queries)
-        //{
-        //    var materializers = new MethodDeclarationSyntax[queries.Count];
+        internal static SourceText Emit(Database database, List<Query> queries)
+        {
+            var className = $"__{database.Symbol.GetFullName().Replace('.', '_')}";
+            var members = new List<MethodDeclarationSyntax>(queries.Count);
+            var existingParsers = new Dictionary<Query, MethodDefinitionSyntax>();
 
-        //    for (var queryIndex = 0; queryIndex < queries.Count; queryIndex++)
-        //    {
-        //        var query = queries[queryIndex];
+            var parserIndex = 0;
 
-        //        materializers[queryIndex] =
-        //           Method(query);
-        //    }
+            var cases = new List<SwitchSectionSyntax>();
+            var caseStatements = new List<StatementSyntax>();
 
-        //    return File("Reflow.Queries")
-        //        .WithMembers(
-        //            Class($"__{database.Symbol.GetFullName().Replace('.', '_')}", CSharpModifiers.Public | CSharpModifiers.Static)
-        //                .WithMembers(
+            for (var queryIndex = 0; queryIndex < queries.Count; queryIndex++)
+            {
+                var query = queries[queryIndex];
 
-        //                )
-        //        )
-        //        .GetText();
+                if (query.Type.HasFlag(QueryType.Single))
+                {
+                    if (query.Type.HasFlag(QueryType.WithRelations)) { }
+                    else
+                    {
+                        if (existingParsers.TryGetValue(query, out var methodDefinition))
+                        {
+                            throw new NotImplementedException();
+                        }
+                        else
+                        {
+                            var entity = database.Entities[query.Entity];
 
-        //    static TypeSyntax DictionaryType() =>
-        //        GenericType(
-        //            typeof(Dictionary<,>),
-        //            Type(typeof(Type)),
-        //            Array(Type(typeof(string)))
-        //        );
-        //}
+                            for (
+                                var columnIndex = 0;
+                                columnIndex < entity.Columns.Count;
+                                columnIndex++
+                            )
+                            {
+                                var column = entity.Columns[columnIndex];
+
+                                if (columnIndex == 0)
+                                {
+                                    caseStatements.Add(
+                                        AssignLocal(
+                                            Variable("entity"),
+                                            Instance(Type(entity.EntitySymbol))
+                                        )
+                                    );
+                                }
+
+                                caseStatements.Add(
+                                    AssignMember(
+                                        Variable("entity"),
+                                        column.Symbol,
+                                        Invoke(
+                                            Variable("reader"),
+                                            GenericName("GetFieldValue", Type(column.Symbol.Type)),
+                                            Variable("columnIndex")
+                                        )
+                                    )
+                                );
+
+                                caseStatements.Add(Break());
+
+                                cases.Add(Case(Constant(columnIndex), caseStatements));
+                                caseStatements.Clear();
+                            }
+
+                            methodDefinition = new MethodDefinitionSyntax(
+                                className,
+                                "Parser_" + parserIndex++
+                            );
+
+                            members.Add(
+                                Method(
+                                        methodDefinition.MethodName,
+                                        Type(query.Entity),
+                                        CSharpModifiers.Public | CSharpModifiers.Static
+                                    )
+                                    .WithParameters(
+                                        Parameter("reader", Type(typeof(DbDataReader))),
+                                        Parameter("columns", Array(Type(typeof(ushort))))
+                                    )
+                                    .WithStatements(
+                                        Local("entity", Type(query.Entity)).WithInitializer(Null()),
+                                        Local("columnCount ", Var())
+                                            .WithInitializer(
+                                                AccessMember(Variable("columns"), "Length")
+                                            ),
+                                        For(
+                                            Local("columnIndex", Type(typeof(int)))
+                                                .WithInitializer(Constant(0)),
+                                            LessThen(
+                                                Variable("columnIndex"),
+                                                Variable("columnCount")
+                                            ),
+                                            Increment(Variable("columnIndex")),
+                                            Switch(
+                                                AccessElement(
+                                                    Variable("columns"),
+                                                    Variable("columnIndex")
+                                                ),
+                                                cases
+                                            )
+                                        ),
+                                        Return(Variable("entity"))
+                                    )
+                            );
+                        }
+                    }
+                }
+                else if (query.Type.HasFlag(QueryType.Many))
+                {
+                    if (query.Type.HasFlag(QueryType.WithRelations)) { }
+                    else { }
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
+
+                cases.Clear();
+            }
+
+            var test = File("Reflow.Queries")
+                .WithMembers(
+                    Class(className, CSharpModifiers.Public | CSharpModifiers.Static)
+                        .WithMembers(members)
+                )
+                .GetText()
+                .ToString();
+
+            return File("Reflow.Queries")
+                .WithMembers(
+                    Class(className, CSharpModifiers.Public | CSharpModifiers.Static)
+                        .WithMembers(members)
+                )
+                .GetText();
+        }
     }
 }
