@@ -68,7 +68,7 @@ namespace Reflow.Analyzer.Emitters
 
             static TypeSyntax DictionaryType() =>
                 GenericType(
-                    typeof(Dictionary<, >),
+                    typeof(Dictionary<,>),
                     Type(typeof(Type)),
                     Type("Reflow.DatabaseConfiguration")
                 );

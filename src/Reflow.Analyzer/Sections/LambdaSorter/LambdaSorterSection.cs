@@ -45,7 +45,7 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
 
                 context.AddNamedSource(
                     database.Symbol.GetFullName().Replace('.', '_'),
-                    QueriesEmitter.Emit(database, queries)
+                    QueryParserEmitter.Emit(database, queries)
                 );
 
                 queries.Clear();

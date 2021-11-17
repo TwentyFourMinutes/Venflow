@@ -16,6 +16,11 @@ namespace Reflow.Playground
                         .TrackChanges()
                         .TrackChanges(false)
                         .SingleAsync();
+
+                    var ad = db.People
+                        .Query(() => $"select * frdadadadom people where id = {0}")
+                        .TrackChanges(false)
+                        .SingleAsync();
                 }
             );
         }

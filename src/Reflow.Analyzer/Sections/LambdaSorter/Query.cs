@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Reflow.Analyzer.Models;
 using Reflow.Analyzer.Models.Definitions;
 
 namespace Reflow.Analyzer.Sections.LambdaSorter
@@ -129,9 +130,9 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
 
     internal class QueryLinkData : ILambdaLinkData
     {
-        internal short[]? ColumnIndecies { get; set; }
-        internal string[]? UsedEntities { get; set; }
+        internal MethodLocation? Location { get; set; }
 
+        internal string[]? UsedEntities { get; }
         internal int MinimumSqlLength { get; }
         internal short[] ParameterIndecies { get; }
 

@@ -45,11 +45,7 @@ namespace Reflow.Analyzer.Emitters
                 .GetText();
 
             static TypeSyntax DictionaryType() =>
-                GenericType(
-                    typeof(Dictionary<, >),
-                    Type(typeof(Type)),
-                    Array(Type(typeof(string)))
-                );
+                GenericType(typeof(Dictionary<,>), Type(typeof(Type)), Array(Type(typeof(string))));
         }
     }
 }

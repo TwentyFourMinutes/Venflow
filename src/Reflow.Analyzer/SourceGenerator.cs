@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Reflection;
+using Microsoft.CodeAnalysis;
 using Reflow.Analyzer.Properties;
 
 namespace Reflow.Analyzer
@@ -16,6 +17,16 @@ namespace Reflow.Analyzer
 
         public SourceGenerator()
         {
+#if DEBUG
+            // This is a temp fix to allow NuGet packages in DEBUG
+            Assembly.LoadFile(
+                Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "../Reflow.Analyzer/bin/Debug/netstandard2.0/Microsoft.Bcl.HashCode.dll"
+                )
+            );
+#endif
+
             var rootGenerator = typeof(SourceGenerator);
             var generatorSectionType = typeof(IGeneratorSection);
 
