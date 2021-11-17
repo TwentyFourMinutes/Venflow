@@ -8,13 +8,13 @@ namespace Reflow.Analyzer.Models.Definitions
         internal SemanticModel SemanticModel { get; }
         internal LambdaExpressionSyntax LambdaSyntax { get; }
         internal List<InvocationExpressionSyntax> Invocations { get; }
-        internal LambdaLink LambdaLink { get; }
+        internal LambdaLinkDefinition LambdaLink { get; }
 
         internal FluentCallDefinition(
             SemanticModel semanticModel,
             LambdaExpressionSyntax lambdaSyntax,
             List<InvocationExpressionSyntax> invocations,
-            LambdaLink lambdaLink
+            LambdaLinkDefinition lambdaLink
         )
         {
             SemanticModel = semanticModel;

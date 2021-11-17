@@ -1,98 +1,85 @@
-﻿//using Microsoft.CodeAnalysis;
-//using Microsoft.CodeAnalysis.CSharp.Syntax;
-//using Microsoft.CodeAnalysis.Text;
-//using Reflow.Analyzer.CodeGenerator;
-//using Reflow.Analyzer.Models.Definitions;
-//using static Reflow.Analyzer.CodeGenerator.CSharpCodeGenerator;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
+using Reflow.Analyzer.CodeGenerator;
+using Reflow.Analyzer.Models.Definitions;
+using Reflow.Analyzer.Sections.LambdaSorter;
+using static Reflow.Analyzer.CodeGenerator.CSharpCodeGenerator;
 
-//namespace Reflow.Analyzer.Emitters
-//{
-//    internal static class LambdaLinksEmitter
-//    {
-//        internal static SourceText Emit(
-//            IList<LambdaLink> links,
-//            IList<ClosureLambdaLinkDefinition> closureLinks
-//        )
-//        {
-//            var syntaxLinks = new SyntaxList<ExpressionSyntax>();
+namespace Reflow.Analyzer.Emitters
+{
+    internal static class LambdaLinksEmitter
+    {
+        internal static SourceText Emit(IList<LambdaLinkDefinition> links)
+        {
+            var syntaxLinks = new List<ExpressionSyntax>();
+            var arguments = new List<ExpressionSyntax>(6);
 
-//            for (var linkIndex = 0; linkIndex < links.Count; linkIndex++)
-//            {
-//                var link = links[linkIndex];
+            for (var linkIndex = 0; linkIndex < links.Count; linkIndex++)
+            {
+                var link = links[linkIndex];
 
-//                syntaxLinks = syntaxLinks.Add(
-//                    Instance(Type("Reflow.Lambdas.LambdaLink"))
-//                        .WithArguments(
-//                            TypeOf(Type(link.FullClassName)),
-//                            Constant(link.FullLambdaName),
-//                            Instance(Type("Reflow.Lambdas.LambdaData"))
-//                                .WithArguments(
-//                                    Constant(link.Data.MinimumSqlLength),
-//                                    ArrayInitializer(
-//                                        Array(Type(typeof(short))),
-//                                        link.Data.ParameterIndecies.Select(
-//                                            x => (ExpressionSyntax)Constant(x)
-//                                        )
-//                                    ),
-//                                    ArrayInitializer(
-//                                        Array(Type(typeof(Type))),
-//                                        link.Data.UsedEntities.Select(
-//                                            x => (ExpressionSyntax)TypeOf(Type(x))
-//                                        )
-//                                    )
-//                                )
-//                        )
-//                );
-//            }
+                arguments.Add(TypeOf(Type(link.ClassName)));
+                arguments.Add(Constant(link.IdentifierName));
+                arguments.Add(Constant(link.MemberIndex));
+                arguments.Add(Constant(link.LambdaIndex));
+                arguments.Add(Constant(link.HasClosure));
 
-//            for (var linkIndex = 0; linkIndex < closureLinks.Count; linkIndex++)
-//            {
-//                var link = closureLinks[linkIndex];
+                if (link.Data is not null)
+                {
+                    if (link.Data is QueryLinkData queryData)
+                    {
+                        arguments.Add(
+                            Instance(Type("Reflow.Lambdas.QueryLinkData"))
+                                .WithArguments(
+                                    Constant(queryData.MinimumSqlLength),
+                                    ArrayInitializer(
+                                        Array(Type(typeof(short))),
+                                        queryData.ParameterIndecies.Select(x => Constant(x))
+                                    ),
+                                    ArrayInitializer(
+                                        Array(Type(typeof(Type))),
+                                        queryData.UsedEntities.Select(x => TypeOf(Type(x)))
+                                    ),
+                                    Instance(Type("Reflow.Lambdas.MethodLocation"))
+                                        .WithArguments(
+                                            TypeOf(Type(queryData.Location!.FullTypeName)),
+                                            Constant(queryData.Location!.MethodName)
+                                        )
+                                )
+                        );
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException();
+                    }
+                }
 
-//                syntaxLinks = syntaxLinks.Add(
-//                    Instance(Type("Reflow.Lambdas.ClosureLambdaLink"))
-//                        .WithArguments(
-//                            TypeOf(Type(link.FullClassName)),
-//                            Constant(link.MemberIndex),
-//                            Constant(link.FullLambdaName),
-//                            Instance(Type("Reflow.Lambdas.LambdaData"))
-//                                .WithArguments(
-//                                    Constant(link.Data.MinimumSqlLength),
-//                                    ArrayInitializer(
-//                                        Array(Type(typeof(short))),
-//                                        link.Data.ParameterIndecies.Select(
-//                                            x => (ExpressionSyntax)Constant(x)
-//                                        )
-//                                    ),
-//                                    ArrayInitializer(
-//                                        Array(Type(typeof(Type))),
-//                                        link.Data.UsedEntities.Select(
-//                                            x => (ExpressionSyntax)TypeOf(Type(x))
-//                                        )
-//                                    )
-//                                )
-//                        )
-//                );
-//            }
+                syntaxLinks.Add(
+                    Instance(Type("Reflow.Lambdas.LambdaLink")).WithArguments(arguments)
+                );
 
-//            return File("Reflow.Lambdas")
-//                .WithMembers(
-//                    Class("LambdaLinks", CSharpModifiers.Public | CSharpModifiers.Static)
-//                        .WithMembers(
-//                            Field(
-//                                    "Links",
-//                                    Array(Type("Reflow.Lambdas.LambdaLink")),
-//                                    CSharpModifiers.Public | CSharpModifiers.Static
-//                                )
-//                                .WithInitializer(
-//                                    ArrayInitializer(
-//                                        Array(Type("Reflow.Lambdas.LambdaLink")),
-//                                        syntaxLinks
-//                                    )
-//                                )
-//                        )
-//                )
-//                .GetText();
-//        }
-//    }
-//}
+                arguments.Clear();
+            }
+
+            return File("Reflow.Lambdas")
+                .WithMembers(
+                    Class("LambdaLinks", CSharpModifiers.Public | CSharpModifiers.Static)
+                        .WithMembers(
+                            Field(
+                                    "Links",
+                                    Array(Type("Reflow.Lambdas.LambdaLink")),
+                                    CSharpModifiers.Public | CSharpModifiers.Static
+                                )
+                                .WithInitializer(
+                                    ArrayInitializer(
+                                        Array(Type("Reflow.Lambdas.LambdaLink")),
+                                        syntaxLinks
+                                    )
+                                )
+                        )
+                )
+                .GetText();
+        }
+    }
+}

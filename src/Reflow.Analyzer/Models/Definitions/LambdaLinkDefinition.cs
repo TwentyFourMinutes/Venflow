@@ -1,6 +1,6 @@
 ﻿namespace Reflow.Analyzer.Models.Definitions
 {
-    internal class LambdaLink
+    internal class LambdaLinkDefinition
     {
         internal ILambdaLinkData? Data { get; set; }
 
@@ -10,7 +10,7 @@
         internal int LambdaIndex { get; }
         internal bool HasClosure { get; }
 
-        internal LambdaLink(
+        internal LambdaLinkDefinition(
             string className,
             string identifierName,
             int memberIndex,

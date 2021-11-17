@@ -68,7 +68,7 @@ namespace Reflow.Analyzer.Emitters
                 _cases.Clear();
             }
 
-            return File("Reflow.Queries")
+            return File("Reflow.QueryParsers")
                 .WithMembers(
                     Class(_className, CSharpModifiers.Public | CSharpModifiers.Static)
                         .WithMembers(_parsers)
@@ -108,7 +108,10 @@ namespace Reflow.Analyzer.Emitters
                 _caseStatements.Clear();
             }
 
-            var methodDefinition = new MethodLocation(_className, "Parser_" + _parserIndex++);
+            var methodDefinition = new MethodLocation(
+                "Reflow.QueryParsers." + _className,
+                "Parser_" + _parserIndex++
+            );
 
             _parsers.Add(
                 Method(

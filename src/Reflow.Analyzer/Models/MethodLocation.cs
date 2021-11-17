@@ -2,8 +2,8 @@
 {
     internal class MethodLocation
     {
-        public string FullTypeName { get; }
-        public string MethodName { get; }
+        internal string FullTypeName { get; }
+        internal string MethodName { get; }
 
         internal MethodLocation(string fullTypeName, string methodName)
         {

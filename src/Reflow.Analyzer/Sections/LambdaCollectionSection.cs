@@ -539,12 +539,12 @@ namespace Reflow.Analyzer.Sections
                                     _semanticModel,
                                     lambdaSyntax,
                                     data.Invocations,
-                                    new LambdaLink(
+                                    new LambdaLinkDefinition(
                                         _className,
                                         identifier,
                                         _memberIndex,
                                         _lambdaIndex,
-                                        dataFlow.CapturedInside.Length == 0
+                                        dataFlow.CapturedInside.Length > 0
                                     )
                                 )
                             );

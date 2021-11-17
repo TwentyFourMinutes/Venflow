@@ -4,7 +4,7 @@ namespace Reflow.Lambdas
 {
     internal static class LambdaLinker
     {
-        private static readonly IReadOnlyDictionary<MethodInfo, LambdaData> _lambdaData;
+        private static readonly IReadOnlyDictionary<MethodInfo, ILambdaLinkData> _lambdaData;
 
         static LambdaLinker()
         {
@@ -17,7 +17,7 @@ namespace Reflow.Lambdas
 
             var links = (LambdaLink[])linksField.GetValue(null)!;
 
-            var lambdaData = new Dictionary<MethodInfo, LambdaData>(links.Length);
+            var lambdaData = new Dictionary<MethodInfo, ILambdaLinkData>(links.Length);
 
             for (var linkIndex = 0; linkIndex < links.Length; linkIndex++)
             {
@@ -25,11 +25,11 @@ namespace Reflow.Lambdas
 
                 MethodInfo? method = null;
 
-                if (link is ClosureLambdaLink closureLink)
+                if (link.HasClosure)
                 {
                     var nestedTypes = link.ClassType.GetNestedTypes(BindingFlags.NonPublic);
 
-                    var expectedTypeName = "<>DisplayClass" + closureLink.MemberIndex;
+                    var expectedTypeName = "<>c__DisplayClass" + link.MemberIndex;
 
                     for (
                         var nestedTypeIndex = 0;
@@ -43,7 +43,7 @@ namespace Reflow.Lambdas
                             continue;
 
                         var tempMethod = nestedType.GetMethod(
-                            link.FullLambdaName,
+                            $"<{link.IdentifierName}>b__{link.LambdaIndex}",
                             BindingFlags.NonPublic | BindingFlags.Instance
                         );
 
@@ -58,9 +58,11 @@ namespace Reflow.Lambdas
                 }
                 else
                 {
+                    var nestedType = link.ClassType.GetNestedType("<>c", BindingFlags.NonPublic)!;
+
                     method =
-                        link.ClassType.GetMethod(
-                            link.FullLambdaName,
+                        nestedType.GetMethod(
+                            $"<{link.IdentifierName}>b__{link.MemberIndex}_{link.LambdaIndex}",
                             BindingFlags.NonPublic | BindingFlags.Instance
                         ) ?? throw new InvalidOperationException();
                 }
@@ -73,9 +75,9 @@ namespace Reflow.Lambdas
             linksField.SetValue(null, null);
         }
 
-        internal static LambdaData GetLambdaData(MethodInfo method)
+        internal static TData GetLambdaData<TData>(MethodInfo method) where TData : ILambdaLinkData
         {
-            return _lambdaData[method];
+            return (TData)_lambdaData[method];
         }
     }
 }

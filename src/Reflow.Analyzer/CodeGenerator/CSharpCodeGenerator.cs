@@ -306,6 +306,13 @@ namespace Reflow.Analyzer.CodeGenerator
             return LiteralExpression(SyntaxKind.StringLiteralExpression).WithToken(Literal(value));
         }
 
+        public static LiteralExpressionSyntax Constant(bool value)
+        {
+            return LiteralExpression(
+                value ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression
+            );
+        }
+
         public static CastExpressionSyntax Cast(TypeSyntax toType, ExpressionSyntax expression)
         {
             return CastExpression(toType, expression);

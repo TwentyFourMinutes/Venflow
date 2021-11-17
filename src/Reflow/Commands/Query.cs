@@ -13,7 +13,7 @@ namespace Reflow.Commands
             [ThreadStatic]
             internal static AmbientData? Current;
 
-            internal LambdaData LambdaData = null!;
+            internal QueryLinkData LambdaData = null!;
             internal DbCommand Command = null!;
         }
 
@@ -65,7 +65,7 @@ namespace Reflow.Commands
 
         internal static void Handle(Func<SqlInterpolationHandler> sql)
         {
-            var lambdaData = LambdaLinker.GetLambdaData(sql.Method);
+            var lambdaData = LambdaLinker.GetLambdaData<QueryLinkData>(sql.Method);
 
             var command = new NpgsqlCommand();
 
