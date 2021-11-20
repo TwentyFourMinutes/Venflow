@@ -7,23 +7,20 @@ namespace Reflow.Lambdas
     {
         internal Type ClassType { get; }
         internal string IdentifierName { get; }
-        internal int MemberIndex { get; }
-        internal int LambdaIndex { get; }
+        internal uint LambdaIndex { get; }
         internal bool HasClosure { get; }
         internal ILambdaLinkData Data { get; }
 
         public LambdaLink(
             Type classType,
             string identifierName,
-            int memberIndex,
-            int lambdaIndex,
+            uint lambdaIndex,
             bool hasClosure,
             ILambdaLinkData data
         )
         {
             ClassType = classType;
             IdentifierName = identifierName;
-            MemberIndex = memberIndex;
             LambdaIndex = lambdaIndex;
             HasClosure = hasClosure;
             Data = data;

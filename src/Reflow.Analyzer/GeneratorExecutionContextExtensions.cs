@@ -11,7 +11,7 @@ namespace Reflow.Analyzer
             SourceText sourceText
         )
         {
-            context.AddSource(name + ".generated.cs", sourceText);
+            context.AddSource(name + ".g.cs", sourceText);
         }
     }
 }

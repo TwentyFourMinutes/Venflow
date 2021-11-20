@@ -2,9 +2,9 @@
 {
     public class DatabaseConfiguration
     {
-        public Action<IDatabase> Instantiater { get; }
+        public Action<object> Instantiater { get; }
 
-        public DatabaseConfiguration(Action<IDatabase> instantiater)
+        public DatabaseConfiguration(Action<object> instantiater)
         {
             Instantiater = instantiater;
         }

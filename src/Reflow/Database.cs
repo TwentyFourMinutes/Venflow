@@ -33,6 +33,7 @@ namespace Reflow
 
         /// <inheritdoc/>
         public DbConnection? Connection { get; private set; }
+        DbConnection? IDatabase.Connection => Connection;
 
         private readonly string _connectionString;
 
@@ -62,10 +63,14 @@ namespace Reflow
                 );
             }
         }
+
+        ValueTask IDatabase.EnsureValidConnection(CancellationToken cancellationToken) =>
+            EnsureValidConnection(cancellationToken);
     }
 
-    public interface IDatabase
+    internal interface IDatabase
     {
         DbConnection? Connection { get; }
+        ValueTask EnsureValidConnection(CancellationToken cancellationToken);
     }
 }

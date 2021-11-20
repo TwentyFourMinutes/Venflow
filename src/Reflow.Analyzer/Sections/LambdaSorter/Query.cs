@@ -78,6 +78,7 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
 
                 WithLinkData(
                     new QueryLinkData(
+                        Value.Entity,
                         contentLength,
                         parameterIndecies.ToArray(),
                         new string[] { Value.Entity.GetFullName() }
@@ -132,16 +133,19 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
     {
         internal MethodLocation? Location { get; set; }
 
+        internal ITypeSymbol Entity { get; }
         internal string[]? UsedEntities { get; }
         internal int MinimumSqlLength { get; }
         internal short[] ParameterIndecies { get; }
 
         internal QueryLinkData(
+            ITypeSymbol entity,
             int minimumSqlLength,
             short[] parameterIndecies,
             string[] usedEntities
         )
         {
+            Entity = entity;
             MinimumSqlLength = minimumSqlLength;
             ParameterIndecies = parameterIndecies;
             UsedEntities = usedEntities;

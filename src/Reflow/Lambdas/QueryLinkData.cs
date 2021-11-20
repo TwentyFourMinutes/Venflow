@@ -5,24 +5,24 @@ namespace Reflow.Lambdas
     [EditorBrowsable(EditorBrowsableState.Never)]
     public class QueryLinkData : ILambdaLinkData
     {
-        internal short[]? ColumnIndecies { get; set; }
+        internal ushort[]? ColumnIndecies { get; set; }
 
         internal int MinimumSqlLength { get; }
         internal short[] ParameterIndecies { get; }
         internal Type[]? UsedEntities { get; }
-        internal MethodLocation Location { get; }
+        internal Delegate Parser { get; }
 
         public QueryLinkData(
             int minimumSqlLength,
             short[] parameterIndecies,
             Type[] usedEntities,
-            MethodLocation location
+            Delegate parser
         )
         {
             MinimumSqlLength = minimumSqlLength;
             ParameterIndecies = parameterIndecies;
             UsedEntities = usedEntities;
-            Location = location;
+            Parser = parser;
         }
     }
 }

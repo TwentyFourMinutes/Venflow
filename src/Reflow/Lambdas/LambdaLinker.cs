@@ -29,8 +29,6 @@ namespace Reflow.Lambdas
                 {
                     var nestedTypes = link.ClassType.GetNestedTypes(BindingFlags.NonPublic);
 
-                    var expectedTypeName = "<>c__DisplayClass" + link.MemberIndex;
-
                     for (
                         var nestedTypeIndex = 0;
                         nestedTypeIndex < nestedTypes.Length;
@@ -39,15 +37,22 @@ namespace Reflow.Lambdas
                     {
                         var nestedType = nestedTypes[nestedTypeIndex];
 
-                        if (!nestedType.Name.StartsWith(expectedTypeName))
+                        if (
+                            !nestedType.Name.StartsWith("<>c__DisplayClass")
+                            || !nestedType.Name.EndsWith(
+                                (link.LambdaIndex >> sizeof(ushort) * 8).ToString()
+                            )
+                        )
                             continue;
 
-                        var tempMethod = nestedType.GetMethod(
-                            $"<{link.IdentifierName}>b__{link.LambdaIndex}",
+                        var tempMethod = nestedType.GetMethods(
                             BindingFlags.NonPublic | BindingFlags.Instance
-                        );
+                        )[link.LambdaIndex & ushort.MaxValue];
 
-                        if (tempMethod is null)
+                        if (
+                            tempMethod is null
+                            || !tempMethod.Name.StartsWith("<" + link.IdentifierName + ">b__")
+                        )
                             continue;
 
                         method = tempMethod;
@@ -60,11 +65,19 @@ namespace Reflow.Lambdas
                 {
                     var nestedType = link.ClassType.GetNestedType("<>c", BindingFlags.NonPublic)!;
 
-                    method =
-                        nestedType.GetMethod(
-                            $"<{link.IdentifierName}>b__{link.MemberIndex}_{link.LambdaIndex}",
-                            BindingFlags.NonPublic | BindingFlags.Instance
-                        ) ?? throw new InvalidOperationException();
+                    var methods = nestedType.GetMethods(
+                        BindingFlags.Instance | BindingFlags.NonPublic
+                    );
+
+                    var tempMethod = methods[link.LambdaIndex];
+
+                    if (
+                        tempMethod is null
+                        || !tempMethod.Name.StartsWith("<" + link.IdentifierName + ">b__")
+                    )
+                        continue;
+
+                    method = tempMethod;
                 }
 
                 lambdaData.Add(method, link.Data);

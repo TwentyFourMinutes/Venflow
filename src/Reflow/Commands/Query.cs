@@ -15,19 +15,27 @@ namespace Reflow.Commands
 
             internal QueryLinkData LambdaData = null!;
             internal DbCommand Command = null!;
+            internal IDatabase Database = null!;
         }
 
-        internal static async Task<T?> SingleAsync<T>(CancellationToken cancellationToken)
+        internal static async Task<TEntity?> SingleAsync<TEntity>(
+            CancellationToken cancellationToken
+        )
         {
             var queryData = AmbientData.Current ?? throw new InvalidOperationException();
 
-            var dataReader = await queryData.Command.ExecuteReaderAsync(
-                CommandBehavior.SingleRow,
-                cancellationToken
-            );
+            await queryData.Database.EnsureValidConnection(cancellationToken);
+            queryData.Command.Connection = queryData.Database.Connection;
+
+            DbDataReader dataReader = null!;
 
             try
             {
+                dataReader = await queryData.Command.ExecuteReaderAsync(
+                    CommandBehavior.SingleRow,
+                    cancellationToken
+                );
+
                 if (!dataReader.HasRows)
                     return default;
 
@@ -37,7 +45,7 @@ namespace Reflow.Commands
                 {
                     var columnSchema = dataReader.GetColumnSchema();
 
-                    queryData.LambdaData.ColumnIndecies = columnIndecies = new short[
+                    queryData.LambdaData.ColumnIndecies = columnIndecies = new ushort[
                         columnSchema.Count
                     ];
 
@@ -48,22 +56,31 @@ namespace Reflow.Commands
                         var column = columnSchema[columnIndex];
 
                         columnIndecies[columnIndex] =
-                            (short)column.ColumnOrdinal.GetValueOrDefault();
+                            (ushort)column.ColumnOrdinal.GetValueOrDefault();
                     }
                 }
 
                 await dataReader.ReadAsync();
+
+                return ((Func<DbDataReader, ushort[], TEntity>)queryData.LambdaData.Parser).Invoke(
+                    dataReader,
+                    columnIndecies
+                );
+            }
+            catch
+            {
+                return default;
             }
             finally
             {
-                await dataReader.DisposeAsync();
+                if (dataReader is not null)
+                    await dataReader.DisposeAsync();
+
                 await queryData.Command.DisposeAsync();
             }
-
-            return default;
         }
 
-        internal static void Handle(Func<SqlInterpolationHandler> sql)
+        internal static void Handle(IDatabase database, Func<SqlInterpolationHandler> sql)
         {
             var lambdaData = LambdaLinker.GetLambdaData<QueryLinkData>(sql.Method);
 
@@ -75,7 +92,7 @@ namespace Reflow.Commands
             {
                 ParameterIndecies = lambdaData.ParameterIndecies,
                 Parameters = command.Parameters,
-                CommandBuilder = commandBuilder
+                CommandBuilder = commandBuilder,
             };
 
             SqlInterpolationHandler.AmbientData.Current = interpolationData;
@@ -86,7 +103,12 @@ namespace Reflow.Commands
 
             command.CommandText = commandBuilder.ToString();
 
-            var queryData = new AmbientData { Command = command, LambdaData = lambdaData };
+            var queryData = new AmbientData
+            {
+                Command = command,
+                LambdaData = lambdaData,
+                Database = database
+            };
 
             AmbientData.Current = queryData;
         }

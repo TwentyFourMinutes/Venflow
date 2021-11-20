@@ -6,14 +6,14 @@ namespace Reflow
     {
         private readonly IDatabase _database;
 
-        public Table(IDatabase database)
+        public Table(object database)
         {
-            _database = database;
+            _database = (IDatabase)database;
         }
 
         public QueryBuilder<T> Query(Func<SqlInterpolationHandler> sql)
         {
-            Commands.Query.Handle(sql);
+            Commands.Query.Handle(_database, sql);
 
             return default;
         }

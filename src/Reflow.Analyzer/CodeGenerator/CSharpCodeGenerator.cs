@@ -295,12 +295,19 @@ namespace Reflow.Analyzer.CodeGenerator
 
         public static LiteralExpressionSyntax Constant(short value)
         {
-            return Constant((int)value);
+            return LiteralExpression(SyntaxKind.NumericLiteralExpression).WithToken(Literal(value));
         }
+
+        public static LiteralExpressionSyntax Constant(uint value)
+        {
+            return LiteralExpression(SyntaxKind.NumericLiteralExpression).WithToken(Literal(value));
+        }
+
         public static LiteralExpressionSyntax Constant(int value)
         {
             return LiteralExpression(SyntaxKind.NumericLiteralExpression).WithToken(Literal(value));
         }
+
         public static LiteralExpressionSyntax Constant(string value)
         {
             return LiteralExpression(SyntaxKind.StringLiteralExpression).WithToken(Literal(value));
@@ -332,6 +339,15 @@ namespace Reflow.Analyzer.CodeGenerator
         )
         {
             return new CSharpIfSyntax(condition, statements);
+        }
+
+        public static InvocationExpressionSyntax Invoke(
+            NameSyntax member,
+            string memberName,
+            params ExpressionSyntax[] parameters
+        )
+        {
+            return Invoke(member, IdentifierName(memberName), parameters);
         }
 
         public static InvocationExpressionSyntax Invoke(

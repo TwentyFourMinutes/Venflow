@@ -5,24 +5,36 @@ namespace Reflow.Playground
 {
     public static class Program
     {
-        public static void Main()
+        public static int MyProperty
+        {
+            get { return 0; }
+            set { }
+        }
+
+        public static async Task Main()
         {
             var db = new MyDatabase();
             Test(
                 () =>
                 {
                     var a = db.People
-                        .Query(() => $"select * from people where id = {0}")
+                        .Query(() => $"first {0}")
                         .TrackChanges()
                         .TrackChanges(false)
                         .SingleAsync();
 
-                    var ad = db.People
-                        .Query(() => $"select * frdadadadom people where id = {0}")
-                        .TrackChanges(false)
-                        .SingleAsync();
+                    var ad = db.People.Query(() => @$"second").TrackChanges(false).SingleAsync();
                 }
             );
+
+            for (var i = 0; i < 2; i++)
+            {
+                var ads = await db.People
+                    .Query(() => @$"SELECT ""Id"", ""Name"" FROM ""People"" WHERE ""Id"" = {i}")
+                    .SingleAsync();
+            }
+
+            var ad = await db.People.Query(() => @$"last").SingleAsync();
         }
         public static void Test(Action a) => Console.WriteLine(a);
     }
@@ -31,7 +43,11 @@ namespace Reflow.Playground
     {
         public Table<Person> People { get; set; }
 
-        public MyDatabase() : base("") { }
+        public MyDatabase()
+            : base(
+                "User ID = venflow_tests; Password = venflow_tests; Server = 127.0.0.1; Port = 5432; Database = venflow_tests; "
+            )
+        { }
     }
 
     public class Person

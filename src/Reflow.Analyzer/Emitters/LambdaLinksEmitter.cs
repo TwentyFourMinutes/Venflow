@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Data.Common;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Reflow.Analyzer.CodeGenerator;
@@ -21,7 +22,6 @@ namespace Reflow.Analyzer.Emitters
 
                 arguments.Add(TypeOf(Type(link.ClassName)));
                 arguments.Add(Constant(link.IdentifierName));
-                arguments.Add(Constant(link.MemberIndex));
                 arguments.Add(Constant(link.LambdaIndex));
                 arguments.Add(Constant(link.HasClosure));
 
@@ -41,11 +41,18 @@ namespace Reflow.Analyzer.Emitters
                                         Array(Type(typeof(Type))),
                                         queryData.UsedEntities.Select(x => TypeOf(Type(x)))
                                     ),
-                                    Instance(Type("Reflow.Lambdas.MethodLocation"))
-                                        .WithArguments(
-                                            TypeOf(Type(queryData.Location!.FullTypeName)),
-                                            Constant(queryData.Location!.MethodName)
+                                    Cast(
+                                        GenericType(
+                                            typeof(Func<,,>),
+                                            Type(typeof(DbDataReader)),
+                                            Type(typeof(ushort[])),
+                                            Type(queryData.Entity)
+                                        ),
+                                        AccessMember(
+                                            Type(queryData.Location!.FullTypeName),
+                                            queryData.Location!.MethodName
                                         )
+                                    )
                                 )
                         );
                     }

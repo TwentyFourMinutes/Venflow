@@ -6,21 +6,18 @@
 
         internal string ClassName { get; }
         internal string IdentifierName { get; }
-        internal int MemberIndex { get; }
-        internal int LambdaIndex { get; }
+        internal uint LambdaIndex { get; set; }
         internal bool HasClosure { get; }
 
         internal LambdaLinkDefinition(
             string className,
             string identifierName,
-            int memberIndex,
-            int lambdaIndex,
+            uint lambdaIndex,
             bool hasClosure
         )
         {
             ClassName = className;
             IdentifierName = identifierName;
-            MemberIndex = memberIndex;
             LambdaIndex = lambdaIndex;
             HasClosure = hasClosure;
         }

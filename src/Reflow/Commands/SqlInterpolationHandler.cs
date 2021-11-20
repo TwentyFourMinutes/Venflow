@@ -39,7 +39,7 @@ namespace Reflow.Commands
 
             if (current is null)
                 throw new InvalidOperationException(
-                    $"Invalid usage of the '{nameof(SqlInterpolationHandler)}' struct, it should never be called explictly by user code."
+                    $"Invalid usage of the '{nameof(SqlInterpolationHandler)}' struct, it should never be called explicitly by user code."
                 );
 
             _commandBuilder = current.CommandBuilder;

@@ -1,6 +1,9 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Immutable;
+using System.Reflection;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 using Reflow.Analyzer.Models.Definitions;
 
 namespace Reflow.Analyzer.Sections
@@ -18,27 +21,19 @@ namespace Reflow.Analyzer.Sections
             EntityConfigurationSection previous
         )
         {
-            var lambdaCollector = new LambdaCollector(context.Compilation);
+            var instanceMembers = new List<MemberDeclarationSyntax>();
+            var staticMembers = new List<MemberDeclarationSyntax>();
 
-            var members = new List<SyntaxNode>();
-            var instanceVariableMembers = new List<MemberDeclarationSyntax>();
-            var staticVariableMembers = new List<MemberDeclarationSyntax>();
+            var classSyntaxWalker = new ClassSyntaxWalker(
+                context.Compilation,
+                instanceMembers,
+                staticMembers
+            );
 
             foreach (var classSyntax in syntaxReceiver.Candidates)
             {
-                lambdaCollector.SetClassScope(classSyntax);
-
                 foreach (var childNode in classSyntax.ChildNodes())
                 {
-                    switch (childNode)
-                    {
-                        case BaseTypeDeclarationSyntax:
-                            lambdaCollector.IncrementMemberIndex();
-                            continue;
-                    }
-
-                    members.Add(childNode);
-
                     switch (childNode)
                     {
                         case FieldDeclarationSyntax:
@@ -52,35 +47,124 @@ namespace Reflow.Analyzer.Sections
 
                     if (IsStaticMember(member))
                     {
-                        staticVariableMembers.Add(member);
+                        staticMembers.Add(member);
                     }
                     else
                     {
-                        instanceVariableMembers.Add(member);
+                        instanceMembers.Add(member);
                     }
                 }
 
-                var hasInstanceConstructor = false;
-                var hasStaticConstructor = false;
+                classSyntaxWalker.CollectLambdas(classSyntax);
 
-                for (var memberIndex = 0; memberIndex < members.Count; memberIndex++)
+                if (!classSyntaxWalker.HasInstanceConstructor && instanceMembers.Count > 0)
                 {
-                    var member = members[memberIndex];
-
-                    if (member is MethodDeclarationSyntax methodSyntax)
+                    for (
+                        var variableMemberIndex = 0;
+                        variableMemberIndex < instanceMembers.Count;
+                        variableMemberIndex++
+                    )
                     {
-                        lambdaCollector.Collect(member, methodSyntax.Identifier.Text);
-                        lambdaCollector.ResetLambdaIndex();
+                        classSyntaxWalker.VisitWithName(
+                            instanceMembers[variableMemberIndex],
+                            ".cctor"
+                        );
                     }
-                    else if (member is PropertyDeclarationSyntax propertySyntax)
+
+                    instanceMembers.Clear();
+                }
+
+                if (!classSyntaxWalker.HasStaticConstructor && staticMembers.Count > 0)
+                {
+                    for (
+                        var variableMemberIndex = 0;
+                        variableMemberIndex < staticMembers.Count;
+                        variableMemberIndex++
+                    )
+                    {
+                        classSyntaxWalker.VisitWithName(
+                            staticMembers[variableMemberIndex],
+                            ".cctor"
+                        );
+                    }
+
+                    staticMembers.Clear();
+                }
+            }
+
+            return classSyntaxWalker.DatabaseFluentCalls;
+        }
+
+        private static bool IsStaticMember(MemberDeclarationSyntax member)
+        {
+            for (var modifierIndex = 0; modifierIndex < member.Modifiers.Count; modifierIndex++)
+            {
+                if (member.Modifiers[modifierIndex].IsKind(SyntaxKind.StaticKeyword))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private class ClassSyntaxWalker : SyntaxWalker
+        {
+            internal Dictionary<
+                ITypeSymbol,
+                List<FluentCallDefinition>
+            > DatabaseFluentCalls { get; }
+
+            internal bool HasInstanceConstructor { get; private set; }
+            internal bool HasStaticConstructor { get; private set; }
+
+            private uint _lambdaIndex;
+            private string _currentMemberName = null!;
+            private ClassDeclarationSyntax _classSyntax = null!;
+            private string _className = null!;
+            private SemanticModel? _semanticModel;
+
+            private readonly Compilation _compilation;
+            private readonly List<MemberDeclarationSyntax> _instanceMembers;
+            private readonly List<MemberDeclarationSyntax> _staticMembers;
+            private readonly ScopeCollection _closureScopes;
+
+            internal ClassSyntaxWalker(
+                Compilation compilation,
+                List<MemberDeclarationSyntax> instanceMembers,
+                List<MemberDeclarationSyntax> staticMembers
+            )
+            {
+                _compilation = compilation;
+                _instanceMembers = instanceMembers;
+                _staticMembers = staticMembers;
+
+                DatabaseFluentCalls = new(SymbolEqualityComparer.Default);
+                _closureScopes = new();
+            }
+
+            public void VisitWithName(SyntaxNode node, string memberName)
+            {
+                _currentMemberName = memberName;
+                Visit(node);
+            }
+
+            public override void Visit(SyntaxNode node)
+            {
+                if (node is MemberDeclarationSyntax)
+                {
+                    if (node is BaseTypeDeclarationSyntax)
+                    {
+                        return;
+                    }
+
+                    if (node is MethodDeclarationSyntax methodSyntax)
+                    {
+                        _currentMemberName = methodSyntax.Identifier.Text;
+                    }
+                    else if (node is PropertyDeclarationSyntax propertySyntax)
                     {
                         if (propertySyntax.ExpressionBody is not null)
                         {
-                            lambdaCollector.IncrementMemberIndex();
-                            lambdaCollector.Collect(
-                                propertySyntax.ExpressionBody,
-                                "get_" + propertySyntax.Identifier.Text
-                            );
+                            _currentMemberName = "get_" + propertySyntax.Identifier.Text;
                         }
                         else if (propertySyntax.AccessorList is not null)
                         {
@@ -92,99 +176,69 @@ namespace Reflow.Analyzer.Sections
                             {
                                 var accessor = propertySyntax.AccessorList.Accessors[accessorIndex];
 
-                                if (accessor.IsKind(SyntaxKind.GetAccessorDeclaration))
+                                if (
+                                    accessor.IsKind(SyntaxKind.GetAccessorDeclaration)
+                                    && propertySyntax.Initializer is null
+                                )
                                 {
-                                    lambdaCollector.IncrementMemberIndex();
-
-                                    if (accessor.Body is null)
-                                    {
-                                        lambdaCollector.IncrementMemberIndex();
-                                    }
-                                    else if (propertySyntax.Initializer is null)
-                                    {
-                                        lambdaCollector.Collect(
-                                            accessor.Body,
-                                            "get_" + propertySyntax.Identifier.Text
-                                        );
-                                    }
+                                    _currentMemberName = "get_" + propertySyntax.Identifier.Text;
                                 }
-                                else if (accessor.IsKind(SyntaxKind.SetAccessorDeclaration))
+                                else if (
+                                    accessor.IsKind(SyntaxKind.SetAccessorDeclaration)
+                                    && propertySyntax.Initializer is null
+                                    && accessor.Body is not null
+                                )
                                 {
-                                    lambdaCollector.IncrementMemberIndex();
-
-                                    if (
-                                        propertySyntax.Initializer is null
-                                        && accessor.Body is not null
-                                    )
-                                    {
-                                        lambdaCollector.Collect(
-                                            accessor.Body,
-                                            "set" + propertySyntax.Identifier.Text
-                                        );
-                                    }
+                                    _currentMemberName = "set_" + propertySyntax.Identifier.Text;
+                                }
+                                else
+                                {
+                                    return;
                                 }
                             }
-                        }
-                        lambdaCollector.ResetLambdaIndex();
-                    }
-                    else if (member is FieldDeclarationSyntax fieldSyntax)
-                    {
-                        lambdaCollector.IncrementMemberIndex(
-                            fieldSyntax.Declaration.Variables.Count - 1
-                        );
-                    }
-                    else if (member is ConstructorDeclarationSyntax constructorSyntax)
-                    {
-                        var isStaticConstructor = IsStaticMember(constructorSyntax);
-                        var identifierName = isStaticConstructor ? ".cctor" : ".ctor";
-
-                        lambdaCollector.Collect(member, identifierName);
-
-                        if (isStaticConstructor)
-                        {
-                            hasStaticConstructor = true;
                         }
                         else
                         {
-                            hasInstanceConstructor = true;
+                            return;
                         }
-
-                        var variableMembers = isStaticConstructor
-                            ? staticVariableMembers
-                            : instanceVariableMembers;
-
-                        for (
-                            var variableMemberIndex = 0;
-                            variableMemberIndex < variableMembers.Count;
-                            variableMemberIndex++
-                        )
-                        {
-                            var variableMember = variableMembers[variableMemberIndex];
-
-                            if (variableMember is FieldDeclarationSyntax field)
-                            {
-                                for (
-                                    var fieldVariableIndex = 0;
-                                    fieldVariableIndex < field.Declaration.Variables.Count;
-                                    fieldVariableIndex++
-                                )
-                                {
-                                    var fieldVariable = field.Declaration.Variables[
-                                        fieldVariableIndex
-                                    ];
-
-                                    lambdaCollector.Collect(fieldVariable, identifierName);
-                                }
-                            }
-                            else if (variableMember is PropertyDeclarationSyntax property)
-                            {
-                                lambdaCollector.Collect(property.Initializer!, identifierName);
-                            }
-                        }
-
-                        lambdaCollector.ResetLambdaIndex();
                     }
-                    else if (member is EventDeclarationSyntax eventSyntax)
+                    else if (node is FieldDeclarationSyntax)
+                    {
+                        return;
+                    }
+                    else if (node is ConstructorDeclarationSyntax constructorSyntax)
+                    {
+                        var isStaticConstructor = IsStaticMember(constructorSyntax);
+                        _currentMemberName = isStaticConstructor ? ".cctor" : ".ctor";
+
+                        List<MemberDeclarationSyntax> memebrs;
+
+                        // How does this behave with different ctors?
+                        if (isStaticConstructor)
+                        {
+                            if (HasStaticConstructor)
+                                return;
+
+                            HasStaticConstructor = true;
+                            memebrs = _staticMembers;
+                        }
+                        else
+                        {
+                            if (HasInstanceConstructor)
+                                return;
+
+                            HasInstanceConstructor = true;
+                            memebrs = _instanceMembers;
+                        }
+
+                        for (var memberIndex = 0; memberIndex < memebrs.Count; memberIndex++)
+                        {
+                            base.Visit(memebrs[memberIndex]);
+                        }
+
+                        memebrs.Clear();
+                    }
+                    else if (node is EventDeclarationSyntax eventSyntax)
                     {
                         for (
                             var accessorIndex = 0;
@@ -194,41 +248,33 @@ namespace Reflow.Analyzer.Sections
                         {
                             var accessor = eventSyntax.AccessorList.Accessors[accessorIndex];
 
-                            if (accessor.IsKind(SyntaxKind.AddAccessorDeclaration))
+                            if (
+                                accessor.IsKind(SyntaxKind.AddAccessorDeclaration)
+                                && accessor.Body is not null
+                            )
                             {
-                                lambdaCollector.IncrementMemberIndex();
-
-                                if (accessor.Body is not null)
-                                {
-                                    lambdaCollector.Collect(
-                                        accessor.Body,
-                                        "add_" + eventSyntax.Identifier.Text
-                                    );
-                                }
+                                _currentMemberName = "add_" + eventSyntax.Identifier.Text;
                             }
-                            else if (accessor.IsKind(SyntaxKind.RemoveAccessorDeclaration))
+                            else if (
+                                accessor.IsKind(SyntaxKind.RemoveAccessorDeclaration)
+                                && accessor.Body is not null
+                            )
                             {
-                                lambdaCollector.IncrementMemberIndex();
-
-                                if (accessor.Body is not null)
-                                {
-                                    lambdaCollector.Collect(
-                                        accessor.Body,
-                                        "remove_" + eventSyntax.Identifier.Text
-                                    );
-                                }
+                                _currentMemberName = "remove_" + eventSyntax.Identifier.Text;
+                            }
+                            else
+                            {
+                                return;
                             }
                         }
-
-                        lambdaCollector.ResetLambdaIndex();
                     }
-                    else if (member is EventFieldDeclarationSyntax)
+                    else if (node is EventFieldDeclarationSyntax)
                     {
-                        lambdaCollector.IncrementMemberIndex(2);
+                        return;
                     }
-                    else if (member is ConversionOperatorDeclarationSyntax conversionOperatorSyntax)
+                    else if (node is ConversionOperatorDeclarationSyntax conversionOperatorSyntax)
                     {
-                        var identifierName =
+                        _currentMemberName =
                             conversionOperatorSyntax.ImplicitOrExplicitKeyword.Text switch
                             {
                                 "implicit" => "op_Implicit",
@@ -238,16 +284,12 @@ namespace Reflow.Analyzer.Sections
                                       $"The conversion token '{conversionOperatorSyntax.ImplicitOrExplicitKeyword}' is not known, please report this on GitHub."
                                   )
                             };
-
-                        lambdaCollector.Collect(member, identifierName);
-                        lambdaCollector.ResetLambdaIndex();
                     }
-                    else if (member is IndexerDeclarationSyntax indexSyntax)
+                    else if (node is IndexerDeclarationSyntax indexSyntax)
                     {
                         if (indexSyntax.ExpressionBody is not null)
                         {
-                            lambdaCollector.IncrementMemberIndex();
-                            lambdaCollector.Collect(indexSyntax.ExpressionBody, "get_Item");
+                            _currentMemberName = "get_Item";
                         }
                         else
                         {
@@ -261,24 +303,20 @@ namespace Reflow.Analyzer.Sections
 
                                 if (accessor.IsKind(SyntaxKind.GetAccessorDeclaration))
                                 {
-                                    lambdaCollector.IncrementMemberIndex();
-                                    lambdaCollector.Collect(accessor.Body!, "get_Item");
+                                    ;
+                                    _currentMemberName = "get_Item";
                                 }
-                                else if (accessor.IsKind(SyntaxKind.SetAccessorDeclaration))
-                                {
-                                    lambdaCollector.IncrementMemberIndex();
-
-                                    if (accessor.Body is not null)
-                                        lambdaCollector.Collect(accessor.Body, "set_Item");
-                                }
+                                else if (
+                                    accessor.IsKind(SyntaxKind.SetAccessorDeclaration)
+                                    && accessor.Body is not null
+                                )
+                                    _currentMemberName = "set_Item";
                             }
                         }
-
-                        lambdaCollector.ResetLambdaIndex();
                     }
-                    else if (member is OperatorDeclarationSyntax operatorSyntax)
+                    else if (node is OperatorDeclarationSyntax operatorSyntax)
                     {
-                        var identifierName = operatorSyntax.Kind() switch
+                        _currentMemberName = operatorSyntax.Kind() switch
                         {
                             SyntaxKind.PlusToken => "op_Addition",
                             SyntaxKind.MinusToken => "op_Subtraction",
@@ -297,293 +335,88 @@ namespace Reflow.Analyzer.Sections
                                   $"The operator token '{operatorSyntax.Kind()}' is not known, please report this on GitHub."
                               )
                         };
-
-                        lambdaCollector.Collect(member, identifierName);
-                        lambdaCollector.ResetLambdaIndex();
                     }
-                    else if (member is DestructorDeclarationSyntax)
+                    else if (node is DestructorDeclarationSyntax)
                     {
-                        lambdaCollector.Collect(member, "Finalize");
-                        lambdaCollector.ResetLambdaIndex();
-                    }
-
-                    if (member is MemberDeclarationSyntax)
-                    {
-                        lambdaCollector.IncrementMemberIndex();
+                        _currentMemberName = "Finalize";
                     }
                 }
-
-                if (!hasInstanceConstructor && instanceVariableMembers.Count > 0)
+                else if (node is BlockSyntax blockSyntax)
                 {
-                    for (
-                        var variableMemberIndex = 0;
-                        variableMemberIndex < instanceVariableMembers.Count;
-                        variableMemberIndex++
-                    )
-                    {
-                        var variableMember = instanceVariableMembers[variableMemberIndex];
+                    _closureScopes.EnterScope(blockSyntax.Span);
 
-                        if (variableMember is FieldDeclarationSyntax fieldSyntax)
-                        {
-                            for (
-                                var fieldVariableIndex = 0;
-                                fieldVariableIndex < fieldSyntax.Declaration.Variables.Count;
-                                fieldVariableIndex++
+                    base.Visit(blockSyntax);
+
+                    _closureScopes.LeaveScope();
+
+                    return;
+                }
+                else if (node is LambdaExpressionSyntax lambdaSyntax)
+                {
+                    _semanticModel ??= _compilation.GetSemanticModel(
+                        _classSyntax!.SyntaxTree,
+                        true
+                    );
+
+                    var dataFlow = _semanticModel.AnalyzeDataFlow(lambdaSyntax);
+
+                    if (dataFlow is null || !dataFlow.Succeeded)
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    var hasClosure = dataFlow.CapturedInside.Length > 0;
+
+                    if (TryGetFluentCallBaseData(lambdaSyntax, out var data))
+                    {
+                        if (
+                            !DatabaseFluentCalls.TryGetValue(
+                                data.DatabaseSymbol,
+                                out var fluentCalls
                             )
-                            {
-                                var fieldVariable = fieldSyntax.Declaration.Variables[
-                                    fieldVariableIndex
-                                ];
-
-                                lambdaCollector.Collect(fieldVariable, ".ctor");
-                            }
-                        }
-                        else if (variableMember is PropertyDeclarationSyntax propertySyntax)
+                        )
                         {
-                            lambdaCollector.Collect(propertySyntax.Initializer!, ".ctor");
+                            fluentCalls = new List<FluentCallDefinition>();
+
+                            DatabaseFluentCalls.Add(data.DatabaseSymbol, fluentCalls);
                         }
-                    }
 
-                    lambdaCollector.ResetLambdaIndex();
-                }
-                if (!hasStaticConstructor && staticVariableMembers.Count > 0)
-                {
-                    if (!hasInstanceConstructor && instanceVariableMembers.Count > 0)
-                        lambdaCollector.IncrementMemberIndex();
-
-                    for (
-                        var variableMemberIndex = 0;
-                        variableMemberIndex < staticVariableMembers.Count;
-                        variableMemberIndex++
-                    )
-                    {
-                        var variableMember = staticVariableMembers[variableMemberIndex];
-
-                        if (variableMember is FieldDeclarationSyntax fieldSyntax)
-                        {
-                            for (
-                                var fieldVariableIndex = 0;
-                                fieldVariableIndex < fieldSyntax.Declaration.Variables.Count;
-                                fieldVariableIndex++
-                            )
-                            {
-                                lambdaCollector.Collect(
-                                    fieldSyntax.Declaration.Variables[fieldVariableIndex],
-                                    ".cctor"
-                                );
-                            }
-                        }
-                        else if (variableMember is PropertyDeclarationSyntax propertySyntax)
-                        {
-                            lambdaCollector.Collect(propertySyntax.Initializer!, ".cctor");
-                        }
-                    }
-
-                    lambdaCollector.ResetLambdaIndex();
-                }
-
-                lambdaCollector.ResetMemberIndex();
-
-                members.Clear();
-                instanceVariableMembers.Clear();
-                staticVariableMembers.Clear();
-            }
-
-            if (lambdaCollector.Diagnostics.Count > 0)
-            {
-                for (
-                    var diagnosticIndex = 0;
-                    diagnosticIndex < lambdaCollector.Diagnostics.Count;
-                    diagnosticIndex++
-                )
-                {
-                    context.ReportDiagnostic(lambdaCollector.Diagnostics[diagnosticIndex]);
-                }
-
-                return null!;
-            }
-
-            return lambdaCollector.FluentCalls;
-            //context.AddNamedSource("LambdaLinks", LambdaLinksEmitter.Emit(links, closureLinks));
-        }
-
-        private static bool IsStaticMember(MemberDeclarationSyntax member)
-        {
-            for (var modifierIndex = 0; modifierIndex < member.Modifiers.Count; modifierIndex++)
-            {
-                if (member.Modifiers[modifierIndex].IsKind(SyntaxKind.StaticKeyword))
-                    return true;
-            }
-
-            return false;
-        }
-
-        private class LambdaCollector
-        {
-            internal List<Diagnostic> Diagnostics { get; }
-            internal Dictionary<ITypeSymbol, List<FluentCallDefinition>> FluentCalls { get; }
-
-            private int _memberIndex;
-            private int _lambdaIndex;
-            private ClassDeclarationSyntax _classSyntax = null!;
-            private string _className = null!;
-            private SemanticModel? _semanticModel;
-
-            private readonly Queue<SyntaxNode> _nodeQueue;
-            private readonly Stack<SyntaxNode> _nodeStack;
-            private readonly List<SyntaxNode> _nodeBuffer;
-            private readonly Compilation _compilation;
-
-            [System.Diagnostics.CodeAnalysis.SuppressMessage(
-                "MicrosoftCodeAnalysisCorrectness",
-                "RS1024:Compare symbols correctly",
-                Justification = "<Pending>"
-            )]
-            internal LambdaCollector(Compilation compilation)
-            {
-                _compilation = compilation;
-
-                Diagnostics = new();
-                FluentCalls = new(SymbolEqualityComparer.Default);
-                _nodeQueue = new();
-                _nodeStack = new();
-                _nodeBuffer = new();
-            }
-
-            internal void IncrementMemberIndex(int count = 1)
-            {
-                _memberIndex += count;
-            }
-
-            internal void IncrementLambdaIndex(int count = 1)
-            {
-                _lambdaIndex += count;
-            }
-
-            internal void ResetLambdaIndex()
-            {
-                _lambdaIndex = 0;
-            }
-
-            internal void ResetMemberIndex()
-            {
-                _memberIndex = 0;
-            }
-
-            internal void SetClassScope(ClassDeclarationSyntax syntax)
-            {
-                _classSyntax = syntax;
-
-                SyntaxNode? node = syntax;
-
-                while (node is not BaseNamespaceDeclarationSyntax and not null)
-                {
-                    node = node.Parent;
-                }
-
-                if (node is null)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                _className =
-                    ((BaseNamespaceDeclarationSyntax)node).Name.ToString()
-                    + "."
-                    + syntax.Identifier.Text;
-
-                _semanticModel = null;
-            }
-
-            internal void Collect(SyntaxNode syntaxNode, string identifier)
-            {
-                _nodeStack.Push(syntaxNode);
-
-                while (_nodeQueue.Count > 0 || _nodeStack.Count > 0)
-                {
-                    var node = _nodeStack.Count > 0 ? _nodeStack.Pop() : _nodeQueue.Dequeue();
-
-                    var traverseIntoChildren = true;
-
-                    if (node is BlockSyntax && node.Parent is not MemberDeclarationSyntax)
-                    {
-                        traverseIntoChildren = false;
-
-                        IncrementLambdaIndex();
-                    }
-                    else if (node is LambdaExpressionSyntax lambdaSyntax)
-                    {
-                        _semanticModel ??= _compilation.GetSemanticModel(
-                            _classSyntax!.SyntaxTree,
-                            true
+                        var lambdaLink = new LambdaLinkDefinition(
+                            _className,
+                            _currentMemberName,
+                            hasClosure ? uint.MaxValue : _lambdaIndex,
+                            dataFlow.CapturedInside.Length > 0
                         );
 
-                        if (TryGetFluentCallBaseData(lambdaSyntax, out var data))
+                        if (hasClosure)
                         {
-                            var dataFlow = _semanticModel.AnalyzeDataFlow(lambdaSyntax);
-
-                            if (dataFlow is null || !dataFlow.Succeeded)
-                            {
-                                throw new InvalidOperationException();
-                            }
-
-                            if (!FluentCalls.TryGetValue(data.DatabaseSymbol, out var calls))
-                            {
-                                FluentCalls.Add(
-                                    data.DatabaseSymbol,
-                                    calls = new List<FluentCallDefinition>()
-                                );
-                            }
-
-                            calls.Add(
-                                new FluentCallDefinition(
-                                    _semanticModel,
-                                    lambdaSyntax,
-                                    data.Invocations,
-                                    new LambdaLinkDefinition(
-                                        _className,
-                                        identifier,
-                                        _memberIndex,
-                                        _lambdaIndex,
-                                        dataFlow.CapturedInside.Length > 0
-                                    )
-                                )
+                            _closureScopes.AddFluentCallToScope(
+                                dataFlow.CapturedInside,
+                                lambdaLink
                             );
                         }
 
-                        IncrementLambdaIndex();
+                        fluentCalls.Add(
+                            new FluentCallDefinition(
+                                _semanticModel,
+                                lambdaSyntax,
+                                data.Invocations,
+                                lambdaLink
+                            )
+                        );
                     }
 
-                    if (traverseIntoChildren)
+                    if (hasClosure)
                     {
-                        foreach (var childNode in node.ChildNodes())
-                        {
-                            _nodeBuffer.Add(childNode);
-                        }
-                        if (_nodeBuffer.Count > 0)
-                        {
-                            for (
-                                var bufferIndex = _nodeBuffer.Count - 1;
-                                bufferIndex >= 0;
-                                bufferIndex--
-                            )
-                            {
-                                _nodeStack.Push(_nodeBuffer[bufferIndex]);
-                            }
-
-                            _nodeBuffer.Clear();
-                        }
+                        _closureScopes.AddFluentCallToScope(dataFlow.CapturedInside);
                     }
                     else
                     {
-                        foreach (var childNode in node.ChildNodes())
-                        {
-                            _nodeQueue.Enqueue(childNode);
-                        }
+                        _lambdaIndex++;
                     }
                 }
 
-                _nodeQueue.Clear();
-                _nodeStack.Clear();
+                base.Visit(node);
             }
 
             private bool TryGetFluentCallBaseData(
@@ -644,6 +477,143 @@ namespace Reflow.Analyzer.Sections
                 data = (databaseSymbol, invocations);
 
                 return true;
+            }
+
+            internal void CollectLambdas(ClassDeclarationSyntax classSyntax)
+            {
+                _classSyntax = classSyntax;
+
+                SyntaxNode? node = classSyntax;
+
+                while (node is not BaseNamespaceDeclarationSyntax and not null)
+                {
+                    node = node.Parent;
+                }
+
+                if (node is null)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                _className =
+                    ((BaseNamespaceDeclarationSyntax)node).Name.ToString()
+                    + "."
+                    + classSyntax.Identifier.Text;
+
+                base.Visit(classSyntax);
+
+                _lambdaIndex = 0;
+                _semanticModel = null;
+                HasStaticConstructor = false;
+                HasStaticConstructor = false;
+            }
+        }
+
+        private class ScopeCollection
+        {
+            private readonly IndexedStack<Scope> _scopeStack;
+            private readonly List<Scope> _scopes;
+
+            internal ScopeCollection()
+            {
+                _scopeStack = new();
+                _scopes = new();
+            }
+
+            internal void EnterScope(TextSpan span)
+            {
+                var scope = new Scope(span, _scopeStack.Count);
+                _scopes.Add(scope);
+                _scopeStack.Push(scope);
+            }
+
+            internal void AddFluentCallToScope(
+                ImmutableArray<ISymbol> capturedVariables,
+                LambdaLinkDefinition? lamdaLink = null
+            )
+            {
+                if (_scopeStack.Count > 1)
+                {
+                    for (
+                        var capturedSymbolIndex = 0;
+                        capturedSymbolIndex < capturedVariables.Length;
+                        capturedSymbolIndex++
+                    )
+                    {
+                        var capturedSymbol = capturedVariables[capturedSymbolIndex];
+
+                        var location = capturedSymbol.Locations[0].SourceSpan;
+
+                        var scopeIndex = 0;
+
+                        for (; scopeIndex < _scopeStack.Count; scopeIndex++)
+                        {
+                            var scope = _scopeStack[scopeIndex];
+
+                            if (!scope.Span.OverlapsWith(location))
+                            {
+                                _scopeStack[scopeIndex - 1].LambdaLinks.Add(lamdaLink);
+
+                                return;
+                            }
+                        }
+
+                        _scopeStack[scopeIndex].LambdaLinks.Add(lamdaLink);
+                    }
+                }
+                else
+                {
+                    _scopes[0].LambdaLinks.Add(lamdaLink);
+                }
+            }
+
+            internal void LeaveScope()
+            {
+                _scopeStack.Pop();
+
+                if (_scopeStack.Count == 0)
+                    Build();
+            }
+
+            internal void Build()
+            {
+                _scopes.Sort((x, y) => x.Deepness.CompareTo(y.Deepness));
+
+                uint consumedScopeIndex = 0;
+
+                for (var scopeIndex = 0; scopeIndex < _scopes.Count; scopeIndex++)
+                {
+                    var scope = _scopes[scopeIndex];
+
+                    for (var lambdaIndex = 0; lambdaIndex < scope.LambdaLinks.Count; lambdaIndex++)
+                    {
+                        var lambdaLink = scope.LambdaLinks[lambdaIndex];
+
+                        if (lambdaLink is not null)
+                        {
+                            lambdaLink.LambdaIndex = consumedScopeIndex << 16 | ((uint)lambdaIndex);
+                        }
+                    }
+
+                    if (scope.LambdaLinks.Count > 0)
+                    {
+                        consumedScopeIndex++;
+                    }
+                }
+            }
+        }
+
+        private class Scope
+        {
+            internal TextSpan Span { get; }
+            internal List<LambdaLinkDefinition?> LambdaLinks { get; }
+            internal int Deepness { get; }
+
+            internal Scope(TextSpan span, int deepness)
+            {
+                Span = span;
+                Deepness = deepness;
+                LambdaLinks = new();
             }
         }
 

@@ -3,24 +3,25 @@
 namespace Reflow.Commands
 {
     [StructLayout(LayoutKind.Sequential, Pack = 0)]
-    public readonly ref struct QueryBuilder<T> where T : class, new()
+    public readonly ref struct QueryBuilder<TEntity> where TEntity : class, new()
     {
     }
 
     public static class QueryBuilderExtensions
     {
-        public static QueryBuilder<T> TrackChanges<T>(this QueryBuilder<T> builder)
-            where T : class, new()
+        public static QueryBuilder<TEntity> TrackChanges<TEntity>(
+            this QueryBuilder<TEntity> builder
+        ) where TEntity : class, new()
         {
             _ = builder;
 
             return default;
         }
 
-        public static QueryBuilder<T> TrackChanges<T>(
-            this QueryBuilder<T> builder,
+        public static QueryBuilder<TEntity> TrackChanges<TEntity>(
+            this QueryBuilder<TEntity> builder,
             bool trackChanges
-        ) where T : class, new()
+        ) where TEntity : class, new()
         {
             _ = builder;
             _ = trackChanges;
@@ -28,14 +29,14 @@ namespace Reflow.Commands
             return default;
         }
 
-        public static Task<T?> SingleAsync<T>(
-            this QueryBuilder<T> builder,
+        public static Task<TEntity?> SingleAsync<TEntity>(
+            this QueryBuilder<TEntity> builder,
             CancellationToken cancellationToken = default
-        ) where T : class, new()
+        ) where TEntity : class, new()
         {
             _ = builder;
 
-            return Query.SingleAsync<T>(cancellationToken);
+            return Query.SingleAsync<TEntity>(cancellationToken);
         }
     }
 }
