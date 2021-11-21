@@ -13,6 +13,7 @@
         Abstract = 1 << 6,
         Override = 1 << 7,
         Virtual = 1 << 8,
-        Ref = 1 << 9
+        Ref = 1 << 9,
+        Async = 1 << 9,
     }
 }

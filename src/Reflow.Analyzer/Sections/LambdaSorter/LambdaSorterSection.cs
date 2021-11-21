@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Reflow.Analyzer.Emitters;
-using Reflow.Analyzer.Models.Definitions;
+using Reflow.Analyzer.Models;
 
 namespace Reflow.Analyzer.Sections.LambdaSorter
 {
@@ -16,7 +16,7 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
             var databases = GetPrevious<DatabaseConfigurationSection>().Data;
 
             var queries = new List<Query>();
-            var lambdaLinks = new List<LambdaLinkDefinition>();
+            var commands = new List<ICommandOperation>();
 
             for (var databaseIndex = 0; databaseIndex < databases.Count; databaseIndex++)
             {
@@ -38,13 +38,13 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                     ) {
                         case "Query":
                         case "QueryRaw":
-                            queries.Add(Query.Construct(fluentCall));
+                            var query = Query.Construct(fluentCall);
+                            queries.Add(query);
+                            commands.Add(query);
                             break;
                         default:
                             continue;
                     }
-
-                    lambdaLinks.Add(fluentCall.LambdaLink);
                 }
 
                 context.AddNamedSource(
@@ -55,7 +55,7 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                 queries.Clear();
             }
 
-            context.AddNamedSource("LambdaLinks", LambdaLinksEmitter.Emit(lambdaLinks));
+            context.AddNamedSource("LambdaLinks", LambdaLinksEmitter.Emit(commands));
 
             return default;
         }

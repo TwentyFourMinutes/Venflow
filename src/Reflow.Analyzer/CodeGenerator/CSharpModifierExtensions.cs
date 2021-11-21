@@ -25,6 +25,7 @@ namespace Reflow.Analyzer.CodeGenerator
                             CSharpModifiers.Abstract => SyntaxKind.AbstractKeyword,
                             CSharpModifiers.Override => SyntaxKind.OverrideKeyword,
                             CSharpModifiers.Virtual => SyntaxKind.VirtualKeyword,
+                            CSharpModifiers.Async => SyntaxKind.AsyncKeyword,
                             _ => throw new InvalidOperationException()
                         }
                     )

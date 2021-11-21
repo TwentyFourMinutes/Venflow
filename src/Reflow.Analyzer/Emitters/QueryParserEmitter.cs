@@ -55,7 +55,10 @@ namespace Reflow.Analyzer.Emitters
                 else if (query.Type.HasFlag(QueryType.Many))
                 {
                     if (query.Type.HasFlag(QueryType.WithRelations)) { }
-                    else { }
+                    else
+                    {
+                        methodLocation = BuildManyNoRelationParser(query);
+                    }
                 }
                 else
                 {
@@ -142,6 +145,89 @@ namespace Reflow.Analyzer.Emitters
 
             return methodDefinition;
         }
+
+        private MethodLocation BuildManyNoRelationParser(Query query)
+        {
+            var entity = _database.Entities[query.Entity];
+
+            for (var columnIndex = 0; columnIndex < entity.Columns.Count; columnIndex++)
+            {
+                var column = entity.Columns[columnIndex];
+
+                if (columnIndex == 0)
+                {
+                    _caseStatements.Add(
+                        AssignLocal(Variable("lastEntity"), Instance(Type(entity.EntitySymbol)))
+                    );
+
+                    _caseStatements.Add(
+                        Statement(Invoke(Variable("entities"), "Add", Variable("lastEntity")))
+                    );
+                }
+
+                _caseStatements.Add(
+                    AssignMember(
+                        Variable("lastEntity"),
+                        column.Symbol,
+                        Invoke(
+                            Variable("reader"),
+                            GenericName("GetFieldValue", Type(column.Symbol.Type)),
+                            Variable("columnIndex")
+                        )
+                    )
+                );
+                _caseStatements.Add(Break());
+
+                _cases.Add(Case(Constant(columnIndex), _caseStatements));
+                _caseStatements.Clear();
+            }
+
+            var methodDefinition = new MethodLocation(
+                "Reflow.QueryParsers." + _className,
+                "Parser_" + _parserIndex++
+            );
+
+            _parsers.Add(
+                Method(
+                        methodDefinition.MethodName,
+                        GenericType(
+                            typeof(Task<>),
+                            GenericType(typeof(IList<>), Type(query.Entity))
+                        ),
+                        CSharpModifiers.Internal | CSharpModifiers.Static | CSharpModifiers.Async
+                    )
+                    .WithParameters(
+                        Parameter("reader", Type(typeof(DbDataReader))),
+                        Parameter("columns", Array(Type(typeof(ushort))))
+                    )
+                    .WithStatements(
+                        Local("entities", GenericType(typeof(List<>), Type(query.Entity)))
+                            .WithInitializer(
+                                Instance(GenericType(typeof(List<>), Type(query.Entity)))
+                            ),
+                        Local("lastEntity", Type(query.Entity)).WithInitializer(Null()),
+                        Local("columnCount", Var())
+                            .WithInitializer(AccessMember(Variable("columns"), "Length")),
+                        While(
+                            Await(Invoke(Variable("reader"), "ReadAsync")),
+                            For(
+                                Local("columnIndex", Type(typeof(int)))
+                                    .WithInitializer(Constant(0)),
+                                LessThen(Variable("columnIndex"), Variable("columnCount")),
+                                Increment(Variable("columnIndex")),
+                                Switch(
+                                    AccessElement(Variable("columns"), Variable("columnIndex")),
+                                    _cases
+                                )
+                            )
+                        ),
+                        Return(Variable("entities"))
+                    )
+            );
+
+            return methodDefinition;
+        }
+
         internal static SourceText Emit(Database database, List<Query> queries)
         {
             return new QueryParserEmitter(database, queries).Build();

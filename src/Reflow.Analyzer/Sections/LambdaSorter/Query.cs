@@ -5,9 +5,9 @@ using Reflow.Analyzer.Models.Definitions;
 
 namespace Reflow.Analyzer.Sections.LambdaSorter
 {
-    internal class Query
+    internal class Query : ICommandOperation
     {
-        internal FluentCallDefinition FluentCall { get; private set; }
+        public FluentCallDefinition FluentCall { get; private set; }
         internal QueryType Type { get; private set; }
         internal ITypeSymbol Entity { get; private set; }
         internal bool TrackChanges { get; private set; }

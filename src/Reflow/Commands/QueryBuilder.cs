@@ -38,5 +38,15 @@ namespace Reflow.Commands
 
             return Query.SingleAsync<TEntity>(cancellationToken);
         }
+
+        public static Task<IList<TEntity>> ManyAsync<TEntity>(
+            this QueryBuilder<TEntity> builder,
+            CancellationToken cancellationToken = default
+        ) where TEntity : class, new()
+        {
+            _ = builder;
+
+            return Query.ManyAsync<TEntity>(cancellationToken);
+        }
     }
 }

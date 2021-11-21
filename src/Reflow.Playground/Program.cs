@@ -34,7 +34,9 @@ namespace Reflow.Playground
                     .SingleAsync();
             }
 
-            var ad = await db.People.Query(() => @$"last").SingleAsync();
+            var ad = await db.People
+                .Query(() => @$"SELECT ""Id"", ""Name"" FROM ""People""")
+                .ManyAsync();
         }
         public static void Test(Action a) => Console.WriteLine(a);
     }
@@ -46,7 +48,8 @@ namespace Reflow.Playground
         public MyDatabase()
             : base(
                 "User ID = venflow_tests; Password = venflow_tests; Server = 127.0.0.1; Port = 5432; Database = venflow_tests; "
-            ) { }
+            )
+        { }
     }
 
     public class Person

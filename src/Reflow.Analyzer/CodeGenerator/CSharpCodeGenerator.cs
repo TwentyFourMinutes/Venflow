@@ -555,5 +555,23 @@ namespace Reflow.Analyzer.CodeGenerator
                 .WithCondition(condition)
                 .WithIncrementors(SingletonSeparatedList(increment));
         }
+
+        public static WhileStatementSyntax While(
+            ExpressionSyntax condition,
+            params StatementSyntax[] statements
+        )
+        {
+            return WhileStatement(condition, Block(statements));
+        }
+
+        public static AwaitExpressionSyntax Await(ExpressionSyntax expression)
+        {
+            return AwaitExpression(expression);
+        }
+
+        public static ExpressionStatementSyntax Statement(ExpressionSyntax expression)
+        {
+            return ExpressionStatement(expression);
+        }
     }
 }
