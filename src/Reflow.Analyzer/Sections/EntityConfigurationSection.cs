@@ -20,6 +20,7 @@ namespace Reflow.Analyzer.Sections
             DatabaseConfigurationSection previous
         )
         {
+            var entities = new List<Entity>();
             var entityProxies = new Dictionary<ITypeSymbol, List<Column>>(
                 SymbolEqualityComparer.Default
             );
@@ -34,9 +35,6 @@ namespace Reflow.Analyzer.Sections
 
                 foreach (var entity in configuration.Entities.Values)
                 {
-                    //if (!candidates.TryGetValue(table.EntityType, out var tableConfiguration))
-                    //    continue;
-
                     var updatableProperties = new List<Column>();
 
                     for (var columnIndex = 0; columnIndex < entity.Columns.Count; columnIndex++)
@@ -49,17 +47,13 @@ namespace Reflow.Analyzer.Sections
                         }
                     }
 
+                    entities.Add(entity);
                     entityProxies.Add(entity.EntitySymbol, updatableProperties);
                 }
             }
 
             context.AddNamedSource("EntityProxies", EntityProxyEmitter.Emit(entityProxies));
-            context.AddNamedSource(
-                "EntityConfigurations",
-                EntityConfigurationEmitter.Emit(
-                    previous.Data.SelectMany(x => x.Entities.Values).ToList()
-                )
-            );
+            context.AddNamedSource("EntityData", EntityDataEmitter.Emit(entities));
 
             return default;
         }
@@ -68,11 +62,6 @@ namespace Reflow.Analyzer.Sections
         {
             internal Dictionary<ITypeSymbol, INamedTypeSymbol> Candidates { get; }
 
-            [System.Diagnostics.CodeAnalysis.SuppressMessage(
-                "MicrosoftCodeAnalysisCorrectness",
-                "RS1024:Compare symbols correctly",
-                Justification = "<Pending>"
-            )]
             internal SyntaxReceiver()
             {
                 Candidates = new(SymbolEqualityComparer.Default);

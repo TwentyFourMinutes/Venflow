@@ -49,14 +49,47 @@ namespace Reflow.Commands
                         columnSchema.Count
                     ];
 
+                    var entityIndex = 0;
+                    var entities = queryData.LambdaData!.UsedEntities;
+
+                    var nextEntity = Entities.Data[entities[entityIndex++]!];
+                    Entity? currentEntity = null;
+                    var nextKeyName = nextEntity.Columns.First().Key;
+                    var absoluteIndex = (ushort)nextEntity.Columns.Count * -1;
+
                     for (var columnIndex = 0; columnIndex < columnSchema.Count; columnIndex++)
                     {
-                        // TODO
-
                         var column = columnSchema[columnIndex];
 
-                        columnIndecies[columnIndex] =
-                            (ushort)column.ColumnOrdinal.GetValueOrDefault();
+                        if (column.ColumnName == nextKeyName)
+                        {
+                            currentEntity = nextEntity;
+
+                            if (entityIndex < entities.Length)
+                            {
+                                nextEntity = Entities.Data[entities[entityIndex++]!];
+                                nextKeyName = nextEntity.Columns.First().Key;
+                            }
+
+                            absoluteIndex += (ushort)nextEntity.Columns.Count;
+                            columnIndecies[columnIndex] = (ushort)absoluteIndex;
+                        }
+                        else if (
+                            currentEntity is not null
+                            && currentEntity.Columns.TryGetValue(
+                                column.ColumnName,
+                                out var columnData
+                            )
+                        )
+                        {
+                            columnIndecies[columnIndex] = (ushort)(
+                                absoluteIndex + columnData.Index
+                            );
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException();
+                        }
                     }
                 }
 

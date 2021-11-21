@@ -70,7 +70,7 @@ namespace Reflow.Analyzer.Emitters
 
             return File("Reflow.QueryParsers")
                 .WithMembers(
-                    Class(_className, CSharpModifiers.Public | CSharpModifiers.Static)
+                    Class(_className, CSharpModifiers.Internal | CSharpModifiers.Static)
                         .WithMembers(_parsers)
                 )
                 .GetText();
@@ -117,7 +117,7 @@ namespace Reflow.Analyzer.Emitters
                 Method(
                         methodDefinition.MethodName,
                         Type(query.Entity),
-                        CSharpModifiers.Public | CSharpModifiers.Static
+                        CSharpModifiers.Internal | CSharpModifiers.Static
                     )
                     .WithParameters(
                         Parameter("reader", Type(typeof(DbDataReader))),

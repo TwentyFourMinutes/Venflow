@@ -46,8 +46,7 @@ namespace Reflow.Playground
         public MyDatabase()
             : base(
                 "User ID = venflow_tests; Password = venflow_tests; Server = 127.0.0.1; Port = 5432; Database = venflow_tests; "
-            )
-        { }
+            ) { }
     }
 
     public class Person
@@ -68,3 +67,21 @@ namespace Reflow.Playground
         }
     }
 }
+
+//namespace Reflow
+//{
+//    public static class EntityData
+//    {
+//        public static Dictionary<Type, Entity[]> Data = new Dictionary<Type, Entity[]>(1)
+//        {
+//            {
+//                typeof(Playground.Person),
+//                new Entity(new Dictionary<string, Column>(2)
+//                {
+//                    { "Id", new Column("Id", 0) },
+//                    { "Name", new Column("Name", 1) }
+//                })
+//            }
+//        };
+//    }
+//}
