@@ -52,9 +52,9 @@ namespace Reflow.Analyzer.Sections
                     ).TypeArguments[0];
 
                     configuration.EntitySymbols.Add((entitySymbol, entityType));
-
-                    configurations.Add(configuration);
                 }
+
+                configurations.Add(configuration);
             }
 
             context.AddNamedSource(
@@ -97,10 +97,10 @@ namespace Reflow.Analyzer.Sections
                         || !potentialDatabaseType.IsReflowSymbol()
                     )
                         continue;
+
+                    Candidates.Add(classSymbol);
                     break;
                 }
-
-                Candidates.Add(classSymbol);
             }
         }
     }

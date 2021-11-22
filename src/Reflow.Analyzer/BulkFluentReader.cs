@@ -27,7 +27,8 @@ namespace Reflow.Analyzer.Sections
             {
                 var statements = _blockSyntax.Statements;
 
-                var invocationSyntaxis = new List<InvocationExpressionSyntax>();
+                var invocations =
+                    new List<(IMethodSymbol MethodSymbol, SeparatedSyntaxList<ArgumentSyntax> Arguments)>();
 
                 for (var statementIndex = 0; statementIndex < statements.Count; statementIndex++)
                 {
@@ -40,9 +41,7 @@ namespace Reflow.Analyzer.Sections
                     )
                         continue;
 
-                    invocationSyntaxis.Add(rootInvocationSyntax);
-
-                    var expression = rootInvocationSyntax.Expression;
+                    ExpressionSyntax expression = rootInvocationSyntax;
 
                     while (true)
                     {
@@ -52,14 +51,16 @@ namespace Reflow.Analyzer.Sections
                         }
                         else if (expression is InvocationExpressionSyntax childInvocationSyntax)
                         {
-                            var symbol = (IMethodSymbol)SemanticModel!.GetSymbolInfo(
+                            var methodSymbol = (IMethodSymbol)SemanticModel!.GetSymbolInfo(
                                 childInvocationSyntax
                             ).Symbol!;
 
-                            if (!symbol.ConstructedFrom.IsReflowSymbol())
+                            if (!methodSymbol.ConstructedFrom.IsReflowSymbol())
                                 throw new InvalidOperationException();
 
-                            invocationSyntaxis.Add(childInvocationSyntax);
+                            invocations.Add(
+                                (methodSymbol, childInvocationSyntax.ArgumentList.Arguments)
+                            );
 
                             expression = childInvocationSyntax.Expression;
                         }
@@ -73,34 +74,22 @@ namespace Reflow.Analyzer.Sections
                         }
                     }
 
-                    var invocation = invocationSyntaxis[invocationSyntaxis.Count - 1];
+                    var invocation = invocations[invocations.Count - 1];
 
-                    if (
-                        !ValidateHead(
-                            (
-                                (MemberAccessExpressionSyntax)invocation.Expression
-                            ).Name.Identifier.Text,
-                            invocation.ArgumentList.Arguments
-                        )
-                    )
+                    if (!ValidateHead(invocation.MethodSymbol, invocation.Arguments))
                     {
                         throw new InvalidOperationException("Invalid head.");
                     }
 
                     for (
-                        var invocationSyntaxIndex = invocationSyntaxis.Count - 2;
+                        var invocationSyntaxIndex = invocations.Count - 2;
                         invocationSyntaxIndex >= 0;
                         invocationSyntaxIndex--
                     )
                     {
-                        var invocationSyntax = invocationSyntaxis[invocationSyntaxIndex];
+                        invocation = invocations[invocationSyntaxIndex];
 
-                        ReadTail(
-                            (
-                                (MemberAccessExpressionSyntax)invocationSyntax.Expression
-                            ).Name.Identifier.Text,
-                            invocationSyntax.ArgumentList.Arguments
-                        );
+                        ReadTail(invocation.MethodSymbol, invocation.Arguments);
                     }
 
                     if (!ValidateTail())
@@ -108,16 +97,16 @@ namespace Reflow.Analyzer.Sections
                         throw new InvalidOperationException("Invalid tail.");
                     }
 
-                    invocationSyntaxis.Clear();
+                    invocations.Clear();
                 }
             }
 
             protected abstract bool ValidateHead(
-                string name,
+                IMethodSymbol methodSymbol,
                 SeparatedSyntaxList<ArgumentSyntax> arguments
             );
             protected abstract void ReadTail(
-                string name,
+                IMethodSymbol methodSymbol,
                 SeparatedSyntaxList<ArgumentSyntax> arguments
             );
 

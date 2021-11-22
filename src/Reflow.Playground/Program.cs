@@ -43,6 +43,7 @@ namespace Reflow.Playground
     public class MyDatabase : Database<MyDatabase>
     {
         public Table<Person> People { get; set; }
+        public Table<Email> Emails { get; set; }
 
         public MyDatabase()
             : base(
@@ -55,6 +56,21 @@ namespace Reflow.Playground
     {
         public int Id { get; set; }
         public virtual string Name { get; set; }
+
+        public IList<Email> Emails { get; }
+
+        public Person()
+        {
+            Emails = new List<Email>();
+        }
+    }
+
+    public class Email
+    {
+        public int Id { get; set; }
+
+        public int PersonId { get; set; }
+        public Person Person { get; set; }
     }
 
     public class PersonConfiguration : IEntityConfiguration<Person>
@@ -63,7 +79,12 @@ namespace Reflow.Playground
         {
             entityBuilder.MapTable("People");
 
-            entityBuilder.Column(x => x.Name).HasName("name");
+            entityBuilder.Column(x => x.Name).HasName("Name");
+
+            entityBuilder
+                .HasMany(x => x.Emails)
+                .WithOne(x => x.Person)
+                .UsingForeignKey(x => x.PersonId);
         }
     }
 }

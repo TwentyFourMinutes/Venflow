@@ -61,6 +61,47 @@ namespace Reflow.Analyzer.Sections
                     entityProxies.Add(entity.Symbol, updatableProperties);
                 }
 
+                foreach (var entity in database.Entities.Values)
+                {
+                    if (entity.Relations.Count == 0)
+                        continue;
+
+                    for (
+                        var relationIndex = 0;
+                        relationIndex < entity.Relations.Count;
+                        relationIndex++
+                    )
+                    {
+                        var relation = entity.Relations[relationIndex];
+
+                        if (relation.IsProcessed)
+                            break;
+
+                        relation.IsProcessed = true;
+
+                        if (
+                            !database.Entities.TryGetValue(
+                                relation.RightEntitySymbol,
+                                out var rightEntity
+                            )
+                        )
+                        {
+                            throw new InvalidOperationException();
+                        }
+
+                        var navigationColumn = relation.RightNavigationProperty is not null
+                            ? rightEntity.Columns.FirstOrDefault(
+                                  x => x.PropertyName == relation.RightNavigationProperty.Name
+                              )
+                            : null;
+
+                        if (navigationColumn is not null)
+                            rightEntity.Columns.Remove(navigationColumn);
+
+                        rightEntity.Relations.Add(relation.GetMirror());
+                    }
+                }
+
                 database.EntitySymbols.Clear();
             }
 
@@ -74,7 +115,7 @@ namespace Reflow.Analyzer.Sections
         {
             internal Dictionary<
                 ITypeSymbol,
-                (SemanticModel SemanticModel, BlockSyntax BlockSyntax)
+                (SemanticModel SemanticModel, BlockSyntax? BlockSyntax)
             > Candidates { get; }
 
             internal SyntaxReceiver()
