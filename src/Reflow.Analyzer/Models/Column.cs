@@ -1,14 +1,20 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace Reflow.Analyzer.Models
+namespace Reflow.Analyzer.Sections
 {
     internal class Column
     {
-        internal IPropertySymbol Symbol { get; }
+        internal string ColumnName { get; set; }
+        internal string PropertyName { get; }
+        internal INamedTypeSymbol Type { get; }
+        internal bool IsUpdatable { get; }
 
-        internal Column(IPropertySymbol symbol)
+        internal Column(string propertyName, INamedTypeSymbol type, bool isUpdatable)
         {
-            Symbol = symbol;
+            PropertyName = propertyName;
+            ColumnName = propertyName;
+            Type = type;
+            IsUpdatable = isUpdatable;
         }
     }
 }

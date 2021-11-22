@@ -1,8 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Reflow.Analyzer.Emitters;
-using Reflow.Analyzer.Models;
 
 namespace Reflow.Analyzer.Sections
 {
@@ -13,43 +11,57 @@ namespace Reflow.Analyzer.Sections
               NoData
           >
     {
-        [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1024:Compare symbols correctly")]
         protected override NoData Execute(
             GeneratorExecutionContext context,
             SyntaxReceiver syntaxReceiver,
             DatabaseConfigurationSection previous
         )
         {
+            var configurations = syntaxReceiver.Candidates;
             var entities = new List<Entity>();
             var entityProxies = new Dictionary<ITypeSymbol, List<Column>>(
                 SymbolEqualityComparer.Default
             );
 
-            for (
-                var configurationIndex = 0;
-                configurationIndex < previous.Data.Count;
-                configurationIndex++
-            )
+            for (var databaseIndex = 0; databaseIndex < previous.Data.Count; databaseIndex++)
             {
-                var configuration = previous.Data[configurationIndex];
+                var database = previous.Data[databaseIndex];
 
-                foreach (var entity in configuration.Entities.Values)
+                for (
+                    var entitySymbolIndex = 0;
+                    entitySymbolIndex < database.EntitySymbols.Count;
+                    entitySymbolIndex++
+                )
                 {
+                    var (propertySymbol, entitySymbol) = database.EntitySymbols[entitySymbolIndex];
+
+                    configurations.TryGetValue(entitySymbol, out var configurationData);
+
+                    var entity = Entity.Construct(
+                        configurationData.SemanticModel,
+                        propertySymbol,
+                        entitySymbol,
+                        configurationData.BlockSyntax
+                    );
+
                     var updatableProperties = new List<Column>();
 
                     for (var columnIndex = 0; columnIndex < entity.Columns.Count; columnIndex++)
                     {
                         var column = entity.Columns[columnIndex];
 
-                        if (column.Symbol.IsVirtual)
+                        if (column.IsUpdatable)
                         {
                             updatableProperties.Add(column);
                         }
                     }
 
                     entities.Add(entity);
-                    entityProxies.Add(entity.EntitySymbol, updatableProperties);
+                    database.Entities.Add(entity.Symbol, entity);
+                    entityProxies.Add(entity.Symbol, updatableProperties);
                 }
+
+                database.EntitySymbols.Clear();
             }
 
             context.AddNamedSource("EntityProxies", EntityProxyEmitter.Emit(entityProxies));
@@ -60,7 +72,10 @@ namespace Reflow.Analyzer.Sections
 
         internal class SyntaxReceiver : ISyntaxContextReceiver
         {
-            internal Dictionary<ITypeSymbol, INamedTypeSymbol> Candidates { get; }
+            internal Dictionary<
+                ITypeSymbol,
+                (SemanticModel SemanticModel, BlockSyntax BlockSyntax)
+            > Candidates { get; }
 
             internal SyntaxReceiver()
             {
@@ -69,11 +84,11 @@ namespace Reflow.Analyzer.Sections
 
             void ISyntaxContextReceiver.OnVisitSyntaxNode(GeneratorSyntaxContext context)
             {
-                if (context.Node is not ClassDeclarationSyntax)
+                if (context.Node is not ClassDeclarationSyntax classSyntax)
                     return;
 
                 var configurationSymbol = (INamedTypeSymbol)context.SemanticModel.GetDeclaredSymbol(
-                    context.Node
+                    classSyntax
                 )!;
 
                 for (
@@ -85,14 +100,28 @@ namespace Reflow.Analyzer.Sections
                     var interfaceSymbol = configurationSymbol.Interfaces[interfaceIndex];
 
                     if (
-                        interfaceSymbol.GetFullName()
-                            is not "Reflow.Modeling.IEntityConfiguration`1"
+                        interfaceSymbol.GetFullName() is not "Reflow.Modeling.IEntityConfiguration"
                         || !interfaceSymbol.IsReflowSymbol()
                     )
                         continue;
 
-                    Candidates.Add(interfaceSymbol.TypeArguments[0], configurationSymbol);
-                    break;
+                    var configureMethod = configurationSymbol
+                        .GetMembers()
+                        .Single(x => x.Name.EndsWith("Configure"));
+
+                    Candidates.Add(
+                        interfaceSymbol.TypeArguments[0],
+                        (
+                            context.SemanticModel,
+                            (
+                                (MethodDeclarationSyntax)classSyntax.FindNode(
+                                    configureMethod.Locations[0].SourceSpan
+                                )
+                            ).Body!
+                        )
+                    );
+
+                    return;
                 }
             }
         }

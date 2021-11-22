@@ -90,17 +90,17 @@ namespace Reflow.Analyzer.Emitters
                 if (columnIndex == 0)
                 {
                     _caseStatements.Add(
-                        AssignLocal(Variable("entity"), Instance(Type(entity.EntitySymbol)))
+                        AssignLocal(Variable("entity"), Instance(Type(entity.Symbol)))
                     );
                 }
 
                 _caseStatements.Add(
                     AssignMember(
                         Variable("entity"),
-                        column.Symbol,
+                        column.PropertyName,
                         Invoke(
                             Variable("reader"),
-                            GenericName("GetFieldValue", Type(column.Symbol.Type)),
+                            GenericName("GetFieldValue", Type(column.Type)),
                             Variable("columnIndex")
                         )
                     )
@@ -157,7 +157,7 @@ namespace Reflow.Analyzer.Emitters
                 if (columnIndex == 0)
                 {
                     _caseStatements.Add(
-                        AssignLocal(Variable("lastEntity"), Instance(Type(entity.EntitySymbol)))
+                        AssignLocal(Variable("lastEntity"), Instance(Type(entity.Symbol)))
                     );
 
                     _caseStatements.Add(
@@ -168,10 +168,10 @@ namespace Reflow.Analyzer.Emitters
                 _caseStatements.Add(
                     AssignMember(
                         Variable("lastEntity"),
-                        column.Symbol,
+                        column.PropertyName,
                         Invoke(
                             Variable("reader"),
-                            GenericName("GetFieldValue", Type(column.Symbol.Type)),
+                            GenericName("GetFieldValue", Type(column.Type)),
                             Variable("columnIndex")
                         )
                     )

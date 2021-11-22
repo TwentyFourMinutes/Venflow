@@ -1,5 +1,4 @@
-﻿using NpgsqlTypes;
-using Reflow.Commands;
+﻿using Reflow.Commands;
 using Reflow.Modeling;
 namespace Reflow.Playground
 {
@@ -62,29 +61,9 @@ namespace Reflow.Playground
     {
         void IEntityConfiguration<Person>.Configure(IEntityBuilder<Person> entityBuilder)
         {
-            entityBuilder.MapTable("people");
+            entityBuilder.MapTable("People");
 
-            entityBuilder.MapId(x => x.Id);
-
-            entityBuilder.Column(x => x.Name).HasName("name").HasType(NpgsqlDbType.Varchar);
+            entityBuilder.Column(x => x.Name).HasName("name");
         }
     }
 }
-
-//namespace Reflow
-//{
-//    public static class EntityData
-//    {
-//        public static Dictionary<Type, Entity[]> Data = new Dictionary<Type, Entity[]>(1)
-//        {
-//            {
-//                typeof(Playground.Person),
-//                new Entity(new Dictionary<string, Column>(2)
-//                {
-//                    { "Id", new Column("Id", 0) },
-//                    { "Name", new Column("Name", 1) }
-//                })
-//            }
-//        };
-//    }
-//}

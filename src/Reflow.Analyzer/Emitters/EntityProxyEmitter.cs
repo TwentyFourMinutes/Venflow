@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Reflow.Analyzer.CodeGenerator;
-using Reflow.Analyzer.Models;
+using Reflow.Analyzer.Sections;
 using static Reflow.Analyzer.CodeGenerator.CSharpCodeGenerator;
 
 namespace Reflow.Analyzer.Emitters
@@ -63,13 +63,13 @@ namespace Reflow.Analyzer.Emitters
 
                     proxyMembers = proxyMembers.Add(
                         Property(
-                                property.Symbol.Name,
-                                Type(property.Symbol),
+                                property.PropertyName,
+                                Type(property.Type),
                                 CSharpModifiers.Public | CSharpModifiers.Override
                             )
-                            .WithGetAccessor(Return(AccessMember(Base(), property.Symbol.Name)))
+                            .WithGetAccessor(Return(AccessMember(Base(), property.PropertyName)))
                             .WithSetAccessor(
-                                AssignMember(Base(), property.Symbol.Name, Value()),
+                                AssignMember(Base(), property.PropertyName, Value()),
                                 If(
                                     IsBitSet(Variable("_changes"), Type(numericType), Constant(1)),
                                     AssignMember(

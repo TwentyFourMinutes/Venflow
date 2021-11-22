@@ -47,36 +47,11 @@ namespace Reflow.Analyzer.Sections
                     )
                         continue;
 
-                    var entity = new Entity(
-                        entitySymbol,
-                        ((INamedTypeSymbol)entitySymbol.Type).TypeArguments[0]
-                    );
+                    var entityType = (INamedTypeSymbol)(
+                        (INamedTypeSymbol)entitySymbol.Type
+                    ).TypeArguments[0];
 
-                    var entityType = ((INamedTypeSymbol)entitySymbol.Type).TypeArguments[0];
-
-                    var entityMembers = entityType.GetMembers();
-
-                    for (
-                        var entityMemberIndex = 0;
-                        entityMemberIndex < entityMembers.Length;
-                        entityMemberIndex++
-                    )
-                    {
-                        var entityMember = entityMembers[entityMemberIndex];
-
-                        if (
-                            entityMember is not IPropertySymbol entityPropertySymbol
-                            || entityPropertySymbol.DeclaredAccessibility != Accessibility.Public
-                            || entityPropertySymbol.GetMethod is null
-                            || entityPropertySymbol.GetMethod.DeclaredAccessibility
-                                != Accessibility.Public
-                        )
-                            continue;
-
-                        entity.Columns.Add(new Column(entityPropertySymbol));
-                    }
-
-                    configuration.Entities.Add(entity.EntitySymbol, entity);
+                    configuration.EntitySymbols.Add((entitySymbol, entityType));
 
                     configurations.Add(configuration);
                 }

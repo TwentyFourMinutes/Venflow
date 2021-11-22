@@ -9,7 +9,7 @@ namespace Reflow.Analyzer
         protected T Value { get; }
         protected SemanticModel SemanticModel { get; }
 
-        private readonly List<InvocationExpressionSyntax> _invocations;
+        private readonly IList<InvocationExpressionSyntax> _invocations;
         private readonly FluentCallDefinition _fluentCall;
 
         protected FluentSyntaxReader(FluentCallDefinition fluentCall)

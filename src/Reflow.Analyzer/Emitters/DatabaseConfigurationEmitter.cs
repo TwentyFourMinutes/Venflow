@@ -25,13 +25,19 @@ namespace Reflow.Analyzer.Emitters
                         .WithInitializer(Cast(Type(database.Symbol), Variable(databaseParameter)))
                 );
 
-                foreach (var entity in database.Entities.Values)
+                for (
+                    var entitySymbolIndex = 0;
+                    entitySymbolIndex < database.EntitySymbols.Count;
+                    entitySymbolIndex++
+                )
                 {
+                    var (propertySymbol, entitySymbol) = database.EntitySymbols[entitySymbolIndex];
+
                     statements = statements.Add(
                         AssignMember(
                             databaseLocal,
-                            entity.PropertySymbol,
-                            Instance(GenericType("Reflow.Table", Type(entity.EntitySymbol)))
+                            propertySymbol,
+                            Instance(GenericType("Reflow.Table", Type(entitySymbol)))
                                 .WithArguments(Variable(databaseLocal))
                         )
                     );

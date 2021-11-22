@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Reflow.Analyzer.CodeGenerator;
-using Reflow.Analyzer.Models;
+using Reflow.Analyzer.Sections;
 using static Reflow.Analyzer.CodeGenerator.CSharpCodeGenerator;
 
 namespace Reflow.Analyzer.Emitters
@@ -17,7 +17,7 @@ namespace Reflow.Analyzer.Emitters
                 var entity = entities[entityIndex];
 
                 entityData[entityIndex] = DictionaryEntry(
-                    TypeOf(Type(entity.EntitySymbol)),
+                    TypeOf(Type(entity.Symbol)),
                     Instance(Type("Reflow.Entity"))
                         .WithArguments(
                             Instance(
@@ -33,10 +33,10 @@ namespace Reflow.Analyzer.Emitters
                                         entity.Columns.Select(
                                             (x, i) =>
                                                 DictionaryEntry(
-                                                    Constant(x.Symbol.Name),
+                                                    Constant(x.ColumnName),
                                                     Instance(Type("Reflow.Column"))
                                                         .WithArguments(
-                                                            Constant(x.Symbol.Name),
+                                                            Constant(x.ColumnName),
                                                             Constant(i)
                                                         )
                                                 )
