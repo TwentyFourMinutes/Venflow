@@ -1,5 +1,4 @@
-﻿using Reflow.Commands;
-using Reflow.Modeling;
+﻿using Reflow.Modeling;
 namespace Reflow.Playground
 {
     public static class Program
@@ -22,7 +21,7 @@ namespace Reflow.Playground
                         .TrackChanges(false)
                         .SingleAsync();
 
-                    var ad = db.People.Query(() => @$"second").TrackChanges(false).SingleAsync();
+                    var ad = db.People.QueryRaw(() => "second").TrackChanges(false).SingleAsync();
                 }
             );
 
@@ -34,7 +33,7 @@ namespace Reflow.Playground
             }
 
             var ad = await db.People
-                .Query(() => @$"SELECT ""Id"", ""Name"" FROM ""People""")
+                .QueryRaw(() => @"SELECT ""Id"", ""Name"" FROM ""People""")
                 .ManyAsync();
         }
         public static void Test(Action a) => Console.WriteLine(a);
@@ -57,7 +56,7 @@ namespace Reflow.Playground
         public int Id { get; set; }
         public virtual string Name { get; set; }
 
-        public IList<Email> Emails { get; }
+        public List<Email> Emails { get; }
 
         public Person()
         {

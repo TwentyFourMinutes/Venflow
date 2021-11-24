@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Reflow.Analyzer.Models;
 using Reflow.Analyzer.Models.Definitions;
@@ -37,7 +38,7 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                 ArgumentListSyntax list
             )
             {
-                if (name is not "Query" or "QueryRaw")
+                if (name is not "Query" and not "QueryRaw")
                 {
                     return false;
                 }
@@ -50,40 +51,67 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
 
                 Value.Entity = tableType.TypeArguments[0];
 
-                var contentLength = 0;
-                short argumentIndex = 0;
-                var parameterIndecies = new List<short>();
-                var interpolatedStringSyntax =
-                    (InterpolatedStringExpressionSyntax)lambdaSyntax.ExpressionBody!;
-
-                for (
-                    var contentIndex = 0;
-                    contentIndex < interpolatedStringSyntax.Contents.Count;
-                    contentIndex++
-                )
+                if (name is "QueryRaw")
                 {
-                    var content = interpolatedStringSyntax.Contents[contentIndex];
-
-                    if (content is InterpolationSyntax)
-                    {
-                        parameterIndecies.Add(argumentIndex++);
-
-                        contentLength += 3 + (int)Math.Log10(argumentIndex);
-                    }
-                    else if (content is InterpolatedStringContentSyntax stringContentSyntax)
-                    {
-                        contentLength += stringContentSyntax.GetText().Length;
-                    }
-                }
-
-                WithLinkData(
-                    new QueryLinkData(
-                        Value.Entity,
-                        contentLength,
-                        parameterIndecies.ToArray(),
-                        new string[] { Value.Entity.GetFullName() }
+                    if (
+                        lambdaSyntax.ExpressionBody is not LiteralExpressionSyntax literalSyntax
+                        || literalSyntax.Kind() != SyntaxKind.StringLiteralExpression
                     )
-                );
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    WithLinkData(
+                        new QueryLinkData(
+                            Value.Entity,
+                            -1,
+                            null,
+                            new string[] { Value.Entity.GetFullName() }
+                        )
+                    );
+                }
+                else
+                {
+                    var contentLength = 0;
+                    short argumentIndex = 0;
+                    var parameterIndecies = new List<short>();
+                    var interpolatedStringSyntax =
+                        (InterpolatedStringExpressionSyntax)lambdaSyntax.ExpressionBody!;
+
+                    for (
+                        var contentIndex = 0;
+                        contentIndex < interpolatedStringSyntax.Contents.Count;
+                        contentIndex++
+                    )
+                    {
+                        var content = interpolatedStringSyntax.Contents[contentIndex];
+
+                        if (content is InterpolationSyntax)
+                        {
+                            parameterIndecies.Add(argumentIndex++);
+
+                            contentLength += 3 + (int)Math.Log10(argumentIndex);
+                        }
+                        else if (content is InterpolatedStringContentSyntax stringContentSyntax)
+                        {
+                            contentLength += stringContentSyntax.GetText().Length;
+                        }
+                    }
+
+                    if (parameterIndecies.Count == 0)
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    WithLinkData(
+                        new QueryLinkData(
+                            Value.Entity,
+                            contentLength,
+                            parameterIndecies.ToArray(),
+                            new string[] { Value.Entity.GetFullName() }
+                        )
+                    );
+                }
 
                 return true;
             }
@@ -136,12 +164,12 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
         internal ITypeSymbol Entity { get; }
         internal string[]? UsedEntities { get; }
         internal int MinimumSqlLength { get; }
-        internal short[] ParameterIndecies { get; }
+        internal short[]? ParameterIndecies { get; }
 
         internal QueryLinkData(
             ITypeSymbol entity,
             int minimumSqlLength,
-            short[] parameterIndecies,
+            short[]? parameterIndecies,
             string[] usedEntities
         )
         {

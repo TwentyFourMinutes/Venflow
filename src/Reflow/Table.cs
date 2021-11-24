@@ -17,5 +17,12 @@ namespace Reflow
 
             return default;
         }
+
+        public QueryBuilder<T> QueryRaw(Func<string> sql)
+        {
+            Commands.Query.HandleRaw(_database, sql);
+
+            return default;
+        }
     }
 }

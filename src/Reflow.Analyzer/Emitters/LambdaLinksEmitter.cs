@@ -74,10 +74,12 @@ namespace Reflow.Analyzer.Emitters
             return Instance(Type("Reflow.Lambdas.QueryLinkData"))
                 .WithArguments(
                     Constant(data.MinimumSqlLength),
-                    ArrayInitializer(
-                        Array(Type(typeof(short))),
-                        data.ParameterIndecies.Select(x => Constant(x))
-                    ),
+                    data.ParameterIndecies is null
+                      ? Null()
+                      : ArrayInitializer(
+                            Array(Type(typeof(short))),
+                            data.ParameterIndecies.Select(x => Constant(x))
+                        ),
                     ArrayInitializer(
                         Array(Type(typeof(Type))),
                         data.UsedEntities.Select(x => TypeOf(Type(x)))

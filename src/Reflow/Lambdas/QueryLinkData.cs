@@ -8,13 +8,13 @@ namespace Reflow.Lambdas
         internal ushort[]? ColumnIndecies { get; set; }
 
         internal int MinimumSqlLength { get; }
-        internal short[] ParameterIndecies { get; }
+        internal short[]? ParameterIndecies { get; }
         internal Type[] UsedEntities { get; }
         internal Delegate Parser { get; }
 
         public QueryLinkData(
             int minimumSqlLength,
-            short[] parameterIndecies,
+            short[]? parameterIndecies,
             Type[] usedEntities,
             Delegate parser
         )

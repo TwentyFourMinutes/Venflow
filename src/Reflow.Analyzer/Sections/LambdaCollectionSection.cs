@@ -213,7 +213,7 @@ namespace Reflow.Analyzer.Sections
 
                         List<MemberDeclarationSyntax> memebrs;
 
-                        // How does this behave with different ctors?
+                        // TODO: How does this behave with different ctors?
                         if (isStaticConstructor)
                         {
                             if (HasStaticConstructor)
@@ -426,7 +426,11 @@ namespace Reflow.Analyzer.Sections
             {
                 if (
                     lambdaSyntax.ExpressionBody
-                    is not InterpolatedStringExpressionSyntax interpolatedStringSyntax
+                        is not InterpolatedStringExpressionSyntax interpolatedStringSyntax
+                    && (
+                        lambdaSyntax.ExpressionBody is not LiteralExpressionSyntax expressionSyntax
+                        || expressionSyntax.Kind() != SyntaxKind.StringLiteralExpression
+                    )
                 )
                 {
                     data = default;

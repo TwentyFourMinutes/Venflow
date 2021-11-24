@@ -134,7 +134,7 @@ namespace Reflow.Commands
 
             var interpolationData = new SqlInterpolationHandler.AmbientData
             {
-                ParameterIndecies = lambdaData.ParameterIndecies,
+                ParameterIndecies = lambdaData.ParameterIndecies!,
                 Parameters = command.Parameters,
                 CommandBuilder = commandBuilder,
             };
@@ -151,6 +151,18 @@ namespace Reflow.Commands
             {
                 Command = command,
                 LambdaData = lambdaData,
+                Database = database
+            };
+
+            AmbientData.Current = queryData;
+        }
+
+        internal static void HandleRaw(IDatabase database, Func<string> sql)
+        {
+            var queryData = new AmbientData
+            {
+                Command = new NpgsqlCommand(sql.Invoke()),
+                LambdaData = LambdaLinker.GetLambdaData<QueryLinkData>(sql.Method),
                 Database = database
             };
 
