@@ -445,13 +445,6 @@ namespace Reflow.Analyzer.Sections
 
                 while (lastInvocationSyntax is not null)
                 {
-                    var symbol = (IMethodSymbol)_semanticModel!.GetSymbolInfo(
-                        lastInvocationSyntax!
-                    ).Symbol!;
-
-                    if (!symbol.ConstructedFrom.IsReflowSymbol())
-                        break;
-
                     invocations.Add(lastInvocationSyntax);
 
                     lastInvocationSyntax =

@@ -5,47 +5,43 @@ namespace Reflow.Commands
     [StructLayout(LayoutKind.Sequential, Pack = 0)]
     public readonly ref struct QueryBuilder<TEntity> where TEntity : class, new()
     {
-    }
-
-    public static class QueryBuilderExtensions
-    {
-        public static QueryBuilder<TEntity> TrackChanges<TEntity>(
-            this QueryBuilder<TEntity> builder
-        ) where TEntity : class, new()
+        public QueryBuilder<TEntity> TrackChanges()
         {
-            _ = builder;
-
             return default;
         }
 
-        public static QueryBuilder<TEntity> TrackChanges<TEntity>(
-            this QueryBuilder<TEntity> builder,
-            bool trackChanges
-        ) where TEntity : class, new()
+        public QueryBuilder<TEntity> TrackChanges(bool trackChanges)
         {
-            _ = builder;
             _ = trackChanges;
 
             return default;
         }
 
-        public static Task<TEntity?> SingleAsync<TEntity>(
-            this QueryBuilder<TEntity> builder,
-            CancellationToken cancellationToken = default
-        ) where TEntity : class, new()
+        public QueryRelationBuilder<TEntity, TToEntity> Join<TToEntity>(
+            Func<TEntity, TToEntity> with
+        ) where TToEntity : class, new()
         {
-            _ = builder;
+            _ = with;
 
+            return default;
+        }
+
+        public QueryRelationBuilder<TEntity, TToEntity> Join<TToEntity>(
+            Func<TEntity, IList<TToEntity>> with
+        ) where TToEntity : class, new()
+        {
+            _ = with;
+
+            return default;
+        }
+
+        public Task<TEntity?> SingleAsync(CancellationToken cancellationToken = default)
+        {
             return Query.SingleAsync<TEntity>(cancellationToken);
         }
 
-        public static Task<IList<TEntity>> ManyAsync<TEntity>(
-            this QueryBuilder<TEntity> builder,
-            CancellationToken cancellationToken = default
-        ) where TEntity : class, new()
+        public Task<IList<TEntity>> ManyAsync(CancellationToken cancellationToken = default)
         {
-            _ = builder;
-
             return Query.ManyAsync<TEntity>(cancellationToken);
         }
     }

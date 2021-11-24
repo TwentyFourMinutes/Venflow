@@ -12,33 +12,38 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
         internal QueryType Type { get; private set; }
         internal ITypeSymbol Entity { get; private set; }
         internal bool TrackChanges { get; private set; }
+        internal RelationBuilderValues JoinedEntities { get; }
 
         public Query()
         {
             FluentCall = null!;
             Entity = null!;
+            JoinedEntities = new();
         }
 
         internal static Query Construct(FluentCallDefinition fluentCall)
         {
-            var query = new FluentReader(fluentCall).Evaluate();
+            var query = new Query { FluentCall = fluentCall };
 
-            query.FluentCall = fluentCall;
+            new FluentReader(query, fluentCall).Evaluate();
 
             return query;
         }
 
         private class FluentReader : FluentSyntaxReader<Query>
         {
-            internal FluentReader(FluentCallDefinition fluentCall) : base(fluentCall) { }
+            private ITypeSymbol? _previousJoinSymbol;
+
+            internal FluentReader(Query query, FluentCallDefinition fluentCall)
+                : base(query, fluentCall) { }
 
             protected override bool ValidateHead(
                 LambdaExpressionSyntax lambdaSyntax,
-                string name,
-                ArgumentListSyntax list
+                IMethodSymbol methodSymbol,
+                SeparatedSyntaxList<ArgumentSyntax> arguments
             )
             {
-                if (name is not "Query" and not "QueryRaw")
+                if (methodSymbol.Name is not "Query" and not "QueryRaw")
                 {
                     return false;
                 }
@@ -51,7 +56,7 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
 
                 Value.Entity = tableType.TypeArguments[0];
 
-                if (name is "QueryRaw")
+                if (methodSymbol.Name is "QueryRaw")
                 {
                     if (
                         lambdaSyntax.ExpressionBody is not LiteralExpressionSyntax literalSyntax
@@ -116,16 +121,37 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                 return true;
             }
 
-            protected override void ReadTail(string name, ArgumentListSyntax list)
+            protected override void ReadTail(
+                IMethodSymbol methodSymbol,
+                SeparatedSyntaxList<ArgumentSyntax> arguments
+            )
             {
-                switch (name)
+                switch (methodSymbol.Name)
                 {
                     case "TrackChanges":
                         Value.TrackChanges =
-                            list.Arguments.Count == 0
+                            arguments.Count == 0
                             || (bool)(
-                                (LiteralExpressionSyntax)list.Arguments[0].Expression
+                                (LiteralExpressionSyntax)arguments[0].Expression
                             ).Token.Value!;
+                        return;
+                    case "Join":
+                    case "ThenJoin":
+                        var isNested = methodSymbol.Name is "ThenJoin";
+                        var typeArguments = ((INamedTypeSymbol)methodSymbol.ReturnType).TypeArguments;
+
+                        Value.JoinedEntities.AddToPath(
+                            (INamedTypeSymbol)(isNested ? _previousJoinSymbol! : typeArguments[0]),
+                            (INamedTypeSymbol)typeArguments[1],
+                            (IPropertySymbol)SemanticModel.GetSymbolInfo(
+                                GetMemberAccessFromLambda(arguments.Single())
+                            ).Symbol!, isNested);
+
+                        if (!isNested)
+                        {
+                            _previousJoinSymbol = typeArguments[1];
+                        }
+
                         return;
                     case "SingleAsync":
                         Value.Type |= QueryType.Single;
@@ -144,6 +170,19 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                 }
 
                 return true;
+            }
+
+            private static MemberAccessExpressionSyntax GetMemberAccessFromLambda(
+                ArgumentSyntax argumentSyntax
+            )
+            {
+                var lambda = (SimpleLambdaExpressionSyntax)argumentSyntax.Expression;
+                var memberAccess = (MemberAccessExpressionSyntax)lambda.ExpressionBody!;
+
+                if (memberAccess.Expression is not IdentifierNameSyntax)
+                    throw new InvalidOperationException();
+
+                return memberAccess;
             }
         }
     }

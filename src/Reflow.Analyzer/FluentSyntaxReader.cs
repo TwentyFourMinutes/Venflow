@@ -4,7 +4,7 @@ using Reflow.Analyzer.Models.Definitions;
 
 namespace Reflow.Analyzer
 {
-    internal abstract class FluentSyntaxReader<T> where T : new()
+    internal abstract class FluentSyntaxReader<T>
     {
         protected T Value { get; }
         protected SemanticModel SemanticModel { get; }
@@ -12,22 +12,27 @@ namespace Reflow.Analyzer
         private readonly IList<InvocationExpressionSyntax> _invocations;
         private readonly FluentCallDefinition _fluentCall;
 
-        protected FluentSyntaxReader(FluentCallDefinition fluentCall)
+        protected FluentSyntaxReader(T value, FluentCallDefinition fluentCall)
         {
             _fluentCall = fluentCall;
             _invocations = fluentCall.Invocations;
             SemanticModel = fluentCall.SemanticModel;
-            Value = new();
+            Value = value;
         }
 
-        internal T Evaluate()
+        internal void Evaluate()
         {
-            var invocation = _invocations[0];
+            var invocationSyntax = _invocations[0];
+            var methodSymbol = (IMethodSymbol)SemanticModel.GetSymbolInfo(invocationSyntax).Symbol!;
+
+            if (!methodSymbol.ConstructedFrom.IsReflowSymbol())
+                throw new InvalidOperationException();
+
             if (
                 !ValidateHead(
                     _fluentCall.LambdaSyntax,
-                    ((MemberAccessExpressionSyntax)invocation.Expression).Name.Identifier.Text,
-                    invocation.ArgumentList
+                    methodSymbol,
+                    invocationSyntax.ArgumentList.Arguments
                 )
             )
             {
@@ -36,19 +41,19 @@ namespace Reflow.Analyzer
 
             for (var invocationIndex = 1; invocationIndex < _invocations.Count; invocationIndex++)
             {
-                invocation = _invocations[invocationIndex];
-                ReadTail(
-                    ((MemberAccessExpressionSyntax)invocation.Expression).Name.Identifier.Text,
-                    invocation.ArgumentList
-                );
+                invocationSyntax = _invocations[invocationIndex];
+                methodSymbol = (IMethodSymbol)SemanticModel.GetSymbolInfo(invocationSyntax).Symbol!;
+
+                if (!methodSymbol.ConstructedFrom.IsReflowSymbol())
+                    break;
+
+                ReadTail(methodSymbol, invocationSyntax.ArgumentList.Arguments);
             }
 
             if (!ValidateTail())
             {
                 throw new InvalidOperationException("Invalid tail.");
             }
-
-            return Value;
         }
 
         protected void WithLinkData(ILambdaLinkData data)
@@ -58,11 +63,14 @@ namespace Reflow.Analyzer
 
         protected abstract bool ValidateHead(
             LambdaExpressionSyntax lambdaSyntax,
-            string name,
-            ArgumentListSyntax list
+            IMethodSymbol methodSymbol,
+            SeparatedSyntaxList<ArgumentSyntax> arguments
         );
 
-        protected abstract void ReadTail(string name, ArgumentListSyntax list);
+        protected abstract void ReadTail(
+            IMethodSymbol methodSymbol,
+            SeparatedSyntaxList<ArgumentSyntax> arguments
+        );
 
         protected virtual bool ValidateTail()
         {

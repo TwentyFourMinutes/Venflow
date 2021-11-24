@@ -4,7 +4,7 @@ using Reflow.Analyzer.Models;
 
 namespace Reflow.Analyzer.Sections
 {
-    internal partial class Entity
+    internal class Entity
     {
         internal string? TableName { get; private set; }
         internal INamedTypeSymbol Symbol { get; }
@@ -67,7 +67,7 @@ namespace Reflow.Analyzer.Sections
             return entity;
         }
 
-        private class FluentReader : BulkFluentReader<Entity>
+        private class FluentReader : BulkFluentSyntaxReader<Entity>
         {
             private Column? _currentColumn;
             private EntityRelation? _currentRelation;
