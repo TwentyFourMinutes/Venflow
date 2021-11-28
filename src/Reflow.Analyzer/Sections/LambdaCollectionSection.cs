@@ -358,6 +358,16 @@ namespace Reflow.Analyzer.Sections
                         true
                     );
 
+                    var lambdaSymbol = _semanticModel.GetTypeInfo(lambdaSyntax).ConvertedType;
+
+                    if (
+                        lambdaSymbol is not null
+                        && lambdaSymbol.GetFullName() == "System.Linq.Expressions.Expression"
+                    )
+                    {
+                        return;
+                    }
+
                     var dataFlow = _semanticModel.AnalyzeDataFlow(lambdaSyntax);
 
                     if (dataFlow is null || !dataFlow.Succeeded)
