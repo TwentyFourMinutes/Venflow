@@ -137,9 +137,13 @@ namespace Reflow.Commands
             }
         }
 
-        internal static void Handle(IDatabase database, Func<SqlInterpolationHandler> sql)
+        internal static void Handle<TDelegate>(
+            IDatabase database,
+            TDelegate data,
+            Func<TDelegate, SqlInterpolationHandler> sql
+        ) where TDelegate : Delegate
         {
-            var lambdaData = LambdaLinker.GetLambdaData<QueryLinkData>(sql.Method);
+            var lambdaData = LambdaLinker.GetLambdaData<QueryLinkData>(data.Method);
 
             var command = new NpgsqlCommand();
 
@@ -148,13 +152,14 @@ namespace Reflow.Commands
             var interpolationData = new SqlInterpolationHandler.AmbientData
             {
                 ParameterIndecies = lambdaData.ParameterIndecies!,
+                HelperStrings = lambdaData.HelperStrings!,
                 Parameters = command.Parameters,
                 CommandBuilder = commandBuilder,
             };
 
             SqlInterpolationHandler.AmbientData.Current = interpolationData;
 
-            sql.Invoke();
+            sql.Invoke(data);
 
             SqlInterpolationHandler.AmbientData.Current = null;
 

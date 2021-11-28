@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Reflow.Analyzer.Models;
@@ -21,11 +22,11 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
             JoinedEntities = new();
         }
 
-        internal static Query Construct(FluentCallDefinition fluentCall)
+        internal static Query Construct(Database database, FluentCallDefinition fluentCall)
         {
             var query = new Query { FluentCall = fluentCall };
 
-            new FluentReader(query, fluentCall).Evaluate();
+            new FluentReader(database, query, fluentCall).Evaluate();
 
             return query;
         }
@@ -33,9 +34,13 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
         private class FluentReader : FluentSyntaxReader<Query>
         {
             private ITypeSymbol? _previousJoinSymbol;
+            private readonly Database _database;
 
-            internal FluentReader(Query query, FluentCallDefinition fluentCall)
-                : base(query, fluentCall) { }
+            internal FluentReader(Database database, Query query, FluentCallDefinition fluentCall)
+                : base(query, fluentCall)
+            {
+                _database = database;
+            }
 
             protected override bool ValidateHead(
                 LambdaExpressionSyntax lambdaSyntax,
@@ -52,6 +57,7 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                     (
                         (MemberAccessExpressionSyntax)lambdaSyntax.FirstAncestorOrSelf<InvocationExpressionSyntax>()!.Expression
                     ).Expression;
+
                 var tableType = (INamedTypeSymbol)SemanticModel.GetTypeInfo(tableSyntax).Type!;
 
                 Value.Entity = tableType.TypeArguments[0];
@@ -66,15 +72,17 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                         throw new InvalidOperationException();
                     }
 
-                    WithLinkData(new QueryLinkData(Value.Entity, -1, null));
+                    WithLinkData(new QueryLinkData(Value.Entity, -1, null, null));
                 }
                 else
                 {
                     var contentLength = 0;
                     short argumentIndex = 0;
                     var parameterIndecies = new List<short>();
+                    var queryHelperStrings = new List<string>();
                     var interpolatedStringSyntax =
                         (InterpolatedStringExpressionSyntax)lambdaSyntax.ExpressionBody!;
+                    var stringBuilder = new StringBuilder();
 
                     for (
                         var contentIndex = 0;
@@ -82,27 +90,160 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                         contentIndex++
                     )
                     {
-                        var content = interpolatedStringSyntax.Contents[contentIndex];
+                        var contentSyntax = interpolatedStringSyntax.Contents[contentIndex];
 
-                        if (content is InterpolationSyntax)
+                        if (contentSyntax is InterpolationSyntax interpolationSyntax)
                         {
-                            parameterIndecies.Add(argumentIndex++);
+                            switch (interpolationSyntax.Expression)
+                            {
+                                case MemberAccessExpressionSyntax memberAccessSyntax:
+                                {
+                                    var symbolInfo = SemanticModel.GetSymbolInfo(
+                                        memberAccessSyntax.Expression
+                                    );
 
-                            contentLength += 3 + (int)Math.Log10(argumentIndex);
+                                    if (
+                                        symbolInfo.Symbol is not IParameterSymbol symbol
+                                        || !lambdaSyntax
+                                            .GetLocation()
+                                            .SourceSpan.OverlapsWith(symbol.Locations[0].SourceSpan)
+                                    )
+                                    {
+                                        DefaultSwitchCase();
+                                        break;
+                                    }
+
+                                    if (
+                                        !_database.Entities.TryGetValue(
+                                            symbol!.Type,
+                                            out var entity
+                                        )
+                                    )
+                                    {
+                                        throw new InvalidOperationException();
+                                    }
+
+                                    var propertyName = memberAccessSyntax.Name.Identifier.Text;
+
+                                    var column = entity.Columns.FirstOrDefault(
+                                        x => x.PropertyName == propertyName
+                                    );
+
+                                    if (column is null)
+                                        throw new InvalidOperationException();
+
+                                    stringBuilder
+                                        .Append('"')
+                                        .Append(entity.TableName)
+                                        .Append("\".\"")
+                                        .Append(column.ColumnName)
+                                        .Append('"');
+
+                                    queryHelperStrings.Add(stringBuilder.ToString());
+                                    contentLength += stringBuilder.Length;
+                                    stringBuilder.Clear();
+                                    argumentIndex++;
+                                    break;
+                                }
+                                case IdentifierNameSyntax identifierSyntax:
+                                {
+                                    var symbolInfo = SemanticModel.GetSymbolInfo(identifierSyntax);
+
+                                    if (
+                                        symbolInfo.Symbol is not IParameterSymbol symbol
+                                        || !lambdaSyntax
+                                            .GetLocation()
+                                            .SourceSpan.OverlapsWith(symbol.Locations[0].SourceSpan)
+                                    )
+                                    {
+                                        DefaultSwitchCase();
+                                        break;
+                                    }
+
+                                    if (
+                                        !_database.Entities.TryGetValue(
+                                            symbol!.Type,
+                                            out var entity
+                                        )
+                                    )
+                                    {
+                                        throw new InvalidOperationException();
+                                    }
+
+                                    var appendAllColumnNames = false;
+
+                                    if (interpolationSyntax.FormatClause is not null)
+                                    {
+                                        appendAllColumnNames =
+                                            interpolationSyntax.FormatClause.FormatStringToken.Text switch
+                                            {
+                                                "*" => true,
+                                                _ => throw new InvalidOperationException(),
+                                            };
+                                    }
+
+                                    if (appendAllColumnNames)
+                                    {
+                                        for (
+                                            var columnIndex = 0;
+                                            columnIndex < entity.Columns.Count;
+                                            columnIndex++
+                                        )
+                                        {
+                                            stringBuilder
+                                                .Append('"')
+                                                .Append(entity.TableName)
+                                                .Append("\".\"")
+                                                .Append(entity.Columns[columnIndex].ColumnName)
+                                                .Append("\", ");
+                                        }
+
+                                        stringBuilder.Length -= 2;
+                                    }
+                                    else
+                                    {
+                                        stringBuilder
+                                            .Append('"')
+                                            .Append(entity.TableName)
+                                            .Append('"');
+                                    }
+
+                                    queryHelperStrings.Add(stringBuilder.ToString());
+                                    contentLength += stringBuilder.Length;
+                                    stringBuilder.Clear();
+                                    argumentIndex++;
+                                    break;
+                                }
+                                default:
+                                    DefaultSwitchCase();
+                                    break;
+                            }
+
+                            void DefaultSwitchCase()
+                            {
+                                parameterIndecies.Add(argumentIndex++);
+
+                                contentLength += 3 + (int)Math.Log10(argumentIndex);
+                            }
                         }
-                        else if (content is InterpolatedStringContentSyntax stringContentSyntax)
+                        else if (contentSyntax is InterpolatedStringTextSyntax stringTextSyntax)
                         {
-                            contentLength += stringContentSyntax.GetText().Length;
+                            contentLength += stringTextSyntax.TextToken.Text.Length;
                         }
                     }
 
-                    if (parameterIndecies.Count == 0)
+                    if (parameterIndecies.Count == 0 && queryHelperStrings.Count == 0)
                     {
                         throw new InvalidOperationException();
                     }
 
                     WithLinkData(
-                        new QueryLinkData(Value.Entity, contentLength, parameterIndecies.ToArray())
+                        new QueryLinkData(
+                            Value.Entity,
+                            contentLength,
+                            parameterIndecies.Count == 0 ? null : parameterIndecies,
+                            queryHelperStrings.Count == 0 ? null : queryHelperStrings
+                        )
                     );
                 }
 
@@ -194,13 +335,20 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
 
         internal ITypeSymbol Entity { get; }
         internal int MinimumSqlLength { get; }
-        internal short[]? ParameterIndecies { get; }
+        internal List<short>? ParameterIndecies { get; }
+        internal List<string>? HelperStrings { get; }
 
-        internal QueryLinkData(ITypeSymbol entity, int minimumSqlLength, short[]? parameterIndecies)
+        internal QueryLinkData(
+            ITypeSymbol entity,
+            int minimumSqlLength,
+            List<short>? parameterIndecies,
+            List<string>? helperStrings
+        )
         {
             Entity = entity;
             MinimumSqlLength = minimumSqlLength;
             ParameterIndecies = parameterIndecies;
+            HelperStrings = helperStrings;
         }
     }
 }

@@ -15,15 +15,18 @@ namespace Reflow.Commands
             internal StringBuilder CommandBuilder = null!;
             internal NpgsqlParameterCollection Parameters = null!;
             internal short[] ParameterIndecies = null!;
+            internal string[] HelperStrings = null!;
         }
 
         private int _interpolationIndex;
         private short _parameterIndex;
         private short _absolutParameterIndex;
         private short _nextParameterIndex;
+        private int _helperStringsIndex;
 
         private readonly StringBuilder _commandBuilder;
-        private readonly short[] _parameterIndecies;
+        private readonly short[]? _parameterIndecies;
+        private readonly string[]? _helperStrings;
         private readonly NpgsqlParameterCollection _parameters;
 
         public SqlInterpolationHandler(int literalLength, int formattedCount)
@@ -34,6 +37,7 @@ namespace Reflow.Commands
             _interpolationIndex = 0;
             _parameterIndex = 0;
             _absolutParameterIndex = 0;
+            _helperStringsIndex = 0;
 
             var current = AmbientData.Current;
 
@@ -44,8 +48,10 @@ namespace Reflow.Commands
 
             _commandBuilder = current.CommandBuilder;
             _parameterIndecies = current.ParameterIndecies;
+            _helperStrings = current.HelperStrings;
             _parameters = current.Parameters;
-            _nextParameterIndex = _parameterIndecies.Length > 0 ? _parameterIndecies[0] : (short)-1;
+            _nextParameterIndex =
+                _parameterIndecies?.Length > 0 ? _parameterIndecies[0] : (short)-1;
         }
 
         public void AppendLiteral(string value)
@@ -58,14 +64,23 @@ namespace Reflow.Commands
             BaseAppendFormatted(value);
         }
 
+        public void AppendFormatted<T>(T value, string format)
+        {
+            _ = format;
+
+            BaseAppendFormatted(value);
+        }
+
         private void BaseAppendFormatted<T>(T value)
         {
             if (_interpolationIndex++ != _nextParameterIndex)
             {
+                _commandBuilder.Append(_helperStrings![_helperStringsIndex++]);
+
                 return;
             }
 
-            if (++_parameterIndex < _parameterIndecies.Length)
+            if (++_parameterIndex < _parameterIndecies!.Length)
                 _nextParameterIndex = _parameterIndecies[_parameterIndex];
 
             var parameterName = "@p" + _absolutParameterIndex++;

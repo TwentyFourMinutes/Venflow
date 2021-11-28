@@ -101,6 +101,12 @@ namespace Reflow.Analyzer.Emitters
                             Array(Type(typeof(short))),
                             data.ParameterIndecies.Select(x => Constant(x))
                         ),
+                    data.HelperStrings is null
+                      ? Null()
+                      : ArrayInitializer(
+                            Array(Type(typeof(string))),
+                            data.HelperStrings.Select(x => Constant(x))
+                        ),
                     ArrayInitializer(
                         Array(Type(typeof(Type))),
                         new[] { query.Entity }

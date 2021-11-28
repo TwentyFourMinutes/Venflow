@@ -27,20 +27,21 @@ namespace Reflow.Playground
 
             for (var i = 0; i < 2; i++)
             {
-                var ads = await db.People
-                    .Query(() => @$"SELECT ""Id"", ""Name"" FROM ""People"" WHERE ""Id"" = {i}")
+                var person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
                     .SingleAsync();
             }
 
-            var ad = await db.People
-                .QueryRaw(
-                    () =>
-                        @"SELECT * FROM ""People""
-                                  JOIN ""Emails"" ON ""Emails"".""PersonId"" = ""People"".""Id"""
+            var people = await db.People
+                .Query<Email>(
+                    (people, email) =>
+                        $@"SELECT * FROM {people}
+                           JOIN {email} ON {email.PersonId} = {people.Id}"
                 )
                 .Join(x => x.Emails)
                 .SingleAsync();
         }
+
         public static void Test(Action a) => Console.WriteLine(a);
     }
 
@@ -52,7 +53,8 @@ namespace Reflow.Playground
         public MyDatabase()
             : base(
                 "User ID = venflow_tests; Password = venflow_tests; Server = 127.0.0.1; Port = 5432; Database = venflow_tests; "
-            ) { }
+            )
+        { }
     }
 
     public class Person

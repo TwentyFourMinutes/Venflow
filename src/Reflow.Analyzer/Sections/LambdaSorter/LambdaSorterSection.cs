@@ -38,7 +38,7 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                     ) {
                         case "Query":
                         case "QueryRaw":
-                            var query = Query.Construct(fluentCall);
+                            var query = Query.Construct(database, fluentCall);
                             queries.Add(query);
                             commands.Add(query);
                             break;
