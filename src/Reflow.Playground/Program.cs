@@ -1,4 +1,5 @@
-﻿using Reflow.Modeling;
+﻿using System.Linq.Expressions;
+using Reflow.Modeling;
 namespace Reflow.Playground
 {
     public static class Program
@@ -12,6 +13,9 @@ namespace Reflow.Playground
         public static async Task Main()
         {
             var db = new MyDatabase();
+
+            Expression<Func<int>> test = () => 0;
+
             Test(
                 () =>
                 {

@@ -140,7 +140,7 @@ namespace Reflow.Commands
         internal static void Handle<TDelegate>(
             IDatabase database,
             TDelegate data,
-            Func<TDelegate, SqlInterpolationHandler> sql
+            Action<TDelegate> sql
         ) where TDelegate : Delegate
         {
             var lambdaData = LambdaLinker.GetLambdaData<QueryLinkData>(data.Method);
