@@ -66,14 +66,7 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                         throw new InvalidOperationException();
                     }
 
-                    WithLinkData(
-                        new QueryLinkData(
-                            Value.Entity,
-                            -1,
-                            null,
-                            new string[] { Value.Entity.GetFullName() }
-                        )
-                    );
+                    WithLinkData(new QueryLinkData(Value.Entity, -1, null));
                 }
                 else
                 {
@@ -109,12 +102,7 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                     }
 
                     WithLinkData(
-                        new QueryLinkData(
-                            Value.Entity,
-                            contentLength,
-                            parameterIndecies.ToArray(),
-                            new string[] { Value.Entity.GetFullName() }
-                        )
+                        new QueryLinkData(Value.Entity, contentLength, parameterIndecies.ToArray())
                     );
                 }
 
@@ -137,21 +125,25 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                         return;
                     case "Join":
                     case "ThenJoin":
-                        var isNested = methodSymbol.Name is "ThenJoin";
-                        var typeArguments = ((INamedTypeSymbol)methodSymbol.ReturnType).TypeArguments;
+                        var isNew = methodSymbol.Name is "Join";
+                        var typeArguments =
+                            ((INamedTypeSymbol)methodSymbol.ReturnType).TypeArguments;
 
                         Value.JoinedEntities.AddToPath(
-                            (INamedTypeSymbol)(isNested ? _previousJoinSymbol! : typeArguments[0]),
+                            (INamedTypeSymbol)(isNew ? typeArguments[0] : _previousJoinSymbol!),
                             (INamedTypeSymbol)typeArguments[1],
                             (IPropertySymbol)SemanticModel.GetSymbolInfo(
                                 GetMemberAccessFromLambda(arguments.Single())
-                            ).Symbol!, isNested);
+                            ).Symbol!,
+                            isNew
+                        );
 
-                        if (!isNested)
+                        if (!isNew)
                         {
                             _previousJoinSymbol = typeArguments[1];
                         }
 
+                        Value.Type |= QueryType.WithRelations;
                         return;
                     case "SingleAsync":
                         Value.Type |= QueryType.Single;
@@ -164,7 +156,7 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
 
             protected override bool ValidateTail()
             {
-                if (Value.Type is not QueryType.Single and not QueryType.Many)
+                if (!Value.Type.HasFlag(QueryType.Single) && !Value.Type.HasFlag(QueryType.Many))
                 {
                     return false;
                 }
@@ -201,21 +193,14 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
         internal MethodLocation? Location { get; set; }
 
         internal ITypeSymbol Entity { get; }
-        internal string[]? UsedEntities { get; }
         internal int MinimumSqlLength { get; }
         internal short[]? ParameterIndecies { get; }
 
-        internal QueryLinkData(
-            ITypeSymbol entity,
-            int minimumSqlLength,
-            short[]? parameterIndecies,
-            string[] usedEntities
-        )
+        internal QueryLinkData(ITypeSymbol entity, int minimumSqlLength, short[]? parameterIndecies)
         {
             Entity = entity;
             MinimumSqlLength = minimumSqlLength;
             ParameterIndecies = parameterIndecies;
-            UsedEntities = usedEntities;
         }
     }
 }

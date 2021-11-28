@@ -71,6 +71,27 @@ namespace Reflow.Analyzer.Emitters
         {
             var query = (Query)command;
 
+            TypeSyntax returnType;
+
+            if (query.Type.HasFlag(QueryType.Single))
+            {
+                if (query.Type.HasFlag(QueryType.WithRelations))
+                {
+                    returnType = GenericType(typeof(Task<>), Type(data.Entity));
+                }
+                else
+                {
+                    returnType = Type(data.Entity);
+                }
+            }
+            else
+            {
+                returnType = GenericType(
+                    typeof(Task<>),
+                    GenericType(typeof(IList<>), Type(data.Entity))
+                );
+            }
+
             return Instance(Type("Reflow.Lambdas.QueryLinkData"))
                 .WithArguments(
                     Constant(data.MinimumSqlLength),
@@ -82,19 +103,18 @@ namespace Reflow.Analyzer.Emitters
                         ),
                     ArrayInitializer(
                         Array(Type(typeof(Type))),
-                        data.UsedEntities.Select(x => TypeOf(Type(x)))
+                        new[] { query.Entity }
+                            .Concat(
+                                query.JoinedEntities.FlattenedPath.Select(x => x.RightEntitySymbol)
+                            )
+                            .Select(x => TypeOf(Type(x)))
                     ),
                     Cast(
                         GenericType(
                             typeof(Func<,,>),
                             Type(typeof(DbDataReader)),
                             Type(typeof(ushort[])),
-                            query.Type.HasFlag(QueryType.Single)
-                              ? Type(data.Entity)
-                              : GenericType(
-                                    typeof(Task<>),
-                                    GenericType(typeof(IList<>), Type(data.Entity))
-                                )
+                            returnType
                         ),
                         AccessMember(Type(data.Location!.FullTypeName), data.Location!.MethodName)
                     )

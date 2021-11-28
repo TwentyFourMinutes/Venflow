@@ -5,15 +5,14 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
     internal class RelationBuilderValues
     {
         internal List<RelationPath> FlattenedPath { get; }
+        internal List<RelationPath> TrailingPath { get; }
 
         private RelationPath _currentPath;
-
-        private readonly List<RelationPath> _trailingPath;
 
         internal RelationBuilderValues()
         {
             _currentPath = default!;
-            _trailingPath = new(1);
+            TrailingPath = new(1);
             FlattenedPath = new(4);
         }
 
@@ -26,9 +25,9 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
         {
             if (isNested)
             {
-                for (var pathIndex = 0; pathIndex < _trailingPath.Count; pathIndex++)
+                for (var pathIndex = 0; pathIndex < TrailingPath.Count; pathIndex++)
                 {
-                    var path = _trailingPath[pathIndex];
+                    var path = TrailingPath[pathIndex];
 
                     if (path.Equals(leftEntitySymbol, rightEntitySymbol, navigationSymbol))
                     {
@@ -44,7 +43,7 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                     navigationSymbol
                 );
 
-                _trailingPath.Add(_currentPath);
+                TrailingPath.Add(_currentPath);
 
                 FlattenedPath.Add(_currentPath);
             }

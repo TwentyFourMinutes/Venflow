@@ -45,7 +45,7 @@ namespace Reflow.Commands
 
         public Task<TRootEntity?> SingleAsync(CancellationToken cancellationToken = default)
         {
-            return Query.SingleAsync<TRootEntity>(cancellationToken);
+            return Query.SingleAsync<TRootEntity>(true, cancellationToken);
         }
 
         public Task<IList<TRootEntity>> ManyAsync(CancellationToken cancellationToken = default)

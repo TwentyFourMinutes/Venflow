@@ -20,6 +20,7 @@ namespace Reflow.Commands
         }
 
         internal static async Task<TEntity?> SingleAsync<TEntity>(
+            bool hasRelations,
             CancellationToken cancellationToken
         )
         {
@@ -32,10 +33,14 @@ namespace Reflow.Commands
 
             try
             {
+                var commandBehaviour = hasRelations
+                    ? CommandBehavior.SingleResult | CommandBehavior.SequentialAccess
+                    : CommandBehavior.SingleRow
+                      | CommandBehavior.SingleResult
+                      | CommandBehavior.SequentialAccess;
+
                 dataReader = await queryData.Command.ExecuteReaderAsync(
-                    CommandBehavior.SingleRow
-                        | CommandBehavior.SingleResult
-                        | CommandBehavior.SequentialAccess,
+                    commandBehaviour,
                     cancellationToken
                 );
 
@@ -54,12 +59,20 @@ namespace Reflow.Commands
                     queryData.LambdaData.ColumnIndecies = columnIndecies;
                 }
 
-                await dataReader.ReadAsync();
+                if (hasRelations)
+                {
+                    return await (
+                        (Func<DbDataReader, ushort[], Task<TEntity>>)queryData.LambdaData.Parser
+                    ).Invoke(dataReader, columnIndecies);
+                }
+                else
+                {
+                    await dataReader.ReadAsync();
 
-                return ((Func<DbDataReader, ushort[], TEntity>)queryData.LambdaData.Parser).Invoke(
-                    dataReader,
-                    columnIndecies
-                );
+                    return (
+                        (Func<DbDataReader, ushort[], TEntity>)queryData.LambdaData.Parser
+                    ).Invoke(dataReader, columnIndecies);
+                }
             }
             catch
             {

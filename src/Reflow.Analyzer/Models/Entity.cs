@@ -199,7 +199,7 @@ namespace Reflow.Analyzer.Sections
                         case string methodName
                               when methodName is "WithOne" or "WithMany" && arguments.Count is 0:
                         {
-                            if (methodName is "WithMany")
+                            if (methodName is "WithOne")
                             {
                                 _currentRelation.RelationType = RelationType.OneToMany;
                             }
@@ -210,7 +210,7 @@ namespace Reflow.Analyzer.Sections
                         {
                             var memberAccess = GetMemberAccessFromLambda(arguments.Single());
 
-                            if (methodName is "WithMany")
+                            if (methodName is "WithOne")
                             {
                                 _currentRelation.RelationType = RelationType.OneToMany;
                             }

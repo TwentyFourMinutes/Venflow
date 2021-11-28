@@ -22,6 +22,7 @@ namespace Reflow.Analyzer.Sections
             var entityProxies = new Dictionary<ITypeSymbol, List<Column>>(
                 SymbolEqualityComparer.Default
             );
+            var abosluteRelationIndex = 0;
 
             for (var databaseIndex = 0; databaseIndex < previous.Data.Count; databaseIndex++)
             {
@@ -77,6 +78,7 @@ namespace Reflow.Analyzer.Sections
                         if (relation.IsProcessed)
                             break;
 
+                        relation.Id = abosluteRelationIndex++;
                         relation.IsProcessed = true;
 
                         if (
@@ -98,7 +100,7 @@ namespace Reflow.Analyzer.Sections
                         if (navigationColumn is not null)
                             rightEntity.Columns.Remove(navigationColumn);
 
-                        rightEntity.Relations.Add(relation.GetMirror());
+                        rightEntity.Relations.Add(relation.CreateMirror());
                     }
                 }
 

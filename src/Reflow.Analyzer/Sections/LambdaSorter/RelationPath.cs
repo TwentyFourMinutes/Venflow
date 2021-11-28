@@ -2,7 +2,7 @@
 
 namespace Reflow.Analyzer.Sections.LambdaSorter
 {
-    internal class RelationPath
+    internal class RelationPath : IEquatable<RelationPath>
     {
         internal INamedTypeSymbol LeftEntitySymbol { get; }
         internal INamedTypeSymbol RightEntitySymbol { get; }
@@ -59,6 +59,33 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
             return this.LeftEntitySymbol.Equals(leftEntitySymbol, SymbolEqualityComparer.Default)
                 && this.RightEntitySymbol.Equals(rightEntitySymbol, SymbolEqualityComparer.Default)
                 && this.NavigationSymbol.Equals(navigationSymbol, SymbolEqualityComparer.Default);
+        }
+
+        public bool Equals(RelationPath other)
+        {
+            return this.LeftEntitySymbol.Equals(
+                    other.LeftEntitySymbol,
+                    SymbolEqualityComparer.Default
+                )
+                && this.RightEntitySymbol.Equals(
+                    other.RightEntitySymbol,
+                    SymbolEqualityComparer.Default
+                )
+                && this.NavigationSymbol.Equals(
+                    other.NavigationSymbol,
+                    SymbolEqualityComparer.Default
+                );
+        }
+
+        public override int GetHashCode()
+        {
+            var hash = new HashCode();
+
+            hash.Add(LeftEntitySymbol);
+            hash.Add(RightEntitySymbol);
+            hash.Add(NavigationSymbol);
+
+            return hash.ToHashCode();
         }
     }
 }

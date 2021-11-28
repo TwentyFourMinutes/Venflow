@@ -5,9 +5,14 @@ namespace Reflow.Analyzer.CodeGenerator
 {
     public class CSharpIfSyntax
     {
-        private readonly IfStatementSyntax _ifSyntax;
+        private IfStatementSyntax _ifSyntax;
 
-        public CSharpIfSyntax(ExpressionSyntax condition, StatementSyntax[] then)
+        public CSharpIfSyntax(IfStatementSyntax ifSyntax)
+        {
+            _ifSyntax = ifSyntax;
+        }
+
+        public CSharpIfSyntax(ExpressionSyntax condition, IEnumerable<StatementSyntax> then)
         {
             _ifSyntax = IfStatement(condition, Block(then));
         }
@@ -15,6 +20,18 @@ namespace Reflow.Analyzer.CodeGenerator
         public static implicit operator IfStatementSyntax(CSharpIfSyntax syntax)
         {
             return syntax._ifSyntax;
+        }
+
+        public CSharpIfSyntax Else(params StatementSyntax[] statements)
+        {
+            return Else((IEnumerable<StatementSyntax>)statements);
+        }
+
+        public CSharpIfSyntax Else(IEnumerable<StatementSyntax> statements)
+        {
+            _ifSyntax = _ifSyntax.WithElse(ElseClause(Block(statements)));
+
+            return this;
         }
     }
 }

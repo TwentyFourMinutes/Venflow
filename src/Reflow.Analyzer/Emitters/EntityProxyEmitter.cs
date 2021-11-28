@@ -21,13 +21,7 @@ namespace Reflow.Analyzer.Emitters
 
                 var propertyCount = updatableEntity.Value.Count;
 
-                var numericType = (propertyCount + 1) switch
-                {
-                    <= sizeof(byte) * 8 => TypeCode.Byte,
-                    <= sizeof(ushort) * 8 => TypeCode.UInt16,
-                    <= sizeof(uint) * 8 => TypeCode.UInt32,
-                    _ => TypeCode.UInt64,
-                };
+                var numericType = BitUtilities.GetTypeBySize(propertyCount + 1);
 
                 if (numericType != TypeCode.UInt64)
                 {
@@ -45,15 +39,7 @@ namespace Reflow.Analyzer.Emitters
                                 .WithDefault(SyntaxKind.FalseLiteralExpression)
                         )
                         .WithStatements(
-                            If(
-                                Variable("trackChanges"),
-                                AssignMember(
-                                    This(),
-                                    Variable("_changes"),
-                                    Constant(1),
-                                    SyntaxKind.OrAssignmentExpression
-                                )
-                            )
+                            If(Variable("trackChanges"), SetBit(This(), Variable("_changes"), 1))
                         )
                 );
 
@@ -71,13 +57,8 @@ namespace Reflow.Analyzer.Emitters
                             .WithSetAccessor(
                                 AssignMember(Base(), property.PropertyName, Value()),
                                 If(
-                                    IsBitSet(Variable("_changes"), Type(numericType), Constant(1)),
-                                    AssignMember(
-                                        This(),
-                                        Variable("_changes"),
-                                        Constant(1 << propertyIndex + 1),
-                                        SyntaxKind.OrAssignmentExpression
-                                    )
+                                    IsBitSet(Variable("_changes"), Type(numericType), 1),
+                                    SetBit(This(), Variable("_changes"), propertyIndex + 1)
                                 )
                             )
                     );

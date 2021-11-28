@@ -166,7 +166,16 @@ namespace Reflow.Analyzer.CodeGenerator
 
         public static NameSyntax Var()
         {
-            return IdentifierName("var");
+            return IdentifierName(
+                Identifier(TriviaList(), SyntaxKind.VarKeyword, "var", "var", TriviaList())
+            );
+        }
+        public static LiteralExpressionSyntax Default()
+        {
+            return LiteralExpression(
+                SyntaxKind.DefaultLiteralExpression,
+                Token(SyntaxKind.DefaultKeyword)
+            );
         }
 
         public static TypeSyntax Void()
@@ -341,38 +350,115 @@ namespace Reflow.Analyzer.CodeGenerator
             return new CSharpIfSyntax(condition, statements);
         }
 
+        public static CSharpIfSyntax If(
+            ExpressionSyntax condition,
+            IEnumerable<StatementSyntax> statements
+        )
+        {
+            return new CSharpIfSyntax(condition, statements);
+        }
+
+        public static CSharpIfSyntax If(IfStatementSyntax ifStatement)
+        {
+            return new CSharpIfSyntax(ifStatement);
+        }
+
+        public static ExpressionSyntax Equal(
+            ExpressionSyntax expression,
+            LiteralExpressionSyntax to
+        )
+        {
+            if (to.Kind() == SyntaxKind.DefaultLiteralExpression)
+                return Equal(expression, (ExpressionSyntax)to);
+            else
+                return IsPatternExpression(expression, ConstantPattern(to));
+        }
+
+        public static BinaryExpressionSyntax Equal(ExpressionSyntax expression, ExpressionSyntax to)
+        {
+            return BinaryExpression(SyntaxKind.EqualsExpression, expression, to);
+        }
+
+        public static BinaryExpressionSyntax NotEqual(
+            ExpressionSyntax expression,
+            ExpressionSyntax to
+        )
+        {
+            return BinaryExpression(SyntaxKind.NotEqualsExpression, expression, to);
+        }
+
+        public static PrefixUnaryExpressionSyntax Not(ExpressionSyntax expression)
+        {
+            return PrefixUnaryExpression(SyntaxKind.LogicalNotExpression, expression);
+        }
+
+        public static BinaryExpressionSyntax And(ExpressionSyntax left, ExpressionSyntax right)
+        {
+            return BinaryExpression(SyntaxKind.LogicalAndExpression, left, right);
+        }
+
+        public static BinaryExpressionSyntax Or(ExpressionSyntax left, ExpressionSyntax right)
+        {
+            return BinaryExpression(SyntaxKind.LogicalOrExpression, left, right);
+        }
+
+        public static ArgumentSyntax Out(NameSyntax variable)
+        {
+            return Argument(variable).WithRefKindKeyword(Token(SyntaxKind.OutKeyword));
+        }
+
         public static InvocationExpressionSyntax Invoke(
             NameSyntax member,
             string memberName,
-            params ExpressionSyntax[] parameters
+            params SyntaxNode[] parameters
         )
         {
             return Invoke(member, IdentifierName(memberName), parameters);
         }
 
         public static InvocationExpressionSyntax Invoke(
-            NameSyntax member,
+            ExpressionSyntax member,
+            string memberName,
+            params SyntaxNode[] parameters
+        )
+        {
+            return Invoke(member, IdentifierName(memberName), parameters);
+        }
+
+        public static InvocationExpressionSyntax Invoke(
+            ExpressionSyntax expression,
             SimpleNameSyntax memberName,
-            params ExpressionSyntax[] parameters
+            params SyntaxNode[] parameters
         )
         {
             return InvocationExpression(
                     MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
-                        member,
+                        expression,
                         memberName
                     )
                 )
-                .WithArgumentList(ArgumentList(SeparatedList(parameters.Select(x => Argument(x)))));
+                .WithArgumentList(
+                    ArgumentList(
+                        SeparatedList(
+                            parameters.Select(
+                                x =>
+                                    x.IsKind(SyntaxKind.Argument)
+                                        ? (ArgumentSyntax)x
+                                        : Argument((ExpressionSyntax)x)
+                            )
+                        )
+                    )
+                );
         }
 
-        public static ExpressionStatementSyntax AssignLocal(
+        public static AssignmentExpressionSyntax AssignLocal(
             ExpressionSyntax local,
             ExpressionSyntax right,
             SyntaxKind operation = SyntaxKind.SimpleAssignmentExpression
         )
         {
-            return ExpressionStatement(AssignmentExpression(operation, local, right));
+            return AssignmentExpression(operation, local, right);
         }
 
         public static ExpressionStatementSyntax AssignMember(
@@ -447,6 +533,14 @@ namespace Reflow.Analyzer.CodeGenerator
 
         public static MemberAccessExpressionSyntax AccessMember(
             ExpressionSyntax member,
+            IPropertySymbol property
+        )
+        {
+            return AccessMember(member, property.Name);
+        }
+
+        public static MemberAccessExpressionSyntax AccessMember(
+            ExpressionSyntax member,
             string memberName
         )
         {
@@ -482,10 +576,29 @@ namespace Reflow.Analyzer.CodeGenerator
             return BreakStatement();
         }
 
+        public static AssignmentExpressionSyntax SetBit(NameSyntax local, int index)
+        {
+            return AssignLocal(local, Constant(1 << index), SyntaxKind.OrAssignmentExpression);
+        }
+
+        public static ExpressionStatementSyntax SetBit(
+            ExpressionSyntax name,
+            SimpleNameSyntax memberName,
+            int index
+        )
+        {
+            return AssignMember(
+                name,
+                memberName,
+                Constant(1 << index),
+                SyntaxKind.OrAssignmentExpression
+            );
+        }
+
         public static BinaryExpressionSyntax IsBitSet(
             ExpressionSyntax expression,
             TypeSyntax type,
-            LiteralExpressionSyntax index
+            int index
         )
         {
             return BinaryExpression(
@@ -493,7 +606,11 @@ namespace Reflow.Analyzer.CodeGenerator
                 Cast(
                     type,
                     ParenthesizedExpression(
-                        BinaryExpression(SyntaxKind.BitwiseAndExpression, expression, index)
+                        BinaryExpression(
+                            SyntaxKind.BitwiseAndExpression,
+                            expression,
+                            Constant(1 << index)
+                        )
                     )
                 ),
                 Constant(0)
@@ -548,6 +665,16 @@ namespace Reflow.Analyzer.CodeGenerator
             params StatementSyntax[] statements
         )
         {
+            return For(local, condition, increment, (IEnumerable<StatementSyntax>)statements);
+        }
+
+        public static ForStatementSyntax For(
+            CSharpLocalSyntax local,
+            ExpressionSyntax condition,
+            ExpressionSyntax increment,
+            IEnumerable<StatementSyntax> statements
+        )
+        {
             var localSyntax = (LocalDeclarationStatementSyntax)(StatementSyntax)local;
 
             return ForStatement(Block(statements))
@@ -561,6 +688,14 @@ namespace Reflow.Analyzer.CodeGenerator
             params StatementSyntax[] statements
         )
         {
+            return While(condition, (IEnumerable<StatementSyntax>)statements);
+        }
+
+        public static WhileStatementSyntax While(
+            ExpressionSyntax condition,
+            IEnumerable<StatementSyntax> statements
+        )
+        {
             return WhileStatement(condition, Block(statements));
         }
 
@@ -572,6 +707,48 @@ namespace Reflow.Analyzer.CodeGenerator
         public static ExpressionStatementSyntax Statement(ExpressionSyntax expression)
         {
             return ExpressionStatement(expression);
+        }
+
+        public static IEnumerable<StatementSyntax> Concat(
+            StatementSyntax firstStatement,
+            params StatementSyntax[] otherStatements
+        )
+        {
+            return Concat(firstStatement, (IList<StatementSyntax>)otherStatements);
+        }
+
+        public static IEnumerable<StatementSyntax> Concat(
+            StatementSyntax firstStatement,
+            IList<StatementSyntax> otherStatements
+        )
+        {
+            yield return firstStatement;
+
+            for (var statementIndex = 0; statementIndex < otherStatements.Count; statementIndex++)
+            {
+                yield return otherStatements[statementIndex];
+            }
+        }
+
+        public static IEnumerable<StatementSyntax> Concat(
+            StatementSyntax firstStatement,
+            IEnumerable<StatementSyntax> otherStatements
+        )
+        {
+            yield return firstStatement;
+
+            foreach (var statememt in otherStatements)
+            {
+                yield return statememt;
+            }
+        }
+
+        public static IEnumerable<StatementSyntax> Concat(
+            IEnumerable<StatementSyntax> firstStatements,
+            params StatementSyntax[] secondStatements
+        )
+        {
+            return firstStatements.Concat(secondStatements);
         }
     }
 }

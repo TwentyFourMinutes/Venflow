@@ -33,9 +33,13 @@ namespace Reflow.Playground
             }
 
             var ad = await db.People
-                .QueryRaw(() => @"SELECT ""Id"", ""Name"" FROM ""People""")
+                .QueryRaw(
+                    () =>
+                        @"SELECT * FROM ""People""
+                                  JOIN ""Emails"" ON ""Emails"".""PersonId"" = ""People"".""Id"""
+                )
                 .Join(x => x.Emails)
-                .ManyAsync();
+                .SingleAsync();
         }
         public static void Test(Action a) => Console.WriteLine(a);
     }
@@ -55,6 +59,7 @@ namespace Reflow.Playground
     {
         public int Id { get; set; }
         public virtual string Name { get; set; }
+        public DateTime DefaultValue { get; set; }
 
         public IList<Email> Emails { get; }
 
@@ -67,6 +72,7 @@ namespace Reflow.Playground
     public class Email
     {
         public int Id { get; set; }
+        public string Address { get; set; }
 
         public int PersonId { get; set; }
         public Person Person { get; set; }
