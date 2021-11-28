@@ -29,14 +29,15 @@ namespace Reflow.Playground
             {
                 var person = await db.People
                     .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
-                    .SingleAsync();
+                    .ManyAsync();
             }
 
             var people = await db.People
                 .Query<Email>(
-                    (people, email) =>
+                    (people, emails) =>
                         $@"SELECT * FROM {people}
-                           JOIN {email} ON {email.PersonId} = {people.Id}"
+                           JOIN {emails} ON {emails.PersonId} = {people.Id}
+                           WHERE {people.Id} = {0}"
                 )
                 .Join(x => x.Emails)
                 .SingleAsync();
@@ -53,8 +54,7 @@ namespace Reflow.Playground
         public MyDatabase()
             : base(
                 "User ID = venflow_tests; Password = venflow_tests; Server = 127.0.0.1; Port = 5432; Database = venflow_tests; "
-            )
-        { }
+            ) { }
     }
 
     public class Person

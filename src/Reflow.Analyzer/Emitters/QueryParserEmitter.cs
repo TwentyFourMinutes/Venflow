@@ -66,7 +66,10 @@ namespace Reflow.Analyzer.Emitters
                 }
                 else if (query.Type.HasFlag(QueryType.Many))
                 {
-                    if (query.Type.HasFlag(QueryType.WithRelations)) { }
+                    if (query.Type.HasFlag(QueryType.WithRelations))
+                    {
+                        methodLocation = BuildManyWithRelationParser(query);
+                    }
                     else
                     {
                         methodLocation = BuildManyNoRelationParser(query);
@@ -813,6 +816,587 @@ namespace Reflow.Analyzer.Emitters
                             )
                         ),
                         Return(Variable("entities"))
+                    )
+            );
+
+            return methodDefinition;
+        }
+
+        private MethodLocation BuildManyWithRelationParser(Query query)
+        {
+            var virtualEntities = GetVirtualEntities(
+                query.JoinedEntities,
+                _database.Entities[query.Entity]
+            );
+
+            var entityChangesType = BitUtilities.GetTypeBySize(virtualEntities.Length);
+
+            var columnOffset = 0;
+
+            for (
+                var virtualEntityIndex = 0;
+                virtualEntityIndex < virtualEntities.Length;
+                virtualEntityIndex++
+            )
+            {
+                var virtualEntity = virtualEntities[virtualEntityIndex];
+
+                var lastEntityLocalName = "lastEntity_" + virtualEntity.Id;
+                _localSyntaxis.Add(
+                    Local(lastEntityLocalName, Type(virtualEntity.Entity.Symbol))
+                        .WithInitializer(Default())
+                );
+
+                string? entityDictionaryLocalName = null;
+
+                if (virtualEntityIndex > 0)
+                {
+                    entityDictionaryLocalName = "entitiesDictionary_" + virtualEntity.Id;
+
+                    _localSyntaxis.Add(
+                        Local(entityDictionaryLocalName, Var())
+                            .WithInitializer(
+                                Instance(
+                                    GenericType(
+                                        typeof(Dictionary<,>),
+                                        Type(virtualEntity.Entity.Columns[0].Type),
+                                        Type(virtualEntity.Entity.Symbol)
+                                    )
+                                )
+                            )
+                    );
+                }
+
+                var entityIdLocalName = "entityId_" + virtualEntity.Id;
+                _iterationLocalSyntaxis.Add(
+                    Local(entityIdLocalName, Type(virtualEntity.Entity.Columns[0].Type))
+                        .WithInitializer(Default())
+                );
+
+                for (
+                    var columnIndex = 0;
+                    columnIndex < virtualEntity.Entity.Columns.Count;
+                    columnIndex++
+                )
+                {
+                    var column = virtualEntity.Entity.Columns[columnIndex];
+
+                    if (columnIndex == 0)
+                    {
+                        // Instantiate a new entity instance
+                        _caseStatements.Add(
+                            Statement(
+                                AssignLocal(
+                                    Variable(lastEntityLocalName),
+                                    Instance(Type(virtualEntity.Entity.Symbol))
+                                )
+                            )
+                        );
+
+                        // Instantiate used collection
+                        for (
+                            var navigationIndex = 0;
+                            navigationIndex < virtualEntity.InitializeNavigations.Count;
+                            navigationIndex++
+                        )
+                        {
+                            var navigation = virtualEntity.InitializeNavigations[navigationIndex];
+
+                            if (navigation.IsLeftNavigationPropertyInitialized)
+                                continue;
+
+                            _caseStatements.Add(
+                                AssignMember(
+                                    Variable(lastEntityLocalName),
+                                    navigation.LeftNavigationProperty!,
+                                    Instance(
+                                        GenericType(
+                                            typeof(List<>),
+                                            Type(navigation.RightEntitySymbol)
+                                        )
+                                    )
+                                )
+                            );
+                        }
+
+                        // Initialize relation maps
+                        for (
+                            var relationIndex = 0;
+                            relationIndex < virtualEntity.InitializeRelationMaps.Count;
+                            relationIndex++
+                        )
+                        {
+                            var (relation, foreignEntity) = virtualEntity.InitializeRelationMaps[
+                                relationIndex
+                            ];
+
+                            var lastEntityRelationsLocalName =
+                                $"lastEntityRelations_{foreignEntity.Id}_{relation.Id}";
+                            var entityRelationsLocalName =
+                                $"entityRelations_{foreignEntity.Id}_{relation.Id}";
+
+                            _localSyntaxis.Add(
+                                Local(
+                                        lastEntityRelationsLocalName,
+                                        GenericType(
+                                            typeof(HashSet<>),
+                                            Type(relation.RightEntitySymbol)
+                                        )
+                                    )
+                                    .WithInitializer(Null())
+                            );
+
+                            _caseStatements.Add(
+                                Statement(
+                                    AssignLocal(
+                                        Variable(lastEntityRelationsLocalName),
+                                        Instance(
+                                            GenericType(
+                                                typeof(HashSet<>),
+                                                Type(relation.RightEntitySymbol)
+                                            )
+                                        )
+                                    )
+                                )
+                            );
+
+                            _localSyntaxis.Add(
+                                Local(entityRelationsLocalName, Var())
+                                    .WithInitializer(
+                                        Instance(
+                                            GenericType(
+                                                typeof(Dictionary<,>),
+                                                Type(virtualEntity.Entity.Columns[0].Type),
+                                                GenericType(
+                                                    typeof(HashSet<>),
+                                                    Type(relation.RightEntitySymbol)
+                                                )
+                                            )
+                                        )
+                                    )
+                            );
+
+                            _caseStatements.Add(
+                                Statement(
+                                    Invoke(
+                                        Variable(entityRelationsLocalName!),
+                                        "Add",
+                                        Variable(entityIdLocalName),
+                                        Variable(lastEntityRelationsLocalName)
+                                    )
+                                )
+                            );
+                        }
+
+                        // Assign the primary column from the read local
+                        _caseStatements.Add(
+                            AssignMember(
+                                Variable(lastEntityLocalName),
+                                column.PropertyName,
+                                Variable(entityIdLocalName)
+                            )
+                        );
+
+                        // Add self to the result list
+                        if (virtualEntityIndex == 0)
+                        {
+                            _caseStatements.Add(
+                                Statement(
+                                    Invoke(
+                                        Variable("entities"),
+                                        "Add",
+                                        Variable(lastEntityLocalName)
+                                    )
+                                )
+                            );
+                        }
+
+                        // Add self to the entity dictionary
+                        if (entityDictionaryLocalName is not null)
+                        {
+                            _caseStatements.Add(
+                                Statement(
+                                    Invoke(
+                                        Variable(entityDictionaryLocalName),
+                                        "Add",
+                                        AccessMember(
+                                            Variable(lastEntityLocalName),
+                                            column.PropertyName
+                                        ),
+                                        Variable(lastEntityLocalName)
+                                    )
+                                )
+                            );
+                        }
+
+                        List<StatementSyntax> checkForExistingEntitiy;
+
+                        if (virtualEntity.RequiresDBNullCheck && virtualEntityIndex > 0)
+                        {
+                            // Check if the id is already known
+                            checkForExistingEntitiy = new List<StatementSyntax>
+                            {
+                                If(
+                                    Not(
+                                        Invoke(
+                                            Variable(entityDictionaryLocalName!),
+                                            "TryGetValue",
+                                            Variable(entityIdLocalName),
+                                            Out(Variable(lastEntityLocalName))
+                                        )
+                                    ),
+                                    _caseStatements
+                                )
+                            };
+                        }
+                        else
+                        {
+                            checkForExistingEntitiy = _caseStatements;
+                        }
+
+                        // Instantiate last entity relations
+                        if (virtualEntity.ForeignAssignedRelations.Count > 0)
+                        {
+                            for (
+                                var navigationIndex = 0;
+                                navigationIndex < virtualEntity.ForeignAssignedRelations.Count;
+                                navigationIndex++
+                            )
+                            {
+                                var navigation =
+                                    virtualEntity.ForeignAssignedRelations[navigationIndex].Item1;
+
+                                var lastEntityRelationsLocalName =
+                                    $"lastEntityRelations_{virtualEntity.Id}_{navigation.Id}";
+
+                                _miscStatements.Add(
+                                    Statement(
+                                        AssignLocal(Variable(lastEntityRelationsLocalName), Null())
+                                    )
+                                );
+                            }
+
+                            if (virtualEntity.RequiresDBNullCheck && virtualEntityIndex > 0)
+                            {
+                                checkForExistingEntitiy[0] = If(
+                                        (IfStatementSyntax)checkForExistingEntitiy[0]
+                                    )
+                                    .Else(_miscStatements);
+                            }
+                            else
+                            {
+                                checkForExistingEntitiy.AddRange(_miscStatements);
+                            }
+
+                            _miscStatements.Clear();
+                        }
+
+                        if (virtualEntity.RequiresChangedLocal)
+                        {
+                            // Mark the entity as changed
+                            checkForExistingEntitiy.Add(
+                                Statement(SetBit(Variable("entityChanges"), virtualEntity.Id))
+                            );
+                        }
+
+                        var potentialIfBody = new StatementSyntax[]
+                        {
+                            // Get the primary column and store it in a local
+                            Statement(
+                                AssignLocal(
+                                    Variable(entityIdLocalName),
+                                    Invoke(
+                                        Variable("reader"),
+                                        GenericName("GetFieldValue", Type(column.Type)),
+                                        Variable("columnIndex")
+                                    )
+                                )
+                            ),
+                            // Check if the id is the same as the last or if there is no last id
+                            If(
+                                Or(
+                                    Equal(Variable(lastEntityLocalName), Default()),
+                                    NotEqual(
+                                        AccessMember(
+                                            Variable(lastEntityLocalName),
+                                            virtualEntity.Entity.Columns[0].PropertyName
+                                        ),
+                                        Variable(entityIdLocalName)
+                                    )
+                                ),
+                                checkForExistingEntitiy
+                            )
+                        };
+
+                        IEnumerable<StatementSyntax> potentialIf;
+
+                        if (!virtualEntity.RequiresDBNullCheck)
+                        {
+                            potentialIf = potentialIfBody;
+                        }
+                        else
+                        {
+                            potentialIf = new StatementSyntax[]
+                            {
+                                // Check if column is null
+                                If(
+                                    Not(
+                                        Invoke(
+                                            Variable("reader"),
+                                            "IsDBNull",
+                                            Variable("columnIndex")
+                                        )
+                                    ),
+                                    potentialIfBody
+                                )
+                            };
+                        }
+
+                        _cases.Add(
+                            Case(Constant(columnOffset + columnIndex), Concat(potentialIf, Break()))
+                        );
+
+                        _miscStatements.Clear();
+                    }
+                    else
+                    {
+                        // Assign a none primary column
+                        _caseStatements.Add(
+                            AssignMember(
+                                Variable(lastEntityLocalName),
+                                column.PropertyName,
+                                Invoke(
+                                    Variable("reader"),
+                                    GenericName("GetFieldValue", Type(column.Type)),
+                                    Variable("columnIndex")
+                                )
+                            )
+                        );
+
+                        _caseStatements.Add(Break());
+
+                        _cases.Add(Case(Constant(columnOffset + columnIndex), _caseStatements));
+                    }
+
+                    _caseStatements.Clear();
+                }
+
+                columnOffset += virtualEntity.Entity.Columns.Count;
+            }
+
+            for (
+                var virtualEntityIndex = 0;
+                virtualEntityIndex < virtualEntities.Length;
+                virtualEntityIndex++
+            )
+            {
+                var virtualEntity = virtualEntities[virtualEntityIndex];
+
+                if (!virtualEntity.HasRelations)
+                    continue;
+
+                for (
+                    var relationIndex = 0;
+                    relationIndex < virtualEntity.ForeignAssignedRelations.Count;
+                    relationIndex++
+                )
+                {
+                    var (relation, foreignEntity) = virtualEntity.ForeignAssignedRelations[
+                        relationIndex
+                    ];
+
+                    var entityRelationsLocalName =
+                        $"entityRelations_{virtualEntity.Id}_{relation.Id}";
+                    var lastEntityRelationsLocalName =
+                        $"lastEntityRelations_{virtualEntity.Id}_{relation.Id}";
+
+                    var lastRightEntityLocalName = "lastEntity_" + foreignEntity.Id;
+                    var lastRightEntityIdLocalName = "entityId_" + foreignEntity.Id;
+
+                    if (virtualEntity.RequiresDBNullCheck)
+                    {
+                        _afterCases.Add(
+                            If(
+                                IsBitSet(
+                                    Variable("entityChanges"),
+                                    Type(entityChangesType),
+                                    virtualEntity.Id
+                                ),
+                                If(
+                                    Equal(Variable(lastEntityRelationsLocalName), Null()),
+                                    Statement(
+                                        AssignLocal(
+                                            Variable(lastEntityRelationsLocalName),
+                                            AccessElement(
+                                                Variable(entityRelationsLocalName),
+                                                Variable(lastRightEntityIdLocalName)
+                                            )
+                                        )
+                                    )
+                                ),
+                                If(
+                                    Invoke(
+                                        Variable(lastEntityRelationsLocalName),
+                                        "Add",
+                                        Variable("lastEntity_" + virtualEntity.Id)
+                                    ),
+                                    Statement(
+                                        Invoke(
+                                            AccessMember(
+                                                Variable(lastRightEntityLocalName),
+                                                relation.RightNavigationProperty!
+                                            ),
+                                            "Add",
+                                            Variable("lastEntity_" + virtualEntity.Id)
+                                        )
+                                    )
+                                )
+                            )
+                        );
+                    }
+                    else
+                    {
+                        _afterCases.Add(
+                            If(
+                                Or(
+                                    IsBitSet(
+                                        Variable("entityChanges"),
+                                        Type(entityChangesType),
+                                        virtualEntity.Id
+                                    ),
+                                    IsBitSet(
+                                        Variable("entityChanges"),
+                                        Type(entityChangesType),
+                                        foreignEntity.Id
+                                    )
+                                ),
+                                If(
+                                    Equal(Variable(lastEntityRelationsLocalName), Null()),
+                                    Statement(
+                                        AssignLocal(
+                                            Variable(lastEntityRelationsLocalName),
+                                            AccessElement(
+                                                Variable(entityRelationsLocalName),
+                                                Variable(lastRightEntityLocalName)
+                                            )
+                                        )
+                                    )
+                                ),
+                                If(
+                                    Invoke(
+                                        Variable(lastEntityRelationsLocalName),
+                                        "Add",
+                                        Variable("lastEntity_" + virtualEntity.Id)
+                                    ),
+                                    Statement(
+                                        Invoke(
+                                            AccessMember(
+                                                Variable(lastRightEntityLocalName),
+                                                relation.RightNavigationProperty!
+                                            ),
+                                            "Add",
+                                            Variable("lastEntity_" + virtualEntity.Id)
+                                        )
+                                    )
+                                )
+                            )
+                        );
+                    }
+                }
+
+                if (virtualEntity.SelfAssignedRelations.Count > 0)
+                {
+                    for (
+                        var relationIndex = 0;
+                        relationIndex < virtualEntity.SelfAssignedRelations.Count;
+                        relationIndex++
+                    )
+                    {
+                        var (relation, foreignEntity) = virtualEntity.SelfAssignedRelations[
+                            relationIndex
+                        ];
+
+                        _miscStatements.Add(
+                            AssignMember(
+                                Variable("lastEntity_" + virtualEntity.Id),
+                                relation.LeftNavigationProperty!,
+                                Variable("lastEntity_" + foreignEntity.Id)
+                            )
+                        );
+                    }
+
+                    _afterCases.Add(
+                        If(
+                            IsBitSet(
+                                Variable("entityChanges"),
+                                Type(entityChangesType),
+                                virtualEntity.Id
+                            ),
+                            _miscStatements
+                        )
+                    );
+
+                    _miscStatements.Clear();
+                }
+            }
+
+            var methodDefinition = new MethodLocation(
+                "Reflow.QueryParsers." + _className,
+                "Parser_" + _parserIndex++
+            );
+
+            _iterationLocalSyntaxis.Add(
+                Local("entityChanges", Type(entityChangesType)).WithInitializer(Constant(0))
+            );
+
+            _parsers.Add(
+                Method(
+                        methodDefinition.MethodName,
+                        GenericType(
+                            typeof(Task<>),
+                            GenericType(typeof(IList<>), Type(query.Entity))
+                        ),
+                        CSharpModifiers.Internal | CSharpModifiers.Static | CSharpModifiers.Async
+                    )
+                    .WithParameters(
+                        Parameter("reader", Type(typeof(DbDataReader))),
+                        Parameter("columns", Array(Type(typeof(ushort))))
+                    )
+                    .WithStatements(
+                        Concat(
+                            _localSyntaxis,
+                            Local("entities", Var())
+                                .WithInitializer(
+                                    Instance(GenericType(typeof(List<>), Type(query.Entity)))
+                                ),
+                            Local("columnCount", Var())
+                                .WithInitializer(AccessMember(Variable("columns"), "Length")),
+                            While(
+                                Await(Invoke(Variable("reader"), "ReadAsync")),
+                                _iterationLocalSyntaxis.Concat(
+                                    Concat(
+                                        For(
+                                            Local("columnIndex", Var())
+                                                .WithInitializer(Constant(0)),
+                                            LessThen(
+                                                Variable("columnIndex"),
+                                                Variable("columnCount")
+                                            ),
+                                            Increment(Variable("columnIndex")),
+                                            Switch(
+                                                AccessElement(
+                                                    Variable("columns"),
+                                                    Variable("columnIndex")
+                                                ),
+                                                _cases
+                                            )
+                                        ),
+                                        _afterCases
+                                    )
+                                )
+                            ),
+                            Return(Variable("entities"))
+                        )
                     )
             );
 
