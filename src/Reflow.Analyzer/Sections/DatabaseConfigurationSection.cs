@@ -76,11 +76,14 @@ namespace Reflow.Analyzer.Sections
 
             void ISyntaxContextReceiver.OnVisitSyntaxNode(GeneratorSyntaxContext context)
             {
-                if (context.Node is not ClassDeclarationSyntax)
+                if (context.Node is not ClassDeclarationSyntax classDeclaration)
+                    return;
+
+                if (classDeclaration.BaseList is null)
                     return;
 
                 var classSymbol = (INamedTypeSymbol)context.SemanticModel.GetDeclaredSymbol(
-                    context.Node
+                    classDeclaration
                 )!;
 
                 var potentialDatabaseType = classSymbol;
@@ -89,7 +92,10 @@ namespace Reflow.Analyzer.Sections
                 {
                     potentialDatabaseType = potentialDatabaseType.BaseType;
 
-                    if (potentialDatabaseType is null)
+                    if (
+                        potentialDatabaseType is null
+                        || potentialDatabaseType.GetFullName() is "System.Object"
+                    )
                         break;
 
                     if (

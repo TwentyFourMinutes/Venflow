@@ -111,7 +111,8 @@ namespace Reflow.Analyzer.Sections
             internal Dictionary<
                 ITypeSymbol,
                 List<FluentCallDefinition>
-            > DatabaseFluentCalls { get; }
+            > DatabaseFluentCalls
+            { get; }
 
             internal bool HasInstanceConstructor { get; private set; }
             internal bool HasStaticConstructor { get; private set; }

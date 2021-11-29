@@ -127,45 +127,48 @@ namespace Reflow.Analyzer.Sections
 
             void ISyntaxContextReceiver.OnVisitSyntaxNode(GeneratorSyntaxContext context)
             {
-                if (context.Node is not ClassDeclarationSyntax classSyntax)
-                    return;
-
-                var configurationSymbol = (INamedTypeSymbol)context.SemanticModel.GetDeclaredSymbol(
-                    classSyntax
-                )!;
-
-                for (
-                    var interfaceIndex = 0;
-                    interfaceIndex < configurationSymbol.Interfaces.Length;
-                    interfaceIndex++
+                if (
+                    context.Node is not ClassDeclarationSyntax classSyntax
+                    || classSyntax.BaseList is null
                 )
-                {
-                    var interfaceSymbol = configurationSymbol.Interfaces[interfaceIndex];
-
-                    if (
-                        interfaceSymbol.GetFullName() is not "Reflow.Modeling.IEntityConfiguration"
-                        || !interfaceSymbol.IsReflowSymbol()
-                    )
-                        continue;
-
-                    var configureMethod = configurationSymbol
-                        .GetMembers()
-                        .Single(x => x.Name.EndsWith("Configure"));
-
-                    Candidates.Add(
-                        interfaceSymbol.TypeArguments[0],
-                        (
-                            context.SemanticModel,
-                            (
-                                (MethodDeclarationSyntax)classSyntax.FindNode(
-                                    configureMethod.Locations[0].SourceSpan
-                                )
-                            ).Body!
-                        )
-                    );
-
                     return;
-                }
+
+                var baseInterface = classSyntax.BaseList.Types.FirstOrDefault(
+                    x =>
+                        x.Type is SimpleNameSyntax nameSyntax
+                        && nameSyntax.Identifier.ValueText.EndsWith("IEntityConfiguration")
+                );
+
+                if (baseInterface is null)
+                    return;
+
+                var interfaceSymbol = (INamedTypeSymbol)context.SemanticModel.GetSymbolInfo(
+                    baseInterface.Type
+                ).Symbol!;
+
+                if (
+                    interfaceSymbol.GetFullName() is not "Reflow.Modeling.IEntityConfiguration"
+                    || !interfaceSymbol.IsReflowSymbol()
+                )
+                    return;
+
+                var configureMethod = (
+                    (INamedTypeSymbol)context.SemanticModel.GetDeclaredSymbol(classSyntax)!
+                )
+                    .GetMembers()
+                    .Single(x => x.Name.EndsWith("Configure"));
+
+                Candidates.Add(
+                    interfaceSymbol.TypeArguments[0],
+                    (
+                        context.SemanticModel,
+                        (
+                            (MethodDeclarationSyntax)classSyntax.FindNode(
+                                configureMethod.Locations[0].SourceSpan
+                            )
+                        ).Body!
+                    )
+                );
             }
         }
     }
