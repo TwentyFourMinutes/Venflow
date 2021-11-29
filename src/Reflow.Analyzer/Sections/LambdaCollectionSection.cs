@@ -415,12 +415,12 @@ namespace Reflow.Analyzer.Sections
                             )
                         );
                     }
-
-                    if (hasClosure)
+                    else if (hasClosure)
                     {
                         _closureScopes.AddFluentCallToScope(dataFlow.CapturedInside);
                     }
-                    else
+
+                    if (!hasClosure)
                     {
                         _lambdaIndex++;
                     }

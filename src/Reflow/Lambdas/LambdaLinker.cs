@@ -56,6 +56,7 @@ namespace Reflow.Lambdas
                             continue;
 
                         method = tempMethod;
+                        break;
                     }
 
                     if (method is null)

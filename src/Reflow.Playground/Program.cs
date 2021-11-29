@@ -34,6 +34,10 @@ namespace Reflow.Playground
                 var person = await db.People
                     .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
                     .ManyAsync();
+
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
             }
 
             var people = await db.People
