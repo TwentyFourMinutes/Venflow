@@ -8,8 +8,10 @@ namespace Reflow.Analyzer
         where TSyntaxReceiver : ISyntaxContextReceiver
         where TData : new()
     {
+        public GeneratorCache Cache { get; set; } = null!;
         internal TData Data { get; private set; }
         protected internal TPrevious Previous { get; private set; }
+
         IGeneratorSection IGeneratorSection.Previous
         {
             get => Previous;
@@ -76,6 +78,7 @@ namespace Reflow.Analyzer
 
     internal interface IGeneratorSection
     {
+        GeneratorCache Cache { get; set; }
         IGeneratorSection Previous { get; set; }
 
         void Execute(GeneratorExecutionContext context, ISyntaxContextReceiver syntaxReceiver);

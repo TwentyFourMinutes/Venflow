@@ -1,5 +1,8 @@
 ﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -8,6 +11,167 @@ using Reflow.Analyzer.Models.Definitions;
 
 namespace Reflow.Analyzer.Sections
 {
+    internal sealed class SourceTextStream : Stream
+    {
+        private readonly SourceText _source;
+        private readonly Encoding _encoding;
+        private readonly Encoder _encoder;
+
+        private readonly int _minimumTargetBufferCount;
+        private int _position;
+        private int _sourceOffset;
+        private readonly char[] _charBuffer;
+        private int _bufferOffset;
+        private int _bufferUnreadChars;
+        private bool _preambleWritten;
+
+        private static readonly Encoding s_utf8EncodingWithNoBOM = new UTF8Encoding(
+            encoderShouldEmitUTF8Identifier: false,
+            throwOnInvalidBytes: false
+        );
+
+        public SourceTextStream(
+            SourceText source,
+            int bufferSize = 2048,
+            bool useDefaultEncodingIfNull = false
+        )
+        {
+            Debug.Assert(source.Encoding != null || useDefaultEncodingIfNull);
+
+            _source = source;
+            _encoding = source.Encoding ?? s_utf8EncodingWithNoBOM;
+            _encoder = _encoding.GetEncoder();
+            _minimumTargetBufferCount = _encoding.GetMaxByteCount(charCount: 1);
+            _sourceOffset = 0;
+            _position = 0;
+            _charBuffer = new char[Math.Min(bufferSize, _source.Length)];
+            _bufferOffset = 0;
+            _bufferUnreadChars = 0;
+            _preambleWritten = false;
+        }
+
+        public override bool CanRead
+        {
+            get { return true; }
+        }
+
+        public override bool CanSeek
+        {
+            get { return false; }
+        }
+
+        public override bool CanWrite
+        {
+            get { return false; }
+        }
+
+        public override void Flush()
+        {
+            throw new NotSupportedException();
+        }
+
+        public override long Length
+        {
+            get { throw new NotSupportedException(); }
+        }
+
+        public override long Position
+        {
+            get { return _position; }
+            set { throw new NotSupportedException(); }
+        }
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            if (count < _minimumTargetBufferCount)
+            {
+                // The buffer must be able to hold at least one character from the
+                // SourceText stream.  Returning 0 for that case isn't correct because
+                // that indicates end of stream vs. insufficient buffer.
+                throw new ArgumentException(
+                    $"{nameof(count)} must be greater than or equal to {_minimumTargetBufferCount}",
+                    nameof(count)
+                );
+            }
+
+            var originalCount = count;
+
+            if (!_preambleWritten)
+            {
+                var bytesWritten = WritePreamble(buffer, offset, count);
+                offset += bytesWritten;
+                count -= bytesWritten;
+            }
+
+            while (count >= _minimumTargetBufferCount && _position < _source.Length)
+            {
+                if (_bufferUnreadChars == 0)
+                {
+                    FillBuffer();
+                }
+
+                _encoder.Convert(
+                    _charBuffer,
+                    _bufferOffset,
+                    _bufferUnreadChars,
+                    buffer,
+                    offset,
+                    count,
+                    flush: false,
+                    charsUsed: out var charsUsed,
+                    bytesUsed: out var bytesUsed,
+                    completed: out _
+                );
+                _position += charsUsed;
+                _bufferOffset += charsUsed;
+                _bufferUnreadChars -= charsUsed;
+                offset += bytesUsed;
+                count -= bytesUsed;
+            }
+
+            // Return value is the number of bytes read
+            return originalCount - count;
+        }
+
+        private int WritePreamble(byte[] buffer, int offset, int count)
+        {
+            _preambleWritten = true;
+            var preambleBytes = _encoding.GetPreamble();
+            if (preambleBytes == null)
+            {
+                return 0;
+            }
+
+            var length = Math.Min(count, preambleBytes.Length);
+            Array.Copy(preambleBytes, 0, buffer, offset, length);
+            return length;
+        }
+
+        private void FillBuffer()
+        {
+            var charsToRead = Math.Min(_charBuffer.Length, _source.Length - _sourceOffset);
+            _source.CopyTo(_sourceOffset, _charBuffer, 0, charsToRead);
+            _sourceOffset += charsToRead;
+            _bufferOffset = 0;
+            _bufferUnreadChars = charsToRead;
+        }
+
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void SetLength(long value)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
     internal class LambdaCollectionSection
         : GeneratorSection<
               EntityConfigurationSection,
@@ -21,6 +185,11 @@ namespace Reflow.Analyzer.Sections
             EntityConfigurationSection previous
         )
         {
+            var lambdaCache =
+                Cache.GetData<Dictionary<string, LambdaLinkDefinition[]>>("lambdas.json") ?? new();
+
+            var refreshCache = false;
+
             var instanceMembers = new List<MemberDeclarationSyntax>();
             var staticMembers = new List<MemberDeclarationSyntax>();
 
@@ -30,67 +199,100 @@ namespace Reflow.Analyzer.Sections
                 staticMembers
             );
 
+            var fastClassSyntaxWalker = new FastClassSyntaxWalker(
+                context.Compilation,
+                classSyntaxWalker.DatabaseFluentCalls
+            );
+
+            using var hash = SHA256.Create();
+
             foreach (var classSyntax in syntaxReceiver.Candidates)
             {
-                foreach (var childNode in classSyntax.ChildNodes())
+                using Stream stream = new SourceTextStream(
+                    classSyntax.GetText(Encoding.UTF8, SourceHashAlgorithm.Sha256)
+                );
+
+                var classHash = BitConverter.ToString(hash.ComputeHash(stream));
+
+                if (!lambdaCache.TryGetValue(classHash, out var lambdas))
                 {
-                    switch (childNode)
+                    foreach (var childNode in classSyntax.ChildNodes())
                     {
-                        case FieldDeclarationSyntax:
-                        case PropertyDeclarationSyntax { Initializer: not null }:
-                            break;
-                        default:
-                            continue;
+                        switch (childNode)
+                        {
+                            case FieldDeclarationSyntax:
+                            case PropertyDeclarationSyntax { Initializer: not null }:
+                                break;
+                            default:
+                                continue;
+                        }
+
+                        var member = (MemberDeclarationSyntax)childNode;
+
+                        if (IsStaticMember(member))
+                        {
+                            staticMembers.Add(member);
+                        }
+                        else
+                        {
+                            instanceMembers.Add(member);
+                        }
                     }
 
-                    var member = (MemberDeclarationSyntax)childNode;
+                    classSyntaxWalker.CollectLambdas(classSyntax);
 
-                    if (IsStaticMember(member))
+                    if (!classSyntaxWalker.HasInstanceConstructor && instanceMembers.Count > 0)
                     {
-                        staticMembers.Add(member);
+                        for (
+                            var variableMemberIndex = 0;
+                            variableMemberIndex < instanceMembers.Count;
+                            variableMemberIndex++
+                        )
+                        {
+                            classSyntaxWalker.VisitWithName(
+                                instanceMembers[variableMemberIndex],
+                                ".cctor"
+                            );
+                        }
+
+                        instanceMembers.Clear();
                     }
-                    else
+
+                    if (!classSyntaxWalker.HasStaticConstructor && staticMembers.Count > 0)
                     {
-                        instanceMembers.Add(member);
+                        for (
+                            var variableMemberIndex = 0;
+                            variableMemberIndex < staticMembers.Count;
+                            variableMemberIndex++
+                        )
+                        {
+                            classSyntaxWalker.VisitWithName(
+                                staticMembers[variableMemberIndex],
+                                ".cctor"
+                            );
+                        }
+
+                        staticMembers.Clear();
                     }
+
+                    lambdaCache.Add(
+                        classHash,
+                        classSyntaxWalker.DatabaseFluentCalls.Values
+                            .SelectMany(x => x)
+                            .Select(x => x.LambdaLink)
+                            .ToArray()
+                    );
+
+                    refreshCache = true;
                 }
-
-                classSyntaxWalker.CollectLambdas(classSyntax);
-
-                if (!classSyntaxWalker.HasInstanceConstructor && instanceMembers.Count > 0)
+                else
                 {
-                    for (
-                        var variableMemberIndex = 0;
-                        variableMemberIndex < instanceMembers.Count;
-                        variableMemberIndex++
-                    )
-                    {
-                        classSyntaxWalker.VisitWithName(
-                            instanceMembers[variableMemberIndex],
-                            ".cctor"
-                        );
-                    }
-
-                    instanceMembers.Clear();
-                }
-
-                if (!classSyntaxWalker.HasStaticConstructor && staticMembers.Count > 0)
-                {
-                    for (
-                        var variableMemberIndex = 0;
-                        variableMemberIndex < staticMembers.Count;
-                        variableMemberIndex++
-                    )
-                    {
-                        classSyntaxWalker.VisitWithName(
-                            staticMembers[variableMemberIndex],
-                            ".cctor"
-                        );
-                    }
-
-                    staticMembers.Clear();
+                    fastClassSyntaxWalker.CollectLambdas(classSyntax, lambdas);
                 }
             }
+
+            if (refreshCache)
+                Cache.SetData("lambdas.json", lambdaCache);
 
             return classSyntaxWalker.DatabaseFluentCalls;
         }
@@ -106,13 +308,154 @@ namespace Reflow.Analyzer.Sections
             return false;
         }
 
+        private class FastClassSyntaxWalker : SyntaxWalker
+        {
+            private ClassDeclarationSyntax _classSyntax = null!;
+            private LambdaLinkDefinition[] _cachedLambdaLinks = null!;
+            private int _cachedLambdaLinkIndex;
+            private SemanticModel? _semanticModel;
+
+            private readonly Compilation _compilation;
+            private readonly Dictionary<
+                ITypeSymbol,
+                List<FluentCallDefinition>
+            > _databaseFluentCalls;
+
+            internal FastClassSyntaxWalker(
+                Compilation compilation,
+                Dictionary<ITypeSymbol, List<FluentCallDefinition>> databaseFluentCalls
+            )
+            {
+                _compilation = compilation;
+                _databaseFluentCalls = databaseFluentCalls;
+                _cachedLambdaLinkIndex = 0;
+            }
+
+            public override void Visit(SyntaxNode node)
+            {
+                if (node is LambdaExpressionSyntax lambdaSyntax)
+                {
+                    _semanticModel ??= _compilation.GetSemanticModel(
+                        _classSyntax!.SyntaxTree,
+                        true
+                    );
+
+                    var lambdaSymbol = _semanticModel.GetTypeInfo(lambdaSyntax).ConvertedType;
+
+                    if (
+                        lambdaSymbol is not null
+                        && lambdaSymbol.GetFullName() == "System.Linq.Expressions.Expression"
+                    )
+                    {
+                        return;
+                    }
+
+                    if (TryGetFluentCallBaseData(lambdaSyntax, out var data))
+                    {
+                        if (
+                            !_databaseFluentCalls.TryGetValue(
+                                data.DatabaseSymbol,
+                                out var fluentCalls
+                            )
+                        )
+                        {
+                            fluentCalls = new List<FluentCallDefinition>();
+
+                            _databaseFluentCalls.Add(data.DatabaseSymbol, fluentCalls);
+                        }
+
+                        fluentCalls.Add(
+                            new FluentCallDefinition(
+                                _semanticModel,
+                                lambdaSyntax,
+                                data.Invocations,
+                                _cachedLambdaLinks[_cachedLambdaLinkIndex++]
+                            )
+                        );
+                    }
+                }
+
+                base.Visit(node);
+            }
+
+            private bool TryGetFluentCallBaseData(
+                LambdaExpressionSyntax lambdaSyntax,
+                out (ITypeSymbol DatabaseSymbol, List<InvocationExpressionSyntax> Invocations) data
+            )
+            {
+                if (
+                    lambdaSyntax.ExpressionBody
+                        is not InterpolatedStringExpressionSyntax interpolatedStringSyntax
+                    && (
+                        lambdaSyntax.ExpressionBody is not LiteralExpressionSyntax expressionSyntax
+                        || expressionSyntax.Kind() != SyntaxKind.StringLiteralExpression
+                    )
+                )
+                {
+                    data = default;
+
+                    return false;
+                }
+
+                var invocations = new List<InvocationExpressionSyntax>();
+
+                var lastInvocationSyntax =
+                    lambdaSyntax.FirstAncestorOrSelf<InvocationExpressionSyntax>();
+
+                while (lastInvocationSyntax is not null)
+                {
+                    invocations.Add(lastInvocationSyntax);
+
+                    lastInvocationSyntax =
+                        lastInvocationSyntax.Parent!.FirstAncestorOrSelf<InvocationExpressionSyntax>();
+                }
+
+                var memberAccessSyntax = (MemberAccessExpressionSyntax)invocations[0].Expression;
+
+                ITypeSymbol databaseSymbol;
+
+                if (
+                    memberAccessSyntax.Expression
+                    is MemberAccessExpressionSyntax tableMemberAccessSyntax
+                )
+                {
+                    databaseSymbol = _semanticModel.GetTypeInfo(
+                        tableMemberAccessSyntax.Expression
+                    ).Type!;
+                }
+                else
+                {
+                    databaseSymbol = _semanticModel.GetTypeInfo(
+                        memberAccessSyntax.Expression
+                    ).Type!;
+                }
+
+                data = (databaseSymbol, invocations);
+
+                return true;
+            }
+
+            internal void CollectLambdas(
+                ClassDeclarationSyntax classSyntax,
+                LambdaLinkDefinition[] cachedLambdaLinks
+            )
+            {
+                _classSyntax = classSyntax;
+                _cachedLambdaLinks = cachedLambdaLinks;
+
+                base.Visit(classSyntax);
+
+                _semanticModel = null;
+                _cachedLambdaLinkIndex = 0;
+            }
+        }
+
         private class ClassSyntaxWalker : SyntaxWalker
         {
             internal Dictionary<
                 ITypeSymbol,
                 List<FluentCallDefinition>
-            > DatabaseFluentCalls
-            { get; }
+            > DatabaseFluentCalls { get; }
 
             internal bool HasInstanceConstructor { get; private set; }
             internal bool HasStaticConstructor { get; private set; }

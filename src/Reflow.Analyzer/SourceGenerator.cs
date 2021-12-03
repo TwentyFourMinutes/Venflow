@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Reflow.Analyzer.Properties;
 
@@ -16,17 +15,31 @@ namespace Reflow.Analyzer
             set { }
         }
 
+        GeneratorCache IGeneratorSection.Cache
+        {
+            get => null!;
+            set { }
+        }
+
         public SourceGenerator()
         {
 #if DEBUG
             // This is a temp fix to allow NuGet packages in DEBUG
             if (Debugger.IsAttached)
+            {
                 Assembly.LoadFile(
                     Path.Combine(
                         Directory.GetCurrentDirectory(),
                         "../Reflow.Analyzer/bin/Debug/netstandard2.0/Microsoft.Bcl.HashCode.dll"
                     )
                 );
+                Assembly.LoadFile(
+                    Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "../Reflow.Analyzer/bin/Debug/netstandard2.0/Newtonsoft.Json.dll"
+                    )
+                );
+            }
 #endif
 
             var rootGenerator = typeof(SourceGenerator);
@@ -54,7 +67,7 @@ namespace Reflow.Analyzer
                 dict.Add(sectionType, new Data(sectionType, typeArguments[1], typeArguments[0]));
             }
 
-            _rootData = new RootData(this, dict.Values.ToArray());
+            _rootData = new RootData(dict.Values.ToArray());
 
             foreach (var data in dict.Values)
             {
@@ -89,7 +102,29 @@ namespace Reflow.Analyzer
         {
             context.Compilation.EnsureReference("Reflow", AssemblyInfo.PublicKey);
 
-            _rootData.Execute(context);
+            var sw = Stopwatch.StartNew();
+
+            _rootData.Execute(
+                context,
+                new GeneratorCache(context.AnalyzerConfigOptions.GlobalOptions)
+            );
+
+            sw.Stop();
+
+            context.ReportDiagnostic(
+                Diagnostic.Create(
+                    new DiagnosticDescriptor(
+                        "RF1",
+                        "Time",
+                        "{0} ms",
+                        "main",
+                        DiagnosticSeverity.Warning,
+                        true
+                    ),
+                    null,
+                    sw.ElapsedMilliseconds
+                )
+            );
         }
 
         void IGeneratorSection.Execute(
@@ -115,14 +150,12 @@ namespace Reflow.Analyzer
         {
             public List<Data> Subsequents { get; }
 
-            private readonly SourceGenerator _root;
             private readonly ISyntaxContextReceiver[] _receivers;
             private readonly IList<Data> _allSubsequets;
 
-            internal RootData(SourceGenerator root, IList<Data> allSubsequets)
+            internal RootData(IList<Data> allSubsequets)
             {
                 Subsequents = new();
-                _root = root;
                 _receivers = new ISyntaxContextReceiver[allSubsequets.Count];
                 _allSubsequets = allSubsequets;
             }
@@ -143,7 +176,7 @@ namespace Reflow.Analyzer
                 }
             }
 
-            internal void Execute(GeneratorExecutionContext context)
+            internal void Execute(GeneratorExecutionContext context, GeneratorCache generatorCache)
             {
                 for (
                     var subesquentIndex = 0;
@@ -151,7 +184,7 @@ namespace Reflow.Analyzer
                     subesquentIndex++
                 )
                 {
-                    Subsequents[subesquentIndex].Execute(context);
+                    Subsequents[subesquentIndex].Execute(context, generatorCache);
                 }
             }
         }
@@ -186,8 +219,9 @@ namespace Reflow.Analyzer
                 _receiver!.OnVisitSyntaxNode(context);
             }
 
-            internal void Execute(GeneratorExecutionContext context)
+            internal void Execute(GeneratorExecutionContext context, GeneratorCache generatorCache)
             {
+                Section.Cache = generatorCache;
                 Section.Execute(context, _receiver!);
 
                 for (
@@ -196,7 +230,7 @@ namespace Reflow.Analyzer
                     subesquentIndex++
                 )
                 {
-                    Subsequents[subesquentIndex].Execute(context);
+                    Subsequents[subesquentIndex].Execute(context, generatorCache);
                 }
             }
         }
