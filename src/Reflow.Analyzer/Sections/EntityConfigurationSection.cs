@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Reflow.Analyzer.Emitters;
+using Reflow.Analyzer.Models;
 
 namespace Reflow.Analyzer.Sections
 {

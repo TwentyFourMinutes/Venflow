@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace Reflow.Analyzer.Sections
+namespace Reflow.Analyzer.Models
 {
     internal class Column
     {

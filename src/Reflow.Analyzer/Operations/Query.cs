@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Reflow.Analyzer.Models;
 using Reflow.Analyzer.Models.Definitions;
 
-namespace Reflow.Analyzer.Sections.LambdaSorter
+namespace Reflow.Analyzer.Operations
 {
     internal class Query : ICommandOperation
     {
@@ -97,123 +97,123 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                             switch (interpolationSyntax.Expression)
                             {
                                 case MemberAccessExpressionSyntax memberAccessSyntax:
-                                {
-                                    var symbolInfo = SemanticModel.GetSymbolInfo(
-                                        memberAccessSyntax.Expression
-                                    );
-
-                                    if (
-                                        symbolInfo.Symbol is not IParameterSymbol symbol
-                                        || !lambdaSyntax
-                                            .GetLocation()
-                                            .SourceSpan.OverlapsWith(symbol.Locations[0].SourceSpan)
-                                    )
                                     {
-                                        DefaultSwitchCase();
+                                        var symbolInfo = SemanticModel.GetSymbolInfo(
+                                            memberAccessSyntax.Expression
+                                        );
+
+                                        if (
+                                            symbolInfo.Symbol is not IParameterSymbol symbol
+                                            || !lambdaSyntax
+                                                .GetLocation()
+                                                .SourceSpan.OverlapsWith(symbol.Locations[0].SourceSpan)
+                                        )
+                                        {
+                                            DefaultSwitchCase();
+                                            break;
+                                        }
+
+                                        if (
+                                            !_database.Entities.TryGetValue(
+                                                symbol!.Type,
+                                                out var entity
+                                            )
+                                        )
+                                        {
+                                            throw new InvalidOperationException();
+                                        }
+
+                                        var propertyName = memberAccessSyntax.Name.Identifier.Text;
+
+                                        var column = entity.Columns.FirstOrDefault(
+                                            x => x.PropertyName == propertyName
+                                        );
+
+                                        if (column is null)
+                                            throw new InvalidOperationException();
+
+                                        stringBuilder
+                                            .Append('"')
+                                            .Append(entity.TableName)
+                                            .Append("\".\"")
+                                            .Append(column.ColumnName)
+                                            .Append('"');
+
+                                        queryHelperStrings.Add(stringBuilder.ToString());
+                                        contentLength += stringBuilder.Length;
+                                        stringBuilder.Clear();
+                                        argumentIndex++;
                                         break;
                                     }
-
-                                    if (
-                                        !_database.Entities.TryGetValue(
-                                            symbol!.Type,
-                                            out var entity
-                                        )
-                                    )
-                                    {
-                                        throw new InvalidOperationException();
-                                    }
-
-                                    var propertyName = memberAccessSyntax.Name.Identifier.Text;
-
-                                    var column = entity.Columns.FirstOrDefault(
-                                        x => x.PropertyName == propertyName
-                                    );
-
-                                    if (column is null)
-                                        throw new InvalidOperationException();
-
-                                    stringBuilder
-                                        .Append('"')
-                                        .Append(entity.TableName)
-                                        .Append("\".\"")
-                                        .Append(column.ColumnName)
-                                        .Append('"');
-
-                                    queryHelperStrings.Add(stringBuilder.ToString());
-                                    contentLength += stringBuilder.Length;
-                                    stringBuilder.Clear();
-                                    argumentIndex++;
-                                    break;
-                                }
                                 case IdentifierNameSyntax identifierSyntax:
-                                {
-                                    var symbolInfo = SemanticModel.GetSymbolInfo(identifierSyntax);
-
-                                    if (
-                                        symbolInfo.Symbol is not IParameterSymbol symbol
-                                        || !lambdaSyntax
-                                            .GetLocation()
-                                            .SourceSpan.OverlapsWith(symbol.Locations[0].SourceSpan)
-                                    )
                                     {
-                                        DefaultSwitchCase();
-                                        break;
-                                    }
+                                        var symbolInfo = SemanticModel.GetSymbolInfo(identifierSyntax);
 
-                                    if (
-                                        !_database.Entities.TryGetValue(
-                                            symbol!.Type,
-                                            out var entity
+                                        if (
+                                            symbolInfo.Symbol is not IParameterSymbol symbol
+                                            || !lambdaSyntax
+                                                .GetLocation()
+                                                .SourceSpan.OverlapsWith(symbol.Locations[0].SourceSpan)
                                         )
-                                    )
-                                    {
-                                        throw new InvalidOperationException();
-                                    }
+                                        {
+                                            DefaultSwitchCase();
+                                            break;
+                                        }
 
-                                    var appendAllColumnNames = false;
+                                        if (
+                                            !_database.Entities.TryGetValue(
+                                                symbol!.Type,
+                                                out var entity
+                                            )
+                                        )
+                                        {
+                                            throw new InvalidOperationException();
+                                        }
 
-                                    if (interpolationSyntax.FormatClause is not null)
-                                    {
-                                        appendAllColumnNames =
-                                            interpolationSyntax.FormatClause.FormatStringToken.Text switch
+                                        var appendAllColumnNames = false;
+
+                                        if (interpolationSyntax.FormatClause is not null)
+                                        {
+                                            appendAllColumnNames =
+                                                interpolationSyntax.FormatClause.FormatStringToken.Text switch
+                                                {
+                                                    "*" => true,
+                                                    _ => throw new InvalidOperationException(),
+                                                };
+                                        }
+
+                                        if (appendAllColumnNames)
+                                        {
+                                            for (
+                                                var columnIndex = 0;
+                                                columnIndex < entity.Columns.Count;
+                                                columnIndex++
+                                            )
                                             {
-                                                "*" => true,
-                                                _ => throw new InvalidOperationException(),
-                                            };
-                                    }
+                                                stringBuilder
+                                                    .Append('"')
+                                                    .Append(entity.TableName)
+                                                    .Append("\".\"")
+                                                    .Append(entity.Columns[columnIndex].ColumnName)
+                                                    .Append("\", ");
+                                            }
 
-                                    if (appendAllColumnNames)
-                                    {
-                                        for (
-                                            var columnIndex = 0;
-                                            columnIndex < entity.Columns.Count;
-                                            columnIndex++
-                                        )
+                                            stringBuilder.Length -= 2;
+                                        }
+                                        else
                                         {
                                             stringBuilder
                                                 .Append('"')
                                                 .Append(entity.TableName)
-                                                .Append("\".\"")
-                                                .Append(entity.Columns[columnIndex].ColumnName)
-                                                .Append("\", ");
+                                                .Append('"');
                                         }
 
-                                        stringBuilder.Length -= 2;
+                                        queryHelperStrings.Add(stringBuilder.ToString());
+                                        contentLength += stringBuilder.Length;
+                                        stringBuilder.Clear();
+                                        argumentIndex++;
+                                        break;
                                     }
-                                    else
-                                    {
-                                        stringBuilder
-                                            .Append('"')
-                                            .Append(entity.TableName)
-                                            .Append('"');
-                                    }
-
-                                    queryHelperStrings.Add(stringBuilder.ToString());
-                                    contentLength += stringBuilder.Length;
-                                    stringBuilder.Clear();
-                                    argumentIndex++;
-                                    break;
-                                }
                                 default:
                                     DefaultSwitchCase();
                                     break;

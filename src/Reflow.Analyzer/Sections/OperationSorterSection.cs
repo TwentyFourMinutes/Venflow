@@ -2,10 +2,11 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Reflow.Analyzer.Emitters;
 using Reflow.Analyzer.Models;
+using Reflow.Analyzer.Operations;
 
-namespace Reflow.Analyzer.Sections.LambdaSorter
+namespace Reflow.Analyzer.Sections
 {
-    internal class LambdaSorterSection : GeneratorSection<LambdaCollectionSection>
+    internal class OperationSorterSection : GeneratorSection<LambdaCollectionSection>
     {
         protected override NoData Execute(
             GeneratorExecutionContext context,
@@ -35,7 +36,8 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
                         (
                             (MemberAccessExpressionSyntax)fluentCall.Invocations[0].Expression
                         ).Name.Identifier.Text
-                    ) {
+                    )
+                    {
                         case "Query":
                         case "QueryRaw":
                             var query = Query.Construct(database, fluentCall);

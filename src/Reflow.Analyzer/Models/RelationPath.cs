@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace Reflow.Analyzer.Sections.LambdaSorter
+namespace Reflow.Analyzer.Models
 {
     internal class RelationPath : IEquatable<RelationPath>
     {
@@ -56,22 +56,22 @@ namespace Reflow.Analyzer.Sections.LambdaSorter
             IPropertySymbol navigationSymbol
         )
         {
-            return this.LeftEntitySymbol.Equals(leftEntitySymbol, SymbolEqualityComparer.Default)
-                && this.RightEntitySymbol.Equals(rightEntitySymbol, SymbolEqualityComparer.Default)
-                && this.NavigationSymbol.Equals(navigationSymbol, SymbolEqualityComparer.Default);
+            return LeftEntitySymbol.Equals(leftEntitySymbol, SymbolEqualityComparer.Default)
+                && RightEntitySymbol.Equals(rightEntitySymbol, SymbolEqualityComparer.Default)
+                && NavigationSymbol.Equals(navigationSymbol, SymbolEqualityComparer.Default);
         }
 
         public bool Equals(RelationPath other)
         {
-            return this.LeftEntitySymbol.Equals(
+            return LeftEntitySymbol.Equals(
                     other.LeftEntitySymbol,
                     SymbolEqualityComparer.Default
                 )
-                && this.RightEntitySymbol.Equals(
+                && RightEntitySymbol.Equals(
                     other.RightEntitySymbol,
                     SymbolEqualityComparer.Default
                 )
-                && this.NavigationSymbol.Equals(
+                && NavigationSymbol.Equals(
                     other.NavigationSymbol,
                     SymbolEqualityComparer.Default
                 );

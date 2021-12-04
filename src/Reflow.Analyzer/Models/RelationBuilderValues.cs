@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace Reflow.Analyzer.Sections.LambdaSorter
+namespace Reflow.Analyzer.Models
 {
     internal class RelationBuilderValues
     {

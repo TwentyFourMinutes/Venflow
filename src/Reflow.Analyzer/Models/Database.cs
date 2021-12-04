@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
-using Reflow.Analyzer.Sections;
-using Reflow.Analyzer.Sections.LambdaSorter;
+using Reflow.Analyzer.Operations;
 
 namespace Reflow.Analyzer.Models
 {

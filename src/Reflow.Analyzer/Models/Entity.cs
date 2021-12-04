@@ -1,8 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Reflow.Analyzer.Models;
 
-namespace Reflow.Analyzer.Sections
+namespace Reflow.Analyzer.Models
 {
     internal class Entity
     {
@@ -90,78 +89,78 @@ namespace Reflow.Analyzer.Sections
                 switch (methodSymbol.Name)
                 {
                     case "MapTable":
-                    {
-                        Value.TableName =
-                            (
-                                (LiteralExpressionSyntax)arguments.Single().Expression
-                            ).Token.ValueText;
-                        break;
-                    }
+                        {
+                            Value.TableName =
+                                (
+                                    (LiteralExpressionSyntax)arguments.Single().Expression
+                                ).Token.ValueText;
+                            break;
+                        }
                     case "Column":
-                    {
-                        var lambda = (SimpleLambdaExpressionSyntax)arguments.Single().Expression;
-                        var columnName =
-                            (
-                                (MemberAccessExpressionSyntax)lambda.ExpressionBody!
-                            ).Name.Identifier.Text;
+                        {
+                            var lambda = (SimpleLambdaExpressionSyntax)arguments.Single().Expression;
+                            var columnName =
+                                (
+                                    (MemberAccessExpressionSyntax)lambda.ExpressionBody!
+                                ).Name.Identifier.Text;
 
-                        if (!_columns.TryGetValue(columnName, out _currentColumn))
-                            throw new InvalidOperationException();
-                        break;
-                    }
+                            if (!_columns.TryGetValue(columnName, out _currentColumn))
+                                throw new InvalidOperationException();
+                            break;
+                        }
                     case "Ignore":
-                    {
-                        var lambda = (SimpleLambdaExpressionSyntax)arguments.Single().Expression;
-                        var columnName =
-                            (
-                                (MemberAccessExpressionSyntax)lambda.ExpressionBody!
-                            ).Name.Identifier.Text;
+                        {
+                            var lambda = (SimpleLambdaExpressionSyntax)arguments.Single().Expression;
+                            var columnName =
+                                (
+                                    (MemberAccessExpressionSyntax)lambda.ExpressionBody!
+                                ).Name.Identifier.Text;
 
-                        if (!_columns.TryGetValue(columnName, out var column))
-                            throw new InvalidOperationException();
+                            if (!_columns.TryGetValue(columnName, out var column))
+                                throw new InvalidOperationException();
 
-                        _columns.Remove(columnName);
-                        Value.Columns.Remove(column);
-                        break;
-                    }
+                            _columns.Remove(columnName);
+                            Value.Columns.Remove(column);
+                            break;
+                        }
                     case string methodName
                           when methodName is "HasOne" or "HasMany" && arguments.Count is 0:
-                    {
-                        _currentRelation = new EntityRelation
                         {
-                            RelationType = methodName is "HasOne"
-                                ? RelationType.OneToOne
-                                : RelationType.ManyToOne,
-                            LeftEntitySymbol = Value.Symbol,
-                            RightEntitySymbol = (INamedTypeSymbol)methodSymbol.TypeArguments[0],
-                        };
-                        break;
-                    }
+                            _currentRelation = new EntityRelation
+                            {
+                                RelationType = methodName is "HasOne"
+                                    ? RelationType.OneToOne
+                                    : RelationType.ManyToOne,
+                                LeftEntitySymbol = Value.Symbol,
+                                RightEntitySymbol = (INamedTypeSymbol)methodSymbol.TypeArguments[0],
+                            };
+                            break;
+                        }
                     case string methodName
                           when methodName is "HasOne" or "HasMany" && arguments.Count is 1:
-                    {
-                        var memberAccess = GetMemberAccessFromLambda(arguments.Single());
-                        var propertyName = (memberAccess).Name.Identifier.Text;
-
-                        if (_columns.TryGetValue(propertyName, out var column))
                         {
-                            _columns.Remove(propertyName);
-                            Value.Columns.Remove(column);
+                            var memberAccess = GetMemberAccessFromLambda(arguments.Single());
+                            var propertyName = memberAccess.Name.Identifier.Text;
+
+                            if (_columns.TryGetValue(propertyName, out var column))
+                            {
+                                _columns.Remove(propertyName);
+                                Value.Columns.Remove(column);
+                            }
+
+                            _currentRelation = new EntityRelation
+                            {
+                                RelationType = methodName is "HasOne"
+                                    ? RelationType.OneToOne
+                                    : RelationType.ManyToOne,
+                                LeftEntitySymbol = Value.Symbol,
+                                LeftNavigationProperty = (IPropertySymbol)SemanticModel.GetSymbolInfo(
+                                    memberAccess
+                                ).Symbol!,
+                                RightEntitySymbol = (INamedTypeSymbol)methodSymbol.TypeArguments[0],
+                            };
+                            break;
                         }
-
-                        _currentRelation = new EntityRelation
-                        {
-                            RelationType = methodName is "HasOne"
-                                ? RelationType.OneToOne
-                                : RelationType.ManyToOne,
-                            LeftEntitySymbol = Value.Symbol,
-                            LeftNavigationProperty = (IPropertySymbol)SemanticModel.GetSymbolInfo(
-                                memberAccess
-                            ).Symbol!,
-                            RightEntitySymbol = (INamedTypeSymbol)methodSymbol.TypeArguments[0],
-                        };
-                        break;
-                    }
                     default:
                         return false;
                 }
@@ -198,43 +197,43 @@ namespace Reflow.Analyzer.Sections
                     {
                         case string methodName
                               when methodName is "WithOne" or "WithMany" && arguments.Count is 0:
-                        {
-                            if (methodName is "WithOne")
                             {
-                                _currentRelation.RelationType = RelationType.OneToMany;
+                                if (methodName is "WithOne")
+                                {
+                                    _currentRelation.RelationType = RelationType.OneToMany;
+                                }
+                                break;
                             }
-                            break;
-                        }
                         case string methodName
                               when methodName is "WithOne" or "WithMany" && arguments.Count is 1:
-                        {
-                            var memberAccess = GetMemberAccessFromLambda(arguments.Single());
-
-                            if (methodName is "WithOne")
                             {
-                                _currentRelation.RelationType = RelationType.OneToMany;
+                                var memberAccess = GetMemberAccessFromLambda(arguments.Single());
+
+                                if (methodName is "WithOne")
+                                {
+                                    _currentRelation.RelationType = RelationType.OneToMany;
+                                }
+
+                                _currentRelation.RightNavigationProperty =
+                                    (IPropertySymbol)SemanticModel.GetSymbolInfo(memberAccess).Symbol!;
+                                break;
                             }
-
-                            _currentRelation.RightNavigationProperty =
-                                (IPropertySymbol)SemanticModel.GetSymbolInfo(memberAccess).Symbol!;
-                            break;
-                        }
                         case "UsingForeignKey":
-                        {
-                            var memberAccess = GetMemberAccessFromLambda(arguments.Single());
+                            {
+                                var memberAccess = GetMemberAccessFromLambda(arguments.Single());
 
-                            _currentRelation.ForeignKeySymbol =
-                                (IPropertySymbol)SemanticModel.GetSymbolInfo(memberAccess).Symbol!;
+                                _currentRelation.ForeignKeySymbol =
+                                    (IPropertySymbol)SemanticModel.GetSymbolInfo(memberAccess).Symbol!;
 
-                            _currentRelation.ForeignKeyLocation =
-                                _currentRelation.ForeignKeySymbol.ContainingType.Equals(
-                                    _currentRelation.LeftEntitySymbol,
-                                    SymbolEqualityComparer.Default
-                                )
-                                    ? ForeignKeyLocation.Left
-                                    : ForeignKeyLocation.Right;
-                            break;
-                        }
+                                _currentRelation.ForeignKeyLocation =
+                                    _currentRelation.ForeignKeySymbol.ContainingType.Equals(
+                                        _currentRelation.LeftEntitySymbol,
+                                        SymbolEqualityComparer.Default
+                                    )
+                                        ? ForeignKeyLocation.Left
+                                        : ForeignKeyLocation.Right;
+                                break;
+                            }
                     }
                 }
             }

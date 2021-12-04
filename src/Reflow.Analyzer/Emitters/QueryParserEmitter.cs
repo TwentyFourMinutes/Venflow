@@ -4,8 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Reflow.Analyzer.CodeGenerator;
 using Reflow.Analyzer.Models;
-using Reflow.Analyzer.Sections;
-using Reflow.Analyzer.Sections.LambdaSorter;
+using Reflow.Analyzer.Operations;
 using static Reflow.Analyzer.CodeGenerator.CSharpCodeGenerator;
 
 namespace Reflow.Analyzer.Emitters

@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Reflow.Analyzer.Sections
+namespace Reflow.Analyzer
 {
     internal abstract class BulkFluentSyntaxReader<T>
     {

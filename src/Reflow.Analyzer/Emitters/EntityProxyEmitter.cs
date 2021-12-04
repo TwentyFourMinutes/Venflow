@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Reflow.Analyzer.CodeGenerator;
-using Reflow.Analyzer.Sections;
+using Reflow.Analyzer.Models;
 using static Reflow.Analyzer.CodeGenerator.CSharpCodeGenerator;
 
 namespace Reflow.Analyzer.Emitters
