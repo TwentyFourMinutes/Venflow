@@ -38,17 +38,24 @@ namespace Reflow.Playground
                 person = await db.People
                     .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
                     .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
             }
 
             var people = await db.People
                 .Query<Email>(
                     (people, emails) =>
-                        $@"SELECT * FROM {people}
+                        $@"SELECT {people:*} FROM {people}
                            JOIN {emails} ON {emails.PersonId} = {people.Id}
                            WHERE {people.Id} = {0}"
                 )
                 .Join(x => x.Emails)
                 .SingleAsync();
+
+            db.People.Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {0}");
+
+            db.People.InsertAsync();
         }
 
         public static void Test(Action a) => Console.WriteLine(a);

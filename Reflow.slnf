@@ -3,6 +3,7 @@
     "path": "Venflow.sln",
     "projects": [
       "src\\Reflow.Analyzer\\Reflow.Analyzer.csproj",
+      "src\\Reflow.Extension\\Reflow.Extension.csproj",
       "src\\Reflow.Playground\\Reflow.Playground.csproj",
       "src\\Reflow\\Reflow.csproj"
     ]

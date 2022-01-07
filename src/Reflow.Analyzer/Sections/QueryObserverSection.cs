@@ -172,17 +172,17 @@ namespace Reflow.Analyzer.Sections
         }
     }
 
-    internal class LambdaCollectionSection
+    internal class QueryObserverSection
         : GeneratorSection<
-              EntityConfigurationSection,
-              LambdaCollectionSection.SyntaxReceiver,
+              CommandObserverSection,
+              QueryObserverSection.SyntaxReceiver,
               Dictionary<ITypeSymbol, List<FluentCallDefinition>>
           >
     {
         protected override Dictionary<ITypeSymbol, List<FluentCallDefinition>> Execute(
             GeneratorExecutionContext context,
             SyntaxReceiver syntaxReceiver,
-            EntityConfigurationSection previous
+            CommandObserverSection previous
         )
         {
             var lambdaCache =
@@ -971,7 +971,7 @@ namespace Reflow.Analyzer.Sections
         internal class SyntaxReceiver : ISyntaxContextReceiver
         {
             private static readonly HashSet<string> _validInvocationNames =
-                new() { "Query", "QueryRaw", "Insert", "Update", "Delete" };
+                new() { "Query", "QueryRaw" };
 
             internal HashSet<ClassDeclarationSyntax> Candidates { get; }
 

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Reflow.Analyzer.Properties;
 

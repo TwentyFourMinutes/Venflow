@@ -6,12 +6,12 @@ using Reflow.Analyzer.Operations;
 
 namespace Reflow.Analyzer.Sections
 {
-    internal class OperationSorterSection : GeneratorSection<LambdaCollectionSection>
+    internal class OperationSorterSection : GeneratorSection<QueryObserverSection>
     {
         protected override NoData Execute(
             GeneratorExecutionContext context,
             NoReceiver syntaxReceiver,
-            LambdaCollectionSection previous
+            QueryObserverSection previous
         )
         {
             var databases = GetPrevious<DatabaseConfigurationSection>().Data;
@@ -36,8 +36,7 @@ namespace Reflow.Analyzer.Sections
                         (
                             (MemberAccessExpressionSyntax)fluentCall.Invocations[0].Expression
                         ).Name.Identifier.Text
-                    )
-                    {
+                    ) {
                         case "Query":
                         case "QueryRaw":
                             var query = Query.Construct(database, fluentCall);

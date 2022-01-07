@@ -63,18 +63,9 @@ namespace Reflow.Analyzer.Models
 
         public bool Equals(RelationPath other)
         {
-            return LeftEntitySymbol.Equals(
-                    other.LeftEntitySymbol,
-                    SymbolEqualityComparer.Default
-                )
-                && RightEntitySymbol.Equals(
-                    other.RightEntitySymbol,
-                    SymbolEqualityComparer.Default
-                )
-                && NavigationSymbol.Equals(
-                    other.NavigationSymbol,
-                    SymbolEqualityComparer.Default
-                );
+            return LeftEntitySymbol.Equals(other.LeftEntitySymbol, SymbolEqualityComparer.Default)
+                && RightEntitySymbol.Equals(other.RightEntitySymbol, SymbolEqualityComparer.Default)
+                && NavigationSymbol.Equals(other.NavigationSymbol, SymbolEqualityComparer.Default);
         }
 
         public override int GetHashCode()

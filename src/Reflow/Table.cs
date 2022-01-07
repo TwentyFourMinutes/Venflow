@@ -16,6 +16,8 @@ namespace Reflow
             _database = (IDatabase)database;
         }
 
+        #region Query
+
         public QueryBuilder<TEntity> Query(Func<SqlInterpolationHandler> sql)
         {
             Commands.Query.Handle(_database, sql, static x => x.Invoke());
@@ -233,5 +235,12 @@ namespace Reflow
 
             return default;
         }
+
+        #endregion
+
+        #region Insert
+
+        public void InsertAsync() { }
+        #endregion
     }
 }

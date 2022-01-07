@@ -35,7 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Venflow\Venflow.csproj" />
     <ProjectReference Include="..\..\src\Venflow.Generators\Venflow.Generators.csproj" />
     <ProjectReference Include="..\..\src\Venflow.NewtonsoftJson\Venflow.NewtonsoftJson.csproj" />
     <ProjectReference Include="..\Venflow.Shared\Venflow.Shared.csproj" />
