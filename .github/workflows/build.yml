@@ -73,7 +73,7 @@ jobs:
         args: /github/workspace/docs/docfx/docfx.json --property TargetFramework=net5.0
         
     - name: Deploy Documentation to Github Pages
-      uses: JamesIves/github-pages-deploy-action@v4.2.2
+      uses: JamesIves/github-pages-deploy-action@v4.2.3
       if: ${{ github.event_name == 'push' }}
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
