@@ -4,7 +4,7 @@ namespace Reflow.Analyzer.Models
 {
     internal class EntityRelation
     {
-        internal int Id { get; set; }
+        internal uint Id { get; set; }
         internal bool IsProcessed { get; set; }
 
         internal INamedTypeSymbol LeftEntitySymbol { get; set; } = null!;

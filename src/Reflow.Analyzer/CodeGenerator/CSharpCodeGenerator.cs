@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Reflow.Analyzer.Shared;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Reflow.Analyzer.CodeGenerator
@@ -11,6 +12,7 @@ namespace Reflow.Analyzer.CodeGenerator
         {
             return new CSharpFileSyntax(namespaceName);
         }
+
         public static CSharpClassSyntax Class(
             string name,
             CSharpModifiers modifiers = CSharpModifiers.None
@@ -26,6 +28,7 @@ namespace Reflow.Analyzer.CodeGenerator
         {
             return new CSharpConstructorSyntax(name, modifiers);
         }
+
         public static CSharpParameterSyntax Parameter(string name, TypeSyntax type)
         {
             return new CSharpParameterSyntax(name, type, CSharpModifiers.None);
@@ -44,6 +47,7 @@ namespace Reflow.Analyzer.CodeGenerator
         {
             return new CSharpPropertySyntax(name, type, modifiers);
         }
+
         public static CSharpFieldSyntax Field(
             string name,
             TypeSyntax type,
@@ -83,6 +87,7 @@ namespace Reflow.Analyzer.CodeGenerator
         {
             return ArrayInitializer(type, (IEnumerable<ExpressionSyntax>)expressions);
         }
+
         public static ArrayCreationExpressionSyntax ArrayInitializer(
             ArrayTypeSyntax type,
             IEnumerable<ExpressionSyntax> expressions
@@ -170,6 +175,7 @@ namespace Reflow.Analyzer.CodeGenerator
                 Identifier(TriviaList(), SyntaxKind.VarKeyword, "var", "var", TriviaList())
             );
         }
+
         public static LiteralExpressionSyntax Default()
         {
             return LiteralExpression(
@@ -187,6 +193,7 @@ namespace Reflow.Analyzer.CodeGenerator
         {
             return Type(type.GetFullName());
         }
+
         public static TypeSyntax Type(IPropertySymbol type)
         {
             return Type(type.Type.GetFullName());
@@ -195,6 +202,11 @@ namespace Reflow.Analyzer.CodeGenerator
         public static TypeSyntax Type(Type type)
         {
             return Type(type.FullName);
+        }
+
+        public static TypeSyntax Type<TType>()
+        {
+            return Type(typeof(TType).FullName);
         }
 
         public static TypeSyntax Type(Type type, string memberName)
@@ -333,10 +345,12 @@ namespace Reflow.Analyzer.CodeGenerator
         {
             return CastExpression(toType, expression);
         }
+
         public static TypeOfExpressionSyntax TypeOf(TypeSyntax type)
         {
             return TypeOfExpression(type);
         }
+
         public static CSharpLambdaSyntax Lambda(params string[] parameters)
         {
             return new CSharpLambdaSyntax(parameters);
@@ -444,8 +458,8 @@ namespace Reflow.Analyzer.CodeGenerator
                             parameters.Select(
                                 x =>
                                     x.IsKind(SyntaxKind.Argument)
-                                        ? (ArgumentSyntax)x
-                                        : Argument((ExpressionSyntax)x)
+                                      ? (ArgumentSyntax)x
+                                      : Argument((ExpressionSyntax)x)
                             )
                         )
                     )
@@ -658,6 +672,7 @@ namespace Reflow.Analyzer.CodeGenerator
         {
             return LiteralExpression(SyntaxKind.NullLiteralExpression);
         }
+
         public static ForStatementSyntax For(
             CSharpLocalSyntax local,
             ExpressionSyntax condition,
@@ -707,6 +722,11 @@ namespace Reflow.Analyzer.CodeGenerator
         public static ExpressionStatementSyntax Statement(ExpressionSyntax expression)
         {
             return ExpressionStatement(expression);
+        }
+
+        public static IEnumerable<StatementSyntax> Concat(params StatementSyntax[] otherStatements)
+        {
+            return otherStatements;
         }
 
         public static IEnumerable<StatementSyntax> Concat(

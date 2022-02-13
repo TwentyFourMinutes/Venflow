@@ -1,6 +1,4 @@
 ﻿namespace Reflow.Analyzer
 {
-    internal struct NoData
-    {
-    }
+    internal struct NoData { }
 }

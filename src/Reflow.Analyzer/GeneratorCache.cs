@@ -14,7 +14,7 @@ namespace Reflow.Analyzer
 
             if (config.TryGetValue("build_property.projectdir", out var projectDir))
             {
-                _cacheDirectory = Path.Combine(projectDir, "bin/obj/ReflowCache");
+                _cacheDirectory = Path.Combine(projectDir, "obj/ReflowCache");
 
                 if (!Directory.Exists(_cacheDirectory))
                 {

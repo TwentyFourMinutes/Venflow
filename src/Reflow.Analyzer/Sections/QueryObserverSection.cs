@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Reflow.Analyzer.Models.Definitions;
+using Reflow.Analyzer.Shared;
 
 namespace Reflow.Analyzer.Sections
 {
@@ -50,30 +51,15 @@ namespace Reflow.Analyzer.Sections
             _preambleWritten = false;
         }
 
-        public override bool CanRead
-        {
-            get { return true; }
-        }
+        public override bool CanRead => true;
 
-        public override bool CanSeek
-        {
-            get { return false; }
-        }
+        public override bool CanSeek => false;
 
-        public override bool CanWrite
-        {
-            get { return false; }
-        }
+        public override bool CanWrite => false;
 
-        public override void Flush()
-        {
-            throw new NotSupportedException();
-        }
+        public override void Flush() => throw new NotSupportedException();
 
-        public override long Length
-        {
-            get { throw new NotSupportedException(); }
-        }
+        public override long Length => throw new NotSupportedException();
 
         public override long Position
         {
@@ -156,20 +142,13 @@ namespace Reflow.Analyzer.Sections
             _bufferUnreadChars = charsToRead;
         }
 
-        public override long Seek(long offset, SeekOrigin origin)
-        {
+        public override long Seek(long offset, SeekOrigin origin) =>
             throw new NotSupportedException();
-        }
 
-        public override void SetLength(long value)
-        {
-            throw new NotSupportedException();
-        }
+        public override void SetLength(long value) => throw new NotSupportedException();
 
-        public override void Write(byte[] buffer, int offset, int count)
-        {
+        public override void Write(byte[] buffer, int offset, int count) =>
             throw new NotSupportedException();
-        }
     }
 
     internal class QueryObserverSection
@@ -185,6 +164,23 @@ namespace Reflow.Analyzer.Sections
             CommandObserverSection previous
         )
         {
+            syntaxReceiver.SW.Stop();
+
+            context.ReportDiagnostic(
+                Diagnostic.Create(
+                    new DiagnosticDescriptor(
+                        "NONINCREMNTAL",
+                        "Old Time",
+                        "{0} ms",
+                        "main",
+                        DiagnosticSeverity.Warning,
+                        true
+                    ),
+                    null,
+                    syntaxReceiver.SW.ElapsedMilliseconds
+                )
+            );
+
             var lambdaCache =
                 Cache.GetData<Dictionary<string, LambdaLinkDefinition[]>>("lambdas.json") ?? new();
 
@@ -212,7 +208,7 @@ namespace Reflow.Analyzer.Sections
                     classSyntax.GetText(Encoding.UTF8, SourceHashAlgorithm.Sha256)
                 );
 
-                var classHash = BitConverter.ToString(hash.ComputeHash(stream));
+                var classHash = Convert.ToBase64String(hash.ComputeHash(stream));
 
                 if (!lambdaCache.TryGetValue(classHash, out var lambdas))
                 {
@@ -366,6 +362,7 @@ namespace Reflow.Analyzer.Sections
 
                         fluentCalls.Add(
                             new FluentCallDefinition(
+                                data.DatabaseSymbol,
                                 _semanticModel,
                                 lambdaSyntax,
                                 data.Invocations,
@@ -647,7 +644,6 @@ namespace Reflow.Analyzer.Sections
 
                                 if (accessor.IsKind(SyntaxKind.GetAccessorDeclaration))
                                 {
-                                    ;
                                     _currentMemberName = "get_Item";
                                 }
                                 else if (
@@ -752,6 +748,7 @@ namespace Reflow.Analyzer.Sections
 
                         fluentCalls.Add(
                             new FluentCallDefinition(
+                                data.DatabaseSymbol,
                                 _semanticModel,
                                 lambdaSyntax,
                                 data.Invocations,
@@ -970,6 +967,8 @@ namespace Reflow.Analyzer.Sections
 
         internal class SyntaxReceiver : ISyntaxContextReceiver
         {
+            public Stopwatch SW = new();
+
             private static readonly HashSet<string> _validInvocationNames =
                 new() { "Query", "QueryRaw" };
 
@@ -982,6 +981,9 @@ namespace Reflow.Analyzer.Sections
 
             void ISyntaxContextReceiver.OnVisitSyntaxNode(GeneratorSyntaxContext context)
             {
+                if (!SW.IsRunning)
+                    SW.Restart();
+
                 if (context.Node is LambdaExpressionSyntax lambda)
                 {
                     var classDeclaration = lambda.FirstAncestorOrSelf<ClassDeclarationSyntax>();

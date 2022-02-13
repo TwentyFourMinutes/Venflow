@@ -83,6 +83,7 @@ namespace Reflow.Analyzer
         }
 
         public IEnumerator<T> GetEnumerator() => ((IReadOnlyList<T>)_array).GetEnumerator();
+
         IEnumerator IEnumerable.GetEnumerator() => _array.GetEnumerator();
     }
 }

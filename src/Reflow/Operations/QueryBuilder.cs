@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Reflow.Commands
+namespace Reflow.Operations
 {
     [StructLayout(LayoutKind.Sequential, Pack = 0)]
     public readonly ref struct QueryBuilder<TEntity> where TEntity : class, new()

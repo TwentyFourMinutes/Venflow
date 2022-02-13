@@ -61,20 +61,14 @@ namespace Reflow.Analyzer
     internal abstract class GeneratorSection<TPrevious, TSyntaxReceiver>
         : GeneratorSection<TPrevious, TSyntaxReceiver, NoData>
         where TPrevious : IGeneratorSection
-        where TSyntaxReceiver : ISyntaxContextReceiver
-    {
-    }
+        where TSyntaxReceiver : ISyntaxContextReceiver { }
 
     internal abstract class GeneratorSection<TPrevious>
-        : GeneratorSection<TPrevious, NoReceiver, NoData> where TPrevious : IGeneratorSection
-    {
-    }
+        : GeneratorSection<TPrevious, NoReceiver, NoData> where TPrevious : IGeneratorSection { }
 
     internal interface IGeneratorSection<TPrevious, TSyntaxReceiver> : IGeneratorSection
         where TPrevious : IGeneratorSection
-        where TSyntaxReceiver : ISyntaxContextReceiver
-    {
-    }
+        where TSyntaxReceiver : ISyntaxContextReceiver { }
 
     internal interface IGeneratorSection
     {

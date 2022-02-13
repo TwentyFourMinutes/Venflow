@@ -7,10 +7,10 @@ using Reflow.Analyzer.Models.Definitions;
 
 namespace Reflow.Analyzer.Operations
 {
-    internal class Query : ICommandOperation
+    internal class Query : Models.IOperation
     {
         public FluentCallDefinition FluentCall { get; private set; }
-        internal QueryType Type { get; private set; }
+        internal OperationType Type { get; private set; }
         internal ITypeSymbol Entity { get; private set; }
         internal bool TrackChanges { get; private set; }
         internal RelationBuilderValues JoinedEntities { get; }
@@ -31,7 +31,7 @@ namespace Reflow.Analyzer.Operations
             return query;
         }
 
-        private class FluentReader : FluentSyntaxReader<Query>
+        private class FluentReader : FluentLambdaSyntaxReader<Query>
         {
             private ITypeSymbol? _previousJoinSymbol;
             private readonly Database _database;
@@ -284,20 +284,23 @@ namespace Reflow.Analyzer.Operations
                             _previousJoinSymbol = typeArguments[1];
                         }
 
-                        Value.Type |= QueryType.WithRelations;
+                        Value.Type |= OperationType.WithRelations;
                         return;
                     case "SingleAsync":
-                        Value.Type |= QueryType.Single;
+                        Value.Type |= OperationType.Single;
                         return;
                     case "ManyAsync":
-                        Value.Type |= QueryType.Many;
+                        Value.Type |= OperationType.Many;
                         return;
                 }
             }
 
             protected override bool ValidateTail()
             {
-                if (!Value.Type.HasFlag(QueryType.Single) && !Value.Type.HasFlag(QueryType.Many))
+                if (
+                    !Value.Type.HasFlag(OperationType.Single)
+                    && !Value.Type.HasFlag(OperationType.Many)
+                )
                 {
                     return false;
                 }
@@ -321,7 +324,7 @@ namespace Reflow.Analyzer.Operations
     }
 
     [Flags]
-    internal enum QueryType : byte
+    internal enum OperationType : byte
     {
         None = 0,
         Single = 1 << 0,

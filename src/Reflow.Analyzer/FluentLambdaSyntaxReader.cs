@@ -1,10 +1,11 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Reflow.Analyzer.Models.Definitions;
+using Reflow.Analyzer.Shared;
 
 namespace Reflow.Analyzer
 {
-    internal abstract class FluentSyntaxReader<T>
+    internal abstract class FluentLambdaSyntaxReader<T>
     {
         protected T Value { get; }
         protected SemanticModel SemanticModel { get; }
@@ -12,7 +13,7 @@ namespace Reflow.Analyzer
         private readonly IList<InvocationExpressionSyntax> _invocations;
         private readonly FluentCallDefinition _fluentCall;
 
-        protected FluentSyntaxReader(T value, FluentCallDefinition fluentCall)
+        protected FluentLambdaSyntaxReader(T value, FluentCallDefinition fluentCall)
         {
             _fluentCall = fluentCall;
             _invocations = fluentCall.Invocations;

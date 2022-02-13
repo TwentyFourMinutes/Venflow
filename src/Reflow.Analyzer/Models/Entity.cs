@@ -230,8 +230,8 @@ namespace Reflow.Analyzer.Models
                                     _currentRelation.LeftEntitySymbol,
                                     SymbolEqualityComparer.Default
                                 )
-                                    ? ForeignKeyLocation.Left
-                                    : ForeignKeyLocation.Right;
+                                  ? ForeignKeyLocation.Left
+                                  : ForeignKeyLocation.Right;
                             break;
                         }
                     }

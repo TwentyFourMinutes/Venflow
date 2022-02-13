@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Reflow.Analyzer.Emitters;
 using Reflow.Analyzer.Models;
+using Reflow.Analyzer.Shared;
 
 namespace Reflow.Analyzer.Sections
 {
@@ -57,11 +57,6 @@ namespace Reflow.Analyzer.Sections
                 configurations.Add(configuration);
             }
 
-            context.AddNamedSource(
-                "DatabaseInstantiater",
-                DatabaseConfigurationEmitter.Emit(configurations)
-            );
-
             return configurations;
         }
 
@@ -99,7 +94,7 @@ namespace Reflow.Analyzer.Sections
                         break;
 
                     if (
-                        potentialDatabaseType.GetFullName() is not "Reflow.Database"
+                        potentialDatabaseType.GetFullName() is not "Reflow.Database`1"
                         || !potentialDatabaseType.IsReflowSymbol()
                     )
                         continue;

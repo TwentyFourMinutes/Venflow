@@ -24,10 +24,12 @@ namespace Reflow.Analyzer.CodeGenerator
 
             return this;
         }
+
         public CSharpInstanceSyntax WithArguments(params ExpressionSyntax[] members)
         {
             return WithArguments((IEnumerable<ExpressionSyntax>)members);
         }
+
         public CSharpInstanceSyntax WithArguments(IEnumerable<ExpressionSyntax> members)
         {
             _objectCreationSyntax = _objectCreationSyntax.WithArgumentList(

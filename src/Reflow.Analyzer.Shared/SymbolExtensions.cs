@@ -1,16 +1,15 @@
 ﻿using Microsoft.CodeAnalysis;
-using Reflow.Analyzer.Properties;
 
-namespace Reflow.Analyzer
+namespace Reflow.Analyzer.Shared
 {
     internal static class SymbolExtensions
     {
         internal static string GetFullName(this ISymbol symbol)
         {
             if (symbol.ContainingNamespace.IsGlobalNamespace)
-                return symbol.Name;
+                return symbol.MetadataName;
             else
-                return symbol.ContainingNamespace.ToString() + "." + symbol.Name;
+                return symbol.ContainingNamespace.ToString() + "." + symbol.MetadataName;
         }
 
         internal static bool IsReflowSymbol(this ISymbol symbol)

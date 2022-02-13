@@ -2,7 +2,7 @@
 
 namespace Reflow.Analyzer.Models
 {
-    internal interface ICommandOperation
+    internal interface IOperation
     {
         FluentCallDefinition FluentCall { get; }
     }

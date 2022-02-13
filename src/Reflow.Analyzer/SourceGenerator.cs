@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
-using Reflow.Analyzer.Properties;
+using Reflow.Analyzer.Shared;
 
 namespace Reflow.Analyzer
 {
@@ -147,6 +147,7 @@ namespace Reflow.Analyzer
                 _rootData.OnVisitSyntaxNode(context);
             }
         }
+
         private class RootData
         {
             public List<Data> Subsequents { get; }

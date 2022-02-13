@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="057767EE-ECF6-4674-B8F2-32BF78FA0E4E" Version="1.0.0" Language="en-US" Publisher="Twenty" />
-        <DisplayName>Reflow</DisplayName>
+        <Identity Id="057767EE-ECF6-4674-B8F2-32BF78FA0E4E" Version="1.0" Language="en-US" Publisher="Twenty" />
+        <DisplayName>Reflow.Extension</DisplayName>
         <Description xml:space="preserve">Sql Syntax Highlighting</Description>
+        <Icon>Resources\OptionsPackage.ico</Icon>
         <Tags>sql, reflow, syntax, postgres, orm, database</Tags>
         <Preview>true</Preview>
     </Metadata>
@@ -13,7 +14,7 @@
         </InstallationTarget>
     </Installation>
     <Dependencies>
-        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" Version="[4.8,)" />
+        <Dependency Version="[4.8,)" d:Source="Manual" DisplayName="Microsoft .NET Framework" Id="Microsoft.Framework.NDP" />
     </Dependencies>
     <Assets>
         <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%|" />

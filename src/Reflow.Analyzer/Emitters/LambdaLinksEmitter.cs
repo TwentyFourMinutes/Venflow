@@ -1,7 +1,5 @@
 ﻿using System.Data.Common;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
-using Reflow.Analyzer.CodeGenerator;
 using Reflow.Analyzer.Models;
 using Reflow.Analyzer.Operations;
 using static Reflow.Analyzer.CodeGenerator.CSharpCodeGenerator;
@@ -10,16 +8,16 @@ namespace Reflow.Analyzer.Emitters
 {
     internal static class LambdaLinksEmitter
     {
-        internal static SourceText Emit(IList<ICommandOperation> commands)
+        internal static ArrayCreationExpressionSyntax Emit(IEnumerable<IOperation> operations)
         {
             var syntaxLinks = new List<ExpressionSyntax>();
             var arguments = new List<ExpressionSyntax>(6);
 
-            for (var commandIndex = 0; commandIndex < commands.Count; commandIndex++)
+            foreach (var operation in operations)
             {
-                var command = commands[commandIndex];
-                var link = command.FluentCall.LambdaLink;
+                var link = operation.FluentCall.LambdaLink;
 
+                arguments.Add(TypeOf(Type(operation.FluentCall.DatabaseSymbol)));
                 arguments.Add(TypeOf(Type(link.ClassName)));
                 arguments.Add(Constant(link.IdentifierName));
                 arguments.Add(Constant(link.LambdaIndex));
@@ -29,7 +27,7 @@ namespace Reflow.Analyzer.Emitters
                 {
                     if (link.Data is QueryLinkData queryData)
                     {
-                        arguments.Add(GetQuerySpecificExpressions(command, queryData));
+                        arguments.Add(GetQuerySpecificExpressions(operation, queryData));
                     }
                     else
                     {
@@ -44,38 +42,21 @@ namespace Reflow.Analyzer.Emitters
                 arguments.Clear();
             }
 
-            return File("Reflow.Lambdas")
-                .WithMembers(
-                    Class("LambdaLinks", CSharpModifiers.Public | CSharpModifiers.Static)
-                        .WithMembers(
-                            Field(
-                                    "Links",
-                                    Array(Type("Reflow.Lambdas.LambdaLink")),
-                                    CSharpModifiers.Public | CSharpModifiers.Static
-                                )
-                                .WithInitializer(
-                                    ArrayInitializer(
-                                        Array(Type("Reflow.Lambdas.LambdaLink")),
-                                        syntaxLinks
-                                    )
-                                )
-                        )
-                )
-                .GetText();
+            return ArrayInitializer(Array(Type("Reflow.Lambdas.LambdaLink")), syntaxLinks);
         }
 
         private static ExpressionSyntax GetQuerySpecificExpressions(
-            ICommandOperation command,
+            IOperation operation,
             QueryLinkData data
         )
         {
-            var query = (Query)command;
+            var query = (Query)operation;
 
             TypeSyntax returnType;
 
-            if (query.Type.HasFlag(QueryType.Single))
+            if (query.Type.HasFlag(OperationType.Single))
             {
-                if (query.Type.HasFlag(QueryType.WithRelations))
+                if (query.Type.HasFlag(OperationType.WithRelations))
                 {
                     returnType = GenericType(typeof(Task<>), Type(data.Entity));
                 }

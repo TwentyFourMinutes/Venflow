@@ -5,12 +5,16 @@ namespace Reflow.Analyzer.Models.Definitions
     internal class LambdaLinkDefinition
     {
         internal ILambdaLinkData? Data { get; set; }
+
         [JsonProperty]
         internal string ClassName { get; }
+
         [JsonProperty]
         internal string IdentifierName { get; }
+
         [JsonProperty]
         internal uint LambdaIndex { get; set; }
+
         [JsonProperty]
         internal bool HasClosure { get; }
 
@@ -29,7 +33,5 @@ namespace Reflow.Analyzer.Models.Definitions
         }
     }
 
-    internal interface ILambdaLinkData
-    {
-    }
+    internal interface ILambdaLinkData { }
 }

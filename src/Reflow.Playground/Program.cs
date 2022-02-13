@@ -1,10 +1,17 @@
 ﻿using System.Linq.Expressions;
 using Reflow.Modeling;
+
 namespace Reflow.Playground
 {
     public static class Program
     {
         public static int MyProperty
+        {
+            get { return 0; }
+            set { }
+        }
+
+        public static int MyProperty2
         {
             get { return 0; }
             set { }
@@ -16,11 +23,13 @@ namespace Reflow.Playground
 
             Expression<Func<int>> test = () => 0;
 
+            Console.WriteLine("s");
+
             Test(
                 () =>
                 {
                     var a = db.People
-                        .Query(() => $"first {0}")
+                        .QueryRaw(() => "SELECT * FROM people WHERE id = 0;")
                         .TrackChanges()
                         .TrackChanges(false)
                         .SingleAsync();
@@ -29,12 +38,266 @@ namespace Reflow.Playground
                 }
             );
 
+            Console.WriteLine();
+
             for (var i = 0; i < 2; i++)
             {
                 var person = await db.People
+                    .Query(people => $"  SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+
+                person = await db.People
                     .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
                     .ManyAsync();
 
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
+                person = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .ManyAsync();
                 person = await db.People
                     .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
                     .ManyAsync();
@@ -51,11 +314,9 @@ namespace Reflow.Playground
                            WHERE {people.Id} = {0}"
                 )
                 .Join(x => x.Emails)
-                .SingleAsync();
+                .ManyAsync();
 
-            db.People.Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {0}");
-
-            db.People.InsertAsync();
+            await db.People.InsertAsync(people);
         }
 
         public static void Test(Action a) => Console.WriteLine(a);
@@ -75,7 +336,7 @@ namespace Reflow.Playground
     public class Person
     {
         public int Id { get; set; }
-        public virtual string Name { get; set; }
+        public virtual string Name { get; set; } = null!;
         public DateTime DefaultValue { get; set; }
 
         public IList<Email> Emails { get; }
@@ -89,10 +350,10 @@ namespace Reflow.Playground
     public class Email
     {
         public int Id { get; set; }
-        public string Address { get; set; }
+        public string Address { get; set; } = null!;
 
         public int PersonId { get; set; }
-        public Person Person { get; set; }
+        public Person Person { get; set; } = null!;
     }
 
     public class PersonConfiguration : IEntityConfiguration<Person>

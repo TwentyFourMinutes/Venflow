@@ -1,4 +1,4 @@
-﻿using Reflow.Commands;
+﻿using Reflow.Operations;
 
 namespace Reflow
 {
@@ -20,14 +20,14 @@ namespace Reflow
 
         public QueryBuilder<TEntity> Query(Func<SqlInterpolationHandler> sql)
         {
-            Commands.Query.Handle(_database, sql, static x => x.Invoke());
+            Operations.Query.Handle(_database, sql, static x => x.Invoke());
 
             return default;
         }
 
         public QueryBuilder<TEntity> Query(Func<TEntity, SqlInterpolationHandler> sql)
         {
-            Commands.Query.Handle(
+            Operations.Query.Handle(
                 _database,
                 sql,
                 static x => x.Invoke(InstanceStore<TEntity>.Instance)
@@ -39,7 +39,7 @@ namespace Reflow
         public QueryBuilder<TEntity> Query<T1>(Func<TEntity, T1, SqlInterpolationHandler> sql)
             where T1 : class, new()
         {
-            Commands.Query.Handle(
+            Operations.Query.Handle(
                 _database,
                 sql,
                 static x => x.Invoke(InstanceStore<TEntity>.Instance, InstanceStore<T1>.Instance)
@@ -47,13 +47,14 @@ namespace Reflow
 
             return default;
         }
+
         public QueryBuilder<TEntity> Query<T1, T2>(
             Func<TEntity, T1, T2, SqlInterpolationHandler> sql
         )
             where T1 : class, new()
             where T2 : class, new()
         {
-            Commands.Query.Handle(
+            Operations.Query.Handle(
                 _database,
                 sql,
                 static x =>
@@ -74,7 +75,7 @@ namespace Reflow
             where T2 : class, new()
             where T3 : class, new()
         {
-            Commands.Query.Handle(
+            Operations.Query.Handle(
                 _database,
                 sql,
                 static x =>
@@ -97,7 +98,7 @@ namespace Reflow
             where T3 : class, new()
             where T4 : class, new()
         {
-            Commands.Query.Handle(
+            Operations.Query.Handle(
                 _database,
                 sql,
                 static x =>
@@ -122,7 +123,7 @@ namespace Reflow
             where T4 : class, new()
             where T5 : class, new()
         {
-            Commands.Query.Handle(
+            Operations.Query.Handle(
                 _database,
                 sql,
                 static x =>
@@ -149,7 +150,7 @@ namespace Reflow
             where T5 : class, new()
             where T6 : class, new()
         {
-            Commands.Query.Handle(
+            Operations.Query.Handle(
                 _database,
                 sql,
                 static x =>
@@ -178,7 +179,7 @@ namespace Reflow
             where T6 : class, new()
             where T7 : class, new()
         {
-            Commands.Query.Handle(
+            Operations.Query.Handle(
                 _database,
                 sql,
                 static x =>
@@ -209,7 +210,7 @@ namespace Reflow
             where T7 : class, new()
             where T8 : class, new()
         {
-            Commands.Query.Handle(
+            Operations.Query.Handle(
                 _database,
                 sql,
                 static x =>
@@ -231,7 +232,7 @@ namespace Reflow
 
         public QueryBuilder<TEntity> QueryRaw(Func<string> sql)
         {
-            Commands.Query.HandleRaw(_database, sql);
+            Operations.Query.HandleRaw(_database, sql);
 
             return default;
         }
@@ -240,7 +241,17 @@ namespace Reflow
 
         #region Insert
 
-        public void InsertAsync() { }
+        public async Task InsertAsync(TEntity entity)
+        {
+            await Task.Yield();
+            _ = entity;
+        }
+
+        public async Task InsertAsync(IList<TEntity> entities)
+        {
+            await Task.Yield();
+            _ = entities;
+        }
         #endregion
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Reflow.Analyzer.Emitters;
 using Reflow.Analyzer.Models;
+using Reflow.Analyzer.Shared;
 
 namespace Reflow.Analyzer.Sections
 {
@@ -19,11 +20,10 @@ namespace Reflow.Analyzer.Sections
         )
         {
             var configurations = syntaxReceiver.Candidates;
-            var entities = new List<Entity>();
             var entityProxies = new Dictionary<ITypeSymbol, List<Column>>(
                 SymbolEqualityComparer.Default
             );
-            var abosluteRelationIndex = 0;
+            var abosluteRelationIndex = 0u;
 
             for (var databaseIndex = 0; databaseIndex < previous.Data.Count; databaseIndex++)
             {
@@ -58,7 +58,6 @@ namespace Reflow.Analyzer.Sections
                         }
                     }
 
-                    entities.Add(entity);
                     database.Entities.Add(entity.Symbol, entity);
                     entityProxies.Add(entity.Symbol, updatableProperties);
                 }
@@ -104,12 +103,9 @@ namespace Reflow.Analyzer.Sections
                         rightEntity.Relations.Add(relation.CreateMirror());
                     }
                 }
-
-                database.EntitySymbols.Clear();
             }
 
             context.AddNamedSource("EntityProxies", EntityProxyEmitter.Emit(entityProxies));
-            context.AddNamedSource("EntityData", EntityDataEmitter.Emit(entities));
 
             return default;
         }
@@ -148,7 +144,7 @@ namespace Reflow.Analyzer.Sections
                 ).Symbol!;
 
                 if (
-                    interfaceSymbol.GetFullName() is not "Reflow.Modeling.IEntityConfiguration"
+                    interfaceSymbol.GetFullName() is not "Reflow.Modeling.IEntityConfiguration`1"
                     || !interfaceSymbol.IsReflowSymbol()
                 )
                     return;

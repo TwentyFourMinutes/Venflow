@@ -1,4 +1,4 @@
-﻿namespace Reflow.Analyzer.Properties
+﻿namespace Reflow.Analyzer.Shared
 {
     internal class AssemblyInfo
     {

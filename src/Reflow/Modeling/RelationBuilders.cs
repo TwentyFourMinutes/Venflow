@@ -13,9 +13,7 @@
         : IMultiRightRelationBuilder<TEntity, TRelation>,
           IRequiredSingleRightRelationBuilder<TEntity, TRelation>
         where TEntity : class, new()
-        where TRelation : class
-    {
-    }
+        where TRelation : class { }
 
     public interface INotRequiredSingleRightRelationBuilder<TEntity, TRelation>
         : IRequiredSingleRightRelationBuilder<TEntity, TRelation>

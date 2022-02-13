@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Text;
 using Reflow.Analyzer.CodeGenerator;
 using Reflow.Analyzer.Models;
 using Reflow.Analyzer.Operations;
+using Reflow.Analyzer.Shared;
 using static Reflow.Analyzer.CodeGenerator.CSharpCodeGenerator;
 
 namespace Reflow.Analyzer.Emitters
@@ -52,9 +53,9 @@ namespace Reflow.Analyzer.Emitters
                     continue;
                 }
 
-                if (query.Type.HasFlag(QueryType.Single))
+                if (query.Type.HasFlag(OperationType.Single))
                 {
-                    if (query.Type.HasFlag(QueryType.WithRelations))
+                    if (query.Type.HasFlag(OperationType.WithRelations))
                     {
                         methodLocation = BuildSingleWithRelationParser(query);
                     }
@@ -63,9 +64,9 @@ namespace Reflow.Analyzer.Emitters
                         methodLocation = BuildSingleNoRelationParser(query);
                     }
                 }
-                else if (query.Type.HasFlag(QueryType.Many))
+                else if (query.Type.HasFlag(OperationType.Many))
                 {
-                    if (query.Type.HasFlag(QueryType.WithRelations))
+                    if (query.Type.HasFlag(OperationType.WithRelations))
                     {
                         methodLocation = BuildManyWithRelationParser(query);
                     }
@@ -1412,9 +1413,9 @@ namespace Reflow.Analyzer.Emitters
             );
         }
 
-        internal static SourceText Emit(Database database, List<Query> queries)
+        internal static SourceText Emit(Database database)
         {
-            return new QueryParserEmitter(database, queries).Build();
+            return new QueryParserEmitter(database, database.Queries).Build();
         }
 
         private class QueryEqualityComparer : IEqualityComparer<Query>

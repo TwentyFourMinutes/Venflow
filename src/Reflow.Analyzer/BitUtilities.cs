@@ -4,11 +4,13 @@
     {
         internal static TypeCode GetTypeBySize(int size)
         {
+            const int byteSize = 8;
+
             return size switch
             {
-                <= sizeof(byte) * 8 => TypeCode.Byte,
-                <= sizeof(ushort) * 8 => TypeCode.UInt16,
-                <= sizeof(uint) * 8 => TypeCode.UInt32,
+                <= sizeof(byte) * byteSize => TypeCode.Byte,
+                <= sizeof(ushort) * byteSize => TypeCode.UInt16,
+                <= sizeof(uint) * byteSize => TypeCode.UInt32,
                 _ => TypeCode.UInt64,
             };
         }

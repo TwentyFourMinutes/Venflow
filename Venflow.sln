@@ -41,7 +41,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflow.Extensions", "src\Re
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflow.Extension", "src\Reflow.Extension\Reflow.Extension.csproj", "{F755E2CC-7E69-4287-8077-F04FC1901187}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflow.Analyzer.Diagnostic", "src\Reflow.Analyzer.Diagnostic\Reflow.Analyzer.Diagnostic.csproj", "{FEF84B05-7B41-4EE7-BD2F-1DBFE277E691}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Reflow.Analyzer.Shared", "src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.shproj", "{01A6D4B1-FC6E-48C3-8CB8-1DE2650F9E20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflow.Analyzer.Incremental", "src\Reflow.Analyzer.Incremental\Reflow.Analyzer.Incremental.csproj", "{1AEBAE42-8E82-431D-8424-0EFFA1EDCD5D}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{01a6d4b1-fc6e-48c3-8cb8-1de2650f9e20}*SharedItemsImports = 13
+		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{4eb59672-4d9c-49fb-9ee2-e0aa16d854f4}*SharedItemsImports = 5
+		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{fef84b05-7b41-4ee7-bd2f-1dbfe277e691}*SharedItemsImports = 5
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
@@ -125,6 +136,22 @@ Global
 		{F755E2CC-7E69-4287-8077-F04FC1901187}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F755E2CC-7E69-4287-8077-F04FC1901187}.Release|x86.ActiveCfg = Release|x86
 		{F755E2CC-7E69-4287-8077-F04FC1901187}.Release|x86.Build.0 = Release|x86
+		{FEF84B05-7B41-4EE7-BD2F-1DBFE277E691}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEF84B05-7B41-4EE7-BD2F-1DBFE277E691}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEF84B05-7B41-4EE7-BD2F-1DBFE277E691}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FEF84B05-7B41-4EE7-BD2F-1DBFE277E691}.Debug|x86.Build.0 = Debug|Any CPU
+		{FEF84B05-7B41-4EE7-BD2F-1DBFE277E691}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEF84B05-7B41-4EE7-BD2F-1DBFE277E691}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEF84B05-7B41-4EE7-BD2F-1DBFE277E691}.Release|x86.ActiveCfg = Release|Any CPU
+		{FEF84B05-7B41-4EE7-BD2F-1DBFE277E691}.Release|x86.Build.0 = Release|Any CPU
+		{1AEBAE42-8E82-431D-8424-0EFFA1EDCD5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AEBAE42-8E82-431D-8424-0EFFA1EDCD5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AEBAE42-8E82-431D-8424-0EFFA1EDCD5D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1AEBAE42-8E82-431D-8424-0EFFA1EDCD5D}.Debug|x86.Build.0 = Debug|Any CPU
+		{1AEBAE42-8E82-431D-8424-0EFFA1EDCD5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AEBAE42-8E82-431D-8424-0EFFA1EDCD5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AEBAE42-8E82-431D-8424-0EFFA1EDCD5D}.Release|x86.ActiveCfg = Release|Any CPU
+		{1AEBAE42-8E82-431D-8424-0EFFA1EDCD5D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -145,6 +172,9 @@ Global
 		{3A98B604-2BDF-4E66-8783-4F385E4F4225} = {C5886FD4-BD01-499B-B3D3-1BA0BF2B1D3B}
 		{32E82793-0D5E-4EF7-8344-FF9FD80F678F} = {3A98B604-2BDF-4E66-8783-4F385E4F4225}
 		{F755E2CC-7E69-4287-8077-F04FC1901187} = {3A98B604-2BDF-4E66-8783-4F385E4F4225}
+		{FEF84B05-7B41-4EE7-BD2F-1DBFE277E691} = {BCB6D863-5657-4179-9C6B-1779CFEF9B1F}
+		{01A6D4B1-FC6E-48C3-8CB8-1DE2650F9E20} = {BCB6D863-5657-4179-9C6B-1779CFEF9B1F}
+		{1AEBAE42-8E82-431D-8424-0EFFA1EDCD5D} = {BCB6D863-5657-4179-9C6B-1779CFEF9B1F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {020D29CB-7D63-45D4-8F95-7C89DC06E6E6}

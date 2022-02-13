@@ -2,7 +2,7 @@
 using System.Text;
 using Npgsql;
 
-namespace Reflow.Commands
+namespace Reflow.Operations
 {
     [InterpolatedStringHandler]
     public struct SqlInterpolationHandler

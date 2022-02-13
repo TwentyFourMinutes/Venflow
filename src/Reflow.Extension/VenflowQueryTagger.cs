@@ -243,7 +243,11 @@ namespace Reflow.Extension
                 }
             }
 
-            return classifications;
+            var strippedClassifications = classifications
+                .GroupBy(x => x.Span.Span)
+                .Select(x => x.First());
+
+            return strippedClassifications;
         }
 
         private void GetSqlClassifications(
@@ -357,12 +361,12 @@ namespace Reflow.Extension
                     _previousTagIndex = 0;
                 }
 
+                _previousLineIndex--;
+
                 if (_previousLineIndex == 0)
                 {
-                    throw new IndexOutOfRangeException();
+                    return null!;
                 }
-
-                _previousLineIndex--;
 
                 var line = _snapshot.GetLineFromLineNumber(_previousLineIndex);
                 var lineSpan = new SnapshotSpan(line.Start, line.End);
@@ -386,12 +390,12 @@ namespace Reflow.Extension
                     _subsequentTagIndex = 0;
                 }
 
+                _subsequentLineIndex++;
+
                 if (_subsequentLineIndex == _snapshot.LineCount)
                 {
-                    throw new IndexOutOfRangeException();
+                    return null!;
                 }
-
-                _subsequentLineIndex++;
 
                 var line = _snapshot.GetLineFromLineNumber(_subsequentLineIndex);
                 var lineSpan = new SnapshotSpan(line.Start, line.End);

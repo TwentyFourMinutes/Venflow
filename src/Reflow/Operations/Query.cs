@@ -5,7 +5,7 @@ using System.Text;
 using Npgsql;
 using Reflow.Lambdas;
 
-namespace Reflow.Commands
+namespace Reflow.Operations
 {
     internal static class Query
     {
@@ -52,6 +52,7 @@ namespace Reflow.Commands
                 if (columnIndecies is null)
                 {
                     GetColumnIndecies(
+                        queryData.Database,
                         dataReader.GetColumnSchema(),
                         queryData.LambdaData!.UsedEntities,
                         out columnIndecies
@@ -113,6 +114,7 @@ namespace Reflow.Commands
                 if (columnIndecies is null)
                 {
                     GetColumnIndecies(
+                        queryData.Database,
                         dataReader.GetColumnSchema(),
                         queryData.LambdaData!.UsedEntities,
                         out columnIndecies
@@ -143,7 +145,7 @@ namespace Reflow.Commands
             Action<TDelegate> sql
         ) where TDelegate : Delegate
         {
-            var lambdaData = LambdaLinker.GetLambdaData<QueryLinkData>(data.Method);
+            var lambdaData = database.GetQueryData<QueryLinkData>(data.Method);
 
             var command = new NpgsqlCommand();
 
@@ -180,7 +182,7 @@ namespace Reflow.Commands
             var queryData = new AmbientData
             {
                 Command = new NpgsqlCommand(sql.Invoke()),
-                LambdaData = LambdaLinker.GetLambdaData<QueryLinkData>(sql.Method),
+                LambdaData = database.GetQueryData<QueryLinkData>(sql.Method),
                 Database = database
             };
 
@@ -188,6 +190,7 @@ namespace Reflow.Commands
         }
 
         private static void GetColumnIndecies(
+            IDatabase database,
             ReadOnlyCollection<DbColumn> columnSchema,
             Type[] entities,
             out ushort[] columnIndecies
@@ -197,7 +200,7 @@ namespace Reflow.Commands
 
             var entityIndex = 0;
 
-            var nextEntity = Entities.Data[entities[entityIndex++]!];
+            var nextEntity = database.Configuration.Entities[entities[entityIndex++]!];
             Entity? currentEntity = null;
             var nextKeyName = nextEntity.Columns.First().Key;
             var absoluteIndex = (ushort)nextEntity.Columns.Count * -1;
@@ -212,7 +215,7 @@ namespace Reflow.Commands
 
                     if (entityIndex < entities.Length)
                     {
-                        nextEntity = Entities.Data[entities[entityIndex++]!];
+                        nextEntity = database.Configuration.Entities[entities[entityIndex++]!];
                         nextKeyName = nextEntity.Columns.First().Key;
                     }
 
