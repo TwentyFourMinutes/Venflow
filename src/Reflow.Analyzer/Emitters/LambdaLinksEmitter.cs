@@ -17,7 +17,6 @@ namespace Reflow.Analyzer.Emitters
             {
                 var link = operation.FluentCall.LambdaLink;
 
-                arguments.Add(TypeOf(Type(operation.FluentCall.DatabaseSymbol)));
                 arguments.Add(TypeOf(Type(link.ClassName)));
                 arguments.Add(Constant(link.IdentifierName));
                 arguments.Add(Constant(link.LambdaIndex));

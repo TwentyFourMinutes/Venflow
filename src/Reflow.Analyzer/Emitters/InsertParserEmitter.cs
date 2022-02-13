@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Reflow.Analyzer.CodeGenerator;
@@ -19,40 +20,43 @@ namespace Reflow.Analyzer.Emitters
         private readonly List<Insert> _inserts;
         private readonly List<MethodDeclarationSyntax> _inserters;
 
-        //private readonly Dictionary<Command<EntityRelationHolder>, MethodLocation> _inserterCache;
+        private readonly Dictionary<Insert, MethodLocation> _inserterCache;
 
         private InsertParserEmitter(Database database, List<Insert> inserts)
         {
             _database = database;
             _inserts = inserts;
             _className = $"__{database.Symbol.GetFullName().Replace('.', '_')}";
-            _inserters = new(inserts.Count);
-            //_inserterCache = new(commands.Count, CommandEqualityComparer.Default);
+            _inserters = new();
+            _inserterCache = new(InsertEqualityComparer.Default);
         }
 
         private SourceText Build()
         {
-            for (var commandIndex = 0; commandIndex < _inserts.Count; commandIndex++)
+            for (var insertIndex = 0; insertIndex < _inserts.Count; insertIndex++)
             {
-                var insert = _inserts[commandIndex];
+                var insert = _inserts[insertIndex];
 
-                //if (_inserterCache.TryGetValue(command, out var methodLocation))
-                //{
-                //    continue;
-                //}
+                if (_inserterCache.TryGetValue(insert, out var methodLocation))
+                {
+                    _database.Inserts.RemoveAt(insertIndex);
+
+                    continue;
+                }
 
                 if (insert.Command.OperationType.HasFlag(OperationType.Single))
                 {
-                    BuildSingleNoRelationInserter(insert);
+                    methodLocation = BuildSingleNoRelationInserter(insert);
                 }
                 else if (insert.Command.OperationType.HasFlag(OperationType.Many)) { }
                 else
                 {
                     throw new InvalidOperationException();
                 }
-                //((QueryLinkData)command.FluentCall.LambdaLink.Data!).Location = methodLocation;
 
-                //_inserterCache.Add(command, methodLocation);
+                insert.Command.Location = methodLocation;
+
+                _inserterCache.Add(insert, methodLocation);
             }
 
             return File("Reflow.Inserters")
@@ -163,26 +167,27 @@ namespace Reflow.Analyzer.Emitters
             return new InsertParserEmitter(database, database.Inserts).Build();
         }
 
-        //private class CommandEqualityComparer : IEqualityComparer<Command<EntityRelationHolder>>
-        //{
-        //    internal static CommandEqualityComparer Default = new();
+        private class InsertEqualityComparer : IEqualityComparer<Insert>
+        {
+            internal static InsertEqualityComparer Default = new();
 
-        //    private CommandEqualityComparer() { }
+            private InsertEqualityComparer() { }
 
-        //    bool IEqualityComparer<Command>.Equals(Command<EntityRelationHolder> x, Command<EntityRelationHolder> y)
-        //    {
-        //        return x.Entity.Equals(y.Entity, SymbolEqualityComparer.Default) && x.OperationType == y.OperationType;
-        //    }
+            bool IEqualityComparer<Insert>.Equals(Insert x, Insert y)
+            {
+                return x.Command.OperationType == y.Command.OperationType
+                    && x.Command.Entity.Equals(y.Command.Entity, SymbolEqualityComparer.Default);
+            }
 
-        //    int IEqualityComparer<Command>.GetHashCode(Command<EntityRelationHolder> obj)
-        //    {
-        //        var hashCode = new HashCode();
+            int IEqualityComparer<Insert>.GetHashCode(Insert obj)
+            {
+                var hashCode = new HashCode();
 
-        //        hashCode.Add(obj.Entity);
-        //        hashCode.Add(obj.OperationType);
+                hashCode.Add(obj.Command.Entity);
+                hashCode.Add(obj.Command.OperationType);
 
-        //        return hashCode.ToHashCode();
-        //    }
-        //}
+                return hashCode.ToHashCode();
+            }
+        }
     }
 }

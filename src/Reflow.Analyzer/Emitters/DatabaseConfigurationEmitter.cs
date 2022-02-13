@@ -1,8 +1,10 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Data.Common;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Reflow.Analyzer.CodeGenerator;
 using Reflow.Analyzer.Models;
+using Reflow.Analyzer.Operations;
 using static Reflow.Analyzer.CodeGenerator.CSharpCodeGenerator;
 
 namespace Reflow.Analyzer.Emitters
@@ -27,8 +29,16 @@ namespace Reflow.Analyzer.Emitters
                                 LambdaLinksEmitter.Emit(
                                     database.Queries.OfType<Models.IOperation>()
                                 ),
-                                GeInsertSytanx(),
-                                GeInsertSytanx()
+                                GetInsertSytanx(
+                                    database.Inserts.Where(
+                                        x => x.Command.OperationType.HasFlag(OperationType.Single)
+                                    )
+                                ),
+                                GetInsertSytanx(
+                                    database.Inserts.Where(
+                                        x => x.Command.OperationType.HasFlag(OperationType.Many)
+                                    )
+                                )
                             )
                     )
                 );
@@ -142,9 +152,40 @@ namespace Reflow.Analyzer.Emitters
                 GenericType(typeof(Dictionary<,>), Type(typeof(Type)), Type("Reflow.Entity"));
         }
 
-        private static CSharpInstanceSyntax GeInsertSytanx()
+        private static CSharpInstanceSyntax GetInsertSytanx(IEnumerable<Insert> inserts)
         {
-            return Instance(DictionaryType()).WithArguments(Constant(0));
+            var insertInitializers = new List<InitializerExpressionSyntax>();
+
+            foreach (var insert in inserts)
+            {
+                var command = insert.Command;
+
+                var operationType = command.OperationType.HasFlag(OperationType.Single)
+                  ? Type(command.Entity)
+                  : GenericType(typeof(IList<>), Type(command.Entity));
+
+                insertInitializers.Add(
+                    DictionaryEntry(
+                        TypeOf(Type(command.Entity)),
+                        Cast(
+                            GenericType(
+                                typeof(Func<,,>),
+                                Type<DbCommand>(),
+                                operationType,
+                                Type<Task>()
+                            ),
+                            AccessMember(
+                                Type(command.Location!.FullTypeName),
+                                command.Location!.MethodName
+                            )
+                        )
+                    )
+                );
+            }
+
+            return Instance(DictionaryType())
+                .WithArguments(Constant(insertInitializers.Count))
+                .WithInitializer(DictionaryInitializer(insertInitializers));
 
             static TypeSyntax DictionaryType() =>
                 GenericType(typeof(Dictionary<,>), Type<Type>(), Type<Delegate>());

@@ -31,8 +31,8 @@ namespace Reflow.Analyzer.Emitters
             _database = database;
             _queries = queries;
             _className = $"__{database.Symbol.GetFullName().Replace('.', '_')}";
-            _parsers = new(queries.Count);
-            _parserCache = new(queries.Count, QueryEqualityComparer.Default);
+            _parsers = new();
+            _parserCache = new(QueryEqualityComparer.Default);
             _cases = new();
             _afterCases = new();
             _caseStatements = new();

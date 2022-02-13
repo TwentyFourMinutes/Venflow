@@ -362,7 +362,6 @@ namespace Reflow.Analyzer.Sections
 
                         fluentCalls.Add(
                             new FluentCallDefinition(
-                                data.DatabaseSymbol,
                                 _semanticModel,
                                 lambdaSyntax,
                                 data.Invocations,
@@ -748,7 +747,6 @@ namespace Reflow.Analyzer.Sections
 
                         fluentCalls.Add(
                             new FluentCallDefinition(
-                                data.DatabaseSymbol,
                                 _semanticModel,
                                 lambdaSyntax,
                                 data.Invocations,

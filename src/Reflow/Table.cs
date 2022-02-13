@@ -241,17 +241,19 @@ namespace Reflow
 
         #region Insert
 
-        public async Task InsertAsync(TEntity entity)
+        public Task InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
-            await Task.Yield();
-            _ = entity;
+            return Insert.InsertAsync(_database, entity, cancellationToken);
         }
 
-        public async Task InsertAsync(IList<TEntity> entities)
+        public Task InsertAsync(
+            IList<TEntity> entities,
+            CancellationToken cancellationToken = default
+        )
         {
-            await Task.Yield();
-            _ = entities;
+            return Insert.InsertAsync(_database, entities, cancellationToken);
         }
+
         #endregion
     }
 }
