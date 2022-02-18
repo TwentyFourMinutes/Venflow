@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 		<LangVersion>preview</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CSharpier.MsBuild" Version="0.14.0" PrivateAssets="all" />
+		<PackageReference Include="CSharpier.MsBuild" Version="0.15.1" PrivateAssets="all" />
 		<PackageReference Include="Npgsql" Version="6.0.3" />
 	</ItemGroup>
 
