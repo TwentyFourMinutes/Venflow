@@ -314,7 +314,18 @@ namespace Reflow.Analyzer.CodeGenerator
             return IdentifierName(name);
         }
 
+        public static LiteralExpressionSyntax Constant(char value)
+        {
+            return LiteralExpression(SyntaxKind.CharacterLiteralExpression)
+                .WithToken(Literal(value));
+        }
+
         public static LiteralExpressionSyntax Constant(short value)
+        {
+            return LiteralExpression(SyntaxKind.NumericLiteralExpression).WithToken(Literal(value));
+        }
+
+        public static LiteralExpressionSyntax Constant(ushort value)
         {
             return LiteralExpression(SyntaxKind.NumericLiteralExpression).WithToken(Literal(value));
         }
@@ -354,6 +365,15 @@ namespace Reflow.Analyzer.CodeGenerator
         public static CSharpLambdaSyntax Lambda(params string[] parameters)
         {
             return new CSharpLambdaSyntax(parameters);
+        }
+
+        public static ConditionalExpressionSyntax Conditional(
+            ExpressionSyntax condition,
+            ExpressionSyntax then,
+            ExpressionSyntax @else
+        )
+        {
+            return ConditionalExpression(condition, then, @else);
         }
 
         public static CSharpIfSyntax If(
@@ -565,6 +585,15 @@ namespace Reflow.Analyzer.CodeGenerator
             );
         }
 
+        public static MemberAccessExpressionSyntax EnumMember<T>(T member) where T : struct, Enum
+        {
+            return MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression,
+                Type<T>(),
+                IdentifierName(member.ToString())
+            );
+        }
+
         public static BaseExpressionSyntax Base()
         {
             return BaseExpression();
@@ -639,14 +668,60 @@ namespace Reflow.Analyzer.CodeGenerator
             return BinaryExpression(SyntaxKind.RightShiftExpression, expression, count);
         }
 
+        public static BinaryExpressionSyntax BitwiseOr(
+            ExpressionSyntax left,
+            ExpressionSyntax right
+        )
+        {
+            return BinaryExpression(SyntaxKind.BitwiseOrExpression, left, right);
+        }
+
         public static BinaryExpressionSyntax LessThen(ExpressionSyntax left, ExpressionSyntax right)
         {
             return BinaryExpression(SyntaxKind.LessThanExpression, left, right);
         }
 
+        public static BinaryExpressionSyntax LessOrEqualThen(
+            ExpressionSyntax left,
+            ExpressionSyntax right
+        )
+        {
+            return BinaryExpression(SyntaxKind.LessThanOrEqualExpression, left, right);
+        }
+
         public static PostfixUnaryExpressionSyntax Increment(ExpressionSyntax variable)
         {
             return PostfixUnaryExpression(SyntaxKind.PostIncrementExpression, variable);
+        }
+
+        public static PostfixUnaryExpressionSyntax Decrement(ExpressionSyntax variable)
+        {
+            return PostfixUnaryExpression(SyntaxKind.PostDecrementExpression, variable);
+        }
+
+        public static ExpressionSyntax Add(ExpressionSyntax a, ExpressionSyntax b)
+        {
+            return BinaryExpression(SyntaxKind.AddExpression, a, b);
+        }
+
+        public static ExpressionSyntax Substract(ExpressionSyntax a, ExpressionSyntax b)
+        {
+            return BinaryExpression(SyntaxKind.SubtractExpression, a, b);
+        }
+
+        public static ExpressionSyntax Multiply(ExpressionSyntax a, ExpressionSyntax b)
+        {
+            return BinaryExpression(SyntaxKind.MultiplyExpression, a, b);
+        }
+
+        public static ExpressionSyntax Divide(ExpressionSyntax a, ExpressionSyntax b)
+        {
+            return BinaryExpression(SyntaxKind.DivideExpression, a, b);
+        }
+
+        public static ExpressionSyntax Modulo(ExpressionSyntax a, ExpressionSyntax b)
+        {
+            return BinaryExpression(SyntaxKind.ModuloExpression, a, b);
         }
 
         public static ElementAccessExpressionSyntax AccessElement(
@@ -671,6 +746,26 @@ namespace Reflow.Analyzer.CodeGenerator
         public static LiteralExpressionSyntax Null()
         {
             return LiteralExpression(SyntaxKind.NullLiteralExpression);
+        }
+
+        public static ForStatementSyntax For(
+            ExpressionSyntax condition,
+            ExpressionSyntax increment,
+            params StatementSyntax[] statements
+        )
+        {
+            return For(condition, increment, (IEnumerable<StatementSyntax>)statements);
+        }
+
+        public static ForStatementSyntax For(
+            ExpressionSyntax condition,
+            ExpressionSyntax increment,
+            IEnumerable<StatementSyntax> statements
+        )
+        {
+            return ForStatement(Block(statements))
+                .WithCondition(condition)
+                .WithIncrementors(SingletonSeparatedList(increment));
         }
 
         public static ForStatementSyntax For(

@@ -58,7 +58,7 @@ namespace Reflow.Analyzer.Sections
                 var parameterType = invocationSymbol.Parameters[0].Type;
 
                 var operationType =
-                    parameterType.GetFullName() == "System.Collections.IList`1"
+                    parameterType.GetFullName() == "System.Collections.Generic.IList`1"
                         ? OperationType.Many
                         : OperationType.Single;
 

@@ -17,6 +17,11 @@ namespace Reflow.Analyzer.CodeGenerator
             _ifSyntax = IfStatement(condition, Block(then));
         }
 
+        public static implicit operator StatementSyntax(CSharpIfSyntax syntax)
+        {
+            return syntax._ifSyntax;
+        }
+
         public static implicit operator IfStatementSyntax(CSharpIfSyntax syntax)
         {
             return syntax._ifSyntax;

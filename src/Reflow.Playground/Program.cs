@@ -37,7 +37,7 @@ namespace Reflow.Playground
                 .Join(x => x.Emails)
                 .ManyAsync();
 
-            await db.People.InsertAsync(people.First());
+            await db.People.InsertAsync(people);
         }
 
         public static void Test(Action a) => Console.WriteLine(a);
