@@ -46,19 +46,28 @@ namespace Reflow.Analyzer.Sections
                             var insert = Insert.Construct(database, command);
                             database.Inserts.Add(insert);
                             break;
+                        case Command.CommandType.Delete:
+                            var delete = Delete.Construct(database, command);
+                            database.Deletes.Add(delete);
+                            break;
                         default:
                             throw new InvalidOperationException();
                     }
                 }
 
-                context.AddNamedSource(
+                AddSource(
                     database.Symbol.GetFullName().Replace('.', '_'),
                     QueryParserEmitter.Emit(database)
                 );
 
-                context.AddNamedSource(
+                AddSource(
                     database.Symbol.GetFullName().Replace('.', '_') + "_Inserters",
                     InsertParserEmitter.Emit(database)
+                );
+
+                AddSource(
+                    database.Symbol.GetFullName().Replace('.', '_') + "_Deletes",
+                    DeleteEmitter.Emit(database)
                 );
             }
 

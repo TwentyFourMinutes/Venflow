@@ -29,15 +29,43 @@ namespace Reflow.Analyzer.Emitters
                                 LambdaLinksEmitter.Emit(
                                     database.Queries.OfType<Models.IOperation>()
                                 ),
-                                GetInsertSytanx(
-                                    database.Inserts.Where(
-                                        x => x.Command.OperationType.HasFlag(OperationType.Single)
-                                    )
+                                GetCommandSytanx(
+                                    database.Inserts
+                                        .Where(
+                                            x =>
+                                                x.Command.OperationType.HasFlag(
+                                                    OperationType.Single
+                                                )
+                                        )
+                                        .Select(x => x.Command),
+                                    false
                                 ),
-                                GetInsertSytanx(
-                                    database.Inserts.Where(
-                                        x => x.Command.OperationType.HasFlag(OperationType.Many)
-                                    )
+                                GetCommandSytanx(
+                                    database.Inserts
+                                        .Where(
+                                            x => x.Command.OperationType.HasFlag(OperationType.Many)
+                                        )
+                                        .Select(x => x.Command),
+                                    false
+                                ),
+                                GetCommandSytanx(
+                                    database.Deletes
+                                        .Where(
+                                            x =>
+                                                x.Command.OperationType.HasFlag(
+                                                    OperationType.Single
+                                                )
+                                        )
+                                        .Select(x => x.Command),
+                                    true
+                                ),
+                                GetCommandSytanx(
+                                    database.Deletes
+                                        .Where(
+                                            x => x.Command.OperationType.HasFlag(OperationType.Many)
+                                        )
+                                        .Select(x => x.Command),
+                                    true
                                 )
                             )
                     )
@@ -152,14 +180,15 @@ namespace Reflow.Analyzer.Emitters
                 GenericType(typeof(Dictionary<,>), Type(typeof(Type)), Type("Reflow.Entity"));
         }
 
-        private static CSharpInstanceSyntax GetInsertSytanx(IEnumerable<Insert> inserts)
+        private static CSharpInstanceSyntax GetCommandSytanx(
+            IEnumerable<Command> commands,
+            bool isAction
+        )
         {
             var insertInitializers = new List<InitializerExpressionSyntax>();
 
-            foreach (var insert in inserts)
+            foreach (var command in commands)
             {
-                var command = insert.Command;
-
                 var operationType = command.OperationType.HasFlag(OperationType.Single)
                   ? Type(command.Entity)
                   : GenericType(typeof(IList<>), Type(command.Entity));
@@ -168,12 +197,14 @@ namespace Reflow.Analyzer.Emitters
                     DictionaryEntry(
                         TypeOf(Type(command.Entity)),
                         Cast(
-                            GenericType(
-                                typeof(Func<,,>),
-                                Type<DbCommand>(),
-                                operationType,
-                                Type<Task>()
-                            ),
+                            isAction
+                              ? GenericType(typeof(Action<,>), Type<DbCommand>(), operationType)
+                              : GenericType(
+                                    typeof(Func<,,>),
+                                    Type<DbCommand>(),
+                                    operationType,
+                                    Type<Task>()
+                                ),
                             AccessMember(
                                 Type(command.Location!.FullTypeName),
                                 command.Location!.MethodName

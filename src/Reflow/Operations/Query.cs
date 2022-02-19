@@ -85,6 +85,8 @@ namespace Reflow.Operations
                     await dataReader.DisposeAsync();
 
                 await queryData.Command.DisposeAsync();
+
+                AmbientData.Current = null;
             }
         }
 
@@ -136,6 +138,8 @@ namespace Reflow.Operations
                     await dataReader.DisposeAsync();
 
                 await queryData.Command.DisposeAsync();
+
+                AmbientData.Current = null;
             }
         }
 

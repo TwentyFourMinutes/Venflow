@@ -113,7 +113,7 @@ namespace Reflow.Extension
 
                     var containsInvalidTag = false;
 
-                    while ((iterationTag = spanIterator.GetNextPreviousTag()) != null)
+                    while ((iterationTag = spanIterator.GetNextPreviousTag()) is not null)
                     {
                         if (!validator.Validate(iterationTag, iterationTag.Span.GetSnapshotSpan()))
                         {
@@ -133,7 +133,7 @@ namespace Reflow.Extension
 
                     validator.Direction = SqlTagValidator.WalkDirection.Forward;
 
-                    while ((iterationTag = spanIterator.GetNextSubsequentTag()) != null)
+                    while ((iterationTag = spanIterator.GetNextSubsequentTag()) is not null)
                     {
                         if (!validator.Validate(iterationTag, iterationTag.Span.GetSnapshotSpan()))
                         {

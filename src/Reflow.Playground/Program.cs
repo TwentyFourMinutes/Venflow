@@ -23,7 +23,7 @@ namespace Reflow.Playground
             for (var i = 0; i < 2; i++)
             {
                 var person = await db.People
-                    .Query(people => $"  SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
                     .ManyAsync();
             }
 
@@ -38,6 +38,8 @@ namespace Reflow.Playground
                 .ManyAsync();
 
             await db.People.InsertAsync(people);
+
+            await db.People.DeleteAsync(people);
         }
 
         public static void Test(Action a) => Console.WriteLine(a);

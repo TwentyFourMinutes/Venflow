@@ -11,7 +11,7 @@ namespace Reflow.Analyzer.Sections
             OperationEmitterSection previous
         )
         {
-            context.AddNamedSource(
+            AddSource(
                 "DatabaseInstantiater",
                 DatabaseConfigurationEmitter.Emit(GetPrevious<DatabaseConfigurationSection>().Data)
             );

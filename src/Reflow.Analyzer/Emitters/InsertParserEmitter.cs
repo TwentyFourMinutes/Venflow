@@ -65,14 +65,6 @@ namespace Reflow.Analyzer.Emitters
                 _inserterCache.Add(insert, methodLocation);
             }
 
-            var a = File("Reflow.Inserters")
-                .WithMembers(
-                    Class(_className, CSharpModifiers.Internal | CSharpModifiers.Static)
-                        .WithMembers(_inserters)
-                )
-                .GetText()
-                .ToString();
-
             return File("Reflow.Inserters")
                 .WithMembers(
                     Class(_className, CSharpModifiers.Internal | CSharpModifiers.Static)
@@ -411,6 +403,14 @@ namespace Reflow.Analyzer.Emitters
                                         Type(entity.Columns[0].Type)
                                     ),
                                     Constant(0)
+                                )
+                            )
+                        ),
+                        Statement(
+                            Await(
+                                Invoke(
+                                    FastCast(Type("Npgsql.NpgsqlDataReader"), Variable("reader")),
+                                    "DisposeAsync"
                                 )
                             )
                         )

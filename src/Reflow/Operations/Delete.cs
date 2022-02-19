@@ -3,9 +3,9 @@ using Npgsql;
 
 namespace Reflow.Operations
 {
-    internal static class Insert
+    internal static class Delete
     {
-        internal static async Task InsertAsync<TEntity>(
+        internal static async Task<int> DeleteAsync<TEntity>(
             IDatabase database,
             TEntity entity,
             CancellationToken cancellationToken
@@ -14,15 +14,18 @@ namespace Reflow.Operations
             var command = (DbCommand)new NpgsqlCommand();
             command.Connection = database.Connection;
 
-            await database.EnsureValidConnection(cancellationToken);
+            if (entity is null)
+                return default;
 
             try
             {
-                await (
-                    (Func<DbCommand, TEntity, Task>)database.Configuration.SingleInserts[
+                (
+                    (Action<DbCommand, TEntity>)database.Configuration.SingleDeletes[
                         typeof(TEntity)
                     ]
                 ).Invoke(command, entity);
+
+                return await command.ExecuteNonQueryAsync(cancellationToken);
             }
             finally
             {
@@ -30,7 +33,7 @@ namespace Reflow.Operations
             }
         }
 
-        internal static async Task InsertAsync<TEntity>(
+        internal static async Task<int> DeleteAsync<TEntity>(
             IDatabase database,
             IList<TEntity> entities,
             CancellationToken cancellationToken
@@ -39,15 +42,18 @@ namespace Reflow.Operations
             var command = (DbCommand)new NpgsqlCommand();
             command.Connection = database.Connection;
 
-            await database.EnsureValidConnection(cancellationToken);
+            if (entities is null || entities.Count is 0)
+                return default;
 
             try
             {
-                await (
-                    (Func<DbCommand, IList<TEntity>, Task>)database.Configuration.ManyInserts[
+                (
+                    (Action<DbCommand, IList<TEntity>>)database.Configuration.ManyDeletes[
                         typeof(TEntity)
                     ]
                 ).Invoke(command, entities);
+
+                return await command.ExecuteNonQueryAsync(cancellationToken);
             }
             finally
             {

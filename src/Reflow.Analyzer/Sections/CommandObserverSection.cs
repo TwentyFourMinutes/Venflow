@@ -65,6 +65,7 @@ namespace Reflow.Analyzer.Sections
                 var commandType = memberAccessSyntax.Name.Identifier.Text switch
                 {
                     "InsertAsync" => Command.CommandType.Insert,
+                    "DeleteAsync" => Command.CommandType.Delete,
                     _ => throw new InvalidOperationException(),
                 };
 

@@ -105,7 +105,7 @@ namespace Reflow.Analyzer.Sections
                 }
             }
 
-            context.AddNamedSource("EntityProxies", EntityProxyEmitter.Emit(entityProxies));
+            AddSource("EntityProxies", EntityProxyEmitter.Emit(entityProxies));
 
             return default;
         }

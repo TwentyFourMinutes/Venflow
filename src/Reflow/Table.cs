@@ -254,6 +254,19 @@ namespace Reflow
             return Insert.InsertAsync(_database, entities, cancellationToken);
         }
 
+        public Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
+        {
+            return Delete.DeleteAsync(_database, entity, cancellationToken);
+        }
+
+        public Task DeleteAsync(
+            IList<TEntity> entities,
+            CancellationToken cancellationToken = default
+        )
+        {
+            return Delete.DeleteAsync(_database, entities, cancellationToken);
+        }
+
         #endregion
     }
 }

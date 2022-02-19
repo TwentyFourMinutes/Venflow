@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Reflow.Analyzer
 {
@@ -11,6 +12,8 @@ namespace Reflow.Analyzer
         public GeneratorCache Cache { get; set; } = null!;
         internal TData Data { get; private set; }
         protected internal TPrevious Previous { get; private set; }
+
+        private GeneratorExecutionContext? _context;
 
         IGeneratorSection IGeneratorSection.Previous
         {
@@ -54,7 +57,16 @@ namespace Reflow.Analyzer
             ISyntaxContextReceiver syntaxReceiver
         )
         {
+            _context = context;
             Data = Execute(context, (TSyntaxReceiver)syntaxReceiver, Previous);
+        }
+
+        protected void AddSource(string name, SourceText sourceText)
+        {
+            if (!_context.HasValue)
+                throw new InvalidOperationException();
+
+            _context.Value.AddSource(name + ".g.cs", sourceText);
         }
     }
 

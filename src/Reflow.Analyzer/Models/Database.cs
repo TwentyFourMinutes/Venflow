@@ -12,7 +12,7 @@ namespace Reflow.Analyzer.Models
         internal List<Query> Queries { get; }
         internal List<Insert> Inserts { get; }
         internal List<Command> Updates { get; }
-        internal List<Command> Deletes { get; }
+        internal List<Delete> Deletes { get; }
 
         internal Database(ITypeSymbol symbol)
         {

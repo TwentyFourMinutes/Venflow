@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Reflow.Analyzer.Shared;
@@ -350,6 +351,14 @@ namespace Reflow.Analyzer.CodeGenerator
             return LiteralExpression(
                 value ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression
             );
+        }
+
+        public static InvocationExpressionSyntax FastCast(
+            TypeSyntax toType,
+            ExpressionSyntax expression
+        )
+        {
+            return Invoke(Type(typeof(Unsafe)), GenericName("As", toType), expression);
         }
 
         public static CastExpressionSyntax Cast(TypeSyntax toType, ExpressionSyntax expression)
