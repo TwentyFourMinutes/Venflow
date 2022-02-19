@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Reflow.Analyzer.Shared;
 
 namespace Reflow.Analyzer
@@ -8,6 +9,8 @@ namespace Reflow.Analyzer
     [Generator(LanguageNames.CSharp)]
     public class SourceGenerator : ISourceGenerator, IGeneratorSection
     {
+        internal static bool EmitSkipLocalsInit = false;
+
         private readonly RootData _rootData;
 
         IGeneratorSection IGeneratorSection.Previous
@@ -102,6 +105,20 @@ namespace Reflow.Analyzer
         void ISourceGenerator.Execute(GeneratorExecutionContext context)
         {
             context.Compilation.EnsureReference("Reflow", AssemblyInfo.PublicKey);
+
+            if (
+                ((CSharpCompilationOptions)context.Compilation.Options).AllowUnsafe
+                && !context.Compilation.Assembly.Modules
+                    .SelectMany(x => x.GetAttributes())
+                    .Any(
+                        x =>
+                            x.AttributeClass!.GetFullName()
+                                is "System.Runtime.CompilerServices.SkipLocalsInitAttribute"
+                    )
+            )
+            {
+                EmitSkipLocalsInit = true;
+            }
 
             var sw = Stopwatch.StartNew();
 

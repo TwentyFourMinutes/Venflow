@@ -12,9 +12,9 @@ namespace Reflow
 
         static Database()
         {
-            AssemblyRegister.Assembly ??= typeof(T).Assembly;
+            var databaseType = typeof(T);
 
-            var configurationsField = AssemblyRegister.Assembly.GetType(
+            var configurationsField = databaseType.Assembly.GetType(
                 "Reflow.DatabaseConfigurations"
             )!.GetField("Configurations")!;
 
@@ -23,8 +23,6 @@ namespace Reflow
 
             lock (configurations)
             {
-                var databaseType = typeof(T);
-
                 if (
                     !configurations.Remove(databaseType, out _configuration!)
                     || _configuration.LambdaLinks is null
@@ -59,17 +57,21 @@ namespace Reflow
                                     (link.LambdaIndex >> sizeof(ushort) * 8).ToString()
                                 )
                             )
+                            {
                                 continue;
+                            }
 
                             var tempMethod = nestedType.GetMethods(
                                 BindingFlags.NonPublic | BindingFlags.Instance
                             )[link.LambdaIndex & ushort.MaxValue];
 
                             if (
-                                tempMethod is null
-                                || !tempMethod.Name.StartsWith("<" + link.IdentifierName + ">b__")
+                                tempMethod?.Name.StartsWith("<" + link.IdentifierName + ">b__")
+                                is not true
                             )
+                            {
                                 continue;
+                            }
 
                             method = tempMethod;
                             break;
@@ -92,10 +94,12 @@ namespace Reflow
                         var tempMethod = methods[link.LambdaIndex];
 
                         if (
-                            tempMethod is null
-                            || !tempMethod.Name.StartsWith("<" + link.IdentifierName + ">b__")
+                            tempMethod?.Name.StartsWith("<" + link.IdentifierName + ">b__")
+                            is not true
                         )
+                        {
                             continue;
+                        }
 
                         method = tempMethod;
                     }

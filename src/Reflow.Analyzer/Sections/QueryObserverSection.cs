@@ -31,14 +31,8 @@ namespace Reflow.Analyzer.Sections
             throwOnInvalidBytes: false
         );
 
-        public SourceTextStream(
-            SourceText source,
-            int bufferSize = 2048,
-            bool useDefaultEncodingIfNull = false
-        )
+        public SourceTextStream(SourceText source, int bufferSize = 2048)
         {
-            Debug.Assert(source.Encoding != null || useDefaultEncodingIfNull);
-
             _source = source;
             _encoding = source.Encoding ?? s_utf8EncodingWithNoBOM;
             _encoder = _encoding.GetEncoder();

@@ -16,6 +16,15 @@ namespace Reflow.Analyzer.CodeGenerator
             {
                 _classSyntax = _classSyntax.WithModifiers(modifiers.GetSyntaxTokens());
             }
+
+            if (SourceGenerator.EmitSkipLocalsInit)
+            {
+                WithAttributes(
+                    CSharpCodeGenerator.Attribute(
+                        IdentifierName("System.Runtime.CompilerServices.SkipLocalsInitAttribute")
+                    )
+                );
+            }
         }
 
         public static implicit operator SyntaxNode(CSharpClassSyntax syntax)
