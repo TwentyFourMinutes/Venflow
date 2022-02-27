@@ -20,9 +20,7 @@ namespace Reflow.Analyzer.Sections
         )
         {
             var configurations = syntaxReceiver.Candidates;
-            var entityProxies = new Dictionary<ITypeSymbol, List<Column>>(
-                SymbolEqualityComparer.Default
-            );
+            var entityProxies = new Dictionary<ITypeSymbol, Entity>(SymbolEqualityComparer.Default);
             var abosluteRelationIndex = 0u;
 
             for (var databaseIndex = 0; databaseIndex < previous.Data.Count; databaseIndex++)
@@ -46,20 +44,10 @@ namespace Reflow.Analyzer.Sections
                         configurationData.BlockSyntax
                     );
 
-                    var updatableProperties = new List<Column>();
-
-                    for (var columnIndex = 0; columnIndex < entity.Columns.Count; columnIndex++)
-                    {
-                        var column = entity.Columns[columnIndex];
-
-                        if (column.IsUpdatable)
-                        {
-                            updatableProperties.Add(column);
-                        }
-                    }
-
                     database.Entities.Add(entity.Symbol, entity);
-                    entityProxies.Add(entity.Symbol, updatableProperties);
+
+                    if (entity.HasProxy)
+                        entityProxies.Add(entity.Symbol, entity);
                 }
 
                 foreach (var entity in database.Entities.Values)

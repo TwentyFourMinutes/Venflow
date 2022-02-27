@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Reflow.Analyzer.CodeGenerator
@@ -23,11 +22,9 @@ namespace Reflow.Analyzer.CodeGenerator
             return syntax._parameterSyntax;
         }
 
-        public CSharpParameterSyntax WithDefault(SyntaxKind syntax)
+        public CSharpParameterSyntax WithDefault(LiteralExpressionSyntax expression)
         {
-            _parameterSyntax = _parameterSyntax.WithDefault(
-                EqualsValueClause(LiteralExpression(syntax))
-            );
+            _parameterSyntax = _parameterSyntax.WithDefault(EqualsValueClause(expression));
 
             return this;
         }

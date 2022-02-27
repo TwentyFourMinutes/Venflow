@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.ComponentModel;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -16,6 +17,12 @@ namespace Reflow.Analyzer.CodeGenerator
             {
                 _constructorSyntax = _constructorSyntax.WithModifiers(modifiers.GetSyntaxTokens());
             }
+
+            WithAttributes(
+                CSharpCodeGenerator
+                    .Attribute(CSharpCodeGenerator.Type<EditorBrowsableAttribute>())
+                    .WithArguments(CSharpCodeGenerator.EnumMember(EditorBrowsableState.Never))
+            );
         }
 
         public static implicit operator ConstructorDeclarationSyntax(CSharpConstructorSyntax syntax)
@@ -40,6 +47,17 @@ namespace Reflow.Analyzer.CodeGenerator
         public CSharpConstructorSyntax WithStatements(IEnumerable<StatementSyntax> statements)
         {
             _constructorSyntax = _constructorSyntax.WithBody(Block(statements));
+
+            return this;
+        }
+
+        public CSharpConstructorSyntax WithAttributes(params CSharpAttributeSyntax[] attributes)
+        {
+            _constructorSyntax = _constructorSyntax.WithAttributeLists(
+                SingletonList(
+                    AttributeList(SeparatedList(attributes.Select(x => (AttributeSyntax)x)))
+                )
+            );
 
             return this;
         }

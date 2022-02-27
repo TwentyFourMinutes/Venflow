@@ -20,24 +20,13 @@ namespace Reflow.Playground
         {
             var db = new MyDatabase();
 
-            for (var i = 0; i < 2; i++)
-            {
-                var person = await db.People
-                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {i}")
-                    .ManyAsync();
-            }
-
             var people = await db.People
-                .Query<Email>(
-                    (people, emails) =>
-                        $@"SELECT {people:*} FROM {people}
-                           JOIN {emails} ON {emails.PersonId} = {people.Id}
-                           WHERE {people.Id} = {0}"
-                )
-                .Join(x => x.Emails)
+                .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {1}")
+                .TrackChanges()
                 .ManyAsync();
 
-            await db.People.InsertAsync(people);
+            await db.People.UpdateAsync(people.First());
+            await db.People.UpdateAsync(people);
 
             await db.People.DeleteAsync(people);
         }

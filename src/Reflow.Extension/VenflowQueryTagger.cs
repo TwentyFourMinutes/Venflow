@@ -125,6 +125,11 @@ namespace Reflow.Extension
                             break;
                     }
 
+                    if (!validator.HasFinished)
+                    {
+                        return Enumerable.Empty<ITagSpan<ClassificationTag>>();
+                    }
+
                     if (validator.TextSpan.HasValue)
                         lastValidatedIndex = validator.TextSpan.Value.End;
 
@@ -143,6 +148,11 @@ namespace Reflow.Extension
 
                         if (validator.HasFinished)
                             break;
+                    }
+
+                    if (!validator.HasFinished)
+                    {
+                        return Enumerable.Empty<ITagSpan<ClassificationTag>>();
                     }
 
                     if (validator.TextSpan.HasValue)

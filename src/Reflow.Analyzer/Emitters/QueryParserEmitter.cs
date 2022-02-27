@@ -25,6 +25,7 @@ namespace Reflow.Analyzer.Emitters
         private readonly List<StatementSyntax> _localSyntaxis;
         private readonly List<StatementSyntax> _iterationLocalSyntaxis;
         private readonly List<StatementSyntax> _miscStatements;
+        private readonly List<StatementSyntax> _proxyStatments;
 
         private QueryParserEmitter(Database database, List<Query> queries)
         {
@@ -39,6 +40,7 @@ namespace Reflow.Analyzer.Emitters
             _localSyntaxis = new();
             _iterationLocalSyntaxis = new();
             _miscStatements = new();
+            _proxyStatments = new();
         }
 
         private SourceText Build()
@@ -108,7 +110,12 @@ namespace Reflow.Analyzer.Emitters
                 if (columnIndex == 0)
                 {
                     _caseStatements.Add(
-                        Statement(AssignLocal(Variable("entity"), Instance(Type(entity.Symbol))))
+                        Statement(
+                            AssignLocal(
+                                Variable("entity"),
+                                Instance(GetEntityType(entity, query.TrackChanges))
+                            )
+                        )
                     );
                 }
 
@@ -145,7 +152,13 @@ namespace Reflow.Analyzer.Emitters
                         Parameter("columns", Array(Type(typeof(ushort))))
                     )
                     .WithStatements(
-                        Local("entity", Type(query.Entity)).WithInitializer(Default()),
+                        Local(
+                                "entity",
+                                query.TrackChanges && entity.HasProxy
+                                  ? Type(entity.ProxyName!)
+                                  : Type(entity.Symbol)
+                            )
+                            .WithInitializer(Default()),
                         Local("columnCount", Var())
                             .WithInitializer(AccessMember(Variable("columns"), "Length")),
                         For(
@@ -157,6 +170,10 @@ namespace Reflow.Analyzer.Emitters
                                 _cases
                             )
                         ),
+                        EmitIf(
+                            query.TrackChanges && entity.HasProxy,
+                            () => Statement(Invoke(Variable("entity"), "TrackChanges"))
+                        ),
                         Return(Variable("entity"))
                     )
             );
@@ -166,10 +183,7 @@ namespace Reflow.Analyzer.Emitters
 
         private MethodLocation BuildSingleWithRelationParser(Query query)
         {
-            var virtualEntities = GetVirtualEntities(
-                query.JoinedEntities,
-                _database.Entities[query.Entity]
-            );
+            var virtualEntities = GetVirtualEntities(query);
 
             var entityChangesType = BitUtilities.GetTypeBySize(virtualEntities.Length);
 
@@ -185,7 +199,7 @@ namespace Reflow.Analyzer.Emitters
 
                 var lastEntityLocalName = "lastEntity_" + virtualEntity.Id;
                 _localSyntaxis.Add(
-                    Local(lastEntityLocalName, Type(virtualEntity.Entity.Symbol))
+                    Local(lastEntityLocalName, GetEntityType(virtualEntity))
                         .WithInitializer(Default())
                 );
 
@@ -230,7 +244,7 @@ namespace Reflow.Analyzer.Emitters
                             Statement(
                                 AssignLocal(
                                     Variable(lastEntityLocalName),
-                                    Instance(Type(virtualEntity.Entity.Symbol))
+                                    Instance(GetEntityType(virtualEntity))
                                 )
                             )
                         );
@@ -277,12 +291,14 @@ namespace Reflow.Analyzer.Emitters
                             var entityRelationsLocalName =
                                 $"entityRelations_{foreignEntity.Id}_{relation.Id}";
 
+                            var rightEntity = _database.Entities[relation.RightEntitySymbol];
+
                             _localSyntaxis.Add(
                                 Local(
                                         lastEntityRelationsLocalName,
                                         GenericType(
                                             typeof(HashSet<>),
-                                            Type(relation.RightEntitySymbol)
+                                            Type(rightEntity.Columns[0].Type)
                                         )
                                     )
                                     .WithInitializer(Null())
@@ -295,7 +311,7 @@ namespace Reflow.Analyzer.Emitters
                                         Instance(
                                             GenericType(
                                                 typeof(HashSet<>),
-                                                Type(relation.RightEntitySymbol)
+                                                Type(rightEntity.Columns[0].Type)
                                             )
                                         )
                                     )
@@ -311,7 +327,7 @@ namespace Reflow.Analyzer.Emitters
                                                 Type(virtualEntity.Entity.Columns[0].Type),
                                                 GenericType(
                                                     typeof(HashSet<>),
-                                                    Type(relation.RightEntitySymbol)
+                                                    Type(rightEntity.Columns[0].Type)
                                                 )
                                             )
                                         )
@@ -501,6 +517,16 @@ namespace Reflow.Analyzer.Emitters
                     }
                     else
                     {
+                        if (
+                            columnIndex == virtualEntity.Entity.Columns.Count
+                            && virtualEntity.TrackChanges
+                        )
+                        {
+                            _caseStatements.Add(
+                                Statement(Invoke(Variable(lastEntityLocalName), "TrackChanges"))
+                            );
+                        }
+
                         // Assign a none primary column
                         _caseStatements.Add(
                             AssignMember(
@@ -533,7 +559,10 @@ namespace Reflow.Analyzer.Emitters
             {
                 var virtualEntity = virtualEntities[virtualEntityIndex];
 
-                if (!virtualEntity.HasRelations)
+                if (
+                    !virtualEntity.HasRelations
+                    && !(query.TrackChanges && virtualEntity.Entity.HasProxy)
+                )
                     continue;
 
                 for (
@@ -546,126 +575,94 @@ namespace Reflow.Analyzer.Emitters
                         relationIndex
                     ];
 
-                    var entityRelationsLocalName =
-                        $"entityRelations_{virtualEntity.Id}_{relation.Id}";
+                    //var entityRelationsLocalName =
+                    //    $"entityRelations_{virtualEntity.Id}_{relation.Id}";
                     var lastEntityRelationsLocalName =
                         $"lastEntityRelations_{virtualEntity.Id}_{relation.Id}";
 
                     var lastRightEntityLocalName = "lastEntity_" + foreignEntity.Id;
-                    var lastRightEntityIdLocalName = "entityId_" + foreignEntity.Id;
+                    //var lastRightEntityIdLocalName = "entityId_" + foreignEntity.Id;
 
-                    if (virtualEntity.RequiresDBNullCheck)
-                    {
-                        _afterCases.Add(
-                            If(
+                    _afterCases.Add(
+                        If(
+                            Or(
                                 IsBitSet(
                                     Variable("entityChanges"),
                                     Type(entityChangesType),
                                     virtualEntity.Id
                                 ),
-                                If(
-                                    Equal(Variable(lastEntityRelationsLocalName), Null()),
-                                    Statement(
-                                        AssignLocal(
-                                            Variable(lastEntityRelationsLocalName),
-                                            AccessElement(
-                                                Variable(entityRelationsLocalName),
-                                                Variable(lastRightEntityIdLocalName)
-                                            )
-                                        )
-                                    )
-                                ),
-                                If(
-                                    Invoke(
-                                        Variable(lastEntityRelationsLocalName),
-                                        "Add",
-                                        Variable("lastEntity_" + virtualEntity.Id)
-                                    ),
-                                    Statement(
-                                        Invoke(
-                                            AccessMember(
-                                                Variable(lastRightEntityLocalName),
-                                                relation.RightNavigationProperty!
-                                            ),
-                                            "Add",
-                                            Variable("lastEntity_" + virtualEntity.Id)
-                                        )
-                                    )
+                                IsBitSet(
+                                    Variable("entityChanges"),
+                                    Type(entityChangesType),
+                                    foreignEntity.Id
                                 )
-                            )
-                        );
-                    }
-                    else
-                    {
-                        _afterCases.Add(
+                            ),
+                            //If(
+                            //    Equal(Variable(lastEntityRelationsLocalName), Null()),
+                            //    Statement(
+                            //        AssignLocal(
+                            //            Variable(lastEntityRelationsLocalName),
+                            //            AccessElement(
+                            //                Variable(entityRelationsLocalName),
+                            //                Variable(lastRightEntityIdLocalName)
+                            //            )
+                            //        )
+                            //    )
+                            //),
                             If(
-                                Or(
-                                    IsBitSet(
-                                        Variable("entityChanges"),
-                                        Type(entityChangesType),
-                                        virtualEntity.Id
-                                    ),
-                                    IsBitSet(
-                                        Variable("entityChanges"),
-                                        Type(entityChangesType),
-                                        foreignEntity.Id
+                                Invoke(
+                                    Variable(lastEntityRelationsLocalName),
+                                    "Add",
+                                    AccessMember(
+                                        Variable("lastEntity_" + virtualEntity.Id),
+                                        virtualEntity.Entity.Columns[0].PropertyName
                                     )
                                 ),
-                                If(
-                                    Equal(Variable(lastEntityRelationsLocalName), Null()),
-                                    Statement(
-                                        AssignLocal(
-                                            Variable(lastEntityRelationsLocalName),
-                                            AccessElement(
-                                                Variable(entityRelationsLocalName),
-                                                Variable(lastRightEntityLocalName)
-                                            )
-                                        )
-                                    )
-                                ),
-                                If(
+                                Statement(
                                     Invoke(
-                                        Variable(lastEntityRelationsLocalName),
+                                        AccessMember(
+                                            Variable(lastRightEntityLocalName),
+                                            relation.RightNavigationProperty!
+                                        ),
                                         "Add",
                                         Variable("lastEntity_" + virtualEntity.Id)
-                                    ),
-                                    Statement(
-                                        Invoke(
-                                            AccessMember(
-                                                Variable(lastRightEntityLocalName),
-                                                relation.RightNavigationProperty!
-                                            ),
-                                            "Add",
-                                            Variable("lastEntity_" + virtualEntity.Id)
-                                        )
                                     )
                                 )
                             )
-                        );
-                    }
+                        )
+                    );
                 }
 
-                if (virtualEntity.SelfAssignedRelations.Count > 0)
+                for (
+                    var relationIndex = 0;
+                    relationIndex < virtualEntity.SelfAssignedRelations.Count;
+                    relationIndex++
+                )
                 {
-                    for (
-                        var relationIndex = 0;
-                        relationIndex < virtualEntity.SelfAssignedRelations.Count;
-                        relationIndex++
-                    )
-                    {
-                        var (relation, foreignEntity) = virtualEntity.SelfAssignedRelations[
-                            relationIndex
-                        ];
+                    var (relation, foreignEntity) = virtualEntity.SelfAssignedRelations[
+                        relationIndex
+                    ];
 
-                        _miscStatements.Add(
-                            AssignMember(
-                                Variable("lastEntity_" + virtualEntity.Id),
-                                relation.LeftNavigationProperty!,
-                                Variable("lastEntity_" + foreignEntity.Id)
-                            )
-                        );
-                    }
+                    _miscStatements.Add(
+                        AssignMember(
+                            Variable("lastEntity_" + virtualEntity.Id),
+                            relation.LeftNavigationProperty!,
+                            Variable("lastEntity_" + foreignEntity.Id)
+                        )
+                    );
+                }
 
+                if (query.TrackChanges && virtualEntity.Entity.HasProxy)
+                {
+                    _miscStatements.Add(
+                        Statement(
+                            Invoke(Variable("lastEntity_" + virtualEntity.Id), "TrackChanges")
+                        )
+                    );
+                }
+
+                if (_miscStatements.Count > 0)
+                {
                     _afterCases.Add(
                         If(
                             IsBitSet(
@@ -676,7 +673,6 @@ namespace Reflow.Analyzer.Emitters
                             _miscStatements
                         )
                     );
-
                     _miscStatements.Clear();
                 }
             }
@@ -750,7 +746,10 @@ namespace Reflow.Analyzer.Emitters
                 {
                     _caseStatements.Add(
                         Statement(
-                            AssignLocal(Variable("lastEntity"), Instance(Type(entity.Symbol)))
+                            AssignLocal(
+                                Variable("lastEntity"),
+                                Instance(GetEntityType(entity, query.TrackChanges))
+                            )
                         )
                     );
 
@@ -799,7 +798,13 @@ namespace Reflow.Analyzer.Emitters
                             .WithInitializer(
                                 Instance(GenericType(typeof(List<>), Type(query.Entity)))
                             ),
-                        Local("lastEntity", Type(query.Entity)).WithInitializer(Null()),
+                        Local(
+                                "lastEntity",
+                                query.TrackChanges && entity.HasProxy
+                                  ? Type(entity.ProxyName!)
+                                  : Type(entity.Symbol)
+                            )
+                            .WithInitializer(Null()),
                         Local("columnCount", Var())
                             .WithInitializer(AccessMember(Variable("columns"), "Length")),
                         While(
@@ -813,6 +818,10 @@ namespace Reflow.Analyzer.Emitters
                                     AccessElement(Variable("columns"), Variable("columnIndex")),
                                     _cases
                                 )
+                            ),
+                            EmitIf(
+                                query.TrackChanges && entity.HasProxy,
+                                () => Statement(Invoke(Variable("lastEntity"), "TrackChanges"))
                             )
                         ),
                         Return(Variable("entities"))
@@ -824,10 +833,7 @@ namespace Reflow.Analyzer.Emitters
 
         private MethodLocation BuildManyWithRelationParser(Query query)
         {
-            var virtualEntities = GetVirtualEntities(
-                query.JoinedEntities,
-                _database.Entities[query.Entity]
-            );
+            var virtualEntities = GetVirtualEntities(query);
 
             var entityChangesType = BitUtilities.GetTypeBySize(virtualEntities.Length);
 
@@ -843,7 +849,7 @@ namespace Reflow.Analyzer.Emitters
 
                 var lastEntityLocalName = "lastEntity_" + virtualEntity.Id;
                 _localSyntaxis.Add(
-                    Local(lastEntityLocalName, Type(virtualEntity.Entity.Symbol))
+                    Local(lastEntityLocalName, GetEntityType(virtualEntity))
                         .WithInitializer(Default())
                 );
 
@@ -860,7 +866,7 @@ namespace Reflow.Analyzer.Emitters
                                     GenericType(
                                         typeof(Dictionary<,>),
                                         Type(virtualEntity.Entity.Columns[0].Type),
-                                        Type(virtualEntity.Entity.Symbol)
+                                        GetEntityType(virtualEntity)
                                     )
                                 )
                             )
@@ -888,7 +894,7 @@ namespace Reflow.Analyzer.Emitters
                             Statement(
                                 AssignLocal(
                                     Variable(lastEntityLocalName),
-                                    Instance(Type(virtualEntity.Entity.Symbol))
+                                    Instance(GetEntityType(virtualEntity))
                                 )
                             )
                         );
@@ -905,6 +911,8 @@ namespace Reflow.Analyzer.Emitters
                             if (navigation.IsLeftNavigationPropertyInitialized)
                                 continue;
 
+                            var rightEntity = _database.Entities[navigation.RightEntitySymbol];
+
                             _caseStatements.Add(
                                 AssignMember(
                                     Variable(lastEntityLocalName),
@@ -912,7 +920,7 @@ namespace Reflow.Analyzer.Emitters
                                     Instance(
                                         GenericType(
                                             typeof(List<>),
-                                            Type(navigation.RightEntitySymbol)
+                                            GetEntityType(rightEntity, query.TrackChanges)
                                         )
                                     )
                                 )
@@ -935,12 +943,14 @@ namespace Reflow.Analyzer.Emitters
                             var entityRelationsLocalName =
                                 $"entityRelations_{foreignEntity.Id}_{relation.Id}";
 
+                            var rightEntity = _database.Entities[relation.RightEntitySymbol];
+
                             _localSyntaxis.Add(
                                 Local(
                                         lastEntityRelationsLocalName,
                                         GenericType(
                                             typeof(HashSet<>),
-                                            Type(relation.RightEntitySymbol)
+                                            Type(rightEntity.Columns[0].Type)
                                         )
                                     )
                                     .WithInitializer(Null())
@@ -953,7 +963,7 @@ namespace Reflow.Analyzer.Emitters
                                         Instance(
                                             GenericType(
                                                 typeof(HashSet<>),
-                                                Type(relation.RightEntitySymbol)
+                                                Type(rightEntity.Columns[0].Type)
                                             )
                                         )
                                     )
@@ -969,7 +979,7 @@ namespace Reflow.Analyzer.Emitters
                                                 Type(virtualEntity.Entity.Columns[0].Type),
                                                 GenericType(
                                                     typeof(HashSet<>),
-                                                    Type(relation.RightEntitySymbol)
+                                                    Type(rightEntity.Columns[0].Type)
                                                 )
                                             )
                                         )
@@ -1079,9 +1089,9 @@ namespace Reflow.Analyzer.Emitters
                             if (virtualEntity.RequiresDBNullCheck && virtualEntityIndex > 0)
                             {
                                 checkForExistingEntitiy[0] = If(
-                                        (IfStatementSyntax)checkForExistingEntitiy[0]
-                                    )
-                                    .Else(_miscStatements);
+                                    (IfStatementSyntax)checkForExistingEntitiy[0]
+                                )
+                                /*.Else(_miscStatements)*/;
                             }
                             else
                             {
@@ -1192,7 +1202,10 @@ namespace Reflow.Analyzer.Emitters
             {
                 var virtualEntity = virtualEntities[virtualEntityIndex];
 
-                if (!virtualEntity.HasRelations)
+                if (
+                    !virtualEntity.HasRelations
+                    && !(query.TrackChanges && virtualEntity.Entity.HasProxy)
+                )
                     continue;
 
                 for (
@@ -1205,126 +1218,94 @@ namespace Reflow.Analyzer.Emitters
                         relationIndex
                     ];
 
-                    var entityRelationsLocalName =
-                        $"entityRelations_{virtualEntity.Id}_{relation.Id}";
+                    //var entityRelationsLocalName =
+                    //    $"entityRelations_{virtualEntity.Id}_{relation.Id}";
                     var lastEntityRelationsLocalName =
                         $"lastEntityRelations_{virtualEntity.Id}_{relation.Id}";
 
                     var lastRightEntityLocalName = "lastEntity_" + foreignEntity.Id;
-                    var lastRightEntityIdLocalName = "entityId_" + foreignEntity.Id;
+                    //var lastRightEntityIdLocalName = "entityId_" + foreignEntity.Id;
 
-                    if (virtualEntity.RequiresDBNullCheck)
-                    {
-                        _afterCases.Add(
-                            If(
+                    _afterCases.Add(
+                        If(
+                            Or(
                                 IsBitSet(
                                     Variable("entityChanges"),
                                     Type(entityChangesType),
                                     virtualEntity.Id
                                 ),
-                                If(
-                                    Equal(Variable(lastEntityRelationsLocalName), Null()),
-                                    Statement(
-                                        AssignLocal(
-                                            Variable(lastEntityRelationsLocalName),
-                                            AccessElement(
-                                                Variable(entityRelationsLocalName),
-                                                Variable(lastRightEntityIdLocalName)
-                                            )
-                                        )
-                                    )
-                                ),
-                                If(
-                                    Invoke(
-                                        Variable(lastEntityRelationsLocalName),
-                                        "Add",
-                                        Variable("lastEntity_" + virtualEntity.Id)
-                                    ),
-                                    Statement(
-                                        Invoke(
-                                            AccessMember(
-                                                Variable(lastRightEntityLocalName),
-                                                relation.RightNavigationProperty!
-                                            ),
-                                            "Add",
-                                            Variable("lastEntity_" + virtualEntity.Id)
-                                        )
-                                    )
+                                IsBitSet(
+                                    Variable("entityChanges"),
+                                    Type(entityChangesType),
+                                    foreignEntity.Id
                                 )
-                            )
-                        );
-                    }
-                    else
-                    {
-                        _afterCases.Add(
+                            ),
+                            //If(
+                            //    Equal(Variable(lastEntityRelationsLocalName), Null()),
+                            //    Statement(
+                            //        AssignLocal(
+                            //            Variable(lastEntityRelationsLocalName),
+                            //            AccessElement(
+                            //                Variable(entityRelationsLocalName),
+                            //                Variable(lastRightEntityIdLocalName)
+                            //            )
+                            //        )
+                            //    )
+                            //),
                             If(
-                                Or(
-                                    IsBitSet(
-                                        Variable("entityChanges"),
-                                        Type(entityChangesType),
-                                        virtualEntity.Id
-                                    ),
-                                    IsBitSet(
-                                        Variable("entityChanges"),
-                                        Type(entityChangesType),
-                                        foreignEntity.Id
+                                Invoke(
+                                    Variable(lastEntityRelationsLocalName),
+                                    "Add",
+                                    AccessMember(
+                                        Variable("lastEntity_" + virtualEntity.Id),
+                                        virtualEntity.Entity.Columns[0].PropertyName
                                     )
                                 ),
-                                If(
-                                    Equal(Variable(lastEntityRelationsLocalName), Null()),
-                                    Statement(
-                                        AssignLocal(
-                                            Variable(lastEntityRelationsLocalName),
-                                            AccessElement(
-                                                Variable(entityRelationsLocalName),
-                                                Variable(lastRightEntityLocalName)
-                                            )
-                                        )
-                                    )
-                                ),
-                                If(
+                                Statement(
                                     Invoke(
-                                        Variable(lastEntityRelationsLocalName),
+                                        AccessMember(
+                                            Variable(lastRightEntityLocalName),
+                                            relation.RightNavigationProperty!
+                                        ),
                                         "Add",
                                         Variable("lastEntity_" + virtualEntity.Id)
-                                    ),
-                                    Statement(
-                                        Invoke(
-                                            AccessMember(
-                                                Variable(lastRightEntityLocalName),
-                                                relation.RightNavigationProperty!
-                                            ),
-                                            "Add",
-                                            Variable("lastEntity_" + virtualEntity.Id)
-                                        )
                                     )
                                 )
                             )
-                        );
-                    }
+                        )
+                    );
                 }
 
-                if (virtualEntity.SelfAssignedRelations.Count > 0)
+                for (
+                    var relationIndex = 0;
+                    relationIndex < virtualEntity.SelfAssignedRelations.Count;
+                    relationIndex++
+                )
                 {
-                    for (
-                        var relationIndex = 0;
-                        relationIndex < virtualEntity.SelfAssignedRelations.Count;
-                        relationIndex++
-                    )
-                    {
-                        var (relation, foreignEntity) = virtualEntity.SelfAssignedRelations[
-                            relationIndex
-                        ];
+                    var (relation, foreignEntity) = virtualEntity.SelfAssignedRelations[
+                        relationIndex
+                    ];
 
-                        _miscStatements.Add(
-                            AssignMember(
-                                Variable("lastEntity_" + virtualEntity.Id),
-                                relation.LeftNavigationProperty!,
-                                Variable("lastEntity_" + foreignEntity.Id)
-                            )
-                        );
-                    }
+                    _miscStatements.Add(
+                        AssignMember(
+                            Variable("lastEntity_" + virtualEntity.Id),
+                            relation.LeftNavigationProperty!,
+                            Variable("lastEntity_" + foreignEntity.Id)
+                        )
+                    );
+                }
 
+                if (query.TrackChanges && virtualEntity.Entity.HasProxy)
+                {
+                    _miscStatements.Add(
+                        Statement(
+                            Invoke(Variable("lastEntity_" + virtualEntity.Id), "TrackChanges")
+                        )
+                    );
+                }
+
+                if (_miscStatements.Count > 0)
+                {
                     _afterCases.Add(
                         If(
                             IsBitSet(
@@ -1335,7 +1316,6 @@ namespace Reflow.Analyzer.Emitters
                             _miscStatements
                         )
                     );
-
                     _miscStatements.Clear();
                 }
             }
@@ -1373,27 +1353,29 @@ namespace Reflow.Analyzer.Emitters
                                 .WithInitializer(AccessMember(Variable("columns"), "Length")),
                             While(
                                 Await(Invoke(Variable("reader"), "ReadAsync")),
-                                _iterationLocalSyntaxis.Concat(
-                                    Concat(
-                                        For(
-                                            Local("columnIndex", Var())
-                                                .WithInitializer(Constant(0)),
-                                            LessThen(
-                                                Variable("columnIndex"),
-                                                Variable("columnCount")
-                                            ),
-                                            Increment(Variable("columnIndex")),
-                                            Switch(
-                                                AccessElement(
-                                                    Variable("columns"),
-                                                    Variable("columnIndex")
+                                _iterationLocalSyntaxis
+                                    .Concat(
+                                        Concat(
+                                            For(
+                                                Local("columnIndex", Var())
+                                                    .WithInitializer(Constant(0)),
+                                                LessThen(
+                                                    Variable("columnIndex"),
+                                                    Variable("columnCount")
                                                 ),
-                                                _cases
-                                            )
-                                        ),
-                                        _afterCases
+                                                Increment(Variable("columnIndex")),
+                                                Switch(
+                                                    AccessElement(
+                                                        Variable("columns"),
+                                                        Variable("columnIndex")
+                                                    ),
+                                                    _cases
+                                                )
+                                            ),
+                                            _afterCases
+                                        )
                                     )
-                                )
+                                    .Concat(_proxyStatments)
                             ),
                             Return(Variable("entities"))
                         )
@@ -1403,14 +1385,25 @@ namespace Reflow.Analyzer.Emitters
             return methodDefinition;
         }
 
-        private VirtualEntity[] GetVirtualEntities(
-            RelationBuilderValues relationBuilderValues,
-            Entity rootEntity
-        )
+        private TypeSyntax GetEntityType(Entity entity, bool trackChanges)
         {
-            return new VirtualEntitySorter(_database, relationBuilderValues).GenerateSortedEntities(
-                rootEntity
-            );
+            return trackChanges && entity.HasProxy ? Type(entity.ProxyName!) : Type(entity.Symbol);
+        }
+
+        private TypeSyntax GetEntityType(VirtualEntity entity)
+        {
+            return entity.TrackChanges
+              ? Type(entity.Entity.ProxyName!)
+              : Type(entity.Entity.Symbol);
+        }
+
+        private VirtualEntity[] GetVirtualEntities(Query query)
+        {
+            return new VirtualEntitySorter(
+                _database,
+                query.JoinedEntities,
+                query.TrackChanges
+            ).GenerateSortedEntities(_database.Entities[query.Entity]);
         }
 
         internal static SourceText Emit(Database database)
@@ -1481,6 +1474,7 @@ namespace Reflow.Analyzer.Emitters
                 SelfAssignedRelations.Count > 0 || ForeignAssignedRelations.Count > 0;
             internal bool RequiresChangedLocal { get; set; }
             internal bool RequiresDBNullCheck { get; set; }
+            internal bool TrackChanges { get; set; }
             internal int Id { get; set; }
 
             internal VirtualEntity(Entity entity)
@@ -1499,20 +1493,24 @@ namespace Reflow.Analyzer.Emitters
             private readonly LinkedList<VirtualEntity> _entities;
             private readonly Database _database;
             private readonly RelationBuilderValues _relationBuilderValues;
+            private readonly bool _trackChanges;
 
             internal VirtualEntitySorter(
                 Database database,
-                RelationBuilderValues relationBuilderValues
+                RelationBuilderValues relationBuilderValues,
+                bool trackChanges
             )
             {
                 _database = database;
                 _relationBuilderValues = relationBuilderValues;
+                _trackChanges = trackChanges;
                 _entities = new();
             }
 
             internal VirtualEntity[] GenerateSortedEntities(Entity rootEntity)
             {
                 var virtualEntity = new VirtualEntity(rootEntity);
+                virtualEntity.TrackChanges = virtualEntity.Entity.HasProxy && _trackChanges;
 
                 _entities.AddFirst(virtualEntity);
 
@@ -1541,6 +1539,7 @@ namespace Reflow.Analyzer.Emitters
                 var leftVirtualEntity = new VirtualEntity(
                     _database.Entities[relation.LeftEntitySymbol]
                 );
+                leftVirtualEntity.TrackChanges = leftVirtualEntity.Entity.HasProxy && _trackChanges;
 
                 _entities.AddLast(leftVirtualEntity);
 

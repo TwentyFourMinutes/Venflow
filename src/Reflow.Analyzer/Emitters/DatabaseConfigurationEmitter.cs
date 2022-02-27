@@ -49,6 +49,28 @@ namespace Reflow.Analyzer.Emitters
                                     false
                                 ),
                                 GetCommandSytanx(
+                                    database.Updates
+                                        .Where(
+                                            x =>
+                                                x.Command.OperationType.HasFlag(
+                                                    OperationType.Single
+                                                )
+                                        )
+                                        .Select(x => x.Command),
+                                    true
+                                ),
+                                GetCommandSytanx(
+                                    database.Updates
+                                        .Where(
+                                            x =>
+                                                x.Command.OperationType.HasFlag(
+                                                    OperationType.Single
+                                                )
+                                        )
+                                        .Select(x => x.Command),
+                                    true
+                                ),
+                                GetCommandSytanx(
                                     database.Deletes
                                         .Where(
                                             x =>

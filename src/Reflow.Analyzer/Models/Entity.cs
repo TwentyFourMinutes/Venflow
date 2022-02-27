@@ -9,6 +9,8 @@ namespace Reflow.Analyzer.Models
         internal INamedTypeSymbol Symbol { get; }
         internal List<Column> Columns { get; }
         internal List<EntityRelation> Relations { get; set; }
+        internal string? ProxyName { get; set; }
+        internal bool HasProxy { get; set; }
 
         internal Entity(INamedTypeSymbol symbol, string tableName)
         {
@@ -37,6 +39,9 @@ namespace Reflow.Analyzer.Models
                 {
                     continue;
                 }
+
+                if (!HasProxy && propertySymbol.IsVirtual)
+                    HasProxy = true;
 
                 Columns.Add(
                     new Column(

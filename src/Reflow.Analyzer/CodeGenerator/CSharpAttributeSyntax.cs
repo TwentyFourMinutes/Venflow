@@ -7,9 +7,9 @@ namespace Reflow.Analyzer.CodeGenerator
     {
         private AttributeSyntax _attributeSyntax;
 
-        public CSharpAttributeSyntax(NameSyntax name)
+        public CSharpAttributeSyntax(TypeSyntax type)
         {
-            _attributeSyntax = Attribute(name);
+            _attributeSyntax = Attribute(IdentifierName(type.ToString()));
         }
 
         public static implicit operator AttributeSyntax(CSharpAttributeSyntax syntax)

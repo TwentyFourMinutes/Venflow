@@ -11,6 +11,9 @@ namespace Reflow
         internal IReadOnlyDictionary<Type, Delegate> SingleInserts { get; }
         internal IReadOnlyDictionary<Type, Delegate> ManyInserts { get; }
 
+        internal IReadOnlyDictionary<Type, Delegate> SingleUpdates { get; }
+        internal IReadOnlyDictionary<Type, Delegate> ManyUpdates { get; }
+
         internal IReadOnlyDictionary<Type, Delegate> SingleDeletes { get; }
         internal IReadOnlyDictionary<Type, Delegate> ManyDeletes { get; }
 
@@ -24,6 +27,8 @@ namespace Reflow
             LambdaLink[] lambdaLinks,
             IReadOnlyDictionary<Type, Delegate> singleInserts,
             IReadOnlyDictionary<Type, Delegate> manyInserts,
+            IReadOnlyDictionary<Type, Delegate> singleUpdates,
+            IReadOnlyDictionary<Type, Delegate> manyUpdates,
             IReadOnlyDictionary<Type, Delegate> singleDeletes,
             IReadOnlyDictionary<Type, Delegate> manyDeletes
         )
@@ -33,6 +38,8 @@ namespace Reflow
             LambdaLinks = lambdaLinks;
             SingleInserts = singleInserts;
             ManyInserts = manyInserts;
+            SingleUpdates = singleUpdates;
+            ManyUpdates = manyUpdates;
             SingleDeletes = singleDeletes;
             ManyDeletes = manyDeletes;
         }

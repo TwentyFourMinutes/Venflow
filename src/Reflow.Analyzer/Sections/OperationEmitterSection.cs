@@ -46,6 +46,10 @@ namespace Reflow.Analyzer.Sections
                             var insert = Insert.Construct(database, command);
                             database.Inserts.Add(insert);
                             break;
+                        case Command.CommandType.Update:
+                            var update = Update.Construct(database, command);
+                            database.Updates.Add(update);
+                            break;
                         case Command.CommandType.Delete:
                             var delete = Delete.Construct(database, command);
                             database.Deletes.Add(delete);
@@ -63,6 +67,11 @@ namespace Reflow.Analyzer.Sections
                 AddSource(
                     database.Symbol.GetFullName().Replace('.', '_') + "_Inserters",
                     InsertParserEmitter.Emit(database)
+                );
+
+                AddSource(
+                    database.Symbol.GetFullName().Replace('.', '_') + "_Updates",
+                    UpdateEmitter.Emit(database)
                 );
 
                 AddSource(

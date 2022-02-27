@@ -30,12 +30,16 @@ namespace Reflow.Analyzer.CodeGenerator
             return new CSharpConstructorSyntax(name, modifiers);
         }
 
-        public static CSharpParameterSyntax Parameter(string name, TypeSyntax type)
+        public static CSharpParameterSyntax Parameter(
+            string name,
+            TypeSyntax type,
+            CSharpModifiers modifiers = CSharpModifiers.None
+        )
         {
-            return new CSharpParameterSyntax(name, type, CSharpModifiers.None);
+            return new CSharpParameterSyntax(name, type, modifiers);
         }
 
-        public static CSharpAttributeSyntax Attribute(NameSyntax type)
+        public static CSharpAttributeSyntax Attribute(TypeSyntax type)
         {
             return new CSharpAttributeSyntax(type);
         }
@@ -141,7 +145,7 @@ namespace Reflow.Analyzer.CodeGenerator
         }
 
         public static SwitchSectionSyntax Case(
-            LiteralExpressionSyntax caseOn,
+            ExpressionSyntax caseOn,
             params StatementSyntax[] statements
         )
         {
@@ -152,7 +156,7 @@ namespace Reflow.Analyzer.CodeGenerator
         }
 
         public static SwitchSectionSyntax Case(
-            LiteralExpressionSyntax caseOn,
+            ExpressionSyntax caseOn,
             IEnumerable<StatementSyntax> statements
         )
         {
@@ -406,6 +410,42 @@ namespace Reflow.Analyzer.CodeGenerator
             return new CSharpIfSyntax(ifStatement);
         }
 
+        public static IsPatternExpressionSyntax Is(
+            ExpressionSyntax expression,
+            CSharpLocalSyntax local
+        )
+        {
+            var localSyntax = (LocalDeclarationStatementSyntax)local;
+
+            return IsPatternExpression(
+                expression,
+                DeclarationPattern(
+                    localSyntax.Declaration.Type,
+                    SingleVariableDesignation(localSyntax.Declaration.Variables.First().Identifier)
+                )
+            );
+        }
+
+        public static IsPatternExpressionSyntax IsNot(
+            ExpressionSyntax expression,
+            CSharpLocalSyntax local
+        )
+        {
+            var localSyntax = (LocalDeclarationStatementSyntax)local;
+
+            return IsPatternExpression(
+                expression,
+                UnaryPattern(
+                    DeclarationPattern(
+                        localSyntax.Declaration.Type,
+                        SingleVariableDesignation(
+                            localSyntax.Declaration.Variables.First().Identifier
+                        )
+                    )
+                )
+            );
+        }
+
         public static ExpressionSyntax Equal(
             ExpressionSyntax expression,
             LiteralExpressionSyntax to
@@ -628,6 +668,11 @@ namespace Reflow.Analyzer.CodeGenerator
             return BreakStatement();
         }
 
+        public static ContinueStatementSyntax Continue()
+        {
+            return ContinueStatement();
+        }
+
         public static AssignmentExpressionSyntax SetBit(NameSyntax local, int index)
         {
             return AssignLocal(local, Constant(1 << index), SyntaxKind.OrAssignmentExpression);
@@ -669,6 +714,14 @@ namespace Reflow.Analyzer.CodeGenerator
             );
         }
 
+        public static BinaryExpressionSyntax ShiftLeft(
+            ExpressionSyntax expression,
+            ExpressionSyntax count
+        )
+        {
+            return BinaryExpression(SyntaxKind.LeftShiftExpression, expression, count);
+        }
+
         public static BinaryExpressionSyntax ShiftRight(
             ExpressionSyntax expression,
             ExpressionSyntax count
@@ -683,6 +736,19 @@ namespace Reflow.Analyzer.CodeGenerator
         )
         {
             return BinaryExpression(SyntaxKind.BitwiseOrExpression, left, right);
+        }
+
+        public static BinaryExpressionSyntax BitwiseAnd(
+            ExpressionSyntax left,
+            ExpressionSyntax right
+        )
+        {
+            return BinaryExpression(SyntaxKind.BitwiseAndExpression, left, right);
+        }
+
+        public static PrefixUnaryExpressionSyntax BitwiseNot(ExpressionSyntax expression)
+        {
+            return PrefixUnaryExpression(SyntaxKind.BitwiseNotExpression, expression);
         }
 
         public static BinaryExpressionSyntax LessThen(ExpressionSyntax left, ExpressionSyntax right)
@@ -873,6 +939,11 @@ namespace Reflow.Analyzer.CodeGenerator
         )
         {
             return firstStatements.Concat(secondStatements);
+        }
+
+        public static StatementSyntax EmitIf(bool condition, Func<StatementSyntax> statement)
+        {
+            return condition ? statement.Invoke() : Block();
         }
     }
 }

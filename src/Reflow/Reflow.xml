@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Reflow</name>
+    </assembly>
+    <members>
+        <member name="P:Reflow.Database`1.Connection">
+            <inheritdoc/>
+        </member>
+    </members>
+</doc>

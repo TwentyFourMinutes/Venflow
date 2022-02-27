@@ -21,7 +21,9 @@ namespace Reflow.Analyzer.CodeGenerator
             {
                 WithAttributes(
                     CSharpCodeGenerator.Attribute(
-                        IdentifierName("System.Runtime.CompilerServices.SkipLocalsInitAttribute")
+                        CSharpCodeGenerator.Type(
+                            "System.Runtime.CompilerServices.SkipLocalsInitAttribute"
+                        )
                     )
                 );
             }
