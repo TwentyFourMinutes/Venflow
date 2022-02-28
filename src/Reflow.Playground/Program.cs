@@ -4,18 +4,6 @@ namespace Reflow.Playground
 {
     public static class Program
     {
-        public static int MyProperty
-        {
-            get { return 0; }
-            set { }
-        }
-
-        public static int MyProperty2
-        {
-            get { return 0; }
-            set { }
-        }
-
         public static async Task Main()
         {
             var db = new MyDatabase();
@@ -82,4 +70,7 @@ namespace Reflow.Playground
                 .UsingForeignKey(x => x.PersonId);
         }
     }
+
+    [GeneratedKey<Guid>]
+    public partial struct Key<T> where T : struct { }
 }

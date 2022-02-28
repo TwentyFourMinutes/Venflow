@@ -18,11 +18,14 @@ namespace Reflow.Analyzer.CodeGenerator
                 _methodSyntax = _methodSyntax.WithModifiers(modifiers.GetSyntaxTokens());
             }
 
-            WithAttributes(
-                CSharpCodeGenerator
-                    .Attribute(CSharpCodeGenerator.Type<EditorBrowsableAttribute>())
-                    .WithArguments(CSharpCodeGenerator.EnumMember(EditorBrowsableState.Never))
-            );
+            if (CSharpCodeGenerator.Options.HideFromEditor)
+            {
+                WithAttributes(
+                    CSharpCodeGenerator
+                        .Attribute(CSharpCodeGenerator.Type<EditorBrowsableAttribute>())
+                        .WithArguments(CSharpCodeGenerator.EnumMember(EditorBrowsableState.Never))
+                );
+            }
         }
 
         public static implicit operator MethodDeclarationSyntax(CSharpMethodSyntax syntax)

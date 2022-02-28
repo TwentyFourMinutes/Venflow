@@ -172,9 +172,9 @@ namespace Reflow.Analyzer.Operations
                             var noDirectDependencies = true;
 
                             for (
-                                var relationIndex = entity.Relations.Count - 1;
-                                relationIndex >= 0;
-                                relationIndex--
+                                var relationIndex = 0;
+                                relationIndex < entity.Relations.Count;
+                                relationIndex++
                             )
                             {
                                 var relation = entity.Relations[relationIndex];
@@ -202,9 +202,9 @@ namespace Reflow.Analyzer.Operations
                                 continue;
 
                             for (
-                                var relationIndex = entity.Relations.Count - 1;
-                                relationIndex >= 0;
-                                relationIndex--
+                                var relationIndex = 0;
+                                relationIndex < entity.Relations.Count;
+                                relationIndex++
                             )
                             {
                                 var relation = entity.Relations[relationIndex];

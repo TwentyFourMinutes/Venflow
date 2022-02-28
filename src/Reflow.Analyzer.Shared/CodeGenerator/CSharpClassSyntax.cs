@@ -17,7 +17,7 @@ namespace Reflow.Analyzer.CodeGenerator
                 _classSyntax = _classSyntax.WithModifiers(modifiers.GetSyntaxTokens());
             }
 
-            if (SourceGenerator.EmitSkipLocalsInit)
+            if (CSharpCodeGenerator.Options.EmitSkipLocalsInit)
             {
                 WithAttributes(
                     CSharpCodeGenerator.Attribute(

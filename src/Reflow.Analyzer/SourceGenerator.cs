@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+using Reflow.Analyzer.CodeGenerator;
 using Reflow.Analyzer.Shared;
 
 namespace Reflow.Analyzer
@@ -106,19 +106,7 @@ namespace Reflow.Analyzer
         {
             context.Compilation.EnsureReference("Reflow", AssemblyInfo.PublicKey);
 
-            if (
-                ((CSharpCompilationOptions)context.Compilation.Options).AllowUnsafe
-                && !context.Compilation.Assembly.Modules
-                    .SelectMany(x => x.GetAttributes())
-                    .Any(
-                        x =>
-                            x.AttributeClass!.GetFullName()
-                                is "System.Runtime.CompilerServices.SkipLocalsInitAttribute"
-                    )
-            )
-            {
-                EmitSkipLocalsInit = true;
-            }
+            CSharpCodeGenerator.Options.Init(context.Compilation);
 
             var sw = Stopwatch.StartNew();
 

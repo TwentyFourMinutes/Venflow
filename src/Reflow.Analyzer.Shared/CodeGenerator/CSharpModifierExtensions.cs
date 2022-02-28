@@ -20,12 +20,14 @@ namespace Reflow.Analyzer.CodeGenerator
                             CSharpModifiers.Protected => SyntaxKind.ProtectedKeyword,
                             CSharpModifiers.Internal => SyntaxKind.InternalKeyword,
                             CSharpModifiers.Public => SyntaxKind.PublicKeyword,
+                            CSharpModifiers.Partial => SyntaxKind.PartialKeyword,
                             CSharpModifiers.Sealed => SyntaxKind.SealedKeyword,
                             CSharpModifiers.Static => SyntaxKind.StaticKeyword,
                             CSharpModifiers.Abstract => SyntaxKind.AbstractKeyword,
                             CSharpModifiers.Override => SyntaxKind.OverrideKeyword,
                             CSharpModifiers.Virtual => SyntaxKind.VirtualKeyword,
                             CSharpModifiers.Async => SyntaxKind.AsyncKeyword,
+                            CSharpModifiers.ReadOnly => SyntaxKind.ReadOnlyKeyword,
                             _ => throw new InvalidOperationException()
                         }
                     )

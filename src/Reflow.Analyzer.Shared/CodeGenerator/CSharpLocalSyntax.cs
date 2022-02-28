@@ -38,5 +38,16 @@ namespace Reflow.Analyzer.CodeGenerator
 
             return this;
         }
+
+        public CSharpLocalSyntax WithAttributes(params CSharpAttributeSyntax[] attributes)
+        {
+            _localSyntax = _localSyntax.WithAttributeLists(
+                SingletonList(
+                    AttributeList(SeparatedList(attributes.Select(x => (AttributeSyntax)x)))
+                )
+            );
+
+            return this;
+        }
     }
 }

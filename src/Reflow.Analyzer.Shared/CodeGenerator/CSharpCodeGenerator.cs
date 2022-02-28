@@ -9,9 +9,21 @@ namespace Reflow.Analyzer.CodeGenerator
 {
     public static class CSharpCodeGenerator
     {
+        public static CompilationUnitSyntax Compilation(
+            IEnumerable<MemberDeclarationSyntax> namespaces
+        )
+        {
+            return CompilationUnit().WithMembers(List(namespaces));
+        }
+
         public static CSharpFileSyntax File(string namespaceName)
         {
             return new CSharpFileSyntax(namespaceName);
+        }
+
+        public static CSharpNamespaceSyntax Namespace(string name)
+        {
+            return new CSharpNamespaceSyntax(name);
         }
 
         public static CSharpClassSyntax Class(
@@ -20,6 +32,26 @@ namespace Reflow.Analyzer.CodeGenerator
         )
         {
             return new CSharpClassSyntax(name, modifiers);
+        }
+
+        public static CSharpStructSyntax Struct(
+            string name,
+            CSharpModifiers modifiers = CSharpModifiers.None
+        )
+        {
+            return new CSharpStructSyntax(name, modifiers);
+        }
+
+        public static CSharpConversionOperatorSyntax ImplicitOperator(
+            TypeSyntax toType,
+            CSharpModifiers modifiers = CSharpModifiers.None
+        )
+        {
+            return new CSharpConversionOperatorSyntax(
+                SyntaxKind.ImplicitKeyword,
+                toType,
+                modifiers
+            );
         }
 
         public static CSharpConstructorSyntax Constructor(
@@ -37,6 +69,11 @@ namespace Reflow.Analyzer.CodeGenerator
         )
         {
             return new CSharpParameterSyntax(name, type, modifiers);
+        }
+
+        public static CSharpTypeParameterSyntax TypeParameter(string name)
+        {
+            return new CSharpTypeParameterSyntax(name);
         }
 
         public static CSharpAttributeSyntax Attribute(TypeSyntax type)
@@ -268,6 +305,11 @@ namespace Reflow.Analyzer.CodeGenerator
             }
 
             return arrayType;
+        }
+
+        public static TypeSyntax Generic(string name)
+        {
+            return IdentifierName(name);
         }
 
         public static TypeSyntax GenericType(Type type, params TypeSyntax[] types)
@@ -944,6 +986,29 @@ namespace Reflow.Analyzer.CodeGenerator
         public static StatementSyntax EmitIf(bool condition, Func<StatementSyntax> statement)
         {
             return condition ? statement.Invoke() : Block();
+        }
+
+        public static class Options
+        {
+            public static bool EmitSkipLocalsInit { get; set; } = false;
+            public static bool HideFromEditor { get; set; } = true;
+
+            public static void Init(Compilation compilation)
+            {
+                if (
+                    ((CSharpCompilationOptions)compilation.Options).AllowUnsafe
+                    && !compilation.Assembly.Modules
+                        .SelectMany(x => x.GetAttributes())
+                        .Any(
+                            x =>
+                                x.AttributeClass!.GetFullName()
+                                    is "System.Runtime.CompilerServices.SkipLocalsInitAttribute"
+                        )
+                )
+                {
+                    CSharpCodeGenerator.Options.EmitSkipLocalsInit = true;
+                }
+            }
         }
     }
 }

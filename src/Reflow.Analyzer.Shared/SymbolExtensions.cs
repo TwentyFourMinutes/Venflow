@@ -4,6 +4,14 @@ namespace Reflow.Analyzer.Shared
 {
     internal static class SymbolExtensions
     {
+        internal static string GetNamespace(this ISymbol symbol)
+        {
+            if (symbol.ContainingNamespace.IsGlobalNamespace)
+                throw new NotImplementedException();
+            else
+                return symbol.ContainingNamespace.ToString();
+        }
+
         internal static string GetFullName(this ISymbol symbol)
         {
             if (symbol.ContainingNamespace.IsGlobalNamespace)

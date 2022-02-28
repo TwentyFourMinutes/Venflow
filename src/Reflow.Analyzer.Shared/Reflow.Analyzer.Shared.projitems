@@ -9,6 +9,25 @@
     <Import_RootNamespace>Reflow.Analyzer.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpAttributeSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpConversionOperatorSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpNamespaceSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpTypeParameterSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpStructSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpClassSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpCodeGenerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpConstructorSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpFieldSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpFileSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpIfSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpInstanceSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpLambdaSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpLocalSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpMethodSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpModifierExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpModifiers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpParameterSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpPropertySyntax.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Properties\AssemblyInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SymbolExtensions.cs" />
   </ItemGroup>

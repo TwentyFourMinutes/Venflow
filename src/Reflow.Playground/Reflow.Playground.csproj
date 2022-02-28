@@ -18,6 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Reflow.Keys\Reflow.Keys.csproj" />
+    <ProjectReference Include="..\Reflow.Keys.Analyzer\Reflow.Keys.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Reflow\Reflow.csproj" />
     <ProjectReference Include="..\Reflow.Analyzer\Reflow.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <!--<ProjectReference Include="..\Reflow.Analyzer.Incremental\Reflow.Analyzer.Incremental.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />-->
