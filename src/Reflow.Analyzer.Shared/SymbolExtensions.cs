@@ -24,7 +24,7 @@ namespace Reflow.Analyzer.Shared
         {
             var assemblyIdentity = symbol.ContainingAssembly.Identity;
 
-            return assemblyIdentity.Name is "Reflow"
+            return assemblyIdentity.Name is "Reflow" or "Reflow.Keys"
                 && assemblyIdentity.PublicKey.SequenceEqual(AssemblyInfo.PublicKey);
         }
     }

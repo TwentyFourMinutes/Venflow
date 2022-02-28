@@ -24,6 +24,7 @@
     <ProjectReference Include="..\Reflow.Analyzer\Reflow.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <!--<ProjectReference Include="..\Reflow.Analyzer.Incremental\Reflow.Analyzer.Incremental.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />-->
     <Analyzer Include="..\Reflow.Analyzer.Diagnostic\bin\$(Configuration)\netstandard2.0\Reflow.Analyzer.Diagnostic.dll" />
+    <Analyzer Include="..\Reflow.Keys.Analyzer.Diagnostic\bin\$(Configuration)\netstandard2.0\Reflow.Keys.Analyzer.Diagnostic.dll" />
   </ItemGroup>
 
 </Project>

@@ -72,5 +72,5 @@ namespace Reflow.Playground
     }
 
     [GeneratedKey<Guid>]
-    public partial struct Key<T> where T : struct { }
+    public struct Key<T> { }
 }
