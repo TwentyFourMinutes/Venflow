@@ -56,7 +56,7 @@ namespace Reflow.Analyzer
                                         ).Symbol!;
 
                                     if (
-                                        (
+                                        !(
                                             (INamedTypeSymbol)attribtueSymbol.ReceiverType!
                                         ).OriginalDefinition.IsReflowSymbol()
                                     )

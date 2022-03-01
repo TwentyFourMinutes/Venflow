@@ -125,7 +125,7 @@ namespace Reflow.Analyzer.Operations
 
                                     var propertyName = memberAccessSyntax.Name.Identifier.Text;
 
-                                    var column = entity.Columns.FirstOrDefault(
+                                    var column = entity.Columns.Find(
                                         x => x.PropertyName == propertyName
                                     );
 

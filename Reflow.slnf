@@ -11,7 +11,8 @@
       "src\\Reflow.Keys.Analyzer\\Reflow.Keys.Analyzer.csproj",
       "src\\Reflow.Keys\\Reflow.Keys.csproj",
       "src\\Reflow.Playground\\Reflow.Playground.csproj",
-      "src\\Reflow\\Reflow.csproj"
+      "src\\Reflow\\Reflow.csproj",
+      "test\\Reflow.Keys.Analyzer.Diagnostic.Tests\\Reflow.Keys.Analyzer.Diagnostic.Tests.csproj"
     ]
   }
 }

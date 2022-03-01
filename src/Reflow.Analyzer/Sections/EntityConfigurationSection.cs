@@ -80,7 +80,7 @@ namespace Reflow.Analyzer.Sections
                         }
 
                         var navigationColumn = relation.RightNavigationProperty is not null
-                            ? rightEntity.Columns.FirstOrDefault(
+                            ? rightEntity.Columns.Find(
                                   x => x.PropertyName == relation.RightNavigationProperty.Name
                               )
                             : null;
