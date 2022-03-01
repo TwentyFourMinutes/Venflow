@@ -10,6 +10,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="CSharpier.MsBuild" Version="0.15.1" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0-preview.1.22076.8" />
 		<PackageReference Include="Npgsql" Version="7.0.0-preview.1" />
 		<PackageReference Include="ReflectionAnalyzers" Version="0.3.1">
 			<PrivateAssets>all</PrivateAssets>

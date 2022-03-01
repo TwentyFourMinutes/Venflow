@@ -264,6 +264,18 @@ namespace Reflow.Analyzer.Operations
                                 (LiteralExpressionSyntax)arguments[0].Expression
                             ).Token.Value!;
                         return;
+                    case "Caching":
+                        ModifyLinkData<QueryLinkData>(
+                            data =>
+                            {
+                                data.Caching =
+                                    arguments.Count == 0
+                                    || (bool)(
+                                        (LiteralExpressionSyntax)arguments[0].Expression
+                                    ).Token.Value!;
+                            }
+                        );
+                        return;
                     case "Join":
                     case "ThenJoin":
                         var isNew = methodSymbol.Name is "Join";
@@ -337,6 +349,7 @@ namespace Reflow.Analyzer.Operations
         internal MethodLocation? Location { get; set; }
 
         internal ITypeSymbol Entity { get; }
+        internal bool Caching { get; set; }
         internal int MinimumSqlLength { get; }
         internal List<short>? ParameterIndecies { get; }
         internal List<string>? HelperStrings { get; }

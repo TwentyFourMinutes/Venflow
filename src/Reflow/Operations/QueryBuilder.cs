@@ -17,6 +17,18 @@ namespace Reflow.Operations
             return default;
         }
 
+        public QueryBuilder<TEntity> Caching()
+        {
+            return default;
+        }
+
+        public QueryBuilder<TEntity> Caching(bool caching)
+        {
+            _ = caching;
+
+            return default;
+        }
+
         public QueryRelationBuilder<TEntity, TToEntity> Join<TToEntity>(
             Func<TEntity, TToEntity> with
         ) where TToEntity : class, new()
@@ -35,12 +47,12 @@ namespace Reflow.Operations
             return default;
         }
 
-        public Task<TEntity?> SingleAsync(CancellationToken cancellationToken = default)
+        public ValueTask<TEntity?> SingleAsync(CancellationToken cancellationToken = default)
         {
             return Query.SingleAsync<TEntity>(false, cancellationToken);
         }
 
-        public Task<IList<TEntity>> ManyAsync(CancellationToken cancellationToken = default)
+        public ValueTask<IList<TEntity>> ManyAsync(CancellationToken cancellationToken = default)
         {
             return Query.ManyAsync<TEntity>(cancellationToken);
         }

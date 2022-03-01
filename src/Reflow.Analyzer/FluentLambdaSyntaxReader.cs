@@ -62,6 +62,12 @@ namespace Reflow.Analyzer
             _fluentCall.LambdaLink.Data = data;
         }
 
+        protected void ModifyLinkData<TLinkData>(Action<TLinkData> modifier)
+            where TLinkData : ILambdaLinkData
+        {
+            modifier.Invoke((TLinkData)_fluentCall.LambdaLink.Data!);
+        }
+
         protected abstract bool ValidateHead(
             LambdaExpressionSyntax lambdaSyntax,
             IMethodSymbol methodSymbol,

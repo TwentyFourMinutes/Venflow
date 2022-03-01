@@ -20,42 +20,46 @@ namespace Reflow.Analyzer.Sections
             for (var databaseIndex = 0; databaseIndex < databases.Count; databaseIndex++)
             {
                 var database = databases[databaseIndex];
-                var fluentCalls = previous.Data[database.Symbol];
-                var commands = commandData[database.Symbol];
 
-                for (
-                    var fluentCallIndex = 0;
-                    fluentCallIndex < fluentCalls.Count;
-                    fluentCallIndex++
-                )
+                if (previous.Data.TryGetValue(database.Symbol, out var fluentCalls))
                 {
-                    var fluentCall = fluentCalls[fluentCallIndex];
+                    for (
+                        var fluentCallIndex = 0;
+                        fluentCallIndex < fluentCalls.Count;
+                        fluentCallIndex++
+                    )
+                    {
+                        var fluentCall = fluentCalls[fluentCallIndex];
 
-                    var query = Query.Construct(database, fluentCall);
-                    database.Queries.Add(query);
-                    operations.Add(query);
+                        var query = Query.Construct(database, fluentCall);
+                        database.Queries.Add(query);
+                        operations.Add(query);
+                    }
                 }
 
-                for (var commandIndex = 0; commandIndex < commands.Count; commandIndex++)
+                if (commandData.TryGetValue(database.Symbol, out var commands))
                 {
-                    var command = commands[commandIndex];
-
-                    switch (command.Type)
+                    for (var commandIndex = 0; commandIndex < commands.Count; commandIndex++)
                     {
-                        case Command.CommandType.Insert:
-                            var insert = Insert.Construct(database, command);
-                            database.Inserts.Add(insert);
-                            break;
-                        case Command.CommandType.Update:
-                            var update = Update.Construct(database, command);
-                            database.Updates.Add(update);
-                            break;
-                        case Command.CommandType.Delete:
-                            var delete = Delete.Construct(database, command);
-                            database.Deletes.Add(delete);
-                            break;
-                        default:
-                            throw new InvalidOperationException();
+                        var command = commands[commandIndex];
+
+                        switch (command.Type)
+                        {
+                            case Command.CommandType.Insert:
+                                var insert = Insert.Construct(database, command);
+                                database.Inserts.Add(insert);
+                                break;
+                            case Command.CommandType.Update:
+                                var update = Update.Construct(database, command);
+                                database.Updates.Add(update);
+                                break;
+                            case Command.CommandType.Delete:
+                                var delete = Delete.Construct(database, command);
+                                database.Deletes.Add(delete);
+                                break;
+                            default:
+                                throw new InvalidOperationException();
+                        }
                     }
                 }
 

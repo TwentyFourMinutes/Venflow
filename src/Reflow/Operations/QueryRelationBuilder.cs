@@ -43,12 +43,14 @@ namespace Reflow.Operations
             return default;
         }
 
-        public Task<TRootEntity?> SingleAsync(CancellationToken cancellationToken = default)
+        public ValueTask<TRootEntity?> SingleAsync(CancellationToken cancellationToken = default)
         {
             return Query.SingleAsync<TRootEntity>(true, cancellationToken);
         }
 
-        public Task<IList<TRootEntity>> ManyAsync(CancellationToken cancellationToken = default)
+        public ValueTask<IList<TRootEntity>> ManyAsync(
+            CancellationToken cancellationToken = default
+        )
         {
             return Query.ManyAsync<TRootEntity>(cancellationToken);
         }

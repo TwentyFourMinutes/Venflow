@@ -8,7 +8,7 @@ using VerifyCS = Reflow.Keys.Analyzer.Diagnostic.Tests.CSharpCodeFixVerifier<
 namespace Reflow.Keys.Analyzer.Diagnostic.Tests
 {
     [TestClass]
-    public class MakeClassPartialTests
+    public class MakeStructPartialTests
     {
         [TestMethod]
         public Task Empty_Diagnostic()

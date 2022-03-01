@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.Common;
 using System.Text;
+using Microsoft.Extensions.Caching.Memory;
 using Npgsql;
 using Reflow.Lambdas;
 
@@ -17,17 +18,72 @@ namespace Reflow.Operations
             internal QueryLinkData LambdaData = null!;
             internal DbCommand Command = null!;
             internal IDatabase Database = null!;
+
+            internal Action SqlInterpolationHandler = null!;
+            internal IInterpolationArgument[] Arguments = null!;
         }
 
-        internal static async Task<TEntity?> SingleAsync<TEntity>(
+        internal static ValueTask<TEntity?> SingleAsync<TEntity>(
             bool hasRelations,
             CancellationToken cancellationToken
         )
         {
             var queryData = AmbientData.Current ?? throw new InvalidOperationException();
 
-            await queryData.Database.EnsureValidConnection(cancellationToken);
-            queryData.Command.Connection = queryData.Database.Connection;
+            if (queryData.LambdaData.Caching)
+            {
+                var interpolationData =
+                    SqlInterpolationHandler.AmbientData.Current
+                    ?? throw new InvalidOperationException();
+
+                var database = queryData.Database;
+
+                var cacheKey = queryData.LambdaData.CacheKeys!.GetOrAdd(
+                    new InterpolationArgumentCollection(queryData.Arguments),
+                    _ => database.GenerateNewCacheKey()
+                );
+
+                return new ValueTask<TEntity?>(
+                    database.QueryCache.GetOrCreateAsync(
+                        cacheKey,
+                        _ =>
+                        {
+                            interpolationData.Caching = false;
+                            interpolationData.Arguments = null!;
+                            SqlInterpolationHandler.AmbientData.Current = interpolationData;
+
+                            queryData.SqlInterpolationHandler.Invoke();
+
+                            SqlInterpolationHandler.AmbientData.Current = null;
+
+                            queryData.Command.CommandText =
+                                interpolationData.CommandBuilder.ToString();
+
+                            return SingleBaseAsync<TEntity>(hasRelations, cancellationToken)
+                                .AsTask();
+                        }
+                    )
+                );
+            }
+
+            SqlInterpolationHandler.AmbientData.Current = null;
+
+            return SingleBaseAsync<TEntity>(hasRelations, cancellationToken);
+        }
+
+        private static async ValueTask<TEntity?> SingleBaseAsync<TEntity>(
+            bool hasRelations,
+            CancellationToken cancellationToken
+        )
+        {
+            var queryData = AmbientData.Current ?? throw new InvalidOperationException();
+            AmbientData.Current = null;
+
+            var database = queryData.Database;
+            var lambdaData = queryData.LambdaData;
+
+            await database.EnsureValidConnection(cancellationToken);
+            queryData.Command.Connection = database.Connection;
 
             DbDataReader dataReader = null!;
 
@@ -47,32 +103,34 @@ namespace Reflow.Operations
                 if (!dataReader.HasRows)
                     return default;
 
-                var columnIndecies = queryData.LambdaData.ColumnIndecies;
+                var columnIndecies = lambdaData.ColumnIndecies;
 
                 if (columnIndecies is null)
                 {
                     GetColumnIndecies(
-                        queryData.Database,
+                        database,
                         dataReader.GetColumnSchema(),
-                        queryData.LambdaData!.UsedEntities,
+                        lambdaData!.UsedEntities,
                         out columnIndecies
                     );
-                    queryData.LambdaData.ColumnIndecies = columnIndecies;
+
+                    lambdaData.ColumnIndecies = columnIndecies;
                 }
 
                 if (hasRelations)
                 {
                     return await (
-                        (Func<DbDataReader, ushort[], Task<TEntity>>)queryData.LambdaData.Parser
+                        (Func<DbDataReader, ushort[], Task<TEntity>>)lambdaData.Parser
                     ).Invoke(dataReader, columnIndecies);
                 }
                 else
                 {
                     await dataReader.ReadAsync();
 
-                    return (
-                        (Func<DbDataReader, ushort[], TEntity>)queryData.LambdaData.Parser
-                    ).Invoke(dataReader, columnIndecies);
+                    return ((Func<DbDataReader, ushort[], TEntity>)lambdaData.Parser).Invoke(
+                        dataReader,
+                        columnIndecies
+                    );
                 }
             }
             catch
@@ -85,12 +143,10 @@ namespace Reflow.Operations
                     await dataReader.DisposeAsync();
 
                 await queryData.Command.DisposeAsync();
-
-                AmbientData.Current = null;
             }
         }
 
-        internal static async Task<IList<TEntity>> ManyAsync<TEntity>(
+        internal static async ValueTask<IList<TEntity>> ManyAsync<TEntity>(
             CancellationToken cancellationToken
         )
         {
@@ -161,22 +217,29 @@ namespace Reflow.Operations
                 HelperStrings = lambdaData.HelperStrings!,
                 Parameters = command.Parameters,
                 CommandBuilder = commandBuilder,
+                Caching = lambdaData.Caching,
             };
 
             SqlInterpolationHandler.AmbientData.Current = interpolationData;
 
             sql.Invoke(data);
 
-            SqlInterpolationHandler.AmbientData.Current = null;
-
-            command.CommandText = commandBuilder.ToString();
-
             var queryData = new AmbientData
             {
                 Command = command,
                 LambdaData = lambdaData,
-                Database = database
+                Database = database,
             };
+
+            if (lambdaData.Caching)
+            {
+                queryData.SqlInterpolationHandler = () => sql.Invoke(data);
+                queryData.Arguments = interpolationData.Arguments;
+            }
+            else
+            {
+                command.CommandText = commandBuilder.ToString();
+            }
 
             AmbientData.Current = queryData;
         }

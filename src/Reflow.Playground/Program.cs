@@ -8,15 +8,13 @@ namespace Reflow.Playground
         {
             var db = new MyDatabase();
 
-            var people = await db.People
-                .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {1}")
-                .TrackChanges()
-                .ManyAsync();
-
-            await db.People.UpdateAsync(people.First());
-            await db.People.UpdateAsync(people);
-
-            await db.People.DeleteAsync(people);
+            for (var i = 0; i < 3; i++)
+            {
+                var people = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {1}")
+                    .Caching()
+                    .SingleAsync();
+            }
         }
 
         public static void Test(Action a) => Console.WriteLine(a);
