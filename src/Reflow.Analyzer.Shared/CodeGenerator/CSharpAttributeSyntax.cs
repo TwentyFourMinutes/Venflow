@@ -20,7 +20,7 @@ namespace Reflow.Analyzer.CodeGenerator
         public CSharpAttributeSyntax WithArguments(params ExpressionSyntax[] parameters)
         {
             _attributeSyntax = _attributeSyntax.WithArgumentList(
-                AttributeArgumentList(SeparatedList(parameters.Select(x => AttributeArgument(x))))
+                AttributeArgumentList(SeparatedList(parameters.Select(AttributeArgument)))
             );
 
             return this;

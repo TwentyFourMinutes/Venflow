@@ -33,7 +33,7 @@ namespace Reflow.Analyzer.CodeGenerator
         public CSharpInstanceSyntax WithArguments(IEnumerable<ExpressionSyntax> members)
         {
             _objectCreationSyntax = _objectCreationSyntax.WithArgumentList(
-                ArgumentList(SeparatedList(members.Select(x => Argument(x))))
+                ArgumentList(SeparatedList(members.Select(Argument)))
             );
 
             return this;

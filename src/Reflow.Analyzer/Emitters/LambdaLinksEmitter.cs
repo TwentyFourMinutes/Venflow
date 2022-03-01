@@ -74,18 +74,19 @@ namespace Reflow.Analyzer.Emitters
 
             return Instance(Type("Reflow.Lambdas.QueryLinkData"))
                 .WithArguments(
+                    Constant(data.Caching),
                     Constant(data.MinimumSqlLength),
                     data.ParameterIndecies is null
                       ? Null()
                       : ArrayInitializer(
                             Array(Type(typeof(short))),
-                            data.ParameterIndecies.Select(x => Constant(x))
+                            data.ParameterIndecies.Select(Constant)
                         ),
                     data.HelperStrings is null
                       ? Null()
                       : ArrayInitializer(
                             Array(Type(typeof(string))),
-                            data.HelperStrings.Select(x => Constant(x))
+                            data.HelperStrings.Select(Constant)
                         ),
                     ArrayInitializer(
                         Array(Type(typeof(Type))),
