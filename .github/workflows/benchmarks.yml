@@ -19,7 +19,7 @@ jobs:
         VENFLOW_BENCHMARKS_CONNECTION_STRING: 'Server=127.0.0.1;Port=5432;Database=venflow_benchmarks;UserId=venflow_benchmarks;Password=venflow_benchmarks;'
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Setup .NET 6.0
       uses: actions/setup-dotnet@v1

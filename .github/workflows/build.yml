@@ -14,7 +14,7 @@ jobs:
         VENFLOW_TESTS_CONNECTION_STRING: 'Server=127.0.0.1;Port=5432;Database=venflow_tests;UserId=venflow_tests;Password=venflow_tests;Timeout=25;'
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         persist-credentials: false
 
