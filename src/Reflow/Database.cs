@@ -130,7 +130,6 @@ namespace Reflow
         IMemoryCache IDatabase.QueryCache => _queryCache;
         DatabaseConfiguration IDatabase.Configuration => _configuration;
 
-        private int _queryCacheCounter;
         private readonly IMemoryCache _queryCache;
         private readonly string _connectionString;
 
@@ -170,11 +169,9 @@ namespace Reflow
             return (TData)_configuration.Queries[method];
         }
 
-        string IDatabase.GenerateNewCacheKey()
+        object IDatabase.GenerateNewCacheKey()
         {
-            return Convert.ToBase64String(
-                BitConverter.GetBytes(Interlocked.Increment(ref _queryCacheCounter))
-            );
+            return new EquatableStrongBox<Guid>(Guid.NewGuid());
         }
     }
 
@@ -186,6 +183,6 @@ namespace Reflow
 
         ValueTask EnsureValidConnection(CancellationToken cancellationToken);
         TData GetQueryData<TData>(MethodInfo method) where TData : ILambdaLinkData;
-        string GenerateNewCacheKey();
+        object GenerateNewCacheKey();
     }
 }

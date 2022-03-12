@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Common;
+using System.Reflection;
 using System.Text;
 using Microsoft.Extensions.Caching.Memory;
 using Npgsql;
@@ -18,6 +19,7 @@ namespace Reflow.Operations
             internal QueryLinkData LambdaData = null!;
             internal DbCommand Command = null!;
             internal IDatabase Database = null!;
+            internal MethodInfo MethodInfo = null!;
 
             internal Action SqlInterpolationHandler = null!;
             internal IInterpolationArgument[] Arguments = null!;
@@ -32,43 +34,12 @@ namespace Reflow.Operations
 
             if (queryData.LambdaData.Caching)
             {
-                var interpolationData =
-                    SqlInterpolationHandler.AmbientData.Current
-                    ?? throw new InvalidOperationException();
-
-                var database = queryData.Database;
-
-                var cacheKey = queryData.LambdaData.CacheKeys!.GetOrAdd(
-                    new InterpolationArgumentCollection(queryData.Arguments),
-                    _ => database.GenerateNewCacheKey()
-                );
-
-                return new ValueTask<TEntity?>(
-                    database.QueryCache.GetOrCreateAsync(
-                        cacheKey,
-                        _ =>
-                        {
-                            interpolationData.Caching = false;
-                            interpolationData.Arguments = null!;
-                            SqlInterpolationHandler.AmbientData.Current = interpolationData;
-
-                            queryData.SqlInterpolationHandler.Invoke();
-
-                            SqlInterpolationHandler.AmbientData.Current = null;
-
-                            queryData.Command.CommandText =
-                                interpolationData.CommandBuilder.ToString();
-
-                            return SingleBaseAsync<TEntity>(hasRelations, cancellationToken)
-                                .AsTask();
-                        }
-                    )
-                );
+                return GetCachedAsync(hasRelations, SingleBaseAsync<TEntity>, cancellationToken);
             }
-
-            SqlInterpolationHandler.AmbientData.Current = null;
-
-            return SingleBaseAsync<TEntity>(hasRelations, cancellationToken);
+            else
+            {
+                return SingleBaseAsync<TEntity>(hasRelations, cancellationToken);
+            }
         }
 
         private static async ValueTask<TEntity?> SingleBaseAsync<TEntity>(
@@ -76,14 +47,13 @@ namespace Reflow.Operations
             CancellationToken cancellationToken
         )
         {
+            SqlInterpolationHandler.AmbientData.Current = null;
+
             var queryData = AmbientData.Current ?? throw new InvalidOperationException();
             AmbientData.Current = null;
 
-            var database = queryData.Database;
-            var lambdaData = queryData.LambdaData;
-
-            await database.EnsureValidConnection(cancellationToken);
-            queryData.Command.Connection = database.Connection;
+            await queryData.Database.EnsureValidConnection(cancellationToken);
+            queryData.Command.Connection = queryData.Database.Connection;
 
             DbDataReader dataReader = null!;
 
@@ -103,34 +73,33 @@ namespace Reflow.Operations
                 if (!dataReader.HasRows)
                     return default;
 
-                var columnIndecies = lambdaData.ColumnIndecies;
+                var columnIndecies = queryData.LambdaData.ColumnIndecies;
 
                 if (columnIndecies is null)
                 {
                     GetColumnIndecies(
-                        database,
+                        queryData.Database,
                         dataReader.GetColumnSchema(),
-                        lambdaData!.UsedEntities,
+                        queryData.LambdaData!.UsedEntities,
                         out columnIndecies
                     );
 
-                    lambdaData.ColumnIndecies = columnIndecies;
+                    queryData.LambdaData.ColumnIndecies = columnIndecies;
                 }
 
                 if (hasRelations)
                 {
                     return await (
-                        (Func<DbDataReader, ushort[], Task<TEntity>>)lambdaData.Parser
+                        (Func<DbDataReader, ushort[], Task<TEntity>>)queryData.LambdaData.Parser
                     ).Invoke(dataReader, columnIndecies);
                 }
                 else
                 {
                     await dataReader.ReadAsync();
 
-                    return ((Func<DbDataReader, ushort[], TEntity>)lambdaData.Parser).Invoke(
-                        dataReader,
-                        columnIndecies
-                    );
+                    return (
+                        (Func<DbDataReader, ushort[], TEntity>)queryData.LambdaData.Parser
+                    ).Invoke(dataReader, columnIndecies);
                 }
             }
             catch
@@ -146,11 +115,29 @@ namespace Reflow.Operations
             }
         }
 
-        internal static async ValueTask<IList<TEntity>> ManyAsync<TEntity>(
+        internal static ValueTask<IList<TEntity>> ManyAsync<TEntity>(
             CancellationToken cancellationToken
         )
         {
             var queryData = AmbientData.Current ?? throw new InvalidOperationException();
+
+            if (queryData.LambdaData.Caching)
+            {
+                return GetCachedAsync(false, ManyBaseAsync<TEntity>, cancellationToken);
+            }
+            else
+            {
+                return ManyBaseAsync<TEntity>(false, cancellationToken);
+            }
+        }
+
+        private static async ValueTask<IList<TEntity>> ManyBaseAsync<TEntity>(
+            bool ignore,
+            CancellationToken cancellationToken
+        )
+        {
+            _ = ignore;
+            var queryData = AmbientData.Current!;
 
             await queryData.Database.EnsureValidConnection(cancellationToken);
             queryData.Command.Connection = queryData.Database.Connection;
@@ -199,6 +186,26 @@ namespace Reflow.Operations
             }
         }
 
+        private static ValueTask<TReturn> GetCachedAsync<TReturn>(
+            bool hasRelations,
+            Func<bool, CancellationToken, ValueTask<TReturn>> queryFunc,
+            CancellationToken cancellationToken
+        )
+        {
+            var interpolationData = SqlInterpolationHandler.AmbientData.Current;
+            var queryData = AmbientData.Current!;
+
+            return queryData.Database.QueryCache.GetOrCreate(
+                new QueryCacheKey(queryData.MethodInfo, queryData.Arguments),
+                _ =>
+                {
+                    queryData.SqlInterpolationHandler.Invoke();
+
+                    return queryFunc.Invoke(hasRelations, cancellationToken);
+                }
+            );
+        }
+
         internal static void Handle<TDelegate>(
             IDatabase database,
             TDelegate data,
@@ -207,53 +214,107 @@ namespace Reflow.Operations
         {
             var lambdaData = database.GetQueryData<QueryLinkData>(data.Method);
 
-            var command = new NpgsqlCommand();
-
-            var commandBuilder = new StringBuilder(lambdaData.MinimumSqlLength);
-
-            var interpolationData = new SqlInterpolationHandler.AmbientData
+            if (lambdaData.Caching && lambdaData.ParameterIndecies is null)
             {
-                ParameterIndecies = lambdaData.ParameterIndecies!,
-                HelperStrings = lambdaData.HelperStrings!,
-                Parameters = command.Parameters,
-                CommandBuilder = commandBuilder,
-                Caching = lambdaData.Caching,
-            };
+                AmbientData.Current = new AmbientData
+                {
+                    Database = database,
+                    LambdaData = lambdaData,
+                    MethodInfo = sql.Method,
+                    SqlInterpolationHandler = () =>
+                    {
+                        var commandBuilder = new StringBuilder(lambdaData.MinimumSqlLength);
 
-            SqlInterpolationHandler.AmbientData.Current = interpolationData;
+                        SqlInterpolationHandler.AmbientData.Current =
+                            new SqlInterpolationHandler.AmbientData
+                            {
+                                HelperStrings = lambdaData.HelperStrings!,
+                                CommandBuilder = commandBuilder!,
+                                Caching = true,
+                            };
 
-            sql.Invoke(data);
+                        sql.Invoke(data);
 
-            var queryData = new AmbientData
-            {
-                Command = command,
-                LambdaData = lambdaData,
-                Database = database,
-            };
+                        SqlInterpolationHandler.AmbientData.Current = null;
 
-            if (lambdaData.Caching)
-            {
-                queryData.SqlInterpolationHandler = () => sql.Invoke(data);
-                queryData.Arguments = interpolationData.Arguments;
+                        AmbientData.Current!.Command = new NpgsqlCommand(commandBuilder.ToString());
+                    }
+                };
             }
             else
             {
-                command.CommandText = commandBuilder.ToString();
-            }
+                var command = new NpgsqlCommand();
 
-            AmbientData.Current = queryData;
+                var commandBuilder = new StringBuilder(lambdaData.MinimumSqlLength);
+
+                var interpolationData = new SqlInterpolationHandler.AmbientData
+                {
+                    ParameterIndecies = lambdaData.ParameterIndecies!,
+                    HelperStrings = lambdaData.HelperStrings!,
+                    Parameters = command.Parameters,
+                    CommandBuilder = commandBuilder!,
+                    Caching = lambdaData.Caching,
+                };
+
+                SqlInterpolationHandler.AmbientData.Current = interpolationData;
+
+                sql.Invoke(data);
+
+                var queryData = new AmbientData
+                {
+                    Command = command,
+                    LambdaData = lambdaData,
+                    Database = database,
+                    MethodInfo = data.Method,
+                };
+
+                if (lambdaData.Caching)
+                {
+                    queryData.SqlInterpolationHandler = () =>
+                    {
+                        interpolationData.Caching = false;
+                        interpolationData.Arguments = null!;
+                        SqlInterpolationHandler.AmbientData.Current = interpolationData;
+
+                        sql.Invoke(data);
+
+                        SqlInterpolationHandler.AmbientData.Current = null;
+
+                        queryData.Command.CommandText = interpolationData.CommandBuilder.ToString();
+                    };
+                    queryData.Arguments = interpolationData.Arguments;
+                }
+                else
+                {
+                    command.CommandText = commandBuilder!.ToString();
+                }
+
+                AmbientData.Current = queryData;
+            }
         }
 
         internal static void HandleRaw(IDatabase database, Func<string> sql)
         {
-            var queryData = new AmbientData
+            var queryData = database.GetQueryData<QueryLinkData>(sql.Method);
+
+            var ambientData = new AmbientData
             {
-                Command = new NpgsqlCommand(sql.Invoke()),
-                LambdaData = database.GetQueryData<QueryLinkData>(sql.Method),
-                Database = database
+                LambdaData = queryData,
+                Database = database,
+                MethodInfo = sql.Method
             };
 
-            AmbientData.Current = queryData;
+            if (queryData.Caching)
+            {
+                ambientData.SqlInterpolationHandler = () =>
+                    AmbientData.Current!.Command = new NpgsqlCommand(sql.Invoke());
+            }
+            else
+            {
+                ambientData.Command = new NpgsqlCommand(sql.Invoke());
+            }
+
+            AmbientData.Current = ambientData;
         }
 
         private static void GetColumnIndecies(

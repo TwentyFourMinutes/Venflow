@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 namespace Reflow
 {
@@ -25,7 +26,23 @@ namespace Reflow
             return _value!.Equals(otherValue);
         }
 
-        public override int GetHashCode() => _value!.GetHashCode();
+        public override int GetHashCode()
+        {
+            if (_value is null)
+                return 0;
+
+            return _value.GetHashCode();
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (_value is null)
+            {
+                return obj is null;
+            }
+
+            return _value.Equals(obj);
+        }
     }
 
     internal class InterpolationArgument<T> : IInterpolationArgument where T : struct, IEquatable<T>
@@ -46,6 +63,8 @@ namespace Reflow
         }
 
         public override int GetHashCode() => _value!.GetHashCode();
+
+        public override bool Equals(object? obj) => Equals(obj as IInterpolationArgument);
     }
 
     internal class InterpolationListArgument : IInterpolationArgument
@@ -80,6 +99,8 @@ namespace Reflow
         {
             return ((IStructuralEquatable)_value).GetHashCode(EqualityComparer<object>.Default);
         }
+
+        public override bool Equals(object? obj) => Equals(obj as IInterpolationArgument);
     }
 
     internal class InterpolationListArgument<T> : IInterpolationArgument where T : IEquatable<T>
@@ -114,6 +135,8 @@ namespace Reflow
         {
             return ((IStructuralEquatable)_value).GetHashCode(EqualityComparer<T>.Default);
         }
+
+        public override bool Equals(object? obj) => Equals(obj as IInterpolationArgument);
     }
 
     internal class InterpolationArgumentEqualityComparer
@@ -152,19 +175,27 @@ namespace Reflow
         }
     }
 
-    internal class InterpolationArgumentCollection : IEquatable<InterpolationArgumentCollection>
+    internal class QueryCacheKey : IEquatable<QueryCacheKey>
     {
+        private readonly MethodInfo _methodInfo;
         private readonly IList<IInterpolationArgument> _arguments;
 
-        internal InterpolationArgumentCollection(IList<IInterpolationArgument> arguments)
+        internal QueryCacheKey(MethodInfo methodInfo, IList<IInterpolationArgument> arguments)
         {
+            _methodInfo = methodInfo;
             _arguments = arguments;
         }
 
-        public bool Equals(InterpolationArgumentCollection? other)
+        public bool Equals(QueryCacheKey? other)
         {
-            if (other is null || _arguments.Count != other._arguments.Count)
+            if (
+                other is null
+                || _methodInfo != other._methodInfo
+                || _arguments.Count != other._arguments.Count
+            )
+            {
                 return false;
+            }
 
             for (var argumentIndex = 0; argumentIndex < _arguments.Count; argumentIndex++)
             {
@@ -179,9 +210,22 @@ namespace Reflow
 
         public override int GetHashCode()
         {
-            return ((IStructuralEquatable)_arguments).GetHashCode(
-                InterpolationArgumentEqualityComparer.Default
-            );
+            var hash = new HashCode();
+
+            hash.Add(_methodInfo.GetHashCode());
+
+            if (_arguments is not null)
+            {
+                hash.Add(
+                    ((IStructuralEquatable)_arguments).GetHashCode(
+                        InterpolationArgumentEqualityComparer.Default
+                    )
+                );
+            }
+
+            return hash.ToHashCode();
         }
+
+        public override bool Equals(object? obj) => Equals(obj as QueryCacheKey);
     }
 }

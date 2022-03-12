@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Reflow.Lambdas
 {
@@ -9,12 +8,13 @@ namespace Reflow.Lambdas
         internal ushort[]? ColumnIndecies { get; set; }
         internal string[]? HelperStrings { get; set; }
 
+        internal QueryCacheKey? CacheKey { get; set; }
+
         internal bool Caching { get; }
         internal int MinimumSqlLength { get; }
         internal short[]? ParameterIndecies { get; }
         internal Type[] UsedEntities { get; }
         internal Delegate Parser { get; }
-        internal ConcurrentDictionary<InterpolationArgumentCollection, string>? CacheKeys { get; }
 
         public QueryLinkData(
             bool caching,
@@ -31,11 +31,6 @@ namespace Reflow.Lambdas
             HelperStrings = helperStrings;
             UsedEntities = usedEntities;
             Parser = parser;
-
-            if (caching)
-            {
-                CacheKeys = new(Environment.ProcessorCount, 5);
-            }
         }
     }
 }

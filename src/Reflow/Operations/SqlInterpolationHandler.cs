@@ -39,7 +39,6 @@ namespace Reflow.Operations
         public SqlInterpolationHandler(int literalLength, int formattedCount)
         {
             _ = literalLength;
-            _ = formattedCount;
 
             _interpolationIndex = 0;
             _parameterIndex = 0;
@@ -62,9 +61,16 @@ namespace Reflow.Operations
 
             if (_caching)
             {
-                _arguments = current.Arguments = new IInterpolationArgument[
-                    formattedCount - _helperStrings.Length
-                ];
+                if (formattedCount - _helperStrings.Length > 0)
+                {
+                    _arguments = current.Arguments = new IInterpolationArgument[
+                        formattedCount - _helperStrings.Length
+                    ];
+                }
+                else
+                {
+                    _arguments = null!;
+                }
 
                 _commandBuilder = null!;
                 _parameters = null!;

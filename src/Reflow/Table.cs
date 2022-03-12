@@ -2,13 +2,13 @@
 
 namespace Reflow
 {
-    internal static class InstanceStore<T> where T : class, new()
-    {
-        internal static T Instance = new();
-    }
-
     public class Table<TEntity> where TEntity : class, new()
     {
+        private static class InstanceStore<T> where T : class, new()
+        {
+            internal static T Instance = new();
+        }
+
         private readonly IDatabase _database;
 
         public Table(object database)
