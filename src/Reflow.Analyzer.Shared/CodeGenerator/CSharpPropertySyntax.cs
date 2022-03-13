@@ -37,11 +37,31 @@ namespace Reflow.Analyzer.CodeGenerator
             return this;
         }
 
+        public CSharpPropertySyntax WithGetAccessor()
+        {
+            _propertySyntax = _propertySyntax.AddAccessorListAccessors(
+                AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+            );
+
+            return this;
+        }
+
         public CSharpPropertySyntax WithGetAccessor(params StatementSyntax[] statements)
         {
             _propertySyntax = _propertySyntax.AddAccessorListAccessors(
                 AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
                     .WithBody(Block(List(statements)))
+            );
+
+            return this;
+        }
+
+        public CSharpPropertySyntax WithSetAccessor()
+        {
+            _propertySyntax = _propertySyntax.AddAccessorListAccessors(
+                AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
             );
 
             return this;

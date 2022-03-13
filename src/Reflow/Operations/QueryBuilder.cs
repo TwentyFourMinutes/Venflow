@@ -5,30 +5,32 @@ namespace Reflow.Operations
     [StructLayout(LayoutKind.Sequential, Pack = 0)]
     public readonly ref struct QueryBuilder<TEntity> where TEntity : class, new()
     {
-        public QueryBuilder<TEntity> TrackChanges()
+        public JoinQueryBuilder<TEntity> TrackChanges()
         {
             return default;
         }
 
-        public QueryBuilder<TEntity> TrackChanges(bool trackChanges)
+        public JoinQueryBuilder<TEntity> TrackChanges(bool trackChanges)
         {
             _ = trackChanges;
 
             return default;
         }
 
-        public QueryBuilder<TEntity> Caching()
+        public ValueTask<TEntity?> SingleAsync(CancellationToken cancellationToken = default)
         {
-            return default;
+            return Query.SingleAsync<TEntity>(false, cancellationToken);
         }
 
-        public QueryBuilder<TEntity> Caching(bool caching)
+        public ValueTask<IList<TEntity>> ManyAsync(CancellationToken cancellationToken = default)
         {
-            _ = caching;
-
-            return default;
+            return Query.ManyAsync<TEntity>(cancellationToken);
         }
+    }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 0)]
+    public readonly ref struct JoinQueryBuilder<TEntity> where TEntity : class, new()
+    {
         public QueryRelationBuilder<TEntity, TToEntity> Join<TToEntity>(
             Func<TEntity, TToEntity> with
         ) where TToEntity : class, new()

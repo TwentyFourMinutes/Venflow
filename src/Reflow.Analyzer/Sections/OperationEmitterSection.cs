@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Reflow.Analyzer.Emitters;
+using Reflow.Analyzer.Models;
 using Reflow.Analyzer.Operations;
 using Reflow.Analyzer.Shared;
 
@@ -16,6 +17,7 @@ namespace Reflow.Analyzer.Sections
             var databases = GetPrevious<DatabaseConfigurationSection>().Data;
             var commandData = GetPrevious<CommandObserverSection>().Data;
             var operations = new List<Models.IOperation>();
+            var entityCaches = new List<Entity>();
 
             for (var databaseIndex = 0; databaseIndex < databases.Count; databaseIndex++)
             {
@@ -34,6 +36,18 @@ namespace Reflow.Analyzer.Sections
                         var query = Query.Construct(database, fluentCall);
                         database.Queries.Add(query);
                         operations.Add(query);
+
+                        entityCaches.Add(database.Entities[query.Entity]);
+                        entityCaches.AddRange(
+                            query.JoinedEntities.FlattenedPath.Select(
+                                x => database.Entities[x.LeftEntitySymbol]
+                            )
+                        );
+                        entityCaches.AddRange(
+                            query.JoinedEntities.FlattenedPath.Select(
+                                x => database.Entities[x.RightEntitySymbol]
+                            )
+                        );
                     }
                 }
 
@@ -63,8 +77,10 @@ namespace Reflow.Analyzer.Sections
                     }
                 }
 
+                AddSource("EntityCaches", EntityCacheEmitter.Emit(entityCaches));
+
                 AddSource(
-                    database.Symbol.GetFullName().Replace('.', '_'),
+                    database.Symbol.GetFullName().Replace('.', '_') + "_Queries",
                     QueryParserEmitter.Emit(database)
                 );
 

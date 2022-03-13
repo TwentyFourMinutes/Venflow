@@ -10,6 +10,7 @@ namespace Reflow.Analyzer.Models
         internal List<Column> Columns { get; }
         internal List<EntityRelation> Relations { get; set; }
         internal string? ProxyName { get; set; }
+        internal string? CacheName { get; set; }
         internal bool HasProxy { get; set; }
 
         internal Entity(INamedTypeSymbol symbol, string tableName)

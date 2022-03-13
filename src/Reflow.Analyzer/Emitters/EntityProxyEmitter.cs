@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Reflow.Analyzer.CodeGenerator;
 using Reflow.Analyzer.Models;
+using Reflow.Analyzer.Shared;
 using static Reflow.Analyzer.CodeGenerator.CSharpCodeGenerator;
 
 namespace Reflow.Analyzer.Emitters
@@ -15,7 +16,7 @@ namespace Reflow.Analyzer.Emitters
 
             foreach (var updatableEntity in updatableEntites)
             {
-                var proxyTypeName = "__" + updatableEntity.Key.Name.Replace('.', '_');
+                var proxyTypeName = "__" + updatableEntity.Key.GetFullName().Replace('.', '_');
                 var proxyMembers = new List<MemberDeclarationSyntax>();
 
                 updatableEntity.Value.ProxyName = "Reflow.Proxies." + proxyTypeName;
@@ -102,12 +103,12 @@ namespace Reflow.Analyzer.Emitters
                 );
 
                 proxyMembers.Add(
-                    Method("TrackChanges", Void(), CSharpModifiers.Public)
+                    Method("TrackChanges", Void(), CSharpModifiers.Internal)
                         .WithStatements(SetBit(This(), Variable("_changes"), 0))
                 );
 
                 members.Add(
-                    Class(proxyTypeName, CSharpModifiers.Public | CSharpModifiers.Sealed)
+                    Class(proxyTypeName, CSharpModifiers.Internal | CSharpModifiers.Sealed)
                         .WithBase(Type(updatableEntity.Key))
                         .WithMembers(proxyMembers)
                 );

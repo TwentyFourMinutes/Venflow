@@ -13,6 +13,7 @@ namespace Reflow.Analyzer.Operations
         internal OperationType Type { get; private set; }
         internal ITypeSymbol Entity { get; private set; }
         internal bool TrackChanges { get; private set; }
+        internal bool Caching { get; private set; }
         internal RelationBuilderValues JoinedEntities { get; }
 
         internal Query()
@@ -265,16 +266,13 @@ namespace Reflow.Analyzer.Operations
                             ).Token.Value!;
                         return;
                     case "Caching":
-                        ModifyLinkData<QueryLinkData>(
-                            data =>
-                            {
-                                data.Caching =
-                                    arguments.Count == 0
-                                    || (bool)(
-                                        (LiteralExpressionSyntax)arguments[0].Expression
-                                    ).Token.Value!;
-                            }
-                        );
+                        Value.Caching =
+                            arguments.Count == 0
+                            || (bool)(
+                                (LiteralExpressionSyntax)arguments[0].Expression
+                            ).Token.Value!;
+
+                        ModifyLinkData<QueryLinkData>(data => data.Caching = Value.Caching);
                         return;
                     case "Join":
                     case "ThenJoin":

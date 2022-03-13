@@ -111,10 +111,7 @@ namespace Reflow.Analyzer.Emitters
                 {
                     _caseStatements.Add(
                         Statement(
-                            AssignLocal(
-                                Variable("entity"),
-                                Instance(GetEntityType(entity, query.TrackChanges))
-                            )
+                            AssignLocal(Variable("entity"), Instance(GetEntityType(entity, query)))
                         )
                     );
                 }
@@ -199,7 +196,7 @@ namespace Reflow.Analyzer.Emitters
 
                 var lastEntityLocalName = "lastEntity_" + virtualEntity.Id;
                 _localSyntaxis.Add(
-                    Local(lastEntityLocalName, GetEntityType(virtualEntity))
+                    Local(lastEntityLocalName, GetEntityType(virtualEntity, query))
                         .WithInitializer(Default())
                 );
 
@@ -244,7 +241,7 @@ namespace Reflow.Analyzer.Emitters
                             Statement(
                                 AssignLocal(
                                     Variable(lastEntityLocalName),
-                                    Instance(GetEntityType(virtualEntity))
+                                    Instance(GetEntityType(virtualEntity, query))
                                 )
                             )
                         );
@@ -748,7 +745,7 @@ namespace Reflow.Analyzer.Emitters
                         Statement(
                             AssignLocal(
                                 Variable("lastEntity"),
-                                Instance(GetEntityType(entity, query.TrackChanges))
+                                Instance(GetEntityType(entity, query))
                             )
                         )
                     );
@@ -849,7 +846,7 @@ namespace Reflow.Analyzer.Emitters
 
                 var lastEntityLocalName = "lastEntity_" + virtualEntity.Id;
                 _localSyntaxis.Add(
-                    Local(lastEntityLocalName, GetEntityType(virtualEntity))
+                    Local(lastEntityLocalName, GetEntityType(virtualEntity, query))
                         .WithInitializer(Default())
                 );
 
@@ -866,7 +863,7 @@ namespace Reflow.Analyzer.Emitters
                                     GenericType(
                                         typeof(Dictionary<,>),
                                         Type(virtualEntity.Entity.Columns[0].Type),
-                                        GetEntityType(virtualEntity)
+                                        GetEntityType(virtualEntity, query)
                                     )
                                 )
                             )
@@ -894,7 +891,7 @@ namespace Reflow.Analyzer.Emitters
                             Statement(
                                 AssignLocal(
                                     Variable(lastEntityLocalName),
-                                    Instance(GetEntityType(virtualEntity))
+                                    Instance(GetEntityType(virtualEntity, query))
                                 )
                             )
                         );
@@ -920,7 +917,7 @@ namespace Reflow.Analyzer.Emitters
                                     Instance(
                                         GenericType(
                                             typeof(List<>),
-                                            GetEntityType(rightEntity, query.TrackChanges)
+                                            GetEntityType(rightEntity, query)
                                         )
                                     )
                                 )
@@ -1385,16 +1382,36 @@ namespace Reflow.Analyzer.Emitters
             return methodDefinition;
         }
 
-        private TypeSyntax GetEntityType(Entity entity, bool trackChanges)
+        private TypeSyntax GetEntityType(Entity entity, Query query)
         {
-            return trackChanges && entity.HasProxy ? Type(entity.ProxyName!) : Type(entity.Symbol);
+            if (query.TrackChanges)
+            {
+                return Type(entity.ProxyName!);
+            }
+            else if (query.Caching)
+            {
+                return Type(entity.CacheName! + ".__Mutable");
+            }
+            else
+            {
+                return Type(entity.Symbol);
+            }
         }
 
-        private TypeSyntax GetEntityType(VirtualEntity entity)
+        private TypeSyntax GetEntityType(VirtualEntity entity, Query query)
         {
-            return entity.TrackChanges
-              ? Type(entity.Entity.ProxyName!)
-              : Type(entity.Entity.Symbol);
+            if (entity.TrackChanges)
+            {
+                return Type(entity.Entity.ProxyName!);
+            }
+            else if (query.Caching)
+            {
+                return Type(entity.Entity.CacheName! + ".__Mutable");
+            }
+            else
+            {
+                return Type(entity.Entity.Symbol);
+            }
         }
 
         private VirtualEntity[] GetVirtualEntities(Query query)
@@ -1424,6 +1441,7 @@ namespace Reflow.Analyzer.Emitters
 
                 if (
                     x.TrackChanges != y.TrackChanges
+                    || x.Caching != y.Caching
                     || x.Type != y.Type
                     || xPath.Count != yPath.Count
                     || !x.Entity.Equals(y.Entity, SymbolEqualityComparer.Default)
@@ -1447,6 +1465,7 @@ namespace Reflow.Analyzer.Emitters
             {
                 var hashCode = new HashCode();
 
+                hashCode.Add(obj.Caching);
                 hashCode.Add(obj.TrackChanges);
                 hashCode.Add(obj.Entity);
                 hashCode.Add(obj.Type);

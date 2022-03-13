@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpAttributeSyntax.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpInterfaceSyntax.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpConversionOperatorSyntax.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpNamespaceSyntax.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpTypeParameterSyntax.cs" />

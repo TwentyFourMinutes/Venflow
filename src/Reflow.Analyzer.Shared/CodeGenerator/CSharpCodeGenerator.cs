@@ -26,6 +26,14 @@ namespace Reflow.Analyzer.CodeGenerator
             return new CSharpNamespaceSyntax(name);
         }
 
+        public static CSharpInterfaceSyntax Interface(
+            string name,
+            CSharpModifiers modifiers = CSharpModifiers.None
+        )
+        {
+            return new CSharpInterfaceSyntax(name, modifiers);
+        }
+
         public static CSharpClassSyntax Class(
             string name,
             CSharpModifiers modifiers = CSharpModifiers.None

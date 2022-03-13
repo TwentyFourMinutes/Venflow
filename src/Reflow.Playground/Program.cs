@@ -1,4 +1,4 @@
-﻿using Reflow.Modeling;
+using Reflow.Modeling;
 
 namespace Reflow.Playground
 {
@@ -12,6 +12,16 @@ namespace Reflow.Playground
             {
                 var people = await db.People
                     .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {1}")
+                    .Caching()
+                    .SingleAsync();
+
+                people = await db.People
+                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = 1")
+                    .Caching()
+                    .SingleAsync();
+
+                people = await db.People
+                    .QueryRaw(() => @"SELECT * FROM ""People"" WHERE ""Id"" = 0")
                     .Caching()
                     .SingleAsync();
             }
