@@ -64,5 +64,14 @@ namespace Reflow.Analyzer.CodeGenerator
 
             return this;
         }
+
+        public CSharpClassSyntax WithBaseTypes(params TypeSyntax[] parameters)
+        {
+            _classSyntax = _classSyntax.WithBaseList(
+                BaseList(SeparatedList(parameters.Select(x => (BaseTypeSyntax)SimpleBaseType(x))))
+            );
+
+            return this;
+        }
     }
 }

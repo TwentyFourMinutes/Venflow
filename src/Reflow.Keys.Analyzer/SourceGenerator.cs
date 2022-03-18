@@ -1,4 +1,7 @@
 using System.Collections.Immutable;
+using System.ComponentModel;
+using System.Globalization;
+using System.Reflection;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -110,10 +113,131 @@ namespace Reflow.Analyzer
                     if (combined.KeyDeclarations.IsDefaultOrEmpty)
                         return;
 
+                    var emitSystemTextJson = combined.Compilation.HasAssemblyReference(
+                        "System.Text.Json",
+                        KnownPublicKeys.SystemTextJson
+                    );
+
                     Options.Init(combined.Compilation);
-                    Options.HideFromEditor = false;
 
                     var namespaceDeclarations = new List<NamespaceDeclarationSyntax>();
+
+                    if (emitSystemTextJson)
+                    {
+                        namespaceDeclarations.Add(
+                            Namespace("Reflow")
+                                .WithMembers(
+                                    Class("JsonKeyConverterFactory", CSharpModifiers.Internal)
+                                        .WithBase(
+                                            Type(
+                                                "System.Text.Json.Serialization.JsonConverterFactory"
+                                            )
+                                        )
+                                        .WithMembers(
+                                            Method(
+                                                    "CanConvert",
+                                                    Type<bool>(),
+                                                    CSharpModifiers.Public
+                                                        | CSharpModifiers.Override
+                                                )
+                                                .WithParameters(
+                                                    Parameter("typeToConvert", Type<Type>())
+                                                )
+                                                .WithStatements(
+                                                    Return(
+                                                        Invoke(
+                                                            Type(typeof(Enumerable)),
+                                                            nameof(Enumerable.Any),
+                                                            Invoke(
+                                                                Variable("typeToConvert"),
+                                                                nameof(System.Type.GetInterfaces)
+                                                            ),
+                                                            Lambda("x")
+                                                                .WithStatements(
+                                                                    Return(
+                                                                        Equal(
+                                                                            Variable("x"),
+                                                                            TypeOf(
+                                                                                Type("Reflow.IKey")
+                                                                            )
+                                                                        )
+                                                                    )
+                                                                )
+                                                        )
+                                                    )
+                                                ),
+                                            Method(
+                                                    "CreateConverter",
+                                                    NullableType(
+                                                        "System.Text.Json.Serialization.JsonConverter"
+                                                    ),
+                                                    CSharpModifiers.Public
+                                                        | CSharpModifiers.Override
+                                                )
+                                                .WithParameters(
+                                                    Parameter("typeToConvert", Type<Type>()),
+                                                    Parameter(
+                                                        "options",
+                                                        Type(
+                                                            "System.Text.Json.JsonSerializerOptions"
+                                                        )
+                                                    )
+                                                )
+                                                .WithStatements(
+                                                    If(
+                                                        Not(
+                                                            Invoke(
+                                                                This(),
+                                                                "CanConvert",
+                                                                Variable("typeToConvert")
+                                                            )
+                                                        ),
+                                                        Return(Null())
+                                                    ),
+                                                    Local("converterType", Var())
+                                                        .WithInitializer(
+                                                            Invoke(
+                                                                Invoke(
+                                                                    Variable("typeToConvert"),
+                                                                    nameof(
+                                                                        System.Type.GetNestedType
+                                                                    ),
+                                                                    Constant("JsonConverter"),
+                                                                    EnumMember(
+                                                                        BindingFlags.NonPublic
+                                                                    )
+                                                                ),
+                                                                nameof(System.Type.MakeGenericType),
+                                                                AccessElement(
+                                                                    AccessMember(
+                                                                        Variable("typeToConvert"),
+                                                                        nameof(
+                                                                            System.Type.GenericTypeArguments
+                                                                        )
+                                                                    ),
+                                                                    Constant(0)
+                                                                )
+                                                            )
+                                                        ),
+                                                    Return(
+                                                        Cast(
+                                                            Type(
+                                                                "System.Text.Json.Serialization.JsonConverter"
+                                                            ),
+                                                            Invoke(
+                                                                Type(typeof(Activator)),
+                                                                nameof(Activator.CreateInstance),
+                                                                Variable("converterType")
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                        )
+                                )
+                        );
+                    }
+
+                    Options.HideFromEditor = false;
 
                     foreach (
                         var (structSymbol, underlyingSymbol) in combined.KeyDeclarations.Distinct()
@@ -122,11 +246,27 @@ namespace Reflow.Analyzer
                         var namespaceName = structSymbol.GetNamespace();
                         var fullName = namespaceName + "." + structSymbol.Name;
 
+                        var attributesSyntax = new List<CSharpAttributeSyntax>
+                        {
+                            Attribute(Type<TypeConverterAttribute>())
+                                .WithArguments(TypeOf(Type("Reflow.KeyConverterFactory")))
+                        };
+
+                        if (emitSystemTextJson)
+                        {
+                            attributesSyntax.Add(
+                                Attribute(Type("System.Text.Json.Serialization.JsonConverter"))
+                                    .WithArguments(TypeOf(Type("Reflow.JsonKeyConverterFactory")))
+                            );
+                        }
+
                         namespaceDeclarations.Add(
                             Namespace(namespaceName)
                                 .WithMembers(
                                     Struct(structSymbol.Name, CSharpModifiers.Partial)
+                                        .WithAttributes(attributesSyntax)
                                         .WithTypeParameters(TypeParameter("T"))
+                                        .WithBaseTypes(Type("Reflow.IKey"))
                                         .WithMembers(
                                             Field(
                                                 "_value",
@@ -171,11 +311,261 @@ namespace Reflow.Analyzer
                                                             )
                                                             .WithArguments(Variable("value"))
                                                     )
+                                                ),
+                                            Class("KeyConverter", CSharpModifiers.Private)
+                                                .WithBase(Type<TypeConverter>())
+                                                .WithMembers(
+                                                    Field(
+                                                            "_valueTypeDescriptor",
+                                                            Type<TypeConverter>(),
+                                                            CSharpModifiers.Private
+                                                                | CSharpModifiers.Static
+                                                                | CSharpModifiers.ReadOnly
+                                                        )
+                                                        .WithInitializer(
+                                                            Invoke(
+                                                                Type<TypeDescriptor>(),
+                                                                nameof(TypeDescriptor.GetConverter),
+                                                                TypeOf(Type(underlyingSymbol!))
+                                                            )
+                                                        ),
+                                                    Method(
+                                                            "ConvertFrom",
+                                                            NullableType<object>(),
+                                                            CSharpModifiers.Public
+                                                                | CSharpModifiers.Override
+                                                        )
+                                                        .WithParameters(
+                                                            Parameter(
+                                                                "context",
+                                                                Type<ITypeDescriptorContext>()
+                                                            ),
+                                                            Parameter(
+                                                                "culture",
+                                                                Type<CultureInfo>()
+                                                            ),
+                                                            Parameter("value", Type<object>())
+                                                        )
+                                                        .WithStatements(
+                                                            Local("result", Var())
+                                                                .WithInitializer(
+                                                                    Invoke(
+                                                                        Variable(
+                                                                            "_valueTypeDescriptor"
+                                                                        ),
+                                                                        nameof(
+                                                                            TypeConverter.ConvertFrom
+                                                                        ),
+                                                                        Variable("context"),
+                                                                        Variable("culture"),
+                                                                        Variable("value")
+                                                                    )
+                                                                ),
+                                                            Return(
+                                                                Conditional(
+                                                                    Equal(
+                                                                        Variable("result"),
+                                                                        Null()
+                                                                    ),
+                                                                    Null(),
+                                                                    Cast(
+                                                                        GenericName(
+                                                                            fullName,
+                                                                            Generic("T")
+                                                                        ),
+                                                                        Cast(
+                                                                            Type(underlyingSymbol!),
+                                                                            Variable("result")
+                                                                        )
+                                                                    )
+                                                                )
+                                                            )
+                                                        ),
+                                                    Method(
+                                                            "ConvertTo",
+                                                            NullableType<object>(),
+                                                            CSharpModifiers.Public
+                                                                | CSharpModifiers.Override
+                                                        )
+                                                        .WithParameters(
+                                                            Parameter(
+                                                                "context",
+                                                                Type<ITypeDescriptorContext>()
+                                                            ),
+                                                            Parameter(
+                                                                "culture",
+                                                                Type<CultureInfo>()
+                                                            ),
+                                                            Parameter("value", Type<object>()),
+                                                            Parameter(
+                                                                "destinationType",
+                                                                Type<Type>()
+                                                            )
+                                                        )
+                                                        .WithStatements(
+                                                            Return(
+                                                                Invoke(
+                                                                    Variable(
+                                                                        "_valueTypeDescriptor"
+                                                                    ),
+                                                                    nameof(TypeConverter.ConvertTo),
+                                                                    Variable("context"),
+                                                                    Variable("culture"),
+                                                                    AccessMember(
+                                                                        Parenthesis(
+                                                                            Cast(
+                                                                                GenericName(
+                                                                                    fullName,
+                                                                                    Generic("T")
+                                                                                ),
+                                                                                Cast(
+                                                                                    Type(
+                                                                                        underlyingSymbol!
+                                                                                    ),
+                                                                                    Variable(
+                                                                                        "value"
+                                                                                    )
+                                                                                )
+                                                                            )
+                                                                        ),
+                                                                        "_value"
+                                                                    ),
+                                                                    Variable("destinationType")
+                                                                )
+                                                            )
+                                                        )
                                                 )
+                                        )
+                                        .WithOptionalMember(
+                                            emitSystemTextJson,
+                                            () =>
+                                                (MemberDeclarationSyntax)Class(
+                                                        "JsonConverter",
+                                                        CSharpModifiers.Private
+                                                    )
+                                                    .WithBase(
+                                                        GenericType(
+                                                            "System.Text.Json.Serialization.JsonConverter",
+                                                            GenericType(fullName, Generic("T"))
+                                                        )
+                                                    )
+                                                    .WithMembers(
+                                                        Method(
+                                                                "Read",
+                                                                GenericType(fullName, Generic("T")),
+                                                                CSharpModifiers.Public
+                                                                    | CSharpModifiers.Override
+                                                            )
+                                                            .WithParameters(
+                                                                Parameter(
+                                                                    "reader",
+                                                                    Type(
+                                                                        "System.Text.Json.Utf8JsonReader"
+                                                                    ),
+                                                                    CSharpModifiers.Ref
+                                                                ),
+                                                                Parameter(
+                                                                    "typeToConvert",
+                                                                    Type<Type>()
+                                                                ),
+                                                                Parameter(
+                                                                    "options",
+                                                                    Type(
+                                                                        "System.Text.Json.JsonSerializerOptions"
+                                                                    )
+                                                                )
+                                                            )
+                                                            .WithStatements(
+                                                                If(
+                                                                    Equal(
+                                                                        AccessMember(
+                                                                            Variable("reader"),
+                                                                            "TokenType"
+                                                                        ),
+                                                                        AccessMember(
+                                                                            Type(
+                                                                                "System.Text.Json.JsonTokenType"
+                                                                            ),
+                                                                            "Null"
+                                                                        )
+                                                                    ),
+                                                                    Return(Default())
+                                                                ),
+                                                                Return(
+                                                                    Cast(
+                                                                        GenericType(
+                                                                            fullName,
+                                                                            Generic("T")
+                                                                        ),
+                                                                        Invoke(
+                                                                            Type(
+                                                                                "System.Text.Json.JsonSerializer"
+                                                                            ),
+                                                                            GenericName(
+                                                                                "Deserialize",
+                                                                                Type(
+                                                                                    underlyingSymbol!
+                                                                                )
+                                                                            ),
+                                                                            Ref(Variable("reader")),
+                                                                            Variable("options")
+                                                                        )
+                                                                    )
+                                                                )
+                                                            ),
+                                                        Method(
+                                                                "Write",
+                                                                Void(),
+                                                                CSharpModifiers.Public
+                                                                    | CSharpModifiers.Override
+                                                            )
+                                                            .WithParameters(
+                                                                Parameter(
+                                                                    "writer",
+                                                                    Type(
+                                                                        "System.Text.Json.Utf8JsonWriter"
+                                                                    )
+                                                                ),
+                                                                Parameter(
+                                                                    "value",
+                                                                    GenericType(
+                                                                        fullName,
+                                                                        Generic("T")
+                                                                    )
+                                                                ),
+                                                                Parameter(
+                                                                    "options",
+                                                                    Type(
+                                                                        "System.Text.Json.JsonSerializerOptions"
+                                                                    )
+                                                                )
+                                                            )
+                                                            .WithStatements(
+                                                                Statement(
+                                                                    Invoke(
+                                                                        Type(
+                                                                            "System.Text.Json.JsonSerializer"
+                                                                        ),
+                                                                        "Serialize",
+                                                                        Variable("writer"),
+                                                                        AccessMember(
+                                                                            Variable("value"),
+                                                                            "_value"
+                                                                        ),
+                                                                        Variable("options")
+                                                                    )
+                                                                )
+                                                            )
+                                                    )
                                         )
                                 )
                         );
                     }
+
+                    var t = Compilation(namespaceDeclarations)
+                        .NormalizeWhitespace()
+                        .GetText(Encoding.UTF8)
+                        .ToString();
 
                     spc.AddSource(
                         "Keys.g.cs",

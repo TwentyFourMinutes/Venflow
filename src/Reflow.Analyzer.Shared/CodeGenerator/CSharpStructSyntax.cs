@@ -45,6 +45,18 @@ namespace Reflow.Analyzer.CodeGenerator
             return this;
         }
 
+        public CSharpStructSyntax WithOptionalMember(
+            bool condition,
+            Func<MemberDeclarationSyntax> memberFunc
+        )
+        {
+            if (condition)
+            {
+                _structSyntax = _structSyntax.AddMembers(memberFunc.Invoke());
+            }
+            return this;
+        }
+
         public CSharpStructSyntax WithBase(TypeSyntax type)
         {
             _structSyntax = _structSyntax.WithBaseList(
@@ -55,6 +67,11 @@ namespace Reflow.Analyzer.CodeGenerator
         }
 
         public CSharpStructSyntax WithAttributes(params CSharpAttributeSyntax[] attributes)
+        {
+            return WithAttributes((IEnumerable<CSharpAttributeSyntax>)attributes);
+        }
+
+        public CSharpStructSyntax WithAttributes(IEnumerable<CSharpAttributeSyntax> attributes)
         {
             _structSyntax = _structSyntax.WithAttributeLists(
                 SingletonList(
@@ -69,6 +86,15 @@ namespace Reflow.Analyzer.CodeGenerator
         {
             _structSyntax = _structSyntax.WithTypeParameterList(
                 TypeParameterList(SeparatedList(parameters.Select(x => (TypeParameterSyntax)x)))
+            );
+
+            return this;
+        }
+
+        public CSharpStructSyntax WithBaseTypes(params TypeSyntax[] parameters)
+        {
+            _structSyntax = _structSyntax.WithBaseList(
+                BaseList(SeparatedList(parameters.Select(x => (BaseTypeSyntax)SimpleBaseType(x))))
             );
 
             return this;

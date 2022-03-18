@@ -21,6 +21,11 @@ namespace Reflow.Analyzer.CodeGenerator
             return syntax._lambdaSyntax;
         }
 
+        public CSharpLambdaSyntax WithStatements(params StatementSyntax[] statements)
+        {
+            return WithStatements((IEnumerable<StatementSyntax>)statements);
+        }
+
         public CSharpLambdaSyntax WithStatements(IEnumerable<StatementSyntax> statements)
         {
             _lambdaSyntax = _lambdaSyntax.WithBody(Block(statements));

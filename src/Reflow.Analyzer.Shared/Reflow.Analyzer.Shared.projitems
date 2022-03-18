@@ -29,7 +29,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpModifiers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpParameterSyntax.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator\CSharpPropertySyntax.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Properties\AssemblyInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CompilationExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PublicKeys.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SymbolExtensions.cs" />
   </ItemGroup>
 </Project>

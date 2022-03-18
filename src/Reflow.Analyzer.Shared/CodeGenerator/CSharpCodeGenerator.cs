@@ -239,6 +239,31 @@ namespace Reflow.Analyzer.CodeGenerator
             return PredefinedType(Token(SyntaxKind.VoidKeyword));
         }
 
+        public static TypeSyntax NullableType(ISymbol type)
+        {
+            return SyntaxFactory.NullableType(Type(type.GetFullName()));
+        }
+
+        public static TypeSyntax NullableType(IPropertySymbol type)
+        {
+            return SyntaxFactory.NullableType(Type(type.Type.GetFullName()));
+        }
+
+        public static TypeSyntax NullableType(Type type)
+        {
+            return SyntaxFactory.NullableType(Type(type.FullName));
+        }
+
+        public static TypeSyntax NullableType<TType>()
+        {
+            return SyntaxFactory.NullableType(Type(typeof(TType).FullName));
+        }
+
+        public static TypeSyntax NullableType(string type)
+        {
+            return SyntaxFactory.NullableType(Type(type));
+        }
+
         public static TypeSyntax Type(ISymbol type)
         {
             return Type(type.GetFullName());
@@ -533,6 +558,11 @@ namespace Reflow.Analyzer.CodeGenerator
         public static BinaryExpressionSyntax Or(ExpressionSyntax left, ExpressionSyntax right)
         {
             return BinaryExpression(SyntaxKind.LogicalOrExpression, left, right);
+        }
+
+        public static ArgumentSyntax Ref(NameSyntax variable)
+        {
+            return Argument(variable).WithRefKindKeyword(Token(SyntaxKind.RefKeyword));
         }
 
         public static ArgumentSyntax Out(NameSyntax variable)

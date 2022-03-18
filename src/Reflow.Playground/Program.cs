@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Reflow.Modeling;
 
 namespace Reflow.Playground
@@ -6,28 +7,31 @@ namespace Reflow.Playground
     {
         public static async Task Main()
         {
-            var db = new MyDatabase();
+            Key<MyDatabase> key = Guid.NewGuid();
 
-            for (var i = 0; i < 3; i++)
-            {
-                var people = await db.People
-                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {1}")
-                    .Caching()
-                    .SingleAsync();
+            var k = JsonSerializer.Serialize(key);
+            var k2 = JsonSerializer.Deserialize<Key<MyDatabase>>(k);
 
-                people = await db.People
-                    .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = 1")
-                    .Caching()
-                    .SingleAsync();
+            //var db = new MyDatabase();
 
-                people = await db.People
-                    .QueryRaw(() => @"SELECT * FROM ""People"" WHERE ""Id"" = 0")
-                    .Caching()
-                    .SingleAsync();
-            }
+            //for (var i = 0; i < 3; i++)
+            //{
+            //    var people = await db.People
+            //        .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = {1}")
+            //        .Caching()
+            //        .SingleAsync();
+
+            //    people = await db.People
+            //        .Query(people => $"SELECT {people:*} FROM {people} WHERE {people.Id} = 1")
+            //        .Caching()
+            //        .SingleAsync();
+
+            //    people = await db.People
+            //        .QueryRaw(() => @"SELECT * FROM ""People"" WHERE ""Id"" = 0")
+            //        .Caching()
+            //        .SingleAsync();
+            //}
         }
-
-        public static void Test(Action a) => Console.WriteLine(a);
     }
 
     public class MyDatabase : Database<MyDatabase>
@@ -80,5 +84,5 @@ namespace Reflow.Playground
     }
 
     [GeneratedKey<Guid>]
-    public partial struct Key<T> { }
+    public partial struct Key<T> : IKey { }
 }

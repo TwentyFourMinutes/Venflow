@@ -104,7 +104,7 @@ namespace Reflow.Analyzer
 
         void ISourceGenerator.Execute(GeneratorExecutionContext context)
         {
-            context.Compilation.EnsureReference("Reflow", AssemblyInfo.PublicKey);
+            context.Compilation.EnsureReference("Reflow", KnownPublicKeys.Reflow);
 
             CSharpCodeGenerator.Options.Init(context.Compilation);
 
