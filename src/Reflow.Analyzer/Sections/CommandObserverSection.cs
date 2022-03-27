@@ -57,10 +57,13 @@ namespace Reflow.Analyzer.Sections
 
                 var parameterType = invocationSymbol.Parameters[0].Type;
 
-                var operationType =
-                    parameterType.GetFullName() == "System.Collections.Generic.IList`1"
-                        ? OperationType.Many
-                        : OperationType.Single;
+                var operationType = string.Equals(
+                    parameterType.GetFullName(),
+                    "System.Collections.Generic.IList`1",
+                    StringComparison.Ordinal
+                )
+                  ? OperationType.Many
+                  : OperationType.Single;
 
                 var commandType = memberAccessSyntax.Name.Identifier.Text switch
                 {
@@ -79,7 +82,7 @@ namespace Reflow.Analyzer.Sections
         internal class SyntaxReceiver : ISyntaxContextReceiver
         {
             private static readonly HashSet<string> _validInvocationNames =
-                new() { "UpdateAsync", "InsertAsync", "DeleteAsync" };
+                new(StringComparer.Ordinal) { "UpdateAsync", "InsertAsync", "DeleteAsync" };
 
             internal List<InvocationExpressionSyntax> Candidates { get; }
 

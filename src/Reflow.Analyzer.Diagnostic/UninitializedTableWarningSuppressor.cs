@@ -58,7 +58,7 @@ namespace Reflow.Analyzer.Diagnostic
             {
                 var diagnostic = context.ReportedDiagnostics[diagnosticIndex];
 
-                if (diagnostic.Id == "CS8618")
+                if (string.Equals(diagnostic.Id, "CS8618", StringComparison.Ordinal))
                 {
                     var arguments = _getDiagnosticParameters.Invoke(diagnostic);
 

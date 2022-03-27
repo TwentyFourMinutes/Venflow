@@ -41,7 +41,7 @@ namespace Reflow.Analyzer
                 parent = parent.Previous;
             }
 
-            throw new ArgumentException(
+            throw new TypeArgumentException(
                 $"The section '{typeof(TSection).Name}' is not found in the parent hierarchy."
             );
         }

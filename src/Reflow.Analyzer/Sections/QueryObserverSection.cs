@@ -176,7 +176,8 @@ namespace Reflow.Analyzer.Sections
             );
 
             var lambdaCache =
-                Cache.GetData<Dictionary<string, LambdaLinkDefinition[]>>("lambdas.json") ?? new();
+                Cache.GetData<Dictionary<string, LambdaLinkDefinition[]>>("lambdas.json")
+                ?? new(StringComparer.Ordinal);
 
             var refreshCache = false;
 
@@ -334,7 +335,11 @@ namespace Reflow.Analyzer.Sections
 
                     if (
                         lambdaSymbol is not null
-                        && lambdaSymbol.GetFullName() == "System.Linq.Expressions.Expression"
+                        && string.Equals(
+                            lambdaSymbol.GetFullName(),
+                            "System.Linq.Expressions.Expression",
+                            StringComparison.Ordinal
+                        )
                     )
                     {
                         return;
@@ -695,7 +700,11 @@ namespace Reflow.Analyzer.Sections
 
                     if (
                         lambdaSymbol is not null
-                        && lambdaSymbol.GetFullName() == "System.Linq.Expressions.Expression"
+                        && string.Equals(
+                            lambdaSymbol.GetFullName(),
+                            "System.Linq.Expressions.Expression",
+                            StringComparison.Ordinal
+                        )
                     )
                     {
                         return;
@@ -962,7 +971,7 @@ namespace Reflow.Analyzer.Sections
             public Stopwatch SW = new();
 
             private static readonly HashSet<string> _validInvocationNames =
-                new() { "Query", "QueryRaw" };
+                new(StringComparer.Ordinal) { "Query", "QueryRaw" };
 
             internal HashSet<ClassDeclarationSyntax> Candidates { get; }
 

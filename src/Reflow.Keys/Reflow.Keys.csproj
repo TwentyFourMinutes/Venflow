@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <RootNamespace>Reflow</RootNamespace>
   </PropertyGroup>
 
 </Project>

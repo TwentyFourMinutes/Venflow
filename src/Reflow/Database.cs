@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Reflection;
 using Microsoft.Extensions.Caching.Memory;
 using Npgsql;
@@ -59,9 +60,15 @@ namespace Reflow
                             var nestedType = nestedTypes[nestedTypeIndex];
 
                             if (
-                                !nestedType.Name.StartsWith("<>c__DisplayClass")
+                                !nestedType.Name.StartsWith(
+                                    "<>c__DisplayClass",
+                                    StringComparison.Ordinal
+                                )
                                 || !nestedType.Name.EndsWith(
-                                    (link.LambdaIndex >> sizeof(ushort) * 8).ToString()
+                                    (link.LambdaIndex >> sizeof(ushort) * 8).ToString(
+                                        CultureInfo.InvariantCulture.NumberFormat
+                                    ),
+                                    StringComparison.Ordinal
                                 )
                             )
                             {
@@ -73,7 +80,10 @@ namespace Reflow
                             )[link.LambdaIndex & ushort.MaxValue];
 
                             if (
-                                tempMethod?.Name.StartsWith("<" + link.IdentifierName + ">b__")
+                                tempMethod?.Name.StartsWith(
+                                    "<" + link.IdentifierName + ">b__",
+                                    StringComparison.Ordinal
+                                )
                                 is not true
                             )
                             {
@@ -101,7 +111,10 @@ namespace Reflow
                         var tempMethod = methods[link.LambdaIndex];
 
                         if (
-                            tempMethod?.Name.StartsWith("<" + link.IdentifierName + ">b__")
+                            tempMethod?.Name.StartsWith(
+                                "<" + link.IdentifierName + ">b__",
+                                StringComparison.Ordinal
+                            )
                             is not true
                         )
                         {

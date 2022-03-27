@@ -25,11 +25,11 @@ namespace Reflow.Operations
                     ]
                 ).Invoke(command, entity);
 
-                return await command.ExecuteNonQueryAsync(cancellationToken);
+                return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
             finally
             {
-                await command.DisposeAsync();
+                await command.DisposeAsync().ConfigureAwait(false);
             }
         }
 
@@ -53,11 +53,11 @@ namespace Reflow.Operations
                     ]
                 ).Invoke(command, entities);
 
-                return await command.ExecuteNonQueryAsync(cancellationToken);
+                return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
             finally
             {
-                await command.DisposeAsync();
+                await command.DisposeAsync().ConfigureAwait(false);
             }
         }
     }

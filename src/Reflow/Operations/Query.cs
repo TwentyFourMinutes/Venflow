@@ -52,7 +52,7 @@ namespace Reflow.Operations
             var queryData = AmbientData.Current ?? throw new InvalidOperationException();
             AmbientData.Current = null;
 
-            await queryData.Database.EnsureValidConnection(cancellationToken);
+            await queryData.Database.EnsureValidConnection(cancellationToken).ConfigureAwait(false);
             queryData.Command.Connection = queryData.Database.Connection;
 
             DbDataReader dataReader = null!;
@@ -65,10 +65,9 @@ namespace Reflow.Operations
                       | CommandBehavior.SingleResult
                       | CommandBehavior.SequentialAccess;
 
-                dataReader = await queryData.Command.ExecuteReaderAsync(
-                    commandBehaviour,
-                    cancellationToken
-                );
+                dataReader = await queryData.Command
+                    .ExecuteReaderAsync(commandBehaviour, cancellationToken)
+                    .ConfigureAwait(false);
 
                 if (!dataReader.HasRows)
                     return default;
@@ -91,11 +90,13 @@ namespace Reflow.Operations
                 {
                     return await (
                         (Func<DbDataReader, ushort[], Task<TEntity>>)queryData.LambdaData.Parser
-                    ).Invoke(dataReader, columnIndecies);
+                    )
+                        .Invoke(dataReader, columnIndecies)
+                        .ConfigureAwait(false);
                 }
                 else
                 {
-                    await dataReader.ReadAsync();
+                    await dataReader.ReadAsync().ConfigureAwait(false);
 
                     return (
                         (Func<DbDataReader, ushort[], TEntity>)queryData.LambdaData.Parser
@@ -109,9 +110,9 @@ namespace Reflow.Operations
             finally
             {
                 if (dataReader is not null)
-                    await dataReader.DisposeAsync();
+                    await dataReader.DisposeAsync().ConfigureAwait(false);
 
-                await queryData.Command.DisposeAsync();
+                await queryData.Command.DisposeAsync().ConfigureAwait(false);
             }
         }
 
@@ -139,17 +140,19 @@ namespace Reflow.Operations
             _ = ignore;
             var queryData = AmbientData.Current!;
 
-            await queryData.Database.EnsureValidConnection(cancellationToken);
+            await queryData.Database.EnsureValidConnection(cancellationToken).ConfigureAwait(false);
             queryData.Command.Connection = queryData.Database.Connection;
 
             DbDataReader dataReader = null!;
 
             try
             {
-                dataReader = await queryData.Command.ExecuteReaderAsync(
-                    CommandBehavior.SingleResult | CommandBehavior.SequentialAccess,
-                    cancellationToken
-                );
+                dataReader = await queryData.Command
+                    .ExecuteReaderAsync(
+                        CommandBehavior.SingleResult | CommandBehavior.SequentialAccess,
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
 
                 if (!dataReader.HasRows)
                     return Array.Empty<TEntity>();
@@ -169,7 +172,9 @@ namespace Reflow.Operations
 
                 return await (
                     (Func<DbDataReader, ushort[], Task<IList<TEntity>>>)queryData.LambdaData.Parser
-                ).Invoke(dataReader, columnIndecies);
+                )
+                    .Invoke(dataReader, columnIndecies)
+                    .ConfigureAwait(false);
             }
             catch
             {
@@ -178,9 +183,9 @@ namespace Reflow.Operations
             finally
             {
                 if (dataReader is not null)
-                    await dataReader.DisposeAsync();
+                    await dataReader.DisposeAsync().ConfigureAwait(false);
 
-                await queryData.Command.DisposeAsync();
+                await queryData.Command.DisposeAsync().ConfigureAwait(false);
 
                 AmbientData.Current = null;
             }
@@ -337,7 +342,7 @@ namespace Reflow.Operations
             {
                 var column = columnSchema[columnIndex];
 
-                if (column.ColumnName == nextKeyName)
+                if (string.Equals(column.ColumnName, nextKeyName, StringComparison.Ordinal))
                 {
                     currentEntity = nextEntity;
 

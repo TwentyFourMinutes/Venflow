@@ -295,7 +295,11 @@ namespace Reflow.Analyzer.CodeGenerator
                 "System."
                     + type switch
                     {
-                        TypeCode.Empty => throw new ArgumentException(),
+                        TypeCode.Empty
+                          => throw new ArgumentException(
+                              "The type code is not valid.",
+                              nameof(type)
+                          ),
                         _ => type.ToString()
                     }
             );
@@ -348,7 +352,7 @@ namespace Reflow.Analyzer.CodeGenerator
         public static TypeSyntax GenericType(Type type, params TypeSyntax[] types)
         {
             if (!type.IsGenericType)
-                throw new ArgumentException();
+                throw new ArgumentException("The provided type must be generic.", nameof(type));
 
             var index = type.FullName.IndexOf('`');
 

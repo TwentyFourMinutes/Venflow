@@ -29,9 +29,9 @@ namespace Reflow.Keys.Analyzer.Diagnostic
             {
                 var diagnostic = context.Diagnostics[diagnosticIndex];
 
-                var root = await diagnostic.Location.SourceTree!.GetRootAsync(
-                    context.CancellationToken
-                );
+                var root = await diagnostic.Location.SourceTree!
+                    .GetRootAsync(context.CancellationToken)
+                    .ConfigureAwait(false);
 
                 var structSyntax = root.FindToken(diagnostic.Location.SourceSpan.Start).Parent!
                     .AncestorsAndSelf()
@@ -65,7 +65,9 @@ namespace Reflow.Keys.Analyzer.Diagnostic
                 Formatter.Annotation
             )!;
 
-            var oldRoot = await document.GetSyntaxRootAsync(cancellationToken);
+            var oldRoot = await document
+                .GetSyntaxRootAsync(cancellationToken)
+                .ConfigureAwait(false);
 
             var newRoot = oldRoot!.ReplaceNode(structSyntax, formattedStructSyntax)!;
 

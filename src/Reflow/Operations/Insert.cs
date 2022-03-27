@@ -14,7 +14,7 @@ namespace Reflow.Operations
             var command = (DbCommand)new NpgsqlCommand();
             command.Connection = database.Connection;
 
-            await database.EnsureValidConnection(cancellationToken);
+            await database.EnsureValidConnection(cancellationToken).ConfigureAwait(false);
 
             try
             {
@@ -22,11 +22,13 @@ namespace Reflow.Operations
                     (Func<DbCommand, TEntity, Task>)database.Configuration.SingleInserts[
                         typeof(TEntity)
                     ]
-                ).Invoke(command, entity);
+                )
+                    .Invoke(command, entity)
+                    .ConfigureAwait(false);
             }
             finally
             {
-                await command.DisposeAsync();
+                await command.DisposeAsync().ConfigureAwait(false);
             }
         }
 
@@ -39,7 +41,7 @@ namespace Reflow.Operations
             var command = (DbCommand)new NpgsqlCommand();
             command.Connection = database.Connection;
 
-            await database.EnsureValidConnection(cancellationToken);
+            await database.EnsureValidConnection(cancellationToken).ConfigureAwait(false);
 
             try
             {
@@ -47,11 +49,13 @@ namespace Reflow.Operations
                     (Func<DbCommand, IList<TEntity>, Task>)database.Configuration.ManyInserts[
                         typeof(TEntity)
                     ]
-                ).Invoke(command, entities);
+                )
+                    .Invoke(command, entities)
+                    .ConfigureAwait(false);
             }
             finally
             {
-                await command.DisposeAsync();
+                await command.DisposeAsync().ConfigureAwait(false);
             }
         }
     }

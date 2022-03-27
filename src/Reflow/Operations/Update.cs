@@ -25,11 +25,11 @@ namespace Reflow.Operations
                 if (command.Parameters.Count == 0)
                     return 0;
 
-                return await command.ExecuteNonQueryAsync(cancellationToken);
+                return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
             finally
             {
-                await command.DisposeAsync();
+                await command.DisposeAsync().ConfigureAwait(false);
             }
         }
 
@@ -53,11 +53,11 @@ namespace Reflow.Operations
                 if (command.Parameters.Count == 0)
                     return 0;
 
-                return await command.ExecuteNonQueryAsync(cancellationToken);
+                return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
             finally
             {
-                await command.DisposeAsync();
+                await command.DisposeAsync().ConfigureAwait(false);
             }
         }
     }

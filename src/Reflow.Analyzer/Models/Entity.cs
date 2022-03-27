@@ -84,7 +84,7 @@ namespace Reflow.Analyzer.Models
                 BlockSyntax blockSyntax
             ) : base(entity, semanticModel, blockSyntax)
             {
-                _columns = entity.Columns.ToDictionary(x => x.ColumnName);
+                _columns = entity.Columns.ToDictionary(x => x.ColumnName, StringComparer.Ordinal);
             }
 
             protected override bool ValidateHead(

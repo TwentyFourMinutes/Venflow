@@ -68,6 +68,14 @@ namespace Reflow.Analyzer.Models
                 && NavigationSymbol.Equals(other.NavigationSymbol, SymbolEqualityComparer.Default);
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is not RelationPath path)
+                return false;
+
+            return Equals(path);
+        }
+
         public override int GetHashCode()
         {
             var hash = new HashCode();

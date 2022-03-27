@@ -58,13 +58,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflow.Keys.Analyzer.Diagnostic.Tests", "test\Reflow.Keys.Analyzer.Diagnostic.Tests\Reflow.Keys.Analyzer.Diagnostic.Tests.csproj", "{58C274A9-413A-49DC-88C5-92230B61EB01}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{01a6d4b1-fc6e-48c3-8cb8-1de2650f9e20}*SharedItemsImports = 13
-		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{1ca59c7a-37c3-491c-9ff1-30a952a7d8b7}*SharedItemsImports = 5
-		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{4eb59672-4d9c-49fb-9ee2-e0aa16d854f4}*SharedItemsImports = 5
-		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{64395669-2f35-437e-a15e-b6dc2aee0c17}*SharedItemsImports = 5
-		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{fef84b05-7b41-4ee7-bd2f-1dbfe277e691}*SharedItemsImports = 5
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
@@ -227,5 +220,13 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {020D29CB-7D63-45D4-8F95-7C89DC06E6E6}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{01a6d4b1-fc6e-48c3-8cb8-1de2650f9e20}*SharedItemsImports = 13
+		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{1aebae42-8e82-431d-8424-0effa1edcd5d}*SharedItemsImports = 5
+		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{1ca59c7a-37c3-491c-9ff1-30a952a7d8b7}*SharedItemsImports = 5
+		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{4eb59672-4d9c-49fb-9ee2-e0aa16d854f4}*SharedItemsImports = 5
+		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{64395669-2f35-437e-a15e-b6dc2aee0c17}*SharedItemsImports = 5
+		src\Reflow.Analyzer.Shared\Reflow.Analyzer.Shared.projitems*{fef84b05-7b41-4ee7-bd2f-1dbfe277e691}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

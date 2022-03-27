@@ -12,7 +12,9 @@ namespace Reflow.Analyzer.Shared
         {
             if (
                 !compilation.ReferencedAssemblyNames.Any(
-                    x => x.Name == assemblyName && x.PublicKey.SequenceEqual(publicKey)
+                    x =>
+                        string.Equals(x.Name, assemblyName, StringComparison.Ordinal)
+                        && x.PublicKey.SequenceEqual(publicKey)
                 )
             )
             {
@@ -26,11 +28,11 @@ namespace Reflow.Analyzer.Shared
             this Compilation compilation,
             string name,
             IReadOnlyList<byte> publicKey
-        )
-        {
-            return compilation.ReferencedAssemblyNames.Any(
-                x => x.Name == name && x.PublicKey.SequenceEqual(publicKey)
+        ) =>
+            compilation.ReferencedAssemblyNames.Any(
+                x =>
+                    string.Equals(x.Name, name, StringComparison.Ordinal)
+                    && x.PublicKey.SequenceEqual(publicKey)
             );
-        }
     }
 }

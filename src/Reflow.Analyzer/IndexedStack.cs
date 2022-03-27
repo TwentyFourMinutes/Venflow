@@ -69,7 +69,9 @@ namespace Reflow.Analyzer
 
             if ((uint)size >= (uint)array.Length)
             {
-                throw new IndexOutOfRangeException();
+                throw new InvalidOperationException(
+                    "The stack size is zero, no more elements to pop."
+                );
             }
 
             _size = size;

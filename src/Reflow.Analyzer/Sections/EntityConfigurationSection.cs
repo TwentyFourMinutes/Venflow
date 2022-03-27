@@ -81,7 +81,12 @@ namespace Reflow.Analyzer.Sections
 
                         var navigationColumn = relation.RightNavigationProperty is not null
                             ? rightEntity.Columns.Find(
-                                  x => x.PropertyName == relation.RightNavigationProperty.Name
+                                  x =>
+                                      string.Equals(
+                                          x.PropertyName,
+                                          relation.RightNavigationProperty.Name,
+                                          StringComparison.Ordinal
+                                      )
                               )
                             : null;
 
@@ -121,7 +126,10 @@ namespace Reflow.Analyzer.Sections
                 var baseInterface = classSyntax.BaseList.Types.FirstOrDefault(
                     x =>
                         x.Type is SimpleNameSyntax nameSyntax
-                        && nameSyntax.Identifier.ValueText.EndsWith("IEntityConfiguration")
+                        && nameSyntax.Identifier.ValueText.EndsWith(
+                            "IEntityConfiguration",
+                            StringComparison.Ordinal
+                        )
                 );
 
                 if (baseInterface is null)
@@ -141,7 +149,7 @@ namespace Reflow.Analyzer.Sections
                     (INamedTypeSymbol)context.SemanticModel.GetDeclaredSymbol(classSyntax)!
                 )
                     .GetMembers()
-                    .Single(x => x.Name.EndsWith("Configure"));
+                    .Single(x => x.Name.EndsWith("Configure", StringComparison.Ordinal));
 
                 Candidates.Add(
                     interfaceSymbol.TypeArguments[0],
