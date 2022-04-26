@@ -34,4 +34,4 @@ jobs:
         uses: security-code-scan/security-code-scan-results-action@main
 
       - name: Upload sarif
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v2
